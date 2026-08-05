@@ -28,6 +28,43 @@ class AppLocalizationsFr extends AppLocalizations {
   String get continueLabel => 'Continuer';
 
   @override
+  String get onboardingSkip => 'Passer';
+
+  @override
+  String get onboardingNext => 'Suivant';
+
+  @override
+  String get onboardingStart => 'Commencer';
+
+  @override
+  String get onboardingWelcomeTitle => 'Bienvenue sur At-Tijaniya';
+
+  @override
+  String get onboardingWelcomeBody =>
+      'Votre compagnon numérique pour la pratique quotidienne, en français et en arabe.';
+
+  @override
+  String get onboardingWirdTitle => 'Vos wirds, guidés pas à pas';
+
+  @override
+  String get onboardingWirdBody =>
+      'Lazim, Wazifa et Hadratou-l-Jouma : texte, translittération, traduction et tasbih digital pour réciter sereinement.';
+
+  @override
+  String get onboardingKhadaraTitle => 'Khadara : évènements et diffusions';
+
+  @override
+  String get onboardingKhadaraBody =>
+      'Calendrier des évènements, annuaire des zawiyas et diffusions en direct pour rester connecté à la communauté.';
+
+  @override
+  String get onboardingCommunityTitle => 'Une communauté de disciples';
+
+  @override
+  String get onboardingCommunityBody =>
+      'Retrouvez votre entourage spirituel et suivez l\'actualité de votre zawiya.';
+
+  @override
   String get authTitle => 'Bienvenue';
 
   @override

@@ -134,6 +134,16 @@ frise de régularité récente. Une complétion est enregistrée automatiquement
 Android : Lazim entièrement récité via le Tasbih puis retrouvé dans
 l'historique (série = 1 jour, complétion du jour cochée sur la frise).
 
+Onboarding — présentation (P1) fonctionnel
+(`lib/features/onboarding/presentation/onboarding_screen.dart`, contenu FR/AR
+dans `lib/l10n/app_*.arb`) : 4 écrans (Bienvenue, Wirds, Khadara, Communauté)
+avec indicateur de page, "Passer" et "Suivant"/"Commencer". Inséré dans
+`app.dart` entre le choix de la langue et Auth, affiché une seule fois
+(`OnboardingStore`, `shared_preferences`) — contrairement au choix de langue,
+volontairement non persisté pour l'instant (voir `locale_controller.dart`).
+Validé de bout en bout sur émulateur Android, y compris la persistance après
+redémarrage à froid de l'app (onboarding non réaffiché au lancement suivant).
+
 ## Commandes utiles
 - `flutter pub get`
 - `flutter analyze`

@@ -27,6 +27,43 @@ class AppLocalizationsAr extends AppLocalizations {
   String get continueLabel => 'استمرار';
 
   @override
+  String get onboardingSkip => 'تخطي';
+
+  @override
+  String get onboardingNext => 'التالي';
+
+  @override
+  String get onboardingStart => 'ابدأ';
+
+  @override
+  String get onboardingWelcomeTitle => 'مرحبًا بك في التجانية';
+
+  @override
+  String get onboardingWelcomeBody =>
+      'رفيقك الرقمي للممارسة اليومية، بالفرنسية والعربية.';
+
+  @override
+  String get onboardingWirdTitle => 'أورادك، خطوة بخطوة';
+
+  @override
+  String get onboardingWirdBody =>
+      'اللازم والوظيفة وحضرة الجمعة: النص والنقحرة والترجمة والسبحة الرقمية لأداء الورد بطمأنينة.';
+
+  @override
+  String get onboardingKhadaraTitle => 'الحضرة: مناسبات وبث مباشر';
+
+  @override
+  String get onboardingKhadaraBody =>
+      'تقويم المناسبات ودليل الزوايا والبث المباشر للبقاء على تواصل مع الجماعة.';
+
+  @override
+  String get onboardingCommunityTitle => 'جماعة من الإخوان';
+
+  @override
+  String get onboardingCommunityBody =>
+      'تواصل مع محيطك الروحي وتابع مستجدات زاويتك.';
+
+  @override
   String get authTitle => 'مرحبًا بك';
 
   @override

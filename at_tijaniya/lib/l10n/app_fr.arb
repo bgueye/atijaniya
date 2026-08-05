@@ -9,6 +9,18 @@
   "languageArabic": "العربية",
   "continueLabel": "Continuer",
 
+  "onboardingSkip": "Passer",
+  "onboardingNext": "Suivant",
+  "onboardingStart": "Commencer",
+  "onboardingWelcomeTitle": "Bienvenue sur At-Tijaniya",
+  "onboardingWelcomeBody": "Votre compagnon numérique pour la pratique quotidienne, en français et en arabe.",
+  "onboardingWirdTitle": "Vos wirds, guidés pas à pas",
+  "onboardingWirdBody": "Lazim, Wazifa et Hadratou-l-Jouma : texte, translittération, traduction et tasbih digital pour réciter sereinement.",
+  "onboardingKhadaraTitle": "Khadara : évènements et diffusions",
+  "onboardingKhadaraBody": "Calendrier des évènements, annuaire des zawiyas et diffusions en direct pour rester connecté à la communauté.",
+  "onboardingCommunityTitle": "Une communauté de disciples",
+  "onboardingCommunityBody": "Retrouvez votre entourage spirituel et suivez l'actualité de votre zawiya.",
+
   "authTitle": "Bienvenue",
   "authSubtitle": "Connectez-vous pour retrouver votre communauté, ou continuez sans compte pour réciter vos wirds.",
   "authEmailLabel": "E-mail",

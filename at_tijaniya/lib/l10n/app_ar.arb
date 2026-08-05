@@ -9,6 +9,18 @@
   "languageArabic": "العربية",
   "continueLabel": "استمرار",
 
+  "onboardingSkip": "تخطي",
+  "onboardingNext": "التالي",
+  "onboardingStart": "ابدأ",
+  "onboardingWelcomeTitle": "مرحبًا بك في التجانية",
+  "onboardingWelcomeBody": "رفيقك الرقمي للممارسة اليومية، بالفرنسية والعربية.",
+  "onboardingWirdTitle": "أورادك، خطوة بخطوة",
+  "onboardingWirdBody": "اللازم والوظيفة وحضرة الجمعة: النص والنقحرة والترجمة والسبحة الرقمية لأداء الورد بطمأنينة.",
+  "onboardingKhadaraTitle": "الحضرة: مناسبات وبث مباشر",
+  "onboardingKhadaraBody": "تقويم المناسبات ودليل الزوايا والبث المباشر للبقاء على تواصل مع الجماعة.",
+  "onboardingCommunityTitle": "جماعة من الإخوان",
+  "onboardingCommunityBody": "تواصل مع محيطك الروحي وتابع مستجدات زاويتك.",
+
   "authTitle": "مرحبًا بك",
   "authSubtitle": "سجّل الدخول للتواصل مع جماعتك، أو استمر بدون حساب لأداء الورد فقط.",
   "authEmailLabel": "البريد الإلكتروني",

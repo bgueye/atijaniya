@@ -134,6 +134,72 @@ abstract class AppLocalizations {
   /// **'Continuer'**
   String get continueLabel;
 
+  /// No description provided for @onboardingSkip.
+  ///
+  /// In fr, this message translates to:
+  /// **'Passer'**
+  String get onboardingSkip;
+
+  /// No description provided for @onboardingNext.
+  ///
+  /// In fr, this message translates to:
+  /// **'Suivant'**
+  String get onboardingNext;
+
+  /// No description provided for @onboardingStart.
+  ///
+  /// In fr, this message translates to:
+  /// **'Commencer'**
+  String get onboardingStart;
+
+  /// No description provided for @onboardingWelcomeTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Bienvenue sur At-Tijaniya'**
+  String get onboardingWelcomeTitle;
+
+  /// No description provided for @onboardingWelcomeBody.
+  ///
+  /// In fr, this message translates to:
+  /// **'Votre compagnon numérique pour la pratique quotidienne, en français et en arabe.'**
+  String get onboardingWelcomeBody;
+
+  /// No description provided for @onboardingWirdTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Vos wirds, guidés pas à pas'**
+  String get onboardingWirdTitle;
+
+  /// No description provided for @onboardingWirdBody.
+  ///
+  /// In fr, this message translates to:
+  /// **'Lazim, Wazifa et Hadratou-l-Jouma : texte, translittération, traduction et tasbih digital pour réciter sereinement.'**
+  String get onboardingWirdBody;
+
+  /// No description provided for @onboardingKhadaraTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Khadara : évènements et diffusions'**
+  String get onboardingKhadaraTitle;
+
+  /// No description provided for @onboardingKhadaraBody.
+  ///
+  /// In fr, this message translates to:
+  /// **'Calendrier des évènements, annuaire des zawiyas et diffusions en direct pour rester connecté à la communauté.'**
+  String get onboardingKhadaraBody;
+
+  /// No description provided for @onboardingCommunityTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Une communauté de disciples'**
+  String get onboardingCommunityTitle;
+
+  /// No description provided for @onboardingCommunityBody.
+  ///
+  /// In fr, this message translates to:
+  /// **'Retrouvez votre entourage spirituel et suivez l\'actualité de votre zawiya.'**
+  String get onboardingCommunityBody;
+
   /// No description provided for @authTitle.
   ///
   /// In fr, this message translates to:
