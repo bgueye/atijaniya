@@ -177,7 +177,32 @@ Maps" (`open_in_maps.dart`, `url_launcher`) couvre la géolocalisation via
 l'app de plans du téléphone. Validé de bout en bout sur émulateur Android
 (vrai aller-retour réseau vers le projet Supabase live, états vides
 affichés correctement) et par tests unitaires sur le parsing des modèles
-(`test/khadara_models_test.dart`).
+(`test/khadara_models_test.dart`). Re-testé avec des données réelles après
+que le porteur de projet a ajouté des zawiyas/évènements en base : listes,
+détails, résolution du nom de zawiya et bouton "Ouvrir dans Maps" tous
+fonctionnels.
+
+Fil d'actualité & détail d'une publication (P1)
+(`lib/features/communaute/` : `domain/community_models.dart`,
+`data/community_repository.dart`, `presentation/communaute_screen.dart` +
+`post_detail_screen.dart`) : même principe que Khadara, branché sur les
+tables Supabase `posts`/`post_likes`/`post_comments` (lecture publique) —
+la table `posts` est vide à ce jour, état vide authentique affiché.
+Limite structurelle importante : **aimer et commenter exigent une session
+Supabase authentifiée réelle** (RLS `post_likes_owner_only`,
+`post_comments_author_create` : `auth.uid()` non nul), indisponible tant
+que l'authentification n'est pas branchée côté app (TODO dans
+`auth_screen.dart`) — `SupabaseConfig.client.auth.currentUser` est donc
+toujours `null` aujourd'hui. Les méthodes d'écriture
+(`toggleLike`/`addComment`) sont déjà implémentées dans
+`CommunityRepository` mais l'UI n'affiche qu'une invite à se connecter tant
+qu'il n'y a pas de session réelle — se réactivera automatiquement une fois
+l'auth branchée, aucun changement necessaire ici. Nom de l'auteur résolu
+via une requête `profiles` séparée (pas de FK directe
+`posts.author_user_id -> profiles.user_id`, contrairement à
+`author_zawiya_id -> zawiyas` qui est embeddable). Tests unitaires sur le
+parsing des modèles (`test/community_models_test.dart`). Validé sur
+émulateur Android (état vide affiché correctement).
 
 ## Commandes utiles
 - `flutter pub get`

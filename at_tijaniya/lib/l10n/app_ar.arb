@@ -68,8 +68,16 @@
   "figureZiyaraSectionTitle": "الزيارة المرتبطة",
   "figureBiographyPending": "السيرة قيد التحقق من صحتها.",
 
-  "communityComingSoonTitle": "الجماعة",
-  "communityComingSoonBody": "المستجدات والسلسلة الروحية — قريبًا.",
+  "communityFeedEmpty": "لا توجد منشورات حاليًا.",
+  "communityLoadError": "تعذّر تحميل المنشورات.",
+  "communityRetry": "إعادة المحاولة",
+  "communityDefaultAuthor": "مريد",
+  "communitySignInToInteract": "سجّل الدخول للإعجاب أو التعليق على منشور.",
+  "communityCommentsTitle": "التعليقات",
+  "communityNoComments": "لا توجد تعليقات حاليًا.",
+  "communityCommentHint": "أضف تعليقًا...",
+  "communityCommentSignInHint": "سجّل الدخول للتعليق.",
+  "communitySend": "إرسال",
 
   "profileTitle": "ملفي الشخصي",
   "profileMyLineage": "سلسلتي الروحية",

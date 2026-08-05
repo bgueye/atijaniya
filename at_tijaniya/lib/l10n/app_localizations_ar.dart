@@ -190,10 +190,35 @@ class AppLocalizationsAr extends AppLocalizations {
   String get figureBiographyPending => 'السيرة قيد التحقق من صحتها.';
 
   @override
-  String get communityComingSoonTitle => 'الجماعة';
+  String get communityFeedEmpty => 'لا توجد منشورات حاليًا.';
 
   @override
-  String get communityComingSoonBody => 'المستجدات والسلسلة الروحية — قريبًا.';
+  String get communityLoadError => 'تعذّر تحميل المنشورات.';
+
+  @override
+  String get communityRetry => 'إعادة المحاولة';
+
+  @override
+  String get communityDefaultAuthor => 'مريد';
+
+  @override
+  String get communitySignInToInteract =>
+      'سجّل الدخول للإعجاب أو التعليق على منشور.';
+
+  @override
+  String get communityCommentsTitle => 'التعليقات';
+
+  @override
+  String get communityNoComments => 'لا توجد تعليقات حاليًا.';
+
+  @override
+  String get communityCommentHint => 'أضف تعليقًا...';
+
+  @override
+  String get communityCommentSignInHint => 'سجّل الدخول للتعليق.';
+
+  @override
+  String get communitySend => 'إرسال';
 
   @override
   String get profileTitle => 'ملفي الشخصي';

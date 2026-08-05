@@ -192,11 +192,35 @@ class AppLocalizationsFr extends AppLocalizations {
   String get figureBiographyPending => 'Biographie en attente de validation.';
 
   @override
-  String get communityComingSoonTitle => 'Communauté';
+  String get communityFeedEmpty => 'Aucune publication pour le moment.';
 
   @override
-  String get communityComingSoonBody =>
-      'Fil d\'actualité et lignée spirituelle — à venir.';
+  String get communityLoadError => 'Impossible de charger les publications.';
+
+  @override
+  String get communityRetry => 'Réessayer';
+
+  @override
+  String get communityDefaultAuthor => 'Disciple';
+
+  @override
+  String get communitySignInToInteract =>
+      'Connectez-vous pour aimer ou commenter une publication.';
+
+  @override
+  String get communityCommentsTitle => 'Commentaires';
+
+  @override
+  String get communityNoComments => 'Aucun commentaire pour le moment.';
+
+  @override
+  String get communityCommentHint => 'Ajouter un commentaire...';
+
+  @override
+  String get communityCommentSignInHint => 'Connectez-vous pour commenter.';
+
+  @override
+  String get communitySend => 'Envoyer';
 
   @override
   String get profileTitle => 'Mon profil';

@@ -446,17 +446,65 @@ abstract class AppLocalizations {
   /// **'Biographie en attente de validation.'**
   String get figureBiographyPending;
 
-  /// No description provided for @communityComingSoonTitle.
+  /// No description provided for @communityFeedEmpty.
   ///
   /// In fr, this message translates to:
-  /// **'Communauté'**
-  String get communityComingSoonTitle;
+  /// **'Aucune publication pour le moment.'**
+  String get communityFeedEmpty;
 
-  /// No description provided for @communityComingSoonBody.
+  /// No description provided for @communityLoadError.
   ///
   /// In fr, this message translates to:
-  /// **'Fil d\'actualité et lignée spirituelle — à venir.'**
-  String get communityComingSoonBody;
+  /// **'Impossible de charger les publications.'**
+  String get communityLoadError;
+
+  /// No description provided for @communityRetry.
+  ///
+  /// In fr, this message translates to:
+  /// **'Réessayer'**
+  String get communityRetry;
+
+  /// No description provided for @communityDefaultAuthor.
+  ///
+  /// In fr, this message translates to:
+  /// **'Disciple'**
+  String get communityDefaultAuthor;
+
+  /// No description provided for @communitySignInToInteract.
+  ///
+  /// In fr, this message translates to:
+  /// **'Connectez-vous pour aimer ou commenter une publication.'**
+  String get communitySignInToInteract;
+
+  /// No description provided for @communityCommentsTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Commentaires'**
+  String get communityCommentsTitle;
+
+  /// No description provided for @communityNoComments.
+  ///
+  /// In fr, this message translates to:
+  /// **'Aucun commentaire pour le moment.'**
+  String get communityNoComments;
+
+  /// No description provided for @communityCommentHint.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ajouter un commentaire...'**
+  String get communityCommentHint;
+
+  /// No description provided for @communityCommentSignInHint.
+  ///
+  /// In fr, this message translates to:
+  /// **'Connectez-vous pour commenter.'**
+  String get communityCommentSignInHint;
+
+  /// No description provided for @communitySend.
+  ///
+  /// In fr, this message translates to:
+  /// **'Envoyer'**
+  String get communitySend;
 
   /// No description provided for @profileTitle.
   ///

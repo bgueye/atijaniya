@@ -68,8 +68,16 @@
   "figureZiyaraSectionTitle": "Ziyara associée",
   "figureBiographyPending": "Biographie en attente de validation.",
 
-  "communityComingSoonTitle": "Communauté",
-  "communityComingSoonBody": "Fil d'actualité et lignée spirituelle — à venir.",
+  "communityFeedEmpty": "Aucune publication pour le moment.",
+  "communityLoadError": "Impossible de charger les publications.",
+  "communityRetry": "Réessayer",
+  "communityDefaultAuthor": "Disciple",
+  "communitySignInToInteract": "Connectez-vous pour aimer ou commenter une publication.",
+  "communityCommentsTitle": "Commentaires",
+  "communityNoComments": "Aucun commentaire pour le moment.",
+  "communityCommentHint": "Ajouter un commentaire...",
+  "communityCommentSignInHint": "Connectez-vous pour commenter.",
+  "communitySend": "Envoyer",
 
   "profileTitle": "Mon profil",
   "profileMyLineage": "Ma lignée spirituelle",
