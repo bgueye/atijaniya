@@ -124,11 +124,47 @@ class AppLocalizationsFr extends AppLocalizations {
   String get wirdHadratouJouma => 'Hadratou-l-Jouma';
 
   @override
-  String get khadaraComingSoonTitle => 'Khadara';
+  String get khadaraEventsTab => 'Évènements';
 
   @override
-  String get khadaraComingSoonBody =>
-      'Calendrier des évènements et diffusions — à venir.';
+  String get khadaraZawiyasTab => 'Zawiyas';
+
+  @override
+  String get khadaraNoEvents => 'Aucun évènement à venir pour le moment.';
+
+  @override
+  String get khadaraNoZawiyas => 'Aucune zawiya renseignée pour le moment.';
+
+  @override
+  String get khadaraLoadError => 'Impossible de charger les données.';
+
+  @override
+  String get khadaraRetry => 'Réessayer';
+
+  @override
+  String get khadaraOpenInMaps => 'Ouvrir dans Maps';
+
+  @override
+  String get khadaraEventTypeZiyara => 'Ziyara';
+
+  @override
+  String get khadaraEventTypeHadra => 'Hadra';
+
+  @override
+  String get khadaraEventTypeOther => 'Autre';
+
+  @override
+  String get khadaraUpcomingEventsAtZawiya => 'Prochains évènements';
+
+  @override
+  String get khadaraNoUpcomingEventsAtZawiya =>
+      'Aucun évènement à venir dans cette zawiya.';
+
+  @override
+  String get khadaraAddressLabel => 'Adresse';
+
+  @override
+  String get khadaraContactLabel => 'Contact';
 
   @override
   String get figuresSectionFounders => 'Fondateurs';

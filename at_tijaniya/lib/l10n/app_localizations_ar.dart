@@ -122,10 +122,47 @@ class AppLocalizationsAr extends AppLocalizations {
   String get wirdHadratouJouma => 'حضرة الجمعة';
 
   @override
-  String get khadaraComingSoonTitle => 'الحضرة';
+  String get khadaraEventsTab => 'المناسبات';
 
   @override
-  String get khadaraComingSoonBody => 'تقويم المناسبات والبث المباشر — قريبًا.';
+  String get khadaraZawiyasTab => 'الزوايا';
+
+  @override
+  String get khadaraNoEvents => 'لا توجد مناسبات قادمة حاليًا.';
+
+  @override
+  String get khadaraNoZawiyas => 'لم تُسجَّل أي زاوية حاليًا.';
+
+  @override
+  String get khadaraLoadError => 'تعذّر تحميل البيانات.';
+
+  @override
+  String get khadaraRetry => 'إعادة المحاولة';
+
+  @override
+  String get khadaraOpenInMaps => 'فتح في الخرائط';
+
+  @override
+  String get khadaraEventTypeZiyara => 'زيارة';
+
+  @override
+  String get khadaraEventTypeHadra => 'حضرة';
+
+  @override
+  String get khadaraEventTypeOther => 'أخرى';
+
+  @override
+  String get khadaraUpcomingEventsAtZawiya => 'المناسبات القادمة';
+
+  @override
+  String get khadaraNoUpcomingEventsAtZawiya =>
+      'لا توجد مناسبات قادمة في هذه الزاوية.';
+
+  @override
+  String get khadaraAddressLabel => 'العنوان';
+
+  @override
+  String get khadaraContactLabel => 'التواصل';
 
   @override
   String get figuresSectionFounders => 'المؤسسون';

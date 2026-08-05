@@ -314,17 +314,89 @@ abstract class AppLocalizations {
   /// **'Hadratou-l-Jouma'**
   String get wirdHadratouJouma;
 
-  /// No description provided for @khadaraComingSoonTitle.
+  /// No description provided for @khadaraEventsTab.
   ///
   /// In fr, this message translates to:
-  /// **'Khadara'**
-  String get khadaraComingSoonTitle;
+  /// **'Évènements'**
+  String get khadaraEventsTab;
 
-  /// No description provided for @khadaraComingSoonBody.
+  /// No description provided for @khadaraZawiyasTab.
   ///
   /// In fr, this message translates to:
-  /// **'Calendrier des évènements et diffusions — à venir.'**
-  String get khadaraComingSoonBody;
+  /// **'Zawiyas'**
+  String get khadaraZawiyasTab;
+
+  /// No description provided for @khadaraNoEvents.
+  ///
+  /// In fr, this message translates to:
+  /// **'Aucun évènement à venir pour le moment.'**
+  String get khadaraNoEvents;
+
+  /// No description provided for @khadaraNoZawiyas.
+  ///
+  /// In fr, this message translates to:
+  /// **'Aucune zawiya renseignée pour le moment.'**
+  String get khadaraNoZawiyas;
+
+  /// No description provided for @khadaraLoadError.
+  ///
+  /// In fr, this message translates to:
+  /// **'Impossible de charger les données.'**
+  String get khadaraLoadError;
+
+  /// No description provided for @khadaraRetry.
+  ///
+  /// In fr, this message translates to:
+  /// **'Réessayer'**
+  String get khadaraRetry;
+
+  /// No description provided for @khadaraOpenInMaps.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ouvrir dans Maps'**
+  String get khadaraOpenInMaps;
+
+  /// No description provided for @khadaraEventTypeZiyara.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ziyara'**
+  String get khadaraEventTypeZiyara;
+
+  /// No description provided for @khadaraEventTypeHadra.
+  ///
+  /// In fr, this message translates to:
+  /// **'Hadra'**
+  String get khadaraEventTypeHadra;
+
+  /// No description provided for @khadaraEventTypeOther.
+  ///
+  /// In fr, this message translates to:
+  /// **'Autre'**
+  String get khadaraEventTypeOther;
+
+  /// No description provided for @khadaraUpcomingEventsAtZawiya.
+  ///
+  /// In fr, this message translates to:
+  /// **'Prochains évènements'**
+  String get khadaraUpcomingEventsAtZawiya;
+
+  /// No description provided for @khadaraNoUpcomingEventsAtZawiya.
+  ///
+  /// In fr, this message translates to:
+  /// **'Aucun évènement à venir dans cette zawiya.'**
+  String get khadaraNoUpcomingEventsAtZawiya;
+
+  /// No description provided for @khadaraAddressLabel.
+  ///
+  /// In fr, this message translates to:
+  /// **'Adresse'**
+  String get khadaraAddressLabel;
+
+  /// No description provided for @khadaraContactLabel.
+  ///
+  /// In fr, this message translates to:
+  /// **'Contact'**
+  String get khadaraContactLabel;
 
   /// No description provided for @figuresSectionFounders.
   ///

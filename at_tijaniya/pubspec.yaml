@@ -42,6 +42,11 @@ dependencies:
   flutter_local_notifications: ^18.0.1
   timezone: ^0.9.4
   flutter_timezone: ^5.1.0
+  # Calendrier Khadara / annuaire des zawiyas (docs/03-architecture-ecrans.md) :
+  # ouvre l'app de plans du téléphone sur les coordonnées d'un évènement ou
+  # d'une zawiya — pas de carte intégrée en V1 (décision : voir
+  # `khadara_screen.dart`).
+  url_launcher: ^6.3.1
 
 dev_dependencies:
   flutter_test:

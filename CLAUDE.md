@@ -160,6 +160,25 @@ explicitement validé sera fourni — ne jamais renseigner
 (onglet Figures affichant l'état vide) et par tests unitaires/widgets
 couvrant les deux états (vide / rempli via une figure factice de test).
 
+Calendrier des évènements & annuaire des zawiyas (P1)
+(`lib/features/khadara/` : `domain/khadara_models.dart`,
+`data/khadara_repository.dart`, `presentation/khadara_screen.dart` +
+`event_detail_screen.dart` + `zawiya_detail_screen.dart`) : contrairement aux
+modules Wirds/Figures, ce contenu vient des tables Supabase `zawiyas`/`events`
+(lecture publique, `using (true)`, pas d'auth requise) et non d'un fichier
+statique — les deux tables sont réellement vides à ce jour (vérifié via
+`execute_sql`), donc les listes affichent un état vide authentique plutôt
+qu'un contenu simulé. Onglets "Évènements" (à venir, triés par date, nom de
+zawiya résolu via embedding PostgREST) et "Zawiyas" dans `KhadaraScreen`,
+avec gestion loading/erreur+reprise/vide. Portée volontairement réduite pour
+cette itération : pas de carte interactive intégrée (aurait nécessité
+google_maps_flutter + clé API + config native) — un bouton "Ouvrir dans
+Maps" (`open_in_maps.dart`, `url_launcher`) couvre la géolocalisation via
+l'app de plans du téléphone. Validé de bout en bout sur émulateur Android
+(vrai aller-retour réseau vers le projet Supabase live, états vides
+affichés correctement) et par tests unitaires sur le parsing des modèles
+(`test/khadara_models_test.dart`).
+
 ## Commandes utiles
 - `flutter pub get`
 - `flutter analyze`
