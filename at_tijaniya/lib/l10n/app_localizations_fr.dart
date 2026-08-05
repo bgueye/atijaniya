@@ -131,11 +131,29 @@ class AppLocalizationsFr extends AppLocalizations {
       'Calendrier des évènements et diffusions — à venir.';
 
   @override
-  String get figuresComingSoonTitle => 'Figures et enseignements';
+  String get figuresSectionFounders => 'Fondateurs';
 
   @override
-  String get figuresComingSoonBody =>
-      'Biographies des figures fondatrices — à venir.';
+  String get figuresSectionFamilies => 'Familles religieuses';
+
+  @override
+  String get figuresEmptyTitle => 'Biographies en cours de compilation';
+
+  @override
+  String get figuresEmptyBody =>
+      'Ce contenu, sensible, ne sera publié qu\'après validation par un moqaddam ou érudit reconnu du projet.';
+
+  @override
+  String get figureBiographySectionTitle => 'Biographie';
+
+  @override
+  String get figureCitationsSectionTitle => 'Citations';
+
+  @override
+  String get figureZiyaraSectionTitle => 'Ziyara associée';
+
+  @override
+  String get figureBiographyPending => 'Biographie en attente de validation.';
 
   @override
   String get communityComingSoonTitle => 'Communauté';

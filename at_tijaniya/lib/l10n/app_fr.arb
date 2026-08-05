@@ -47,8 +47,14 @@
   "khadaraComingSoonTitle": "Khadara",
   "khadaraComingSoonBody": "Calendrier des évènements et diffusions — à venir.",
 
-  "figuresComingSoonTitle": "Figures et enseignements",
-  "figuresComingSoonBody": "Biographies des figures fondatrices — à venir.",
+  "figuresSectionFounders": "Fondateurs",
+  "figuresSectionFamilies": "Familles religieuses",
+  "figuresEmptyTitle": "Biographies en cours de compilation",
+  "figuresEmptyBody": "Ce contenu, sensible, ne sera publié qu'après validation par un moqaddam ou érudit reconnu du projet.",
+  "figureBiographySectionTitle": "Biographie",
+  "figureCitationsSectionTitle": "Citations",
+  "figureZiyaraSectionTitle": "Ziyara associée",
+  "figureBiographyPending": "Biographie en attente de validation.",
 
   "communityComingSoonTitle": "Communauté",
   "communityComingSoonBody": "Fil d'actualité et lignée spirituelle — à venir.",

@@ -47,8 +47,14 @@
   "khadaraComingSoonTitle": "الحضرة",
   "khadaraComingSoonBody": "تقويم المناسبات والبث المباشر — قريبًا.",
 
-  "figuresComingSoonTitle": "الأعلام والتعاليم",
-  "figuresComingSoonBody": "سير الأعلام المؤسسين — قريبًا.",
+  "figuresSectionFounders": "المؤسسون",
+  "figuresSectionFamilies": "العائلات الدينية",
+  "figuresEmptyTitle": "السير قيد الإعداد",
+  "figuresEmptyBody": "هذا المحتوى الحساس لن يُنشر إلا بعد التحقق من صحته من طرف مقدَّم أو عالم معتمد للمشروع.",
+  "figureBiographySectionTitle": "السيرة",
+  "figureCitationsSectionTitle": "أقوال",
+  "figureZiyaraSectionTitle": "الزيارة المرتبطة",
+  "figureBiographyPending": "السيرة قيد التحقق من صحتها.",
 
   "communityComingSoonTitle": "الجماعة",
   "communityComingSoonBody": "المستجدات والسلسلة الروحية — قريبًا.",

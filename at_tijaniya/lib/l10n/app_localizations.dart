@@ -326,17 +326,53 @@ abstract class AppLocalizations {
   /// **'Calendrier des évènements et diffusions — à venir.'**
   String get khadaraComingSoonBody;
 
-  /// No description provided for @figuresComingSoonTitle.
+  /// No description provided for @figuresSectionFounders.
   ///
   /// In fr, this message translates to:
-  /// **'Figures et enseignements'**
-  String get figuresComingSoonTitle;
+  /// **'Fondateurs'**
+  String get figuresSectionFounders;
 
-  /// No description provided for @figuresComingSoonBody.
+  /// No description provided for @figuresSectionFamilies.
   ///
   /// In fr, this message translates to:
-  /// **'Biographies des figures fondatrices — à venir.'**
-  String get figuresComingSoonBody;
+  /// **'Familles religieuses'**
+  String get figuresSectionFamilies;
+
+  /// No description provided for @figuresEmptyTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Biographies en cours de compilation'**
+  String get figuresEmptyTitle;
+
+  /// No description provided for @figuresEmptyBody.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ce contenu, sensible, ne sera publié qu\'après validation par un moqaddam ou érudit reconnu du projet.'**
+  String get figuresEmptyBody;
+
+  /// No description provided for @figureBiographySectionTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Biographie'**
+  String get figureBiographySectionTitle;
+
+  /// No description provided for @figureCitationsSectionTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Citations'**
+  String get figureCitationsSectionTitle;
+
+  /// No description provided for @figureZiyaraSectionTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ziyara associée'**
+  String get figureZiyaraSectionTitle;
+
+  /// No description provided for @figureBiographyPending.
+  ///
+  /// In fr, this message translates to:
+  /// **'Biographie en attente de validation.'**
+  String get figureBiographyPending;
 
   /// No description provided for @communityComingSoonTitle.
   ///

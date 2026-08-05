@@ -128,10 +128,29 @@ class AppLocalizationsAr extends AppLocalizations {
   String get khadaraComingSoonBody => 'تقويم المناسبات والبث المباشر — قريبًا.';
 
   @override
-  String get figuresComingSoonTitle => 'الأعلام والتعاليم';
+  String get figuresSectionFounders => 'المؤسسون';
 
   @override
-  String get figuresComingSoonBody => 'سير الأعلام المؤسسين — قريبًا.';
+  String get figuresSectionFamilies => 'العائلات الدينية';
+
+  @override
+  String get figuresEmptyTitle => 'السير قيد الإعداد';
+
+  @override
+  String get figuresEmptyBody =>
+      'هذا المحتوى الحساس لن يُنشر إلا بعد التحقق من صحته من طرف مقدَّم أو عالم معتمد للمشروع.';
+
+  @override
+  String get figureBiographySectionTitle => 'السيرة';
+
+  @override
+  String get figureCitationsSectionTitle => 'أقوال';
+
+  @override
+  String get figureZiyaraSectionTitle => 'الزيارة المرتبطة';
+
+  @override
+  String get figureBiographyPending => 'السيرة قيد التحقق من صحتها.';
 
   @override
   String get communityComingSoonTitle => 'الجماعة';

@@ -144,6 +144,22 @@ volontairement non persisté pour l'instant (voir `locale_controller.dart`).
 Validé de bout en bout sur émulateur Android, y compris la persistance après
 redémarrage à froid de l'app (onboarding non réaffiché au lancement suivant).
 
+Module Figures — liste et biographies (P1) : infrastructure complète
+(`lib/features/figures/domain/figure_models.dart`, `data/figures_content.dart`,
+`presentation/figures_screen.dart` et `figure_detail_screen.dart`) mais
+**contenu volontairement vide** — `validatedFigures` reste une liste vide
+(couverte par un test dédié `test/figures_screen_test.dart` qui échouera si
+quelqu'un y ajoute du contenu par erreur). Conforme à docs/01 § 8 : les
+biographies de figures fondatrices et de familles religieuses sont encore
+"à valider" (statut "Sensible" pour les familles). L'écran de liste affiche
+alors un état vide explicite ("Biographies en cours de compilation...")
+plutôt qu'un contenu inventé. L'écran de détail (biographie, citations,
+ziyara associée) est prêt à afficher du contenu réel dès qu'un document
+explicitement validé sera fourni — ne jamais renseigner
+`figures_content.dart` sans cette validation. Validé sur émulateur Android
+(onglet Figures affichant l'état vide) et par tests unitaires/widgets
+couvrant les deux états (vide / rempli via une figure factice de test).
+
 ## Commandes utiles
 - `flutter pub get`
 - `flutter analyze`
