@@ -1,0 +1,56 @@
+name: at_tijaniya
+description: "At-Tijaniya — compagnon numérique du disciple tijani (wirds, khadara, figures, communauté)."
+publish_to: 'none'
+version: 0.1.0
+
+environment:
+  sdk: '>=3.4.0 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_localizations:
+    sdk: flutter
+  intl: any # version fixée automatiquement par flutter_localizations lors du `flutter pub get`
+
+  # État global (langue, session…)
+  flutter_riverpod: ^2.5.1
+  # Navigation : Navigator standard pour ce squelette de démarrage. À
+  # remplacer par go_router en Phase 3 si des deep links (invitations de
+  # parrainage, liens de direct Khadara...) sont nécessaires.
+
+  # Backend
+  supabase_flutter: ^2.5.6
+
+  # Typographie (Jost / Amiri / Cormorant Garamond servies via Google Fonts,
+  # évite de devoir committer les fichiers de police manuellement en Phase 2 ;
+  # à réévaluer en Phase 5 — bundler les .ttf en assets pour fiabilité hors-ligne
+  # avant publication sur les stores).
+  google_fonts: ^6.2.1
+
+  cupertino_icons: ^1.0.8
+  speech_to_text: ^7.4.0
+  shared_preferences: ^2.5.5
+  # Lecteur audio du Wird (docs/03-architecture-ecrans.md) : lecture des
+  # récitations modèles depuis le bucket Supabase Storage `wird-audio`
+  # (docs/06-architecture-backend.md) une fois produites.
+  just_audio: ^0.9.40
+  # Rappels/notifications du Wird (docs/03-architecture-ecrans.md). Heure
+  # choisie par le disciple lui-même (voir commentaire dans
+  # `wird_reminder_slots.dart` sur le choix de ne pas calculer les horaires
+  # de prière automatiquement en V1).
+  flutter_local_notifications: ^18.0.1
+  timezone: ^0.9.4
+  flutter_timezone: ^5.1.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^4.0.0
+
+flutter:
+  uses-material-design: true
+  generate: true # active flutter gen-l10n à partir de lib/l10n/*.arb + l10n.yaml
+
+  assets:
+    - assets/branding/

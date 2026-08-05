@@ -1,0 +1,48 @@
+{
+  "@@locale": "ar",
+
+  "appName": "التجانية",
+
+  "languageChoiceTitle": "اختر لغتك",
+  "languageChoiceSubtitle": "يمكنك تغييرها في أي وقت من الإعدادات.",
+  "languageFrench": "Français",
+  "languageArabic": "العربية",
+  "continueLabel": "استمرار",
+
+  "authTitle": "مرحبًا بك",
+  "authSubtitle": "سجّل الدخول للتواصل مع جماعتك، أو استمر بدون حساب لأداء الورد فقط.",
+  "authEmailLabel": "البريد الإلكتروني",
+  "authPhoneLabel": "الهاتف",
+  "authPasswordLabel": "كلمة السر",
+  "authSignInAction": "تسجيل الدخول",
+  "authSignUpAction": "إنشاء حساب",
+  "authContinueWithoutAccount": "الاستمرار بدون حساب (الورد فقط)",
+
+  "navHome": "الرئيسية",
+  "navWird": "الورد",
+  "navKhadara": "الحضرة",
+  "navFigures": "الأعلام",
+  "navCommunity": "الجماعة",
+
+  "homeGreeting": "السلام عليكم",
+  "homeTodayStatus": "حالة اليوم",
+
+  "wirdListTitle": "أورادي",
+  "wirdLazim": "اللازم",
+  "wirdWazifa": "الوظيفة",
+  "wirdHadratouJouma": "حضرة الجمعة",
+
+  "khadaraComingSoonTitle": "الحضرة",
+  "khadaraComingSoonBody": "تقويم المناسبات والبث المباشر — قريبًا.",
+
+  "figuresComingSoonTitle": "الأعلام والتعاليم",
+  "figuresComingSoonBody": "سير الأعلام المؤسسين — قريبًا.",
+
+  "communityComingSoonTitle": "الجماعة",
+  "communityComingSoonBody": "المستجدات والسلسلة الروحية — قريبًا.",
+
+  "profileTitle": "ملفي الشخصي",
+  "profileMyLineage": "سلسلتي الروحية",
+  "profileSettings": "الإعدادات",
+  "profileSignOut": "تسجيل الخروج"
+}

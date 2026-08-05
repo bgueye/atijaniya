@@ -1,0 +1,69 @@
+# At-Tijaniya — design tokens
+# Source unique de vérité pour les couleurs et typographies. Toute implémentation
+# (Flutter ThemeData, composants) doit référencer ces valeurs plutôt que redéfinir
+# des couleurs en dur.
+
+colors:
+  zaytoune:
+    hex: "#0F3D2E"
+    usage: "Fonds immersifs, écrans de wird, en-têtes"
+  emerald:
+    hex: "#1C6E4A"
+    usage: "Actions principales, états actifs"
+  gold:
+    hex: "#C9A24B"
+    usage: "Accents, filets, éléments précieux"
+  gold_soft:
+    hex: "#F1E6C9"
+    usage: "Fonds doux d'accent, badges"
+  parchment:
+    hex: "#F7F2E7"
+    usage: "Fond principal, écrans de lecture"
+  emerald_soft:
+    hex: "#E4EEE8"
+    usage: "Fonds doux d'accent sur zones claires"
+  ink:
+    hex: "#2B2620"
+    usage: "Texte principal"
+  bronze:
+    hex: "#8C7A5B"
+    usage: "Texte secondaire, bordures, légendes"
+  off_white:
+    hex: "#FFFDF8"
+    usage: "Cartes, surfaces sur fond ivoire"
+
+typography:
+  titles_fr:
+    font_family: "Cormorant Garamond"
+    weights: [500, 600]
+    usage: "H1, H2, noms de figures. Jamais en texte courant."
+  sacred_and_arabic_titles:
+    font_family: "Amiri"
+    weights: [400, 700]
+    usage: "Textes religieux, noms propres arabes, titres de sections. JAMAIS pour les libellés d'interface génériques (boutons, menus)."
+  ui:
+    font_family: "Jost"
+    weights: [300, 400, 500, 600]
+    usage: "Boutons, menus, labels, corps de texte d'interface."
+
+iconography:
+  signature_motif: "rosace à huit branches"
+  rule: "Une seule occurrence par écran, filigrane à faible opacité ou trait fin. Jamais en pattern répété."
+
+logo:
+  concept: "Sceau-rosace — rosace à huit branches encadrant le nom التجانية en calligraphie arabe, double cercle"
+  variants:
+    - name: "fond_clair"
+      file: "assets/branding/logo-fond-clair-1024.png"
+      usage: "Documents, listing stores, supports imprimés"
+    - name: "fond_sombre"
+      file: "assets/branding/logo-fond-sombre.svg"
+      usage: "Splash screen, en-têtes"
+    - name: "icone_app"
+      file: "à produire en Phase 1 (rosace dorée seule, sans texte, fond zaytoune)"
+      usage: "Icône de lanceur Android/iOS"
+  text_visibility_rule: "Le texte arabe intégré au logo est retiré en dessous de ~60px d'affichage ; seule la rosace reste."
+
+accessibility:
+  contrast_zaytoune_on_parchment: "> 7:1 (vérifié)"
+  high_contrast_mode: "prévu pour utilisateurs âgés — à implémenter"

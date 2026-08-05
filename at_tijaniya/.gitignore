@@ -1,0 +1,14 @@
+# Flutter/Dart standard
+.dart_tool/
+.packages
+build/
+.flutter-plugins
+.flutter-plugins-dependencies
+.pub-cache/
+.pub/
+*.iml
+.idea/
+.vscode/
+
+# Ne pas committer les secrets Supabase s'ils finissent dans un fichier local
+*.env
