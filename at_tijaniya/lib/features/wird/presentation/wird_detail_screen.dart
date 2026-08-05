@@ -6,6 +6,7 @@ import '../../../core/theme/app_theme.dart';
 import '../domain/wird_models.dart';
 import 'tasbih_screen.dart';
 import 'wird_audio_controller.dart';
+import 'wird_history_screen.dart';
 import 'wird_reminders_screen.dart';
 
 /// Guide d'un Wird — arabe, translittération, traduction, lecture séquencée,
@@ -73,6 +74,13 @@ class _WirdDetailScreenState extends ConsumerState<WirdDetailScreen> {
         foregroundColor: AppColors.parchment,
         title: Text(wird.nameFrench),
         actions: [
+          IconButton(
+            icon: const Icon(Icons.insights_outlined),
+            tooltip: 'Historique',
+            onPressed: () => Navigator.of(context).push(
+              MaterialPageRoute(builder: (_) => WirdHistoryScreen(wird: wird)),
+            ),
+          ),
           IconButton(
             icon: const Icon(Icons.notifications_active_outlined),
             tooltip: 'Rappels',

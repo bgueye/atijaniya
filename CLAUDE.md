@@ -121,6 +121,19 @@ Le P0 du module Wirds (liste, guide, tasbih, audio, rappels) est donc
 fonctionnellement complet pour ce qui ne dépend pas de contenu externe non
 encore produit (enregistrements audio).
 
+Historique & progression du module Wirds (P1) fonctionnel
+(`lib/features/wird/domain/wird_progress_stats.dart` (calcul pur, couvert par
+`test/wird_progress_stats_test.dart`), `wird_history_controller.dart`,
+`wird_history_screen.dart`, accessible via l'icône graphique sur l'écran
+"Guide d'un Wird") : jours consécutifs, taux de complétion (30 derniers jours
+pour les wirds quotidiens, 8 derniers vendredis pour Hadratou-l-Jouma) et
+frise de régularité récente. Une complétion est enregistrée automatiquement
+(`WirdCompletionStore`, local via `shared_preferences`) quand
+`TasbihController` termine le dernier pilier d'un wird — voir
+`TasbihController.nextPillar()`. Validé de bout en bout sur émulateur
+Android : Lazim entièrement récité via le Tasbih puis retrouvé dans
+l'historique (série = 1 jour, complétion du jour cochée sur la frise).
+
 ## Commandes utiles
 - `flutter pub get`
 - `flutter analyze`

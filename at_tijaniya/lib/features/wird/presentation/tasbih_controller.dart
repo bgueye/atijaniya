@@ -11,6 +11,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../data/tasbih_session_store.dart';
 import '../data/tasbih_voice_service.dart';
+import '../data/wird_completion_store.dart';
 import '../domain/tasbih_session.dart';
 import '../domain/wird_models.dart';
 
@@ -64,6 +65,7 @@ class TasbihController extends StateNotifier<TasbihState> {
 
   final Wird wird;
   final TasbihSessionStore _store = const TasbihSessionStore();
+  final WirdCompletionStore _completionStore = const WirdCompletionStore();
   final TasbihVoiceService _voice = TasbihVoiceService();
 
   /// `true` tant que le disciple n'a pas explicitement arrêté l'écoute et
@@ -117,6 +119,7 @@ class TasbihController extends StateNotifier<TasbihState> {
     _stopVoiceLoop();
     if (isLastPillar) {
       await _store.clear(wird.id);
+      await _completionStore.recordCompletionToday(wird.id);
       state = state.copyWith(wirdCompleted: true);
       return;
     }
