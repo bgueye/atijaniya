@@ -207,6 +207,24 @@ class AppLocalizationsFr extends AppLocalizations {
   String get khadaraContactLabel => 'Contact';
 
   @override
+  String get khadaraUnderstandingTooltip => 'Comprendre la Khadara';
+
+  @override
+  String get khadaraUnderstandingTitle => 'Comprendre la Khadara';
+
+  @override
+  String get khadaraUnderstandingEmptyTitle =>
+      'Contenu en cours de compilation';
+
+  @override
+  String get khadaraUnderstandingEmptyBody =>
+      'Ce contenu pédagogique sera publié une fois validé par un moqaddam ou érudit reconnu du projet.';
+
+  @override
+  String get khadaraUnderstandingCta =>
+      'En attendant, découvrir le calendrier et les zawiyas';
+
+  @override
   String get figuresSectionFounders => 'Fondateurs';
 
   @override

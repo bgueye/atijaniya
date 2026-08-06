@@ -464,6 +464,36 @@ abstract class AppLocalizations {
   /// **'Contact'**
   String get khadaraContactLabel;
 
+  /// No description provided for @khadaraUnderstandingTooltip.
+  ///
+  /// In fr, this message translates to:
+  /// **'Comprendre la Khadara'**
+  String get khadaraUnderstandingTooltip;
+
+  /// No description provided for @khadaraUnderstandingTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Comprendre la Khadara'**
+  String get khadaraUnderstandingTitle;
+
+  /// No description provided for @khadaraUnderstandingEmptyTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Contenu en cours de compilation'**
+  String get khadaraUnderstandingEmptyTitle;
+
+  /// No description provided for @khadaraUnderstandingEmptyBody.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ce contenu pédagogique sera publié une fois validé par un moqaddam ou érudit reconnu du projet.'**
+  String get khadaraUnderstandingEmptyBody;
+
+  /// No description provided for @khadaraUnderstandingCta.
+  ///
+  /// In fr, this message translates to:
+  /// **'En attendant, découvrir le calendrier et les zawiyas'**
+  String get khadaraUnderstandingCta;
+
   /// No description provided for @figuresSectionFounders.
   ///
   /// In fr, this message translates to:

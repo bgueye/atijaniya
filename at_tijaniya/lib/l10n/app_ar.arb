@@ -69,6 +69,11 @@
   "khadaraNoUpcomingEventsAtZawiya": "لا توجد مناسبات قادمة في هذه الزاوية.",
   "khadaraAddressLabel": "العنوان",
   "khadaraContactLabel": "التواصل",
+  "khadaraUnderstandingTooltip": "فهم الحضرة",
+  "khadaraUnderstandingTitle": "فهم الحضرة",
+  "khadaraUnderstandingEmptyTitle": "المحتوى قيد الإعداد",
+  "khadaraUnderstandingEmptyBody": "سيُنشر هذا المحتوى التربوي بعد التحقق من صحته من طرف مقدَّم أو عالم معتمد للمشروع.",
+  "khadaraUnderstandingCta": "في الانتظار، اكتشف التقويم والزوايا",
 
   "figuresSectionFounders": "المؤسسون",
   "figuresSectionFamilies": "العائلات الدينية",

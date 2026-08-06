@@ -204,6 +204,22 @@ class AppLocalizationsAr extends AppLocalizations {
   String get khadaraContactLabel => 'التواصل';
 
   @override
+  String get khadaraUnderstandingTooltip => 'فهم الحضرة';
+
+  @override
+  String get khadaraUnderstandingTitle => 'فهم الحضرة';
+
+  @override
+  String get khadaraUnderstandingEmptyTitle => 'المحتوى قيد الإعداد';
+
+  @override
+  String get khadaraUnderstandingEmptyBody =>
+      'سيُنشر هذا المحتوى التربوي بعد التحقق من صحته من طرف مقدَّم أو عالم معتمد للمشروع.';
+
+  @override
+  String get khadaraUnderstandingCta => 'في الانتظار، اكتشف التقويم والزوايا';
+
+  @override
   String get figuresSectionFounders => 'المؤسسون';
 
   @override

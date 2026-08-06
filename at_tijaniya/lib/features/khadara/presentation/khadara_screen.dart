@@ -7,6 +7,7 @@ import '../domain/khadara_models.dart';
 import 'event_detail_screen.dart';
 import 'khadara_format.dart';
 import 'khadara_providers.dart';
+import 'khadara_understanding_screen.dart';
 import 'zawiya_detail_screen.dart';
 
 /// Module Khadara — calendrier des évènements et annuaire des zawiyas.
@@ -32,13 +33,26 @@ class KhadaraScreen extends StatelessWidget {
       length: 2,
       child: Column(
         children: [
-          TabBar(
-            labelColor: AppColors.emerald,
-            unselectedLabelColor: AppColors.bronze,
-            indicatorColor: AppColors.emerald,
-            tabs: [
-              Tab(text: l10n.khadaraEventsTab),
-              Tab(text: l10n.khadaraZawiyasTab),
+          Row(
+            children: [
+              Expanded(
+                child: TabBar(
+                  labelColor: AppColors.emerald,
+                  unselectedLabelColor: AppColors.bronze,
+                  indicatorColor: AppColors.emerald,
+                  tabs: [
+                    Tab(text: l10n.khadaraEventsTab),
+                    Tab(text: l10n.khadaraZawiyasTab),
+                  ],
+                ),
+              ),
+              IconButton(
+                icon: const Icon(Icons.help_outline, color: AppColors.bronze),
+                tooltip: l10n.khadaraUnderstandingTooltip,
+                onPressed: () => Navigator.of(context).push(
+                  MaterialPageRoute(builder: (_) => const KhadaraUnderstandingScreen()),
+                ),
+              ),
             ],
           ),
           const Expanded(

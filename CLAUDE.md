@@ -367,6 +367,33 @@ l'écran Paramètres lui-même ; écran "À propos" affichant la bonne version
 d'origine après le test pour ne pas laisser d'état de test sur le compte
 réel du porteur de projet.
 
+Comprendre la Khadara (P1) fonctionnel
+(`lib/features/khadara/data/khadara_understanding_content.dart`,
+`presentation/khadara_understanding_screen.dart`, accessible via l'icône
+d'aide (?) sur l'en-tête de l'onglet Khadara, à côté des onglets
+Évènements/Zawiyas) — dernier écran P1 listé pour le module Khadara dans
+docs/03. Même principe que Figures : contenu pédagogique religieux/pratique
+non codé en dur tant qu'aucun document n'est explicitement marqué "validé"
+dans docs/01 § 8 (seul le module Wirds l'est) — `validatedKhadaraUnderstanding`
+reste donc une liste vide, couverte par un test dédié
+(`test/khadara_understanding_screen_test.dart`) qui échouera si du contenu y
+est ajouté sans validation. L'écran affiche un état vide honnête (icône dans
+un badge rond doré, titre, explication) plutôt qu'un contenu inventé, avec
+un bouton "En attendant, découvrir le calendrier et les zawiyas" qui
+referme l'écran vers l'onglet Khadara sous-jacent (déjà fonctionnel, cf.
+paragraphe Khadara ci-dessus) — évite un cul-de-sac tant que le contenu
+pédagogique n'est pas produit, sans jamais laisser croire à une
+fonctionnalité active. Prêt à afficher du contenu réel
+(`KhadaraUnderstandingSection`) dès qu'un document validé sera fourni par le
+porteur de projet.
+
+Validé en conditions réelles sur émulateur Android : navigation depuis
+l'icône d'aide de l'onglet Khadara vers l'écran vide, en français puis en
+arabe (bascule via Paramètres, RTL correct — icône, titre et bouton
+repositionnés, texte du CTA lisible sur une ligne), et tap du bouton
+confirmé ramenant bien à la liste d'évènements Khadara déjà peuplée de
+données réelles.
+
 ## Commandes utiles
 - `flutter pub get`
 - `flutter analyze`

@@ -69,6 +69,11 @@
   "khadaraNoUpcomingEventsAtZawiya": "Aucun évènement à venir dans cette zawiya.",
   "khadaraAddressLabel": "Adresse",
   "khadaraContactLabel": "Contact",
+  "khadaraUnderstandingTooltip": "Comprendre la Khadara",
+  "khadaraUnderstandingTitle": "Comprendre la Khadara",
+  "khadaraUnderstandingEmptyTitle": "Contenu en cours de compilation",
+  "khadaraUnderstandingEmptyBody": "Ce contenu pédagogique sera publié une fois validé par un moqaddam ou érudit reconnu du projet.",
+  "khadaraUnderstandingCta": "En attendant, découvrir le calendrier et les zawiyas",
 
   "figuresSectionFounders": "Fondateurs",
   "figuresSectionFamilies": "Familles religieuses",
