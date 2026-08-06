@@ -47,6 +47,10 @@ dependencies:
   # d'une zawiya — pas de carte intégrée en V1 (décision : voir
   # `khadara_screen.dart`).
   url_launcher: ^6.3.1
+  # Écran "À propos" des Paramètres généraux (docs/03-architecture-ecrans.md) :
+  # lit le numéro de version déclaré dans pubspec.yaml à l'exécution, plutôt
+  # que de le dupliquer en dur dans le code.
+  package_info_plus: ^8.0.0
 
 dev_dependencies:
   flutter_test:

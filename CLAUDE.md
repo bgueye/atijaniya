@@ -333,6 +333,40 @@ retraiter cette valeur transitoire. Suppression réelle jamais affectée
 Revalidé après correction, y compris dans le scénario exact qui l'avait
 révélé (enregistrer puis supprimer sans relancer l'app).
 
+Paramètres généraux et confidentialité (P0) fonctionnels
+(`lib/features/settings/presentation/settings_screen.dart`,
+`privacy_settings_screen.dart`, `privacy_settings_providers.dart`,
+`data/privacy_settings_repository.dart`, `domain/privacy_settings_models.dart`,
+accessibles depuis la tuile "Paramètres" sur "Mon profil") — dernier écran
+P0 du périmètre initial, complète donc le P0. Paramètres généraux : langue
+(FR/AR, bascule immédiate via `localeControllerProvider` déjà existant,
+RTL automatique) ; notifications (tuile informative — les rappels du Wird
+se gèrent déjà individuellement depuis chaque Wird, aucun autre mécanisme
+de notification n'existe dans l'app, pas de toggle inventé) ; confidentialité
+(lien vers l'écran dédié) ; à propos (nom + version lue via
+`package_info_plus`, nouvelle dépendance, plutôt que dupliquer le numéro en
+dur). Paramètres de confidentialité : quatre réglages sur `privacy_settings`
+(`lineage_visible`, `mouqaddam_status_visible`, `available_as_sponsor`,
+`who_can_contact`), écriture directe au toggle (pas de bouton
+"Enregistrer" séparé), retour arrière optimiste en cas d'échec réseau.
+
+**Les trois toggles `lineage_visible`/`mouqaddam_status_visible`/
+`available_as_sponsor` n'ont aujourd'hui aucune fonctionnalité
+consommatrice** ("Retrouver mes disciples" et la recherche de parrain ne
+sont pas construites — mêmes raisons que dans le paragraphe "Ma lignée
+spirituelle" ci-dessus) : chaque toggle affiche une note explicite
+("n'a pas encore d'effet visible") plutôt que de laisser croire à une
+fonctionnalité active.
+
+Validé en conditions réelles sur émulateur Android avec le compte réel
+`bgueye@gmail.com` : bascule de langue FR→AR immédiate et RTL correct sur
+l'écran Paramètres lui-même ; écran "À propos" affichant la bonne version
+(0.1.0) ; activation des quatre réglages de confidentialité vérifiée par
+`execute_sql` (`select * from public.privacy_settings where user_id =
+...`, tous les champs bien mis à jour) puis réglages ramenés à leur valeur
+d'origine après le test pour ne pas laisser d'état de test sur le compte
+réel du porteur de projet.
+
 ## Commandes utiles
 - `flutter pub get`
 - `flutter analyze`

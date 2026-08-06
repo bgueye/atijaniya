@@ -406,4 +406,80 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get lineageRetry => 'Réessayer';
+
+  @override
+  String get settingsTitle => 'Paramètres';
+
+  @override
+  String get settingsLanguageSection => 'Langue';
+
+  @override
+  String get settingsNotificationsSection => 'Notifications';
+
+  @override
+  String get settingsNotificationsBody =>
+      'Les rappels de récitation se gèrent depuis chaque Wird (icône cloche sur l\'écran du Wird).';
+
+  @override
+  String get settingsPrivacySection => 'Confidentialité';
+
+  @override
+  String get settingsPrivacyTileSubtitle =>
+      'Visibilité de votre lignée, de votre statut mouqaddam, qui peut vous contacter';
+
+  @override
+  String get settingsAboutSection => 'À propos';
+
+  @override
+  String get aboutVersionLabel => 'Version';
+
+  @override
+  String get privacyTitle => 'Confidentialité';
+
+  @override
+  String get privacyLineageVisibleLabel =>
+      'Visibilité de ma lignée spirituelle';
+
+  @override
+  String get privacyLineageVisibleDescription =>
+      'Vous rendre visible aux disciples de votre moqaddam.';
+
+  @override
+  String get privacyMouqaddamVisibleLabel =>
+      'Visibilité de mon statut Mouqaddam';
+
+  @override
+  String get privacyMouqaddamVisibleDescription =>
+      'Rendre visible votre statut et votre silsila d\'ijaza.';
+
+  @override
+  String get privacyAvailableAsSponsorLabel => 'Disponible comme parrain';
+
+  @override
+  String get privacyAvailableAsSponsorDescription =>
+      'Être trouvable par des candidats mouqaddam cherchant un parrain.';
+
+  @override
+  String get privacyNoEffectYetNote =>
+      'Ce réglage n\'a pas encore d\'effet visible : la fonctionnalité correspondante n\'est pas encore disponible dans l\'app.';
+
+  @override
+  String get privacyWhoCanContactLabel => 'Qui peut vous contacter';
+
+  @override
+  String get privacyWhoCanContactEveryone => 'Tout le monde';
+
+  @override
+  String get privacyWhoCanContactMatchesOnly =>
+      'Uniquement les correspondances';
+
+  @override
+  String get privacyLoadError =>
+      'Impossible de charger vos réglages de confidentialité.';
+
+  @override
+  String get privacyRetry => 'Réessayer';
+
+  @override
+  String get privacyUpdateError => 'Impossible d\'enregistrer ce réglage.';
 }

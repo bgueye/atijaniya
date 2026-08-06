@@ -136,5 +136,29 @@
   "lineageDeleteConfirmAction": "Supprimer",
   "lineageDeleteSuccess": "Lignée spirituelle supprimée.",
   "lineageLoadError": "Impossible de charger votre lignée spirituelle.",
-  "lineageRetry": "Réessayer"
+  "lineageRetry": "Réessayer",
+
+  "settingsTitle": "Paramètres",
+  "settingsLanguageSection": "Langue",
+  "settingsNotificationsSection": "Notifications",
+  "settingsNotificationsBody": "Les rappels de récitation se gèrent depuis chaque Wird (icône cloche sur l'écran du Wird).",
+  "settingsPrivacySection": "Confidentialité",
+  "settingsPrivacyTileSubtitle": "Visibilité de votre lignée, de votre statut mouqaddam, qui peut vous contacter",
+  "settingsAboutSection": "À propos",
+  "aboutVersionLabel": "Version",
+
+  "privacyTitle": "Confidentialité",
+  "privacyLineageVisibleLabel": "Visibilité de ma lignée spirituelle",
+  "privacyLineageVisibleDescription": "Vous rendre visible aux disciples de votre moqaddam.",
+  "privacyMouqaddamVisibleLabel": "Visibilité de mon statut Mouqaddam",
+  "privacyMouqaddamVisibleDescription": "Rendre visible votre statut et votre silsila d'ijaza.",
+  "privacyAvailableAsSponsorLabel": "Disponible comme parrain",
+  "privacyAvailableAsSponsorDescription": "Être trouvable par des candidats mouqaddam cherchant un parrain.",
+  "privacyNoEffectYetNote": "Ce réglage n'a pas encore d'effet visible : la fonctionnalité correspondante n'est pas encore disponible dans l'app.",
+  "privacyWhoCanContactLabel": "Qui peut vous contacter",
+  "privacyWhoCanContactEveryone": "Tout le monde",
+  "privacyWhoCanContactMatchesOnly": "Uniquement les correspondances",
+  "privacyLoadError": "Impossible de charger vos réglages de confidentialité.",
+  "privacyRetry": "Réessayer",
+  "privacyUpdateError": "Impossible d'enregistrer ce réglage."
 }

@@ -5,6 +5,7 @@ import '../../../core/supabase/supabase_config.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../lineage/presentation/lineage_screen.dart';
+import '../../settings/presentation/settings_screen.dart';
 import '../domain/profile_models.dart';
 import 'edit_profile_sheet.dart';
 import 'profile_providers.dart';
@@ -123,10 +124,9 @@ class _ProfileBody extends ConsumerWidget {
             child: ListTile(
               leading: const Icon(Icons.settings_outlined),
               title: Text(l10n.profileSettings),
-              onTap: () {
-                // TODO(Phase 3, P0) : Paramètres généraux (langue, notifications,
-                // confidentialité — incl. visibilité de la lignée et du statut mouqaddam).
-              },
+              onTap: () => Navigator.of(context).push(
+                MaterialPageRoute(builder: (_) => const SettingsScreen()),
+              ),
             ),
           ),
           const SizedBox(height: 8),

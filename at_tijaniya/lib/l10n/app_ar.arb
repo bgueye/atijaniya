@@ -136,5 +136,29 @@
   "lineageDeleteConfirmAction": "حذف",
   "lineageDeleteSuccess": "تم حذف سلسلتك الروحية.",
   "lineageLoadError": "تعذّر تحميل سلسلتك الروحية.",
-  "lineageRetry": "إعادة المحاولة"
+  "lineageRetry": "إعادة المحاولة",
+
+  "settingsTitle": "الإعدادات",
+  "settingsLanguageSection": "اللغة",
+  "settingsNotificationsSection": "الإشعارات",
+  "settingsNotificationsBody": "تُدار تذكيرات الترديد من داخل كل ورد (أيقونة الجرس في شاشة الورد).",
+  "settingsPrivacySection": "الخصوصية",
+  "settingsPrivacyTileSubtitle": "ظهور سلسلتك الروحية وحالتك كمقدَّم، ومن يمكنه التواصل معك",
+  "settingsAboutSection": "حول التطبيق",
+  "aboutVersionLabel": "الإصدار",
+
+  "privacyTitle": "الخصوصية",
+  "privacyLineageVisibleLabel": "ظهور سلسلتي الروحية",
+  "privacyLineageVisibleDescription": "جعلك مرئيًا لإخوانك في نفس المقدَّم.",
+  "privacyMouqaddamVisibleLabel": "ظهور صفتي كمقدَّم",
+  "privacyMouqaddamVisibleDescription": "إظهار صفتك وسلسلة إجازتك.",
+  "privacyAvailableAsSponsorLabel": "متاح كضامن",
+  "privacyAvailableAsSponsorDescription": "أن يجدك المرشحون لصفة المقدَّم الباحثون عن ضامن.",
+  "privacyNoEffectYetNote": "لا أثر مرئي لهذا الإعداد بعد: الخاصية المرتبطة به غير متوفرة بعد في التطبيق.",
+  "privacyWhoCanContactLabel": "من يمكنه التواصل معك",
+  "privacyWhoCanContactEveryone": "الجميع",
+  "privacyWhoCanContactMatchesOnly": "المتطابقون فقط",
+  "privacyLoadError": "تعذّر تحميل إعدادات الخصوصية.",
+  "privacyRetry": "إعادة المحاولة",
+  "privacyUpdateError": "تعذّر حفظ هذا الإعداد."
 }

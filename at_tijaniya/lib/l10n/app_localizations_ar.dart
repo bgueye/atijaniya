@@ -398,4 +398,75 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get lineageRetry => 'إعادة المحاولة';
+
+  @override
+  String get settingsTitle => 'الإعدادات';
+
+  @override
+  String get settingsLanguageSection => 'اللغة';
+
+  @override
+  String get settingsNotificationsSection => 'الإشعارات';
+
+  @override
+  String get settingsNotificationsBody =>
+      'تُدار تذكيرات الترديد من داخل كل ورد (أيقونة الجرس في شاشة الورد).';
+
+  @override
+  String get settingsPrivacySection => 'الخصوصية';
+
+  @override
+  String get settingsPrivacyTileSubtitle =>
+      'ظهور سلسلتك الروحية وحالتك كمقدَّم، ومن يمكنه التواصل معك';
+
+  @override
+  String get settingsAboutSection => 'حول التطبيق';
+
+  @override
+  String get aboutVersionLabel => 'الإصدار';
+
+  @override
+  String get privacyTitle => 'الخصوصية';
+
+  @override
+  String get privacyLineageVisibleLabel => 'ظهور سلسلتي الروحية';
+
+  @override
+  String get privacyLineageVisibleDescription =>
+      'جعلك مرئيًا لإخوانك في نفس المقدَّم.';
+
+  @override
+  String get privacyMouqaddamVisibleLabel => 'ظهور صفتي كمقدَّم';
+
+  @override
+  String get privacyMouqaddamVisibleDescription => 'إظهار صفتك وسلسلة إجازتك.';
+
+  @override
+  String get privacyAvailableAsSponsorLabel => 'متاح كضامن';
+
+  @override
+  String get privacyAvailableAsSponsorDescription =>
+      'أن يجدك المرشحون لصفة المقدَّم الباحثون عن ضامن.';
+
+  @override
+  String get privacyNoEffectYetNote =>
+      'لا أثر مرئي لهذا الإعداد بعد: الخاصية المرتبطة به غير متوفرة بعد في التطبيق.';
+
+  @override
+  String get privacyWhoCanContactLabel => 'من يمكنه التواصل معك';
+
+  @override
+  String get privacyWhoCanContactEveryone => 'الجميع';
+
+  @override
+  String get privacyWhoCanContactMatchesOnly => 'المتطابقون فقط';
+
+  @override
+  String get privacyLoadError => 'تعذّر تحميل إعدادات الخصوصية.';
+
+  @override
+  String get privacyRetry => 'إعادة المحاولة';
+
+  @override
+  String get privacyUpdateError => 'تعذّر حفظ هذا الإعداد.';
 }

@@ -847,6 +847,138 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'Réessayer'**
   String get lineageRetry;
+
+  /// No description provided for @settingsTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Paramètres'**
+  String get settingsTitle;
+
+  /// No description provided for @settingsLanguageSection.
+  ///
+  /// In fr, this message translates to:
+  /// **'Langue'**
+  String get settingsLanguageSection;
+
+  /// No description provided for @settingsNotificationsSection.
+  ///
+  /// In fr, this message translates to:
+  /// **'Notifications'**
+  String get settingsNotificationsSection;
+
+  /// No description provided for @settingsNotificationsBody.
+  ///
+  /// In fr, this message translates to:
+  /// **'Les rappels de récitation se gèrent depuis chaque Wird (icône cloche sur l\'écran du Wird).'**
+  String get settingsNotificationsBody;
+
+  /// No description provided for @settingsPrivacySection.
+  ///
+  /// In fr, this message translates to:
+  /// **'Confidentialité'**
+  String get settingsPrivacySection;
+
+  /// No description provided for @settingsPrivacyTileSubtitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Visibilité de votre lignée, de votre statut mouqaddam, qui peut vous contacter'**
+  String get settingsPrivacyTileSubtitle;
+
+  /// No description provided for @settingsAboutSection.
+  ///
+  /// In fr, this message translates to:
+  /// **'À propos'**
+  String get settingsAboutSection;
+
+  /// No description provided for @aboutVersionLabel.
+  ///
+  /// In fr, this message translates to:
+  /// **'Version'**
+  String get aboutVersionLabel;
+
+  /// No description provided for @privacyTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Confidentialité'**
+  String get privacyTitle;
+
+  /// No description provided for @privacyLineageVisibleLabel.
+  ///
+  /// In fr, this message translates to:
+  /// **'Visibilité de ma lignée spirituelle'**
+  String get privacyLineageVisibleLabel;
+
+  /// No description provided for @privacyLineageVisibleDescription.
+  ///
+  /// In fr, this message translates to:
+  /// **'Vous rendre visible aux disciples de votre moqaddam.'**
+  String get privacyLineageVisibleDescription;
+
+  /// No description provided for @privacyMouqaddamVisibleLabel.
+  ///
+  /// In fr, this message translates to:
+  /// **'Visibilité de mon statut Mouqaddam'**
+  String get privacyMouqaddamVisibleLabel;
+
+  /// No description provided for @privacyMouqaddamVisibleDescription.
+  ///
+  /// In fr, this message translates to:
+  /// **'Rendre visible votre statut et votre silsila d\'ijaza.'**
+  String get privacyMouqaddamVisibleDescription;
+
+  /// No description provided for @privacyAvailableAsSponsorLabel.
+  ///
+  /// In fr, this message translates to:
+  /// **'Disponible comme parrain'**
+  String get privacyAvailableAsSponsorLabel;
+
+  /// No description provided for @privacyAvailableAsSponsorDescription.
+  ///
+  /// In fr, this message translates to:
+  /// **'Être trouvable par des candidats mouqaddam cherchant un parrain.'**
+  String get privacyAvailableAsSponsorDescription;
+
+  /// No description provided for @privacyNoEffectYetNote.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ce réglage n\'a pas encore d\'effet visible : la fonctionnalité correspondante n\'est pas encore disponible dans l\'app.'**
+  String get privacyNoEffectYetNote;
+
+  /// No description provided for @privacyWhoCanContactLabel.
+  ///
+  /// In fr, this message translates to:
+  /// **'Qui peut vous contacter'**
+  String get privacyWhoCanContactLabel;
+
+  /// No description provided for @privacyWhoCanContactEveryone.
+  ///
+  /// In fr, this message translates to:
+  /// **'Tout le monde'**
+  String get privacyWhoCanContactEveryone;
+
+  /// No description provided for @privacyWhoCanContactMatchesOnly.
+  ///
+  /// In fr, this message translates to:
+  /// **'Uniquement les correspondances'**
+  String get privacyWhoCanContactMatchesOnly;
+
+  /// No description provided for @privacyLoadError.
+  ///
+  /// In fr, this message translates to:
+  /// **'Impossible de charger vos réglages de confidentialité.'**
+  String get privacyLoadError;
+
+  /// No description provided for @privacyRetry.
+  ///
+  /// In fr, this message translates to:
+  /// **'Réessayer'**
+  String get privacyRetry;
+
+  /// No description provided for @privacyUpdateError.
+  ///
+  /// In fr, this message translates to:
+  /// **'Impossible d\'enregistrer ce réglage.'**
+  String get privacyUpdateError;
 }
 
 class _AppLocalizationsDelegate
