@@ -231,4 +231,59 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get profileSignOut => 'تسجيل الخروج';
+
+  @override
+  String get profileSignInRequired => 'سجّل الدخول للوصول إلى ملفك الشخصي.';
+
+  @override
+  String get profileLoadError => 'تعذّر تحميل ملفك الشخصي.';
+
+  @override
+  String get profileRetry => 'إعادة المحاولة';
+
+  @override
+  String get profileEditTooltip => 'تعديل ملفي الشخصي';
+
+  @override
+  String get profileNoBio => 'لم تتم إضافة نبذة تعريفية.';
+
+  @override
+  String get profileZawiyaNoneLabel => 'لم تُسجَّل أي زاوية.';
+
+  @override
+  String get profileEditTitle => 'تعديل ملفي الشخصي';
+
+  @override
+  String get profileDisplayNameLabel => 'الاسم المعروض';
+
+  @override
+  String get profileDisplayNameRequired => 'الاسم المعروض إلزامي.';
+
+  @override
+  String get profileBioLabel => 'نبذة تعريفية (اختياري)';
+
+  @override
+  String get profileZawiyaLabel => 'الزاوية';
+
+  @override
+  String get profileZawiyaNone => 'بدون زاوية';
+
+  @override
+  String get profileSave => 'حفظ';
+
+  @override
+  String get profileUpdateError => 'تعذّر حفظ التعديلات.';
+
+  @override
+  String get profileSignOutConfirmTitle => 'تسجيل الخروج؟';
+
+  @override
+  String get profileSignOutConfirmBody =>
+      'سيتوجب عليك تسجيل الدخول مجددًا للتواصل مع جماعتك.';
+
+  @override
+  String get profileSignOutConfirmAction => 'تسجيل الخروج';
+
+  @override
+  String get profileCancel => 'إلغاء';
 }

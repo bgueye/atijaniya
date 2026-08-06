@@ -204,6 +204,28 @@ via une requête `profiles` séparée (pas de FK directe
 parsing des modèles (`test/community_models_test.dart`). Validé sur
 émulateur Android (état vide affiché correctement).
 
+Mon profil — infos de base (P0) fonctionnel
+(`lib/features/profil/domain/profile_models.dart`,
+`data/profile_repository.dart`, `presentation/profile_providers.dart`,
+`presentation/edit_profile_sheet.dart`, `presentation/profil_screen.dart`) :
+lecture et édition du profil (nom affiché, présentation libre, zawiya de
+rattachement — sélectionnée parmi celles du module Khadara via
+`zawiyasProvider` réutilisé, pas de duplication de requête) branchées sur la
+table Supabase `profiles`. Même limite structurelle que Khadara/Communauté :
+lecture et écriture ont besoin d'un `auth.uid()` réel (policies
+`profiles_owner_*`), indisponible tant que l'authentification n'est pas
+branchée côté app (TODO dans `auth_screen.dart`) — l'écran affiche donc un
+état "Connectez-vous pour accéder à votre profil" explicite plutôt qu'un
+échec silencieux, se réactivera automatiquement une fois l'auth branchée,
+aucun changement nécessaire ici. Déconnexion réelle
+(`SupabaseConfig.client.auth.signOut()`) avec confirmation. Les tuiles "Ma
+lignée spirituelle" et "Paramètres" restent des TODO explicites (P1 et P0
+suivant respectivement, hors périmètre de cet incrément). Tests unitaires
+sur le parsing du modèle (`test/profile_models_test.dart`). Validé sur
+émulateur Android en français et en arabe (RTL) : état "connectez-vous"
+affiché correctement dans les deux langues (mode invité — pas encore de
+session réelle pour valider l'affichage/édition du profil rempli).
+
 ## Commandes utiles
 - `flutter pub get`
 - `flutter analyze`

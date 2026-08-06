@@ -233,4 +233,61 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get profileSignOut => 'Se déconnecter';
+
+  @override
+  String get profileSignInRequired =>
+      'Connectez-vous pour accéder à votre profil.';
+
+  @override
+  String get profileLoadError => 'Impossible de charger votre profil.';
+
+  @override
+  String get profileRetry => 'Réessayer';
+
+  @override
+  String get profileEditTooltip => 'Modifier mon profil';
+
+  @override
+  String get profileNoBio => 'Aucune présentation renseignée.';
+
+  @override
+  String get profileZawiyaNoneLabel => 'Aucune zawiya renseignée.';
+
+  @override
+  String get profileEditTitle => 'Modifier mon profil';
+
+  @override
+  String get profileDisplayNameLabel => 'Nom affiché';
+
+  @override
+  String get profileDisplayNameRequired => 'Le nom affiché est obligatoire.';
+
+  @override
+  String get profileBioLabel => 'À propos (optionnel)';
+
+  @override
+  String get profileZawiyaLabel => 'Zawiya';
+
+  @override
+  String get profileZawiyaNone => 'Aucune zawiya';
+
+  @override
+  String get profileSave => 'Enregistrer';
+
+  @override
+  String get profileUpdateError =>
+      'Impossible d\'enregistrer les modifications.';
+
+  @override
+  String get profileSignOutConfirmTitle => 'Se déconnecter ?';
+
+  @override
+  String get profileSignOutConfirmBody =>
+      'Vous devrez vous reconnecter pour retrouver votre communauté.';
+
+  @override
+  String get profileSignOutConfirmAction => 'Se déconnecter';
+
+  @override
+  String get profileCancel => 'Annuler';
 }

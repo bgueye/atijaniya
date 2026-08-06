@@ -529,6 +529,114 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'Se déconnecter'**
   String get profileSignOut;
+
+  /// No description provided for @profileSignInRequired.
+  ///
+  /// In fr, this message translates to:
+  /// **'Connectez-vous pour accéder à votre profil.'**
+  String get profileSignInRequired;
+
+  /// No description provided for @profileLoadError.
+  ///
+  /// In fr, this message translates to:
+  /// **'Impossible de charger votre profil.'**
+  String get profileLoadError;
+
+  /// No description provided for @profileRetry.
+  ///
+  /// In fr, this message translates to:
+  /// **'Réessayer'**
+  String get profileRetry;
+
+  /// No description provided for @profileEditTooltip.
+  ///
+  /// In fr, this message translates to:
+  /// **'Modifier mon profil'**
+  String get profileEditTooltip;
+
+  /// No description provided for @profileNoBio.
+  ///
+  /// In fr, this message translates to:
+  /// **'Aucune présentation renseignée.'**
+  String get profileNoBio;
+
+  /// No description provided for @profileZawiyaNoneLabel.
+  ///
+  /// In fr, this message translates to:
+  /// **'Aucune zawiya renseignée.'**
+  String get profileZawiyaNoneLabel;
+
+  /// No description provided for @profileEditTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Modifier mon profil'**
+  String get profileEditTitle;
+
+  /// No description provided for @profileDisplayNameLabel.
+  ///
+  /// In fr, this message translates to:
+  /// **'Nom affiché'**
+  String get profileDisplayNameLabel;
+
+  /// No description provided for @profileDisplayNameRequired.
+  ///
+  /// In fr, this message translates to:
+  /// **'Le nom affiché est obligatoire.'**
+  String get profileDisplayNameRequired;
+
+  /// No description provided for @profileBioLabel.
+  ///
+  /// In fr, this message translates to:
+  /// **'À propos (optionnel)'**
+  String get profileBioLabel;
+
+  /// No description provided for @profileZawiyaLabel.
+  ///
+  /// In fr, this message translates to:
+  /// **'Zawiya'**
+  String get profileZawiyaLabel;
+
+  /// No description provided for @profileZawiyaNone.
+  ///
+  /// In fr, this message translates to:
+  /// **'Aucune zawiya'**
+  String get profileZawiyaNone;
+
+  /// No description provided for @profileSave.
+  ///
+  /// In fr, this message translates to:
+  /// **'Enregistrer'**
+  String get profileSave;
+
+  /// No description provided for @profileUpdateError.
+  ///
+  /// In fr, this message translates to:
+  /// **'Impossible d\'enregistrer les modifications.'**
+  String get profileUpdateError;
+
+  /// No description provided for @profileSignOutConfirmTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Se déconnecter ?'**
+  String get profileSignOutConfirmTitle;
+
+  /// No description provided for @profileSignOutConfirmBody.
+  ///
+  /// In fr, this message translates to:
+  /// **'Vous devrez vous reconnecter pour retrouver votre communauté.'**
+  String get profileSignOutConfirmBody;
+
+  /// No description provided for @profileSignOutConfirmAction.
+  ///
+  /// In fr, this message translates to:
+  /// **'Se déconnecter'**
+  String get profileSignOutConfirmAction;
+
+  /// No description provided for @profileCancel.
+  ///
+  /// In fr, this message translates to:
+  /// **'Annuler'**
+  String get profileCancel;
 }
 
 class _AppLocalizationsDelegate
