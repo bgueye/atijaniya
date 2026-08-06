@@ -248,6 +248,72 @@ abstract class AppLocalizations {
   /// **'Continuer sans compte (pratique du Wird uniquement)'**
   String get authContinueWithoutAccount;
 
+  /// No description provided for @authEmailRequired.
+  ///
+  /// In fr, this message translates to:
+  /// **'L\'adresse e-mail est obligatoire.'**
+  String get authEmailRequired;
+
+  /// No description provided for @authEmailInvalid.
+  ///
+  /// In fr, this message translates to:
+  /// **'Adresse e-mail invalide.'**
+  String get authEmailInvalid;
+
+  /// No description provided for @authPasswordRequired.
+  ///
+  /// In fr, this message translates to:
+  /// **'Le mot de passe est obligatoire.'**
+  String get authPasswordRequired;
+
+  /// No description provided for @authPasswordTooShort.
+  ///
+  /// In fr, this message translates to:
+  /// **'Le mot de passe doit contenir au moins 6 caractères.'**
+  String get authPasswordTooShort;
+
+  /// No description provided for @authInvalidCredentials.
+  ///
+  /// In fr, this message translates to:
+  /// **'Adresse e-mail ou mot de passe incorrect.'**
+  String get authInvalidCredentials;
+
+  /// No description provided for @authEmailAlreadyRegistered.
+  ///
+  /// In fr, this message translates to:
+  /// **'Un compte existe déjà avec cette adresse e-mail.'**
+  String get authEmailAlreadyRegistered;
+
+  /// No description provided for @authWeakPassword.
+  ///
+  /// In fr, this message translates to:
+  /// **'Mot de passe trop faible. Utilisez au moins 6 caractères.'**
+  String get authWeakPassword;
+
+  /// No description provided for @authEmailNotConfirmed.
+  ///
+  /// In fr, this message translates to:
+  /// **'Confirmez votre e-mail avant de vous connecter (lien envoyé à votre adresse).'**
+  String get authEmailNotConfirmed;
+
+  /// No description provided for @authRateLimited.
+  ///
+  /// In fr, this message translates to:
+  /// **'Trop de tentatives. Réessayez dans quelques instants.'**
+  String get authRateLimited;
+
+  /// No description provided for @authGenericError.
+  ///
+  /// In fr, this message translates to:
+  /// **'Une erreur est survenue. Réessayez.'**
+  String get authGenericError;
+
+  /// No description provided for @authCheckEmailToConfirm.
+  ///
+  /// In fr, this message translates to:
+  /// **'Compte créé. Vérifiez votre boîte mail pour confirmer votre adresse avant de vous connecter.'**
+  String get authCheckEmailToConfirm;
+
   /// No description provided for @navHome.
   ///
   /// In fr, this message translates to:
@@ -637,6 +703,150 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'Annuler'**
   String get profileCancel;
+
+  /// No description provided for @lineageTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ma lignée spirituelle'**
+  String get lineageTitle;
+
+  /// No description provided for @lineagePrivacyNote.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ces informations restent strictement privées : visibles uniquement par vous, jamais dans un annuaire public.'**
+  String get lineagePrivacyNote;
+
+  /// No description provided for @lineageFoyerLabel.
+  ///
+  /// In fr, this message translates to:
+  /// **'Foyer'**
+  String get lineageFoyerLabel;
+
+  /// No description provided for @lineageFoyerTivaouane.
+  ///
+  /// In fr, this message translates to:
+  /// **'Tivaouane'**
+  String get lineageFoyerTivaouane;
+
+  /// No description provided for @lineageFoyerKaolack.
+  ///
+  /// In fr, this message translates to:
+  /// **'Kaolack'**
+  String get lineageFoyerKaolack;
+
+  /// No description provided for @lineageFoyerMedinaBaye.
+  ///
+  /// In fr, this message translates to:
+  /// **'Médina Baye'**
+  String get lineageFoyerMedinaBaye;
+
+  /// No description provided for @lineageFoyerAutre.
+  ///
+  /// In fr, this message translates to:
+  /// **'Autre'**
+  String get lineageFoyerAutre;
+
+  /// No description provided for @lineageFoyerAutreLabel.
+  ///
+  /// In fr, this message translates to:
+  /// **'Précisez le foyer'**
+  String get lineageFoyerAutreLabel;
+
+  /// No description provided for @lineageFoyerAutreRequired.
+  ///
+  /// In fr, this message translates to:
+  /// **'Merci de préciser le foyer.'**
+  String get lineageFoyerAutreRequired;
+
+  /// No description provided for @lineageMoqaddamNameLabel.
+  ///
+  /// In fr, this message translates to:
+  /// **'Nom du moqaddam'**
+  String get lineageMoqaddamNameLabel;
+
+  /// No description provided for @lineageMoqaddamNameRequired.
+  ///
+  /// In fr, this message translates to:
+  /// **'Le nom du moqaddam est obligatoire.'**
+  String get lineageMoqaddamNameRequired;
+
+  /// No description provided for @lineageYearLabel.
+  ///
+  /// In fr, this message translates to:
+  /// **'Année de transmission (optionnel)'**
+  String get lineageYearLabel;
+
+  /// No description provided for @lineageYearInvalid.
+  ///
+  /// In fr, this message translates to:
+  /// **'Année invalide (entre 1900 et 2100).'**
+  String get lineageYearInvalid;
+
+  /// No description provided for @lineageZawiyaLabel.
+  ///
+  /// In fr, this message translates to:
+  /// **'Zawiya / lieu de transmission (optionnel)'**
+  String get lineageZawiyaLabel;
+
+  /// No description provided for @lineageSave.
+  ///
+  /// In fr, this message translates to:
+  /// **'Enregistrer'**
+  String get lineageSave;
+
+  /// No description provided for @lineageSaveSuccess.
+  ///
+  /// In fr, this message translates to:
+  /// **'Lignée spirituelle enregistrée.'**
+  String get lineageSaveSuccess;
+
+  /// No description provided for @lineageSaveError.
+  ///
+  /// In fr, this message translates to:
+  /// **'Impossible d\'enregistrer ces informations.'**
+  String get lineageSaveError;
+
+  /// No description provided for @lineageDelete.
+  ///
+  /// In fr, this message translates to:
+  /// **'Supprimer mes informations'**
+  String get lineageDelete;
+
+  /// No description provided for @lineageDeleteConfirmTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Supprimer ces informations ?'**
+  String get lineageDeleteConfirmTitle;
+
+  /// No description provided for @lineageDeleteConfirmBody.
+  ///
+  /// In fr, this message translates to:
+  /// **'Votre lignée spirituelle sera définitivement supprimée.'**
+  String get lineageDeleteConfirmBody;
+
+  /// No description provided for @lineageDeleteConfirmAction.
+  ///
+  /// In fr, this message translates to:
+  /// **'Supprimer'**
+  String get lineageDeleteConfirmAction;
+
+  /// No description provided for @lineageDeleteSuccess.
+  ///
+  /// In fr, this message translates to:
+  /// **'Lignée spirituelle supprimée.'**
+  String get lineageDeleteSuccess;
+
+  /// No description provided for @lineageLoadError.
+  ///
+  /// In fr, this message translates to:
+  /// **'Impossible de charger votre lignée spirituelle.'**
+  String get lineageLoadError;
+
+  /// No description provided for @lineageRetry.
+  ///
+  /// In fr, this message translates to:
+  /// **'Réessayer'**
+  String get lineageRetry;
 }
 
 class _AppLocalizationsDelegate

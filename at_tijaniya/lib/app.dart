@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import 'core/supabase/supabase_config.dart';
 import 'core/theme/app_theme.dart';
 import 'core/theme/locale_controller.dart';
 import 'features/auth/presentation/auth_screen.dart';
@@ -76,6 +77,14 @@ class _AtTijaniyaAppState extends ConsumerState<AtTijaniyaApp> {
   Future<void> _afterLanguageChosen() async {
     final seen = await _onboardingStore.hasSeenOnboarding();
     if (!mounted) return;
+    if (SupabaseConfig.client.auth.currentSession != null) {
+      // Session restaurée par supabase_flutter au démarrage (voir
+      // `main.dart`, `SupabaseConfig.init()` est attendu avant `runApp`) :
+      // un disciple déjà connecté ne doit pas se reconnecter à chaque
+      // lancement, ni revoir l'onboarding.
+      setState(() => _step = _Step.home);
+      return;
+    }
     setState(() => _step = seen ? _Step.auth : _Step.onboarding);
   }
 }

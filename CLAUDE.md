@@ -226,6 +226,113 @@ sur le parsing du modèle (`test/profile_models_test.dart`). Validé sur
 affiché correctement dans les deux langues (mode invité — pas encore de
 session réelle pour valider l'affichage/édition du profil rempli).
 
+Authentification Supabase réelle (P0) fonctionnelle
+(`lib/features/auth/presentation/auth_screen.dart`,
+`lib/features/auth/domain/auth_error_message.dart`) : email/mot de passe
+uniquement — téléphone/OTP hors périmètre (`authPhoneLabel` existe dans les
+`.arb` mais n'a jamais été câblé dans l'UI ; nécessiterait un fournisseur
+SMS non configuré). "Se connecter" appelle `signInWithPassword`, "Créer un
+compte" appelle `signUp` et gère les deux cas réels (session immédiate si
+confirmation désactivée côté projet, sinon message "vérifiez votre boîte
+mail" — c'est le cas actuellement configuré sur le projet live). Erreurs
+Supabase classifiées par `classifyAuthError` (logique pure, testée dans
+`test/auth_error_message_test.dart`) puis traduites FR/AR : identifiants
+invalides, e-mail déjà utilisé, mot de passe trop faible, e-mail non
+confirmé, limite de fréquence, repli générique pour le reste (ex.
+`email_address_invalid` renvoyé par Supabase sur certains domaines
+manifestement factices comme `example.com`). `app.dart` saute désormais
+l'écran Auth (et l'onboarding) au démarrage si une session est déjà
+persistée (`SupabaseConfig.client.auth.currentSession`), pour ne pas
+reconnecter un disciple à chaque lancement. Cette limitation levée
+réactive automatiquement, sans changement de leur côté, "Mon profil"
+(`profil_screen.dart`) et les actions communauté (`post_detail_screen.dart`)
+qui étaient déjà conditionnées sur `currentUser`/`currentUserIdProvider`.
+Limite connue : le lien de confirmation par e-mail pointe vers la page par
+défaut Supabase, pas vers l'app (pas de deep link configuré côté client).
+
+Validé en conditions réelles sur émulateur Android contre le projet Supabase
+live (`elrxlhhmkjfcbmiloilp`) : formulaire vide → erreurs de validation
+inline ; connexion avec des identifiants inexistants → "Adresse e-mail ou
+mot de passe incorrect." ; inscription avec un domaine invalide (`example.com`)
+→ repli générique (confirmé par les logs Auth Supabase, code
+`email_address_invalid`) ; inscription réussie avec un domaine valide →
+message "Compte créé, vérifiez votre boîte mail" affiché, et vérifié par
+`execute_sql` que `auth.users` **et** les lignes auto-provisionnées
+`profiles`/`privacy_settings`/`mouqaddam_status` (trigger `handle_new_user`)
+existent bien ; tentative de connexion avant confirmation → "Confirmez votre
+e-mail avant de vous connecter." Boucle complétée avec le compte réel du
+porteur de projet (déjà confirmé côté Supabase) : connexion réussie →
+arrivée sur `HomeShell`, "Mon profil" affichant les vraies données
+(`display_name`, zawiya) ; app tuée puis relancée → arrivée directe sur
+`HomeShell` sans repasser par Auth ni l'onboarding (session persistée) ;
+déconnexion réelle depuis "Mon profil" avec confirmation.
+
+Bug trouvé et corrigé pendant ce test en conditions réelles : `currentUserIdProvider`
+était un `Provider` Riverpod simple lisant `SupabaseConfig.client.auth.currentUser`
+une seule fois puis mis en cache pour toute la durée de vie de l'app — après une
+déconnexion réussie (session bien effacée côté Supabase), "Mon profil" continuait
+d'afficher les anciennes données au lieu de l'état "connectez-vous", tant que l'app
+n'était pas relancée. Corrigé dans `profile_providers.dart` en dérivant
+`currentUserIdProvider` d'un nouveau `authStateChangesProvider`
+(`StreamProvider` sur `SupabaseConfig.client.auth.onAuthStateChange`, un
+`ReplaySubject` côté gotrue) plutôt que d'un simple appel synchrone : il se
+recalcule désormais automatiquement à chaque connexion/déconnexion, sans
+invalidation manuelle à disperser dans `auth_screen.dart`/`profil_screen.dart`.
+`myProfileProvider` regarde ce même provider pour se refetcher au bon moment.
+Revalidé après correction : déconnexion → l'écran "Mon profil", déjà ouvert,
+bascule immédiatement sur l'état "connectez-vous" sans qu'il soit nécessaire
+de le rouvrir.
+
+Ma lignée spirituelle — écran de saisie (P1) fonctionnel
+(`lib/features/lineage/domain/lineage_models.dart`,
+`data/lineage_repository.dart`, `presentation/lineage_providers.dart`,
+`presentation/lineage_screen.dart`, accessible depuis la tuile "Ma lignée
+spirituelle" sur "Mon profil") : les quatre champs listés comme "décision
+validée" dans docs/01 § 5.4.1 — foyer (Tivaouane/Kaolack/Médina
+Baye/Autre, avec précision en texte libre si Autre), nom du moqaddam
+(obligatoire), année de transmission (optionnel, 1900-2100), zawiya/lieu de
+transmission (optionnel, distinct de la zawiya de rattachement gérée dans
+"Mon profil"). `upsert` sur `lineage_declarations` (clé primaire
+`user_id`, une seule ligne par disciple) ; `moqaddam_name_normalized`
+jamais lu ni écrit côté client (trigger serveur `normalize_moqaddam_name`).
+Bandeau de rappel de confidentialité en tête d'écran. Action "Supprimer mes
+informations" avec confirmation.
+
+**Hors périmètre volontaire de cette itération** : "Retrouver mes
+disciples" (mise en relation par correspondance de lignée) — docs/01
+§ 5.4.1 marque ce comportement "recommandation à valider explicitement par
+le porteur de projet avant l'implémentation", contrairement aux quatre
+champs de saisie ci-dessus qui sont une décision déjà validée. Suggestions
+de nom de moqaddam à la saisie (basées sur les noms renseignés par
+d'autres disciples) : la policy RLS déployée (`lineage_owner_only`, `for
+all using (auth.uid() = user_id)`) n'autorise aucune lecture
+inter-utilisateurs côté client — nécessiterait une fonction Postgres
+`SECURITY DEFINER` dédiée, absente du schéma actuel (changement de
+backend). Toggle de visibilité "Me rendre visible aux disciples de mon
+moqaddam" : appartient à l'écran séparé "Paramètres de confidentialité"
+(P0), pas encore construit.
+
+Validé en conditions réelles sur émulateur Android avec le compte réel
+`bgueye@gmail.com` : état vide, validation de formulaire (champ
+obligatoire, foyer "Autre" révélant son champ de précision), enregistrement
+puis vérification par `execute_sql` que la ligne existe dans
+`lineage_declarations` **et** que `moqaddam_name_normalized` a bien été
+calculée par le trigger serveur ; réouverture de l'écran confirmant le
+pré-remplissage ; suppression confirmée en base (`count = 0`).
+
+Bug trouvé et corrigé pendant ce test : juste après une suppression,
+`myLineageProvider` (un `FutureProvider`) pouvait renvoyer brièvement
+l'ancienne valeur mise en cache pendant son rafraîchissement
+(`AsyncValue.when` a `skipLoadingOnRefresh: true` par défaut côté
+Riverpod) — le formulaire, qui venait d'être vidé explicitement, se
+retrouvait donc réaffiché avec les données qu'on venait de supprimer.
+Corrigé en ne remettant plus `_initialized` à `false` après une
+suppression (`lineage_screen.dart`), pour empêcher `_applyExisting` de
+retraiter cette valeur transitoire. Suppression réelle jamais affectée
+(confirmée par SQL dans les deux cas) — bug purement d'affichage.
+Revalidé après correction, y compris dans le scénario exact qui l'avait
+révélé (enregistrer puis supprimer sans relancer l'app).
+
 ## Commandes utiles
 - `flutter pub get`
 - `flutter analyze`

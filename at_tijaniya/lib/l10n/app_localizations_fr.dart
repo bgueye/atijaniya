@@ -91,6 +91,46 @@ class AppLocalizationsFr extends AppLocalizations {
       'Continuer sans compte (pratique du Wird uniquement)';
 
   @override
+  String get authEmailRequired => 'L\'adresse e-mail est obligatoire.';
+
+  @override
+  String get authEmailInvalid => 'Adresse e-mail invalide.';
+
+  @override
+  String get authPasswordRequired => 'Le mot de passe est obligatoire.';
+
+  @override
+  String get authPasswordTooShort =>
+      'Le mot de passe doit contenir au moins 6 caractères.';
+
+  @override
+  String get authInvalidCredentials =>
+      'Adresse e-mail ou mot de passe incorrect.';
+
+  @override
+  String get authEmailAlreadyRegistered =>
+      'Un compte existe déjà avec cette adresse e-mail.';
+
+  @override
+  String get authWeakPassword =>
+      'Mot de passe trop faible. Utilisez au moins 6 caractères.';
+
+  @override
+  String get authEmailNotConfirmed =>
+      'Confirmez votre e-mail avant de vous connecter (lien envoyé à votre adresse).';
+
+  @override
+  String get authRateLimited =>
+      'Trop de tentatives. Réessayez dans quelques instants.';
+
+  @override
+  String get authGenericError => 'Une erreur est survenue. Réessayez.';
+
+  @override
+  String get authCheckEmailToConfirm =>
+      'Compte créé. Vérifiez votre boîte mail pour confirmer votre adresse avant de vous connecter.';
+
+  @override
   String get navHome => 'Accueil';
 
   @override
@@ -290,4 +330,80 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get profileCancel => 'Annuler';
+
+  @override
+  String get lineageTitle => 'Ma lignée spirituelle';
+
+  @override
+  String get lineagePrivacyNote =>
+      'Ces informations restent strictement privées : visibles uniquement par vous, jamais dans un annuaire public.';
+
+  @override
+  String get lineageFoyerLabel => 'Foyer';
+
+  @override
+  String get lineageFoyerTivaouane => 'Tivaouane';
+
+  @override
+  String get lineageFoyerKaolack => 'Kaolack';
+
+  @override
+  String get lineageFoyerMedinaBaye => 'Médina Baye';
+
+  @override
+  String get lineageFoyerAutre => 'Autre';
+
+  @override
+  String get lineageFoyerAutreLabel => 'Précisez le foyer';
+
+  @override
+  String get lineageFoyerAutreRequired => 'Merci de préciser le foyer.';
+
+  @override
+  String get lineageMoqaddamNameLabel => 'Nom du moqaddam';
+
+  @override
+  String get lineageMoqaddamNameRequired =>
+      'Le nom du moqaddam est obligatoire.';
+
+  @override
+  String get lineageYearLabel => 'Année de transmission (optionnel)';
+
+  @override
+  String get lineageYearInvalid => 'Année invalide (entre 1900 et 2100).';
+
+  @override
+  String get lineageZawiyaLabel => 'Zawiya / lieu de transmission (optionnel)';
+
+  @override
+  String get lineageSave => 'Enregistrer';
+
+  @override
+  String get lineageSaveSuccess => 'Lignée spirituelle enregistrée.';
+
+  @override
+  String get lineageSaveError => 'Impossible d\'enregistrer ces informations.';
+
+  @override
+  String get lineageDelete => 'Supprimer mes informations';
+
+  @override
+  String get lineageDeleteConfirmTitle => 'Supprimer ces informations ?';
+
+  @override
+  String get lineageDeleteConfirmBody =>
+      'Votre lignée spirituelle sera définitivement supprimée.';
+
+  @override
+  String get lineageDeleteConfirmAction => 'Supprimer';
+
+  @override
+  String get lineageDeleteSuccess => 'Lignée spirituelle supprimée.';
+
+  @override
+  String get lineageLoadError =>
+      'Impossible de charger votre lignée spirituelle.';
+
+  @override
+  String get lineageRetry => 'Réessayer';
 }

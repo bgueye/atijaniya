@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/supabase/supabase_config.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../l10n/app_localizations.dart';
+import '../../lineage/presentation/lineage_screen.dart';
 import '../domain/profile_models.dart';
 import 'edit_profile_sheet.dart';
 import 'profile_providers.dart';
@@ -106,9 +107,15 @@ class _ProfileBody extends ConsumerWidget {
               leading: const Icon(Icons.auto_awesome_outlined, color: AppColors.gold),
               title: Text(l10n.profileMyLineage),
               trailing: const Icon(Icons.lock_outline, size: 18, color: AppColors.bronze),
-              onTap: () {
-                // TODO(Phase 3, P1) : écran "Renseigner ma lignée spirituelle"
-                // (foyer, nom du moqaddam avec suggestions, année, zawiya optionnelle).
+              onTap: () async {
+                final saved = await Navigator.of(context).push<bool>(
+                  MaterialPageRoute(builder: (_) => const LineageScreen()),
+                );
+                if (saved == true && context.mounted) {
+                  ScaffoldMessenger.of(context)
+                    ..hideCurrentSnackBar()
+                    ..showSnackBar(SnackBar(content: Text(l10n.lineageSaveSuccess)));
+                }
               },
             ),
           ),

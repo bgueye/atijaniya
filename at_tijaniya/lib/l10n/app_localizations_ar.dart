@@ -89,6 +89,45 @@ class AppLocalizationsAr extends AppLocalizations {
   String get authContinueWithoutAccount => 'الاستمرار بدون حساب (الورد فقط)';
 
   @override
+  String get authEmailRequired => 'البريد الإلكتروني إلزامي.';
+
+  @override
+  String get authEmailInvalid => 'عنوان بريد إلكتروني غير صالح.';
+
+  @override
+  String get authPasswordRequired => 'كلمة السر إلزامية.';
+
+  @override
+  String get authPasswordTooShort =>
+      'يجب أن تتكوّن كلمة السر من 6 أحرف على الأقل.';
+
+  @override
+  String get authInvalidCredentials =>
+      'البريد الإلكتروني أو كلمة السر غير صحيحة.';
+
+  @override
+  String get authEmailAlreadyRegistered =>
+      'يوجد حساب مسجَّل بالفعل بهذا البريد الإلكتروني.';
+
+  @override
+  String get authWeakPassword =>
+      'كلمة السر ضعيفة جدًا. استخدم 6 أحرف على الأقل.';
+
+  @override
+  String get authEmailNotConfirmed =>
+      'أكّد بريدك الإلكتروني قبل تسجيل الدخول (رابط أُرسل إلى عنوانك).';
+
+  @override
+  String get authRateLimited => 'محاولات كثيرة جدًا. أعد المحاولة بعد قليل.';
+
+  @override
+  String get authGenericError => 'حدث خطأ ما. أعد المحاولة.';
+
+  @override
+  String get authCheckEmailToConfirm =>
+      'تم إنشاء الحساب. تحقّق من بريدك الإلكتروني لتأكيد عنوانك قبل تسجيل الدخول.';
+
+  @override
   String get navHome => 'الرئيسية';
 
   @override
@@ -286,4 +325,77 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get profileCancel => 'إلغاء';
+
+  @override
+  String get lineageTitle => 'سلسلتي الروحية';
+
+  @override
+  String get lineagePrivacyNote =>
+      'تبقى هذه المعلومات خاصة تمامًا: لا يراها سواك، ولا تظهر أبدًا في دليل عام.';
+
+  @override
+  String get lineageFoyerLabel => 'الفرع';
+
+  @override
+  String get lineageFoyerTivaouane => 'تيفاوان';
+
+  @override
+  String get lineageFoyerKaolack => 'كاولاك';
+
+  @override
+  String get lineageFoyerMedinaBaye => 'مدينة باي';
+
+  @override
+  String get lineageFoyerAutre => 'آخر';
+
+  @override
+  String get lineageFoyerAutreLabel => 'حدد الفرع';
+
+  @override
+  String get lineageFoyerAutreRequired => 'يرجى تحديد الفرع.';
+
+  @override
+  String get lineageMoqaddamNameLabel => 'اسم المقدَّم';
+
+  @override
+  String get lineageMoqaddamNameRequired => 'اسم المقدَّم إلزامي.';
+
+  @override
+  String get lineageYearLabel => 'سنة التلقين (اختياري)';
+
+  @override
+  String get lineageYearInvalid => 'سنة غير صالحة (بين 1900 و2100).';
+
+  @override
+  String get lineageZawiyaLabel => 'الزاوية / مكان التلقين (اختياري)';
+
+  @override
+  String get lineageSave => 'حفظ';
+
+  @override
+  String get lineageSaveSuccess => 'تم حفظ سلسلتك الروحية.';
+
+  @override
+  String get lineageSaveError => 'تعذّر حفظ هذه المعلومات.';
+
+  @override
+  String get lineageDelete => 'حذف معلوماتي';
+
+  @override
+  String get lineageDeleteConfirmTitle => 'حذف هذه المعلومات؟';
+
+  @override
+  String get lineageDeleteConfirmBody => 'ستُحذف سلسلتك الروحية نهائيًا.';
+
+  @override
+  String get lineageDeleteConfirmAction => 'حذف';
+
+  @override
+  String get lineageDeleteSuccess => 'تم حذف سلسلتك الروحية.';
+
+  @override
+  String get lineageLoadError => 'تعذّر تحميل سلسلتك الروحية.';
+
+  @override
+  String get lineageRetry => 'إعادة المحاولة';
 }
