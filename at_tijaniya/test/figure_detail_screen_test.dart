@@ -1,18 +1,14 @@
-// Vérifie que le module Figures respecte la règle "aucun contenu religieux
-// non validé" (CLAUDE.md, docs/01-perimetre-fonctionnel.md § 8) : la liste
-// de production (`validatedFigures`) doit rester vide, et l'écran de liste
-// doit alors afficher un état vide honnête plutôt qu'une liste blanche.
-// Vérifie aussi que l'écran de détail sait rendre une biographie une fois
-// des données présentes (avec une figure factice, locale au test).
+// Vérifie que FigureDetailScreen rend correctement une biographie, des
+// citations et une ziyara quand elles sont présentes, et affiche une note
+// explicite quand la biographie est absente — avec une figure factice,
+// locale au test (pas de contenu religieux réel dans ce fichier).
 
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:at_tijaniya/features/figures/data/figures_content.dart';
 import 'package:at_tijaniya/features/figures/domain/figure_models.dart';
 import 'package:at_tijaniya/features/figures/presentation/figure_detail_screen.dart';
-import 'package:at_tijaniya/features/figures/presentation/figures_screen.dart';
 import 'package:at_tijaniya/l10n/app_localizations.dart';
 
 Widget _wrap(Widget child) {
@@ -30,18 +26,6 @@ Widget _wrap(Widget child) {
 }
 
 void main() {
-  test('validatedFigures reste vide tant qu\'aucune biographie n\'est validée', () {
-    expect(validatedFigures, isEmpty);
-  });
-
-  testWidgets('FiguresScreen affiche un état vide honnête sans contenu validé', (tester) async {
-    await tester.pumpWidget(_wrap(const FiguresScreen()));
-    await tester.pumpAndSettle();
-
-    expect(find.text('Biographies en cours de compilation'), findsOneWidget);
-    expect(find.byType(Card), findsNothing);
-  });
-
   testWidgets('FigureDetailScreen affiche la biographie, les citations et la ziyara quand présentes', (tester) async {
     const figure = Figure(
       id: 'test-figure',

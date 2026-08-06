@@ -34,3 +34,12 @@ final myProfileProvider = FutureProvider<Profile>((ref) {
   ref.watch(currentUserIdProvider);
   return ref.watch(profileRepositoryProvider).fetchMyProfile();
 });
+
+/// `false` par défaut (invité, profil en cours de chargement, ou erreur) —
+/// jamais d'exception propagée juste pour vérifier ce statut. Réutilisable
+/// par tout écran ayant besoin de savoir si le compte connecté a le droit
+/// technique d'administration (ex. review des Figures en brouillon).
+final isAdminProvider = Provider<bool>((ref) {
+  if (ref.watch(currentUserIdProvider) == null) return false;
+  return ref.watch(myProfileProvider).maybeWhen(data: (profile) => profile.isAdmin, orElse: () => false);
+});

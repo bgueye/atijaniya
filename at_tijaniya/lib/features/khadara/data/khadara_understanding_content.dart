@@ -2,8 +2,10 @@
 ///
 /// RÈGLE IMPÉRATIVE (CLAUDE.md, docs/01-perimetre-fonctionnel.md § 8) : ce
 /// fichier est la SEULE source de ce contenu dans l'app, au même titre que
-/// `wirds_content.dart` pour le module Wirds ou `figures_content.dart` pour
-/// le module Figures. Expliquer le déroulement, la signification ou la
+/// `wirds_content.dart` pour le module Wirds (le module Figures, lui, est
+/// désormais alimenté par la table Supabase `figures`, filtrée par
+/// `content_status = 'valide'` côté RLS — voir `figure_models.dart`).
+/// Expliquer le déroulement, la signification ou la
 /// pratique de la Khadara est un contenu religieux/pratique — il ne figure
 /// pas dans le tableau de validation de docs/01 § 8 (seul le module Wirds y
 /// est "Validé"). Cette liste reste donc VIDE tant que le porteur de projet

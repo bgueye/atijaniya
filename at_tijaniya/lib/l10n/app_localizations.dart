@@ -644,6 +644,72 @@ abstract class AppLocalizations {
   /// **'Ce contenu, sensible, ne sera publié qu\'après validation par un moqaddam ou érudit reconnu du projet.'**
   String get figuresEmptyBody;
 
+  /// No description provided for @figuresLoadError.
+  ///
+  /// In fr, this message translates to:
+  /// **'Impossible de charger les données.'**
+  String get figuresLoadError;
+
+  /// No description provided for @figuresRetry.
+  ///
+  /// In fr, this message translates to:
+  /// **'Réessayer'**
+  String get figuresRetry;
+
+  /// No description provided for @figuresReviewButton.
+  ///
+  /// In fr, this message translates to:
+  /// **'Contenu à valider'**
+  String get figuresReviewButton;
+
+  /// No description provided for @figuresReviewTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Figures à valider'**
+  String get figuresReviewTitle;
+
+  /// No description provided for @figuresReviewEmpty.
+  ///
+  /// In fr, this message translates to:
+  /// **'Aucune figure en attente de validation.'**
+  String get figuresReviewEmpty;
+
+  /// No description provided for @figuresReviewValidate.
+  ///
+  /// In fr, this message translates to:
+  /// **'Valider'**
+  String get figuresReviewValidate;
+
+  /// No description provided for @figuresReviewConfirmTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Valider cette biographie ?'**
+  String get figuresReviewConfirmTitle;
+
+  /// No description provided for @figuresReviewConfirmBody.
+  ///
+  /// In fr, this message translates to:
+  /// **'Elle deviendra visible par tous les disciples dans l\'app.'**
+  String get figuresReviewConfirmBody;
+
+  /// No description provided for @figuresReviewConfirmAction.
+  ///
+  /// In fr, this message translates to:
+  /// **'Valider'**
+  String get figuresReviewConfirmAction;
+
+  /// No description provided for @figuresReviewCancel.
+  ///
+  /// In fr, this message translates to:
+  /// **'Annuler'**
+  String get figuresReviewCancel;
+
+  /// No description provided for @figuresReviewSuccess.
+  ///
+  /// In fr, this message translates to:
+  /// **'Figure validée et publiée.'**
+  String get figuresReviewSuccess;
+
   /// No description provided for @figureBiographySectionTitle.
   ///
   /// In fr, this message translates to:

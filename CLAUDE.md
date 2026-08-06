@@ -144,21 +144,35 @@ volontairement non persisté pour l'instant (voir `locale_controller.dart`).
 Validé de bout en bout sur émulateur Android, y compris la persistance après
 redémarrage à froid de l'app (onboarding non réaffiché au lancement suivant).
 
-Module Figures — liste et biographies (P1) : infrastructure complète
-(`lib/features/figures/domain/figure_models.dart`, `data/figures_content.dart`,
-`presentation/figures_screen.dart` et `figure_detail_screen.dart`) mais
-**contenu volontairement vide** — `validatedFigures` reste une liste vide
-(couverte par un test dédié `test/figures_screen_test.dart` qui échouera si
-quelqu'un y ajoute du contenu par erreur). Conforme à docs/01 § 8 : les
-biographies de figures fondatrices et de familles religieuses sont encore
-"à valider" (statut "Sensible" pour les familles). L'écran de liste affiche
-alors un état vide explicite ("Biographies en cours de compilation...")
-plutôt qu'un contenu inventé. L'écran de détail (biographie, citations,
-ziyara associée) est prêt à afficher du contenu réel dès qu'un document
-explicitement validé sera fourni — ne jamais renseigner
-`figures_content.dart` sans cette validation. Validé sur émulateur Android
-(onglet Figures affichant l'état vide) et par tests unitaires/widgets
-couvrant les deux états (vide / rempli via une figure factice de test).
+Module Figures — liste et biographies (P1) fonctionnel, **branché sur
+Supabase** (`lib/features/figures/domain/figure_models.dart`,
+`data/figures_repository.dart`, `presentation/figures_providers.dart`,
+`figures_screen.dart`, `figure_detail_screen.dart`) : changement
+d'architecture par rapport au module Wirds (corpus statique local) —
+le contenu vit désormais dans la table Supabase `figures`, avec un champ
+`content_status` (`brouillon`/`valide`) que le porteur de projet pilote
+directement en base. `figures_content.dart` (ancien fichier statique) a été
+supprimé. La RLS `figures_read_valid_or_admin` (`content_status = 'valide'
+OR is_admin(...)`) laisse volontairement passer les brouillons pour un
+compte admin (utile à un futur back-office) — **bug trouvé et corrigé
+pendant la validation** : sans filtre client, un disciple connecté avec un
+compte admin voyait les biographies en brouillon comme si elles étaient
+publiées. `FiguresRepository.fetchFigures()` ajoute donc un
+`.eq('content_status', 'valide')` explicite en plus de la RLS (défense en
+profondeur) : l'app n'affiche jamais de contenu non validé, quel que soit
+le compte connecté. `bio_text` (un bloc de texte unique en base) est
+découpé en paragraphes sur les lignes vides ; la section
+"SOURCES CONSULTÉES" (note de traçabilité interne au compilateur) est
+exclue de l'affichage, jamais montrée au disciple. Citations
+(`figure_quotes`) embarquées via PostgREST, absentes tant qu'aucune n'est
+saisie. Tests : `test/figures_models_test.dart` (parsing `Figure.fromRow` —
+catégories, découpage biographie, exclusion sources, citations) et
+`test/figure_detail_screen_test.dart` (rendu de l'écran de détail, figure
+factice locale au test). Validé en conditions réelles sur émulateur Android
+avec les données réelles du projet : Cheikh Ahmed Tijani (seule figure
+`valide` à ce jour) s'affiche correctement liste + détail ; les deux figures
+de familles religieuses (El Hadj Malick Sy, El Hadj Ibrahima Niasse),
+encore en `brouillon`, confirmées invisibles après le correctif.
 
 Calendrier des évènements & annuaire des zawiyas (P1)
 (`lib/features/khadara/` : `domain/khadara_models.dart`,
@@ -499,6 +513,59 @@ logs. Le rendu physique de la vibration n'est pas vérifiable sur émulateur
 (pas de capteur haptique), mais le chemin de code est strictement identique
 à celui du Tasbih des wirds validés (même signature `increment()`), déjà
 couvert par ce test.
+
+Bootstrap du noyau initial de mouqaddamines (§ 5.4.2) fait en base — deux
+comptes marqués `mouqaddam_status.status = 'verified'`, `is_founder = true`
+via action SQL explicite (jamais via un champ auto-déclaratif dans l'UI, qui
+n'existe pas) : le compte réel du porteur de projet (`bgueye@gmail.com`,
+validé le 2026-08-05) et un second compte de test QA
+(`claude.tijaniya.qa.test1`, validé le 2026-08-06) pour pouvoir tester un
+parrainage entre deux comptes vérifiés une fois les écrans P2 correspondants
+construits. Chaque validation loggée dans `admin_actions_log`
+(`action_type = 'founder_validation'`). Écrans "Devenir Mouqaddam"/
+"Demandes de parrainage"/"Rechercher un parrain" toujours non construits
+(P2) — ce bootstrap ne fait qu'amorcer les données, pas les écrans.
+
+RLS de `figure_quotes`/`historical_silsila_links` corrigée (migration
+`restrict_figure_quotes_and_silsila_to_valide_content_status`) : les
+policies `SELECT` d'origine étaient totalement ouvertes (`using (true)`),
+sans lien avec le `content_status` de la figure parente — contrairement à
+`figures` lui-même. Remplacées par une vérification via jointure
+(`content_status = 'valide' OR is_admin(...)` sur la figure référencée par
+`figure_id`). Trouvé en auditant la chaîne de validation suite à une
+question du porteur de projet ; aucune ligne existante affectée (tables
+vides au moment du correctif), mais évite une fuite dès qu'une citation
+serait ajoutée à une figure encore en brouillon.
+
+Écran de review admin des Figures (P1, complément) —
+`lib/features/figures/presentation/figures_review_screen.dart`, accessible
+uniquement via un bouton "Contenu à valider" sur `FiguresScreen`, affiché
+seulement si `isAdminProvider` (nouveau, `profile_providers.dart`) vaut
+`true`. Répond à la question : comment un admin/mouqaddam validera-t-il du
+contenu en pratique ? Réponse retenue : **seul `profiles.is_admin` donne ce
+droit** — un statut "Mouqaddam vérifié" n'accorde explicitement aucune
+permission technique (docs/01 § 5.4.2, CLAUDE.md), donc pas de chemin
+d'accès basé sur `mouqaddam_status` ici, volontairement. Liste les figures
+`brouillon` (`FiguresRepository.fetchDraftFigures()`), permet d'ouvrir la
+biographie complète en lecture (réutilise `FigureDetailScreen`) et de la
+faire passer à `valide` (`validateFigure()`) après une boîte de dialogue de
+confirmation explicite ("Elle deviendra visible par tous les disciples").
+Triple protection déjà en place si ce chemin était atteint par erreur par un
+non-admin : (1) le bouton d'entrée n'est même pas rendu, (2)
+`fetchDraftFigures()` renvoie une liste vide pour un non-admin (RLS), (3)
+`validateFigure()` échoue côté serveur (policy `figures_admin_update`).
+`Profile.isAdmin` ajouté au modèle (`profile_models.dart`,
+`test/profile_models_test.dart`) pour porter ce champ.
+
+Validé en conditions réelles sur émulateur Android avec le compte réel
+admin (`bgueye@gmail.com`) : bouton "Contenu à valider" visible, écran de
+review listant bien les deux figures en brouillon (El Hadj Malick Sy, El
+Hadj Ibrahima Niasse), boîte de confirmation "Valider cette biographie ?"
+fonctionnelle. Le tap "Valider" n'a volontairement pas été exercé jusqu'au
+bout pendant ce test (publierait réellement un contenu que le porteur de
+projet n'a pas confirmé comme validé, contrairement à Cheikh Ahmed Tijani) —
+annulation testée à la place, état de la base reconfirmé inchangé par
+requête SQL après coup.
 
 ## Commandes utiles
 - `flutter pub get`

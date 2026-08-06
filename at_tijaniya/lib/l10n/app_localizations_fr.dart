@@ -305,6 +305,40 @@ class AppLocalizationsFr extends AppLocalizations {
       'Ce contenu, sensible, ne sera publié qu\'après validation par un moqaddam ou érudit reconnu du projet.';
 
   @override
+  String get figuresLoadError => 'Impossible de charger les données.';
+
+  @override
+  String get figuresRetry => 'Réessayer';
+
+  @override
+  String get figuresReviewButton => 'Contenu à valider';
+
+  @override
+  String get figuresReviewTitle => 'Figures à valider';
+
+  @override
+  String get figuresReviewEmpty => 'Aucune figure en attente de validation.';
+
+  @override
+  String get figuresReviewValidate => 'Valider';
+
+  @override
+  String get figuresReviewConfirmTitle => 'Valider cette biographie ?';
+
+  @override
+  String get figuresReviewConfirmBody =>
+      'Elle deviendra visible par tous les disciples dans l\'app.';
+
+  @override
+  String get figuresReviewConfirmAction => 'Valider';
+
+  @override
+  String get figuresReviewCancel => 'Annuler';
+
+  @override
+  String get figuresReviewSuccess => 'Figure validée et publiée.';
+
+  @override
   String get figureBiographySectionTitle => 'Biographie';
 
   @override

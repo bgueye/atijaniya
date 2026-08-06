@@ -1,46 +1,100 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../l10n/app_localizations.dart';
-import '../data/figures_content.dart';
 import '../domain/figure_models.dart';
 import 'figure_detail_screen.dart';
+import 'figures_providers.dart';
+import 'figures_review_screen.dart';
+import '../../profil/presentation/profile_providers.dart';
 
 /// Liste des figures — fondateurs et familles religieuses. Priorité P1
 /// (docs/03-architecture-ecrans.md).
 ///
 /// IMPORTANT (CLAUDE.md — contenu religieux ; docs/01-perimetre-fonctionnel.md
-/// § 8) : le contenu affiché ici provient exclusivement de
-/// `lib/features/figures/data/figures_content.dart` (source unique). Cette
-/// liste est actuellement vide car aucune biographie n'est encore validée —
-/// voir la règle impérative en tête de ce fichier de contenu. L'écran
-/// affiche alors un état vide honnête plutôt que du contenu inventé.
-class FiguresScreen extends StatelessWidget {
+/// § 8) : contrairement au module Wirds, ce contenu provient de la table
+/// Supabase `figures` (voir `figure_models.dart`) — la RLS ne renvoie que
+/// les lignes `content_status = 'valide'`, filtrées côté serveur. Si aucune
+/// figure validée n'existe encore, l'écran affiche un état vide honnête
+/// plutôt qu'un contenu inventé.
+///
+/// Bouton "Contenu à valider" affiché uniquement si `isAdminProvider` vaut
+/// `true` — seul chemin de l'app vers `FiguresReviewScreen` (relecture des
+/// brouillons avant publication). "Mouqaddam vérifié" n'accorde aucun droit
+/// ici, voir la note dans `figures_review_screen.dart`.
+class FiguresScreen extends ConsumerWidget {
   const FiguresScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context)!;
-    final founders = validatedFigures.where((f) => f.category == FigureCategory.founder).toList();
-    final families = validatedFigures.where((f) => f.category == FigureCategory.religiousFamily).toList();
+    final figuresAsync = ref.watch(figuresProvider);
+    final isAdmin = ref.watch(isAdminProvider);
 
-    if (founders.isEmpty && families.isEmpty) {
-      return _EmptyState(title: l10n.figuresEmptyTitle, body: l10n.figuresEmptyBody);
-    }
-
-    return ListView(
-      padding: const EdgeInsets.all(16),
+    return Column(
       children: [
-        if (founders.isNotEmpty) ...[
-          _SectionHeader(title: l10n.figuresSectionFounders),
-          for (final figure in founders) _FigureTile(figure: figure),
-          const SizedBox(height: 16),
-        ],
-        if (families.isNotEmpty) ...[
-          _SectionHeader(title: l10n.figuresSectionFamilies),
-          for (final figure in families) _FigureTile(figure: figure),
-        ],
+        if (isAdmin)
+          Padding(
+            padding: const EdgeInsets.fromLTRB(16, 12, 16, 0),
+            child: Align(
+              alignment: Alignment.centerLeft,
+              child: OutlinedButton.icon(
+                onPressed: () => Navigator.of(context).push(
+                  MaterialPageRoute(builder: (_) => const FiguresReviewScreen()),
+                ),
+                icon: const Icon(Icons.fact_check_outlined, size: 18),
+                label: Text(l10n.figuresReviewButton),
+              ),
+            ),
+          ),
+        Expanded(
+          child: figuresAsync.when(
+            loading: () => const Center(child: CircularProgressIndicator(color: AppColors.emerald)),
+            error: (error, stackTrace) => Center(
+              child: Padding(
+                padding: const EdgeInsets.all(24),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const Icon(Icons.wifi_off, color: AppColors.bronze, size: 32),
+                    const SizedBox(height: 12),
+                    Text(l10n.figuresLoadError, textAlign: TextAlign.center, style: const TextStyle(color: AppColors.bronze)),
+                    const SizedBox(height: 12),
+                    OutlinedButton(
+                      onPressed: () => ref.invalidate(figuresProvider),
+                      child: Text(l10n.figuresRetry),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            data: (figures) {
+              final founders = figures.where((f) => f.category == FigureCategory.founder).toList();
+              final families = figures.where((f) => f.category == FigureCategory.religiousFamily).toList();
+
+              if (founders.isEmpty && families.isEmpty) {
+                return _EmptyState(title: l10n.figuresEmptyTitle, body: l10n.figuresEmptyBody);
+              }
+
+              return ListView(
+                padding: const EdgeInsets.all(16),
+                children: [
+                  if (founders.isNotEmpty) ...[
+                    _SectionHeader(title: l10n.figuresSectionFounders),
+                    for (final figure in founders) _FigureTile(figure: figure),
+                    const SizedBox(height: 16),
+                  ],
+                  if (families.isNotEmpty) ...[
+                    _SectionHeader(title: l10n.figuresSectionFamilies),
+                    for (final figure in families) _FigureTile(figure: figure),
+                  ],
+                ],
+              );
+            },
+          ),
+        ),
       ],
     );
   }

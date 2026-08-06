@@ -15,6 +15,7 @@ class Profile {
     this.zawiyaId,
     this.zawiyaName,
     this.bio,
+    this.isAdmin = false,
   });
 
   final String userId;
@@ -28,6 +29,12 @@ class Profile {
   final String? zawiyaName;
   final String? bio;
 
+  /// Droit technique d'administration (modération de contenu — ex. valider
+  /// une biographie du module Figures). Distinct du statut "Mouqaddam
+  /// vérifié", qui n'accorde explicitement aucune permission technique
+  /// (docs/01-perimetre-fonctionnel.md § 5.4.2, CLAUDE.md).
+  final bool isAdmin;
+
   factory Profile.fromRow(Map<String, dynamic> row) {
     final zawiyaRelation = row['zawiyas'] as Map<String, dynamic>?;
     return Profile(
@@ -38,6 +45,7 @@ class Profile {
       zawiyaId: row['zawiya_id'] as String?,
       zawiyaName: zawiyaRelation?['name'] as String?,
       bio: row['bio'] as String?,
+      isAdmin: row['is_admin'] as bool? ?? false,
     );
   }
 }

@@ -45,5 +45,24 @@ void main() {
 
       expect(profile.locale, 'fr');
     });
+
+    test('isAdmin vaut false par défaut si le champ est absent', () {
+      final profile = Profile.fromRow({
+        'user_id': 'u4',
+        'display_name': 'Ibrahima',
+      });
+
+      expect(profile.isAdmin, isFalse);
+    });
+
+    test('isAdmin reflète le champ is_admin quand présent', () {
+      final profile = Profile.fromRow({
+        'user_id': 'u5',
+        'display_name': 'Admin Test',
+        'is_admin': true,
+      });
+
+      expect(profile.isAdmin, isTrue);
+    });
   });
 }

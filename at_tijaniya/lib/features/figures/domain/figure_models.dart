@@ -1,11 +1,15 @@
 /// Modèles de contenu du module Figures et enseignements.
 ///
 /// IMPORTANT (CLAUDE.md — contenu religieux ; docs/01-perimetre-fonctionnel.md
-/// § 8) : les instances de ces modèles ne doivent être construites qu'à
-/// partir d'un document explicitement marqué "validé". Les biographies de
-/// figures fondatrices et de familles religieuses sont *actuellement à
-/// l'état "à valider"* — aucun nom, date, filiation ou enseignement ne doit
-/// être inventé ou complété par le modèle. Voir `data/figures_content.dart`.
+/// § 8) : contrairement au module Wirds (corpus statique dans
+/// `wirds_content.dart`), ce contenu provient de la table Supabase
+/// `figures` (voir `data/figures_repository.dart`), alimentée et validée
+/// par le porteur de projet directement en base. La RLS
+/// (`figures_read_valid_or_admin`) ne renvoie au client que les lignes
+/// `content_status = 'valide'` : une figure en `brouillon` n'est jamais
+/// lisible côté app, quoi qu'il arrive côté client. Aucun nom, date,
+/// filiation ou enseignement ne doit être inventé ou complété par le
+/// modèle — seul un enregistrement marqué `valide` en base fait foi.
 library;
 
 enum FigureCategory { founder, religiousFamily }
@@ -63,4 +67,65 @@ class Figure {
   /// l'instant (à faire une fois le module Khadara connecté à des données
   /// réelles).
   final String? ziyaraNote;
+
+  /// Construit une figure à partir d'une ligne de la table Supabase
+  /// `figures` (embarquant `figure_quotes` via PostgREST — voir
+  /// `FiguresRepository.fetchFigures`).
+  ///
+  /// `bio_text` est un bloc de texte unique (sections séparées par une ligne
+  /// vide) plutôt qu'une liste structurée arabe/translittération/traduction
+  /// comme dans le module Wirds : chaque section devient un paragraphe. La
+  /// section "SOURCES CONSULTÉES" (note de traçabilité interne au
+  /// compilateur, pas un contenu destiné au disciple) est exclue de
+  /// l'affichage.
+  factory Figure.fromRow(Map<String, dynamic> row) {
+    final quotesRows = row['figure_quotes'] as List<dynamic>?;
+    return Figure(
+      id: row['id'] as String,
+      nameArabic: row['name_ar'] as String,
+      nameFrench: row['name_fr'] as String,
+      category: _categoryFromDb(row['category'] as String),
+      summary: _summaryFrom(row['bio_text'] as String?),
+      biography: _biographyFrom(row['bio_text'] as String?),
+      citations: _citationsFrom(quotesRows),
+    );
+  }
+}
+
+FigureCategory _categoryFromDb(String value) {
+  return value == 'founder' ? FigureCategory.founder : FigureCategory.religiousFamily;
+}
+
+List<String> _biographySections(String bioText) {
+  return bioText
+      .split('\n\n')
+      .map((section) => section.trim())
+      .where((section) => section.isNotEmpty)
+      .where((section) => !section.toUpperCase().startsWith('SOURCES CONSULTÉES'))
+      .toList();
+}
+
+List<FigureBiographyParagraph>? _biographyFrom(String? bioText) {
+  if (bioText == null || bioText.trim().isEmpty) return null;
+  final sections = _biographySections(bioText);
+  if (sections.isEmpty) return null;
+  return [for (final section in sections) FigureBiographyParagraph(translation: section)];
+}
+
+String? _summaryFrom(String? bioText) {
+  if (bioText == null) return null;
+  final sections = _biographySections(bioText);
+  return sections.isEmpty ? null : sections.first;
+}
+
+List<FigureCitation>? _citationsFrom(List<dynamic>? quotesRows) {
+  if (quotesRows == null || quotesRows.isEmpty) return null;
+  return [
+    for (final raw in quotesRows.cast<Map<String, dynamic>>())
+      FigureCitation(
+        arabic: raw['text_ar'] as String?,
+        translation: (raw['text_fr'] as String?) ?? (raw['text_ar'] as String?) ?? '',
+        source: (raw['source_note'] as String?) ?? '—',
+      ),
+  ];
 }

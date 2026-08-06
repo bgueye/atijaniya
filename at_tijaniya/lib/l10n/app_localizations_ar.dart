@@ -298,6 +298,40 @@ class AppLocalizationsAr extends AppLocalizations {
       'هذا المحتوى الحساس لن يُنشر إلا بعد التحقق من صحته من طرف مقدَّم أو عالم معتمد للمشروع.';
 
   @override
+  String get figuresLoadError => 'تعذّر تحميل البيانات.';
+
+  @override
+  String get figuresRetry => 'إعادة المحاولة';
+
+  @override
+  String get figuresReviewButton => 'محتوى قيد التحقق';
+
+  @override
+  String get figuresReviewTitle => 'شخصيات قيد التحقق';
+
+  @override
+  String get figuresReviewEmpty => 'لا توجد شخصية في انتظار التحقق.';
+
+  @override
+  String get figuresReviewValidate => 'تحقّق';
+
+  @override
+  String get figuresReviewConfirmTitle => 'تأكيد التحقق من هذه السيرة؟';
+
+  @override
+  String get figuresReviewConfirmBody =>
+      'ستصبح مرئية لجميع المريدين في التطبيق.';
+
+  @override
+  String get figuresReviewConfirmAction => 'تحقّق';
+
+  @override
+  String get figuresReviewCancel => 'إلغاء';
+
+  @override
+  String get figuresReviewSuccess => 'تم التحقق من الشخصية ونشرها.';
+
+  @override
   String get figureBiographySectionTitle => 'السيرة';
 
   @override
