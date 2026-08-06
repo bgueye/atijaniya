@@ -37,21 +37,59 @@ class AppTheme {
     required Brightness brightness,
   }) {
     final uiTextTheme = GoogleFonts.jostTextTheme();
+    final isLight = brightness == Brightness.light;
 
     return ThemeData(
       useMaterial3: true,
       brightness: brightness,
       scaffoldBackgroundColor: surface,
+      // Rôles Material 3 non couverts par les 8 champs "historiques"
+      // (primary/secondary/error/surface + leurs "on*") : laissés non
+      // renseignés, ils retombent sur des valeurs par défaut génériques
+      // (ex. Chip/SegmentedButton utilisent alors surfaceContainerLow/
+      // onSurfaceVariant/outline, qui héritent silencieusement de
+      // surface/onSurface — sans rapport avec la palette de marque). Explicités
+      // ici pour que tout nouveau composant M3 (Chip, Slider, Switch, Menu,
+      // Dialog, SnackBar...) rende avec les couleurs zaytoune/emerald/gold/
+      // bronze plutôt qu'un fallback Material générique.
       colorScheme: ColorScheme(
         brightness: brightness,
         primary: AppColors.emerald,
         onPrimary: AppColors.offWhite,
+        primaryContainer: isLight ? AppColors.emeraldSoft : AppColors.emerald.withValues(alpha: 0.25),
+        onPrimaryContainer: isLight ? AppColors.ink : AppColors.parchment,
         secondary: AppColors.gold,
         onSecondary: AppColors.ink,
+        secondaryContainer: isLight ? AppColors.goldSoft : AppColors.gold,
+        onSecondaryContainer: AppColors.ink,
+        // Bronze porte déjà le rôle "texte secondaire, bordures, légendes"
+        // dans design_tokens.yaml — mapping naturel vers tertiary plutôt
+        // qu'une nouvelle teinte inventée.
+        tertiary: AppColors.bronze,
+        onTertiary: isLight ? AppColors.offWhite : AppColors.ink,
+        tertiaryContainer: isLight ? AppColors.goldSoft : AppColors.bronze.withValues(alpha: 0.3),
+        onTertiaryContainer: isLight ? AppColors.ink : AppColors.parchment,
         error: const Color(0xFFB3261E),
         onError: AppColors.offWhite,
         surface: surface,
         onSurface: onSurface,
+        surfaceContainerLowest: isLight ? AppColors.offWhite : AppColors.zaytoune,
+        surfaceContainerLow: isLight ? AppColors.offWhite : AppColors.zaytoune,
+        surfaceContainer: isLight ? AppColors.offWhite : AppColors.emerald.withValues(alpha: 0.12),
+        surfaceContainerHigh: isLight ? AppColors.goldSoft : AppColors.emerald.withValues(alpha: 0.20),
+        surfaceContainerHighest: isLight ? AppColors.goldSoft : AppColors.emerald.withValues(alpha: 0.28),
+        onSurfaceVariant: AppColors.bronze,
+        outline: AppColors.bronze.withValues(alpha: 0.4),
+        outlineVariant: AppColors.bronze.withValues(alpha: 0.2),
+        shadow: Colors.black,
+        scrim: Colors.black,
+        inverseSurface: isLight ? AppColors.ink : AppColors.parchment,
+        onInverseSurface: isLight ? AppColors.parchment : AppColors.ink,
+        inversePrimary: AppColors.gold,
+        // Évite le voile de teinte automatique M3 (primary appliqué en
+        // surimpression sur les surfaces élevées) : les couleurs de surface
+        // sont déjà choisies explicitement ci-dessus et par `cardTheme`.
+        surfaceTint: Colors.transparent,
       ),
       // Interface générique -> Jost, jamais Amiri (règle stricte du design system).
       textTheme: uiTextTheme.apply(

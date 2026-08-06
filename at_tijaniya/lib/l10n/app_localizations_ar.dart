@@ -161,6 +161,71 @@ class AppLocalizationsAr extends AppLocalizations {
   String get wirdHadratouJouma => 'حضرة الجمعة';
 
   @override
+  String get wirdFreeTitle => 'ورد حر';
+
+  @override
+  String get wirdFreeSubtitle => 'اضبط عدادك الخاص';
+
+  @override
+  String get wirdFreeSetupTitle => 'عداد حر جديد';
+
+  @override
+  String get wirdFreeLabelFieldLabel => 'ماذا تردد؟ (اختياري)';
+
+  @override
+  String get wirdFreeTargetFieldLabel => 'عدد التكرارات';
+
+  @override
+  String get wirdFreeTargetRequired => 'أدخل عدد تكرارات أكبر من 0.';
+
+  @override
+  String get wirdFreeStartButton => 'ابدأ';
+
+  @override
+  String get wirdFreeManualMode => 'عد يدوي';
+
+  @override
+  String get wirdFreeVoiceMode => 'الصوت';
+
+  @override
+  String get wirdFreeUndo => 'تصحيح -1';
+
+  @override
+  String get wirdFreeReset => 'إعادة تعيين';
+
+  @override
+  String get wirdFreeFinishButton => 'إنهاء';
+
+  @override
+  String get wirdFreeTapToCount => 'اضغط للعد';
+
+  @override
+  String get wirdFreeListeningActive =>
+      'الاستماع جارٍ — ردّد، وتوقف الصوت لحظة = +1';
+
+  @override
+  String get wirdFreeListeningPaused => 'الميكروفون متوقف مؤقتًا';
+
+  @override
+  String get wirdFreeVoiceUnavailable =>
+      'التعرف الصوتي غير متوفر على هذا الجهاز.';
+
+  @override
+  String get wirdFreeStartListening => 'ابدأ الاستماع';
+
+  @override
+  String get wirdFreeStopListening => 'إيقاف مؤقت';
+
+  @override
+  String get wirdFreeCompletedTitle => 'انتهى العداد';
+
+  @override
+  String get wirdFreeCompletedBody => 'لقد بلغت عدد التكرارات المحدد.';
+
+  @override
+  String get wirdFreeNewCounterButton => 'عداد جديد';
+
+  @override
   String get khadaraEventsTab => 'المناسبات';
 
   @override

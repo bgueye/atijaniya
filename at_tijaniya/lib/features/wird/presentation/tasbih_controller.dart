@@ -14,6 +14,7 @@ import '../data/tasbih_voice_service.dart';
 import '../data/wird_completion_store.dart';
 import '../domain/tasbih_session.dart';
 import '../domain/wird_models.dart';
+import 'wird_counter_feedback.dart';
 
 class TasbihState {
   const TasbihState({
@@ -97,6 +98,7 @@ class TasbihController extends StateNotifier<TasbihState> {
     _store.save(next);
     if (next.currentCount >= targetCount) {
       _stopVoiceLoop();
+      playWirdCounterCompleteFeedback();
     }
   }
 

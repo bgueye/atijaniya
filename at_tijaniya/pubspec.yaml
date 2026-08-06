@@ -51,6 +51,9 @@ dependencies:
   # lit le numéro de version déclaré dans pubspec.yaml à l'exécution, plutôt
   # que de le dupliquer en dur dans le code.
   package_info_plus: ^8.0.0
+  # Rendu du logo Sceau-rosace (assets/branding/logo-fond-sombre.svg) sur
+  # l'écran de démarrage — Image.asset ne rend pas nativement le SVG.
+  flutter_svg: ^2.3.0
 
 dev_dependencies:
   flutter_test:

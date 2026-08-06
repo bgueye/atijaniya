@@ -164,6 +164,73 @@ class AppLocalizationsFr extends AppLocalizations {
   String get wirdHadratouJouma => 'Hadratou-l-Jouma';
 
   @override
+  String get wirdFreeTitle => 'Wird libre';
+
+  @override
+  String get wirdFreeSubtitle => 'Paramétrez votre propre compteur';
+
+  @override
+  String get wirdFreeSetupTitle => 'Nouveau compteur libre';
+
+  @override
+  String get wirdFreeLabelFieldLabel => 'Que récitez-vous ? (optionnel)';
+
+  @override
+  String get wirdFreeTargetFieldLabel => 'Nombre de répétitions';
+
+  @override
+  String get wirdFreeTargetRequired =>
+      'Indiquez un nombre de répétitions supérieur à 0.';
+
+  @override
+  String get wirdFreeStartButton => 'Commencer';
+
+  @override
+  String get wirdFreeManualMode => 'Tape manuel';
+
+  @override
+  String get wirdFreeVoiceMode => 'Voix';
+
+  @override
+  String get wirdFreeUndo => 'Corriger -1';
+
+  @override
+  String get wirdFreeReset => 'Réinitialiser';
+
+  @override
+  String get wirdFreeFinishButton => 'Terminer';
+
+  @override
+  String get wirdFreeTapToCount => 'Toucher pour compter';
+
+  @override
+  String get wirdFreeListeningActive =>
+      'À l\'écoute — récitez, une pause de silence = +1';
+
+  @override
+  String get wirdFreeListeningPaused => 'Micro en pause';
+
+  @override
+  String get wirdFreeVoiceUnavailable =>
+      'Reconnaissance vocale indisponible sur cet appareil.';
+
+  @override
+  String get wirdFreeStartListening => 'Démarrer l\'écoute';
+
+  @override
+  String get wirdFreeStopListening => 'Mettre en pause';
+
+  @override
+  String get wirdFreeCompletedTitle => 'Compteur terminé';
+
+  @override
+  String get wirdFreeCompletedBody =>
+      'Vous avez atteint l\'objectif de répétitions fixé.';
+
+  @override
+  String get wirdFreeNewCounterButton => 'Nouveau compteur';
+
+  @override
   String get khadaraEventsTab => 'Évènements';
 
   @override

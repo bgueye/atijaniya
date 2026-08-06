@@ -394,6 +394,112 @@ repositionnés, texte du CTA lisible sur une ligne), et tap du bouton
 confirmé ramenant bien à la liste d'évènements Khadara déjà peuplée de
 données réelles.
 
+Wird libre (module Wirds, complément aux P0/P1) fonctionnel
+(`lib/features/wird/domain/free_wird_session.dart`,
+`data/free_wird_store.dart`, `presentation/free_wird_controller.dart`,
+`presentation/free_wird_screen.dart`, accessible via une 4ᵉ carte "Wird
+libre" en bas de la liste des wirds, `wird_list_screen.dart`) : un compteur
+que le disciple paramètre lui-même (nom libre optionnel + cible de
+répétitions obligatoire), pour un dhikr personnel en dehors de
+Lazim/Wazifa/Hadratou-l-Jouma. Ce n'est pas un `Wird` du corpus validé
+(pas de piliers, pas de texte arabe/translittération/traduction fourni par
+l'app) : le nom saisi est entièrement privé au disciple, jamais publié ni
+suggéré par l'app (pas d'exemple de dhikr dans le placeholder), donc hors
+du champ de la règle "contenu religieux" de CLAUDE.md, qui ne s'applique
+qu'au contenu publié par l'app elle-même. Tape manuelle et reconnaissance
+vocale (réutilise `TasbihVoiceService`, déjà découplé de tout `Wird`
+précis), Corriger -1/Réinitialiser, bouton "Terminer" une fois la cible
+atteinte. Reprise de session automatique (un seul compteur libre en cours
+à la fois, `FreeWirdStore`) ; volontairement pas d'historique/streak
+(`WirdProgressStats`/`WirdCompletionStore` supposent une fréquence fixe,
+qu'un wird libre n'a pas).
+
+Volontairement laissé à l'écart de `tasbih_screen.dart`/
+`tasbih_controller.dart` (écran P0 déjà validé en conditions réelles,
+piloté par `Wird.pillars`) : code autonome plutôt qu'un refactor partagé,
+pour ne prendre aucun risque de régression sur ce dernier. Petite
+dette assumée : les puces de cible rapide (33/99/100/1000) sont un
+`Container` fait main plutôt qu'un `ChoiceChip` — le thème M3 par défaut de
+l'app (aucun `chipTheme` personnalisé dans `app_theme.dart`) rendait le
+texte des `ChoiceChip` illisible sur le thème immersif sombre malgré des
+couleurs explicites passées au widget ; même approche que
+`_RepetitionBadge` (`wird_detail_screen.dart`), déjà utilisée ailleurs dans
+le module Wird.
+
+Validé en conditions réelles sur émulateur Android : configuration d'un
+compteur (nom + cible via puce rapide), validation bloquant une cible
+vide/nulle, comptage en tape manuelle jusqu'à la cible, "Terminer" puis
+"Nouveau compteur" revenant à un formulaire vide ; reprise confirmée après
+`am force-stop` + relance à froid (compteur retrouvé en cours, incrémentable)
+; vérifié aussi en arabe (RTL correct — segmented button, puces, boutons
+Corriger/Réinitialiser tous repositionnés). Lazim/Wazifa/Hadratou-l-Jouma
+et leur Tasbih revérifiés fonctionnels après coup (aucune régression liée à
+la modification de `wird_list_screen.dart`).
+
+## Design system — thème Material 3 et logo (raffinements transverses)
+
+`ColorScheme` (`lib/core/theme/app_theme.dart`) complété au-delà des 8 champs
+"historiques" (primary/secondary/error/surface + leurs "on*") : les rôles
+M3 plus récents (containers, `surfaceContainer*`, `onSurfaceVariant`,
+`outline`/`outlineVariant`, `inverseSurface`, `surfaceTint`...) n'étaient pas
+renseignés, donc silencieusement retombés sur des valeurs par défaut
+génériques sans rapport avec la palette de marque (confirmé en lisant les
+defaults M3 du SDK Flutter local : ex. `ChoiceChip`/`SegmentedButton`
+utilisent `secondaryContainer`/`onSurfaceVariant`/`surfaceContainerLow`, qui
+héritaient de `secondary`/`onSurface`/`surface` par défaut). Chaque rôle est
+désormais mappé explicitement vers `AppColors` (bronze devient `tertiary` —
+mapping naturel avec son rôle déjà défini dans `design_tokens.yaml` : "texte
+secondaire, bordures, légendes"), avec des valeurs différentes en thème
+clair/immersif. `surfaceTint` mis à `Colors.transparent` pour éviter le
+voile de teinte M3 automatique sur les surfaces élevées (déjà gérées
+explicitement par `cardTheme`). Effet visible : tout futur composant M3
+(Chip, Slider, Switch, Menu, Dialog, SnackBar...) hérite désormais de la
+palette de marque au lieu d'un fallback Material générique — validé sur le
+`Chip` de type d'évènement dans `event_detail_screen.dart` (texte bronze
+au lieu d'ink par défaut, plus conforme au rôle "texte secondaire").
+
+Logo Sceau-rosace (`assets/branding/`) réellement affiché pour la première
+fois : `flutter_svg` ajouté (dépendance manquante, déjà anticipée par un
+commentaire TODO dans `splash_screen.dart`) pour rendre
+`logo-fond-sombre.svg` sur l'écran de démarrage — remplace l'ancien
+`errorBuilder` de repli (simple cercle doré) qui s'affichait systématiquement
+faute de support SVG par `Image.asset`. Le logo (variante `fond-clair`, PNG)
+est aussi ajouté à `language_selection_screen.dart`, qui n'affichait
+auparavant qu'un texte brut "At-Tijaniya" sans aucune marque visuelle.
+
+Validé en conditions réelles sur émulateur Android : logo visible et net sur
+l'écran de choix de langue (les deux variantes de police/couleur du seau
+bien rendues) ; navigation Khadara → détail d'un évènement confirmant que le
+`Chip` "Ziyara" reste lisible et bien coloré après la complétion du
+`ColorScheme` ; Lazim/Wazifa/Hadratou-l-Jouma non re-régressés. Note de
+session : l'émulateur a connu un plantage de SystemUI ("System UI isn't
+responding") après une session de test très longue — sans lien avec ces
+changements (confirmé par `flutter analyze` + suite de tests complète tous
+deux au vert), résolu par un redémarrage de l'émulateur.
+
+Retour haptique + sonore à la complétion d'un compteur
+(`lib/features/wird/presentation/wird_counter_feedback.dart`,
+`playWirdCounterCompleteFeedback()`) : vibration (`HapticFeedback.
+heavyImpact()`) + son système (`SystemSound.play(SystemSoundType.click)`),
+déclenché dès qu'un compteur atteint sa cible — un seul point d'appel
+partagé, branché dans `TasbihController.increment()` (les trois wirds
+validés, par pilier — donc à chaque pilier terminé, pas seulement à la fin
+du wird) et dans `FreeWirdController.increment()` (Wird libre). Couvre tape
+manuelle et reconnaissance vocale, puisque les deux passent par la même
+méthode `increment()`. `SystemSoundType.click` plutôt qu'`alert` :
+`alert` est explicitement ignoré sur mobile (Android/iOS) par
+l'implémentation Flutter elle-même — seul `click` est audible sur les
+plateformes ciblées par ce projet. Aucune permission Android
+supplémentaire : ces API passent par le retour haptique/sonore de la vue,
+pas par le service `Vibrator` brut.
+
+Validé sur émulateur Android : compteur Wird libre mené jusqu'à sa cible
+(99), `playWirdCounterCompleteFeedback()` déclenché sans exception dans les
+logs. Le rendu physique de la vibration n'est pas vérifiable sur émulateur
+(pas de capteur haptique), mais le chemin de code est strictement identique
+à celui du Tasbih des wirds validés (même signature `increment()`), déjà
+couvert par ce test.
+
 ## Commandes utiles
 - `flutter pub get`
 - `flutter analyze`

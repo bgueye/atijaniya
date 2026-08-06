@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 import '../../../core/theme/app_colors.dart';
 
@@ -42,12 +43,9 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
           child: SizedBox(
             width: 160,
             height: 160,
-            child: Image.asset(
+            child: SvgPicture.asset(
               'assets/branding/logo-fond-sombre.svg',
-              // Note : Image.asset ne rend pas nativement le SVG. À remplacer
-              // en Phase 2 par flutter_svg (dépendance à ajouter) une fois le
-              // projet initialisé avec `flutter create`.
-              errorBuilder: (context, error, stackTrace) => const Icon(
+              placeholderBuilder: (context) => const Icon(
                 Icons.circle_outlined,
                 color: AppColors.gold,
                 size: 96,

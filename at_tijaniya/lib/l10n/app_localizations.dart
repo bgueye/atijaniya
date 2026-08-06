@@ -380,6 +380,132 @@ abstract class AppLocalizations {
   /// **'Hadratou-l-Jouma'**
   String get wirdHadratouJouma;
 
+  /// No description provided for @wirdFreeTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Wird libre'**
+  String get wirdFreeTitle;
+
+  /// No description provided for @wirdFreeSubtitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Paramétrez votre propre compteur'**
+  String get wirdFreeSubtitle;
+
+  /// No description provided for @wirdFreeSetupTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Nouveau compteur libre'**
+  String get wirdFreeSetupTitle;
+
+  /// No description provided for @wirdFreeLabelFieldLabel.
+  ///
+  /// In fr, this message translates to:
+  /// **'Que récitez-vous ? (optionnel)'**
+  String get wirdFreeLabelFieldLabel;
+
+  /// No description provided for @wirdFreeTargetFieldLabel.
+  ///
+  /// In fr, this message translates to:
+  /// **'Nombre de répétitions'**
+  String get wirdFreeTargetFieldLabel;
+
+  /// No description provided for @wirdFreeTargetRequired.
+  ///
+  /// In fr, this message translates to:
+  /// **'Indiquez un nombre de répétitions supérieur à 0.'**
+  String get wirdFreeTargetRequired;
+
+  /// No description provided for @wirdFreeStartButton.
+  ///
+  /// In fr, this message translates to:
+  /// **'Commencer'**
+  String get wirdFreeStartButton;
+
+  /// No description provided for @wirdFreeManualMode.
+  ///
+  /// In fr, this message translates to:
+  /// **'Tape manuel'**
+  String get wirdFreeManualMode;
+
+  /// No description provided for @wirdFreeVoiceMode.
+  ///
+  /// In fr, this message translates to:
+  /// **'Voix'**
+  String get wirdFreeVoiceMode;
+
+  /// No description provided for @wirdFreeUndo.
+  ///
+  /// In fr, this message translates to:
+  /// **'Corriger -1'**
+  String get wirdFreeUndo;
+
+  /// No description provided for @wirdFreeReset.
+  ///
+  /// In fr, this message translates to:
+  /// **'Réinitialiser'**
+  String get wirdFreeReset;
+
+  /// No description provided for @wirdFreeFinishButton.
+  ///
+  /// In fr, this message translates to:
+  /// **'Terminer'**
+  String get wirdFreeFinishButton;
+
+  /// No description provided for @wirdFreeTapToCount.
+  ///
+  /// In fr, this message translates to:
+  /// **'Toucher pour compter'**
+  String get wirdFreeTapToCount;
+
+  /// No description provided for @wirdFreeListeningActive.
+  ///
+  /// In fr, this message translates to:
+  /// **'À l\'écoute — récitez, une pause de silence = +1'**
+  String get wirdFreeListeningActive;
+
+  /// No description provided for @wirdFreeListeningPaused.
+  ///
+  /// In fr, this message translates to:
+  /// **'Micro en pause'**
+  String get wirdFreeListeningPaused;
+
+  /// No description provided for @wirdFreeVoiceUnavailable.
+  ///
+  /// In fr, this message translates to:
+  /// **'Reconnaissance vocale indisponible sur cet appareil.'**
+  String get wirdFreeVoiceUnavailable;
+
+  /// No description provided for @wirdFreeStartListening.
+  ///
+  /// In fr, this message translates to:
+  /// **'Démarrer l\'écoute'**
+  String get wirdFreeStartListening;
+
+  /// No description provided for @wirdFreeStopListening.
+  ///
+  /// In fr, this message translates to:
+  /// **'Mettre en pause'**
+  String get wirdFreeStopListening;
+
+  /// No description provided for @wirdFreeCompletedTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Compteur terminé'**
+  String get wirdFreeCompletedTitle;
+
+  /// No description provided for @wirdFreeCompletedBody.
+  ///
+  /// In fr, this message translates to:
+  /// **'Vous avez atteint l\'objectif de répétitions fixé.'**
+  String get wirdFreeCompletedBody;
+
+  /// No description provided for @wirdFreeNewCounterButton.
+  ///
+  /// In fr, this message translates to:
+  /// **'Nouveau compteur'**
+  String get wirdFreeNewCounterButton;
+
   /// No description provided for @khadaraEventsTab.
   ///
   /// In fr, this message translates to:

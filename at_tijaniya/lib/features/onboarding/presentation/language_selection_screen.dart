@@ -20,6 +20,13 @@ class LanguageSelectionScreen extends ConsumerWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
+              Image.asset(
+                'assets/branding/logo-fond-clair-1024.png',
+                width: 108,
+                height: 108,
+                errorBuilder: (context, error, stackTrace) => const SizedBox(height: 108),
+              ),
+              const SizedBox(height: 16),
               const Text(
                 'At-Tijaniya',
                 textAlign: TextAlign.center,
