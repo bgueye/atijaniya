@@ -117,6 +117,8 @@
   "figureZiyaraSectionTitle": "الزيارات",
   "figureBiographyPending": "السيرة قيد التحقق من صحتها.",
   "figureSilsilaPending": "السلسلة التاريخية لهذه الشخصية غير متوفرة بعد.",
+  "figureSilsilaLoadError": "تعذّر تحميل السلسلة التاريخية.",
+  "figureSilsilaFounderLabel": "مؤسس الطريقة",
   "figureCitationsEmpty": "لا توجد أقوال مسجَّلة حاليًا.",
   "figureZiyarasPending": "لم تُسجَّل بعد أي زيارة مرتبطة.",
 

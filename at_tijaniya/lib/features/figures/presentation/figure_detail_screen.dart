@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../l10n/app_localizations.dart';
 import '../domain/figure_models.dart';
+import 'figures_providers.dart';
 
 /// Biographie détaillée d'une figure — en-tête immersif (rosace + noms) et
 /// onglets Biographie/Silsila/Citations/Ziyaras. Priorité P1
@@ -13,12 +15,14 @@ import '../domain/figure_models.dart';
 ///
 /// Le contenu affiché ici provient exclusivement de la table Supabase
 /// `figures` (voir `figure_models.dart`) — aucun texte religieux inventé.
-/// Les onglets "Silsila" et "Ziyaras" n'ont aujourd'hui aucune source de
-/// données réelle (aucune requête vers `historical_silsila_links`, aucune
-/// colonne "ziyara" alimentée sur `figures` — `Figure.ziyaraNote` reste donc
-/// toujours `null` pour une figure venant de la base) : ils affichent un
-/// état honnête "pas encore disponible" plutôt qu'un contenu simulé, même
-/// logique que "Comprendre la Khadara" (`khadara_understanding_screen.dart`).
+/// L'onglet Silsila lit `get_historical_silsila_chain()` (RPC, voir
+/// `FiguresRepository.fetchHistoricalSilsilaChain`) et affiche un état
+/// honnête "pas encore disponible" pour toute figure qui n'a pas encore de
+/// silsila documentée. L'onglet Ziyaras suit la même logique : aucune
+/// colonne "ziyara" n'est encore alimentée sur `figures`
+/// (`Figure.ziyaraNote` reste donc toujours `null` pour une figure venant
+/// de la base) — même principe que "Comprendre la Khadara"
+/// (`khadara_understanding_screen.dart`).
 class FigureDetailScreen extends StatelessWidget {
   const FigureDetailScreen({super.key, required this.figure});
 
@@ -58,7 +62,7 @@ class FigureDetailScreen extends StatelessWidget {
               child: TabBarView(
                 children: [
                   _BiographyTab(figure: figure),
-                  _PendingTab(message: l10n.figureSilsilaPending),
+                  _SilsilaTab(figure: figure),
                   _CitationsTab(figure: figure),
                   _ZiyarasTab(figure: figure),
                 ],
@@ -83,7 +87,12 @@ class _FigureHero extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return DecoratedBox(
+    return Container(
+      // `width: double.infinity` explicite : sans lui, ce conteneur hérite du
+      // centrage par défaut du `Column` parent (`crossAxisAlignment.center`)
+      // et se réduit à la largeur de son contenu (les noms) au lieu de
+      // couvrir toute la largeur de l'écran comme un bandeau.
+      width: double.infinity,
       decoration: const BoxDecoration(
         gradient: LinearGradient(
           begin: Alignment.topCenter,
@@ -93,45 +102,46 @@ class _FigureHero extends StatelessWidget {
       ),
       child: SafeArea(
         bottom: false,
-        child: SizedBox(
-          height: 176,
-          child: Stack(
-            alignment: Alignment.center,
-            children: [
-              const Positioned(
-                top: 8,
-                child: Opacity(
-                  opacity: 0.12,
-                  child: SizedBox(width: 140, height: 140, child: CustomPaint(painter: _RosacePainter())),
-                ),
+        // Hauteur laissée libre (pas de `SizedBox` à hauteur fixe) : une
+        // valeur fixe s'additionnerait à l'espacement déjà ajouté par
+        // `SafeArea` pour la barre de statut, rendant l'en-tête plus haut
+        // que prévu. Le padding vertical ci-dessous fixe la hauteur perçue.
+        child: Stack(
+          alignment: Alignment.center,
+          children: [
+            const Positioned(
+              top: 4,
+              child: Opacity(
+                opacity: 0.12,
+                child: SizedBox(width: 110, height: 110, child: CustomPaint(painter: _RosacePainter())),
               ),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 24),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Text(
-                      figure.nameArabic,
-                      textDirection: TextDirection.rtl,
-                      textAlign: TextAlign.center,
-                      style: AppTheme.sacredText(fontSize: 24, color: AppColors.goldSoft),
-                    ),
-                    const SizedBox(height: 6),
-                    Text(
-                      figure.nameFrench.toUpperCase(),
-                      textAlign: TextAlign.center,
-                      style: const TextStyle(color: _subtitleColor, fontSize: 12, letterSpacing: 1.4),
-                    ),
-                  ],
-                ),
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 22),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    figure.nameArabic,
+                    textDirection: TextDirection.rtl,
+                    textAlign: TextAlign.center,
+                    style: AppTheme.sacredText(fontSize: 22, color: AppColors.goldSoft),
+                  ),
+                  const SizedBox(height: 6),
+                  Text(
+                    figure.nameFrench.toUpperCase(),
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(color: _subtitleColor, fontSize: 12, letterSpacing: 1.4),
+                  ),
+                ],
               ),
-              const PositionedDirectional(
-                top: 4,
-                start: 4,
-                child: BackButton(color: AppColors.parchment),
-              ),
-            ],
-          ),
+            ),
+            const PositionedDirectional(
+              top: 4,
+              start: 4,
+              child: BackButton(color: AppColors.parchment),
+            ),
+          ],
         ),
       ),
     );
@@ -219,6 +229,119 @@ class _BiographyTab extends StatelessWidget {
     return ListView(
       padding: const EdgeInsets.all(20),
       children: [for (final paragraph in biography) _BiographyParagraph(paragraph: paragraph)],
+    );
+  }
+}
+
+class _SilsilaTab extends ConsumerWidget {
+  const _SilsilaTab({required this.figure});
+
+  final Figure figure;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
+    final chainAsync = ref.watch(historicalSilsilaChainProvider(figure.id));
+
+    return chainAsync.when(
+      loading: () => const Center(child: CircularProgressIndicator(color: AppColors.emerald)),
+      error: (error, stackTrace) => Center(
+        child: Padding(
+          padding: const EdgeInsets.all(24),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Icon(Icons.wifi_off, color: AppColors.bronze, size: 32),
+              const SizedBox(height: 12),
+              Text(
+                l10n.figureSilsilaLoadError,
+                textAlign: TextAlign.center,
+                style: const TextStyle(color: AppColors.bronze),
+              ),
+              const SizedBox(height: 12),
+              OutlinedButton(
+                onPressed: () => ref.invalidate(historicalSilsilaChainProvider(figure.id)),
+                child: Text(l10n.figuresRetry),
+              ),
+            ],
+          ),
+        ),
+      ),
+      data: (chain) {
+        if (chain.isEmpty) return _PendingTab(message: l10n.figureSilsilaPending);
+        return ListView(
+          padding: const EdgeInsets.all(20),
+          children: [
+            for (var i = 0; i < chain.length; i++) ...[
+              _SilsilaNode(
+                link: chain[i],
+                isSelf: chain[i].figureId == figure.id,
+                founderLabel: l10n.figureSilsilaFounderLabel,
+              ),
+              if (i != chain.length - 1) const _SilsilaConnector(),
+            ],
+          ],
+        );
+      },
+    );
+  }
+}
+
+/// Trait fin reliant deux maillons de la silsila (`.chain-link` de la
+/// maquette, bloc 07/08).
+class _SilsilaConnector extends StatelessWidget {
+  const _SilsilaConnector();
+
+  @override
+  Widget build(BuildContext context) {
+    return const Center(child: SizedBox(width: 1.5, height: 16, child: ColoredBox(color: AppColors.gold)));
+  }
+}
+
+/// Un maillon de la silsila (`.chain-node` de la maquette) : fond zaytoune
+/// distinctif pour la racine de la chaîne (`orderIndex == 0`, toujours
+/// Cheikh Ahmed Tijani dans les données actuelles — voir la migration
+/// `add_historical_silsila_chain_data_and_function`), bordure dorée pour la
+/// figure actuellement consultée.
+class _SilsilaNode extends StatelessWidget {
+  const _SilsilaNode({required this.link, required this.isSelf, required this.founderLabel});
+
+  final HistoricalSilsilaLink link;
+  final bool isSelf;
+  final String founderLabel;
+
+  @override
+  Widget build(BuildContext context) {
+    final isRoot = link.orderIndex == 0;
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      decoration: BoxDecoration(
+        color: isRoot ? AppColors.zaytoune : AppColors.offWhite,
+        borderRadius: BorderRadius.circular(12),
+        border: isSelf ? Border.all(color: AppColors.gold, width: 2) : null,
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(
+            link.nameAr,
+            textDirection: TextDirection.rtl,
+            textAlign: TextAlign.center,
+            style: AppTheme.sacredText(fontSize: isRoot ? 18 : 15, color: isRoot ? AppColors.goldSoft : AppColors.zaytoune),
+          ),
+          const SizedBox(height: 2),
+          Text(
+            link.nameFr,
+            textAlign: TextAlign.center,
+            style: TextStyle(fontSize: 12, color: isRoot ? AppColors.parchment : AppColors.bronze),
+          ),
+          if (isRoot) ...[
+            const SizedBox(height: 2),
+            Text(founderLabel, style: const TextStyle(fontSize: 10, color: AppColors.gold, fontWeight: FontWeight.w600)),
+          ],
+        ],
+      ),
     );
   }
 }

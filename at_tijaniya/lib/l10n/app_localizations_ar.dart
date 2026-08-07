@@ -351,6 +351,12 @@ class AppLocalizationsAr extends AppLocalizations {
       'السلسلة التاريخية لهذه الشخصية غير متوفرة بعد.';
 
   @override
+  String get figureSilsilaLoadError => 'تعذّر تحميل السلسلة التاريخية.';
+
+  @override
+  String get figureSilsilaFounderLabel => 'مؤسس الطريقة';
+
+  @override
   String get figureCitationsEmpty => 'لا توجد أقوال مسجَّلة حاليًا.';
 
   @override

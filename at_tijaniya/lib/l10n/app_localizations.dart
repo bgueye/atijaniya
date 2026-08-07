@@ -746,6 +746,18 @@ abstract class AppLocalizations {
   /// **'La silsila historique de cette figure n\'est pas encore disponible.'**
   String get figureSilsilaPending;
 
+  /// No description provided for @figureSilsilaLoadError.
+  ///
+  /// In fr, this message translates to:
+  /// **'Impossible de charger la silsila historique.'**
+  String get figureSilsilaLoadError;
+
+  /// No description provided for @figureSilsilaFounderLabel.
+  ///
+  /// In fr, this message translates to:
+  /// **'Fondateur de la tarikha'**
+  String get figureSilsilaFounderLabel;
+
   /// No description provided for @figureCitationsEmpty.
   ///
   /// In fr, this message translates to:

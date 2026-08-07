@@ -117,6 +117,8 @@
   "figureZiyaraSectionTitle": "Ziyaras",
   "figureBiographyPending": "Biographie en attente de validation.",
   "figureSilsilaPending": "La silsila historique de cette figure n'est pas encore disponible.",
+  "figureSilsilaLoadError": "Impossible de charger la silsila historique.",
+  "figureSilsilaFounderLabel": "Fondateur de la tarikha",
   "figureCitationsEmpty": "Aucune citation renseignée pour le moment.",
   "figureZiyarasPending": "Aucune ziyara associée n'est encore renseignée.",
 

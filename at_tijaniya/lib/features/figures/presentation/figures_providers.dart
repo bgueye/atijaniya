@@ -15,3 +15,9 @@ final figuresProvider = FutureProvider<List<Figure>>((ref) {
 final draftFiguresProvider = FutureProvider<List<Figure>>((ref) {
   return ref.watch(figuresRepositoryProvider).fetchDraftFigures();
 });
+
+/// Silsila historique d'une figure donnée (onglet "Silsila",
+/// `figure_detail_screen.dart`) — `family` car paramétré par `figureId`.
+final historicalSilsilaChainProvider = FutureProvider.family<List<HistoricalSilsilaLink>, String>((ref, figureId) {
+  return ref.watch(figuresRepositoryProvider).fetchHistoricalSilsilaChain(figureId);
+});

@@ -644,6 +644,86 @@ sur les 4 onglets, bouton retour ramenant à la liste. Revalidé en arabe
 soulignement actif du bon côté, contenu français toujours lisible
 gauche-à-droite dans le contexte RTL.
 
+Bug trouvé et corrigé juste après (signalé par le porteur de projet) :
+l'en-tête immersif de `_FigureHero` ne couvrait qu'une bande étroite
+centrée au lieu de toute la largeur de l'écran, et débordait plus haut que
+prévu sous la barre de statut. Deux causes cumulées : (1) `DecoratedBox`
+sans largeur explicite hérite du centrage par défaut du `Column` parent
+(`crossAxisAlignment.center`) et se réduit à la largeur de son contenu —
+corrigé avec un `Container(width: double.infinity, ...)` ; (2) un
+`SizedBox` à hauteur fixe (176) à l'intérieur d'un `SafeArea` s'additionne
+à l'espacement déjà ajouté par `SafeArea` pour la barre de statut, au lieu
+de l'inclure — corrigé en laissant la hauteur libre (padding vertical sur
+le contenu plutôt qu'une hauteur figée). Revalidé sur émulateur Android en
+français et en arabe : bandeau plein-largeur, hauteur compacte conforme à
+la maquette.
+
+Silsila historique (généalogie spirituelle de la tarikha, onglet "Silsila")
+fonctionnelle avec de vraies données — dernier grand vide du module Figures
+listé comme manquant. Source : `docs/Silsila-El-Hadj-Malick-Sy.md`,
+`docs/Silsila-El-Hadj-Oumar-Tall.md`, `docs/Silsila-El-Hadj-Ibrahima-Niasse.md`
+— ces trois documents se terminaient chacun par une recommandation de
+relecture par un moqaddam/érudit avant intégration ; **confirmés validés
+explicitement par le porteur de projet le 2026-08-08**, en tant qu'autorité
+de validation du contenu (même précédent que pour le contenu des Wirds),
+malgré cette recommandation. Migration Supabase
+`add_historical_silsila_chain_data_and_function` :
+
+- Les quatre figures déjà validées (Cheikh Ahmed Tijani, El Hadj Oumar
+  Tall, El Hadj Malick Sy, El Hadj Ibrahima Niasse) partagent un tronc
+  commun documenté par les sources — modélisé comme UN seul arbre dans
+  `historical_silsila_links` (Cheikh Mouhamadoul Khaly et El Hadj Oumar
+  Tall ne sont chacun référencés qu'une fois) plutôt que trois chaînes
+  indépendantes.
+- Quatre maillons intermédiaires sans fiche biographique validée (Cheikh
+  Mouhamadoul Khaly, Alpha Mayoro Wélé, Ibrahima Kelel Thiam, El Hadj
+  Abdoulaye Niasse) insérés comme figures minimales dans `figures` — nom
+  AR/FR uniquement, `content_status = 'brouillon'` (décision explicite du
+  porteur de projet : leur existence dans la chaîne est validée, pas leur
+  fiche complète). Noms arabes : translittérations produites par le
+  modèle (les documents source ne donnaient que la graphie latine) — à
+  vérifier lors de la validation éditoriale de leur fiche. Volontairement
+  hors périmètre : la "seconde chaîne" maghrébine et la "chaîne cachée"
+  mentionnées dans `Silsila-El-Hadj-Ibrahima-Niasse.md` (non détaillées par
+  les sources elles-mêmes), et "Le Prophète Muhammad" comme nœud de la
+  chaîne d'El Hadj Oumar Tall (lien de vision doctrinale, pas une
+  transmission maître-disciple comme les autres maillons — Cheikh Ahmed
+  Tijani reste la racine de l'arbre).
+- Nettoyage : 4 lignes `historical_silsila_links` préexistantes,
+  incomplètes/incohérentes avec les sources validées (trouvées lors de la
+  vérification post-migration — chaînes raccourcies sautant Cheikh
+  Mouhamadoul Khaly, probablement un jeu de données d'amorçage antérieur à
+  ce travail), supprimées après vérification pour ne garder qu'une seule
+  chaîne cohérente par figure.
+- Fonction Postgres `get_historical_silsila_chain(p_figure_id)` (CTE
+  récursif, même principe que `get_ijaza_chain()` pour la silsila
+  d'ijaza du mouqaddam) — `SECURITY DEFINER`, contrairement à
+  `get_ijaza_chain()` : indispensable ici, car les policies RLS
+  `figures_read_valid_or_admin`/`silsila_links_read_valid_or_admin`
+  masqueraient sinon les maillons `brouillon` à un disciple non admin,
+  cassant la chaîne. Ne renvoie que nom/catégorie/rang, jamais de contenu
+  biographique. Avertissement advisor "SECURITY DEFINER exécutable par
+  anon/authenticated" attendu et volontaire (même schéma qu'une fonction
+  déjà présente dans le projet, `is_conversation_participant`).
+
+Côté app : `HistoricalSilsilaLink` (`figure_models.dart`),
+`FiguresRepository.fetchHistoricalSilsilaChain` (RPC),
+`historicalSilsilaChainProvider` (`figures_providers.dart`, `family`), et
+`_SilsilaTab`/`_SilsilaNode`/`_SilsilaConnector` dans
+`figure_detail_screen.dart` remplacent l'ancien `_PendingTab` fixe de
+l'onglet Silsila. Racine de chaîne (`orderIndex == 0`) stylée en carte
+zaytoune avec libellé "Fondateur de la tarikha" (dérivé de la position
+dans l'arbre, pas d'un champ inventé — toutes les chaînes actuelles ont
+Cheikh Ahmed Tijani en racine) ; figure consultée mise en évidence par une
+bordure dorée, conforme à la maquette (`.chain-node.founder`/`.self`).
+
+Validé en conditions réelles sur émulateur Android contre le projet
+Supabase live, en français puis en arabe (RTL) : chaînes d'El Hadj
+Ibrahima Niasse (6 maillons) et d'El Hadj Malick Sy (5 maillons) affichées
+correctement dans l'ordre fondateur → figure consultée, carte fondateur et
+bordure "figure actuelle" bien stylées, RTL correct (ordre des onglets et
+bouton retour inversés, libellé "مؤسس الطريقة" affiché).
+
 ## Commandes utiles
 - `flutter pub get`
 - `flutter analyze`

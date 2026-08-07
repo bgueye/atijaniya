@@ -49,4 +49,18 @@ class FiguresRepository {
   Future<void> validateFigure(String figureId) async {
     await SupabaseConfig.client.from('figures').update({'content_status': 'valide'}).eq('id', figureId);
   }
+
+  /// Silsila historique (généalogie spirituelle) depuis le fondateur
+  /// jusqu'à [figureId], via la fonction Postgres `get_historical_silsila_chain`
+  /// (`SECURITY DEFINER` — nécessaire pour résoudre les maillons
+  /// intermédiaires encore en `brouillon`, voir le commentaire de la
+  /// fonction dans `database/schema.sql`). Liste vide si cette figure n'a
+  /// pas encore de silsila documentée.
+  Future<List<HistoricalSilsilaLink>> fetchHistoricalSilsilaChain(String figureId) async {
+    final rows = await SupabaseConfig.client.rpc(
+      'get_historical_silsila_chain',
+      params: {'p_figure_id': figureId},
+    );
+    return (rows as List).map((row) => HistoricalSilsilaLink.fromRow(row as Map<String, dynamic>)).toList();
+  }
 }

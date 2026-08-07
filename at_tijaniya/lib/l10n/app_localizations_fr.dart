@@ -358,6 +358,13 @@ class AppLocalizationsFr extends AppLocalizations {
       'La silsila historique de cette figure n\'est pas encore disponible.';
 
   @override
+  String get figureSilsilaLoadError =>
+      'Impossible de charger la silsila historique.';
+
+  @override
+  String get figureSilsilaFounderLabel => 'Fondateur de la tarikha';
+
+  @override
   String get figureCitationsEmpty =>
       'Aucune citation renseignée pour le moment.';
 

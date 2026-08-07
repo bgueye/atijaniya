@@ -96,6 +96,38 @@ FigureCategory _categoryFromDb(String value) {
   return value == 'founder' ? FigureCategory.founder : FigureCategory.religiousFamily;
 }
 
+/// Un maillon de la silsila historique (généalogie spirituelle de la
+/// tarikha), du fondateur jusqu'à la figure consultée — voir
+/// `get_historical_silsila_chain()` (fonction Postgres,
+/// `database/schema.sql`). Distinct de la silsila d'ijaza du mouqaddam
+/// (§5.4.2, `get_ijaza_chain()`), qui décrit un tout autre graphe
+/// (parrainage entre disciples vivants).
+class HistoricalSilsilaLink {
+  const HistoricalSilsilaLink({
+    required this.figureId,
+    required this.nameAr,
+    required this.nameFr,
+    required this.category,
+    required this.orderIndex,
+  });
+
+  final String figureId;
+  final String nameAr;
+  final String nameFr;
+  final FigureCategory category;
+  final int orderIndex;
+
+  factory HistoricalSilsilaLink.fromRow(Map<String, dynamic> row) {
+    return HistoricalSilsilaLink(
+      figureId: row['figure_id'] as String,
+      nameAr: row['name_ar'] as String,
+      nameFr: row['name_fr'] as String,
+      category: _categoryFromDb(row['category'] as String),
+      orderIndex: row['order_index'] as int,
+    );
+  }
+}
+
 List<String> _biographySections(String bioText) {
   return bioText
       .split('\n\n')
