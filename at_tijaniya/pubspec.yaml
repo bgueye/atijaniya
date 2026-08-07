@@ -54,6 +54,13 @@ dependencies:
   # Rendu du logo Sceau-rosace (assets/branding/logo-fond-sombre.svg) sur
   # l'écran de démarrage — Image.asset ne rend pas nativement le SVG.
   flutter_svg: ^2.3.0
+  # Messagerie privée (docs/03-architecture-ecrans.md) : génère l'id d'une
+  # nouvelle conversation côté client avant l'insertion, pour ne jamais avoir
+  # à relire la ligne via RETURNING avant d'y être soi-même participant (la
+  # policy SELECT de `conversations` exige déjà d'être participant) — voir
+  # `messages_repository.dart`. Déjà résolue en dépendance transitive
+  # (supabase_flutter/gotrue), déclarée ici explicitement.
+  uuid: ^4.6.0
 
 dev_dependencies:
   flutter_test:

@@ -696,16 +696,74 @@ create policy group_posts_members_write on public.group_posts for insert
 
 create policy conversations_participants_read on public.conversations for select
   using (exists (select 1 from public.conversation_participants cp where cp.conversation_id = conversations.id and cp.user_id = (select auth.uid())));
+-- On peut toujours créer une conversation vide et s'y ajouter soi-même (symétrique à
+-- group_memberships_self_join). La policy SELECT ci-dessus la rend invisible tant
+-- qu'aucun autre participant n'y est ajouté.
+create policy conversations_authenticated_create on public.conversations
+  for insert with check ((select auth.uid()) is not null);
+
+-- conversation_participants_self_read et conversation_participants_insert
+-- référencent toutes les deux conversation_participants dans leur propre clause via
+-- une sous-requête corrélée : évaluer la policy déclenche une nouvelle évaluation de
+-- policy sur la même table, en boucle ("infinite recursion detected in policy for
+-- relation conversation_participants", 42P17 — trouvé en testant la Messagerie
+-- privée, jamais exercé avant faute de code client interrogeant cette table).
+-- Correctif : une fonction SECURITY DEFINER qui contourne RLS pour cette
+-- vérification interne, même patron que is_admin() déjà utilisé dans ce schéma.
+create or replace function public.is_conversation_participant(p_conversation_id uuid, p_user_id uuid)
+returns boolean
+language sql
+security definer
+set search_path = public
+stable
+as $$
+  select exists (
+    select 1 from public.conversation_participants cp
+    where cp.conversation_id = p_conversation_id and cp.user_id = p_user_id
+  );
+$$;
+revoke all on function public.is_conversation_participant(uuid, uuid) from public;
+grant execute on function public.is_conversation_participant(uuid, uuid) to authenticated;
+
 create policy conversation_participants_self_read on public.conversation_participants for select
-  using ((select auth.uid()) = user_id or exists (
-    select 1 from public.conversation_participants cp2
-    where cp2.conversation_id = conversation_participants.conversation_id and cp2.user_id = (select auth.uid())));
+  using (
+    (select auth.uid()) = user_id
+    or public.is_conversation_participant(conversation_participants.conversation_id, (select auth.uid()))
+  );
+create policy conversation_participants_insert on public.conversation_participants
+  for insert with check (
+    -- S'ajouter soi-même : toujours permis (créateur de la conversation).
+    (select auth.uid()) = user_id
+    or (
+      -- Ajouter quelqu'un d'autre : seulement si je suis déjà participant de cette
+      -- conversation ET que je partage au moins un groupe avec cette personne — la
+      -- messagerie privée n'est ouverte qu'entre disciples d'un même groupe, faute
+      -- d'annuaire public de disciples ailleurs dans l'app.
+      public.is_conversation_participant(conversation_participants.conversation_id, (select auth.uid()))
+      and exists (
+        select 1 from public.group_memberships gm1
+        join public.group_memberships gm2 on gm1.group_id = gm2.group_id
+        where gm1.user_id = (select auth.uid())
+          and gm2.user_id = conversation_participants.user_id
+      )
+    )
+  );
 
 create policy messages_participants_only on public.messages
   for select using (exists (
     select 1 from public.conversation_participants cp
     where cp.conversation_id = messages.conversation_id and cp.user_id = (select auth.uid())
   ));
+-- Symétrique à group_posts_members_write.
+create policy messages_participants_write on public.messages
+  for insert with check (
+    (select auth.uid()) = sender_id
+    and exists (
+      select 1 from public.conversation_participants cp
+      where cp.conversation_id = messages.conversation_id
+        and cp.user_id = (select auth.uid())
+    )
+  );
 
 -- ============================================================================
 -- 12. INDEX SUR CLÉS ÉTRANGÈRES (performance)

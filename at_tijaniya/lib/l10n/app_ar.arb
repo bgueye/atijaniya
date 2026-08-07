@@ -153,6 +153,14 @@
   "communityGroupsPostHint": "اكتب رسالة...",
   "communityGroupsLoadPostsError": "تعذّر تحميل النقاشات.",
 
+  "communityMessagesTooltip": "الرسائل",
+  "communityConversationsTitle": "المحادثات",
+  "communityConversationsEmpty": "لا توجد محادثات حاليًا.",
+  "communityConversationsLoadError": "تعذّر تحميل المحادثات.",
+  "communityConversationsRetry": "إعادة المحاولة",
+  "communityConversationsNoMessages": "لا توجد رسائل حاليًا. اكتب أول رسالة!",
+  "communitySendMessageButton": "إرسال رسالة",
+
   "profileTitle": "ملفي الشخصي",
   "profileMyLineage": "سلسلتي الروحية",
   "profileSettings": "الإعدادات",

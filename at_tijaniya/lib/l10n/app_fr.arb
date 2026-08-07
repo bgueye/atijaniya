@@ -153,6 +153,14 @@
   "communityGroupsPostHint": "Écrire un message...",
   "communityGroupsLoadPostsError": "Impossible de charger les discussions.",
 
+  "communityMessagesTooltip": "Messages",
+  "communityConversationsTitle": "Conversations",
+  "communityConversationsEmpty": "Aucune conversation pour le moment.",
+  "communityConversationsLoadError": "Impossible de charger les conversations.",
+  "communityConversationsRetry": "Réessayer",
+  "communityConversationsNoMessages": "Aucun message pour le moment. Écrivez le premier !",
+  "communitySendMessageButton": "Envoyer un message",
+
   "profileTitle": "Mon profil",
   "profileMyLineage": "Ma lignée spirituelle",
   "profileSettings": "Paramètres",

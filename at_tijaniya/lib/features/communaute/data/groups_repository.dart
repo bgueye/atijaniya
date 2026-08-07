@@ -85,7 +85,7 @@ class GroupsRepository {
         .from('group_posts')
         .select()
         .eq('group_id', groupId)
-        .order('created_at');
+        .order('created_at', ascending: true);
 
     final authorIds = rows.map((row) => row['author_user_id'] as String).toSet();
     final names = await _fetchDisplayNames(authorIds);

@@ -463,6 +463,30 @@ class AppLocalizationsFr extends AppLocalizations {
       'Impossible de charger les discussions.';
 
   @override
+  String get communityMessagesTooltip => 'Messages';
+
+  @override
+  String get communityConversationsTitle => 'Conversations';
+
+  @override
+  String get communityConversationsEmpty =>
+      'Aucune conversation pour le moment.';
+
+  @override
+  String get communityConversationsLoadError =>
+      'Impossible de charger les conversations.';
+
+  @override
+  String get communityConversationsRetry => 'Réessayer';
+
+  @override
+  String get communityConversationsNoMessages =>
+      'Aucun message pour le moment. Écrivez le premier !';
+
+  @override
+  String get communitySendMessageButton => 'Envoyer un message';
+
+  @override
   String get profileTitle => 'Mon profil';
 
   @override

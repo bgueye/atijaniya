@@ -944,6 +944,48 @@ abstract class AppLocalizations {
   /// **'Impossible de charger les discussions.'**
   String get communityGroupsLoadPostsError;
 
+  /// No description provided for @communityMessagesTooltip.
+  ///
+  /// In fr, this message translates to:
+  /// **'Messages'**
+  String get communityMessagesTooltip;
+
+  /// No description provided for @communityConversationsTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Conversations'**
+  String get communityConversationsTitle;
+
+  /// No description provided for @communityConversationsEmpty.
+  ///
+  /// In fr, this message translates to:
+  /// **'Aucune conversation pour le moment.'**
+  String get communityConversationsEmpty;
+
+  /// No description provided for @communityConversationsLoadError.
+  ///
+  /// In fr, this message translates to:
+  /// **'Impossible de charger les conversations.'**
+  String get communityConversationsLoadError;
+
+  /// No description provided for @communityConversationsRetry.
+  ///
+  /// In fr, this message translates to:
+  /// **'Réessayer'**
+  String get communityConversationsRetry;
+
+  /// No description provided for @communityConversationsNoMessages.
+  ///
+  /// In fr, this message translates to:
+  /// **'Aucun message pour le moment. Écrivez le premier !'**
+  String get communityConversationsNoMessages;
+
+  /// No description provided for @communitySendMessageButton.
+  ///
+  /// In fr, this message translates to:
+  /// **'Envoyer un message'**
+  String get communitySendMessageButton;
+
   /// No description provided for @profileTitle.
   ///
   /// In fr, this message translates to:

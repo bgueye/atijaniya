@@ -9,6 +9,7 @@ import '../domain/community_models.dart';
 import '../domain/group_models.dart';
 import 'community_format.dart';
 import 'community_providers.dart';
+import 'conversations_screen.dart';
 import 'group_detail_screen.dart';
 import 'groups_providers.dart';
 import 'post_detail_screen.dart';
@@ -33,13 +34,26 @@ class CommunauteScreen extends StatelessWidget {
       length: 2,
       child: Column(
         children: [
-          TabBar(
-            labelColor: AppColors.emerald,
-            unselectedLabelColor: AppColors.bronze,
-            indicatorColor: AppColors.emerald,
-            tabs: [
-              Tab(text: l10n.communityFeedTab),
-              Tab(text: l10n.communityGroupsTab),
+          Row(
+            children: [
+              Expanded(
+                child: TabBar(
+                  labelColor: AppColors.emerald,
+                  unselectedLabelColor: AppColors.bronze,
+                  indicatorColor: AppColors.emerald,
+                  tabs: [
+                    Tab(text: l10n.communityFeedTab),
+                    Tab(text: l10n.communityGroupsTab),
+                  ],
+                ),
+              ),
+              IconButton(
+                icon: const Icon(Icons.mail_outline, color: AppColors.bronze),
+                tooltip: l10n.communityMessagesTooltip,
+                onPressed: () => Navigator.of(context).push(
+                  MaterialPageRoute(builder: (_) => const ConversationsScreen()),
+                ),
+              ),
             ],
           ),
           const Expanded(

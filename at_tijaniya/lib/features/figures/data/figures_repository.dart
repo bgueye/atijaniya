@@ -23,8 +23,8 @@ class FiguresRepository {
         .from('figures')
         .select('*, figure_quotes(text_ar, text_fr, source_note)')
         .eq('content_status', 'valide')
-        .order('category')
-        .order('name_fr');
+        .order('category', ascending: true)
+        .order('name_fr', ascending: true);
     return rows.map((row) => Figure.fromRow(row)).toList();
   }
 
@@ -38,8 +38,8 @@ class FiguresRepository {
         .from('figures')
         .select('*, figure_quotes(text_ar, text_fr, source_note)')
         .eq('content_status', 'brouillon')
-        .order('category')
-        .order('name_fr');
+        .order('category', ascending: true)
+        .order('name_fr', ascending: true);
     return rows.map((row) => Figure.fromRow(row)).toList();
   }
 

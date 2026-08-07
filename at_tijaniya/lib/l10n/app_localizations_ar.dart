@@ -453,6 +453,28 @@ class AppLocalizationsAr extends AppLocalizations {
   String get communityGroupsLoadPostsError => 'تعذّر تحميل النقاشات.';
 
   @override
+  String get communityMessagesTooltip => 'الرسائل';
+
+  @override
+  String get communityConversationsTitle => 'المحادثات';
+
+  @override
+  String get communityConversationsEmpty => 'لا توجد محادثات حاليًا.';
+
+  @override
+  String get communityConversationsLoadError => 'تعذّر تحميل المحادثات.';
+
+  @override
+  String get communityConversationsRetry => 'إعادة المحاولة';
+
+  @override
+  String get communityConversationsNoMessages =>
+      'لا توجد رسائل حاليًا. اكتب أول رسالة!';
+
+  @override
+  String get communitySendMessageButton => 'إرسال رسالة';
+
+  @override
   String get profileTitle => 'ملفي الشخصي';
 
   @override

@@ -4,9 +4,12 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/supabase/supabase_config.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../l10n/app_localizations.dart';
+import '../../profil/presentation/profile_providers.dart';
 import '../domain/community_models.dart';
 import 'community_format.dart';
 import 'community_providers.dart';
+import 'conversation_screen.dart';
+import 'messages_providers.dart';
 
 /// Détail d'une publication — contenu, commentaires, likes. Priorité P1
 /// (docs/03-architecture-ecrans.md).
@@ -92,15 +95,27 @@ class _PostDetailScreenState extends ConsumerState<PostDetailScreen> {
                   ),
                 ],
                 const SizedBox(height: 16),
-                InkWell(
-                  onTap: _promptSignIn,
-                  child: Row(
-                    children: [
-                      const Icon(Icons.favorite_border, color: AppColors.bronze, size: 20),
-                      const SizedBox(width: 6),
-                      Text('${post.likeCount}', style: const TextStyle(color: AppColors.bronze)),
+                Row(
+                  children: [
+                    InkWell(
+                      onTap: _promptSignIn,
+                      child: Row(
+                        children: [
+                          const Icon(Icons.favorite_border, color: AppColors.bronze, size: 20),
+                          const SizedBox(width: 6),
+                          Text('${post.likeCount}', style: const TextStyle(color: AppColors.bronze)),
+                        ],
+                      ),
+                    ),
+                    if (post.authorUserId != null) ...[
+                      const SizedBox(width: 20),
+                      _MessageAuthorButton(
+                        authorUserId: post.authorUserId!,
+                        authorDisplayName: post.authorDisplayName,
+                        fallback: l10n.communityDefaultAuthor,
+                      ),
                     ],
-                  ),
+                  ],
                 ),
                 const Divider(height: 32),
                 Text(
@@ -184,6 +199,69 @@ class _CommentTile extends StatelessWidget {
           ),
           const SizedBox(height: 2),
           Text(comment.contentText, style: const TextStyle(color: AppColors.ink, fontSize: 15)),
+          const SizedBox(height: 4),
+          _MessageAuthorButton(
+            authorUserId: comment.userId,
+            authorDisplayName: comment.authorDisplayName,
+            fallback: fallback,
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+/// Bouton "Envoyer un message" sur un auteur de post/commentaire — voir
+/// AskUserQuestion dans CLAUDE.md/plan : n'apparaît que si un groupe est
+/// réellement partagé avec cet auteur (`shareGroupWithProvider`), jamais
+/// affiché systématiquement, sinon l'écriture échouerait silencieusement
+/// à la RLS `conversation_participants_insert`.
+class _MessageAuthorButton extends ConsumerWidget {
+  const _MessageAuthorButton({
+    required this.authorUserId,
+    required this.authorDisplayName,
+    required this.fallback,
+  });
+
+  final String authorUserId;
+  final String? authorDisplayName;
+  final String fallback;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
+    final myUserId = ref.watch(currentUserIdProvider);
+    if (myUserId == null || myUserId == authorUserId) return const SizedBox.shrink();
+
+    final canMessage = ref.watch(shareGroupWithProvider(authorUserId));
+    return canMessage.maybeWhen(
+      data: (value) => value ? _button(context, ref, l10n) : const SizedBox.shrink(),
+      orElse: () => const SizedBox.shrink(),
+    );
+  }
+
+  Widget _button(BuildContext context, WidgetRef ref, AppLocalizations l10n) {
+    return InkWell(
+      onTap: () async {
+        final conversationId =
+            await ref.read(messagesRepositoryProvider).findOrCreateConversationWith(authorUserId);
+        if (context.mounted) {
+          Navigator.of(context).push(
+            MaterialPageRoute(
+              builder: (_) => ConversationScreen(
+                conversationId: conversationId,
+                otherDisplayName: authorDisplayName ?? fallback,
+              ),
+            ),
+          );
+        }
+      },
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          const Icon(Icons.mail_outline, size: 14, color: AppColors.emerald),
+          const SizedBox(width: 4),
+          Text(l10n.communitySendMessageButton, style: const TextStyle(color: AppColors.emerald, fontSize: 12)),
         ],
       ),
     );
