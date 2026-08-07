@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import 'package:supabase_flutter/supabase_flutter.dart';
+
 import 'core/supabase/supabase_config.dart';
 import 'core/theme/app_theme.dart';
 import 'core/theme/locale_controller.dart';
@@ -10,6 +12,7 @@ import 'features/home/presentation/home_shell.dart';
 import 'features/onboarding/data/onboarding_store.dart';
 import 'features/onboarding/presentation/language_selection_screen.dart';
 import 'features/onboarding/presentation/onboarding_screen.dart';
+import 'features/profil/presentation/profile_providers.dart';
 import 'features/splash/presentation/splash_screen.dart';
 import 'l10n/app_localizations.dart';
 
@@ -30,12 +33,35 @@ enum _Step { splash, language, onboarding, auth, home }
 class _AtTijaniyaAppState extends ConsumerState<AtTijaniyaApp> {
   _Step _step = _Step.splash;
   final _onboardingStore = const OnboardingStore();
+  // Permet de purger les routes poussées par-dessus HomeShell (ProfilScreen,
+  // Paramètres, Ma lignée...) avant de basculer `_step` — sans ça, ces routes
+  // resteraient affichées par-dessus le nouvel écran racine tant qu'on ne les
+  // dépile pas explicitement (le changement de `home:` de MaterialApp ne vide
+  // pas la pile du Navigator existant).
+  final _navigatorKey = GlobalKey<NavigatorState>();
 
   @override
   Widget build(BuildContext context) {
     final locale = ref.watch(localeControllerProvider);
 
+    // `_step` n'est calculé qu'une fois, juste après le choix de la langue
+    // (voir `_afterLanguageChosen`) : sans ce listener, une déconnexion
+    // depuis `ProfilScreen` laissait le disciple bloqué sur `HomeShell` (qui
+    // affiche alors l'état "connectez-vous" sans aucun moyen d'y revenir,
+    // faute de retour vers `AuthScreen`). `authStateChangesProvider` est un
+    // ReplaySubject côté gotrue : la valeur rejouée à l'abonnement initial
+    // (état de session au démarrage) ne déclenche pas ce callback, seules
+    // les transitions ultérieures le font.
+    ref.listen(authStateChangesProvider, (previous, next) {
+      final event = next.valueOrNull?.event;
+      if (event == AuthChangeEvent.signedOut && _step == _Step.home && mounted) {
+        _navigatorKey.currentState?.popUntil((route) => route.isFirst);
+        setState(() => _step = _Step.auth);
+      }
+    });
+
     return MaterialApp(
+      navigatorKey: _navigatorKey,
       title: 'At-Tijaniya',
       debugShowCheckedModeBanner: false,
       theme: AppTheme.standard,
