@@ -201,7 +201,10 @@ class _LineageScreenState extends ConsumerState<LineageScreen> {
                           const Icon(Icons.lock_outline, color: AppColors.bronze),
                           const SizedBox(width: 12),
                           Expanded(
-                            child: Text(l10n.lineagePrivacyNote, style: const TextStyle(color: AppColors.ink)),
+                            child: Text(
+                              l10n.lineagePrivacyNote,
+                              style: const TextStyle(color: AppColors.ink, fontSize: 15),
+                            ),
                           ),
                         ],
                       ),

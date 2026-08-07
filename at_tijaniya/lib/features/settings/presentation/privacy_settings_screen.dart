@@ -165,7 +165,7 @@ class _PrivacySwitch extends StatelessWidget {
             SwitchListTile(
               activeThumbColor: AppColors.emerald,
               title: Text(label, style: const TextStyle(fontWeight: FontWeight.w600, color: AppColors.ink)),
-              subtitle: Text(description, style: const TextStyle(color: AppColors.bronze, fontSize: 12.5)),
+              subtitle: Text(description, style: const TextStyle(color: AppColors.bronze, fontSize: 14)),
               value: value,
               onChanged: onChanged,
             ),

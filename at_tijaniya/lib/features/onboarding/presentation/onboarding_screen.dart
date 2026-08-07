@@ -148,7 +148,7 @@ class _OnboardingSlide extends StatelessWidget {
           Text(
             body,
             textAlign: TextAlign.center,
-            style: const TextStyle(color: AppColors.bronze, fontSize: 15, height: 1.4),
+            style: const TextStyle(color: AppColors.bronze, fontSize: 16, height: 1.4),
           ),
         ],
       ),
