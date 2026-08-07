@@ -67,9 +67,16 @@ class _WirdDetailScreenState extends ConsumerState<WirdDetailScreen> {
     final audioState = ref.watch(wirdAudioControllerProvider(wird));
     final audioController = ref.read(wirdAudioControllerProvider(wird).notifier);
 
-    return Scaffold(
-      backgroundColor: AppColors.zaytoune,
-      appBar: AppBar(
+    // Le titre d'AppBar (et tout autre widget qui lit Theme.of(context))
+    // doit passer par le thème immersif : sans ce wrapper, le titre hérite
+    // de AppBarTheme.titleTextStyle du thème clair ambiant (couleur `ink`
+    // explicite, donc prioritaire sur `foregroundColor`) et s'affiche en
+    // texte quasi noir sur le fond vert zaytoune — illisible.
+    return Theme(
+      data: AppTheme.immersive,
+      child: Scaffold(
+        backgroundColor: AppColors.zaytoune,
+        appBar: AppBar(
         backgroundColor: AppColors.zaytoune,
         foregroundColor: AppColors.parchment,
         title: Text(wird.nameFrench),
@@ -170,6 +177,7 @@ class _WirdDetailScreenState extends ConsumerState<WirdDetailScreen> {
             const SizedBox(height: 96),
           ],
         ),
+      ),
       ),
     );
   }

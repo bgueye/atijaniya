@@ -24,19 +24,25 @@ class TasbihScreen extends ConsumerWidget {
     final state = ref.watch(tasbihControllerProvider(wird));
     final controller = ref.read(tasbihControllerProvider(wird).notifier);
 
-    return Scaffold(
-      backgroundColor: AppColors.zaytoune,
-      appBar: AppBar(
+    // Cf. wird_detail_screen.dart : sans le thème immersif, le titre d'AppBar
+    // hérite de la couleur `ink` (quasi noire) du thème clair ambiant et
+    // devient illisible sur le fond vert zaytoune.
+    return Theme(
+      data: AppTheme.immersive,
+      child: Scaffold(
         backgroundColor: AppColors.zaytoune,
-        foregroundColor: AppColors.parchment,
-        title: Text('Tasbih — ${wird.nameFrench}'),
-      ),
-      body: SafeArea(
-        child: state.loadingSession
-            ? const Center(child: CircularProgressIndicator(color: AppColors.gold))
-            : state.wirdCompleted
-                ? _WirdCompletedView(wird: wird)
-                : _TasbihBody(wird: wird, state: state, controller: controller),
+        appBar: AppBar(
+          backgroundColor: AppColors.zaytoune,
+          foregroundColor: AppColors.parchment,
+          title: Text('Tasbih — ${wird.nameFrench}'),
+        ),
+        body: SafeArea(
+          child: state.loadingSession
+              ? const Center(child: CircularProgressIndicator(color: AppColors.gold))
+              : state.wirdCompleted
+                  ? _WirdCompletedView(wird: wird)
+                  : _TasbihBody(wird: wird, state: state, controller: controller),
+        ),
       ),
     );
   }

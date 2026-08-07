@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/theme/app_colors.dart';
+import '../../../core/theme/app_theme.dart';
 import '../../../l10n/app_localizations.dart';
 import '../domain/free_wird_session.dart';
 import '../domain/tasbih_session.dart' show TasbihMode;
@@ -28,25 +29,31 @@ class FreeWirdScreen extends ConsumerWidget {
     final state = ref.watch(freeWirdControllerProvider);
     final controller = ref.read(freeWirdControllerProvider.notifier);
 
-    return Scaffold(
-      backgroundColor: AppColors.zaytoune,
-      appBar: AppBar(
+    // Cf. wird_detail_screen.dart : sans le thème immersif, le titre d'AppBar
+    // hérite de la couleur `ink` (quasi noire) du thème clair ambiant et
+    // devient illisible sur le fond vert zaytoune.
+    return Theme(
+      data: AppTheme.immersive,
+      child: Scaffold(
         backgroundColor: AppColors.zaytoune,
-        foregroundColor: AppColors.parchment,
-        title: Text(
-          state.session != null && state.session!.label.isNotEmpty
-              ? state.session!.label
-              : l10n.wirdFreeTitle,
+        appBar: AppBar(
+          backgroundColor: AppColors.zaytoune,
+          foregroundColor: AppColors.parchment,
+          title: Text(
+            state.session != null && state.session!.label.isNotEmpty
+                ? state.session!.label
+                : l10n.wirdFreeTitle,
+          ),
         ),
-      ),
-      body: SafeArea(
-        child: state.loading
-            ? const Center(child: CircularProgressIndicator(color: AppColors.gold))
-            : state.completed
-                ? _CompletedView(l10n: l10n, controller: controller)
-                : state.session == null
-                    ? _SetupForm(l10n: l10n, controller: controller)
-                    : _CounterBody(l10n: l10n, state: state, controller: controller),
+        body: SafeArea(
+          child: state.loading
+              ? const Center(child: CircularProgressIndicator(color: AppColors.gold))
+              : state.completed
+                  ? _CompletedView(l10n: l10n, controller: controller)
+                  : state.session == null
+                      ? _SetupForm(l10n: l10n, controller: controller)
+                      : _CounterBody(l10n: l10n, state: state, controller: controller),
+        ),
       ),
     );
   }
