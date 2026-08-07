@@ -215,6 +215,8 @@
   "settingsNotificationsBody": "تُدار تذكيرات الترديد من داخل كل ورد (أيقونة الجرس في شاشة الورد).",
   "settingsPrivacySection": "الخصوصية",
   "settingsPrivacyTileSubtitle": "ظهور سلسلتك الروحية وحالتك كمقدَّم، ومن يمكنه التواصل معك",
+  "settingsDonationSection": "التبرع",
+  "settingsDonationTileSubtitle": "تطبيق التجانية يبقى مجانيًا بفضلكم.",
   "settingsAboutSection": "حول التطبيق",
   "aboutVersionLabel": "الإصدار",
 
@@ -231,5 +233,16 @@
   "privacyWhoCanContactMatchesOnly": "المتطابقون فقط",
   "privacyLoadError": "تعذّر تحميل إعدادات الخصوصية.",
   "privacyRetry": "إعادة المحاولة",
-  "privacyUpdateError": "تعذّر حفظ هذا الإعداد."
+  "privacyUpdateError": "تعذّر حفظ هذا الإعداد.",
+
+  "donationTitle": "التبرع",
+  "donationSubtitle": "تطبيق التجانية يبقى مجانيًا بفضلكم.",
+  "donationCustomAmountLabel": "مبلغ حر",
+  "donationCustomAmountHint": "مبلغ آخر…",
+  "donationAmountInvalid": "يرجى اختيار أو إدخال مبلغ صحيح.",
+  "donationSubmitButton": "تقديم تبرع",
+  "donationSubmitError": "تعذّر تسجيل التبرع في الوقت الحالي.",
+  "donationRecordedTitle": "شكرًا لدعمكم",
+  "donationRecordedBody": "الدفع عبر التطبيق غير متاح بعد. تم تسجيل نيتكم في التبرع بنجاح.",
+  "donationRecordedBackButton": "رجوع"
 }

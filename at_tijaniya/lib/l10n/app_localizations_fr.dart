@@ -652,6 +652,13 @@ class AppLocalizationsFr extends AppLocalizations {
       'Visibilité de votre lignée, de votre statut mouqaddam, qui peut vous contacter';
 
   @override
+  String get settingsDonationSection => 'Faire un don';
+
+  @override
+  String get settingsDonationTileSubtitle =>
+      'At-Tijaniya reste gratuite grâce à vous.';
+
+  @override
   String get settingsAboutSection => 'À propos';
 
   @override
@@ -706,4 +713,37 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get privacyUpdateError => 'Impossible d\'enregistrer ce réglage.';
+
+  @override
+  String get donationTitle => 'Faire un don';
+
+  @override
+  String get donationSubtitle => 'At-Tijaniya reste gratuite grâce à vous.';
+
+  @override
+  String get donationCustomAmountLabel => 'Montant libre';
+
+  @override
+  String get donationCustomAmountHint => 'Autre montant…';
+
+  @override
+  String get donationAmountInvalid =>
+      'Merci de choisir ou saisir un montant valide.';
+
+  @override
+  String get donationSubmitButton => 'Faire un don';
+
+  @override
+  String get donationSubmitError =>
+      'Impossible d\'enregistrer votre don pour le moment.';
+
+  @override
+  String get donationRecordedTitle => 'Merci pour votre soutien';
+
+  @override
+  String get donationRecordedBody =>
+      'Le paiement en ligne n\'est pas encore disponible dans l\'application. Votre intention de don a bien été enregistrée.';
+
+  @override
+  String get donationRecordedBackButton => 'Retour';
 }

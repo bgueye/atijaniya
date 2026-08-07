@@ -567,6 +567,53 @@ projet n'a pas confirmé comme validé, contrairement à Cheikh Ahmed Tijani) �
 annulation testée à la place, état de la base reconfirmé inchangé par
 requête SQL après coup.
 
+Faire un don (P1, fonctionnalités transverses) fonctionnel
+(`lib/features/donation/domain/donation_amount.dart`,
+`data/donation_repository.dart`, `presentation/donation_providers.dart`,
+`presentation/donation_screen.dart`, accessible via la tuile "Faire un don"
+sur l'écran "Paramètres", entre "Confidentialité" et "À propos" — dernier
+écran P1 du périmètre listé dans docs/03-architecture-ecrans.md).
+
+**Limite volontaire, décidée avec le porteur de projet avant l'implémentation** :
+aucun prestataire de paiement n'est choisi (`docs/06-architecture-backend.md`
+§ « hors périmètre » : Orange Money/Wave/Stripe... « à trancher séparément » ;
+encore listé dans `docs/04-roadmap-developpement.md` comme « à valider avant
+la Phase 2 »). Cet écran ne fait donc jamais transiter de paiement réel :
+montants suggérés (2 000/5 000/10 000 F CFA, conformes à la maquette) ou
+montant libre, puis au tap sur "Faire un don" une ligne est insérée dans
+`donations` (`status = 'pending'` par défaut, `payment_method`/
+`payment_provider_ref` restent `null`) — `user_id` nul pour un don anonyme
+(disciple non connecté), la policy RLS `donations_owner_create` l'autorise
+explicitement. L'écran affiche ensuite un état honnête ("le paiement en
+ligne n'est pas encore disponible") plutôt qu'une confirmation de paiement
+simulée — même logique que l'audio des Wirds ou "Comprendre la Khadara".
+Puces de montant en `Container` explicite plutôt qu'en `ChoiceChip`, même
+raison qu'ailleurs dans le module Wird (`free_wird_screen.dart`,
+`wird_detail_screen.dart`) : le thème M3 par défaut ne rend pas les couleurs
+de marque de façon fiable sur ce widget. Logique de parsing du montant
+libre couverte par `test/donation_amount_test.dart`.
+
+Bug trouvé et corrigé pendant la validation en conditions réelles sur
+émulateur Android (bascule FR → AR) : le montant formaté avec séparateur de
+milliers ("10 000 F") s'affichait réordonné en "F 000 10" une fois le
+`Text` placé dans un contexte de paragraphe RTL (locale arabe) — l'espace
+entre les groupes de chiffres, neutre en bidi, laisse l'algorithme
+Unicode réordonner les groupes séparément selon la direction du paragraphe.
+Corrigé en fixant explicitement `textDirection: TextDirection.ltr` sur ce
+`Text` (un montant doit toujours se lire chiffres-puis-devise, même en
+contexte arabe). Revalidé après correction : "10 000 F / 5 000 F / 2 000 F"
+s'affichent correctement en arabe, y compris avec un montant libre saisi
+au clavier.
+
+Validé de bout en bout sur émulateur Android contre le projet Supabase
+live, en français puis en arabe (RTL) : sélection/désélection des puces de
+montant, validation bloquant la soumission sans montant choisi, saisie
+d'un montant libre, soumission enregistrant bien une ligne dans
+`donations` (vérifié par `execute_sql` : montant, devise `XOF`, statut
+`pending`, `payment_method`/`payment_provider_ref` nuls) puis nettoyée
+après le test ; état "Merci pour votre soutien" affiché et bouton "Retour"
+ramenant correctement aux Paramètres.
+
 ## Commandes utiles
 - `flutter pub get`
 - `flutter analyze`

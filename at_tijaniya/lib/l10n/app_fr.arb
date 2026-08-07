@@ -215,6 +215,8 @@
   "settingsNotificationsBody": "Les rappels de récitation se gèrent depuis chaque Wird (icône cloche sur l'écran du Wird).",
   "settingsPrivacySection": "Confidentialité",
   "settingsPrivacyTileSubtitle": "Visibilité de votre lignée, de votre statut mouqaddam, qui peut vous contacter",
+  "settingsDonationSection": "Faire un don",
+  "settingsDonationTileSubtitle": "At-Tijaniya reste gratuite grâce à vous.",
   "settingsAboutSection": "À propos",
   "aboutVersionLabel": "Version",
 
@@ -231,5 +233,16 @@
   "privacyWhoCanContactMatchesOnly": "Uniquement les correspondances",
   "privacyLoadError": "Impossible de charger vos réglages de confidentialité.",
   "privacyRetry": "Réessayer",
-  "privacyUpdateError": "Impossible d'enregistrer ce réglage."
+  "privacyUpdateError": "Impossible d'enregistrer ce réglage.",
+
+  "donationTitle": "Faire un don",
+  "donationSubtitle": "At-Tijaniya reste gratuite grâce à vous.",
+  "donationCustomAmountLabel": "Montant libre",
+  "donationCustomAmountHint": "Autre montant…",
+  "donationAmountInvalid": "Merci de choisir ou saisir un montant valide.",
+  "donationSubmitButton": "Faire un don",
+  "donationSubmitError": "Impossible d'enregistrer votre don pour le moment.",
+  "donationRecordedTitle": "Merci pour votre soutien",
+  "donationRecordedBody": "Le paiement en ligne n'est pas encore disponible dans l'application. Votre intention de don a bien été enregistrée.",
+  "donationRecordedBackButton": "Retour"
 }

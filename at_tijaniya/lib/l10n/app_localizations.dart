@@ -1298,6 +1298,18 @@ abstract class AppLocalizations {
   /// **'Visibilité de votre lignée, de votre statut mouqaddam, qui peut vous contacter'**
   String get settingsPrivacyTileSubtitle;
 
+  /// No description provided for @settingsDonationSection.
+  ///
+  /// In fr, this message translates to:
+  /// **'Faire un don'**
+  String get settingsDonationSection;
+
+  /// No description provided for @settingsDonationTileSubtitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'At-Tijaniya reste gratuite grâce à vous.'**
+  String get settingsDonationTileSubtitle;
+
   /// No description provided for @settingsAboutSection.
   ///
   /// In fr, this message translates to:
@@ -1393,6 +1405,66 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'Impossible d\'enregistrer ce réglage.'**
   String get privacyUpdateError;
+
+  /// No description provided for @donationTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Faire un don'**
+  String get donationTitle;
+
+  /// No description provided for @donationSubtitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'At-Tijaniya reste gratuite grâce à vous.'**
+  String get donationSubtitle;
+
+  /// No description provided for @donationCustomAmountLabel.
+  ///
+  /// In fr, this message translates to:
+  /// **'Montant libre'**
+  String get donationCustomAmountLabel;
+
+  /// No description provided for @donationCustomAmountHint.
+  ///
+  /// In fr, this message translates to:
+  /// **'Autre montant…'**
+  String get donationCustomAmountHint;
+
+  /// No description provided for @donationAmountInvalid.
+  ///
+  /// In fr, this message translates to:
+  /// **'Merci de choisir ou saisir un montant valide.'**
+  String get donationAmountInvalid;
+
+  /// No description provided for @donationSubmitButton.
+  ///
+  /// In fr, this message translates to:
+  /// **'Faire un don'**
+  String get donationSubmitButton;
+
+  /// No description provided for @donationSubmitError.
+  ///
+  /// In fr, this message translates to:
+  /// **'Impossible d\'enregistrer votre don pour le moment.'**
+  String get donationSubmitError;
+
+  /// No description provided for @donationRecordedTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Merci pour votre soutien'**
+  String get donationRecordedTitle;
+
+  /// No description provided for @donationRecordedBody.
+  ///
+  /// In fr, this message translates to:
+  /// **'Le paiement en ligne n\'est pas encore disponible dans l\'application. Votre intention de don a bien été enregistrée.'**
+  String get donationRecordedBody;
+
+  /// No description provided for @donationRecordedBackButton.
+  ///
+  /// In fr, this message translates to:
+  /// **'Retour'**
+  String get donationRecordedBackButton;
 }
 
 class _AppLocalizationsDelegate

@@ -635,6 +635,13 @@ class AppLocalizationsAr extends AppLocalizations {
       'ظهور سلسلتك الروحية وحالتك كمقدَّم، ومن يمكنه التواصل معك';
 
   @override
+  String get settingsDonationSection => 'التبرع';
+
+  @override
+  String get settingsDonationTileSubtitle =>
+      'تطبيق التجانية يبقى مجانيًا بفضلكم.';
+
+  @override
   String get settingsAboutSection => 'حول التطبيق';
 
   @override
@@ -684,4 +691,35 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get privacyUpdateError => 'تعذّر حفظ هذا الإعداد.';
+
+  @override
+  String get donationTitle => 'التبرع';
+
+  @override
+  String get donationSubtitle => 'تطبيق التجانية يبقى مجانيًا بفضلكم.';
+
+  @override
+  String get donationCustomAmountLabel => 'مبلغ حر';
+
+  @override
+  String get donationCustomAmountHint => 'مبلغ آخر…';
+
+  @override
+  String get donationAmountInvalid => 'يرجى اختيار أو إدخال مبلغ صحيح.';
+
+  @override
+  String get donationSubmitButton => 'تقديم تبرع';
+
+  @override
+  String get donationSubmitError => 'تعذّر تسجيل التبرع في الوقت الحالي.';
+
+  @override
+  String get donationRecordedTitle => 'شكرًا لدعمكم';
+
+  @override
+  String get donationRecordedBody =>
+      'الدفع عبر التطبيق غير متاح بعد. تم تسجيل نيتكم في التبرع بنجاح.';
+
+  @override
+  String get donationRecordedBackButton => 'رجوع';
 }
