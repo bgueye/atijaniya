@@ -77,7 +77,10 @@ class _PostDetailScreenState extends ConsumerState<PostDetailScreen> {
                   style: const TextStyle(color: AppColors.bronze, fontSize: 12),
                 ),
                 const SizedBox(height: 12),
-                Text(post.contentText, style: const TextStyle(color: AppColors.ink, height: 1.4)),
+                Text(
+                  post.contentText,
+                  style: const TextStyle(color: AppColors.ink, fontSize: 16, height: 1.4),
+                ),
                 if (post.mediaUrl != null) ...[
                   const SizedBox(height: 16),
                   ClipRRect(
@@ -180,7 +183,7 @@ class _CommentTile extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 2),
-          Text(comment.contentText, style: const TextStyle(color: AppColors.ink)),
+          Text(comment.contentText, style: const TextStyle(color: AppColors.ink, fontSize: 15)),
         ],
       ),
     );

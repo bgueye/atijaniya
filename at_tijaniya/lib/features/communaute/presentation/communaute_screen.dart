@@ -95,7 +95,7 @@ class _PostCard extends StatelessWidget {
                 post.contentText,
                 maxLines: 4,
                 overflow: TextOverflow.ellipsis,
-                style: const TextStyle(color: AppColors.ink),
+                style: const TextStyle(color: AppColors.ink, fontSize: 15),
               ),
               if (post.mediaUrl != null) ...[
                 const SizedBox(height: 10),

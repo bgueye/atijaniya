@@ -57,7 +57,7 @@ class FigureDetailScreen extends StatelessWidget {
             const SizedBox(height: 28),
             _SectionTitle(l10n.figureZiyaraSectionTitle),
             const SizedBox(height: 8),
-            Text(figure.ziyaraNote!, style: const TextStyle(color: AppColors.ink)),
+            Text(figure.ziyaraNote!, style: const TextStyle(color: AppColors.ink, fontSize: 16)),
           ],
         ],
       ),
@@ -125,11 +125,11 @@ class _BiographyParagraph extends StatelessWidget {
           if (paragraph.transliteration != null) ...[
             Text(
               paragraph.transliteration!,
-              style: const TextStyle(fontStyle: FontStyle.italic, fontSize: 12, color: AppColors.bronze),
+              style: const TextStyle(fontStyle: FontStyle.italic, fontSize: 15, color: AppColors.bronze),
             ),
             const SizedBox(height: 4),
           ],
-          Text(paragraph.translation, style: const TextStyle(color: AppColors.ink)),
+          Text(paragraph.translation, style: const TextStyle(color: AppColors.ink, fontSize: 16)),
         ],
       ),
     );
@@ -165,11 +165,11 @@ class _CitationCard extends StatelessWidget {
           if (citation.transliteration != null) ...[
             Text(
               citation.transliteration!,
-              style: const TextStyle(fontStyle: FontStyle.italic, fontSize: 12, color: AppColors.bronze),
+              style: const TextStyle(fontStyle: FontStyle.italic, fontSize: 15, color: AppColors.bronze),
             ),
             const SizedBox(height: 4),
           ],
-          Text(citation.translation, style: const TextStyle(color: AppColors.ink)),
+          Text(citation.translation, style: const TextStyle(color: AppColors.ink, fontSize: 16)),
           const SizedBox(height: 8),
           Text(
             '— ${citation.source}',

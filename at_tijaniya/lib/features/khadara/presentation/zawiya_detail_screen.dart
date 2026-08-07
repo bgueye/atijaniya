@@ -27,7 +27,10 @@ class ZawiyaDetailScreen extends ConsumerWidget {
         padding: const EdgeInsets.all(20),
         children: [
           if (zawiya.description != null) ...[
-            Text(zawiya.description!, style: const TextStyle(color: AppColors.ink, height: 1.4)),
+            Text(
+              zawiya.description!,
+              style: const TextStyle(color: AppColors.ink, fontSize: 16, height: 1.4),
+            ),
             const SizedBox(height: 16),
           ],
           if (zawiya.addressText != null) ...[

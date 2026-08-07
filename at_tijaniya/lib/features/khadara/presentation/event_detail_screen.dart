@@ -42,7 +42,10 @@ class EventDetailScreen extends StatelessWidget {
           ],
           if (event.description != null) ...[
             const SizedBox(height: 20),
-            Text(event.description!, style: const TextStyle(color: AppColors.ink, height: 1.4)),
+            Text(
+              event.description!,
+              style: const TextStyle(color: AppColors.ink, fontSize: 16, height: 1.4),
+            ),
           ],
           if (event.hasLocation) ...[
             const SizedBox(height: 24),

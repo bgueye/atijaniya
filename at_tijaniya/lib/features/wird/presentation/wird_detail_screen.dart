@@ -269,10 +269,14 @@ class _PillarCard extends StatelessWidget {
             style: const TextStyle(
               fontStyle: FontStyle.italic,
               color: AppColors.bronze,
+              fontSize: 15,
             ),
           ),
           const SizedBox(height: 6),
-          Text(pillar.translation, style: const TextStyle(color: AppColors.ink)),
+          Text(
+            pillar.translation,
+            style: const TextStyle(color: AppColors.ink, fontSize: 16),
+          ),
           if (pillar.note != null) ...[
             const SizedBox(height: 10),
             Text(
@@ -495,10 +499,10 @@ class _ParagraphBlock extends StatelessWidget {
           const SizedBox(height: 6),
           Text(
             paragraph.transliteration,
-            style: const TextStyle(fontStyle: FontStyle.italic, fontSize: 12, color: AppColors.bronze),
+            style: const TextStyle(fontStyle: FontStyle.italic, fontSize: 15, color: AppColors.bronze),
           ),
           const SizedBox(height: 4),
-          Text(paragraph.translation, style: const TextStyle(fontSize: 13, color: AppColors.ink)),
+          Text(paragraph.translation, style: const TextStyle(fontSize: 16, color: AppColors.ink)),
         ],
       ),
     );

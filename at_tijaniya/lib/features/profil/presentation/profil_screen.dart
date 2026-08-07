@@ -207,7 +207,10 @@ class _ProfileHeader extends StatelessWidget {
               ],
             ),
             const SizedBox(height: 12),
-            Text(profile.bio ?? l10n.profileNoBio, style: const TextStyle(color: AppColors.ink)),
+            Text(
+              profile.bio ?? l10n.profileNoBio,
+              style: const TextStyle(color: AppColors.ink, fontSize: 16),
+            ),
           ],
         ),
       ),

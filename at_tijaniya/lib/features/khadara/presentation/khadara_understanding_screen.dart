@@ -95,7 +95,10 @@ class _SectionTile extends StatelessWidget {
           children: [
             Text(section.title, style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 16, color: AppColors.ink)),
             const SizedBox(height: 8),
-            Text(section.body, style: const TextStyle(color: AppColors.ink, height: 1.4)),
+            Text(
+              section.body,
+              style: const TextStyle(color: AppColors.ink, fontSize: 16, height: 1.4),
+            ),
           ],
         ),
       ),
