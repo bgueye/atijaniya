@@ -342,13 +342,28 @@ class AppLocalizationsFr extends AppLocalizations {
   String get figureBiographySectionTitle => 'Biographie';
 
   @override
+  String get figureTabSilsila => 'Silsila';
+
+  @override
   String get figureCitationsSectionTitle => 'Citations';
 
   @override
-  String get figureZiyaraSectionTitle => 'Ziyara associée';
+  String get figureZiyaraSectionTitle => 'Ziyaras';
 
   @override
   String get figureBiographyPending => 'Biographie en attente de validation.';
+
+  @override
+  String get figureSilsilaPending =>
+      'La silsila historique de cette figure n\'est pas encore disponible.';
+
+  @override
+  String get figureCitationsEmpty =>
+      'Aucune citation renseignée pour le moment.';
+
+  @override
+  String get figureZiyarasPending =>
+      'Aucune ziyara associée n\'est encore renseignée.';
 
   @override
   String get communityFeedEmpty => 'Aucune publication pour le moment.';

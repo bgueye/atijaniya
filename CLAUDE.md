@@ -614,6 +614,36 @@ d'un montant libre, soumission enregistrant bien une ligne dans
 après le test ; état "Merci pour votre soutien" affiché et bouton "Retour"
 ramenant correctement aux Paramètres.
 
+Biographie détaillée (module Figures) refaite pour suivre fidèlement la
+maquette charte graphique
+(`docs/At-Tijaniya-Charte-Graphique-Maquettes-v2.html`, bloc 07) :
+`figure_detail_screen.dart` remplace l'ancien `AppBar` + liste unique par
+un en-tête immersif (dégradé zaytoune → emerald, rosace à huit branches en
+filigrane redessinée en `CustomPainter` pour reproduire exactement le
+tracé de la maquette, nom arabe en Amiri + nom français en petites
+capitales) suivi de 4 onglets Biographie/Silsila/Citations/Ziyaras
+(`TabBar`/`TabBarView`, style actif emerald + soulignement doré conforme à
+la maquette). Les onglets Silsila et Ziyaras n'ont aujourd'hui aucune
+source de données réelle (aucune requête vers `historical_silsila_links`,
+`Figure.ziyaraNote` toujours `null` pour une figure venant de la base) :
+ils affichent un état honnête "pas encore disponible" plutôt qu'un contenu
+simulé, même logique que "Comprendre la Khadara". Corrige au passage une
+duplication : l'ancien écran affichait le premier paragraphe de biographie
+deux fois (une fois comme "résumé" centré sous le nom, une fois dans la
+liste des paragraphes) — le résumé n'est plus dupliqué, seul l'onglet
+Biographie l'affiche désormais. `test/figure_detail_screen_test.dart`
+adapté en conséquence : `TabBarView` ne construit que la page active, le
+test bascule donc explicitement d'onglet (`tester.tap` + `pumpAndSettle`)
+avant de vérifier le contenu des Citations/Ziyaras.
+
+Validé en conditions réelles sur émulateur Android avec les données
+réelles du projet (Cheikh Ahmed Tijani, seule figure validée) : en-tête
+immersif avec rosace en filigrane visible, changement d'onglet fonctionnel
+sur les 4 onglets, bouton retour ramenant à la liste. Revalidé en arabe
+(RTL) : bouton retour et ordre des onglets correctement inversés,
+soulignement actif du bon côté, contenu français toujours lisible
+gauche-à-droite dans le contexte RTL.
+
 ## Commandes utiles
 - `flutter pub get`
 - `flutter analyze`

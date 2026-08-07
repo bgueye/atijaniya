@@ -716,6 +716,12 @@ abstract class AppLocalizations {
   /// **'Biographie'**
   String get figureBiographySectionTitle;
 
+  /// No description provided for @figureTabSilsila.
+  ///
+  /// In fr, this message translates to:
+  /// **'Silsila'**
+  String get figureTabSilsila;
+
   /// No description provided for @figureCitationsSectionTitle.
   ///
   /// In fr, this message translates to:
@@ -725,7 +731,7 @@ abstract class AppLocalizations {
   /// No description provided for @figureZiyaraSectionTitle.
   ///
   /// In fr, this message translates to:
-  /// **'Ziyara associée'**
+  /// **'Ziyaras'**
   String get figureZiyaraSectionTitle;
 
   /// No description provided for @figureBiographyPending.
@@ -733,6 +739,24 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'Biographie en attente de validation.'**
   String get figureBiographyPending;
+
+  /// No description provided for @figureSilsilaPending.
+  ///
+  /// In fr, this message translates to:
+  /// **'La silsila historique de cette figure n\'est pas encore disponible.'**
+  String get figureSilsilaPending;
+
+  /// No description provided for @figureCitationsEmpty.
+  ///
+  /// In fr, this message translates to:
+  /// **'Aucune citation renseignée pour le moment.'**
+  String get figureCitationsEmpty;
+
+  /// No description provided for @figureZiyarasPending.
+  ///
+  /// In fr, this message translates to:
+  /// **'Aucune ziyara associée n\'est encore renseignée.'**
+  String get figureZiyarasPending;
 
   /// No description provided for @communityFeedEmpty.
   ///

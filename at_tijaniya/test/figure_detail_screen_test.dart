@@ -45,11 +45,21 @@ void main() {
     await tester.pumpWidget(_wrap(const FigureDetailScreen(figure: figure)));
     await tester.pumpAndSettle();
 
+    // Onglet "Biographie" (actif par défaut).
     expect(find.text('Paragraphe biographique de test.'), findsOneWidget);
+    expect(find.text('Biographie en attente de validation.'), findsNothing);
+
+    // Onglet "Citations" — TabBarView ne construit que la page active,
+    // il faut donc basculer d'onglet avant de chercher son contenu.
+    await tester.tap(find.text('Citations'));
+    await tester.pumpAndSettle();
     expect(find.text('Citation de test.'), findsOneWidget);
     expect(find.text('— Source de test'), findsOneWidget);
+
+    // Onglet "Ziyaras".
+    await tester.tap(find.text('Ziyaras'));
+    await tester.pumpAndSettle();
     expect(find.text('Note de ziyara de test.'), findsOneWidget);
-    expect(find.text('Biographie en attente de validation.'), findsNothing);
   });
 
   testWidgets('FigureDetailScreen indique une biographie en attente quand absente', (tester) async {

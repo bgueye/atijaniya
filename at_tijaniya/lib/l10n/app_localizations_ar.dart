@@ -335,13 +335,26 @@ class AppLocalizationsAr extends AppLocalizations {
   String get figureBiographySectionTitle => 'السيرة';
 
   @override
+  String get figureTabSilsila => 'السلسلة';
+
+  @override
   String get figureCitationsSectionTitle => 'أقوال';
 
   @override
-  String get figureZiyaraSectionTitle => 'الزيارة المرتبطة';
+  String get figureZiyaraSectionTitle => 'الزيارات';
 
   @override
   String get figureBiographyPending => 'السيرة قيد التحقق من صحتها.';
+
+  @override
+  String get figureSilsilaPending =>
+      'السلسلة التاريخية لهذه الشخصية غير متوفرة بعد.';
+
+  @override
+  String get figureCitationsEmpty => 'لا توجد أقوال مسجَّلة حاليًا.';
+
+  @override
+  String get figureZiyarasPending => 'لم تُسجَّل بعد أي زيارة مرتبطة.';
 
   @override
   String get communityFeedEmpty => 'لا توجد منشورات حاليًا.';
