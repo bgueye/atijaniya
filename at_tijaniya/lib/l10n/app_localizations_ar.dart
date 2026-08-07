@@ -375,6 +375,84 @@ class AppLocalizationsAr extends AppLocalizations {
   String get communitySend => 'إرسال';
 
   @override
+  String get communityFeedTab => 'المستجدات';
+
+  @override
+  String get communityGroupsTab => 'المجموعات';
+
+  @override
+  String get communityGroupsEmpty => 'لا توجد مجموعات حاليًا.';
+
+  @override
+  String get communityGroupsLoadError => 'تعذّر تحميل المجموعات.';
+
+  @override
+  String get communityGroupsRetry => 'إعادة المحاولة';
+
+  @override
+  String get communityGroupsCreateButton => 'إنشاء مجموعة';
+
+  @override
+  String get communityGroupsCreateTitle => 'إنشاء مجموعة';
+
+  @override
+  String get communityGroupsNameLabel => 'اسم المجموعة';
+
+  @override
+  String get communityGroupsNameRequired => 'اسم المجموعة إلزامي.';
+
+  @override
+  String get communityGroupsDescriptionLabel => 'الوصف (اختياري)';
+
+  @override
+  String get communityGroupsZawiyaLabel => 'الزاوية (اختياري)';
+
+  @override
+  String get communityGroupsRegionLabel => 'المنطقة (اختياري)';
+
+  @override
+  String get communityGroupsCreateSubmit => 'إنشاء';
+
+  @override
+  String get communityGroupsSignInToCreate => 'سجّل الدخول لإنشاء مجموعة.';
+
+  @override
+  String get communityGroupsJoin => 'الانضمام إلى المجموعة';
+
+  @override
+  String get communityGroupsLeave => 'مغادرة المجموعة';
+
+  @override
+  String get communityGroupsLeaveConfirmTitle => 'مغادرة هذه المجموعة؟';
+
+  @override
+  String get communityGroupsLeaveConfirmBody =>
+      'لن تتمكن من رؤية نقاشاتها حتى تنضم إليها مجددًا.';
+
+  @override
+  String get communityGroupsLeaveConfirmAction => 'مغادرة';
+
+  @override
+  String get communityGroupsSignInToJoin => 'سجّل الدخول للانضمام إلى مجموعة.';
+
+  @override
+  String get communityGroupsNotMemberTitle => 'انضم إلى هذه المجموعة';
+
+  @override
+  String get communityGroupsNotMemberBody =>
+      'نقاشات المجموعة مرئية فقط لأعضائها.';
+
+  @override
+  String get communityGroupsPostsEmpty =>
+      'لا توجد نقاشات حاليًا. كن أول من يكتب!';
+
+  @override
+  String get communityGroupsPostHint => 'اكتب رسالة...';
+
+  @override
+  String get communityGroupsLoadPostsError => 'تعذّر تحميل النقاشات.';
+
+  @override
   String get profileTitle => 'ملفي الشخصي';
 
   @override

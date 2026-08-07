@@ -794,6 +794,156 @@ abstract class AppLocalizations {
   /// **'Envoyer'**
   String get communitySend;
 
+  /// No description provided for @communityFeedTab.
+  ///
+  /// In fr, this message translates to:
+  /// **'Fil'**
+  String get communityFeedTab;
+
+  /// No description provided for @communityGroupsTab.
+  ///
+  /// In fr, this message translates to:
+  /// **'Groupes'**
+  String get communityGroupsTab;
+
+  /// No description provided for @communityGroupsEmpty.
+  ///
+  /// In fr, this message translates to:
+  /// **'Aucun groupe pour le moment.'**
+  String get communityGroupsEmpty;
+
+  /// No description provided for @communityGroupsLoadError.
+  ///
+  /// In fr, this message translates to:
+  /// **'Impossible de charger les groupes.'**
+  String get communityGroupsLoadError;
+
+  /// No description provided for @communityGroupsRetry.
+  ///
+  /// In fr, this message translates to:
+  /// **'Réessayer'**
+  String get communityGroupsRetry;
+
+  /// No description provided for @communityGroupsCreateButton.
+  ///
+  /// In fr, this message translates to:
+  /// **'Créer un groupe'**
+  String get communityGroupsCreateButton;
+
+  /// No description provided for @communityGroupsCreateTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Créer un groupe'**
+  String get communityGroupsCreateTitle;
+
+  /// No description provided for @communityGroupsNameLabel.
+  ///
+  /// In fr, this message translates to:
+  /// **'Nom du groupe'**
+  String get communityGroupsNameLabel;
+
+  /// No description provided for @communityGroupsNameRequired.
+  ///
+  /// In fr, this message translates to:
+  /// **'Le nom du groupe est obligatoire.'**
+  String get communityGroupsNameRequired;
+
+  /// No description provided for @communityGroupsDescriptionLabel.
+  ///
+  /// In fr, this message translates to:
+  /// **'Description (optionnel)'**
+  String get communityGroupsDescriptionLabel;
+
+  /// No description provided for @communityGroupsZawiyaLabel.
+  ///
+  /// In fr, this message translates to:
+  /// **'Zawiya (optionnel)'**
+  String get communityGroupsZawiyaLabel;
+
+  /// No description provided for @communityGroupsRegionLabel.
+  ///
+  /// In fr, this message translates to:
+  /// **'Région (optionnel)'**
+  String get communityGroupsRegionLabel;
+
+  /// No description provided for @communityGroupsCreateSubmit.
+  ///
+  /// In fr, this message translates to:
+  /// **'Créer'**
+  String get communityGroupsCreateSubmit;
+
+  /// No description provided for @communityGroupsSignInToCreate.
+  ///
+  /// In fr, this message translates to:
+  /// **'Connectez-vous pour créer un groupe.'**
+  String get communityGroupsSignInToCreate;
+
+  /// No description provided for @communityGroupsJoin.
+  ///
+  /// In fr, this message translates to:
+  /// **'Rejoindre le groupe'**
+  String get communityGroupsJoin;
+
+  /// No description provided for @communityGroupsLeave.
+  ///
+  /// In fr, this message translates to:
+  /// **'Quitter le groupe'**
+  String get communityGroupsLeave;
+
+  /// No description provided for @communityGroupsLeaveConfirmTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Quitter ce groupe ?'**
+  String get communityGroupsLeaveConfirmTitle;
+
+  /// No description provided for @communityGroupsLeaveConfirmBody.
+  ///
+  /// In fr, this message translates to:
+  /// **'Vous ne verrez plus ses discussions tant que vous ne l\'aurez pas rejoint à nouveau.'**
+  String get communityGroupsLeaveConfirmBody;
+
+  /// No description provided for @communityGroupsLeaveConfirmAction.
+  ///
+  /// In fr, this message translates to:
+  /// **'Quitter'**
+  String get communityGroupsLeaveConfirmAction;
+
+  /// No description provided for @communityGroupsSignInToJoin.
+  ///
+  /// In fr, this message translates to:
+  /// **'Connectez-vous pour rejoindre un groupe.'**
+  String get communityGroupsSignInToJoin;
+
+  /// No description provided for @communityGroupsNotMemberTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Rejoignez ce groupe'**
+  String get communityGroupsNotMemberTitle;
+
+  /// No description provided for @communityGroupsNotMemberBody.
+  ///
+  /// In fr, this message translates to:
+  /// **'Les discussions d\'un groupe ne sont visibles que pour ses membres.'**
+  String get communityGroupsNotMemberBody;
+
+  /// No description provided for @communityGroupsPostsEmpty.
+  ///
+  /// In fr, this message translates to:
+  /// **'Aucune discussion pour le moment. Soyez le premier à écrire !'**
+  String get communityGroupsPostsEmpty;
+
+  /// No description provided for @communityGroupsPostHint.
+  ///
+  /// In fr, this message translates to:
+  /// **'Écrire un message...'**
+  String get communityGroupsPostHint;
+
+  /// No description provided for @communityGroupsLoadPostsError.
+  ///
+  /// In fr, this message translates to:
+  /// **'Impossible de charger les discussions.'**
+  String get communityGroupsLoadPostsError;
+
   /// No description provided for @profileTitle.
   ///
   /// In fr, this message translates to:

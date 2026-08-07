@@ -382,6 +382,87 @@ class AppLocalizationsFr extends AppLocalizations {
   String get communitySend => 'Envoyer';
 
   @override
+  String get communityFeedTab => 'Fil';
+
+  @override
+  String get communityGroupsTab => 'Groupes';
+
+  @override
+  String get communityGroupsEmpty => 'Aucun groupe pour le moment.';
+
+  @override
+  String get communityGroupsLoadError => 'Impossible de charger les groupes.';
+
+  @override
+  String get communityGroupsRetry => 'Réessayer';
+
+  @override
+  String get communityGroupsCreateButton => 'Créer un groupe';
+
+  @override
+  String get communityGroupsCreateTitle => 'Créer un groupe';
+
+  @override
+  String get communityGroupsNameLabel => 'Nom du groupe';
+
+  @override
+  String get communityGroupsNameRequired => 'Le nom du groupe est obligatoire.';
+
+  @override
+  String get communityGroupsDescriptionLabel => 'Description (optionnel)';
+
+  @override
+  String get communityGroupsZawiyaLabel => 'Zawiya (optionnel)';
+
+  @override
+  String get communityGroupsRegionLabel => 'Région (optionnel)';
+
+  @override
+  String get communityGroupsCreateSubmit => 'Créer';
+
+  @override
+  String get communityGroupsSignInToCreate =>
+      'Connectez-vous pour créer un groupe.';
+
+  @override
+  String get communityGroupsJoin => 'Rejoindre le groupe';
+
+  @override
+  String get communityGroupsLeave => 'Quitter le groupe';
+
+  @override
+  String get communityGroupsLeaveConfirmTitle => 'Quitter ce groupe ?';
+
+  @override
+  String get communityGroupsLeaveConfirmBody =>
+      'Vous ne verrez plus ses discussions tant que vous ne l\'aurez pas rejoint à nouveau.';
+
+  @override
+  String get communityGroupsLeaveConfirmAction => 'Quitter';
+
+  @override
+  String get communityGroupsSignInToJoin =>
+      'Connectez-vous pour rejoindre un groupe.';
+
+  @override
+  String get communityGroupsNotMemberTitle => 'Rejoignez ce groupe';
+
+  @override
+  String get communityGroupsNotMemberBody =>
+      'Les discussions d\'un groupe ne sont visibles que pour ses membres.';
+
+  @override
+  String get communityGroupsPostsEmpty =>
+      'Aucune discussion pour le moment. Soyez le premier à écrire !';
+
+  @override
+  String get communityGroupsPostHint => 'Écrire un message...';
+
+  @override
+  String get communityGroupsLoadPostsError =>
+      'Impossible de charger les discussions.';
+
+  @override
   String get profileTitle => 'Mon profil';
 
   @override
