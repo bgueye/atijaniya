@@ -1376,6 +1376,138 @@ abstract class AppLocalizations {
   /// **'Réessayer'**
   String get lineageRetry;
 
+  /// No description provided for @lineageFindDisciplesCta.
+  ///
+  /// In fr, this message translates to:
+  /// **'Retrouver mes condisciples'**
+  String get lineageFindDisciplesCta;
+
+  /// No description provided for @lineageMatchesTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Retrouver mes condisciples'**
+  String get lineageMatchesTitle;
+
+  /// No description provided for @lineageMatchesLoadError.
+  ///
+  /// In fr, this message translates to:
+  /// **'Impossible de charger ces informations.'**
+  String get lineageMatchesLoadError;
+
+  /// No description provided for @lineageMatchesRetry.
+  ///
+  /// In fr, this message translates to:
+  /// **'Réessayer'**
+  String get lineageMatchesRetry;
+
+  /// No description provided for @lineageMatchesNoLineageTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Renseignez d\'abord votre lignée'**
+  String get lineageMatchesNoLineageTitle;
+
+  /// No description provided for @lineageMatchesNoLineageBody.
+  ///
+  /// In fr, this message translates to:
+  /// **'Pour retrouver vos condisciples, indiquez d\'abord le foyer et le moqaddam qui vous a transmis le Wird.'**
+  String get lineageMatchesNoLineageBody;
+
+  /// No description provided for @lineageMatchesGoToLineageCta.
+  ///
+  /// In fr, this message translates to:
+  /// **'Renseigner ma lignée'**
+  String get lineageMatchesGoToLineageCta;
+
+  /// No description provided for @lineageMatchesNotVisibleTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Rendez votre lignée visible'**
+  String get lineageMatchesNotVisibleTitle;
+
+  /// No description provided for @lineageMatchesNotVisibleBody.
+  ///
+  /// In fr, this message translates to:
+  /// **'Activez « Visibilité de ma lignée spirituelle » dans les paramètres de confidentialité pour retrouver vos condisciples.'**
+  String get lineageMatchesNotVisibleBody;
+
+  /// No description provided for @lineageMatchesGoToPrivacyCta.
+  ///
+  /// In fr, this message translates to:
+  /// **'Paramètres de confidentialité'**
+  String get lineageMatchesGoToPrivacyCta;
+
+  /// No description provided for @lineageMatchesEmptyTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Aucune correspondance pour le moment'**
+  String get lineageMatchesEmptyTitle;
+
+  /// No description provided for @lineageMatchesEmptyBody.
+  ///
+  /// In fr, this message translates to:
+  /// **'Nous vous montrerons ici tout condisciple ayant la même lignée et ayant lui aussi activé la visibilité.'**
+  String get lineageMatchesEmptyBody;
+
+  /// No description provided for @lineageMatchesReceivedSection.
+  ///
+  /// In fr, this message translates to:
+  /// **'Demandes reçues'**
+  String get lineageMatchesReceivedSection;
+
+  /// No description provided for @lineageMatchesResultsSection.
+  ///
+  /// In fr, this message translates to:
+  /// **'Condisciples correspondants'**
+  String get lineageMatchesResultsSection;
+
+  /// No description provided for @lineageMatchesAccept.
+  ///
+  /// In fr, this message translates to:
+  /// **'Accepter'**
+  String get lineageMatchesAccept;
+
+  /// No description provided for @lineageMatchesDecline.
+  ///
+  /// In fr, this message translates to:
+  /// **'Refuser'**
+  String get lineageMatchesDecline;
+
+  /// No description provided for @lineageMatchesRespondError.
+  ///
+  /// In fr, this message translates to:
+  /// **'Impossible de répondre à cette demande.'**
+  String get lineageMatchesRespondError;
+
+  /// No description provided for @lineageMatchesConnectButton.
+  ///
+  /// In fr, this message translates to:
+  /// **'Se mettre en relation'**
+  String get lineageMatchesConnectButton;
+
+  /// No description provided for @lineageMatchesConnectError.
+  ///
+  /// In fr, this message translates to:
+  /// **'Impossible d\'envoyer la demande.'**
+  String get lineageMatchesConnectError;
+
+  /// No description provided for @lineageMatchesStatusPending.
+  ///
+  /// In fr, this message translates to:
+  /// **'Demande envoyée'**
+  String get lineageMatchesStatusPending;
+
+  /// No description provided for @lineageMatchesStatusAccepted.
+  ///
+  /// In fr, this message translates to:
+  /// **'Connecté'**
+  String get lineageMatchesStatusAccepted;
+
+  /// No description provided for @lineageMatchesStatusDeclined.
+  ///
+  /// In fr, this message translates to:
+  /// **'Demande refusée'**
+  String get lineageMatchesStatusDeclined;
+
   /// No description provided for @profileBecomeMouqaddam.
   ///
   /// In fr, this message translates to:
@@ -1807,12 +1939,6 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'Être trouvable par des candidats mouqaddam cherchant un parrain.'**
   String get privacyAvailableAsSponsorDescription;
-
-  /// No description provided for @privacyNoEffectYetNote.
-  ///
-  /// In fr, this message translates to:
-  /// **'Ce réglage n\'a pas encore d\'effet visible : la fonctionnalité correspondante n\'est pas encore disponible dans l\'app.'**
-  String get privacyNoEffectYetNote;
 
   /// No description provided for @privacyWhoCanContactLabel.
   ///

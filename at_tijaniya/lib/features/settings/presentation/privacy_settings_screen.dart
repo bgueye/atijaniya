@@ -10,12 +10,14 @@ import 'privacy_settings_providers.dart';
 /// mouqaddam (opt-in), disponibilité comme parrain, qui peut contacter.
 /// Priorité P0 (docs/03-architecture-ecrans.md).
 ///
-/// RAPPEL SENSIBILITÉ (CLAUDE.md, docs/01 § 5.4.1 et § 5.4.2) :
-/// `lineageVisible`, `mouqaddamStatusVisible` et `availableAsSponsor` n'ont
-/// aujourd'hui aucune fonctionnalité consommatrice — "Retrouver mes
-/// disciples" et la recherche de parrain ne sont pas construites. Ces trois
-/// réglages affichent donc une note explicite plutôt que de laisser croire
-/// à une fonctionnalité active.
+/// RAPPEL SENSIBILITÉ (CLAUDE.md, docs/01 § 5.4.1 et § 5.4.2) : les trois
+/// toggles ont désormais un effet réel — `lineageVisible` ("Retrouver mes
+/// disciples", `search_lineage_matches`), `mouqaddamStatusVisible`
+/// (`mouqaddam_status_visible_to`, silsila d'ijaza) et `availableAsSponsor`
+/// (`search_available_sponsors`). Ne plus ajouter la note "pas encore
+/// d'effet visible" si un futur réglage de ce type est introduit sans sa
+/// fonctionnalité consommatrice : elle a existé ici un temps, retirée une
+/// fois les trois écrans construits.
 class PrivacySettingsScreen extends ConsumerWidget {
   const PrivacySettingsScreen({super.key});
 
@@ -99,7 +101,6 @@ class _PrivacyFormState extends ConsumerState<_PrivacyForm> {
         _PrivacySwitch(
           label: l10n.privacyLineageVisibleLabel,
           description: l10n.privacyLineageVisibleDescription,
-          note: l10n.privacyNoEffectYetNote,
           value: _settings.lineageVisible,
           onChanged: (value) => _apply(_settings.copyWith(lineageVisible: value)),
         ),
@@ -107,7 +108,6 @@ class _PrivacyFormState extends ConsumerState<_PrivacyForm> {
         _PrivacySwitch(
           label: l10n.privacyMouqaddamVisibleLabel,
           description: l10n.privacyMouqaddamVisibleDescription,
-          note: l10n.privacyNoEffectYetNote,
           value: _settings.mouqaddamStatusVisible,
           onChanged: (value) => _apply(_settings.copyWith(mouqaddamStatusVisible: value)),
         ),
@@ -115,7 +115,6 @@ class _PrivacyFormState extends ConsumerState<_PrivacyForm> {
         _PrivacySwitch(
           label: l10n.privacyAvailableAsSponsorLabel,
           description: l10n.privacyAvailableAsSponsorDescription,
-          note: l10n.privacyNoEffectYetNote,
           value: _settings.availableAsSponsor,
           onChanged: (value) => _apply(_settings.copyWith(availableAsSponsor: value)),
         ),
@@ -143,47 +142,24 @@ class _PrivacySwitch extends StatelessWidget {
   const _PrivacySwitch({
     required this.label,
     required this.description,
-    required this.note,
     required this.value,
     required this.onChanged,
   });
 
   final String label;
   final String description;
-  final String note;
   final bool value;
   final ValueChanged<bool> onChanged;
 
   @override
   Widget build(BuildContext context) {
     return Card(
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 4),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            SwitchListTile(
-              activeThumbColor: AppColors.emerald,
-              title: Text(label, style: const TextStyle(fontWeight: FontWeight.w600, color: AppColors.ink)),
-              subtitle: Text(description, style: const TextStyle(color: AppColors.bronze, fontSize: 14)),
-              value: value,
-              onChanged: onChanged,
-            ),
-            Padding(
-              padding: const EdgeInsets.fromLTRB(16, 0, 16, 12),
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Icon(Icons.info_outline, size: 14, color: AppColors.bronze),
-                  const SizedBox(width: 6),
-                  Expanded(
-                    child: Text(note, style: const TextStyle(color: AppColors.bronze, fontSize: 11.5)),
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
+      child: SwitchListTile(
+        activeThumbColor: AppColors.emerald,
+        title: Text(label, style: const TextStyle(fontWeight: FontWeight.w600, color: AppColors.ink)),
+        subtitle: Text(description, style: const TextStyle(color: AppColors.bronze, fontSize: 14)),
+        value: value,
+        onChanged: onChanged,
       ),
     );
   }

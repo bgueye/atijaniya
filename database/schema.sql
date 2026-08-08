@@ -107,7 +107,8 @@ create trigger trg_lineage_normalize before insert or update on public.lineage_d
 
 -- Demande de mise en relation entre deux disciples dont les lignées
 -- correspondent (même foyer + nom de moqaddam normalisé). L'aperçu minimal
--- est calculé côté application ; cette table gère l'acceptation explicite.
+-- est calculé côté base par search_lineage_matches() (SECURITY DEFINER,
+-- ci-dessous) ; cette table gère l'acceptation explicite.
 create table public.lineage_connection_requests (
   id uuid primary key default gen_random_uuid(),
   requester_id uuid not null references auth.users(id) on delete cascade,
@@ -118,6 +119,45 @@ create table public.lineage_connection_requests (
   check (requester_id <> recipient_id),
   unique (requester_id, recipient_id)
 );
+
+-- "Retrouver mes disciples" (docs/01 §5.4.1, confirmé validé par le porteur
+-- de projet le 2026-08-08) — SECURITY DEFINER indispensable : la RLS
+-- lineage_owner_only interdit toute lecture inter-utilisateurs directe sur
+-- lineage_declarations (même famille de contrainte que
+-- mouqaddam_status_visible_to/is_verified_mouqaddam, section 3). Ne renvoie
+-- jamais que l'aperçu minimal prévu par la spec (prénom affiché, avatar,
+-- année de transmission) — jamais le nom du moqaddam ni la zawiya de
+-- l'autre disciple. Correspondance par trigram (index idx_lineage_normalized
+-- déjà en place) plutôt qu'égalité stricte, pour tolérer les variantes
+-- orthographiques (docs/06 §"matching des lignées"), seuil 0.4.
+create or replace function public.search_lineage_matches()
+returns table (user_id uuid, display_name text, avatar_url text, transmission_year smallint)
+language sql
+stable
+security definer
+set search_path = public, extensions
+as $$
+  select p.user_id, p.display_name, p.avatar_url, ld2.transmission_year
+  from public.lineage_declarations ld_self
+  join public.lineage_declarations ld2 on ld2.user_id <> ld_self.user_id
+  join public.privacy_settings ps2 on ps2.user_id = ld2.user_id and ps2.lineage_visible = true
+  join public.profiles p on p.user_id = ld2.user_id
+  where ld_self.user_id = (select auth.uid())
+    and exists (
+      select 1 from public.privacy_settings ps_self
+      where ps_self.user_id = ld_self.user_id and ps_self.lineage_visible = true
+    )
+    and ld2.foyer = ld_self.foyer
+    and (
+      ld_self.foyer <> 'autre'
+      or similarity(coalesce(ld2.foyer_autre_text, ''), coalesce(ld_self.foyer_autre_text, '')) > 0.4
+    )
+    and similarity(ld2.moqaddam_name_normalized, ld_self.moqaddam_name_normalized) > 0.4
+  order by similarity(ld2.moqaddam_name_normalized, ld_self.moqaddam_name_normalized) desc;
+$$;
+revoke all on function public.search_lineage_matches() from public;
+revoke all on function public.search_lineage_matches() from anon;
+grant execute on function public.search_lineage_matches() to authenticated;
 
 -- ============================================================================
 -- 3. STATUT MOUQADDAM & SILSILA D'IJAZA — §5.4.2

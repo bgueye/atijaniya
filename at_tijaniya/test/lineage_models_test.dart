@@ -53,4 +53,43 @@ void main() {
       expect(lineage.zawiyaText, isNull);
     });
   });
+
+  group('LineageMatch.fromRow', () {
+    test('parse un aperçu minimal, jamais le nom du moqaddam ni la zawiya', () {
+      final match = LineageMatch.fromRow({
+        'user_id': 'u2',
+        'display_name': 'Fatou',
+        'avatar_url': null,
+        'transmission_year': 2019,
+      });
+      expect(match.userId, 'u2');
+      expect(match.displayName, 'Fatou');
+      expect(match.transmissionYear, 2019);
+    });
+  });
+
+  group('LineageConnectionRequest', () {
+    test('parse une demande en attente', () {
+      final request = LineageConnectionRequest.fromRow({
+        'id': 'r1',
+        'requester_id': 'me',
+        'recipient_id': 'them',
+        'status': 'pending',
+        'created_at': '2026-08-08T10:00:00.000000+00:00',
+      });
+      expect(request.status, LineageConnectionStatus.pending);
+      expect(request.otherUserName, isNull);
+    });
+
+    test('withOtherUserName complète le nom résolu séparément', () {
+      final request = LineageConnectionRequest.fromRow({
+        'id': 'r1',
+        'requester_id': 'me',
+        'recipient_id': 'them',
+        'status': 'accepted',
+        'created_at': '2026-08-08T10:00:00.000000+00:00',
+      }).withOtherUserName('Modou');
+      expect(request.otherUserName, 'Modou');
+    });
+  });
 }

@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../l10n/app_localizations.dart';
 import '../domain/lineage_models.dart';
+import 'lineage_matches_screen.dart';
 import 'lineage_providers.dart';
 
 /// Renseigner ma lignée spirituelle — foyer, nom du moqaddam, année de
@@ -192,6 +193,16 @@ class _LineageScreenState extends ConsumerState<LineageScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
+                  if (lineage != null) ...[
+                    OutlinedButton.icon(
+                      onPressed: () => Navigator.of(context).push(
+                        MaterialPageRoute(builder: (_) => const LineageMatchesScreen()),
+                      ),
+                      icon: const Icon(Icons.people_outline, size: 18),
+                      label: Text(l10n.lineageFindDisciplesCta),
+                    ),
+                    const SizedBox(height: 20),
+                  ],
                   Card(
                     color: AppColors.goldSoft,
                     child: Padding(

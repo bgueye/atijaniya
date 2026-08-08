@@ -699,6 +699,77 @@ class AppLocalizationsFr extends AppLocalizations {
   String get lineageRetry => 'Réessayer';
 
   @override
+  String get lineageFindDisciplesCta => 'Retrouver mes condisciples';
+
+  @override
+  String get lineageMatchesTitle => 'Retrouver mes condisciples';
+
+  @override
+  String get lineageMatchesLoadError =>
+      'Impossible de charger ces informations.';
+
+  @override
+  String get lineageMatchesRetry => 'Réessayer';
+
+  @override
+  String get lineageMatchesNoLineageTitle => 'Renseignez d\'abord votre lignée';
+
+  @override
+  String get lineageMatchesNoLineageBody =>
+      'Pour retrouver vos condisciples, indiquez d\'abord le foyer et le moqaddam qui vous a transmis le Wird.';
+
+  @override
+  String get lineageMatchesGoToLineageCta => 'Renseigner ma lignée';
+
+  @override
+  String get lineageMatchesNotVisibleTitle => 'Rendez votre lignée visible';
+
+  @override
+  String get lineageMatchesNotVisibleBody =>
+      'Activez « Visibilité de ma lignée spirituelle » dans les paramètres de confidentialité pour retrouver vos condisciples.';
+
+  @override
+  String get lineageMatchesGoToPrivacyCta => 'Paramètres de confidentialité';
+
+  @override
+  String get lineageMatchesEmptyTitle => 'Aucune correspondance pour le moment';
+
+  @override
+  String get lineageMatchesEmptyBody =>
+      'Nous vous montrerons ici tout condisciple ayant la même lignée et ayant lui aussi activé la visibilité.';
+
+  @override
+  String get lineageMatchesReceivedSection => 'Demandes reçues';
+
+  @override
+  String get lineageMatchesResultsSection => 'Condisciples correspondants';
+
+  @override
+  String get lineageMatchesAccept => 'Accepter';
+
+  @override
+  String get lineageMatchesDecline => 'Refuser';
+
+  @override
+  String get lineageMatchesRespondError =>
+      'Impossible de répondre à cette demande.';
+
+  @override
+  String get lineageMatchesConnectButton => 'Se mettre en relation';
+
+  @override
+  String get lineageMatchesConnectError => 'Impossible d\'envoyer la demande.';
+
+  @override
+  String get lineageMatchesStatusPending => 'Demande envoyée';
+
+  @override
+  String get lineageMatchesStatusAccepted => 'Connecté';
+
+  @override
+  String get lineageMatchesStatusDeclined => 'Demande refusée';
+
+  @override
   String get profileBecomeMouqaddam => 'Devenir Mouqaddam';
 
   @override
@@ -936,10 +1007,6 @@ class AppLocalizationsFr extends AppLocalizations {
   @override
   String get privacyAvailableAsSponsorDescription =>
       'Être trouvable par des candidats mouqaddam cherchant un parrain.';
-
-  @override
-  String get privacyNoEffectYetNote =>
-      'Ce réglage n\'a pas encore d\'effet visible : la fonctionnalité correspondante n\'est pas encore disponible dans l\'app.';
 
   @override
   String get privacyWhoCanContactLabel => 'Qui peut vous contacter';

@@ -3,11 +3,11 @@
 /// "Paramètres de confidentialité").
 ///
 /// RAPPEL SENSIBILITÉ (CLAUDE.md, docs/01 § 5.4.1 et § 5.4.2) :
-/// `lineageVisible`, `mouqaddamStatusVisible` et `availableAsSponsor`
-/// n'ont aujourd'hui aucune fonctionnalité consommatrice ("Retrouver mes
-/// disciples" et la recherche de parrain ne sont pas construites) — ce
-/// modèle ne fait que refléter la préférence du disciple, jamais
-/// interprétée ailleurs dans l'app pour l'instant.
+/// `lineageVisible`, `mouqaddamStatusVisible` et `availableAsSponsor` sont
+/// interprétés côté base par des fonctions Postgres `SECURITY DEFINER`
+/// dédiées (`search_lineage_matches`, `mouqaddam_status_visible_to`,
+/// `search_available_sponsors`) — jamais lus directement côté client pour
+/// une décision de visibilité inter-utilisateurs.
 library;
 
 enum WhoCanContact { everyone, matchesOnly }

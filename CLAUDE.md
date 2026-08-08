@@ -366,7 +366,7 @@ dur). Paramètres de confidentialité : quatre réglages sur `privacy_settings`
 
 **Les trois toggles `lineage_visible`/`mouqaddam_status_visible`/
 `available_as_sponsor` n'ont aujourd'hui aucune fonctionnalité
-consommatrice** ("Retrouver mes disciples" et la recherche de parrain ne
+consommatrice** ("Retrouver mes condisciples" et la recherche de parrain ne
 sont pas construites — mêmes raisons que dans le paragraphe "Ma lignée
 spirituelle" ci-dessus) : chaque toggle affiche une note explicite
 ("n'a pas encore d'effet visible") plutôt que de laisser croire à une
@@ -926,6 +926,78 @@ réelle en attente), "Ma silsila d'ijaza" affichant Bocar seul à la
 profondeur 0 (racine, `sponsor_user_id` nul), ajout d'un maillon manuel de
 test confirmé affiché puis supprimé par `execute_sql` (pas de bouton
 suppression côté client, RLS sans policy `DELETE`). Revalidé en arabe (RTL).
+
+Retrouver mes condisciples (docs/01 § 5.4.1) fonctionnel — dernier point du
+périmètre P1/P2 restant, confirmé validé par le porteur de projet le
+2026-08-08 (le modèle documenté n'était jusque-là qu'une recommandation).
+Même schéma que le workflow Mouqaddam : `lineage_declarations` a une RLS
+entièrement "propriétaire uniquement" (`lineage_owner_only`), donc toute
+recherche inter-utilisateurs passe par une fonction dédiée
+`search_lineage_matches()` (`SECURITY DEFINER`, migration
+`add_lineage_matching_search_function`) — jamais de requête directe sur
+cette table pour un autre utilisateur. Correspondance par foyer identique +
+nom du moqaddam proche (trigram, `similarity()` sur l'index
+`idx_lineage_normalized` déjà en place, seuil 0.4) plutôt qu'égalité
+stricte, pour tolérer les variantes orthographiques déjà anticipées par
+`docs/06-architecture-backend.md` — testé avec une variante réelle ("El Hadj
+Oumar Diop" vs "El Hadji Oumar Diop") avant toute construction d'écran.
+Aperçu minimal renvoyé : prénom affiché, avatar, année de transmission —
+jamais le nom du moqaddam ni la zawiya de l'autre disciple, jamais un
+annuaire général (seuls les disciples ayant eux-mêmes activé
+`lineage_visible` apparaissent). Contrairement au parrainage Mouqaddam,
+accepter/refuser une demande (`lineage_connection_requests`,
+`lineage_requests_recipient_decides`) ne touche aucune autre table : un
+`UPDATE` client direct suffit, pas besoin de fonction `SECURITY DEFINER`
+dédiée.
+
+Côté app : `LineageMatch`/`LineageConnectionRequest` ajoutés à
+`lineage_models.dart` (testés dans `test/lineage_models_test.dart`,
+fichier déjà existant pour `LineageDeclaration`/`Foyer` — complété plutôt
+que dupliqué), méthodes ajoutées à `LineageRepository`/`lineage_providers.dart`
+existants (résolution des noms via `profiles`, même limite que
+`SponsorshipRequest`). Un seul écran `LineageMatchesScreen` (contrairement
+au workflow Mouqaddam, symétrique : n'importe qui est à la fois chercheur
+et résultat potentiel pour quelqu'un d'autre — pas de rôles distincts
+justifiant deux écrans séparés) avec deux sections, "Demandes reçues" et
+"Disciples correspondants", plus trois états vides gérés explicitement
+(pas encore de lignée renseignée, lignée renseignée mais non rendue
+visible, aucune correspondance) redirigeant respectivement vers
+`LineageScreen`/`PrivacySettingsScreen`. Accessible via un nouveau bouton
+"Retrouver mes condisciples" en haut de `LineageScreen`, affiché seulement
+une fois une déclaration existante (pas de tuile `ProfilScreen` dédiée,
+contrairement à Mouqaddam).
+
+Bonus corrigé au passage : `PrivacySettingsScreen` affichait encore la
+note "ce réglage n'a pas encore d'effet visible" sur les trois toggles
+`lineageVisible`/`mouqaddamStatusVisible`/`availableAsSponsor` — vraie au
+moment de sa construction, oubliée lors du branchement de Mouqaddam la
+session précédente (les deux derniers toggles avaient déjà un effet réel
+depuis) et désormais fausse pour les trois. Note retirée, `_PrivacySwitch`
+simplifié en conséquence ; `privacyNoEffectYetNote` retiré des `.arb`
+(plus aucun appelant).
+
+Validé en conditions réelles sur émulateur Android avec le compte
+fondateur réel `bgueye@gmail.com` (Bocar, qui avait déjà une vraie
+déclaration de lignée — Tivaouane / "El Hadj Oumar Diop" / 2004 /
+Latmingue — et `lineage_visible = true` d'une session antérieure) : une
+lignée temporaire quasi-identique (variante orthographique volontaire)
+ajoutée pour `claude.tijaniya.qa.test1` (nettoyée après coup, ainsi que
+les demandes de test) a bien remonté dans "Disciples correspondants" avec
+l'aperçu minimal attendu (année seule, jamais le nom du moqaddam) ; envoi
+d'une demande confirmé en base ; demande reçue simulée dans l'autre sens,
+acceptée depuis l'écran (bouton "Accepter"), confirmée `accepted` en base
+par `execute_sql`. Revalidé en arabe (RTL) : titre, flèche retour, statut
+et avatar correctement inversés.
+
+Correction de vocabulaire signalée par le porteur de projet juste après :
+"mes disciples" est trompeur en français (implique qu'on leur a soi-même
+transmis le Wird, alors qu'il s'agit de pairs partageant le même moqaddam)
+— renommé en "condisciples" partout côté FR (bouton, titre d'écran, corps
+des états vides, section "Condisciples correspondants") ainsi que dans
+`docs/03-architecture-ecrans.md` et les commentaires de code. L'arabe
+n'avait pas ce problème (`مريد`/`مريدون` sans suffixe possessif ne porte
+aucune connotation de hiérarchie transmetteur→destinataire) — laissé
+inchangé.
 
 ## Commandes utiles
 - `flutter pub get`

@@ -14,3 +14,13 @@ final myLineageProvider = FutureProvider<LineageDeclaration?>((ref) {
   ref.watch(currentUserIdProvider);
   return ref.watch(lineageRepositoryProvider).fetchMyLineage();
 });
+
+final lineageMatchesProvider = FutureProvider<List<LineageMatch>>((ref) {
+  ref.watch(currentUserIdProvider);
+  return ref.watch(lineageRepositoryProvider).searchMatches();
+});
+
+final myConnectionRequestsProvider = FutureProvider<List<LineageConnectionRequest>>((ref) {
+  ref.watch(currentUserIdProvider);
+  return ref.watch(lineageRepositoryProvider).fetchMyConnectionRequests();
+});

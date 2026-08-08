@@ -63,7 +63,7 @@ P3 = consolidation avant lancement. Détail du séquencement : `04-roadmap-devel
 | Messagerie privée | Liste de conversations + fil individuel | P2 |
 | Mon profil | Infos de base, zawiya, "Ma lignée spirituelle" | P0 |
 | Renseigner ma lignée spirituelle | Foyer, nom du moqaddam (suggestions), année, zawiya (optionnel) | P1 |
-| Retrouver mes disciples (lignée) | Activation mise en relation, résultats (aperçu minimal), action "Se mettre en relation" | P1 |
+| Retrouver mes condisciples (lignée) | Activation mise en relation, résultats (aperçu minimal), action "Se mettre en relation" | P1 |
 | Devenir Mouqaddam | Déclaration du statut : choix du parrain (mouqaddam ayant donné l'ijaza) + date ; envoi de la demande de parrainage | P2 |
 | Demandes de parrainage | Côté mouqaddam vérifié : demandes reçues, accepter/refuser | P2 |
 | Rechercher un parrain | Recherche des mouqaddamines "disponibles comme parrain", pour l'écran Devenir Mouqaddam | P2 |

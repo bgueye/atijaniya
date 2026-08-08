@@ -676,6 +676,75 @@ class AppLocalizationsAr extends AppLocalizations {
   String get lineageRetry => 'إعادة المحاولة';
 
   @override
+  String get lineageFindDisciplesCta => 'العثور على مريدين متطابقين';
+
+  @override
+  String get lineageMatchesTitle => 'العثور على مريدين متطابقين';
+
+  @override
+  String get lineageMatchesLoadError => 'تعذّر تحميل هذه المعلومات.';
+
+  @override
+  String get lineageMatchesRetry => 'إعادة المحاولة';
+
+  @override
+  String get lineageMatchesNoLineageTitle => 'أدخل سلسلتك الروحية أولاً';
+
+  @override
+  String get lineageMatchesNoLineageBody =>
+      'للعثور على مريدين آخرين، أدخل أولاً الفوج ومقدَّمك الذي نقل إليك الورد.';
+
+  @override
+  String get lineageMatchesGoToLineageCta => 'إدخال سلسلتي الروحية';
+
+  @override
+  String get lineageMatchesNotVisibleTitle => 'اجعل سلسلتك مرئية';
+
+  @override
+  String get lineageMatchesNotVisibleBody =>
+      'فعّل «ظهور سلسلتي الروحية» في إعدادات الخصوصية للعثور على مريدين آخرين يشاركونك نفس السلسلة.';
+
+  @override
+  String get lineageMatchesGoToPrivacyCta => 'إعدادات الخصوصية';
+
+  @override
+  String get lineageMatchesEmptyTitle => 'لا توجد أي مطابقة حالياً';
+
+  @override
+  String get lineageMatchesEmptyBody =>
+      'سنعرض هنا أي مريد لديه نفس السلسلة وفعّل هو أيضاً خاصية الظهور.';
+
+  @override
+  String get lineageMatchesReceivedSection => 'الطلبات المستلمة';
+
+  @override
+  String get lineageMatchesResultsSection => 'مريدون متطابقون';
+
+  @override
+  String get lineageMatchesAccept => 'قبول';
+
+  @override
+  String get lineageMatchesDecline => 'رفض';
+
+  @override
+  String get lineageMatchesRespondError => 'تعذّر الرد على هذا الطلب.';
+
+  @override
+  String get lineageMatchesConnectButton => 'التواصل';
+
+  @override
+  String get lineageMatchesConnectError => 'تعذّر إرسال الطلب.';
+
+  @override
+  String get lineageMatchesStatusPending => 'تم إرسال الطلب';
+
+  @override
+  String get lineageMatchesStatusAccepted => 'تم التواصل';
+
+  @override
+  String get lineageMatchesStatusDeclined => 'تم رفض الطلب';
+
+  @override
   String get profileBecomeMouqaddam => 'أن تصبح مقدَّماً';
 
   @override
@@ -900,10 +969,6 @@ class AppLocalizationsAr extends AppLocalizations {
   @override
   String get privacyAvailableAsSponsorDescription =>
       'أن يجدك المرشحون لصفة المقدَّم الباحثون عن ضامن.';
-
-  @override
-  String get privacyNoEffectYetNote =>
-      'لا أثر مرئي لهذا الإعداد بعد: الخاصية المرتبطة به غير متوفرة بعد في التطبيق.';
 
   @override
   String get privacyWhoCanContactLabel => 'من يمكنه التواصل معك';

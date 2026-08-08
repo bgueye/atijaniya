@@ -60,3 +60,82 @@ class LineageDeclaration {
     );
   }
 }
+
+/// Un disciple correspondant à la lignée du disciple connecté
+/// (`search_lineage_matches`, fonction `SECURITY DEFINER` — voir
+/// `lineage_repository.dart`). Aperçu minimal volontaire (docs/01 §5.4.1) :
+/// jamais le nom du moqaddam ni la zawiya de l'autre disciple, seulement de
+/// quoi le reconnaître.
+class LineageMatch {
+  const LineageMatch({
+    required this.userId,
+    required this.displayName,
+    this.avatarUrl,
+    this.transmissionYear,
+  });
+
+  final String userId;
+  final String displayName;
+  final String? avatarUrl;
+  final int? transmissionYear;
+
+  factory LineageMatch.fromRow(Map<String, dynamic> row) {
+    return LineageMatch(
+      userId: row['user_id'] as String,
+      displayName: row['display_name'] as String,
+      avatarUrl: row['avatar_url'] as String?,
+      transmissionYear: row['transmission_year'] as int?,
+    );
+  }
+}
+
+enum LineageConnectionStatus { pending, accepted, declined }
+
+LineageConnectionStatus _connectionStatusFromDb(String value) {
+  return LineageConnectionStatus.values.firstWhere(
+    (s) => s.name == value,
+    orElse: () => LineageConnectionStatus.pending,
+  );
+}
+
+/// Une demande de mise en relation — `otherUserName` résolu séparément via
+/// `profiles` (pas de FK directe, même limite que
+/// `mouqaddam_models.SponsorshipRequest`).
+class LineageConnectionRequest {
+  const LineageConnectionRequest({
+    required this.id,
+    required this.requesterId,
+    required this.recipientId,
+    required this.status,
+    required this.createdAt,
+    this.otherUserName,
+  });
+
+  final String id;
+  final String requesterId;
+  final String recipientId;
+  final LineageConnectionStatus status;
+  final DateTime createdAt;
+  final String? otherUserName;
+
+  LineageConnectionRequest withOtherUserName(String? name) {
+    return LineageConnectionRequest(
+      id: id,
+      requesterId: requesterId,
+      recipientId: recipientId,
+      status: status,
+      createdAt: createdAt,
+      otherUserName: name,
+    );
+  }
+
+  factory LineageConnectionRequest.fromRow(Map<String, dynamic> row) {
+    return LineageConnectionRequest(
+      id: row['id'] as String,
+      requesterId: row['requester_id'] as String,
+      recipientId: row['recipient_id'] as String,
+      status: _connectionStatusFromDb(row['status'] as String),
+      createdAt: DateTime.parse(row['created_at'] as String).toLocal(),
+    );
+  }
+}
