@@ -146,6 +146,9 @@ class AppLocalizationsAr extends AppLocalizations {
   String get homeGreeting => 'السلام عليكم';
 
   @override
+  String get homeGreetingPrefix => 'السلام عليكم';
+
+  @override
   String get homeTodayStatus => 'حالة اليوم';
 
   @override

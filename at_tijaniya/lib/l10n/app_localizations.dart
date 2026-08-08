@@ -350,6 +350,12 @@ abstract class AppLocalizations {
   /// **'Salam, disciple'**
   String get homeGreeting;
 
+  /// No description provided for @homeGreetingPrefix.
+  ///
+  /// In fr, this message translates to:
+  /// **'Salam,'**
+  String get homeGreetingPrefix;
+
   /// No description provided for @homeTodayStatus.
   ///
   /// In fr, this message translates to:

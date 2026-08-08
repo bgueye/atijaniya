@@ -149,6 +149,9 @@ class AppLocalizationsFr extends AppLocalizations {
   String get homeGreeting => 'Salam, disciple';
 
   @override
+  String get homeGreetingPrefix => 'Salam,';
+
+  @override
   String get homeTodayStatus => 'Statut du jour';
 
   @override

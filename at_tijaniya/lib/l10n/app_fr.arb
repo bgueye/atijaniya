@@ -48,6 +48,7 @@
   "navCommunity": "Communauté",
 
   "homeGreeting": "Salam, disciple",
+  "homeGreetingPrefix": "Salam,",
   "homeTodayStatus": "Statut du jour",
 
   "wirdListTitle": "Mes Wirds",
