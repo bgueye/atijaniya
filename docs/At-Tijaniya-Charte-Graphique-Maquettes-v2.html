@@ -1,0 +1,912 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>At-Tijaniya — Charte graphique & Maquettes v2</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Lateef&family=Cormorant+Garamond:wght@500;600;700&family=Cormorant+Garamond:ital@1&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink: #2B2620;
+    --zaytoune: #0F3D2E;
+    --emerald: #1C6E4A;
+    --emerald-soft: #E4EEE8;
+    --gold: #C9A24B;
+    --gold-soft: #F1E6C9;
+    --parchment: #F7F2E7;
+    --bronze: #8C7A5B;
+    --white: #FFFDF8;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  body{
+    background:#EDE7D8;
+    font-family:'Jost', sans-serif;
+    color:var(--ink);
+    padding:40px 20px 120px;
+  }
+  .studio-header{ max-width:1200px; margin:0 auto 60px; text-align:center; }
+  .studio-header .eyebrow{ font-size:12px; letter-spacing:.28em; text-transform:uppercase; color:var(--bronze); font-weight:500; margin-bottom:14px; }
+  .studio-header h1{ font-family:'Cormorant Garamond', serif; font-size:52px; font-weight:600; color:var(--zaytoune); letter-spacing:.01em; }
+  .studio-header .arabic-title{ font-family:'Amiri', serif; font-size:30px; color:var(--gold); margin-top:6px; }
+  .studio-header p.sub{ max-width:620px; margin:18px auto 0; font-size:15px; color:var(--bronze); line-height:1.6; }
+  .studio-header .versionnote{ max-width:680px; margin:14px auto 0; font-size:12.5px; color:var(--emerald); background:var(--emerald-soft); padding:10px 16px; border-radius:8px; display:inline-block; }
+
+  section.block{ max-width:1280px; margin:0 auto 90px; }
+  .block-title{ display:flex; align-items:baseline; gap:16px; margin-bottom:10px; }
+  .block-title .num{ font-family:'Cormorant Garamond', serif; font-style:italic; font-size:20px; color:var(--gold); }
+  .block-title h2{ font-family:'Cormorant Garamond', serif; font-size:30px; font-weight:600; color:var(--zaytoune); }
+  .block-title .line{ flex:1; height:1px; background:linear-gradient(90deg, var(--bronze), transparent); }
+  .block-sub{ font-size:13px; color:var(--bronze); margin-bottom:32px; max-width:760px; line-height:1.6; }
+
+  /* ===== PALETTE ===== */
+  .palette-grid{ display:grid; grid-template-columns:repeat(6,1fr); gap:16px; }
+  .swatch{ border-radius:4px; overflow:hidden; box-shadow:0 2px 10px rgba(15,61,46,.08); }
+  .swatch .fill{ height:100px; }
+  .swatch .label{ background:var(--white); padding:12px 14px; }
+  .swatch .name{ font-size:13px; font-weight:600; color:var(--ink); }
+  .swatch .hex{ font-size:11px; color:var(--bronze); font-family:monospace; margin-top:2px; }
+  .swatch .use{ font-size:10.5px; color:var(--bronze); margin-top:6px; line-height:1.4; }
+
+  /* ===== TYPO ===== */
+  .type-grid{ display:grid; grid-template-columns:1fr 1fr; gap:28px; }
+  .type-card{ background:var(--white); border-radius:6px; padding:28px 30px; box-shadow:0 2px 14px rgba(15,61,46,.06); }
+  .type-card .role{ font-size:11px; letter-spacing:.16em; text-transform:uppercase; color:var(--gold); font-weight:600; margin-bottom:14px; }
+  .type-card .sample-fr{ font-family:'Cormorant Garamond', serif; font-size:34px; color:var(--zaytoune); font-weight:600; }
+  .type-card .sample-ar{ font-family:'Amiri', serif; font-size:30px; color:var(--zaytoune); direction:rtl; margin-top:6px; }
+  .type-card .sample-body{ font-family:'Jost', sans-serif; font-size:15px; color:var(--ink); margin-top:10px; line-height:1.6; }
+  .type-card .meta{ font-size:12px; color:var(--bronze); margin-top:14px; border-top:1px solid #eee; padding-top:12px; }
+
+  /* ===== SIGNATURE MOTIF ===== */
+  .signature-box{ background:var(--zaytoune); border-radius:8px; padding:50px; display:flex; align-items:center; gap:40px; color:var(--parchment); position:relative; overflow:hidden; }
+  .signature-box .rosace{ width:120px; height:120px; flex-shrink:0; }
+  .signature-box h3{ font-family:'Cormorant Garamond', serif; font-size:24px; color:var(--gold-soft); margin-bottom:10px; }
+  .signature-box p{ font-size:14px; line-height:1.7; color:#D9E6DE; max-width:560px; }
+
+  /* ===== PHONE MOCKUPS (shared shell) ===== */
+  .phones-labels{ display:flex; gap:32px; flex-wrap:wrap; justify-content:flex-start; }
+  .phone-col{ display:flex; flex-direction:column; align-items:center; }
+  .phone-col .tagn{ font-size:9px; letter-spacing:.1em; text-transform:uppercase; color:var(--gold); font-weight:700; margin-bottom:8px; }
+  .phone{ width:270px; height:568px; background:#0a0a0a; border-radius:38px; padding:11px; box-shadow:0 20px 60px rgba(15,61,46,.28); position:relative; flex-shrink:0; }
+  .phone .notch{ position:absolute; top:11px; left:50%; transform:translateX(-50%); width:100px; height:20px; background:#0a0a0a; border-radius:0 0 14px 14px; z-index:10; }
+  .screen{ width:100%; height:100%; background:var(--parchment); border-radius:29px; overflow:hidden; position:relative; display:flex; flex-direction:column; }
+  .phone-caption{ text-align:center; margin-top:14px; color:var(--bronze); font-style:italic; font-family:'Cormorant Garamond', serif; font-size:15px; max-width:270px; }
+  .statusbar{ height:30px; display:flex; align-items:center; justify-content:space-between; padding:0 20px; font-size:10px; color:var(--ink); font-weight:600; flex-shrink:0; }
+
+  /* generic light header (title on parchment) */
+  .hdr-light{ padding:6px 18px 12px; flex-shrink:0; position:relative; }
+  .hdr-light .back{ font-size:14px; color:var(--bronze); margin-bottom:6px; }
+  .hdr-light h2{ font-family:'Cormorant Garamond', serif; font-size:21px; color:var(--zaytoune); font-weight:600; }
+  .hdr-light .ar{ font-family:'Amiri', serif; color:var(--gold); font-size:13px; margin-top:2px; }
+  .hdr-light.center{ text-align:center; }
+
+  /* generic dark header (title on zaytoune) */
+  .hdr-dark{ padding:12px 18px 0; display:flex; align-items:center; justify-content:space-between; flex-shrink:0; color:var(--parchment); }
+  .hdr-dark .back{ font-size:16px; }
+  .hdr-dark .t{ font-family:'Amiri', serif; color:var(--gold-soft); font-size:14px; }
+  .hdr-dark .dots{ font-size:14px; letter-spacing:2px; }
+
+  /* generic scroll body */
+  .gbody-scroll{ flex:1; overflow:hidden; padding:6px 18px 14px; }
+  .glist{ flex:1; overflow:hidden; padding:2px 18px 14px; display:flex; flex-direction:column; gap:9px; }
+  .gitem{ background:var(--white); border-radius:10px; padding:10px 12px; display:flex; align-items:center; gap:11px; box-shadow:0 2px 8px rgba(15,61,46,.06); }
+  .gitem .gavatar{ width:34px; height:34px; border-radius:50%; background:var(--emerald-soft); display:flex; align-items:center; justify-content:center; font-size:14px; flex-shrink:0; color:var(--emerald); }
+  .gitem .gavatar.gold{ background:var(--gold-soft); color:#8a6a1f; }
+  .gitem .gbody{ flex:1; min-width:0; }
+  .gitem .gtitle{ font-size:11.5px; font-weight:600; color:var(--ink); }
+  .gitem .gsub{ font-size:9.5px; color:var(--bronze); margin-top:2px; }
+  .gitem .gtrail{ font-size:9px; color:var(--bronze); flex-shrink:0; text-align:right; }
+  .gitem .gtrail .dot-new{ width:7px; height:7px; border-radius:50%; background:#E8544A; display:inline-block; margin-bottom:3px; }
+
+  .mini-btn{ font-size:8.5px; padding:5px 9px; border-radius:12px; border:1px solid var(--emerald); color:var(--emerald); font-weight:600; background:none; white-space:nowrap; }
+  .mini-btn.gold{ border-color:var(--gold); color:#8a6a1f; }
+  .mini-btn.filled{ background:var(--emerald); color:white; border:none; }
+
+  .section-label{ font-size:9.5px; letter-spacing:.14em; text-transform:uppercase; color:var(--bronze); font-weight:600; margin:14px 0 8px; }
+
+  /* toggle rows (settings) */
+  .trow{ display:flex; align-items:center; justify-content:space-between; gap:10px; padding:11px 0; border-bottom:1px solid #ECE4D0; }
+  .trow .tlabel{ font-size:11px; color:var(--ink); font-weight:500; }
+  .trow .tsub{ font-size:9px; color:var(--bronze); margin-top:2px; line-height:1.4; }
+  .switch{ width:34px; height:20px; border-radius:11px; background:#DDD4BE; position:relative; flex-shrink:0; }
+  .switch.on{ background:var(--emerald); }
+  .switch::after{ content:''; width:16px; height:16px; border-radius:50%; background:white; position:absolute; top:2px; left:2px; }
+  .switch.on::after{ left:16px; }
+
+  /* form fields */
+  .ffield{ margin-bottom:13px; }
+  .ffield label{ font-size:8.5px; letter-spacing:.08em; text-transform:uppercase; color:var(--bronze); font-weight:700; display:block; margin-bottom:5px; }
+  .finput{ background:var(--white); border:1px solid #ECE4D0; border-radius:8px; padding:9px 11px; font-size:10.5px; color:#B8AD94; }
+  .finput.filled{ color:var(--ink); }
+  .chip-select{ display:flex; gap:6px; flex-wrap:wrap; }
+  .chip-select .chip{ font-size:9px; padding:6px 11px; border-radius:14px; border:1px solid var(--bronze); color:var(--bronze); }
+  .chip-select .chip.sel{ background:var(--emerald); border-color:var(--emerald); color:white; font-weight:600; }
+
+  .badge-mq{ display:inline-flex; align-items:center; gap:4px; background:var(--gold-soft); color:#8a6a1f; font-size:8px; font-weight:700; padding:3px 7px; border-radius:9px; letter-spacing:.03em; }
+  .badge-mq svg{ width:8px; height:8px; }
+
+  /* silsila chain */
+  .chain-wrap{ flex:1; overflow:hidden; padding:14px 20px; display:flex; flex-direction:column; align-items:center; gap:0; }
+  .chain-node{ width:100%; background:var(--white); border-radius:10px; padding:9px 12px; text-align:center; box-shadow:0 2px 8px rgba(15,61,46,.06); }
+  .chain-node .cname{ font-size:11px; font-weight:600; color:var(--zaytoune); }
+  .chain-node .cyear{ font-size:8.5px; color:var(--bronze); margin-top:2px; }
+  .chain-node.self{ border:2px solid var(--gold); }
+  .chain-node.founder{ background:var(--zaytoune); }
+  .chain-node.founder .cname{ color:var(--gold-soft); font-family:'Amiri', serif; font-size:14px; }
+  .chain-node.founder .cyear{ color:var(--parchment); }
+  .chain-link{ width:1px; height:14px; background:var(--gold); }
+  .chain-fade{ font-size:8px; color:var(--bronze); font-style:italic; margin:2px 0; }
+
+  /* stat grid + mini calendar */
+  .stat-grid{ display:grid; grid-template-columns:1fr 1fr; gap:9px; margin-bottom:14px; }
+  .stat-box{ background:var(--white); border-radius:10px; padding:12px; text-align:center; box-shadow:0 2px 8px rgba(15,61,46,.06); }
+  .stat-box .snum{ font-family:'Cormorant Garamond', serif; font-size:24px; color:var(--zaytoune); font-weight:700; }
+  .stat-box .slabel{ font-size:8.5px; color:var(--bronze); margin-top:2px; }
+  .cal-mini{ display:grid; grid-template-columns:repeat(7,1fr); gap:4px; margin-bottom:6px; }
+  .cal-mini .cd{ aspect-ratio:1; border-radius:4px; background:#ECE4D0; }
+  .cal-mini .cd.done{ background:var(--emerald); }
+
+  /* onboarding / splash / lang */
+  .splash-screen{ background:var(--zaytoune); align-items:center; justify-content:center; display:flex; flex-direction:column; gap:14px; }
+  .splash-rosace{ width:100px; height:100px; }
+  .splash-title{ font-family:'Amiri', serif; color:var(--gold-soft); font-size:22px; }
+  .lang-screen{ padding:0 22px; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:14px; flex:1; }
+  .lang-btn{ width:100%; padding:15px; border-radius:10px; border:1.5px solid var(--bronze); text-align:center; font-size:13px; color:var(--ink); }
+  .lang-btn.sel{ border-color:var(--emerald); background:var(--emerald-soft); color:var(--emerald); font-weight:700; }
+  .onb-screen{ flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:0 26px; text-align:center; gap:10px; }
+  .onb-rosace{ width:90px; height:90px; opacity:.85; margin-bottom:6px; }
+  .onb-title{ font-family:'Cormorant Garamond', serif; font-size:19px; color:var(--zaytoune); font-weight:600; }
+  .onb-text{ font-size:11px; color:var(--bronze); line-height:1.6; }
+  .dots-row{ display:flex; gap:6px; justify-content:center; margin-top:16px; }
+  .dots-row .d{ width:6px; height:6px; border-radius:50%; background:#ECE4D0; }
+  .dots-row .d.active{ background:var(--gold); width:16px; border-radius:4px; }
+  .form-screen{ padding:26px 22px; flex:1; display:flex; flex-direction:column; }
+  .form-screen h2{ font-family:'Cormorant Garamond', serif; font-size:24px; color:var(--zaytoune); font-weight:600; margin-bottom:4px; }
+  .form-screen .fsub{ font-size:11px; color:var(--bronze); margin-bottom:20px; }
+  .guest-link{ text-align:center; font-size:10.5px; color:var(--emerald); margin-top:10px; text-decoration:underline; }
+
+  /* buttons reused everywhere */
+  .btn-primary{ background:var(--emerald); color:var(--white); border:none; padding:12px 20px; border-radius:8px; font-size:12.5px; font-weight:600; font-family:'Jost'; width:100%; margin-bottom:9px; }
+  .btn-secondary{ background:transparent; color:var(--emerald); border:1.5px solid var(--emerald); padding:10px 20px; border-radius:8px; font-size:12.5px; font-weight:600; font-family:'Jost'; width:100%; margin-bottom:9px; }
+  .btn-gold{ background:var(--gold); color:var(--zaytoune); border:none; padding:12px 20px; border-radius:8px; font-size:12.5px; font-weight:700; font-family:'Jost'; width:100%; }
+
+  /* wird card (reused) */
+  .wird-cards{ display:flex; flex-direction:column; gap:9px; }
+  .wird-card{ background:var(--white); border-radius:10px; padding:13px 15px; display:flex; align-items:center; justify-content:space-between; border-left:3px solid var(--gold); box-shadow:0 2px 8px rgba(15,61,46,.06); }
+  .wird-card .wname-ar{ font-family:'Amiri', serif; font-size:16px; color:var(--zaytoune); }
+  .wird-card .wname-fr{ font-size:9.5px; color:var(--bronze); margin-top:2px; }
+  .wird-card .status{ font-size:9px; padding:4px 9px; border-radius:20px; font-weight:600; }
+  .status.done{ background:var(--emerald-soft); color:var(--emerald); }
+  .status.pending{ background:var(--gold-soft); color:#95762A; }
+
+  .tabbar{ height:58px; background:var(--white); border-top:1px solid #ECE4D0; display:flex; align-items:center; justify-content:space-around; flex-shrink:0; }
+  .tab{ display:flex; flex-direction:column; align-items:center; gap:3px; }
+  .tab .ic{ width:18px; height:18px; font-size:15px; }
+  .tab span{ font-size:8px; color:var(--bronze); font-weight:500; }
+  .tab.active span{ color:var(--emerald); font-weight:700; }
+
+  /* wird practice screen (dark, tasbih) */
+  .wird-screen{ background:var(--zaytoune); }
+  .rosace-watermark{ position:absolute; width:230px; height:230px; opacity:.06; top:50%; left:50%; transform:translate(-50%,-50%); }
+  .wird-center{ flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; position:relative; }
+  .arabic-phrase{ font-family:'Amiri', serif; color:var(--parchment); font-size:24px; text-align:center; line-height:1.9; direction:rtl; max-width:220px; z-index:2; margin-bottom:6px; }
+  .translit{ color:var(--bronze); font-size:10px; font-style:italic; z-index:2; margin-bottom:22px; font-family:'Cormorant Garamond', serif; }
+  .counter-ring{ width:148px; height:148px; border-radius:50%; border:2px solid var(--gold); display:flex; flex-direction:column; align-items:center; justify-content:center; position:relative; z-index:2; }
+  .counter-num{ font-family:'Cormorant Garamond', serif; font-size:42px; color:var(--parchment); font-weight:600; }
+  .counter-target{ font-size:10px; color:var(--bronze); margin-top:2px; }
+  .mode-switch{ display:flex; gap:5px; z-index:2; margin-top:22px; background:rgba(255,255,255,.06); padding:5px; border-radius:20px; }
+  .mode-btn{ font-size:8.5px; padding:6px 11px; border-radius:16px; color:var(--bronze); font-weight:500; }
+  .mode-btn.active{ background:var(--gold); color:var(--zaytoune); font-weight:700; }
+  .wird-bottom{ padding:16px 22px 20px; flex-shrink:0; }
+  .progress-bar-bg{ height:3px; background:rgba(255,255,255,.12); border-radius:2px; overflow:hidden; margin-bottom:9px; }
+  .progress-bar-fill{ height:100%; width:63%; background:var(--gold); }
+  .wird-bottom .prog-label{ font-size:9px; color:var(--bronze); display:flex; justify-content:space-between; }
+
+  /* wird guide / reading screen */
+  .guide-screen{ background:var(--parchment); }
+  .guide-body{ flex:1; overflow:hidden; padding:6px 20px 10px; }
+  .guide-pillar{ background:var(--white); border-radius:10px; padding:14px; margin-bottom:10px; box-shadow:0 2px 8px rgba(15,61,46,.06); }
+  .guide-pillar .gp-ar{ font-family:'Amiri', serif; font-size:17px; color:var(--zaytoune); direction:rtl; text-align:center; line-height:1.8; }
+  .guide-pillar .gp-translit{ font-size:9.5px; font-style:italic; color:var(--bronze); text-align:center; margin-top:6px; font-family:'Cormorant Garamond', serif; }
+  .guide-pillar .gp-fr{ font-size:9.5px; color:var(--ink); text-align:center; margin-top:6px; border-top:1px solid #ECE4D0; padding-top:6px; }
+  .audio-bar{ background:var(--zaytoune); padding:10px 18px; display:flex; align-items:center; gap:10px; flex-shrink:0; }
+  .audio-bar .play-ic{ width:28px; height:28px; border-radius:50%; background:var(--gold); color:var(--zaytoune); display:flex; align-items:center; justify-content:center; font-size:11px; flex-shrink:0; }
+  .audio-bar .wave{ flex:1; height:18px; background:repeating-linear-gradient(90deg, var(--gold-soft) 0 2px, transparent 2px 5px); opacity:.5; border-radius:3px; }
+  .audio-bar .time{ font-size:8.5px; color:var(--parchment); flex-shrink:0; }
+
+  /* khadara list (reused) */
+  .kh-list{ flex:1; overflow:hidden; padding:0 20px; display:flex; flex-direction:column; gap:11px; }
+  .kh-card{ background:var(--white); border-radius:10px; overflow:hidden; box-shadow:0 2px 8px rgba(15,61,46,.06); }
+  .kh-thumb{ height:70px; background:linear-gradient(135deg, var(--zaytoune), #1C6E4A); position:relative; display:flex; align-items:center; justify-content:center; }
+  .kh-thumb .play{ width:28px; height:28px; border-radius:50%; background:rgba(255,255,255,.9); display:flex; align-items:center; justify-content:center; color:var(--zaytoune); font-size:10px; }
+  .kh-thumb .badge-live{ position:absolute; top:8px; left:8px; background:#E8544A; color:white; font-size:7.5px; font-weight:700; padding:3px 7px; border-radius:10px; letter-spacing:.05em; }
+  .kh-thumb .badge-replay{ position:absolute; top:8px; left:8px; background:rgba(0,0,0,.45); color:white; font-size:7.5px; font-weight:600; padding:3px 7px; border-radius:10px; }
+  .kh-info{ padding:9px 11px; }
+  .kh-info .kname{ font-size:11.5px; font-weight:600; color:var(--ink); }
+  .kh-info .kmeta{ font-size:9px; color:var(--bronze); margin-top:3px; }
+  .filter-row{ display:flex; gap:7px; padding:0 20px 12px; flex-shrink:0; }
+  .filter-chip{ font-size:9px; padding:6px 12px; border-radius:20px; border:1px solid var(--bronze); color:var(--bronze); font-weight:500; }
+  .filter-chip.active{ background:var(--emerald); color:var(--white); border-color:var(--emerald); }
+
+  /* event detail */
+  .ev-hero{ height:150px; background:linear-gradient(135deg, var(--zaytoune), #1C6E4A); flex-shrink:0; position:relative; }
+  .ev-hero .rosace-lg{ width:110px; height:110px; opacity:.12; position:absolute; top:10px; left:50%; transform:translateX(-50%); }
+  .ev-body{ flex:1; overflow:hidden; padding:16px 20px; }
+  .ev-body h3{ font-family:'Cormorant Garamond', serif; font-size:18px; color:var(--zaytoune); margin-bottom:6px; }
+  .ev-meta-row{ font-size:10px; color:var(--bronze); margin-bottom:4px; }
+  .ev-body p{ font-size:10.5px; color:var(--ink); line-height:1.6; margin-top:10px; }
+
+  /* live player */
+  .live-screen{ background:#0a0a0a; }
+  .live-video{ flex:1; background:linear-gradient(135deg,#132a20,#0a0a0a); display:flex; align-items:center; justify-content:center; position:relative; }
+  .live-video .badge-live{ position:absolute; top:14px; left:16px; background:#E8544A; color:white; font-size:8px; font-weight:700; padding:4px 9px; border-radius:10px; }
+  .live-video .viewers{ position:absolute; top:14px; right:16px; color:white; font-size:9px; background:rgba(255,255,255,.15); padding:4px 9px; border-radius:10px; }
+  .live-video .center-ic{ width:50px; height:50px; opacity:.4; }
+  .live-chat{ background:rgba(0,0,0,.55); padding:10px 16px; flex-shrink:0; }
+  .live-chat .lc-msg{ font-size:9.5px; color:#EFE9D8; margin-bottom:5px; }
+  .live-chat .lc-msg b{ color:var(--gold); }
+
+  /* figures list & quotes */
+  .fig-hero-sm{ height:150px; background:linear-gradient(180deg, var(--zaytoune) 0%, #164430 100%); position:relative; flex-shrink:0; display:flex; align-items:center; justify-content:center; }
+  .fig-hero-sm h2{ font-family:'Cormorant Garamond', serif; color:var(--gold-soft); font-size:20px; }
+  .quote-card{ background:var(--white); border-radius:10px; padding:13px 14px; margin-bottom:10px; border-right:3px solid var(--gold); box-shadow:0 2px 8px rgba(15,61,46,.06); }
+  .quote-card .ar{ font-family:'Amiri', serif; font-size:14px; color:var(--zaytoune); direction:rtl; line-height:1.7; }
+  .quote-card .fr{ font-size:9.5px; color:var(--bronze); font-style:italic; margin-top:5px; }
+
+  .fig-tabs{ display:flex; padding:0 20px; border-bottom:1px solid #ECE4D0; flex-shrink:0; }
+  .fig-tab{ font-size:10px; padding:11px 0; margin-right:16px; color:var(--bronze); font-weight:500; border-bottom:2px solid transparent; }
+  .fig-tab.active{ color:var(--emerald); border-bottom-color:var(--gold); font-weight:700; }
+  .fig-body{ flex:1; overflow:hidden; padding:14px 20px; }
+  .fig-body p{ font-size:11px; line-height:1.7; color:var(--ink); margin-bottom:11px; }
+
+  /* feed / posts */
+  .post-card{ background:var(--white); border-radius:10px; padding:12px 13px; box-shadow:0 2px 8px rgba(15,61,46,.06); }
+  .post-card .phead{ display:flex; align-items:center; gap:9px; margin-bottom:8px; }
+  .post-card .ptxt{ font-size:10.5px; color:var(--ink); line-height:1.6; margin-bottom:8px; }
+  .post-card .pactions{ display:flex; gap:14px; font-size:9.5px; color:var(--bronze); border-top:1px solid #ECE4D0; padding-top:8px; }
+
+  /* profile */
+  .profile-hero{ background:var(--zaytoune); padding:26px 20px 20px; flex-shrink:0; text-align:center; position:relative; }
+  .profile-avatar{ width:64px; height:64px; border-radius:50%; background:var(--gold-soft); margin:0 auto 8px; display:flex; align-items:center; justify-content:center; font-size:24px; color:#8a6a1f; }
+  .profile-hero .pname{ font-family:'Cormorant Garamond', serif; color:var(--parchment); font-size:18px; font-weight:600; }
+  .profile-hero .pzawiya{ font-size:9.5px; color:var(--bronze); margin-top:3px; }
+  .menu-list{ flex:1; overflow:hidden; padding:12px 20px; }
+  .menu-row{ display:flex; align-items:center; justify-content:space-between; padding:12px 2px; border-bottom:1px solid #ECE4D0; font-size:11px; color:var(--ink); }
+  .menu-row .chev{ color:var(--bronze); font-size:12px; }
+
+  /* search bar */
+  .searchbar{ margin:0 20px 10px; background:var(--white); border-radius:20px; padding:9px 14px; font-size:10px; color:var(--bronze); box-shadow:0 2px 8px rgba(15,61,46,.06); flex-shrink:0; }
+
+  /* donation */
+  .amount-grid{ display:grid; grid-template-columns:1fr 1fr 1fr; gap:8px; margin-bottom:16px; }
+  .amount-chip{ padding:12px; text-align:center; border-radius:10px; border:1.5px solid var(--bronze); font-size:11px; color:var(--ink); font-weight:600; }
+  .amount-chip.sel{ border-color:var(--gold); background:var(--gold-soft); color:#8a6a1f; }
+
+  /* components section (reused) */
+  .components-grid{ display:grid; grid-template-columns:repeat(3,1fr); gap:24px; }
+  .comp-card{ background:var(--white); border-radius:8px; padding:24px; box-shadow:0 2px 12px rgba(15,61,46,.06); }
+  .comp-card .comp-label{ font-size:11px; letter-spacing:.12em; text-transform:uppercase; color:var(--gold); font-weight:600; margin-bottom:16px; }
+  .chip-demo{ display:flex; gap:8px; flex-wrap:wrap; }
+  .badge-demo{ display:flex; gap:8px; flex-wrap:wrap; align-items:center; }
+
+  footer.notes{ max-width:1280px; margin:60px auto 0; background:var(--white); border-radius:8px; padding:32px 36px; box-shadow:0 2px 14px rgba(15,61,46,.06); }
+  footer.notes h3{ font-family:'Cormorant Garamond', serif; color:var(--zaytoune); font-size:20px; margin-bottom:14px; }
+  footer.notes ul{ padding-left:18px; }
+  footer.notes li{ font-size:13px; color:var(--ink); line-height:1.8; margin-bottom:6px; }
+</style>
+</head>
+<body>
+
+<div class="studio-header">
+  <div class="eyebrow">Charte graphique & maquettes — Version 2.0</div>
+  <h1>At-Tijaniya</h1>
+  <div class="arabic-title">التجانية</div>
+  <p class="sub">Identité visuelle et maquettes complètes de tous les écrans du périmètre V1. Direction : sobriété spirituelle, vert zaytoune profond et filets dorés, calligraphie arabe réservée aux textes sacrés et aux titres.</p>
+  <div class="versionnote">Nouveau dans cette version : parcours d'onboarding, historique des wirds, écrans Khadara complets, module Figures complet, module Communauté complet (lignée spirituelle du disciple, statut Mouqaddam vérifié & silsila d'ijaza), paramètres et don.</div>
+</div>
+
+<!-- ================= PALETTE ================= -->
+<section class="block">
+  <div class="block-title"><span class="num">01</span><h2>Palette de couleurs</h2><div class="line"></div></div>
+  <div class="palette-grid">
+    <div class="swatch"><div class="fill" style="background:#0F3D2E;"></div><div class="label"><div class="name">Vert zaytoune</div><div class="hex">#0F3D2E</div><div class="use">Fonds immersifs, écrans de wird, en-têtes</div></div></div>
+    <div class="swatch"><div class="fill" style="background:#1C6E4A;"></div><div class="label"><div class="name">Émeraude</div><div class="hex">#1C6E4A</div><div class="use">Actions principales, états actifs</div></div></div>
+    <div class="swatch"><div class="fill" style="background:#C9A24B;"></div><div class="label"><div class="name">Doré mat</div><div class="hex">#C9A24B</div><div class="use">Accents, filets, éléments précieux</div></div></div>
+    <div class="swatch"><div class="fill" style="background:#F7F2E7;"></div><div class="label"><div class="name">Ivoire parchemin</div><div class="hex">#F7F2E7</div><div class="use">Fond principal, écrans de lecture</div></div></div>
+    <div class="swatch"><div class="fill" style="background:#2B2620;"></div><div class="label"><div class="name">Encre</div><div class="hex">#2B2620</div><div class="use">Texte principal</div></div></div>
+    <div class="swatch"><div class="fill" style="background:#8C7A5B;"></div><div class="label"><div class="name">Bronze</div><div class="hex">#8C7A5B</div><div class="use">Texte secondaire, bordures, légendes</div></div></div>
+  </div>
+</section>
+
+<!-- ================= TYPOGRAPHIE ================= -->
+<section class="block">
+  <div class="block-title"><span class="num">02</span><h2>Typographie</h2><div class="line"></div></div>
+  <div class="type-grid">
+    <div class="type-card">
+      <div class="role">Display — Titres français</div>
+      <div class="sample-fr">Les enseignements du Cheikh</div>
+      <div class="sample-body">Cormorant Garamond — une serif élégante à empattements marqués. Utilisée uniquement pour les titres, jamais en texte courant.</div>
+      <div class="meta">Poids : 600 (titres), 500 (sous-titres) · Usage : H1, H2, noms de figures</div>
+    </div>
+    <div class="type-card">
+      <div class="role">Display — Textes sacrés & titres arabes</div>
+      <div class="sample-ar">الشيخ أحمد التجاني</div>
+      <div class="sample-body">Amiri — police naskh contemporaine. Réservée aux citations, noms arabes et textes de wirds — jamais utilisée pour de l'interface générique.</div>
+      <div class="meta">Poids : 400 (texte), 700 (titres) · Usage : versets, noms, silsila</div>
+    </div>
+    <div class="type-card">
+      <div class="role">Texte courant — Interface (FR/EN)</div>
+      <div class="sample-body" style="font-size:16px; margin-top:0;">Jost — une sans-serif géométrique discrète, très lisible sur petit écran.</div>
+      <div class="meta">Poids : 400 (texte), 500/600 (labels, boutons) · Usage : navigation, descriptions, UI</div>
+    </div>
+    <div class="type-card">
+      <div class="role">Translittération</div>
+      <div class="sample-body" style="font-family:'Cormorant Garamond',serif; font-style:italic; font-size:17px; margin-top:0; color:var(--zaytoune);">Yâ Rabbî bi-l-Mustafâ balligh maqâsidanâ</div>
+      <div class="meta">Cormorant Garamond italique · distingue la translittération latine du texte arabe et de la traduction</div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= SIGNATURE ================= -->
+<section class="block">
+  <div class="block-title"><span class="num">03</span><h2>Élément signature — Le sceau-rosace</h2><div class="line"></div></div>
+  <div class="signature-box">
+    <svg class="rosace" viewBox="0 0 200 200"><g fill="none" stroke="#C9A24B" stroke-width="1.4"><circle cx="100" cy="100" r="92"/><circle cx="100" cy="100" r="78"/><polygon points="100,20 112,80 172,80 122,112 140,172 100,132 60,172 78,112 28,80 88,80"/></g></svg>
+    <div>
+      <h3>Une rosace à huit branches, jamais une décoration de fond</h3>
+      <p>Inspirée des sceaux et frontispices de manuscrits tijanis, cette rosace géométrique à huit branches est l'unique motif ornemental du système. Elle apparaît toujours seule, discrète — jamais en pattern répété ou en fond chargé.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ================= 04 ONBOARDING & COMPTE ================= -->
+<section class="block">
+  <div class="block-title"><span class="num">04</span><h2>Maquettes — Onboarding & compte</h2><div class="line"></div></div>
+  <p class="block-sub">Premier lancement : langue, création de compte ou usage local du module Wirds sans compte, puis présentation rapide de l'application.</p>
+  <div class="phones-labels">
+
+    <div class="phone-col"><div class="tagn">P0</div><div class="phone"><div class="notch"></div>
+      <div class="screen splash-screen">
+        <svg class="splash-rosace" viewBox="0 0 200 200"><g fill="none" stroke="#C9A24B" stroke-width="1.6"><circle cx="100" cy="100" r="92"/><circle cx="100" cy="100" r="78"/><polygon points="100,20 112,80 172,80 122,112 140,172 100,132 60,172 78,112 28,80 88,80"/></g></svg>
+        <div class="splash-title">التجانية</div>
+      </div></div><div class="phone-caption">Splash screen</div></div>
+
+    <div class="phone-col"><div class="tagn">P0</div><div class="phone"><div class="notch"></div>
+      <div class="screen">
+        <div class="statusbar"><span>9:41</span><span>●●●●</span></div>
+        <div class="lang-screen">
+          <div class="onb-title" style="margin-bottom:10px;">Choisissez votre langue</div>
+          <div class="lang-btn sel">Français</div>
+          <div class="lang-btn">العربية</div>
+        </div>
+      </div></div><div class="phone-caption">Choix de la langue</div></div>
+
+    <div class="phone-col"><div class="tagn">P0</div><div class="phone"><div class="notch"></div>
+      <div class="screen">
+        <div class="statusbar"><span>9:41</span><span>●●●●</span></div>
+        <div class="form-screen">
+          <h2>Bienvenue</h2>
+          <div class="fsub">Créez votre compte pour rejoindre la communauté.</div>
+          <div class="ffield"><label>Email ou téléphone</label><div class="finput">nom@exemple.com</div></div>
+          <div class="ffield"><label>Mot de passe</label><div class="finput">••••••••</div></div>
+          <div style="flex:1"></div>
+          <button class="btn-primary">Créer mon compte</button>
+          <button class="btn-secondary">J'ai déjà un compte</button>
+          <div class="guest-link">Continuer sans compte (wirds uniquement)</div>
+        </div>
+      </div></div><div class="phone-caption">Inscription / Connexion</div></div>
+
+    <div class="phone-col"><div class="tagn">P1</div><div class="phone"><div class="notch"></div>
+      <div class="screen">
+        <div class="statusbar"><span>9:41</span><span>●●●●</span></div>
+        <div class="onb-screen">
+          <svg class="onb-rosace" viewBox="0 0 200 200"><g fill="none" stroke="#0F3D2E" stroke-width="1.6"><circle cx="100" cy="100" r="92"/><polygon points="100,20 112,80 172,80 122,112 140,172 100,132 60,172 78,112 28,80 88,80"/></g></svg>
+          <div class="onb-title">Vos wirds, chaque jour</div>
+          <div class="onb-text">Lazim, Wazifa et Hadratou-l-Jouma, avec guide texte et audio, où que vous soyez.</div>
+          <div class="dots-row"><div class="d active"></div><div class="d"></div><div class="d"></div></div>
+        </div>
+      </div></div><div class="phone-caption">Onboarding — présentation</div></div>
+
+  </div>
+</section>
+
+<!-- ================= 05 MODULE WIRDS ================= -->
+<section class="block">
+  <div class="block-title"><span class="num">05</span><h2>Maquettes — Module Wirds</h2><div class="line"></div></div>
+  <p class="block-sub">Contenu validé par un moqaddam référent. Hadratou-l-Jouma : 1600 répétitions.</p>
+  <div class="phones-labels">
+
+    <div class="phone-col"><div class="tagn">P0</div><div class="phone"><div class="notch"></div>
+      <div class="screen home-screen">
+        <div class="statusbar"><span>9:41</span><span>●●●●</span></div>
+        <div class="hdr-light center">
+          <svg style="width:30px;height:30px;margin:0 auto 4px;display:block;" viewBox="0 0 200 200"><g fill="none" stroke="#C9A24B" stroke-width="6"><circle cx="100" cy="100" r="92"/><polygon points="100,20 112,80 172,80 122,112 140,172 100,132 60,172 78,112 28,80 88,80"/></g></svg>
+          <div class="ar" style="font-size:18px;">التجانية</div>
+        </div>
+        <div class="gbody-scroll">
+          <div style="font-family:'Cormorant Garamond',serif; font-size:19px; color:var(--zaytoune); font-weight:600; margin-bottom:14px;">Assalamu alaikum, Amadou</div>
+          <div class="section-label">Vos wirds du jour</div>
+          <div class="wird-cards">
+            <div class="wird-card"><div><div class="wname-ar">اللازم</div><div class="wname-fr">Lazim</div></div><div class="status done">✓ Fait</div></div>
+            <div class="wird-card"><div><div class="wname-ar">الوظيفة</div><div class="wname-fr">Wazifa</div></div><div class="status pending">À faire</div></div>
+            <div class="wird-card"><div><div class="wname-ar">حضرة الجمعة</div><div class="wname-fr">Hadratou-l-Jouma</div></div><div class="status pending">Vendredi</div></div>
+          </div>
+          <div class="section-label">En ce moment</div>
+          <div style="background:var(--zaytoune); border-radius:10px; padding:12px 14px; color:var(--parchment); display:flex; align-items:center; gap:10px;">
+            <div style="width:8px;height:8px;border-radius:50%;background:#E8544A;flex-shrink:0;"></div>
+            <div style="font-size:10.5px; line-height:1.4;">Khadara en direct — <b style="color:var(--gold-soft);">Zawiya de Kaolack</b></div>
+          </div>
+        </div>
+        <div class="tabbar">
+          <div class="tab active"><div class="ic">🏠</div><span>Accueil</span></div>
+          <div class="tab"><div class="ic">📿</div><span>Wirds</span></div>
+          <div class="tab"><div class="ic">🕌</div><span>Khadara</span></div>
+          <div class="tab"><div class="ic">📖</div><span>Figures</span></div>
+          <div class="tab"><div class="ic">💬</div><span>Communauté</span></div>
+        </div>
+      </div></div><div class="phone-caption">Accueil / Tableau de bord</div></div>
+
+    <div class="phone-col"><div class="tagn">P0</div><div class="phone"><div class="notch"></div>
+      <div class="screen">
+        <div class="statusbar"><span>9:41</span><span>●●●●</span></div>
+        <div class="hdr-light"><span class="back">←</span><h2>Vos Wirds</h2></div>
+        <div class="gbody-scroll">
+          <div class="wird-cards">
+            <div class="wird-card"><div><div class="wname-ar">اللازم</div><div class="wname-fr">Lazim · quotidien</div></div><div class="status done">✓ Fait</div></div>
+            <div class="wird-card"><div><div class="wname-ar">الوظيفة</div><div class="wname-fr">Wazifa · quotidien</div></div><div class="status pending">À faire</div></div>
+            <div class="wird-card"><div><div class="wname-ar">حضرة الجمعة</div><div class="wname-fr">Hadratou-l-Jouma · hebdo</div></div><div class="status pending">Vendredi</div></div>
+          </div>
+        </div>
+      </div></div><div class="phone-caption">Liste des Wirds</div></div>
+
+    <div class="phone-col"><div class="tagn">P0</div><div class="phone"><div class="notch"></div>
+      <div class="screen guide-screen">
+        <div class="statusbar"><span>9:41</span><span>●●●●</span></div>
+        <div class="hdr-light"><span class="back">←</span><h2>Wazifa</h2><div class="ar">الوظيفة</div></div>
+        <div class="guide-body">
+          <div class="guide-pillar"><div class="gp-ar">أَسْتَغْفِرُ اللهَ الْعَظِيمَ</div><div class="gp-translit">Astaghfiru-Llâha-l-'Azîm</div><div class="gp-fr">Je demande pardon à Dieu le Grand — 30 fois</div></div>
+          <div class="guide-pillar"><div class="gp-ar">اللَّهُمَّ صَلِّ عَلَى سَيِّدِنَا مُحَمَّد</div><div class="gp-translit">Allâhumma salli 'alâ sayyidinâ Muhammad</div><div class="gp-fr">Prière sur le Prophète ﷺ — 50 fois</div></div>
+        </div>
+        <div class="audio-bar"><div class="play-ic">▶</div><div class="wave"></div><div class="time">1:24</div></div>
+      </div></div><div class="phone-caption">Guide d'un Wird + lecteur audio</div></div>
+
+    <div class="phone-col"><div class="tagn">P0</div><div class="phone"><div class="notch"></div>
+      <div class="screen wird-screen">
+        <div class="statusbar" style="color:#F7F2E7;"><span>9:41</span><span>●●●●</span></div>
+        <div class="hdr-dark"><span class="back">←</span><span class="t">الوظيفة</span><span class="dots">⋮</span></div>
+        <div class="wird-center">
+          <svg class="rosace-watermark" viewBox="0 0 200 200"><g fill="none" stroke="#C9A24B" stroke-width="1"><circle cx="100" cy="100" r="92"/><polygon points="100,20 112,80 172,80 122,112 140,172 100,132 60,172 78,112 28,80 88,80"/></g></svg>
+          <div class="arabic-phrase">أَسْتَغْفِرُ اللهَ الْعَظِيمَ</div>
+          <div class="translit">Astaghfiru-Llâha-l-'Azîm</div>
+          <div class="counter-ring"><div class="counter-num">47</div><div class="counter-target">sur 100</div></div>
+          <div class="mode-switch"><div class="mode-btn active">Tactile</div><div class="mode-btn">Vocal</div><div class="mode-btn">Reprendre</div></div>
+        </div>
+        <div class="wird-bottom"><div class="progress-bar-bg"><div class="progress-bar-fill"></div></div><div class="prog-label"><span>Wazifa — étape 3/5</span><span>63%</span></div></div>
+      </div></div><div class="phone-caption">Tasbih digital</div></div>
+
+    <div class="phone-col"><div class="tagn">P1</div><div class="phone"><div class="notch"></div>
+      <div class="screen">
+        <div class="statusbar"><span>9:41</span><span>●●●●</span></div>
+        <div class="hdr-light"><span class="back">←</span><h2>Ma progression</h2></div>
+        <div class="gbody-scroll">
+          <div class="stat-grid">
+            <div class="stat-box"><div class="snum">18</div><div class="slabel">jours consécutifs</div></div>
+            <div class="stat-box"><div class="snum">94%</div><div class="slabel">taux de complétion</div></div>
+          </div>
+          <div class="section-label">Ce mois-ci</div>
+          <div class="cal-mini">
+            <div class="cd done"></div><div class="cd done"></div><div class="cd done"></div><div class="cd"></div><div class="cd done"></div><div class="cd done"></div><div class="cd"></div>
+            <div class="cd done"></div><div class="cd done"></div><div class="cd done"></div><div class="cd done"></div><div class="cd"></div><div class="cd done"></div><div class="cd done"></div>
+          </div>
+        </div>
+      </div></div><div class="phone-caption">Historique & progression</div></div>
+
+    <div class="phone-col"><div class="tagn">P0</div><div class="phone"><div class="notch"></div>
+      <div class="screen">
+        <div class="statusbar"><span>9:41</span><span>●●●●</span></div>
+        <div class="hdr-light"><span class="back">←</span><h2>Rappels</h2></div>
+        <div class="gbody-scroll">
+          <div class="trow"><div><div class="tlabel">Lazim</div><div class="tsub">Après la prière du Fajr</div></div><div class="switch on"></div></div>
+          <div class="trow"><div><div class="tlabel">Wazifa</div><div class="tsub">Après la prière du Maghrib</div></div><div class="switch on"></div></div>
+          <div class="trow"><div><div class="tlabel">Hadratou-l-Jouma</div><div class="tsub">Vendredi, avant Jum'a</div></div><div class="switch"></div></div>
+        </div>
+      </div></div><div class="phone-caption">Paramètres de rappels</div></div>
+
+  </div>
+</section>
+
+<!-- ================= 06 MODULE KHADARA ================= -->
+<section class="block">
+  <div class="block-title"><span class="num">06</span><h2>Maquettes — Module Khadara</h2><div class="line"></div></div>
+  <p class="block-sub">Calendrier géolocalisé, diffusion en direct ou différée, annuaire des zawiyas.</p>
+  <div class="phones-labels">
+
+    <div class="phone-col"><div class="tagn">P1</div><div class="phone"><div class="notch"></div>
+      <div class="screen khadara-screen">
+        <div class="statusbar"><span>9:41</span><span>●●●●</span></div>
+        <div class="hdr-light"><h2>Khadara</h2><div class="ar">الخضرة</div></div>
+        <div class="filter-row"><div class="filter-chip active">En direct</div><div class="filter-chip">À venir</div><div class="filter-chip">Près de moi</div></div>
+        <div class="kh-list">
+          <div class="kh-card"><div class="kh-thumb"><span class="badge-live">● DIRECT</span><div class="play">▶</div></div><div class="kh-info"><div class="kname">Hadratou-l-Jouma — Médina Baye</div><div class="kmeta">📍 Kaolack · 1 240 en ligne</div></div></div>
+          <div class="kh-card"><div class="kh-thumb" style="background:linear-gradient(135deg,#8C7A5B,#2B2620);"><div class="play">▶</div></div><div class="kh-info"><div class="kname">Ziyara annuelle — Tivaouane</div><div class="kmeta">📅 Dans 12 jours</div></div></div>
+        </div>
+        <div class="tabbar">
+          <div class="tab"><div class="ic">🏠</div><span>Accueil</span></div><div class="tab"><div class="ic">📿</div><span>Wirds</span></div>
+          <div class="tab active"><div class="ic">🕌</div><span>Khadara</span></div><div class="tab"><div class="ic">📖</div><span>Figures</span></div><div class="tab"><div class="ic">💬</div><span>Communauté</span></div>
+        </div>
+      </div></div><div class="phone-caption">Calendrier des évènements</div></div>
+
+    <div class="phone-col"><div class="tagn">P1</div><div class="phone"><div class="notch"></div>
+      <div class="screen">
+        <div class="statusbar" style="position:relative;z-index:3;"><span>9:41</span><span>●●●●</span></div>
+        <div class="ev-hero"><svg class="rosace-lg" viewBox="0 0 200 200"><g fill="none" stroke="#C9A24B" stroke-width="1"><circle cx="100" cy="100" r="92"/><polygon points="100,20 112,80 172,80 122,112 140,172 100,132 60,172 78,112 28,80 88,80"/></g></svg></div>
+        <div class="ev-body">
+          <h3>Ziyara annuelle — Tivaouane</h3>
+          <div class="ev-meta-row">📅 14 septembre 2026 · 📍 Tivaouane, Sénégal</div>
+          <p>Rassemblement annuel des disciples autour de la zawiya, avec récitation collective et prises de parole des mouqaddamines.</p>
+          <div style="flex:1"></div>
+        </div>
+        <div style="padding:14px 20px;"><button class="btn-primary" style="margin-bottom:0;">Rejoindre le direct</button></div>
+      </div></div><div class="phone-caption">Détail d'un évènement</div></div>
+
+    <div class="phone-col"><div class="tagn">P2</div><div class="phone"><div class="notch"></div>
+      <div class="screen live-screen">
+        <div class="statusbar" style="color:#fff;"><span>9:41</span><span>●●●●</span></div>
+        <div class="live-video">
+          <span class="badge-live">● DIRECT</span><span class="viewers">1 240</span>
+          <svg class="center-ic" viewBox="0 0 200 200"><g fill="none" stroke="#C9A24B" stroke-width="2"><circle cx="100" cy="100" r="92"/><polygon points="100,20 112,80 172,80 122,112 140,172 100,132 60,172 78,112 28,80 88,80"/></g></svg>
+        </div>
+        <div class="live-chat">
+          <div class="lc-msg"><b>Fatou :</b> Qu'Allah vous bénisse</div>
+          <div class="lc-msg"><b>Ibrahima :</b> À Kaolack avec vous 🤲</div>
+        </div>
+      </div></div><div class="phone-caption">Direct (khadara en direct)</div></div>
+
+    <div class="phone-col"><div class="tagn">P2</div><div class="phone"><div class="notch"></div>
+      <div class="screen">
+        <div class="statusbar"><span>9:41</span><span>●●●●</span></div>
+        <div class="hdr-light"><span class="back">←</span><h2>Rediffusions</h2></div>
+        <div class="kh-list">
+          <div class="kh-card"><div class="kh-thumb" style="background:linear-gradient(135deg,#1C6E4A,#0F3D2E);"><span class="badge-replay">42:10</span><div class="play">▶</div></div><div class="kh-info"><div class="kname">Wazifa collective — Zawiya de Fès</div><div class="kmeta">Il y a 3 jours</div></div></div>
+          <div class="kh-card"><div class="kh-thumb" style="background:linear-gradient(135deg,#8C7A5B,#2B2620);"><span class="badge-replay">1:12:04</span><div class="play">▶</div></div><div class="kh-info"><div class="kname">Hadratou-l-Jouma — Kaolack</div><div class="kmeta">Il y a 1 semaine</div></div></div>
+        </div>
+      </div></div><div class="phone-caption">Rediffusions</div></div>
+
+    <div class="phone-col"><div class="tagn">P1</div><div class="phone"><div class="notch"></div>
+      <div class="screen">
+        <div class="statusbar"><span>9:41</span><span>●●●●</span></div>
+        <div class="hdr-light"><span class="back">←</span><h2>Zawiyas & daaras</h2></div>
+        <div class="searchbar">🔍 Rechercher une zawiya…</div>
+        <div class="glist">
+          <div class="gitem"><div class="gavatar">🕌</div><div class="gbody"><div class="gtitle">Zawiya de Kaolack</div><div class="gsub">📍 Kaolack, Sénégal</div></div></div>
+          <div class="gitem"><div class="gavatar">🕌</div><div class="gbody"><div class="gtitle">Zawiya de Tivaouane</div><div class="gsub">📍 Tivaouane, Sénégal</div></div></div>
+          <div class="gitem"><div class="gavatar">🕌</div><div class="gbody"><div class="gtitle">Zawiya de Fès</div><div class="gsub">📍 Fès, Maroc</div></div></div>
+        </div>
+      </div></div><div class="phone-caption">Annuaire des zawiyas / daaras</div></div>
+
+    <div class="phone-col"><div class="tagn">P1</div><div class="phone"><div class="notch"></div>
+      <div class="screen">
+        <div class="statusbar"><span>9:41</span><span>●●●●</span></div>
+        <div class="hdr-light"><span class="back">←</span><h2>Comprendre la Khadara</h2></div>
+        <div class="fig-body">
+          <p>La khadara est un rassemblement de récitation collective, souvent organisé autour d'une zawiya, pendant lequel les disciples récitent ensemble la Wazifa ou d'autres invocations.</p>
+          <p>Elle se distingue de la pratique individuelle par sa dimension communautaire : la présence physique ou à distance des frères et sœurs renforce le recueillement partagé.</p>
+        </div>
+      </div></div><div class="phone-caption">Comprendre la Khadara</div></div>
+
+  </div>
+</section>
+
+<!-- ================= 07 MODULE FIGURES ================= -->
+<section class="block">
+  <div class="block-title"><span class="num">07</span><h2>Maquettes — Module Figures et enseignements</h2><div class="line"></div></div>
+  <div class="phones-labels">
+
+    <div class="phone-col"><div class="tagn">P1</div><div class="phone"><div class="notch"></div>
+      <div class="screen">
+        <div class="statusbar"><span>9:41</span><span>●●●●</span></div>
+        <div class="hdr-light"><h2>Figures</h2></div>
+        <div class="glist">
+          <div class="gitem"><div class="gavatar gold">☪</div><div class="gbody"><div class="gtitle">Cheikh Ahmed Tijane</div><div class="gsub">Fondateur de la tarikha</div></div></div>
+          <div class="gitem"><div class="gavatar gold">☪</div><div class="gbody"><div class="gtitle">El Hadj Malick Sy</div><div class="gsub">Foyer de Tivaouane</div></div></div>
+          <div class="gitem"><div class="gavatar gold">☪</div><div class="gbody"><div class="gtitle">El Hadj Ibrahima Niasse</div><div class="gsub">Foyer de Médina Baye</div></div></div>
+        </div>
+      </div></div><div class="phone-caption">Liste des figures</div></div>
+
+    <div class="phone-col"><div class="tagn">P1</div><div class="phone"><div class="notch"></div>
+      <div class="screen fig-screen">
+        <div class="statusbar" style="color:#F7F2E7; position:relative; z-index:3;"><span>9:41</span><span>●●●●</span></div>
+        <div class="fig-hero-sm" style="position:relative;">
+          <svg style="width:130px;height:130px;opacity:.1;position:absolute;top:4px;left:50%;transform:translateX(-50%);" viewBox="0 0 200 200"><g fill="none" stroke="#C9A24B" stroke-width="1.2"><circle cx="100" cy="100" r="92"/><polygon points="100,20 112,80 172,80 122,112 140,172 100,132 60,172 78,112 28,80 88,80"/></g></svg>
+          <div style="text-align:center; z-index:2;"><div style="font-family:'Amiri',serif; font-size:22px; color:var(--gold-soft);">الشيخ أحمد التجاني</div><div style="font-size:10px; color:#CFE0D6; letter-spacing:.1em; text-transform:uppercase; margin-top:4px;">Cheikh Ahmed Tijane</div></div>
+        </div>
+        <div class="fig-tabs"><div class="fig-tab active">Biographie</div><div class="fig-tab">Silsila</div><div class="fig-tab">Citations</div><div class="fig-tab">Ziyaras</div></div>
+        <div class="fig-body"><p>Né en 1150 de l'hégire à Aïn Madhi, fondateur de la voie tijaniyya, reconnue pour la simplicité de ses wirds et l'ouverture de sa transmission spirituelle...</p></div>
+      </div></div><div class="phone-caption">Biographie détaillée</div></div>
+
+    <div class="phone-col"><div class="tagn">P2</div><div class="phone"><div class="notch"></div>
+      <div class="screen">
+        <div class="statusbar"><span>9:41</span><span>●●●●</span></div>
+        <div class="hdr-light"><span class="back">←</span><h2>Silsila historique</h2></div>
+        <div class="chain-wrap">
+          <div class="chain-node founder"><div class="cname">Cheikh Ahmed Tijane</div><div class="cyear">Fondateur — 1214 H</div></div>
+          <div class="chain-link"></div>
+          <div class="chain-node"><div class="cname">Sidi Mohammed El Ghali</div><div class="cyear">Successeur</div></div>
+          <div class="chain-link"></div>
+          <div class="chain-node"><div class="cname">El Hadj Malick Sy</div><div class="cyear">Foyer de Tivaouane</div></div>
+          <div class="chain-fade">⋯ chaîne complète consultable ⋯</div>
+        </div>
+      </div></div><div class="phone-caption">Silsila (généalogie historique)</div></div>
+
+    <div class="phone-col"><div class="tagn">P2</div><div class="phone"><div class="notch"></div>
+      <div class="screen">
+        <div class="statusbar"><span>9:41</span><span>●●●●</span></div>
+        <div class="hdr-light"><span class="back">←</span><h2>Recueil de citations</h2></div>
+        <div class="gbody-scroll">
+          <div class="quote-card"><div class="ar">من رآني فقد رأى الحق</div><div class="fr">« Quiconque m'a vu a vu la Vérité » — Cheikh Ahmed Tijane</div></div>
+          <div class="quote-card"><div class="ar">العلم نور</div><div class="fr">« Le savoir est une lumière » — enseignement rapporté</div></div>
+        </div>
+      </div></div><div class="phone-caption">Recueil de citations</div></div>
+
+  </div>
+</section>
+
+<!-- ================= 08 MODULE COMMUNAUTE ================= -->
+<section class="block">
+  <div class="block-title"><span class="num">08</span><h2>Maquettes — Module Communauté</h2><div class="line"></div></div>
+  <p class="block-sub">Fil d'actualité, groupes, messagerie — et la lignée spirituelle : retrouver les disciples de son moqaddam (§5.4.1), et le statut « Mouqaddam vérifié » avec silsila d'ijaza par parrainage (§5.4.2). Champs de lignée privés par défaut.</p>
+  <div class="phones-labels">
+
+    <div class="phone-col"><div class="tagn">P1</div><div class="phone"><div class="notch"></div>
+      <div class="screen">
+        <div class="statusbar"><span>9:41</span><span>●●●●</span></div>
+        <div class="hdr-light"><h2>Communauté</h2></div>
+        <div class="gbody-scroll" style="display:flex; flex-direction:column; gap:10px;">
+          <div class="post-card"><div class="phead"><div class="gavatar" style="width:28px;height:28px;font-size:11px;">Z</div><div><div style="font-size:10.5px;font-weight:600;">Zawiya de Kaolack</div><div style="font-size:8.5px;color:var(--bronze);">Il y a 2 h</div></div></div><div class="ptxt">La Hadratou-l-Jouma de ce vendredi sera diffusée en direct dès 13h.</div><div class="pactions"><span>♡ 214</span><span>💬 18</span></div></div>
+          <div class="post-card"><div class="phead"><div class="gavatar gold" style="width:28px;height:28px;font-size:11px;">A</div><div><div style="font-size:10.5px;font-weight:600;">Amadou D.</div><div style="font-size:8.5px;color:var(--bronze);">Il y a 5 h</div></div></div><div class="ptxt">Qu'Allah bénisse tous les disciples réunis à Tivaouane 🤲</div><div class="pactions"><span>♡ 92</span><span>💬 6</span></div></div>
+        </div>
+        <div class="tabbar">
+          <div class="tab"><div class="ic">🏠</div><span>Accueil</span></div><div class="tab"><div class="ic">📿</div><span>Wirds</span></div><div class="tab"><div class="ic">🕌</div><span>Khadara</span></div><div class="tab"><div class="ic">📖</div><span>Figures</span></div><div class="tab active"><div class="ic">💬</div><span>Communauté</span></div>
+        </div>
+      </div></div><div class="phone-caption">Fil d'actualité</div></div>
+
+    <div class="phone-col"><div class="tagn">P1</div><div class="phone"><div class="notch"></div>
+      <div class="screen">
+        <div class="statusbar"><span>9:41</span><span>●●●●</span></div>
+        <div class="hdr-light"><span class="back">←</span><h2>Publication</h2></div>
+        <div class="gbody-scroll">
+          <div class="post-card" style="margin-bottom:12px;"><div class="ptxt">La Hadratou-l-Jouma de ce vendredi sera diffusée en direct dès 13h, depuis la zawiya de Kaolack.</div><div class="pactions"><span>♡ 214</span><span>💬 18</span></div></div>
+          <div class="section-label">Commentaires</div>
+          <div class="gitem"><div class="gavatar">F</div><div class="gbody"><div class="gtitle">Fatou S.</div><div class="gsub">Qu'Allah vous bénisse, on y sera</div></div></div>
+          <div class="gitem"><div class="gavatar">I</div><div class="gbody"><div class="gtitle">Ibrahima N.</div><div class="gsub">Merci pour l'info 🤲</div></div></div>
+        </div>
+      </div></div><div class="phone-caption">Détail d'une publication</div></div>
+
+    <div class="phone-col"><div class="tagn">P2</div><div class="phone"><div class="notch"></div>
+      <div class="screen">
+        <div class="statusbar"><span>9:41</span><span>●●●●</span></div>
+        <div class="hdr-light"><h2>Groupes</h2></div>
+        <div class="glist">
+          <div class="gitem"><div class="gavatar">🕌</div><div class="gbody"><div class="gtitle">Disciples de Kaolack</div><div class="gsub">3 214 membres</div></div></div>
+          <div class="gitem"><div class="gavatar">🕌</div><div class="gbody"><div class="gtitle">Diaspora Europe</div><div class="gsub">1 802 membres</div></div></div>
+          <div class="gitem"><div class="gavatar">🕌</div><div class="gbody"><div class="gtitle">Zawiya de Tivaouane</div><div class="gsub">2 460 membres</div></div></div>
+        </div>
+      </div></div><div class="phone-caption">Groupes</div></div>
+
+    <div class="phone-col"><div class="tagn">P2</div><div class="phone"><div class="notch"></div>
+      <div class="screen">
+        <div class="statusbar"><span>9:41</span><span>●●●●</span></div>
+        <div class="hdr-light"><h2>Messages</h2></div>
+        <div class="glist">
+          <div class="gitem"><div class="gavatar">F</div><div class="gbody"><div class="gtitle">Fatou Sy</div><div class="gsub">Qu'Allah te bénisse…</div></div><div class="gtrail"><div class="dot-new"></div>2 min</div></div>
+          <div class="gitem"><div class="gavatar">I</div><div class="gbody"><div class="gtitle">Ibrahima N.</div><div class="gsub">On se retrouve à la khadara ?</div></div><div class="gtrail">1 h</div></div>
+        </div>
+      </div></div><div class="phone-caption">Messagerie privée</div></div>
+
+    <div class="phone-col"><div class="tagn">P0</div><div class="phone"><div class="notch"></div>
+      <div class="screen">
+        <div class="statusbar" style="color:#fff; position:relative; z-index:2;"><span>9:41</span><span>●●●●</span></div>
+        <div class="profile-hero">
+          <div class="profile-avatar">A</div>
+          <div class="pname">Amadou Diallo</div>
+          <div class="pzawiya">Zawiya de Kaolack</div>
+          <div style="margin-top:8px;"><span class="badge-mq">☆ Mouqaddam vérifié</span></div>
+        </div>
+        <div class="menu-list">
+          <div class="menu-row">Ma lignée spirituelle <span class="chev">›</span></div>
+          <div class="menu-row">Ma silsila d'ijaza <span class="chev">›</span></div>
+          <div class="menu-row">Paramètres de confidentialité <span class="chev">›</span></div>
+          <div class="menu-row">Paramètres généraux <span class="chev">›</span></div>
+        </div>
+      </div></div><div class="phone-caption">Mon profil</div></div>
+
+    <div class="phone-col"><div class="tagn">P1</div><div class="phone"><div class="notch"></div>
+      <div class="screen">
+        <div class="statusbar"><span>9:41</span><span>●●●●</span></div>
+        <div class="form-screen" style="padding:22px 20px;">
+          <span class="back" style="margin-bottom:10px;">←</span>
+          <h2 style="font-size:20px;">Ma lignée spirituelle</h2>
+          <div class="fsub">Renseignez le moqaddam qui vous a transmis le Wird.</div>
+          <div class="ffield"><label>Foyer</label><div class="chip-select"><div class="chip sel">Kaolack</div><div class="chip">Tivaouane</div><div class="chip">Médina Baye</div><div class="chip">Autre</div></div></div>
+          <div class="ffield"><label>Nom du moqaddam</label><div class="finput filled">Cheikh Ibrahima N.</div></div>
+          <div class="ffield"><label>Année de transmission</label><div class="finput filled">2014</div></div>
+          <div class="ffield"><label>Zawiya / lieu (optionnel)</label><div class="finput">Kaolack</div></div>
+          <div style="flex:1"></div>
+          <button class="btn-primary">Enregistrer</button>
+        </div>
+      </div></div><div class="phone-caption">Renseigner ma lignée spirituelle</div></div>
+
+    <div class="phone-col"><div class="tagn">P1</div><div class="phone"><div class="notch"></div>
+      <div class="screen">
+        <div class="statusbar"><span>9:41</span><span>●●●●</span></div>
+        <div class="hdr-light"><span class="back">←</span><h2>Retrouver mes disciples</h2></div>
+        <div class="gbody-scroll">
+          <div class="trow"><div><div class="tlabel">Me rendre visible</div><div class="tsub">Aux disciples de mon moqaddam</div></div><div class="switch on"></div></div>
+          <div class="section-label">Correspondances</div>
+          <div class="gitem"><div class="gavatar">S</div><div class="gbody"><div class="gtitle">Souleymane · 2016</div><div class="gsub">Kaolack</div></div><button class="mini-btn">Contacter</button></div>
+          <div class="gitem"><div class="gavatar">M</div><div class="gbody"><div class="gtitle">Mariam · 2013</div><div class="gsub">Kaolack</div></div><button class="mini-btn">Contacter</button></div>
+        </div>
+      </div></div><div class="phone-caption">Retrouver mes disciples (lignée)</div></div>
+
+    <div class="phone-col"><div class="tagn">P2</div><div class="phone"><div class="notch"></div>
+      <div class="screen">
+        <div class="statusbar"><span>9:41</span><span>●●●●</span></div>
+        <div class="form-screen" style="padding:22px 20px;">
+          <span class="back" style="margin-bottom:10px;">←</span>
+          <h2 style="font-size:20px;">Devenir Mouqaddam</h2>
+          <div class="fsub">Ce statut est vérifié par parrainage — il n'est jamais auto-déclaré.</div>
+          <div class="ffield"><label>Mon parrain (ijaza)</label><div class="finput filled">Cheikh Ibrahima N. — vérifié ✓</div></div>
+          <div class="ffield"><label>Date de transmission de l'ijaza</label><div class="finput filled">2019</div></div>
+          <div style="flex:1"></div>
+          <button class="btn-primary">Envoyer la demande de parrainage</button>
+        </div>
+      </div></div><div class="phone-caption">Devenir Mouqaddam</div></div>
+
+    <div class="phone-col"><div class="tagn">P2</div><div class="phone"><div class="notch"></div>
+      <div class="screen">
+        <div class="statusbar"><span>9:41</span><span>●●●●</span></div>
+        <div class="hdr-light"><span class="back">←</span><h2>Demandes de parrainage</h2></div>
+        <div class="glist">
+          <div class="gitem"><div class="gavatar gold">S</div><div class="gbody"><div class="gtitle">Souleymane B.</div><div class="gsub">Ijaza en 2019</div></div></div>
+          <div style="display:flex; gap:8px; padding:0 20px;"><button class="mini-btn filled" style="flex:1;">Accepter</button><button class="mini-btn" style="flex:1;">Refuser</button></div>
+        </div>
+      </div></div><div class="phone-caption">Demandes de parrainage</div></div>
+
+    <div class="phone-col"><div class="tagn">P2</div><div class="phone"><div class="notch"></div>
+      <div class="screen">
+        <div class="statusbar"><span>9:41</span><span>●●●●</span></div>
+        <div class="hdr-light"><span class="back">←</span><h2>Rechercher un parrain</h2></div>
+        <div class="searchbar">🔍 Nom du moqaddam…</div>
+        <div class="glist">
+          <div class="gitem"><div class="gavatar gold">I</div><div class="gbody"><div class="gtitle">Cheikh Ibrahima N.</div><div class="gsub">Kaolack · disponible comme parrain</div></div></div>
+          <div class="gitem"><div class="gavatar gold">M</div><div class="gbody"><div class="gtitle">Cheikh Moustapha S.</div><div class="gsub">Tivaouane · disponible comme parrain</div></div></div>
+        </div>
+      </div></div><div class="phone-caption">Rechercher un parrain</div></div>
+
+    <div class="phone-col"><div class="tagn">P2</div><div class="phone"><div class="notch"></div>
+      <div class="screen">
+        <div class="statusbar"><span>9:41</span><span>●●●●</span></div>
+        <div class="hdr-light"><span class="back">←</span><h2>Ma silsila d'ijaza</h2></div>
+        <div class="chain-wrap">
+          <div class="chain-node self"><div class="cname">Moi — Amadou Diallo</div><div class="cyear">2019</div></div>
+          <div class="chain-link"></div>
+          <div class="chain-node"><div class="cname">Cheikh Ibrahima N.</div><div class="cyear">Parrain vérifié — 2005</div></div>
+          <div class="chain-link"></div>
+          <div class="chain-node"><div class="cname">El Hadj Ibrahima Niasse</div><div class="cyear">1948 (saisi manuellement)</div></div>
+          <div class="chain-fade">⋯ jusqu'à Cheikh Ahmed Tijane ⋯</div>
+          <div class="chain-link"></div>
+          <div class="chain-node founder"><div class="cname">الشيخ أحمد التجاني</div><div class="cyear">Fondateur</div></div>
+        </div>
+      </div></div><div class="phone-caption">Ma silsila d'ijaza (reconstruite)</div></div>
+
+    <div class="phone-col"><div class="tagn">P0</div><div class="phone"><div class="notch"></div>
+      <div class="screen">
+        <div class="statusbar"><span>9:41</span><span>●●●●</span></div>
+        <div class="hdr-light"><span class="back">←</span><h2>Confidentialité</h2></div>
+        <div class="gbody-scroll">
+          <div class="trow"><div><div class="tlabel">Visibilité de ma lignée</div><div class="tsub">Disciple : opt-in, mise en relation par correspondance</div></div><div class="switch"></div></div>
+          <div class="trow"><div><div class="tlabel">Visibilité du statut Mouqaddam</div><div class="tsub">Privé par défaut</div></div><div class="switch on"></div></div>
+          <div class="trow"><div><div class="tlabel">Disponible comme parrain</div><div class="tsub">Découvrable dans la recherche de parrainage</div></div><div class="switch on"></div></div>
+          <div class="trow"><div><div class="tlabel">Qui peut me contacter</div><div class="tsub">Tout le monde / mises en relation uniquement</div></div><div class="switch on"></div></div>
+        </div>
+      </div></div><div class="phone-caption">Paramètres de confidentialité</div></div>
+
+  </div>
+</section>
+
+<!-- ================= 09 TRANSVERSES ================= -->
+<section class="block">
+  <div class="block-title"><span class="num">09</span><h2>Maquettes — Fonctionnalités transverses</h2><div class="line"></div></div>
+  <div class="phones-labels">
+
+    <div class="phone-col"><div class="tagn">P0</div><div class="phone"><div class="notch"></div>
+      <div class="screen">
+        <div class="statusbar"><span>9:41</span><span>●●●●</span></div>
+        <div class="hdr-light"><h2>Paramètres</h2></div>
+        <div class="menu-list" style="padding-top:0;">
+          <div class="menu-row">Langue <span class="chev">FR ›</span></div>
+          <div class="menu-row">Notifications <span class="chev">›</span></div>
+          <div class="menu-row">Confidentialité <span class="chev">›</span></div>
+          <div class="menu-row">Faire un don <span class="chev">›</span></div>
+          <div class="menu-row">À propos <span class="chev">›</span></div>
+        </div>
+      </div></div><div class="phone-caption">Paramètres généraux</div></div>
+
+    <div class="phone-col"><div class="tagn">P1</div><div class="phone"><div class="notch"></div>
+      <div class="screen">
+        <div class="statusbar"><span>9:41</span><span>●●●●</span></div>
+        <div class="form-screen" style="padding:22px 20px;">
+          <span class="back" style="margin-bottom:10px;">←</span>
+          <h2 style="font-size:20px;">Faire un don</h2>
+          <div class="fsub">At-Tijaniya reste gratuite grâce à vous.</div>
+          <div class="amount-grid">
+            <div class="amount-chip">2 000 F</div><div class="amount-chip sel">5 000 F</div><div class="amount-chip">10 000 F</div>
+          </div>
+          <div class="ffield"><label>Montant libre</label><div class="finput">Autre montant…</div></div>
+          <div style="flex:1"></div>
+          <button class="btn-gold">Faire un don</button>
+        </div>
+      </div></div><div class="phone-caption">Faire un don</div></div>
+
+  </div>
+</section>
+
+<!-- ================= 10 COMPOSANTS ================= -->
+<section class="block">
+  <div class="block-title"><span class="num">10</span><h2>Composants d'interface</h2><div class="line"></div></div>
+  <div class="components-grid">
+    <div class="comp-card">
+      <div class="comp-label">Boutons</div>
+      <button class="btn-primary">Commencer le wird</button>
+      <button class="btn-secondary">Voir plus tard</button>
+      <button class="btn-gold">Faire un don</button>
+    </div>
+    <div class="comp-card">
+      <div class="comp-label">Statuts & badges</div>
+      <div class="badge-demo">
+        <span class="status done">✓ Fait</span>
+        <span class="status pending">À faire</span>
+        <span class="badge-mq">☆ Mouqaddam vérifié</span>
+      </div>
+      <div style="margin-top:14px;" class="chip-demo">
+        <span class="filter-chip active">Actif</span>
+        <span class="filter-chip">Inactif</span>
+      </div>
+    </div>
+    <div class="comp-card">
+      <div class="comp-label">Carte wird & réglage de confidentialité</div>
+      <div class="wird-card" style="margin-bottom:14px;"><div><div class="wname-ar">اللازم</div><div class="wname-fr">Lazim</div></div><div class="status done">✓ Fait</div></div>
+      <div class="trow" style="border-bottom:none; padding:0;"><div class="tlabel">Visibilité</div><div class="switch on"></div></div>
+    </div>
+    <div class="comp-card">
+      <div class="comp-label">Élément de liste générique</div>
+      <div class="gitem"><div class="gavatar">F</div><div class="gbody"><div class="gtitle">Fatou Sy</div><div class="gsub">Sous-titre / méta-donnée</div></div><div class="gtrail">2 min</div></div>
+    </div>
+    <div class="comp-card">
+      <div class="comp-label">Champ de formulaire & sélection</div>
+      <div class="ffield"><label>Nom du moqaddam</label><div class="finput filled">Cheikh Ibrahima N.</div></div>
+      <div class="chip-select"><div class="chip sel">Kaolack</div><div class="chip">Tivaouane</div><div class="chip">Autre</div></div>
+    </div>
+    <div class="comp-card">
+      <div class="comp-label">Maillon de silsila</div>
+      <div class="chain-node self"><div class="cname">Moi</div><div class="cyear">2019</div></div>
+    </div>
+  </div>
+</section>
+
+<footer class="notes">
+  <h3>Notes d'application pour l'équipe de développement</h3>
+  <ul>
+    <li>Le vert zaytoune (#0F3D2E) est réservé aux écrans de pratique (wirds, khadara en direct) — il crée une bulle de recueillement distincte de la navigation générale sur fond parchemin.</li>
+    <li>La rosace à huit branches ne doit jamais être dupliquée en motif répété : une seule occurrence par écran, toujours en filigrane à faible opacité ou en trait fin.</li>
+    <li>L'arabe (Amiri) est strictement réservé aux textes religieux, noms propres arabes et titres de sections — jamais utilisé pour des libellés d'interface générique (boutons, menus).</li>
+    <li>Respect RTL : les écrans en mode arabe doivent inverser la mise en page (icônes, alignements) — à décliner pour chaque écran de cette version.</li>
+    <li>Champs de lignée spirituelle (disciple §5.4.1 et mouqaddam §5.4.2) : privés par défaut. Le bouton « Se mettre en relation » / « Contacter » ne doit être visible qu'après correspondance opt-in mutuelle.</li>
+    <li>Le badge « Mouqaddam vérifié » ne s'affiche qu'après acceptation d'un parrainage (ou validation initiale du porteur de projet) — jamais sur simple déclaration.</li>
+    <li>L'écran « Ma silsila d'ijaza » reconstruit la chaîne automatiquement via le graphe de parrainage ; le dernier maillon connu dans l'app complète le reste en texte libre (style visuel identique, sans lien cliquable).</li>
+    <li>Accessibilité : contraste vérifié pour le texte parchemin sur fond zaytoune (ratio > 7:1) ; prévoir un mode contraste renforcé pour les utilisateurs âgés.</li>
+  </ul>
+</footer>
+
+</body>
+</html>
