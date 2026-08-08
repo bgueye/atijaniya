@@ -506,6 +506,78 @@ abstract class AppLocalizations {
   /// **'Nouveau compteur'**
   String get wirdFreeNewCounterButton;
 
+  /// No description provided for @tariqaConditionsCardTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Conditions de la Tariqa'**
+  String get tariqaConditionsCardTitle;
+
+  /// No description provided for @tariqaConditionsCardSubtitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Les 23 conditions du wird et de l\'affiliation'**
+  String get tariqaConditionsCardSubtitle;
+
+  /// No description provided for @tariqaConditionsTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Conditions de la Tariqa'**
+  String get tariqaConditionsTitle;
+
+  /// No description provided for @tariqaConditionsLoadError.
+  ///
+  /// In fr, this message translates to:
+  /// **'Impossible de charger les données.'**
+  String get tariqaConditionsLoadError;
+
+  /// No description provided for @tariqaConditionsRetry.
+  ///
+  /// In fr, this message translates to:
+  /// **'Réessayer'**
+  String get tariqaConditionsRetry;
+
+  /// No description provided for @tariqaConditionsEmptyTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Contenu en cours de compilation'**
+  String get tariqaConditionsEmptyTitle;
+
+  /// No description provided for @tariqaConditionsEmptyBody.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ce contenu sera publié une fois validé par un moqaddam ou érudit reconnu du projet.'**
+  String get tariqaConditionsEmptyBody;
+
+  /// No description provided for @tariqaConditionsCategoryValiditeTalqin.
+  ///
+  /// In fr, this message translates to:
+  /// **'Validité du talqîn'**
+  String get tariqaConditionsCategoryValiditeTalqin;
+
+  /// No description provided for @tariqaConditionsCategoryCompagnonnage.
+  ///
+  /// In fr, this message translates to:
+  /// **'Compagnonnage envers le Cheikh'**
+  String get tariqaConditionsCategoryCompagnonnage;
+
+  /// No description provided for @tariqaConditionsCategoryConditionsGenerales.
+  ///
+  /// In fr, this message translates to:
+  /// **'Conditions générales'**
+  String get tariqaConditionsCategoryConditionsGenerales;
+
+  /// No description provided for @tariqaConditionsCategoryValiditeRecitation.
+  ///
+  /// In fr, this message translates to:
+  /// **'Validité de la récitation'**
+  String get tariqaConditionsCategoryValiditeRecitation;
+
+  /// No description provided for @tariqaConditionsCategoryConditionsComplementaires.
+  ///
+  /// In fr, this message translates to:
+  /// **'Conditions complémentaires'**
+  String get tariqaConditionsCategoryConditionsComplementaires;
+
   /// No description provided for @khadaraEventsTab.
   ///
   /// In fr, this message translates to:

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../../core/theme/app_colors.dart';
 import '../../../l10n/app_localizations.dart';
+import '../../tariqa_conditions/presentation/tariqa_conditions_screen.dart';
 import '../data/wirds_content.dart';
 import '../domain/wird_models.dart';
 import 'free_wird_screen.dart';
@@ -30,6 +31,8 @@ class WirdListScreen extends StatelessWidget {
           const SizedBox(height: 12),
         ],
         _FreeWirdCard(l10n: l10n),
+        const SizedBox(height: 12),
+        _TariqaConditionsCard(l10n: l10n),
       ],
     );
   }
@@ -75,6 +78,28 @@ class _FreeWirdCard extends StatelessWidget {
         trailing: const Icon(Icons.chevron_right, color: AppColors.bronze),
         onTap: () => Navigator.of(context).push(
           MaterialPageRoute(builder: (_) => const FreeWirdScreen()),
+        ),
+      ),
+    );
+  }
+}
+
+class _TariqaConditionsCard extends StatelessWidget {
+  const _TariqaConditionsCard({required this.l10n});
+
+  final AppLocalizations l10n;
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      child: ListTile(
+        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        leading: const Icon(Icons.rule_outlined, color: AppColors.emerald),
+        title: Text(l10n.tariqaConditionsCardTitle, style: const TextStyle(fontWeight: FontWeight.w500)),
+        subtitle: Text(l10n.tariqaConditionsCardSubtitle, style: const TextStyle(color: AppColors.bronze)),
+        trailing: const Icon(Icons.chevron_right, color: AppColors.bronze),
+        onTap: () => Navigator.of(context).push(
+          MaterialPageRoute(builder: (_) => const TariqaConditionsScreen()),
         ),
       ),
     );

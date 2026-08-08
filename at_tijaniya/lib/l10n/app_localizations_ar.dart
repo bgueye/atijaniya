@@ -226,6 +226,45 @@ class AppLocalizationsAr extends AppLocalizations {
   String get wirdFreeNewCounterButton => 'عداد جديد';
 
   @override
+  String get tariqaConditionsCardTitle => 'شروط الطريقة';
+
+  @override
+  String get tariqaConditionsCardSubtitle =>
+      'الشروط الثلاثة والعشرون للورد والانتساب';
+
+  @override
+  String get tariqaConditionsTitle => 'شروط الطريقة';
+
+  @override
+  String get tariqaConditionsLoadError => 'تعذّر تحميل البيانات.';
+
+  @override
+  String get tariqaConditionsRetry => 'إعادة المحاولة';
+
+  @override
+  String get tariqaConditionsEmptyTitle => 'المحتوى قيد الإعداد';
+
+  @override
+  String get tariqaConditionsEmptyBody =>
+      'سيُنشر هذا المحتوى بعد التحقق من صحته من طرف مقدَّم أو عالم معتمد للمشروع.';
+
+  @override
+  String get tariqaConditionsCategoryValiditeTalqin => 'شروط صحة التلقين';
+
+  @override
+  String get tariqaConditionsCategoryCompagnonnage => 'شروط الصحبة';
+
+  @override
+  String get tariqaConditionsCategoryConditionsGenerales => 'الشروط العامة';
+
+  @override
+  String get tariqaConditionsCategoryValiditeRecitation => 'شروط صحة الأوراد';
+
+  @override
+  String get tariqaConditionsCategoryConditionsComplementaires =>
+      'الشروط المكملة';
+
+  @override
   String get khadaraEventsTab => 'المناسبات';
 
   @override

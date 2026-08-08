@@ -675,14 +675,20 @@ malgré cette recommandation. Migration Supabase
   `historical_silsila_links` (Cheikh Mouhamadoul Khaly et El Hadj Oumar
   Tall ne sont chacun référencés qu'une fois) plutôt que trois chaînes
   indépendantes.
-- Quatre maillons intermédiaires sans fiche biographique validée (Cheikh
-  Mouhamadoul Khaly, Alpha Mayoro Wélé, Ibrahima Kelel Thiam, El Hadj
-  Abdoulaye Niasse) insérés comme figures minimales dans `figures` — nom
-  AR/FR uniquement, `content_status = 'brouillon'` (décision explicite du
-  porteur de projet : leur existence dans la chaîne est validée, pas leur
-  fiche complète). Noms arabes : translittérations produites par le
+- Quatre maillons intermédiaires sans fiche biographique validée au moment
+  de cette migration (Cheikh Mouhamadoul Khaly, Alpha Mayoro Wélé,
+  Ibrahima Kelel Thiam, El Hadj Abdoulaye Niasse) insérés comme figures
+  minimales dans `figures` — nom AR/FR uniquement, `content_status =
+  'brouillon'` à l'origine (décision explicite du porteur de projet : leur
+  existence dans la chaîne était validée, pas encore leur fiche complète).
+  **Mise à jour** : le porteur de projet a depuis rédigé et validé une
+  biographie complète pour ces quatre figures directement en base
+  (`content_status = 'valide'`, hors session assistée par le modèle) —
+  elles sont donc désormais visibles comme n'importe quelle autre figure
+  du module. Noms arabes : translittérations initialement produites par le
   modèle (les documents source ne donnaient que la graphie latine) — à
-  vérifier lors de la validation éditoriale de leur fiche. Volontairement
+  revérifier si ce n'est pas déjà fait lors de la rédaction de leur fiche
+  complète. Volontairement
   hors périmètre : la "seconde chaîne" maghrébine et la "chaîne cachée"
   mentionnées dans `Silsila-El-Hadj-Ibrahima-Niasse.md` (non détaillées par
   les sources elles-mêmes), et "Le Prophète Muhammad" comme nœud de la
@@ -756,6 +762,47 @@ n'est pas vide. Testé (`test/figures_models_test.dart` : parsing et tri par
 français et arabe (El Hadj Malick Sy : 6 œuvres listées dans le bon ordre ;
 El Hadj Ibrahima Niasse : 2 œuvres, titre de section "المؤلفات" correct en
 RTL).
+
+Deux figures supplémentaires ajoutées directement en base par le porteur de
+projet (hors session assistée par le modèle, donc non détaillées ailleurs
+dans cet historique) : **Cheikh Amary Ndack Seck** (`content_status =
+'valide'`, bio complète) — pas encore rattachée à `historical_silsila_links`
+ni à aucune citation/œuvre, à vérifier si c'est volontaire (figure isolée
+de l'arbre) lors d'un prochain passage sur la silsila — et **Thierno
+Mouhamadou Seydou Bâ (Thierno Mawdo)** (`content_status = 'brouillon'`,
+donc invisible côté app, RLS + filtre client déjà couverts par le
+mécanisme existant).
+
+Conditions de la Tariqa (chouroutes) — nouvelle table de référence et
+premier écran qui l'exploite. Table Supabase `tariqa_conditions` (23
+lignes, `content_status = 'valide'`) créée et remplie directement en base
+par le porteur de projet (migrations `create_tariqa_conditions_table` et
+`update_tariqa_conditions_categories_arabic`, hors session assistée par le
+modèle) : les 23 conditions régissant l'affiliation et la pratique du Wird,
+listées par le site officiel tidjaniya.com et recoupées avec des sources
+sénégalaises reconnues, réparties en 5 catégories (`validite_talqin`,
+`compagnonnage`, `conditions_generales`, `validite_recitation`,
+`conditions_complementaires`). RLS : lecture publique du contenu `valide`
+uniquement (`tariqa_conditions_public_read`) — pas de policy d'écriture
+cliente exposée, contrairement à `figures` : ce contenu est figé une fois
+validé, pas de flux de review admin prévu ici.
+
+Côté app (`lib/features/tariqa_conditions/`) : `TariqaCondition`/
+`TariqaConditionCategory` (`domain/tariqa_condition_models.dart`),
+`TariqaConditionsRepository.fetchConditions()` (`data/`, filtre explicite
+`content_status = 'valide'` en plus de la RLS, même défense en profondeur
+que `FiguresRepository`), `tariqaConditionsProvider`
+(`presentation/tariqa_conditions_providers.dart`),
+`TariqaConditionsScreen` — liste groupée par les 5 catégories officielles,
+texte français + arabe (Amiri, RTL) quand disponible, état de chargement/
+erreur+reprise/vide. Accessible depuis une nouvelle carte "Conditions de la
+Tariqa" en bas de `WirdListScreen` (même niveau que "Wird libre"), puisque
+ces conditions régissent directement la pratique du Wird. `database/schema.sql`
+régénéré pour refléter ce nouvel état de la base (voir aussi le correctif
+des policies RLS `figures_read_valid_or_admin`/`figure_quotes_read_valid_or_admin`/
+`silsila_links_read_valid_or_admin`, `figure_works`, `events.image_url` et
+le bucket Storage `event-images`, tous déjà en place côté base mais absents
+du fichier avant cette régénération).
 
 ## Commandes utiles
 - `flutter pub get`

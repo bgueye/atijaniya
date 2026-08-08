@@ -231,6 +231,48 @@ class AppLocalizationsFr extends AppLocalizations {
   String get wirdFreeNewCounterButton => 'Nouveau compteur';
 
   @override
+  String get tariqaConditionsCardTitle => 'Conditions de la Tariqa';
+
+  @override
+  String get tariqaConditionsCardSubtitle =>
+      'Les 23 conditions du wird et de l\'affiliation';
+
+  @override
+  String get tariqaConditionsTitle => 'Conditions de la Tariqa';
+
+  @override
+  String get tariqaConditionsLoadError => 'Impossible de charger les données.';
+
+  @override
+  String get tariqaConditionsRetry => 'Réessayer';
+
+  @override
+  String get tariqaConditionsEmptyTitle => 'Contenu en cours de compilation';
+
+  @override
+  String get tariqaConditionsEmptyBody =>
+      'Ce contenu sera publié une fois validé par un moqaddam ou érudit reconnu du projet.';
+
+  @override
+  String get tariqaConditionsCategoryValiditeTalqin => 'Validité du talqîn';
+
+  @override
+  String get tariqaConditionsCategoryCompagnonnage =>
+      'Compagnonnage envers le Cheikh';
+
+  @override
+  String get tariqaConditionsCategoryConditionsGenerales =>
+      'Conditions générales';
+
+  @override
+  String get tariqaConditionsCategoryValiditeRecitation =>
+      'Validité de la récitation';
+
+  @override
+  String get tariqaConditionsCategoryConditionsComplementaires =>
+      'Conditions complémentaires';
+
+  @override
   String get khadaraEventsTab => 'Évènements';
 
   @override

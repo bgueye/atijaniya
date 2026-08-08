@@ -262,8 +262,11 @@ create table public.events (
   latitude double precision,
   longitude double precision,
   created_by uuid references auth.users(id),
-  created_at timestamptz not null default now()
+  created_at timestamptz not null default now(),
+  image_url text -- URL publique Storage (bucket event-images, section 11.2) ; NULL tant qu'aucune image n'a été ajoutée
 );
+comment on column public.events.image_url is
+  'URL de l''image de couverture de l''événement (affiche du Gamou, photo de la zawiya, etc.). Nullable.';
 
 create table public.live_streams (
   id uuid primary key default gen_random_uuid(),
@@ -365,16 +368,21 @@ create table public.figures (
   birth_year_hijri int,
   bio_text text,
   portrait_url text,
-  created_at timestamptz not null default now()
+  created_at timestamptz not null default now(),
+  content_status text not null default 'brouillon' check (content_status in ('brouillon','valide'))
 );
+comment on column public.figures.content_status is
+  'brouillon = compilation non validée par un moqaddam, ne doit pas être exposée publiquement dans l''app tant que valide n''est pas atteint (cf. document de projet §8).';
 
 create table public.figure_quotes (
   id uuid primary key default gen_random_uuid(),
   figure_id uuid not null references public.figures(id) on delete cascade,
-  text_ar text not null,
+  text_ar text, -- nullable : une citation peut n'être sourcée qu'en traduction (voir source_note)
   text_fr text,
   source_note text
 );
+comment on column public.figure_quotes.text_ar is
+  'Texte arabe original si disponible et vérifié ; peut être NULL si la citation n''est sourcée qu''en traduction (voir source_note).';
 
 -- Silsila HISTORIQUE et doctrinale (chaîne de la tarikha) — distincte du
 -- graphe de parrainage vivant (mouqaddam_sponsorships, section 3).
@@ -385,11 +393,83 @@ create table public.historical_silsila_links (
   order_index int not null
 );
 
+-- Reconstruction de la silsila historique (CTE récursif) depuis une figure
+-- donnée jusqu'à la racine de l'arbre (le fondateur, sans parent_figure_id).
+-- SECURITY DEFINER (contrairement à get_ijaza_chain) : indispensable pour
+-- résoudre les maillons intermédiaires encore en content_status='brouillon'
+-- (fiche minimale nom AR/FR non encore validée), que la RLS
+-- figures_read_valid_or_admin masquerait sinon à un disciple non admin,
+-- cassant la chaîne affichée. Ne renvoie que nom/catégorie/rang, jamais de
+-- contenu biographique. Avertissement advisor "SECURITY DEFINER exécutable
+-- par anon/authenticated" attendu et volontaire (même schéma que
+-- is_conversation_participant, section 11).
+create or replace function public.get_historical_silsila_chain(p_figure_id uuid)
+returns table (
+  figure_id uuid,
+  name_ar text,
+  name_fr text,
+  category text,
+  order_index int
+) as $$
+  with recursive chain as (
+    select l.figure_id, f.name_ar, f.name_fr, f.category, l.order_index, l.parent_figure_id
+    from public.historical_silsila_links l
+    join public.figures f on f.id = l.figure_id
+    where l.figure_id = p_figure_id
+    union all
+    select l.figure_id, f.name_ar, f.name_fr, f.category, l.order_index, l.parent_figure_id
+    from public.historical_silsila_links l
+    join public.figures f on f.id = l.figure_id
+    join chain c on l.figure_id = c.parent_figure_id
+  )
+  select figure_id, name_ar, name_fr, category, order_index from chain order by order_index;
+$$ language sql stable security definer set search_path = public;
+
+-- Œuvres/enseignements écrits attribués à une figure (livre, traité,
+-- diwan...) — complète figure_quotes sans le remplacer.
+create table public.figure_works (
+  id uuid primary key default gen_random_uuid(),
+  figure_id uuid not null references public.figures(id) on delete cascade,
+  title text not null,
+  description text, -- reste NULL quand le texte source ne donne aucun détail au-delà du titre
+  order_index int not null default 0, -- created_at seul n'est pas fiable : identique pour un même insert groupé
+  created_at timestamptz not null default now()
+);
+
 create table public.figure_events (
   figure_id uuid not null references public.figures(id) on delete cascade,
   event_id uuid not null references public.events(id) on delete cascade,
   primary key (figure_id, event_id)
 );
+
+-- ============================================================================
+-- 6.1. CONDITIONS DE LA TARIQA (chouroutes) — table de référence indépendante
+-- ============================================================================
+-- Les 23 conditions (chouroutes) de la Tariqa Tidjaniyya régissant
+-- l'affiliation et la pratique du Wird, telles que listées par le site
+-- officiel tidjaniya.com et recoupées avec des sources sénégalaises
+-- reconnues. Contenu validé directement en base par le porteur de projet
+-- (même précédent que la silsila historique, section 6) : les 23 lignes
+-- sont insérées avec content_status='valide' dès la migration d'origine,
+-- pas de flux de review admin comme pour `figures` (pas de policy
+-- d'écriture cliente exposée ci-dessous, contenu figé une fois validé).
+create table public.tariqa_conditions (
+  id uuid primary key default gen_random_uuid(),
+  order_index int not null unique check (order_index between 1 and 23),
+  category text not null check (category in (
+    'validite_talqin', 'compagnonnage', 'conditions_generales',
+    'validite_recitation', 'conditions_complementaires'
+  )),
+  text_fr text not null,
+  text_ar text,
+  source_note text,
+  content_status text not null default 'brouillon' check (content_status in ('brouillon','valide')),
+  created_at timestamptz not null default now()
+);
+comment on table public.tariqa_conditions is
+  'Les 23 conditions (chouroutes) de la Tariqa Tidjaniyya régissant l''affiliation et la pratique du Wird, telles que listées par le site officiel tidjaniya.com et recoupées avec des sources sénégalaises reconnues.';
+comment on column public.tariqa_conditions.category is
+  'Suit la classification officielle en 5 catégories de tidjaniya.com/ar (شروط صحة التلقين، شروط الصحبة، الشروط العامة، شروط صحة الأوراد، الشروط المكملة).';
 
 -- ============================================================================
 -- 7. MODULE COMMUNAUTÉ — fil, groupes, messagerie
@@ -547,7 +627,9 @@ alter table public.wird_steps enable row level security;
 alter table public.figures enable row level security;
 alter table public.figure_quotes enable row level security;
 alter table public.historical_silsila_links enable row level security;
+alter table public.figure_works enable row level security;
 alter table public.figure_events enable row level security;
+alter table public.tariqa_conditions enable row level security;
 alter table public.profiles enable row level security;
 alter table public.devices enable row level security;
 alter table public.lineage_connection_requests enable row level security;
@@ -649,18 +731,49 @@ create policy wird_steps_read_all on public.wird_steps for select using (true);
 create policy wird_steps_admin_write on public.wird_steps for insert with check (public.is_admin((select auth.uid())));
 create policy wird_steps_admin_update on public.wird_steps for update using (public.is_admin((select auth.uid())));
 
-create policy figures_read_all on public.figures for select using (true);
+-- Laisse volontairement passer les lignes "brouillon" pour un compte admin
+-- (nécessaire pour un futur back-office de relecture) — l'app filtre malgré
+-- tout explicitement content_status='valide' côté client, en plus de cette
+-- RLS (défense en profondeur, voir figures_repository.dart).
+create policy figures_read_valid_or_admin on public.figures for select
+  using (content_status = 'valide' or public.is_admin((select auth.uid())));
 create policy figures_admin_write on public.figures for insert with check (public.is_admin((select auth.uid())));
 create policy figures_admin_update on public.figures for update using (public.is_admin((select auth.uid())));
 
-create policy figure_quotes_read_all on public.figure_quotes for select using (true);
+-- Filtre par jointure sur le content_status de la figure parente : une
+-- citation ne doit jamais fuiter tant que sa figure n'est pas validée.
+create policy figure_quotes_read_valid_or_admin on public.figure_quotes for select
+  using (exists (
+    select 1 from public.figures f
+    where f.id = figure_quotes.figure_id
+      and (f.content_status = 'valide' or public.is_admin((select auth.uid())))
+  ));
 create policy figure_quotes_admin_write on public.figure_quotes for insert with check (public.is_admin((select auth.uid())));
 
-create policy silsila_links_read_all on public.historical_silsila_links for select using (true);
+create policy silsila_links_read_valid_or_admin on public.historical_silsila_links for select
+  using (exists (
+    select 1 from public.figures f
+    where f.id = historical_silsila_links.figure_id
+      and (f.content_status = 'valide' or public.is_admin((select auth.uid())))
+  ));
 create policy silsila_links_admin_write on public.historical_silsila_links for insert with check (public.is_admin((select auth.uid())));
+
+create policy figure_works_read_valid_or_admin on public.figure_works for select
+  using (exists (
+    select 1 from public.figures f
+    where f.id = figure_works.figure_id
+      and (f.content_status = 'valide' or public.is_admin((select auth.uid())))
+  ));
+create policy figure_works_admin_write on public.figure_works for insert with check (public.is_admin((select auth.uid())));
 
 create policy figure_events_read_all on public.figure_events for select using (true);
 create policy figure_events_admin_write on public.figure_events for insert with check (public.is_admin((select auth.uid())));
+
+-- Pas de policy d'écriture cliente exposée : contenu validé une fois pour
+-- toutes en base par le porteur de projet (voir commentaire de la table,
+-- section 6.1), pas de flux de review admin comme pour figures.
+create policy tariqa_conditions_public_read on public.tariqa_conditions for select
+  using (content_status = 'valide');
 
 -- --- Dons ---
 create policy donations_owner_or_admin_read on public.donations for select
@@ -766,6 +879,39 @@ create policy messages_participants_write on public.messages
   );
 
 -- ============================================================================
+-- 11.2 STORAGE — image de couverture d'un évènement (bucket event-images)
+-- ============================================================================
+-- Détail complet : docs/event-image-storage.md. Convention de chemin
+-- obligatoire : event-images/{event_id}/{nom_de_fichier} — les policies
+-- ci-dessous retrouvent l'event_id via (storage.foldername(name))[1].
+
+insert into storage.buckets (id, name, public, file_size_limit, allowed_mime_types)
+values ('event-images', 'event-images', true, 5242880, array['image/jpeg','image/png','image/webp']);
+
+create policy event_images_public_read on storage.objects
+  for select using (bucket_id = 'event-images');
+
+-- Seul le créateur de l'événement peut uploader/remplacer/supprimer l'image
+-- de SON événement. events.created_by est nullable : un événement "système"
+-- sans créateur (import/seed admin) ne peut recevoir d'image que via la clé
+-- service_role, qui bypass RLS.
+create policy event_images_owner_insert on storage.objects
+  for insert with check (
+    bucket_id = 'event-images'
+    and auth.uid() in (select created_by from public.events where id::text = (storage.foldername(name))[1])
+  );
+create policy event_images_owner_update on storage.objects
+  for update using (
+    bucket_id = 'event-images'
+    and auth.uid() in (select created_by from public.events where id::text = (storage.foldername(name))[1])
+  );
+create policy event_images_owner_delete on storage.objects
+  for delete using (
+    bucket_id = 'event-images'
+    and auth.uid() in (select created_by from public.events where id::text = (storage.foldername(name))[1])
+  );
+
+-- ============================================================================
 -- 12. INDEX SUR CLÉS ÉTRANGÈRES (performance)
 -- ============================================================================
 -- Toute colonne de clé étrangère fréquemment filtrée/jointe a un index
@@ -780,6 +926,7 @@ create index idx_events_created_by on public.events (created_by);
 create index idx_events_zawiya_id on public.events (zawiya_id);
 create index idx_figure_events_event_id on public.figure_events (event_id);
 create index idx_figure_quotes_figure_id on public.figure_quotes (figure_id);
+create index idx_figure_works_figure_id on public.figure_works (figure_id);
 create index idx_group_memberships_user_id on public.group_memberships (user_id);
 create index idx_group_posts_author_user_id on public.group_posts (author_user_id);
 create index idx_group_posts_group_id on public.group_posts (group_id);
