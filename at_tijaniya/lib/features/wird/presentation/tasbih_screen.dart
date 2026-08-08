@@ -6,6 +6,7 @@ import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_theme.dart';
 import '../domain/tasbih_session.dart';
 import '../domain/wird_models.dart';
+import 'tasbih_beads_ring.dart';
 import 'tasbih_controller.dart';
 
 /// Tasbih digital — tape manuel, reconnaissance vocale, reprise de session.
@@ -158,49 +159,40 @@ class _ManualCounter extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final progress = target == 0 ? 0.0 : (count / target).clamp(0.0, 1.0);
     return GestureDetector(
       onTap: complete ? null : onTap,
-      child: SizedBox(
-        width: 240,
-        height: 240,
-        child: Stack(
+      behavior: HitTestBehavior.opaque,
+      child: TasbihBeadsRing(
+        count: count,
+        target: target,
+        size: 240,
+        complete: complete,
+        child: Container(
+          width: 190,
+          height: 190,
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            color: AppColors.emerald.withValues(alpha: complete ? 0.35 : 0.18),
+          ),
           alignment: Alignment.center,
-          children: [
-            CircularProgressIndicator(
-              value: progress,
-              strokeWidth: 10,
-              backgroundColor: AppColors.parchment.withValues(alpha: 0.12),
-              valueColor: AlwaysStoppedAnimation(complete ? AppColors.gold : AppColors.emerald),
-            ),
-            Container(
-              width: 190,
-              height: 190,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: AppColors.emerald.withValues(alpha: complete ? 0.35 : 0.18),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                '$count',
+                style: const TextStyle(color: AppColors.parchment, fontSize: 56, fontWeight: FontWeight.bold),
               ),
-              alignment: Alignment.center,
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Text(
-                    '$count',
-                    style: const TextStyle(color: AppColors.parchment, fontSize: 56, fontWeight: FontWeight.bold),
-                  ),
-                  Text('/ $target', style: const TextStyle(color: AppColors.bronze, fontSize: 18)),
-                  const SizedBox(height: 8),
-                  if (complete)
-                    const Icon(Icons.check_circle, color: AppColors.gold, size: 26)
-                  else
-                    const Text(
-                      'Toucher pour compter',
-                      style: TextStyle(color: AppColors.bronze, fontSize: 12),
-                    ),
-                ],
-              ),
-            ),
-          ],
+              Text('/ $target', style: const TextStyle(color: AppColors.bronze, fontSize: 18)),
+              const SizedBox(height: 8),
+              if (complete)
+                const Icon(Icons.check_circle, color: AppColors.gold, size: 26)
+              else
+                const Text(
+                  'Toucher pour compter',
+                  style: TextStyle(color: AppColors.bronze, fontSize: 12),
+                ),
+            ],
+          ),
         ),
       ),
     );
@@ -224,32 +216,22 @@ class _VoiceCounter extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final progress = target == 0 ? 0.0 : (count / target).clamp(0.0, 1.0);
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        SizedBox(
-          width: 220,
-          height: 220,
-          child: Stack(
-            alignment: Alignment.center,
+        TasbihBeadsRing(
+          count: count,
+          target: target,
+          size: 220,
+          complete: complete,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
             children: [
-              CircularProgressIndicator(
-                value: progress,
-                strokeWidth: 10,
-                backgroundColor: AppColors.parchment.withValues(alpha: 0.12),
-                valueColor: AlwaysStoppedAnimation(complete ? AppColors.gold : AppColors.emerald),
+              Text(
+                '$count',
+                style: const TextStyle(color: AppColors.parchment, fontSize: 48, fontWeight: FontWeight.bold),
               ),
-              Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Text(
-                    '$count',
-                    style: const TextStyle(color: AppColors.parchment, fontSize: 48, fontWeight: FontWeight.bold),
-                  ),
-                  Text('/ $target', style: const TextStyle(color: AppColors.bronze, fontSize: 16)),
-                ],
-              ),
+              Text('/ $target', style: const TextStyle(color: AppColors.bronze, fontSize: 16)),
             ],
           ),
         ),
