@@ -369,6 +369,9 @@ class AppLocalizationsFr extends AppLocalizations {
       'Aucune citation renseignée pour le moment.';
 
   @override
+  String get figureWorksSectionTitle => 'Œuvres';
+
+  @override
   String get figureZiyarasPending =>
       'Aucune ziyara associée n\'est encore renseignée.';
 

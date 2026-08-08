@@ -360,6 +360,9 @@ class AppLocalizationsAr extends AppLocalizations {
   String get figureCitationsEmpty => 'لا توجد أقوال مسجَّلة حاليًا.';
 
   @override
+  String get figureWorksSectionTitle => 'المؤلفات';
+
+  @override
   String get figureZiyarasPending => 'لم تُسجَّل بعد أي زيارة مرتبطة.';
 
   @override

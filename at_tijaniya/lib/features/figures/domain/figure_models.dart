@@ -38,6 +38,17 @@ class FigureCitation {
   final String source;
 }
 
+/// Une œuvre écrite (livre, traité, diwan...) attribuée à la figure —
+/// complète les citations sans les remplacer (demande du porteur de projet
+/// du 2026-08-08). `description` reste `null` quand le texte source ne
+/// donne aucun détail au-delà du titre (pas de résumé inventé).
+class FigureWork {
+  const FigureWork({required this.title, this.description});
+
+  final String title;
+  final String? description;
+}
+
 class Figure {
   const Figure({
     required this.id,
@@ -47,6 +58,7 @@ class Figure {
     this.summary,
     this.biography,
     this.citations,
+    this.works,
     this.ziyaraNote,
   });
 
@@ -61,6 +73,7 @@ class Figure {
 
   final List<FigureBiographyParagraph>? biography;
   final List<FigureCitation>? citations;
+  final List<FigureWork>? works;
 
   /// Ziyara associée (lieu/évènement de pèlerinage lié à cette figure) —
   /// simple note textuelle, pas de lien direct au calendrier Khadara pour
@@ -80,6 +93,7 @@ class Figure {
   /// l'affichage.
   factory Figure.fromRow(Map<String, dynamic> row) {
     final quotesRows = row['figure_quotes'] as List<dynamic>?;
+    final worksRows = row['figure_works'] as List<dynamic>?;
     return Figure(
       id: row['id'] as String,
       nameArabic: row['name_ar'] as String,
@@ -88,6 +102,7 @@ class Figure {
       summary: _summaryFrom(row['bio_text'] as String?),
       biography: _biographyFrom(row['bio_text'] as String?),
       citations: _citationsFrom(quotesRows),
+      works: _worksFrom(worksRows),
     );
   }
 }
@@ -159,5 +174,14 @@ List<FigureCitation>? _citationsFrom(List<dynamic>? quotesRows) {
         translation: (raw['text_fr'] as String?) ?? (raw['text_ar'] as String?) ?? '',
         source: (raw['source_note'] as String?) ?? '—',
       ),
+  ];
+}
+
+List<FigureWork>? _worksFrom(List<dynamic>? worksRows) {
+  if (worksRows == null || worksRows.isEmpty) return null;
+  final rows = worksRows.cast<Map<String, dynamic>>().toList()
+    ..sort((a, b) => (a['order_index'] as int).compareTo(b['order_index'] as int));
+  return [
+    for (final raw in rows) FigureWork(title: raw['title'] as String, description: raw['description'] as String?),
   ];
 }

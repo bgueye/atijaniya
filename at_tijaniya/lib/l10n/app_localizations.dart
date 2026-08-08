@@ -764,6 +764,12 @@ abstract class AppLocalizations {
   /// **'Aucune citation renseignée pour le moment.'**
   String get figureCitationsEmpty;
 
+  /// No description provided for @figureWorksSectionTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Œuvres'**
+  String get figureWorksSectionTitle;
+
   /// No description provided for @figureZiyarasPending.
   ///
   /// In fr, this message translates to:

@@ -21,7 +21,7 @@ class FiguresRepository {
   Future<List<Figure>> fetchFigures() async {
     final rows = await SupabaseConfig.client
         .from('figures')
-        .select('*, figure_quotes(text_ar, text_fr, source_note)')
+        .select('*, figure_quotes(text_ar, text_fr, source_note), figure_works(title, description, order_index)')
         .eq('content_status', 'valide')
         .order('category', ascending: true)
         .order('name_fr', ascending: true);
@@ -36,7 +36,7 @@ class FiguresRepository {
   Future<List<Figure>> fetchDraftFigures() async {
     final rows = await SupabaseConfig.client
         .from('figures')
-        .select('*, figure_quotes(text_ar, text_fr, source_note)')
+        .select('*, figure_quotes(text_ar, text_fr, source_note), figure_works(title, description, order_index)')
         .eq('content_status', 'brouillon')
         .order('category', ascending: true)
         .order('name_fr', ascending: true);

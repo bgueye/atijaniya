@@ -724,6 +724,39 @@ correctement dans l'ordre fondateur → figure consultée, carte fondateur et
 bordure "figure actuelle" bien stylées, RTL correct (ordre des onglets et
 bouton retour inversés, libellé "مؤسس الطريقة" affiché).
 
+Œuvres/enseignements écrits d'une figure ajoutés dans l'onglet Citations,
+en complément des citations existantes plutôt qu'en remplacement (demande
+explicite du porteur de projet du 2026-08-08, suite à une question
+exploratoire sur l'évolution du Recueil de citations). Nouvelle table
+Supabase `figure_works` (`title`, `description` optionnelle, `order_index`,
+RLS `figure_works_read_valid_or_admin`/`figure_works_admin_write` — même
+forme que `figure_quotes`), migration `add_figure_works_table_and_data` +
+`add_order_index_to_figure_works` (correctif : `created_at` identique pour
+toutes les lignes d'un même insert, ordre d'affichage non fiable sans
+colonne dédiée — touche El Hadj Malick Sy, seule figure à plusieurs
+œuvres). Contenu des 10 lignes insérées : **aucun fait nouveau** — titres et
+descriptions repris tels quels de la section "ŒUVRE ÉCRITE"/"PREMIERS
+ÉCRITS"/etc. du `bio_text` déjà `content_status = 'valide'` de chaque
+figure (Jawahir al-Ma'ani pour Cheikh Ahmed Tijani ; Rimah Hizb ir-Rahim
+pour El Hadj Oumar Tall ; Ifham al-Munkir al-Jani, Khilasou-z-Zahab,
+Kifayatou-r-Raghibin, Wassilatoul Mouna, Fatihatou Toulaab et le Diwan
+pour El Hadj Malick Sy ; Rouhoul Adab et Kachiful Ilbas pour El Hadj
+Ibrahima Niasse) — simple restructuration en champ dédié, pas de nouvelle
+validation nécessaire contrairement à la silsila historique ci-dessus.
+
+Côté app : `FigureWork` (`figure_models.dart`, `works` sur `Figure`,
+triés côté client par `order_index`), `figure_works(title, description,
+order_index)` embarqué dans `FiguresRepository.fetchFigures`/
+`fetchDraftFigures`. `_CitationsTab` affiche les deux sources
+indépendamment (une section peut être vide sans cacher l'autre) : citations
+d'abord, puis un titre de section "Œuvres" et les `_WorkCard` (titre en
+Cormorant Garamond, description optionnelle en dessous) si `figure.works`
+n'est pas vide. Testé (`test/figures_models_test.dart` : parsing et tri par
+`order_index`) et validé en conditions réelles sur émulateur Android,
+français et arabe (El Hadj Malick Sy : 6 œuvres listées dans le bon ordre ;
+El Hadj Ibrahima Niasse : 2 œuvres, titre de section "المؤلفات" correct en
+RTL).
+
 ## Commandes utiles
 - `flutter pub get`
 - `flutter analyze`

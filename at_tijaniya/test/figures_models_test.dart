@@ -1,7 +1,8 @@
 // Vérifie le parsing de Figure.fromRow depuis une ligne de la table Supabase
 // `figures` : mapping de catégorie, découpage de bio_text en paragraphes,
 // exclusion de la section "SOURCES CONSULTÉES" (note interne de traçabilité,
-// pas un contenu destiné au disciple), parsing des citations embarquées.
+// pas un contenu destiné au disciple), parsing des citations et des œuvres
+// embarquées.
 
 import 'package:flutter_test/flutter_test.dart';
 
@@ -93,6 +94,36 @@ void main() {
         'bio_text': null,
       });
       expect(figure.citations, isNull);
+    });
+
+    test('parse les œuvres embarquées (figure_works), triées par order_index', () {
+      final figure = Figure.fromRow({
+        'id': 'f7',
+        'name_ar': 'اسم',
+        'name_fr': 'Nom',
+        'category': 'founder',
+        'bio_text': null,
+        'figure_works': [
+          {'title': 'Second ouvrage', 'description': null, 'order_index': 1},
+          {'title': 'Premier ouvrage', 'description': 'Description test.', 'order_index': 0},
+        ],
+      });
+      expect(figure.works, hasLength(2));
+      expect(figure.works![0].title, 'Premier ouvrage');
+      expect(figure.works![0].description, 'Description test.');
+      expect(figure.works![1].title, 'Second ouvrage');
+      expect(figure.works![1].description, isNull);
+    });
+
+    test('figure_works absent ou vide donne des œuvres nulles', () {
+      final figure = Figure.fromRow({
+        'id': 'f8',
+        'name_ar': 'اسم',
+        'name_fr': 'Nom',
+        'category': 'founder',
+        'bio_text': null,
+      });
+      expect(figure.works, isNull);
     });
   });
 }

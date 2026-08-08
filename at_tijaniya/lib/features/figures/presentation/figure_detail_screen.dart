@@ -346,6 +346,11 @@ class _SilsilaNode extends StatelessWidget {
   }
 }
 
+/// Onglet Citations — cite les paroles de la figure et, en complément (pas
+/// en remplacement, demande du porteur de projet du 2026-08-08), ses
+/// œuvres écrites (livres, traités, diwan...). Les deux sources
+/// (`figure_quotes`/`figure_works`) sont indépendantes : chacune s'affiche
+/// dès qu'elle a du contenu, même si l'autre est encore vide.
 class _CitationsTab extends StatelessWidget {
   const _CitationsTab({required this.figure});
 
@@ -355,12 +360,72 @@ class _CitationsTab extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     final citations = figure.citations;
-    if (citations == null || citations.isEmpty) {
+    final works = figure.works;
+    final hasCitations = citations != null && citations.isNotEmpty;
+    final hasWorks = works != null && works.isNotEmpty;
+
+    if (!hasCitations && !hasWorks) {
       return _PendingTab(message: l10n.figureCitationsEmpty);
     }
+
     return ListView(
       padding: const EdgeInsets.all(20),
-      children: [for (final citation in citations) _CitationCard(citation: citation)],
+      children: [
+        if (hasCitations) for (final citation in citations) _CitationCard(citation: citation),
+        if (hasWorks) ...[
+          if (hasCitations) const SizedBox(height: 8),
+          _SectionTitle(l10n.figureWorksSectionTitle),
+          const SizedBox(height: 8),
+          for (final work in works) _WorkCard(work: work),
+        ],
+      ],
+    );
+  }
+}
+
+class _SectionTitle extends StatelessWidget {
+  const _SectionTitle(this.title);
+
+  final String title;
+
+  @override
+  Widget build(BuildContext context) {
+    return Text(title, style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 16, color: AppColors.ink));
+  }
+}
+
+class _WorkCard extends StatelessWidget {
+  const _WorkCard({required this.work});
+
+  final FigureWork work;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 12),
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        color: AppColors.offWhite,
+        borderRadius: BorderRadius.circular(14),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Text(
+            work.title,
+            style: const TextStyle(
+              fontFamily: AppFonts.titlesFr,
+              fontSize: 17,
+              fontWeight: FontWeight.w600,
+              color: AppColors.zaytoune,
+            ),
+          ),
+          if (work.description != null) ...[
+            const SizedBox(height: 6),
+            Text(work.description!, style: const TextStyle(color: AppColors.ink, fontSize: 15, height: 1.4)),
+          ],
+        ],
+      ),
     );
   }
 }
