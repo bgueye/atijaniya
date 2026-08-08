@@ -699,6 +699,186 @@ class AppLocalizationsFr extends AppLocalizations {
   String get lineageRetry => 'Réessayer';
 
   @override
+  String get profileBecomeMouqaddam => 'Devenir Mouqaddam';
+
+  @override
+  String get profileSponsorshipRequests => 'Demandes de parrainage';
+
+  @override
+  String get profileMyIjazaChain => 'Ma silsila d\'ijaza';
+
+  @override
+  String get mouqaddamBecomeTitle => 'Devenir Mouqaddam';
+
+  @override
+  String get mouqaddamIntro =>
+      'Le statut de mouqaddam vérifié n\'est jamais auto-proclamé : votre parrain doit confirmer qu\'il vous a transmis l\'ijaza.';
+
+  @override
+  String get mouqaddamLoadError => 'Impossible de charger votre demande.';
+
+  @override
+  String get mouqaddamRetry => 'Réessayer';
+
+  @override
+  String get mouqaddamChooseSponsorButton => 'Choisir un parrain';
+
+  @override
+  String get mouqaddamChangeSponsorButton => 'Changer de parrain';
+
+  @override
+  String get mouqaddamNoSponsorChosen =>
+      'Aucun parrain choisi pour l\'instant.';
+
+  @override
+  String get mouqaddamSelectedSponsorLabel => 'Parrain choisi';
+
+  @override
+  String get mouqaddamYearFieldLabel =>
+      'Année de transmission de l\'ijaza (optionnel)';
+
+  @override
+  String get mouqaddamYearInvalid => 'Année invalide (entre 1200 et 2100).';
+
+  @override
+  String get mouqaddamSubmitButton => 'Envoyer la demande';
+
+  @override
+  String get mouqaddamSponsorRequiredError =>
+      'Choisissez un parrain avant d\'envoyer la demande.';
+
+  @override
+  String get mouqaddamSubmitError => 'Impossible d\'envoyer la demande.';
+
+  @override
+  String get mouqaddamPendingTitle => 'Demande en attente';
+
+  @override
+  String get mouqaddamPendingSponsorLabel => 'Parrain sollicité';
+
+  @override
+  String get mouqaddamPendingCancelButton => 'Annuler la demande';
+
+  @override
+  String get mouqaddamPendingCancelConfirmTitle => 'Annuler cette demande ?';
+
+  @override
+  String get mouqaddamPendingCancelConfirmBody =>
+      'Vous pourrez en soumettre une nouvelle à tout moment.';
+
+  @override
+  String get mouqaddamPendingCancelConfirmAction => 'Annuler la demande';
+
+  @override
+  String get mouqaddamCancelError => 'Impossible d\'annuler la demande.';
+
+  @override
+  String get mouqaddamRejectedNote =>
+      'Votre dernière demande a été refusée. Vous pouvez en soumettre une nouvelle.';
+
+  @override
+  String get mouqaddamSearchTitle => 'Rechercher un parrain';
+
+  @override
+  String get mouqaddamSearchFieldHint => 'Rechercher par nom...';
+
+  @override
+  String get mouqaddamSearchEmpty =>
+      'Aucun mouqaddam disponible comme parrain pour le moment.';
+
+  @override
+  String get mouqaddamSearchNoResults => 'Aucun résultat pour cette recherche.';
+
+  @override
+  String get mouqaddamSearchLoadError => 'Impossible de charger les résultats.';
+
+  @override
+  String get mouqaddamRequestsTitle => 'Demandes de parrainage';
+
+  @override
+  String get mouqaddamRequestsEmpty =>
+      'Aucune demande de parrainage en attente.';
+
+  @override
+  String get mouqaddamRequestsLoadError =>
+      'Impossible de charger les demandes.';
+
+  @override
+  String get mouqaddamRequestsYearLabel => 'Année d\'ijaza indiquée';
+
+  @override
+  String get mouqaddamRequestsAccept => 'Accepter';
+
+  @override
+  String get mouqaddamRequestsReject => 'Refuser';
+
+  @override
+  String get mouqaddamRequestsAcceptConfirmTitle => 'Accepter cette demande ?';
+
+  @override
+  String get mouqaddamRequestsAcceptConfirmBody =>
+      'Le statut de mouqaddam vérifié sera confirmé pour ce disciple.';
+
+  @override
+  String get mouqaddamRequestsRejectConfirmTitle => 'Refuser cette demande ?';
+
+  @override
+  String get mouqaddamRequestsRejectConfirmBody =>
+      'Le disciple pourra soumettre une nouvelle demande à tout moment.';
+
+  @override
+  String get mouqaddamRequestsConfirmAction => 'Confirmer';
+
+  @override
+  String get mouqaddamRequestsSuccessAccepted => 'Demande acceptée.';
+
+  @override
+  String get mouqaddamRequestsSuccessRejected => 'Demande refusée.';
+
+  @override
+  String get mouqaddamRequestsError => 'Impossible de traiter cette demande.';
+
+  @override
+  String get mouqaddamChainTitle => 'Ma silsila d\'ijaza';
+
+  @override
+  String get mouqaddamChainLoadError => 'Impossible de charger votre silsila.';
+
+  @override
+  String get mouqaddamChainEmpty =>
+      'Votre silsila n\'est pas encore disponible.';
+
+  @override
+  String get mouqaddamChainYouLabel => 'Vous';
+
+  @override
+  String get mouqaddamChainCompleteTitle =>
+      'Compléter la chaîne au-delà de l\'app';
+
+  @override
+  String get mouqaddamChainCompleteBody =>
+      'Si votre parrain n\'a jamais utilisé l\'application, ajoutez ici le prochain maillon connu (nom et date approximative), jusqu\'à Cheikh Ahmed Tijani.';
+
+  @override
+  String get mouqaddamChainNameFieldLabel => 'Nom';
+
+  @override
+  String get mouqaddamChainNameRequired => 'Le nom est obligatoire.';
+
+  @override
+  String get mouqaddamChainYearTextFieldLabel =>
+      'Date approximative (optionnel)';
+
+  @override
+  String get mouqaddamChainAddButton => 'Ajouter ce maillon';
+
+  @override
+  String get mouqaddamChainAddError => 'Impossible d\'ajouter ce maillon.';
+
+  @override
+  String get mouqaddamChainAddSuccess => 'Maillon ajouté.';
+
+  @override
   String get settingsTitle => 'Paramètres';
 
   @override

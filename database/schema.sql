@@ -198,41 +198,179 @@ create table public.mouqaddam_manual_chain_links (
   unique (mouqaddam_user_id, order_index)
 );
 
+-- Visibilité opt-in partagée par mouqaddam_status_visibility,
+-- manual_chain_links_visibility et get_ijaza_chain — SECURITY DEFINER
+-- indispensable : privacy_settings a une RLS "owner only"
+-- (privacy_settings_owner_only), donc une policy sur une AUTRE table qui
+-- vérifie le flag d'un AUTRE utilisateur via un simple EXISTS se heurte à
+-- cette même RLS et ne voit jamais la ligne (jamais détecté avant le
+-- workflow Mouqaddam : aucun écran ne lisait encore le statut d'un AUTRE
+-- utilisateur avant lui).
+create or replace function public.mouqaddam_status_visible_to(p_owner_id uuid, p_viewer_id uuid)
+returns boolean
+language sql
+stable
+security definer
+set search_path = public
+as $$
+  select p_viewer_id = p_owner_id
+    or exists (
+      select 1 from public.privacy_settings ps
+      where ps.user_id = p_owner_id and ps.mouqaddam_status_visible = true
+    );
+$$;
+revoke all on function public.mouqaddam_status_visible_to(uuid, uuid) from public;
+revoke all on function public.mouqaddam_status_visible_to(uuid, uuid) from anon;
+grant execute on function public.mouqaddam_status_visible_to(uuid, uuid) to authenticated;
+
+-- "Un utilisateur est-il mouqaddam vérifié ?" est une question de règle
+-- métier/sécurité (ex. sponsorship_candidate_create : le parrain choisi
+-- est-il bien vérifié ?), pas d'affichage de profil — elle doit rester vraie
+-- indépendamment de l'opt-in de visibilité de la CIBLE. Distincte de
+-- mouqaddam_status_visible_to (qui, elle, reste réservée à l'affichage) :
+-- un simple EXISTS direct sur mouqaddam_status à l'intérieur d'une policy
+-- se heurte à la RLS de cette table pour un utilisateur autre que
+-- soi-même (même bug de fond que ci-dessus — confirmé empiriquement, un
+-- candidat de test réel bloqué par "new row violates row-level security
+-- policy" alors que toutes les conditions métier étaient réunies, migration
+-- fix_sponsorship_create_verified_check_rls).
+create or replace function public.is_verified_mouqaddam(p_user_id uuid)
+returns boolean
+language sql
+stable
+security definer
+set search_path = public
+as $$
+  select exists (
+    select 1 from public.mouqaddam_status ms where ms.user_id = p_user_id and ms.status = 'verified'
+  );
+$$;
+revoke all on function public.is_verified_mouqaddam(uuid) from public;
+revoke all on function public.is_verified_mouqaddam(uuid) from anon;
+grant execute on function public.is_verified_mouqaddam(uuid) to authenticated;
+
 -- Reconstruction automatique de la silsila d'ijaza (CTE récursif) :
 -- remonte le graphe de parrainage accepté depuis un mouqaddam donné,
 -- puis complète avec la chaîne manuelle du dernier maillon trouvé.
+-- SECURITY DEFINER (migration add_mouqaddam_workflow_rls_and_functions,
+-- 2026-08-08) : sans lui, la RLS sponsorship_participants_only bloque la
+-- récursion dès le deuxième maillon — un mouqaddam n'est participant que de
+-- SA PROPRE ligne, jamais de celle de son parrain (confirmé empiriquement :
+-- la chaîne s'arrêtait systématiquement à la profondeur 0 avant ce
+-- correctif). La fonction vérifie donc elle-même la visibilité en tête
+-- (titulaire ou tiers autorisé par mouqaddam_status_visible_to), puisqu'elle
+-- contourne désormais la RLS sous-jacente : résultat vide plutôt qu'une
+-- fuite si non autorisé.
 create or replace function public.get_ijaza_chain(p_mouqaddam_id uuid)
 returns table (
   depth int,
   user_id uuid,
   ijaza_year smallint,
   is_manual boolean,
-  name_text text
+  name_text text,
+  year_text text
 ) as $$
   with recursive chain as (
     select 0 as depth, ms.candidate_user_id as user_id, ms.ijaza_year,
-           false as is_manual, null::text as name_text, ms.sponsor_user_id
+           false as is_manual, null::text as name_text, null::text as year_text, ms.sponsor_user_id
     from public.mouqaddam_sponsorships ms
     where ms.candidate_user_id = p_mouqaddam_id and ms.status = 'accepted'
+      and public.mouqaddam_status_visible_to(p_mouqaddam_id, (select auth.uid()))
     union all
     select c.depth + 1, ms.candidate_user_id, ms.ijaza_year,
-           false, null::text, ms.sponsor_user_id
+           false, null::text, null::text, ms.sponsor_user_id
     from public.mouqaddam_sponsorships ms
     join chain c on ms.candidate_user_id = c.sponsor_user_id
     where ms.status = 'accepted'
   )
-  select depth, user_id, ijaza_year, is_manual, name_text from chain
+  select depth, user_id, ijaza_year, is_manual, name_text, year_text from chain
   union all
   select
     (select coalesce(max(depth), -1) + 1 + mcl.order_index from chain),
-    null, null, true, mcl.name_text
+    null, null, true, mcl.name_text, mcl.year_text
   from public.mouqaddam_manual_chain_links mcl
   where mcl.mouqaddam_user_id = coalesce(
     (select user_id from chain order by depth desc limit 1),
     p_mouqaddam_id
   )
+  and public.mouqaddam_status_visible_to(p_mouqaddam_id, (select auth.uid()))
   order by 1;
-$$ language sql stable set search_path = public;
+$$ language sql stable security definer set search_path = public;
+
+-- Réponse du parrain à une demande de parrainage ("Demandes de
+-- parrainage") : accepter confirme le statut du candidat de façon atomique
+-- (jamais de champ "je suis mouqaddam" auto-déclaratif côté client, cf.
+-- CLAUDE.md) ; refuser ne fait que clore la demande. SECURITY DEFINER
+-- indispensable : mouqaddam_status n'a aucune policy UPDATE cliente,
+-- volontairement (même principe que handle_new_user).
+create or replace function public.respond_to_sponsorship(p_sponsorship_id uuid, p_accept boolean)
+returns void
+language plpgsql
+security definer
+set search_path = public
+as $$
+declare
+  v_sponsor_id uuid;
+  v_candidate_id uuid;
+  v_status text;
+begin
+  select sponsor_user_id, candidate_user_id, status into v_sponsor_id, v_candidate_id, v_status
+  from public.mouqaddam_sponsorships
+  where id = p_sponsorship_id
+  for update;
+
+  if v_sponsor_id is null or v_sponsor_id <> auth.uid() then
+    raise exception 'Non autorisé à répondre à cette demande.';
+  end if;
+  if v_status <> 'pending' then
+    raise exception 'Cette demande a déjà été traitée.';
+  end if;
+  if not public.is_verified_mouqaddam(auth.uid()) then
+    raise exception 'Votre statut de mouqaddam vérifié ne permet plus de répondre à une demande.';
+  end if;
+
+  update public.mouqaddam_sponsorships
+  set status = case when p_accept then 'accepted' else 'rejected' end,
+      decided_at = now()
+  where id = p_sponsorship_id;
+
+  if p_accept then
+    update public.mouqaddam_status
+    set status = 'verified', verified_at = now()
+    where user_id = v_candidate_id;
+  end if;
+end;
+$$;
+revoke all on function public.respond_to_sponsorship(uuid, boolean) from public;
+revoke all on function public.respond_to_sponsorship(uuid, boolean) from anon;
+grant execute on function public.respond_to_sponsorship(uuid, boolean) to authenticated;
+
+-- Recherche de parrain disponible ("Rechercher un parrain") : ne renvoie
+-- que nom affiché + zawiya, jamais la silsila ni aucune autre donnée
+-- sensible, et seulement pour les mouqaddamines vérifiés ayant explicitement
+-- activé "disponible comme parrain" (opt-in distinct de la visibilité du
+-- statut lui-même, cf. docs/01 §5.4.2).
+create or replace function public.search_available_sponsors(p_query text default null)
+returns table (user_id uuid, display_name text, zawiya_name text)
+language sql
+stable
+security definer
+set search_path = public
+as $$
+  select p.user_id, p.display_name, z.name
+  from public.mouqaddam_status ms
+  join public.privacy_settings ps on ps.user_id = ms.user_id
+  join public.profiles p on p.user_id = ms.user_id
+  left join public.zawiyas z on z.id = p.zawiya_id
+  where ms.status = 'verified'
+    and ps.available_as_sponsor = true
+    and ms.user_id <> (select auth.uid())
+    and (p_query is null or p.display_name ilike '%' || p_query || '%')
+  order by p.display_name;
+$$;
+revoke all on function public.search_available_sponsors(text) from public;
+revoke all on function public.search_available_sponsors(text) from anon;
+grant execute on function public.search_available_sponsors(text) to authenticated;
 
 -- ============================================================================
 -- 4. MODULE KHADARA — zawiyas, évènements, direct, rediffusions
@@ -654,22 +792,41 @@ alter table public.sensitive_data_access_log enable row level security; -- idem
 create policy lineage_owner_only on public.lineage_declarations
   for all using ((select auth.uid()) = user_id) with check ((select auth.uid()) = user_id);
 
+-- Utilise mouqaddam_status_visible_to() (section 3) plutôt qu'un EXISTS
+-- direct sur privacy_settings : cette dernière a sa propre RLS "owner only",
+-- qui bloquerait sinon la vérification du flag d'un AUTRE utilisateur (voir
+-- le commentaire de la fonction).
 create policy mouqaddam_status_visibility on public.mouqaddam_status
-  for select using (
-    (select auth.uid()) = user_id
-    or exists (select 1 from public.privacy_settings ps
-               where ps.user_id = mouqaddam_status.user_id and ps.mouqaddam_status_visible = true)
-  );
+  for select using (public.mouqaddam_status_visible_to(user_id, (select auth.uid())));
 
 create policy sponsorship_participants_only on public.mouqaddam_sponsorships
   for select using ((select auth.uid()) = candidate_user_id or (select auth.uid()) = sponsor_user_id);
 
-create policy manual_chain_links_visibility on public.mouqaddam_manual_chain_links
-  for select using (
-    (select auth.uid()) = mouqaddam_user_id
-    or exists (select 1 from public.privacy_settings ps
-               where ps.user_id = mouqaddam_manual_chain_links.mouqaddam_user_id and ps.mouqaddam_status_visible = true)
+-- Création de la demande par le candidat ("Devenir Mouqaddam") : seul son
+-- propre user_id comme candidat, vers un parrain actuellement vérifié,
+-- jamais vers soi-même, jamais si déjà vérifié. is_verified_mouqaddam()
+-- plutôt qu'un EXISTS direct sur mouqaddam_status : cette dernière a sa
+-- propre RLS (mouqaddam_status_visibility, opt-in), qui bloquerait sinon la
+-- vérification du statut du parrain choisi tant qu'il n'a pas rendu son
+-- statut publiquement visible (voir le commentaire de la fonction).
+create policy sponsorship_candidate_create on public.mouqaddam_sponsorships
+  for insert with check (
+    (select auth.uid()) = candidate_user_id
+    and status = 'pending'
+    and sponsor_user_id is not null
+    and sponsor_user_id <> (select auth.uid())
+    and public.is_verified_mouqaddam(sponsor_user_id)
+    and not public.is_verified_mouqaddam((select auth.uid()))
   );
+-- Une seule demande en attente à la fois par candidat.
+create unique index uq_mq_sponsorship_pending on public.mouqaddam_sponsorships (candidate_user_id) where status = 'pending';
+-- Le candidat peut annuler sa propre demande tant qu'elle est en attente
+-- (sinon il resterait bloqué en cas d'erreur de parrain choisi).
+create policy sponsorship_candidate_cancel on public.mouqaddam_sponsorships
+  for delete using ((select auth.uid()) = candidate_user_id and status = 'pending');
+
+create policy manual_chain_links_visibility on public.mouqaddam_manual_chain_links
+  for select using (public.mouqaddam_status_visible_to(mouqaddam_user_id, (select auth.uid())));
 create policy manual_chain_links_owner_write on public.mouqaddam_manual_chain_links
   for insert with check ((select auth.uid()) = mouqaddam_user_id);
 

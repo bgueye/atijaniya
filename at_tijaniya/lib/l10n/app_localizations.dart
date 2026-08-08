@@ -1376,6 +1376,336 @@ abstract class AppLocalizations {
   /// **'Réessayer'**
   String get lineageRetry;
 
+  /// No description provided for @profileBecomeMouqaddam.
+  ///
+  /// In fr, this message translates to:
+  /// **'Devenir Mouqaddam'**
+  String get profileBecomeMouqaddam;
+
+  /// No description provided for @profileSponsorshipRequests.
+  ///
+  /// In fr, this message translates to:
+  /// **'Demandes de parrainage'**
+  String get profileSponsorshipRequests;
+
+  /// No description provided for @profileMyIjazaChain.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ma silsila d\'ijaza'**
+  String get profileMyIjazaChain;
+
+  /// No description provided for @mouqaddamBecomeTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Devenir Mouqaddam'**
+  String get mouqaddamBecomeTitle;
+
+  /// No description provided for @mouqaddamIntro.
+  ///
+  /// In fr, this message translates to:
+  /// **'Le statut de mouqaddam vérifié n\'est jamais auto-proclamé : votre parrain doit confirmer qu\'il vous a transmis l\'ijaza.'**
+  String get mouqaddamIntro;
+
+  /// No description provided for @mouqaddamLoadError.
+  ///
+  /// In fr, this message translates to:
+  /// **'Impossible de charger votre demande.'**
+  String get mouqaddamLoadError;
+
+  /// No description provided for @mouqaddamRetry.
+  ///
+  /// In fr, this message translates to:
+  /// **'Réessayer'**
+  String get mouqaddamRetry;
+
+  /// No description provided for @mouqaddamChooseSponsorButton.
+  ///
+  /// In fr, this message translates to:
+  /// **'Choisir un parrain'**
+  String get mouqaddamChooseSponsorButton;
+
+  /// No description provided for @mouqaddamChangeSponsorButton.
+  ///
+  /// In fr, this message translates to:
+  /// **'Changer de parrain'**
+  String get mouqaddamChangeSponsorButton;
+
+  /// No description provided for @mouqaddamNoSponsorChosen.
+  ///
+  /// In fr, this message translates to:
+  /// **'Aucun parrain choisi pour l\'instant.'**
+  String get mouqaddamNoSponsorChosen;
+
+  /// No description provided for @mouqaddamSelectedSponsorLabel.
+  ///
+  /// In fr, this message translates to:
+  /// **'Parrain choisi'**
+  String get mouqaddamSelectedSponsorLabel;
+
+  /// No description provided for @mouqaddamYearFieldLabel.
+  ///
+  /// In fr, this message translates to:
+  /// **'Année de transmission de l\'ijaza (optionnel)'**
+  String get mouqaddamYearFieldLabel;
+
+  /// No description provided for @mouqaddamYearInvalid.
+  ///
+  /// In fr, this message translates to:
+  /// **'Année invalide (entre 1200 et 2100).'**
+  String get mouqaddamYearInvalid;
+
+  /// No description provided for @mouqaddamSubmitButton.
+  ///
+  /// In fr, this message translates to:
+  /// **'Envoyer la demande'**
+  String get mouqaddamSubmitButton;
+
+  /// No description provided for @mouqaddamSponsorRequiredError.
+  ///
+  /// In fr, this message translates to:
+  /// **'Choisissez un parrain avant d\'envoyer la demande.'**
+  String get mouqaddamSponsorRequiredError;
+
+  /// No description provided for @mouqaddamSubmitError.
+  ///
+  /// In fr, this message translates to:
+  /// **'Impossible d\'envoyer la demande.'**
+  String get mouqaddamSubmitError;
+
+  /// No description provided for @mouqaddamPendingTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Demande en attente'**
+  String get mouqaddamPendingTitle;
+
+  /// No description provided for @mouqaddamPendingSponsorLabel.
+  ///
+  /// In fr, this message translates to:
+  /// **'Parrain sollicité'**
+  String get mouqaddamPendingSponsorLabel;
+
+  /// No description provided for @mouqaddamPendingCancelButton.
+  ///
+  /// In fr, this message translates to:
+  /// **'Annuler la demande'**
+  String get mouqaddamPendingCancelButton;
+
+  /// No description provided for @mouqaddamPendingCancelConfirmTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Annuler cette demande ?'**
+  String get mouqaddamPendingCancelConfirmTitle;
+
+  /// No description provided for @mouqaddamPendingCancelConfirmBody.
+  ///
+  /// In fr, this message translates to:
+  /// **'Vous pourrez en soumettre une nouvelle à tout moment.'**
+  String get mouqaddamPendingCancelConfirmBody;
+
+  /// No description provided for @mouqaddamPendingCancelConfirmAction.
+  ///
+  /// In fr, this message translates to:
+  /// **'Annuler la demande'**
+  String get mouqaddamPendingCancelConfirmAction;
+
+  /// No description provided for @mouqaddamCancelError.
+  ///
+  /// In fr, this message translates to:
+  /// **'Impossible d\'annuler la demande.'**
+  String get mouqaddamCancelError;
+
+  /// No description provided for @mouqaddamRejectedNote.
+  ///
+  /// In fr, this message translates to:
+  /// **'Votre dernière demande a été refusée. Vous pouvez en soumettre une nouvelle.'**
+  String get mouqaddamRejectedNote;
+
+  /// No description provided for @mouqaddamSearchTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Rechercher un parrain'**
+  String get mouqaddamSearchTitle;
+
+  /// No description provided for @mouqaddamSearchFieldHint.
+  ///
+  /// In fr, this message translates to:
+  /// **'Rechercher par nom...'**
+  String get mouqaddamSearchFieldHint;
+
+  /// No description provided for @mouqaddamSearchEmpty.
+  ///
+  /// In fr, this message translates to:
+  /// **'Aucun mouqaddam disponible comme parrain pour le moment.'**
+  String get mouqaddamSearchEmpty;
+
+  /// No description provided for @mouqaddamSearchNoResults.
+  ///
+  /// In fr, this message translates to:
+  /// **'Aucun résultat pour cette recherche.'**
+  String get mouqaddamSearchNoResults;
+
+  /// No description provided for @mouqaddamSearchLoadError.
+  ///
+  /// In fr, this message translates to:
+  /// **'Impossible de charger les résultats.'**
+  String get mouqaddamSearchLoadError;
+
+  /// No description provided for @mouqaddamRequestsTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Demandes de parrainage'**
+  String get mouqaddamRequestsTitle;
+
+  /// No description provided for @mouqaddamRequestsEmpty.
+  ///
+  /// In fr, this message translates to:
+  /// **'Aucune demande de parrainage en attente.'**
+  String get mouqaddamRequestsEmpty;
+
+  /// No description provided for @mouqaddamRequestsLoadError.
+  ///
+  /// In fr, this message translates to:
+  /// **'Impossible de charger les demandes.'**
+  String get mouqaddamRequestsLoadError;
+
+  /// No description provided for @mouqaddamRequestsYearLabel.
+  ///
+  /// In fr, this message translates to:
+  /// **'Année d\'ijaza indiquée'**
+  String get mouqaddamRequestsYearLabel;
+
+  /// No description provided for @mouqaddamRequestsAccept.
+  ///
+  /// In fr, this message translates to:
+  /// **'Accepter'**
+  String get mouqaddamRequestsAccept;
+
+  /// No description provided for @mouqaddamRequestsReject.
+  ///
+  /// In fr, this message translates to:
+  /// **'Refuser'**
+  String get mouqaddamRequestsReject;
+
+  /// No description provided for @mouqaddamRequestsAcceptConfirmTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Accepter cette demande ?'**
+  String get mouqaddamRequestsAcceptConfirmTitle;
+
+  /// No description provided for @mouqaddamRequestsAcceptConfirmBody.
+  ///
+  /// In fr, this message translates to:
+  /// **'Le statut de mouqaddam vérifié sera confirmé pour ce disciple.'**
+  String get mouqaddamRequestsAcceptConfirmBody;
+
+  /// No description provided for @mouqaddamRequestsRejectConfirmTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Refuser cette demande ?'**
+  String get mouqaddamRequestsRejectConfirmTitle;
+
+  /// No description provided for @mouqaddamRequestsRejectConfirmBody.
+  ///
+  /// In fr, this message translates to:
+  /// **'Le disciple pourra soumettre une nouvelle demande à tout moment.'**
+  String get mouqaddamRequestsRejectConfirmBody;
+
+  /// No description provided for @mouqaddamRequestsConfirmAction.
+  ///
+  /// In fr, this message translates to:
+  /// **'Confirmer'**
+  String get mouqaddamRequestsConfirmAction;
+
+  /// No description provided for @mouqaddamRequestsSuccessAccepted.
+  ///
+  /// In fr, this message translates to:
+  /// **'Demande acceptée.'**
+  String get mouqaddamRequestsSuccessAccepted;
+
+  /// No description provided for @mouqaddamRequestsSuccessRejected.
+  ///
+  /// In fr, this message translates to:
+  /// **'Demande refusée.'**
+  String get mouqaddamRequestsSuccessRejected;
+
+  /// No description provided for @mouqaddamRequestsError.
+  ///
+  /// In fr, this message translates to:
+  /// **'Impossible de traiter cette demande.'**
+  String get mouqaddamRequestsError;
+
+  /// No description provided for @mouqaddamChainTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ma silsila d\'ijaza'**
+  String get mouqaddamChainTitle;
+
+  /// No description provided for @mouqaddamChainLoadError.
+  ///
+  /// In fr, this message translates to:
+  /// **'Impossible de charger votre silsila.'**
+  String get mouqaddamChainLoadError;
+
+  /// No description provided for @mouqaddamChainEmpty.
+  ///
+  /// In fr, this message translates to:
+  /// **'Votre silsila n\'est pas encore disponible.'**
+  String get mouqaddamChainEmpty;
+
+  /// No description provided for @mouqaddamChainYouLabel.
+  ///
+  /// In fr, this message translates to:
+  /// **'Vous'**
+  String get mouqaddamChainYouLabel;
+
+  /// No description provided for @mouqaddamChainCompleteTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Compléter la chaîne au-delà de l\'app'**
+  String get mouqaddamChainCompleteTitle;
+
+  /// No description provided for @mouqaddamChainCompleteBody.
+  ///
+  /// In fr, this message translates to:
+  /// **'Si votre parrain n\'a jamais utilisé l\'application, ajoutez ici le prochain maillon connu (nom et date approximative), jusqu\'à Cheikh Ahmed Tijani.'**
+  String get mouqaddamChainCompleteBody;
+
+  /// No description provided for @mouqaddamChainNameFieldLabel.
+  ///
+  /// In fr, this message translates to:
+  /// **'Nom'**
+  String get mouqaddamChainNameFieldLabel;
+
+  /// No description provided for @mouqaddamChainNameRequired.
+  ///
+  /// In fr, this message translates to:
+  /// **'Le nom est obligatoire.'**
+  String get mouqaddamChainNameRequired;
+
+  /// No description provided for @mouqaddamChainYearTextFieldLabel.
+  ///
+  /// In fr, this message translates to:
+  /// **'Date approximative (optionnel)'**
+  String get mouqaddamChainYearTextFieldLabel;
+
+  /// No description provided for @mouqaddamChainAddButton.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ajouter ce maillon'**
+  String get mouqaddamChainAddButton;
+
+  /// No description provided for @mouqaddamChainAddError.
+  ///
+  /// In fr, this message translates to:
+  /// **'Impossible d\'ajouter ce maillon.'**
+  String get mouqaddamChainAddError;
+
+  /// No description provided for @mouqaddamChainAddSuccess.
+  ///
+  /// In fr, this message translates to:
+  /// **'Maillon ajouté.'**
+  String get mouqaddamChainAddSuccess;
+
   /// No description provided for @settingsTitle.
   ///
   /// In fr, this message translates to:

@@ -804,6 +804,129 @@ des policies RLS `figures_read_valid_or_admin`/`figure_quotes_read_valid_or_admi
 le bucket Storage `event-images`, tous déjà en place côté base mais absents
 du fichier avant cette régénération).
 
+Statut Mouqaddam vérifié — workflow complet (P2, § 5.4.2) : "Devenir
+Mouqaddam", "Demandes de parrainage", "Rechercher un parrain", "Ma silsila
+d'ijaza" (`lib/features/mouqaddam/`). Dernier grand morceau du périmètre P2
+listé dans `docs/03-architecture-ecrans.md` — le backend (`mouqaddam_status`,
+`mouqaddam_sponsorships`, `mouqaddam_manual_chain_links`, `get_ijaza_chain()`)
+existait déjà intégralement, mais aucun écran ni policy d'écriture cliente
+n'avait encore été construit.
+
+**Bugs RLS corrigés — même famille, trouvés en trois temps** (comptes
+mouqaddam fondateurs réels `bgueye@gmail.com`/`claude.tijaniya.qa.test1`
+utilisés pour les reproduire, jamais de compte fictif, données de test
+toujours nettoyées après coup) :
+
+1. *Avant toute construction d'écran* (migration
+   `add_mouqaddam_workflow_rls_and_functions`, confirmé par une
+   sponsorisation temporaire de `claude.tijaniya.qa.test1` par
+   `bgueye@gmail.com`) : `get_ijaza_chain()` n'était pas `SECURITY DEFINER`,
+   donc son CTE récursif se heurtait à la RLS `sponsorship_participants_only`
+   dès le deuxième maillon — un mouqaddam n'est participant que de SA PROPRE
+   ligne dans `mouqaddam_sponsorships`, jamais de celle de son parrain. La
+   chaîne s'arrêtait donc systématiquement à la profondeur 0, jamais détecté
+   avant (`docs/06-architecture-backend.md` le signalait déjà explicitement :
+   "validée sur le cas racine, pas encore sur une chaîne à plusieurs
+   maillons"). Même bug de fond sur
+   `mouqaddam_status_visibility`/`manual_chain_links_visibility` : leur
+   `EXISTS` sur `privacy_settings` (RLS "owner only") ne pouvait jamais voir
+   le flag d'un AUTRE utilisateur. Corrigé par une fonction partagée
+   `mouqaddam_status_visible_to(owner, viewer)` (`SECURITY DEFINER`),
+   utilisée par les deux policies et en tête de `get_ijaza_chain()`
+   elle-même (qui contourne désormais la RLS sous-jacente, donc doit
+   vérifier elle-même l'autorisation — résultat vide plutôt qu'une fuite si
+   non autorisé). Au passage, `get_ijaza_chain()` ne renvoyait jamais non
+   plus `mouqaddam_manual_chain_links.year_text` (colonne oubliée du
+   `select` des maillons manuels) — corrigé avant tout usage côté client
+   (migration `add_year_text_to_get_ijaza_chain`), sans quoi la "date
+   approximative" collectée par l'écran "Ma silsila d'ijaza" n'aurait jamais
+   pu être réaffichée.
+
+2. *Trouvé en conditions réelles sur émulateur Android*, avec le vrai compte
+   `bgueye@gmail.com` temporairement basculé à `status = 'none'` pour rejouer
+   le parcours candidat : soumettre une vraie demande vers
+   `claude.tijaniya.qa.test1` échouait systématiquement ("new row violates
+   row-level security policy"), alors que toutes les conditions métier
+   étaient réunies. Cause : `sponsorship_candidate_create` vérifiait "le
+   parrain est-il vérifié"/"suis-je déjà vérifié" par un `EXISTS` direct sur
+   `mouqaddam_status` — exactement le même bug de fond que le point 1
+   (RLS `mouqaddam_status_visibility` bloquant la vérification du statut
+   d'un AUTRE utilisateur, ici le parrain choisi), simplement pas encore
+   repéré à cet endroit. Corrigé par une nouvelle fonction dédiée
+   `is_verified_mouqaddam(user_id)` (`SECURITY DEFINER` — distincte de
+   `mouqaddam_status_visible_to` : vérifier qu'un statut est vérifié est une
+   question de règle métier, pas d'affichage, elle doit rester vraie
+   indépendamment de l'opt-in de visibilité de la cible), migration
+   `fix_sponsorship_create_verified_check_rls`, réutilisée aussi dans
+   `respond_to_sponsorship()` par cohérence.
+
+3. *Bug purement Flutter*, trouvé dans la foulée sur le même parcours :
+   `MouqaddamRepository.fetchMyLatestRequest()` plantait
+   (`type 'Null' is not a subtype of type 'String'`) pour `bgueye@gmail.com`
+   dès l'ouverture de "Devenir Mouqaddam" — non pas à cause d'une vraie
+   demande, mais parce que la requête remontait sa ligne d'AMORÇAGE
+   fondateur dans `mouqaddam_sponsorships` (`sponsor_user_id = NULL`,
+   `status = 'accepted'`, cf. `docs/06-architecture-backend.md`), que
+   `SponsorshipRequest.fromRow` ne sait pas parser (`sponsorUserId` non
+   nullable dans le modèle — une ligne d'amorçage n'est pas une "demande"
+   au sens de cet écran). Corrigé en excluant `sponsor_user_id is not null`
+   de la requête.
+
+**Nouvelles policies/fonctions** : `sponsorship_candidate_create` (le
+candidat crée sa propre demande `pending`, vers un parrain actuellement
+`verified` via `is_verified_mouqaddam()`, jamais vers lui-même, jamais s'il
+est déjà vérifié — plus un index unique partiel `uq_mq_sponsorship_pending`
+limitant à une demande en attente à la fois) ; `sponsorship_candidate_cancel`
+(annulation de sa propre demande en attente) ; `respond_to_sponsorship(id,
+accept)` (`SECURITY DEFINER` — accepter met à jour `mouqaddam_sponsorships`
+ET `mouqaddam_status` de façon atomique, `mouqaddam_status` n'ayant
+volontairement aucune policy `UPDATE` cliente, même principe que
+`handle_new_user`) ; `search_available_sponsors(query)` (`SECURITY
+DEFINER`, ne renvoie que nom affiché + zawiya des mouqaddamines vérifiés
+ayant activé `available_as_sponsor`, jamais la silsila) ;
+`is_verified_mouqaddam(user_id)` (`SECURITY DEFINER`, cf. point 2
+ci-dessus). Ces quatre dernières fonctions sont explicitement révoquées à
+`anon` (pas seulement à `public` :
+confirmé par `has_function_privilege` que dans ce projet Supabase, `anon`
+et `authenticated` conservent une exécution héritée indépendante d'un simple
+`revoke ... from public` — `is_conversation_participant` et
+`get_historical_silsila_chain`, déployées avant, en sont d'ailleurs
+elles-mêmes affectées ; non corrigé ici, hors périmètre de ce chantier, pas
+de risque concret identifié pour elles).
+
+Côté app : `MouqaddamStatus`/`SponsorshipRequest`/`AvailableSponsor`/
+`IjazaChainLink` (`domain/mouqaddam_models.dart`, testés dans
+`test/mouqaddam_models_test.dart`), `MouqaddamRepository` (résolution des
+noms via une requête `profiles` séparée, même limite que
+`CommunityRepository`/`SponsorshipRequest` — pas de FK directe vers
+`profiles`), providers dérivés de `currentUserIdProvider` (même pattern que
+`isAdminProvider`, se recalculent à la connexion/déconnexion). Quatre écrans
+: `BecomeMouqaddamScreen` (état demande en attente/refusée/aucune, choix du
+parrain via `SearchSponsorScreen` poussé avec retour de valeur, année
+d'ijaza optionnelle), `SponsorshipRequestsScreen` (accepter/refuser avec
+confirmation, même patron que `FiguresReviewScreen`),
+`IjazaChainScreen` (chaîne verticale façon `_SilsilaTab` du module Figures
+mais widgets volontairement séparés — deux concepts distincts, cf.
+commentaire de `HistoricalSilsilaLink` — plus formulaire d'ajout du
+complément manuel, en écriture seule : aucune policy `UPDATE`/`DELETE`
+cliente sur `mouqaddam_manual_chain_links`, donc pas de bouton modifier/
+supprimer proposé). Tuiles conditionnelles sur `ProfilScreen` : "Devenir
+Mouqaddam" si non vérifié, "Demandes de parrainage" + "Ma silsila d'ijaza"
+si vérifié (`isVerifiedMouqaddamProvider`).
+
+Validé en conditions réelles sur émulateur Android avec le compte fondateur
+réel `bgueye@gmail.com` (Bocar), en basculant temporairement son statut à
+`none` et la disponibilité comme parrain de `claude.tijaniya.qa.test1` à
+`true` (restaurés après coup) : écran "Devenir Mouqaddam" affichant le
+formulaire, recherche de parrain listant bien le compte QA, sélection,
+soumission, passage à l'état "Demande en attente", annulation ramenant au
+formulaire vide. Une fois le compte remis à son état vérifié d'origine :
+"Demandes de parrainage" affichant l'état vide honnête (aucune demande
+réelle en attente), "Ma silsila d'ijaza" affichant Bocar seul à la
+profondeur 0 (racine, `sponsor_user_id` nul), ajout d'un maillon manuel de
+test confirmé affiché puis supprimé par `execute_sql` (pas de bouton
+suppression côté client, RLS sans policy `DELETE`). Revalidé en arabe (RTL).
+
 ## Commandes utiles
 - `flutter pub get`
 - `flutter analyze`

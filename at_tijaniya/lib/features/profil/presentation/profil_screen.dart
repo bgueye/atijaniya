@@ -5,6 +5,10 @@ import '../../../core/supabase/supabase_config.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../lineage/presentation/lineage_screen.dart';
+import '../../mouqaddam/presentation/become_mouqaddam_screen.dart';
+import '../../mouqaddam/presentation/ijaza_chain_screen.dart';
+import '../../mouqaddam/presentation/mouqaddam_providers.dart';
+import '../../mouqaddam/presentation/sponsorship_requests_screen.dart';
 import '../../settings/presentation/settings_screen.dart';
 import '../domain/profile_models.dart';
 import 'edit_profile_sheet.dart';
@@ -120,6 +124,35 @@ class _ProfileBody extends ConsumerWidget {
               },
             ),
           ),
+          if (ref.watch(isVerifiedMouqaddamProvider)) ...[
+            Card(
+              child: ListTile(
+                leading: const Icon(Icons.how_to_reg_outlined, color: AppColors.gold),
+                title: Text(l10n.profileSponsorshipRequests),
+                onTap: () => Navigator.of(context).push(
+                  MaterialPageRoute(builder: (_) => const SponsorshipRequestsScreen()),
+                ),
+              ),
+            ),
+            Card(
+              child: ListTile(
+                leading: const Icon(Icons.account_tree_outlined, color: AppColors.gold),
+                title: Text(l10n.profileMyIjazaChain),
+                onTap: () => Navigator.of(context).push(
+                  MaterialPageRoute(builder: (_) => const IjazaChainScreen()),
+                ),
+              ),
+            ),
+          ] else
+            Card(
+              child: ListTile(
+                leading: const Icon(Icons.workspace_premium_outlined, color: AppColors.gold),
+                title: Text(l10n.profileBecomeMouqaddam),
+                onTap: () => Navigator.of(context).push(
+                  MaterialPageRoute(builder: (_) => const BecomeMouqaddamScreen()),
+                ),
+              ),
+            ),
           Card(
             child: ListTile(
               leading: const Icon(Icons.settings_outlined),

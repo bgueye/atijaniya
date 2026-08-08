@@ -676,6 +676,176 @@ class AppLocalizationsAr extends AppLocalizations {
   String get lineageRetry => 'إعادة المحاولة';
 
   @override
+  String get profileBecomeMouqaddam => 'أن تصبح مقدَّماً';
+
+  @override
+  String get profileSponsorshipRequests => 'طلبات الكفالة';
+
+  @override
+  String get profileMyIjazaChain => 'سلسلة إجازتي';
+
+  @override
+  String get mouqaddamBecomeTitle => 'أن تصبح مقدَّماً';
+
+  @override
+  String get mouqaddamIntro =>
+      'صفة المقدَّم الموثّق لا تُعلَن من تلقاء نفسك أبداً: يجب أن يؤكد كفيلك أنه هو من نقل إليك الإجازة.';
+
+  @override
+  String get mouqaddamLoadError => 'تعذّر تحميل طلبك.';
+
+  @override
+  String get mouqaddamRetry => 'إعادة المحاولة';
+
+  @override
+  String get mouqaddamChooseSponsorButton => 'اختيار كفيل';
+
+  @override
+  String get mouqaddamChangeSponsorButton => 'تغيير الكفيل';
+
+  @override
+  String get mouqaddamNoSponsorChosen => 'لم يُختَر أي كفيل بعد.';
+
+  @override
+  String get mouqaddamSelectedSponsorLabel => 'الكفيل المختار';
+
+  @override
+  String get mouqaddamYearFieldLabel => 'سنة نقل الإجازة (اختياري)';
+
+  @override
+  String get mouqaddamYearInvalid => 'سنة غير صحيحة (بين 1200 و2100).';
+
+  @override
+  String get mouqaddamSubmitButton => 'إرسال الطلب';
+
+  @override
+  String get mouqaddamSponsorRequiredError => 'اختر كفيلاً قبل إرسال الطلب.';
+
+  @override
+  String get mouqaddamSubmitError => 'تعذّر إرسال الطلب.';
+
+  @override
+  String get mouqaddamPendingTitle => 'طلب قيد الانتظار';
+
+  @override
+  String get mouqaddamPendingSponsorLabel => 'الكفيل المطلوب';
+
+  @override
+  String get mouqaddamPendingCancelButton => 'إلغاء الطلب';
+
+  @override
+  String get mouqaddamPendingCancelConfirmTitle => 'إلغاء هذا الطلب؟';
+
+  @override
+  String get mouqaddamPendingCancelConfirmBody =>
+      'يمكنك إرسال طلب جديد في أي وقت.';
+
+  @override
+  String get mouqaddamPendingCancelConfirmAction => 'إلغاء الطلب';
+
+  @override
+  String get mouqaddamCancelError => 'تعذّر إلغاء الطلب.';
+
+  @override
+  String get mouqaddamRejectedNote => 'رُفض طلبك الأخير. يمكنك إرسال طلب جديد.';
+
+  @override
+  String get mouqaddamSearchTitle => 'البحث عن كفيل';
+
+  @override
+  String get mouqaddamSearchFieldHint => 'البحث بالاسم...';
+
+  @override
+  String get mouqaddamSearchEmpty => 'لا يوجد حالياً أي مقدَّم متاح للكفالة.';
+
+  @override
+  String get mouqaddamSearchNoResults => 'لا توجد نتائج لهذا البحث.';
+
+  @override
+  String get mouqaddamSearchLoadError => 'تعذّر تحميل النتائج.';
+
+  @override
+  String get mouqaddamRequestsTitle => 'طلبات الكفالة';
+
+  @override
+  String get mouqaddamRequestsEmpty => 'لا توجد طلبات كفالة قيد الانتظار.';
+
+  @override
+  String get mouqaddamRequestsLoadError => 'تعذّر تحميل الطلبات.';
+
+  @override
+  String get mouqaddamRequestsYearLabel => 'سنة الإجازة المذكورة';
+
+  @override
+  String get mouqaddamRequestsAccept => 'قبول';
+
+  @override
+  String get mouqaddamRequestsReject => 'رفض';
+
+  @override
+  String get mouqaddamRequestsAcceptConfirmTitle => 'قبول هذا الطلب؟';
+
+  @override
+  String get mouqaddamRequestsAcceptConfirmBody =>
+      'سيتم تأكيد صفة المقدَّم الموثّق لهذا المريد.';
+
+  @override
+  String get mouqaddamRequestsRejectConfirmTitle => 'رفض هذا الطلب؟';
+
+  @override
+  String get mouqaddamRequestsRejectConfirmBody =>
+      'يمكن للمريد إرسال طلب جديد في أي وقت.';
+
+  @override
+  String get mouqaddamRequestsConfirmAction => 'تأكيد';
+
+  @override
+  String get mouqaddamRequestsSuccessAccepted => 'تم قبول الطلب.';
+
+  @override
+  String get mouqaddamRequestsSuccessRejected => 'تم رفض الطلب.';
+
+  @override
+  String get mouqaddamRequestsError => 'تعذّر معالجة هذا الطلب.';
+
+  @override
+  String get mouqaddamChainTitle => 'سلسلة إجازتي';
+
+  @override
+  String get mouqaddamChainLoadError => 'تعذّر تحميل سلسلتك.';
+
+  @override
+  String get mouqaddamChainEmpty => 'سلسلتك غير متوفرة بعد.';
+
+  @override
+  String get mouqaddamChainYouLabel => 'أنتَ';
+
+  @override
+  String get mouqaddamChainCompleteTitle => 'إكمال السلسلة خارج التطبيق';
+
+  @override
+  String get mouqaddamChainCompleteBody =>
+      'إن لم يكن كفيلك قد استخدم التطبيق قط، أضف هنا الحلقة التالية المعروفة (الاسم والتاريخ التقريبي)، وصولاً إلى الشيخ أحمد التيجاني.';
+
+  @override
+  String get mouqaddamChainNameFieldLabel => 'الاسم';
+
+  @override
+  String get mouqaddamChainNameRequired => 'الاسم إلزامي.';
+
+  @override
+  String get mouqaddamChainYearTextFieldLabel => 'التاريخ التقريبي (اختياري)';
+
+  @override
+  String get mouqaddamChainAddButton => 'إضافة هذه الحلقة';
+
+  @override
+  String get mouqaddamChainAddError => 'تعذّر إضافة هذه الحلقة.';
+
+  @override
+  String get mouqaddamChainAddSuccess => 'تمت إضافة الحلقة.';
+
+  @override
   String get settingsTitle => 'الإعدادات';
 
   @override
