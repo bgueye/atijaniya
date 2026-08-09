@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../../../core/theme/app_colors.dart';
 import '../../../l10n/app_localizations.dart';
@@ -8,6 +9,8 @@ import 'event_detail_screen.dart';
 import 'khadara_format.dart';
 import 'khadara_providers.dart';
 import 'khadara_understanding_screen.dart';
+import 'live_stream_providers.dart';
+import 'live_stream_screen.dart';
 import 'zawiya_detail_screen.dart';
 
 /// Module Khadara — calendrier des évènements et annuaire des zawiyas.
@@ -30,19 +33,21 @@ class KhadaraScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     return DefaultTabController(
-      length: 2,
+      length: 3,
       child: Column(
         children: [
           Row(
             children: [
               Expanded(
                 child: TabBar(
+                  isScrollable: true,
                   labelColor: AppColors.emerald,
                   unselectedLabelColor: AppColors.bronze,
                   indicatorColor: AppColors.emerald,
                   tabs: [
                     Tab(text: l10n.khadaraEventsTab),
                     Tab(text: l10n.khadaraZawiyasTab),
+                    Tab(text: l10n.khadaraLiveTab),
                   ],
                 ),
               ),
@@ -60,6 +65,7 @@ class KhadaraScreen extends StatelessWidget {
               children: [
                 _EventsTab(),
                 _ZawiyasTab(),
+                _LiveTab(),
               ],
             ),
           ),
@@ -125,6 +131,98 @@ class _ZawiyasTab extends ConsumerWidget {
           ),
         ),
       ),
+    );
+  }
+}
+
+/// Directs en cours + rediffusions — regroupe les deux écrans "Direct" et
+/// "Rediffusions" du docs/03-architecture-ecrans.md dans un seul onglet
+/// (même logique de sobriété d'arborescence que les onglets de
+/// `FigureDetailScreen` : deux contenus liés plutôt que deux écrans
+/// top-level séparés). Sections indépendantes (chacune son propre
+/// chargement/erreur/vide) plutôt qu'un `_AsyncSection` unique : deux
+/// providers différents à combiner sur un seul écran.
+class _LiveTab extends ConsumerWidget {
+  const _LiveTab();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
+    final liveStreams = ref.watch(allLiveStreamsProvider);
+    final replays = ref.watch(streamReplaysProvider);
+
+    return ListView(
+      padding: const EdgeInsets.all(16),
+      children: [
+        Text(l10n.khadaraLiveNowSection, style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 15, color: AppColors.ink)),
+        const SizedBox(height: 8),
+        liveStreams.when(
+          loading: () => const Center(child: CircularProgressIndicator(color: AppColors.emerald)),
+          error: (error, stackTrace) => OutlinedButton(
+            onPressed: () => ref.invalidate(allLiveStreamsProvider),
+            child: Text(l10n.khadaraRetry),
+          ),
+          data: (streams) => streams.isEmpty
+              ? Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 8),
+                  child: Text(l10n.khadaraNoLiveNow, style: const TextStyle(color: AppColors.bronze)),
+                )
+              : Column(
+                  children: streams
+                      .map(
+                        (stream) => Card(
+                          child: ListTile(
+                            leading: const Icon(Icons.podcasts, color: AppColors.emerald),
+                            title: Text(stream.eventTitle ?? l10n.khadaraLiveTab),
+                            subtitle: Text(l10n.khadaraLiveBadge),
+                            trailing: const Icon(Icons.chevron_right, color: AppColors.bronze),
+                            onTap: () => Navigator.of(context).push(
+                              MaterialPageRoute(builder: (_) => LiveStreamScreen(stream: stream)),
+                            ),
+                          ),
+                        ),
+                      )
+                      .toList(),
+                ),
+        ),
+        const SizedBox(height: 24),
+        Text(l10n.khadaraReplaysSection, style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 15, color: AppColors.ink)),
+        const SizedBox(height: 8),
+        replays.when(
+          loading: () => const Center(child: CircularProgressIndicator(color: AppColors.emerald)),
+          error: (error, stackTrace) => OutlinedButton(
+            onPressed: () => ref.invalidate(streamReplaysProvider),
+            child: Text(l10n.khadaraRetry),
+          ),
+          data: (list) => list.isEmpty
+              ? Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 8),
+                  child: Text(l10n.khadaraNoReplays, style: const TextStyle(color: AppColors.bronze)),
+                )
+              : Column(
+                  children: list
+                      .map(
+                        (replay) => Card(
+                          child: ListTile(
+                            leading: const Icon(Icons.play_circle_outline, color: AppColors.emerald),
+                            title: Text(replay.eventTitle ?? l10n.khadaraLiveTab),
+                            trailing: const Icon(Icons.open_in_new, color: AppColors.bronze),
+                            onTap: () async {
+                              final uri = Uri.tryParse(replay.videoUrl);
+                              final launched = uri != null && await launchUrl(uri, mode: LaunchMode.externalApplication);
+                              if (!launched && context.mounted) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(content: Text(l10n.khadaraOpenReplayError)),
+                                );
+                              }
+                            },
+                          ),
+                        ),
+                      )
+                      .toList(),
+                ),
+        ),
+      ],
     );
   }
 }

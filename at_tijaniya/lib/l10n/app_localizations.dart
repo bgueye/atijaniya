@@ -698,6 +698,186 @@ abstract class AppLocalizations {
   /// **'En attendant, découvrir le calendrier et les zawiyas'**
   String get khadaraUnderstandingCta;
 
+  /// No description provided for @khadaraLiveTab.
+  ///
+  /// In fr, this message translates to:
+  /// **'Directs'**
+  String get khadaraLiveTab;
+
+  /// No description provided for @khadaraLiveNowSection.
+  ///
+  /// In fr, this message translates to:
+  /// **'En direct maintenant'**
+  String get khadaraLiveNowSection;
+
+  /// No description provided for @khadaraReplaysSection.
+  ///
+  /// In fr, this message translates to:
+  /// **'Rediffusions'**
+  String get khadaraReplaysSection;
+
+  /// No description provided for @khadaraNoLiveNow.
+  ///
+  /// In fr, this message translates to:
+  /// **'Aucun direct en cours actuellement.'**
+  String get khadaraNoLiveNow;
+
+  /// No description provided for @khadaraNoReplays.
+  ///
+  /// In fr, this message translates to:
+  /// **'Aucune rediffusion pour le moment.'**
+  String get khadaraNoReplays;
+
+  /// No description provided for @khadaraLiveBadge.
+  ///
+  /// In fr, this message translates to:
+  /// **'En direct'**
+  String get khadaraLiveBadge;
+
+  /// No description provided for @khadaraJoinLive.
+  ///
+  /// In fr, this message translates to:
+  /// **'Rejoindre le direct'**
+  String get khadaraJoinLive;
+
+  /// No description provided for @khadaraStartLive.
+  ///
+  /// In fr, this message translates to:
+  /// **'Démarrer un direct'**
+  String get khadaraStartLive;
+
+  /// No description provided for @khadaraStartLiveTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Démarrer un direct'**
+  String get khadaraStartLiveTitle;
+
+  /// No description provided for @khadaraStartLiveBody.
+  ///
+  /// In fr, this message translates to:
+  /// **'Choisissez la plateforme sur laquelle vous diffusez déjà et collez le lien : il sera partagé avec les disciples pour qu\'ils rejoignent le direct.'**
+  String get khadaraStartLiveBody;
+
+  /// No description provided for @khadaraSourceYoutube.
+  ///
+  /// In fr, this message translates to:
+  /// **'YouTube'**
+  String get khadaraSourceYoutube;
+
+  /// No description provided for @khadaraSourceFacebook.
+  ///
+  /// In fr, this message translates to:
+  /// **'Facebook'**
+  String get khadaraSourceFacebook;
+
+  /// No description provided for @khadaraSourceOther.
+  ///
+  /// In fr, this message translates to:
+  /// **'Autre lien'**
+  String get khadaraSourceOther;
+
+  /// No description provided for @khadaraSourceNative.
+  ///
+  /// In fr, this message translates to:
+  /// **'Natif (diffuser depuis l\'app)'**
+  String get khadaraSourceNative;
+
+  /// No description provided for @khadaraSourceNativeUnavailable.
+  ///
+  /// In fr, this message translates to:
+  /// **'Nécessite un prestataire de streaming, pas encore disponible.'**
+  String get khadaraSourceNativeUnavailable;
+
+  /// No description provided for @khadaraExternalUrlLabel.
+  ///
+  /// In fr, this message translates to:
+  /// **'Lien du direct'**
+  String get khadaraExternalUrlLabel;
+
+  /// No description provided for @khadaraExternalUrlRequired.
+  ///
+  /// In fr, this message translates to:
+  /// **'Le lien est obligatoire.'**
+  String get khadaraExternalUrlRequired;
+
+  /// No description provided for @khadaraStartLiveButton.
+  ///
+  /// In fr, this message translates to:
+  /// **'Démarrer'**
+  String get khadaraStartLiveButton;
+
+  /// No description provided for @khadaraStartLiveError.
+  ///
+  /// In fr, this message translates to:
+  /// **'Impossible de démarrer ce direct.'**
+  String get khadaraStartLiveError;
+
+  /// No description provided for @khadaraWatchOn.
+  ///
+  /// In fr, this message translates to:
+  /// **'Regarder le direct'**
+  String get khadaraWatchOn;
+
+  /// No description provided for @khadaraEndLiveButton.
+  ///
+  /// In fr, this message translates to:
+  /// **'Terminer'**
+  String get khadaraEndLiveButton;
+
+  /// No description provided for @khadaraEndLiveConfirmTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Terminer ce direct ?'**
+  String get khadaraEndLiveConfirmTitle;
+
+  /// No description provided for @khadaraEndLiveConfirmBody.
+  ///
+  /// In fr, this message translates to:
+  /// **'Les disciples ne pourront plus le rejoindre.'**
+  String get khadaraEndLiveConfirmBody;
+
+  /// No description provided for @khadaraEndLiveConfirmAction.
+  ///
+  /// In fr, this message translates to:
+  /// **'Terminer'**
+  String get khadaraEndLiveConfirmAction;
+
+  /// No description provided for @khadaraLiveEnded.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ce direct est terminé.'**
+  String get khadaraLiveEnded;
+
+  /// No description provided for @khadaraChatHint.
+  ///
+  /// In fr, this message translates to:
+  /// **'Écrire un message…'**
+  String get khadaraChatHint;
+
+  /// No description provided for @khadaraChatSignInToWrite.
+  ///
+  /// In fr, this message translates to:
+  /// **'Connectez-vous pour écrire dans le chat.'**
+  String get khadaraChatSignInToWrite;
+
+  /// No description provided for @khadaraChatEmpty.
+  ///
+  /// In fr, this message translates to:
+  /// **'Aucun message pour le moment.'**
+  String get khadaraChatEmpty;
+
+  /// No description provided for @khadaraNativeNotAvailable.
+  ///
+  /// In fr, this message translates to:
+  /// **'Le direct natif n\'est pas encore disponible — aucun prestataire de streaming n\'a encore été choisi pour l\'app.'**
+  String get khadaraNativeNotAvailable;
+
+  /// No description provided for @khadaraOpenReplayError.
+  ///
+  /// In fr, this message translates to:
+  /// **'Impossible d\'ouvrir ce lien.'**
+  String get khadaraOpenReplayError;
+
   /// No description provided for @figuresSectionFounders.
   ///
   /// In fr, this message translates to:

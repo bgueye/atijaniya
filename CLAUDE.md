@@ -1079,6 +1079,58 @@ correctement traduits et positionnés. Données de test supprimées après
 coup, `get_ijaza_chain` reconfirmé revenu à l'état d'origine (Bocar seul,
 profondeur 0).
 
+Direct et rediffusions (module Khadara, P2) fonctionnels — dernier gros
+morceau du périmètre P2 jamais entamé jusqu'ici. Le backend
+(`live_streams`, `stream_replays`, `live_chat_messages`, RLS) existait déjà
+intégralement dans `database/schema.sql`, mais aucun écran n'avait encore
+été construit. Portée de cet incrément tranchée avec le porteur de projet
+avant construction : `docs/06-architecture-backend.md` liste le choix du
+prestataire de streaming natif (Agora/Mux/LiveKit) comme "à trancher
+séparément (dépend du budget)" — même statut que le prestataire de
+paiement des dons — donc seule l'agrégation de flux externes
+(YouTube/Facebook/autre lien) et les rediffusions sont fonctionnelles ;
+l'option "Natif (diffuser depuis l'app)" reste affichée dans le formulaire
+mais désactivée, avec une explication honnête plutôt qu'omise en silence
+(même logique que le paiement des dons ou l'audio des Wirds).
+
+Côté app (`lib/features/khadara/`) : `LiveStream`/`StreamReplay`/
+`LiveChatMessage` (`domain/khadara_models.dart`), `LiveStreamRepository`
+(nouveau fichier `data/live_stream_repository.dart`, séparé de
+`khadara_repository.dart` — même principe que `MessagesRepository` distinct
+des posts communautaires), providers dérivés (`live_stream_providers.dart`).
+Trois écrans : `StartLiveStreamScreen` (choix de la source + lien, accessible
+depuis `EventDetailScreen` via un bouton "Démarrer un direct" affiché
+uniquement si aucun direct actif n'existe déjà pour cet évènement et que le
+disciple est connecté), `LiveStreamScreen` (bouton "Regarder le direct" vers
+le lien externe + chat, bouton "Terminer" réservé à `started_by`/admin — RLS
+`streams_owner_or_admin_update` — avec confirmation), et un 3ᵉ onglet
+"Directs" sur `KhadaraScreen` (regroupe "Direct" et "Rediffusions" du
+docs/03-architecture-ecrans.md en un seul onglet, deux sections
+indépendantes — même sobriété d'arborescence que les onglets de
+`FigureDetailScreen`). Chat sans Supabase Realtime (aucun précédent dans
+l'app) : un polling léger (4s) tant que `LiveStreamScreen` est ouvert,
+plutôt qu'un simple tirer-pour-rafraîchir, pour rester crédible sur un fil
+qui se veut "en direct" ; même sobriété que `ConversationScreen` pour le
+reste (bulles de message, pas de statut lu/non lu). Rediffusions ouvertes
+via lien externe (`url_launcher`, même pattern que "Ouvrir dans Maps") :
+pas de lecteur vidéo intégré dans cet incrément, cohérent avec l'absence de
+prestataire natif — les replays sont de toute façon des liens vers la
+plateforme externe où le direct a eu lieu.
+
+Validé en conditions réelles sur émulateur Android avec le compte réel
+`bgueye@gmail.com` (Bocar) sur un évènement réel ("Gamou de Tivaouane
+2026") : bouton "Démarrer un direct" visible connecté, formulaire testé
+(source "Autre lien" + URL de test), démarrage confirmé (navigation directe
+vers `LiveStreamScreen`, snackbar absent = succès), message de chat envoyé
+et affiché en bulle, "Regarder le direct" ouvrant bien Chrome sur l'URL
+externe, "Terminer" avec confirmation ramenant à `EventDetailScreen` avec
+le bouton "Démarrer un direct" à nouveau proposé (statut `ended` reconfirmé
+en base, `started_at`/`ended_at` cohérents). Revalidé intégralement en
+arabe (RTL) : 3ᵉ onglet "البث المباشر" bien positionné et traduit, sections
+"مباشر الآن"/"إعادة البث" correctement alignées. Donnée de test supprimée
+après coup (cascade sur `live_chat_messages` confirmée par `execute_sql`,
+`live_streams` revenu à 0 ligne).
+
 ## Commandes utiles
 - `flutter pub get`
 - `flutter analyze`

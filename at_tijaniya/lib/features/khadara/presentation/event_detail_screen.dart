@@ -1,22 +1,26 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/theme/app_colors.dart';
 import '../../../l10n/app_localizations.dart';
+import '../../profil/presentation/profile_providers.dart';
 import '../domain/khadara_models.dart';
 import 'khadara_format.dart';
+import 'live_stream_providers.dart';
+import 'live_stream_screen.dart';
 import 'open_in_maps.dart';
+import 'start_live_stream_screen.dart';
 
-/// Détail d'un évènement Khadara — lieu, date, description. Priorité P1
-/// (docs/03-architecture-ecrans.md). "Rejoindre/démarrer un direct" (P2)
-/// n'est pas dans ce périmètre : voir docs/03, module Khadara, écran
-/// "Direct".
-class EventDetailScreen extends StatelessWidget {
+/// Détail d'un évènement Khadara — lieu, date, description, et
+/// rejoindre/démarrer un direct (P2, docs/03-architecture-ecrans.md :
+/// écran "Direct") si l'évènement en a un.
+class EventDetailScreen extends ConsumerWidget {
   const EventDetailScreen({super.key, required this.event});
 
   final KhadaraEvent event;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context)!;
 
     return Scaffold(
@@ -55,8 +59,52 @@ class EventDetailScreen extends StatelessWidget {
               label: Text(l10n.khadaraOpenInMaps),
             ),
           ],
+          const SizedBox(height: 24),
+          _LiveStreamSection(event: event, l10n: l10n),
         ],
       ),
+    );
+  }
+}
+
+/// Rejoindre le direct en cours pour cet évènement, ou en démarrer un —
+/// invisible tant que le direct n'est pas encore chargé ou en erreur (pas
+/// de reprise dédiée ici, `khadaraLoadError` de l'onglet Directs couvre
+/// déjà ce cas ailleurs) : ne bloque jamais la lecture du reste de la
+/// fiche évènement.
+class _LiveStreamSection extends ConsumerWidget {
+  const _LiveStreamSection({required this.event, required this.l10n});
+
+  final KhadaraEvent event;
+  final AppLocalizations l10n;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final streamAsync = ref.watch(latestStreamForEventProvider(event.id));
+    final myUserId = ref.watch(currentUserIdProvider);
+
+    return streamAsync.maybeWhen(
+      data: (stream) {
+        final isActive = stream != null && stream.status != LiveStreamStatus.ended;
+        if (isActive) {
+          return FilledButton.icon(
+            onPressed: () => Navigator.of(context).push(
+              MaterialPageRoute(builder: (_) => LiveStreamScreen(stream: stream)),
+            ),
+            icon: const Icon(Icons.podcasts),
+            label: Text(l10n.khadaraJoinLive),
+          );
+        }
+        if (myUserId == null) return const SizedBox.shrink();
+        return OutlinedButton.icon(
+          onPressed: () => Navigator.of(context).push(
+            MaterialPageRoute(builder: (_) => StartLiveStreamScreen(eventId: event.id, eventTitle: event.title)),
+          ),
+          icon: const Icon(Icons.podcasts_outlined),
+          label: Text(l10n.khadaraStartLive),
+        );
+      },
+      orElse: () => const SizedBox.shrink(),
     );
   }
 }

@@ -327,6 +327,100 @@ class AppLocalizationsAr extends AppLocalizations {
   String get khadaraUnderstandingCta => 'في الانتظار، اكتشف التقويم والزوايا';
 
   @override
+  String get khadaraLiveTab => 'البث المباشر';
+
+  @override
+  String get khadaraLiveNowSection => 'مباشر الآن';
+
+  @override
+  String get khadaraReplaysSection => 'إعادة البث';
+
+  @override
+  String get khadaraNoLiveNow => 'لا يوجد بث مباشر حاليًا.';
+
+  @override
+  String get khadaraNoReplays => 'لا توجد إعادة بث حتى الآن.';
+
+  @override
+  String get khadaraLiveBadge => 'مباشر';
+
+  @override
+  String get khadaraJoinLive => 'الانضمام إلى البث المباشر';
+
+  @override
+  String get khadaraStartLive => 'بدء بث مباشر';
+
+  @override
+  String get khadaraStartLiveTitle => 'بدء بث مباشر';
+
+  @override
+  String get khadaraStartLiveBody =>
+      'اختر المنصة التي تبث عليها بالفعل والصق الرابط: سيُشارَك مع المريدين للانضمام إلى البث المباشر.';
+
+  @override
+  String get khadaraSourceYoutube => 'يوتيوب';
+
+  @override
+  String get khadaraSourceFacebook => 'فيسبوك';
+
+  @override
+  String get khadaraSourceOther => 'رابط آخر';
+
+  @override
+  String get khadaraSourceNative => 'بث ذاتي (من داخل التطبيق)';
+
+  @override
+  String get khadaraSourceNativeUnavailable =>
+      'يتطلب مزوّد خدمة بث، غير متوفر بعد.';
+
+  @override
+  String get khadaraExternalUrlLabel => 'رابط البث المباشر';
+
+  @override
+  String get khadaraExternalUrlRequired => 'الرابط إلزامي.';
+
+  @override
+  String get khadaraStartLiveButton => 'بدء';
+
+  @override
+  String get khadaraStartLiveError => 'تعذّر بدء هذا البث المباشر.';
+
+  @override
+  String get khadaraWatchOn => 'مشاهدة البث المباشر';
+
+  @override
+  String get khadaraEndLiveButton => 'إنهاء';
+
+  @override
+  String get khadaraEndLiveConfirmTitle => 'إنهاء هذا البث المباشر؟';
+
+  @override
+  String get khadaraEndLiveConfirmBody =>
+      'لن يتمكن المريدون بعد الآن من الانضمام إليه.';
+
+  @override
+  String get khadaraEndLiveConfirmAction => 'إنهاء';
+
+  @override
+  String get khadaraLiveEnded => 'انتهى هذا البث المباشر.';
+
+  @override
+  String get khadaraChatHint => 'اكتب رسالة…';
+
+  @override
+  String get khadaraChatSignInToWrite => 'سجّل الدخول للكتابة في المحادثة.';
+
+  @override
+  String get khadaraChatEmpty => 'لا توجد رسائل حتى الآن.';
+
+  @override
+  String get khadaraNativeNotAvailable =>
+      'البث الذاتي غير متوفر بعد — لم يتم اختيار مزوّد خدمة بث للتطبيق بعد.';
+
+  @override
+  String get khadaraOpenReplayError => 'تعذّر فتح هذا الرابط.';
+
+  @override
   String get figuresSectionFounders => 'المؤسسون';
 
   @override

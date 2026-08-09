@@ -337,6 +337,101 @@ class AppLocalizationsFr extends AppLocalizations {
       'En attendant, découvrir le calendrier et les zawiyas';
 
   @override
+  String get khadaraLiveTab => 'Directs';
+
+  @override
+  String get khadaraLiveNowSection => 'En direct maintenant';
+
+  @override
+  String get khadaraReplaysSection => 'Rediffusions';
+
+  @override
+  String get khadaraNoLiveNow => 'Aucun direct en cours actuellement.';
+
+  @override
+  String get khadaraNoReplays => 'Aucune rediffusion pour le moment.';
+
+  @override
+  String get khadaraLiveBadge => 'En direct';
+
+  @override
+  String get khadaraJoinLive => 'Rejoindre le direct';
+
+  @override
+  String get khadaraStartLive => 'Démarrer un direct';
+
+  @override
+  String get khadaraStartLiveTitle => 'Démarrer un direct';
+
+  @override
+  String get khadaraStartLiveBody =>
+      'Choisissez la plateforme sur laquelle vous diffusez déjà et collez le lien : il sera partagé avec les disciples pour qu\'ils rejoignent le direct.';
+
+  @override
+  String get khadaraSourceYoutube => 'YouTube';
+
+  @override
+  String get khadaraSourceFacebook => 'Facebook';
+
+  @override
+  String get khadaraSourceOther => 'Autre lien';
+
+  @override
+  String get khadaraSourceNative => 'Natif (diffuser depuis l\'app)';
+
+  @override
+  String get khadaraSourceNativeUnavailable =>
+      'Nécessite un prestataire de streaming, pas encore disponible.';
+
+  @override
+  String get khadaraExternalUrlLabel => 'Lien du direct';
+
+  @override
+  String get khadaraExternalUrlRequired => 'Le lien est obligatoire.';
+
+  @override
+  String get khadaraStartLiveButton => 'Démarrer';
+
+  @override
+  String get khadaraStartLiveError => 'Impossible de démarrer ce direct.';
+
+  @override
+  String get khadaraWatchOn => 'Regarder le direct';
+
+  @override
+  String get khadaraEndLiveButton => 'Terminer';
+
+  @override
+  String get khadaraEndLiveConfirmTitle => 'Terminer ce direct ?';
+
+  @override
+  String get khadaraEndLiveConfirmBody =>
+      'Les disciples ne pourront plus le rejoindre.';
+
+  @override
+  String get khadaraEndLiveConfirmAction => 'Terminer';
+
+  @override
+  String get khadaraLiveEnded => 'Ce direct est terminé.';
+
+  @override
+  String get khadaraChatHint => 'Écrire un message…';
+
+  @override
+  String get khadaraChatSignInToWrite =>
+      'Connectez-vous pour écrire dans le chat.';
+
+  @override
+  String get khadaraChatEmpty => 'Aucun message pour le moment.';
+
+  @override
+  String get khadaraNativeNotAvailable =>
+      'Le direct natif n\'est pas encore disponible — aucun prestataire de streaming n\'a encore été choisi pour l\'app.';
+
+  @override
+  String get khadaraOpenReplayError => 'Impossible d\'ouvrir ce lien.';
+
+  @override
   String get figuresSectionFounders => 'Fondateurs';
 
   @override
