@@ -1844,6 +1844,18 @@ abstract class AppLocalizations {
   /// **'Maillon ajouté.'**
   String get mouqaddamChainAddSuccess;
 
+  /// No description provided for @mouqaddamChainUltimateSourceQuestion.
+  ///
+  /// In fr, this message translates to:
+  /// **'Cette personne est-elle Cheikh Ahmed Tijani, à l\'origine de la tarikha ?'**
+  String get mouqaddamChainUltimateSourceQuestion;
+
+  /// No description provided for @mouqaddamChainCompleteDone.
+  ///
+  /// In fr, this message translates to:
+  /// **'Votre silsila remonte déjà jusqu\'à Cheikh Ahmed Tijani — aucun maillon supplémentaire à ajouter.'**
+  String get mouqaddamChainCompleteDone;
+
   /// No description provided for @settingsTitle.
   ///
   /// In fr, this message translates to:

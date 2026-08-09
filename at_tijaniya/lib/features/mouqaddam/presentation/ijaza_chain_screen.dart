@@ -64,7 +64,7 @@ class IjazaChainScreen extends ConsumerWidget {
                   if (i != chain.length - 1) const _ChainConnector(),
                 ],
               const SizedBox(height: 32),
-              _CompleteChainSection(l10n: l10n),
+              _CompleteChainSection(l10n: l10n, chainCompleted: chain.isNotEmpty && chain.last.isUltimateSource),
             ],
           );
         },
@@ -125,9 +125,14 @@ class _ChainNode extends StatelessWidget {
 }
 
 class _CompleteChainSection extends ConsumerStatefulWidget {
-  const _CompleteChainSection({required this.l10n});
+  const _CompleteChainSection({required this.l10n, required this.chainCompleted});
 
   final AppLocalizations l10n;
+
+  /// `true` si le dernier maillon manuel est déjà marqué `isUltimateSource`
+  /// (Cheikh Ahmed Tijani) : plus rien à ajouter après le fondateur, le
+  /// formulaire cède la place à un message de complétion.
+  final bool chainCompleted;
 
   @override
   ConsumerState<_CompleteChainSection> createState() => _CompleteChainSectionState();
@@ -137,6 +142,7 @@ class _CompleteChainSectionState extends ConsumerState<_CompleteChainSection> {
   final _formKey = GlobalKey<FormState>();
   final _nameController = TextEditingController();
   final _yearTextController = TextEditingController();
+  bool _isUltimateSource = false;
   bool _saving = false;
 
   @override
@@ -155,10 +161,12 @@ class _CompleteChainSectionState extends ConsumerState<_CompleteChainSection> {
       await ref.read(mouqaddamRepositoryProvider).addManualChainLink(
             nameText: _nameController.text.trim(),
             yearText: yearText.isEmpty ? null : yearText,
+            isUltimateSource: _isUltimateSource,
           );
       ref.invalidate(myIjazaChainProvider);
       _nameController.clear();
       _yearTextController.clear();
+      setState(() => _isUltimateSource = false);
       if (mounted) {
         ScaffoldMessenger.of(context)
           ..hideCurrentSnackBar()
@@ -178,6 +186,14 @@ class _CompleteChainSectionState extends ConsumerState<_CompleteChainSection> {
   @override
   Widget build(BuildContext context) {
     final l10n = widget.l10n;
+    if (widget.chainCompleted) {
+      return Card(
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Text(l10n.mouqaddamChainCompleteDone, style: const TextStyle(color: AppColors.bronze, fontSize: 13)),
+        ),
+      );
+    }
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(16),
@@ -200,7 +216,15 @@ class _CompleteChainSectionState extends ConsumerState<_CompleteChainSection> {
                 controller: _yearTextController,
                 decoration: InputDecoration(labelText: l10n.mouqaddamChainYearTextFieldLabel),
               ),
-              const SizedBox(height: 16),
+              const SizedBox(height: 4),
+              CheckboxListTile(
+                value: _isUltimateSource,
+                onChanged: (value) => setState(() => _isUltimateSource = value ?? false),
+                controlAffinity: ListTileControlAffinity.leading,
+                contentPadding: EdgeInsets.zero,
+                title: Text(l10n.mouqaddamChainUltimateSourceQuestion, style: const TextStyle(fontSize: 13)),
+              ),
+              const SizedBox(height: 12),
               OutlinedButton(
                 onPressed: _saving ? null : _add,
                 child: _saving

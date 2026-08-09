@@ -112,7 +112,16 @@ class MouqaddamRepository {
   /// toujours à la suite des maillons déjà saisis par ce mouqaddam — RLS
   /// `manual_chain_links_owner_write` : insertion uniquement, jamais de
   /// modification ni de suppression une fois enregistré.
-  Future<void> addManualChainLink({required String nameText, String? yearText}) async {
+  ///
+  /// `isUltimateSource` : coché par l'utilisateur lui-même quand ce maillon
+  /// est Cheikh Ahmed Tijani (option A, `docs/08-spec-animation-silsila.md`
+  /// §6) — l'appelant (`ijaza_chain_screen.dart`) doit empêcher tout ajout
+  /// ultérieur une fois ce flag posé sur le dernier maillon.
+  Future<void> addManualChainLink({
+    required String nameText,
+    String? yearText,
+    bool isUltimateSource = false,
+  }) async {
     final userId = SupabaseConfig.client.auth.currentUser!.id;
     final lastRow = await SupabaseConfig.client
         .from('mouqaddam_manual_chain_links')
@@ -128,6 +137,7 @@ class MouqaddamRepository {
       'order_index': nextOrderIndex,
       'name_text': nameText,
       'year_text': yearText,
+      'is_ultimate_source': isUltimateSource,
     });
   }
 

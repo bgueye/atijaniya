@@ -918,6 +918,14 @@ class AppLocalizationsAr extends AppLocalizations {
   String get mouqaddamChainAddSuccess => 'تمت إضافة الحلقة.';
 
   @override
+  String get mouqaddamChainUltimateSourceQuestion =>
+      'هل هذا الشخص هو الشيخ أحمد التيجاني، أصل الطريقة؟';
+
+  @override
+  String get mouqaddamChainCompleteDone =>
+      'سلسلتك تصل بالفعل إلى الشيخ أحمد التيجاني — لا حاجة لإضافة أي حلقة أخرى.';
+
+  @override
   String get settingsTitle => 'الإعدادات';
 
   @override

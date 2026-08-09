@@ -235,6 +235,14 @@ create table public.mouqaddam_manual_chain_links (
   name_text text not null,
   year_text text, -- texte libre : une date approximative est acceptée
   created_at timestamptz not null default now(),
+  -- Coché explicitement par l'utilisateur qui saisit ce maillon ("Cette
+  -- personne est-elle Cheikh Ahmed Tijani ?") — option A retenue dans
+  -- docs/08-spec-animation-silsila.md §6 : jamais déduit d'une comparaison
+  -- de texte sur le nom, fragile aux variantes orthographiques déjà
+  -- documentées comme risque (§12 du document de projet). Consommé par
+  -- get_ijaza_chain() ci-dessous, et par la future animation de révélation
+  -- (docs/08-spec-animation-silsila.md) pour déclencher le climax.
+  is_ultimate_source boolean not null default false,
   unique (mouqaddam_user_id, order_index)
 );
 
@@ -308,7 +316,8 @@ returns table (
   ijaza_year smallint,
   is_manual boolean,
   name_text text,
-  year_text text
+  year_text text,
+  is_ultimate_source boolean
 ) as $$
   with recursive chain as (
     select 0 as depth, ms.candidate_user_id as user_id, ms.ijaza_year,
@@ -323,11 +332,11 @@ returns table (
     join chain c on ms.candidate_user_id = c.sponsor_user_id
     where ms.status = 'accepted'
   )
-  select depth, user_id, ijaza_year, is_manual, name_text, year_text from chain
+  select depth, user_id, ijaza_year, is_manual, name_text, year_text, false as is_ultimate_source from chain
   union all
   select
     (select coalesce(max(depth), -1) + 1 + mcl.order_index from chain),
-    null, null, true, mcl.name_text, mcl.year_text
+    null, null, true, mcl.name_text, mcl.year_text, mcl.is_ultimate_source
   from public.mouqaddam_manual_chain_links mcl
   where mcl.mouqaddam_user_id = coalesce(
     (select user_id from chain order by depth desc limit 1),

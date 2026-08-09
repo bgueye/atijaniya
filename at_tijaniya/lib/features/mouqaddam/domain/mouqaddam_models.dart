@@ -130,6 +130,7 @@ class IjazaChainLink {
     this.nameText,
     this.yearText,
     this.resolvedName,
+    this.isUltimateSource = false,
   });
 
   final int depth;
@@ -139,6 +140,14 @@ class IjazaChainLink {
   final String? nameText;
   final String? yearText;
   final String? resolvedName;
+
+  /// Coché explicitement par le mouqaddam qui a saisi ce maillon manuel
+  /// ("Cette personne est-elle Cheikh Ahmed Tijani, à l'origine de la
+  /// tarikha ?") — option A retenue dans `docs/08-spec-animation-silsila.md`
+  /// §6 : jamais déduit d'une comparaison de texte sur le nom, fragile
+  /// aux variantes orthographiques déjà documentées comme risque. Toujours
+  /// `false` pour un maillon automatique (`isManual = false`).
+  final bool isUltimateSource;
 
   String displayName(String fallback) => isManual ? (nameText ?? fallback) : (resolvedName ?? fallback);
 
@@ -151,6 +160,7 @@ class IjazaChainLink {
       nameText: nameText,
       yearText: yearText,
       resolvedName: resolvedName,
+      isUltimateSource: isUltimateSource,
     );
   }
 
@@ -162,6 +172,7 @@ class IjazaChainLink {
       isManual: row['is_manual'] as bool,
       nameText: row['name_text'] as String?,
       yearText: row['year_text'] as String?,
+      isUltimateSource: row['is_ultimate_source'] as bool? ?? false,
     );
   }
 }

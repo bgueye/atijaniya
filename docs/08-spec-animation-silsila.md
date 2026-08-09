@@ -105,18 +105,20 @@ incomplète (mouqaddam qui n'a pas encore renseigné son complément manuel
 jusqu'au fondateur) ne doit pas se voir attribuer un faux climax sur un
 ancêtre intermédiaire.
 
-**Recommandation d'implémentation** : ajouter un champ explicite plutôt que
-de comparer des chaînes de texte (fragile, sensible aux variantes
-orthographiques déjà documentées comme risque au §12 du document de
-projet) :
-- Option A (préférée) : colonne booléenne `is_ultimate_source` sur la
-  dernière ligne de `mouqaddam_manual_chain_links` d'une chaîne, cochée
-  explicitement par l'utilisateur qui saisit le complément manuel
-  ("Cette personne est-elle Cheikh Ahmed Tijani, à l'origine de la
-  tarikha ?").
-- Option B (repli) : une constante `FOUNDER_FIGURE_ID` côté app pointant
-  vers la ligne `figures` de Cheikh Ahmed Tijani (déjà en base, §8), et
-  comparaison sur un futur champ de liaison plutôt que sur le texte du nom.
+**Décision (2026-08-09) : option A retenue et déjà en place.** Colonne
+booléenne `is_ultimate_source` sur `mouqaddam_manual_chain_links`
+(migration `add_is_ultimate_source_to_manual_chain_links`), cochée
+explicitement par l'utilisateur qui saisit le complément manuel via la
+question "Cette personne est-elle Cheikh Ahmed Tijani, à l'origine de la
+tarikha ?" (`ijaza_chain_screen.dart`, `_CompleteChainSection`). Une fois
+ce flag posé sur le dernier maillon, le formulaire d'ajout cède la place à
+un message de complétion — pas de maillon possible après le fondateur.
+`get_ijaza_chain()` renvoie désormais `is_ultimate_source` pour chaque
+maillon (toujours `false` pour un maillon automatique), consommable
+directement par `ChainLink.isFounder` (§3) sans déduction sur le nom.
+
+Option B (constante `FOUNDER_FIGURE_ID` côté app) écartée, gardée ici pour
+mémoire seulement.
 
 Si la chaîne s'arrête sans confirmation du fondateur : terminer sobrement
 sur le dernier maillon connu, éventuellement avec un CTA discret si c'est
@@ -168,5 +170,7 @@ courant de `privacy_settings`).
   partage à cet écran existant.
 - Le mécanisme de parrainage et la reconstruction de chaîne (déjà
   implémentés en base, `database/schema.sql` §3).
-- Toute mise à jour de schéma pour `is_ultimate_source` (§6, option A) :
-  à valider et migrer séparément si cette option est retenue.
+- L'animation de révélation et la carte de partage elles-mêmes (écran,
+  timing, `RenderRepaintBoundary`...) restent à construire — seul le
+  champ `is_ultimate_source` (§6) est en place à ce stade, sur l'écran
+  "Ma silsila d'ijaza" déjà existant, sans aucune animation pour l'instant.

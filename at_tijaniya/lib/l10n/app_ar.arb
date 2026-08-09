@@ -312,6 +312,8 @@
   "mouqaddamChainAddButton": "إضافة هذه الحلقة",
   "mouqaddamChainAddError": "تعذّر إضافة هذه الحلقة.",
   "mouqaddamChainAddSuccess": "تمت إضافة الحلقة.",
+  "mouqaddamChainUltimateSourceQuestion": "هل هذا الشخص هو الشيخ أحمد التيجاني، أصل الطريقة؟",
+  "mouqaddamChainCompleteDone": "سلسلتك تصل بالفعل إلى الشيخ أحمد التيجاني — لا حاجة لإضافة أي حلقة أخرى.",
 
   "settingsTitle": "الإعدادات",
   "settingsLanguageSection": "اللغة",

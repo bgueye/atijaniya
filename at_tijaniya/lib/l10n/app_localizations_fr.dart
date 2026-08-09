@@ -953,6 +953,14 @@ class AppLocalizationsFr extends AppLocalizations {
   String get mouqaddamChainAddSuccess => 'Maillon ajouté.';
 
   @override
+  String get mouqaddamChainUltimateSourceQuestion =>
+      'Cette personne est-elle Cheikh Ahmed Tijani, à l\'origine de la tarikha ?';
+
+  @override
+  String get mouqaddamChainCompleteDone =>
+      'Votre silsila remonte déjà jusqu\'à Cheikh Ahmed Tijani — aucun maillon supplémentaire à ajouter.';
+
+  @override
   String get settingsTitle => 'Paramètres';
 
   @override

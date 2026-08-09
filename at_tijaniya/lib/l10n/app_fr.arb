@@ -312,6 +312,8 @@
   "mouqaddamChainAddButton": "Ajouter ce maillon",
   "mouqaddamChainAddError": "Impossible d'ajouter ce maillon.",
   "mouqaddamChainAddSuccess": "Maillon ajouté.",
+  "mouqaddamChainUltimateSourceQuestion": "Cette personne est-elle Cheikh Ahmed Tijani, à l'origine de la tarikha ?",
+  "mouqaddamChainCompleteDone": "Votre silsila remonte déjà jusqu'à Cheikh Ahmed Tijani — aucun maillon supplémentaire à ajouter.",
 
   "settingsTitle": "Paramètres",
   "settingsLanguageSection": "Langue",
