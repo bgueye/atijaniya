@@ -81,7 +81,10 @@ class _LiveStreamScreenState extends ConsumerState<LiveStreamScreen> {
     );
     if (confirmed != true) return;
     await ref.read(liveStreamRepositoryProvider).endLiveStream(widget.stream.id);
-    ref.invalidate(latestStreamForEventProvider(widget.stream.eventId ?? ''));
+    final eventId = widget.stream.eventId;
+    final groupId = widget.stream.groupId;
+    if (eventId != null) ref.invalidate(latestStreamForEventProvider(eventId));
+    if (groupId != null) ref.invalidate(latestStreamForGroupProvider(groupId));
     ref.invalidate(allLiveStreamsProvider);
     if (mounted) Navigator.of(context).pop();
   }
@@ -96,7 +99,7 @@ class _LiveStreamScreenState extends ConsumerState<LiveStreamScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.stream.eventTitle ?? l10n.khadaraLiveTab),
+        title: Text(widget.stream.displayTitle(l10n.khadaraLiveTab)),
         actions: [
           if (isOwner && !isEnded)
             TextButton(

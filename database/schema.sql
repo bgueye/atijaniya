@@ -482,6 +482,14 @@ comment on column public.events.image_url is
 create table public.live_streams (
   id uuid primary key default gen_random_uuid(),
   event_id uuid references public.events(id),
+  -- Direct rattaché à un groupe plutôt qu'à un évènement Khadara (public
+  -- par défaut) : le contenu d'un groupe est réservé à ses membres
+  -- (group_posts_members_read/write), donc un direct de groupe doit
+  -- suivre la même règle de confidentialité — voir les policies RLS
+  -- ci-dessous. Pas de contrainte CHECK empêchant event_id ET group_id
+  -- simultanément : invariant applicatif (LiveStreamRepository), cohérent
+  -- avec le reste du schéma.
+  group_id uuid references public.groups(id),
   source_type text not null check (source_type in ('native','youtube','facebook','other')),
   external_url text,
   status text not null default 'scheduled' check (status in ('scheduled','live','ended')),
@@ -942,16 +950,80 @@ create policy events_owner_or_admin_update on public.events for update
 create policy events_owner_or_admin_delete on public.events for delete
   using ((select auth.uid()) = created_by or public.is_admin((select auth.uid())));
 
-create policy streams_read_all on public.live_streams for select using (true);
-create policy streams_authenticated_create on public.live_streams for insert with check ((select auth.uid()) is not null);
+-- Public si group_id est nul (direct d'évènement) ; réservé aux membres du
+-- groupe sinon (migration add_group_scoped_live_streams) — même règle que
+-- group_posts_members_read/write, group_memberships étant lui-même
+-- publiquement lisible (group_memberships_read_all), pas besoin de
+-- SECURITY DEFINER ici contrairement au cas mouqaddam/privacy_settings.
+create policy streams_read_public_or_group_member on public.live_streams for select
+  using (
+    group_id is null
+    or exists (
+      select 1 from public.group_memberships gm
+      where gm.group_id = live_streams.group_id and gm.user_id = (select auth.uid())
+    )
+  );
+create policy streams_authenticated_create on public.live_streams for insert
+  with check (
+    (select auth.uid()) is not null
+    and (
+      group_id is null
+      or exists (
+        select 1 from public.group_memberships gm
+        where gm.group_id = live_streams.group_id and gm.user_id = (select auth.uid())
+      )
+    )
+  );
 create policy streams_owner_or_admin_update on public.live_streams for update
   using ((select auth.uid()) = started_by or public.is_admin((select auth.uid())));
 
-create policy replays_read_all on public.stream_replays for select using (true);
+-- stream_replays/live_chat_messages n'ont pas de group_id propre : passent
+-- par une jointure sur live_streams.group_id, même principe que ci-dessus.
+create policy replays_read_public_or_group_member on public.stream_replays for select
+  using (
+    exists (
+      select 1 from public.live_streams ls
+      where ls.id = stream_replays.stream_id
+        and (
+          ls.group_id is null
+          or exists (
+            select 1 from public.group_memberships gm
+            where gm.group_id = ls.group_id and gm.user_id = (select auth.uid())
+          )
+        )
+    )
+  );
 create policy replays_admin_write on public.stream_replays for insert with check (public.is_admin((select auth.uid())));
 
-create policy live_chat_read_all on public.live_chat_messages for select using (true);
-create policy live_chat_authenticated_write on public.live_chat_messages for insert with check ((select auth.uid()) = user_id);
+create policy live_chat_read_public_or_group_member on public.live_chat_messages for select
+  using (
+    exists (
+      select 1 from public.live_streams ls
+      where ls.id = live_chat_messages.stream_id
+        and (
+          ls.group_id is null
+          or exists (
+            select 1 from public.group_memberships gm
+            where gm.group_id = ls.group_id and gm.user_id = (select auth.uid())
+          )
+        )
+    )
+  );
+create policy live_chat_authenticated_write on public.live_chat_messages for insert
+  with check (
+    (select auth.uid()) = user_id
+    and exists (
+      select 1 from public.live_streams ls
+      where ls.id = live_chat_messages.stream_id
+        and (
+          ls.group_id is null
+          or exists (
+            select 1 from public.group_memberships gm
+            where gm.group_id = ls.group_id and gm.user_id = (select auth.uid())
+          )
+        )
+    )
+  );
 
 create policy wirds_read_all on public.wirds for select using (true);
 create policy wirds_admin_write on public.wirds for insert with check (public.is_admin((select auth.uid())));
@@ -1167,6 +1239,7 @@ create index idx_lineage_connection_requests_recipient_id on public.lineage_conn
 create index idx_live_chat_messages_stream_id on public.live_chat_messages (stream_id);
 create index idx_live_chat_messages_user_id on public.live_chat_messages (user_id);
 create index idx_live_streams_event_id on public.live_streams (event_id);
+create index idx_live_streams_group_id on public.live_streams (group_id);
 create index idx_live_streams_started_by on public.live_streams (started_by);
 create index idx_messages_conversation_id on public.messages (conversation_id);
 create index idx_messages_sender_id on public.messages (sender_id);

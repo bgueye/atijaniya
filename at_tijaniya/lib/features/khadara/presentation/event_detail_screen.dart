@@ -98,7 +98,7 @@ class _LiveStreamSection extends ConsumerWidget {
         if (myUserId == null) return const SizedBox.shrink();
         return OutlinedButton.icon(
           onPressed: () => Navigator.of(context).push(
-            MaterialPageRoute(builder: (_) => StartLiveStreamScreen(eventId: event.id, eventTitle: event.title)),
+            MaterialPageRoute(builder: (_) => StartLiveStreamScreen.forEvent(eventId: event.id, contextTitle: event.title)),
           ),
           icon: const Icon(Icons.podcasts_outlined),
           label: Text(l10n.khadaraStartLive),

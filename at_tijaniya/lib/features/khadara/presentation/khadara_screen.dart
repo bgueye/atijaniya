@@ -173,7 +173,7 @@ class _LiveTab extends ConsumerWidget {
                         (stream) => Card(
                           child: ListTile(
                             leading: const Icon(Icons.podcasts, color: AppColors.emerald),
-                            title: Text(stream.eventTitle ?? l10n.khadaraLiveTab),
+                            title: Text(stream.displayTitle(l10n.khadaraLiveTab)),
                             subtitle: Text(l10n.khadaraLiveBadge),
                             trailing: const Icon(Icons.chevron_right, color: AppColors.bronze),
                             onTap: () => Navigator.of(context).push(
@@ -205,7 +205,7 @@ class _LiveTab extends ConsumerWidget {
                         (replay) => Card(
                           child: ListTile(
                             leading: const Icon(Icons.play_circle_outline, color: AppColors.emerald),
-                            title: Text(replay.eventTitle ?? l10n.khadaraLiveTab),
+                            title: Text(replay.displayTitle(l10n.khadaraLiveTab)),
                             trailing: const Icon(Icons.open_in_new, color: AppColors.bronze),
                             onTap: () async {
                               final uri = Uri.tryParse(replay.videoUrl);

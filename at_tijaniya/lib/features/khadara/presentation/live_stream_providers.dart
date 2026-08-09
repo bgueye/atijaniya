@@ -9,6 +9,11 @@ final latestStreamForEventProvider = FutureProvider.family<LiveStream?, String>(
   return ref.watch(liveStreamRepositoryProvider).fetchLatestStreamForEvent(eventId);
 });
 
+/// Symétrique côté groupe — voir `LiveStreamRepository.fetchLatestStreamForGroup`.
+final latestStreamForGroupProvider = FutureProvider.family<LiveStream?, String>((ref, groupId) {
+  return ref.watch(liveStreamRepositoryProvider).fetchLatestStreamForGroup(groupId);
+});
+
 final allLiveStreamsProvider = FutureProvider<List<LiveStream>>((ref) {
   return ref.watch(liveStreamRepositoryProvider).fetchAllLiveStreams();
 });

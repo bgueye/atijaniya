@@ -129,6 +129,8 @@ class LiveStream {
     required this.id,
     this.eventId,
     this.eventTitle,
+    this.groupId,
+    this.groupName,
     required this.sourceType,
     this.externalUrl,
     required this.status,
@@ -142,6 +144,18 @@ class LiveStream {
 
   /// Résolu via l'embedding PostgREST (`select('*, events(title)')`).
   final String? eventTitle;
+
+  /// Rattachement alternatif à un groupe plutôt qu'à un évènement (jamais
+  /// les deux à la fois — invariant applicatif, voir
+  /// `LiveStreamRepository.startLiveStream`). Un direct de groupe est
+  /// réservé aux membres du groupe côté RLS (migration
+  /// `add_group_scoped_live_streams`) : `fromRow` n'a donc jamais besoin de
+  /// filtrer lui-même, Postgres ne renvoie déjà que ce que l'appelant est
+  /// autorisé à voir.
+  final String? groupId;
+
+  /// Résolu via l'embedding PostgREST (`select('*, groups(name)')`).
+  final String? groupName;
   final LiveStreamSourceType sourceType;
   final String? externalUrl;
   final LiveStreamStatus status;
@@ -151,12 +165,20 @@ class LiveStream {
 
   bool get isLive => status == LiveStreamStatus.live;
 
+  /// Titre à afficher pour ce direct — évènement, groupe, ou repli
+  /// générique fourni par l'appelant (aucun des deux ne devrait manquer en
+  /// pratique, mais reste défensif).
+  String displayTitle(String fallback) => eventTitle ?? groupName ?? fallback;
+
   factory LiveStream.fromRow(Map<String, dynamic> row) {
     final eventRelation = row['events'] as Map<String, dynamic>?;
+    final groupRelation = row['groups'] as Map<String, dynamic>?;
     return LiveStream(
       id: row['id'] as String,
       eventId: row['event_id'] as String?,
       eventTitle: eventRelation?['title'] as String?,
+      groupId: row['group_id'] as String?,
+      groupName: groupRelation?['name'] as String?,
       sourceType: liveStreamSourceTypeFromString(row['source_type'] as String),
       externalUrl: row['external_url'] as String?,
       status: liveStreamStatusFromString(row['status'] as String),
@@ -177,6 +199,7 @@ class StreamReplay {
     required this.id,
     required this.streamId,
     this.eventTitle,
+    this.groupName,
     required this.videoUrl,
     this.durationSeconds,
     required this.createdAt,
@@ -186,19 +209,27 @@ class StreamReplay {
   final String streamId;
 
   /// Résolu via l'embedding PostgREST à travers `live_streams.event_id`
-  /// (`select('*, live_streams(events(title))')`).
+  /// (`select('*, live_streams(events(title), groups(name)))')`).
   final String? eventTitle;
+
+  /// Résolu à travers `live_streams.group_id` — voir `LiveStream.groupId`
+  /// pour la règle de confidentialité (RLS filtre déjà côté serveur).
+  final String? groupName;
   final String videoUrl;
   final int? durationSeconds;
   final DateTime createdAt;
 
+  String displayTitle(String fallback) => eventTitle ?? groupName ?? fallback;
+
   factory StreamReplay.fromRow(Map<String, dynamic> row) {
     final streamRelation = row['live_streams'] as Map<String, dynamic>?;
     final eventRelation = streamRelation?['events'] as Map<String, dynamic>?;
+    final groupRelation = streamRelation?['groups'] as Map<String, dynamic>?;
     return StreamReplay(
       id: row['id'] as String,
       streamId: row['stream_id'] as String,
       eventTitle: eventRelation?['title'] as String?,
+      groupName: groupRelation?['name'] as String?,
       videoUrl: row['video_url'] as String,
       durationSeconds: row['duration_seconds'] as int?,
       createdAt: DateTime.parse(row['created_at'] as String).toLocal(),

@@ -1131,6 +1131,71 @@ arabe (RTL) : 3ᵉ onglet "البث المباشر" bien positionné et traduit,
 après coup (cascade sur `live_chat_messages` confirmée par `execute_sql`,
 `live_streams` revenu à 0 ligne).
 
+Direct rattaché à un groupe (extension de ce qui précède, suite à une
+question exploratoire du porteur de projet sur les onglets Fil/Groupes de
+Communauté). Fil d'actualité écarté (les publications sont asynchrones,
+pas d'ancrage clair type évènement/groupe) ; Groupes retenu, avec un point
+de confidentialité identifié avant toute construction : `live_streams`
+était jusque-là entièrement public (`streams_read_all using (true)`), alors
+que le contenu d'un groupe est réservé à ses membres
+(`group_posts_members_read`/`write`) — sans correctif, un direct de groupe
+aurait fuité publiquement l'existence/le contenu d'un groupe privé via
+l'onglet "Directs" de Khadara.
+
+Migration `add_group_scoped_live_streams` : colonne `live_streams.group_id`
+(nullable, alternative à `event_id` — jamais les deux, invariant applicatif
+non verrouillé par une contrainte CHECK, cohérent avec le reste du schéma).
+RLS de `live_streams`/`live_chat_messages`/`stream_replays` refaites :
+public si `group_id is null` (comportement évènement inchangé), réservé aux
+membres du groupe sinon (`live_chat_messages`/`stream_replays` n'ayant pas
+de `group_id` propre, la vérification passe par une jointure sur
+`live_streams.group_id`). Pas de fonction `SECURITY DEFINER` nécessaire ici
+contrairement au cas mouqaddam/`privacy_settings` : `group_memberships` est
+déjà publiquement lisible (`group_memberships_read_all`), donc les policies
+peuvent vérifier l'appartenance directement par `EXISTS`.
+
+Côté app : `LiveStream`/`StreamReplay` acceptent désormais `groupId`/
+`groupName` (résolus via l'embedding PostgREST `groups(name)`, en plus de
+`events(title)`) avec un accesseur commun `displayTitle()`.
+`LiveStreamRepository.startLiveStream`/`fetchLatestStreamFor...` généralisés
+pour accepter soit un évènement soit un groupe (`assert` défensif : jamais
+les deux à la fois). `StartLiveStreamScreen` gagne deux constructeurs
+nommés (`.forEvent`/`.forGroup`) plutôt qu'un paramètre optionnel ambigu.
+Section direct ajoutée à `group_detail_screen.dart`
+(`_GroupLiveStreamSection`), rendue uniquement si `group.isMember` — même
+visibilité que le fil de discussion, aucun rôle "admin de groupe" n'existe
+dans le schéma donc même permissivité que pour poster un message : n'importe
+quel membre peut démarrer un direct pour son groupe. Un direct de groupe
+apparaît aussi dans l'onglet "Directs" de Khadara pour les membres (RLS
+filtre naturellement les non-membres) : un seul endroit centralisé "ce qui
+est en direct maintenant", pas de liste dupliquée côté Communauté.
+
+Validé en conditions réelles sur émulateur Android avec le compte réel
+`bgueye@gmail.com` (Bocar, membre du groupe réel "Tivaouane") : bouton
+"Démarrer un direct" visible sur l'écran du groupe, formulaire testé
+(source "Autre lien"), démarrage confirmé (titre "Tivaouane" affiché via
+`groupName`, `event_id` bien nul et `group_id` bien renseigné en base),
+message de chat envoyé et affiché, retour sur l'écran du groupe montrant
+bien "Rejoindre le direct" (bouton plein) à la place de "Démarrer".
+Apparition confirmée dans l'onglet "Directs" de Khadara. Frontière de
+confidentialité RLS vérifiée directement en base (même expression
+booléenne que les policies) avec le compte réel `bgueye@gmail.com`
+(membre → visible) et le compte de test QA `claude.tijaniya.qa.test1`
+(non-membre du groupe → invisible), plutôt qu'un aller-retour complet sur
+un second appareil pour ce point précis. Donnée de test supprimée après
+coup.
+
+Note trouvée pendant ce nettoyage, non résolue par prudence : une ligne
+`live_streams` préexistante (évènement "Gamou de Tivaouane 2026", lien
+YouTube apparaissant dupliqué/concaténé dans `external_url`,
+`started_by = bgueye@gmail.com`, horodatage postérieur au nettoyage de la
+session de test précédente sur ce même évènement) a été repérée mais
+volontairement laissée intacte — impossible de déterminer avec certitude
+si elle provient d'un vrai direct démarré par le porteur de projet depuis
+son propre appareil (le lien dupliqué pouvant être un copier-coller
+accidentel) ou d'un résidu de test non identifié. À vérifier/nettoyer par
+le porteur de projet si ce n'est pas un direct réel.
+
 ## Commandes utiles
 - `flutter pub get`
 - `flutter analyze`

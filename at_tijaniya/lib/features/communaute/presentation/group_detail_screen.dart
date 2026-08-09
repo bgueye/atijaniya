@@ -3,6 +3,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/theme/app_colors.dart';
 import '../../../l10n/app_localizations.dart';
+import '../../khadara/domain/khadara_models.dart';
+import '../../khadara/presentation/live_stream_providers.dart';
+import '../../khadara/presentation/live_stream_screen.dart';
+import '../../khadara/presentation/start_live_stream_screen.dart';
 import '../../profil/presentation/profile_providers.dart';
 import '../domain/group_models.dart';
 import 'community_format.dart';
@@ -115,6 +119,7 @@ class _GroupDetailScreenState extends ConsumerState<GroupDetailScreen> {
             onLeave: _confirmLeave,
             onSignInPrompt: () => _promptSignIn(l10n.communityGroupsSignInToJoin),
           ),
+          if (_group.isMember) _GroupLiveStreamSection(group: _group, l10n: l10n),
           const Divider(height: 1),
           Expanded(
             child: _group.isMember
@@ -206,6 +211,52 @@ class _GroupHeader extends StatelessWidget {
                   ),
           ),
         ],
+      ),
+    );
+  }
+}
+
+/// Rejoindre le direct en cours pour ce groupe, ou en démarrer un — rendu
+/// uniquement pour un membre (voir `build()` ci-dessus), donc jamais besoin
+/// de re-vérifier `signedIn` ici (être membre implique déjà une session
+/// réelle, `group_memberships_self_join` exige `auth.uid() = user_id`).
+/// Un direct de groupe est réservé aux autres membres côté RLS
+/// (`streams_read_public_or_group_member`, migration
+/// `add_group_scoped_live_streams`) : n'apparaît jamais dans l'onglet
+/// "Directs" de Khadara pour un non-membre.
+class _GroupLiveStreamSection extends ConsumerWidget {
+  const _GroupLiveStreamSection({required this.group, required this.l10n});
+
+  final Group group;
+  final AppLocalizations l10n;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final streamAsync = ref.watch(latestStreamForGroupProvider(group.id));
+
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(20, 0, 20, 16),
+      child: streamAsync.maybeWhen(
+        data: (stream) {
+          final isActive = stream != null && stream.status != LiveStreamStatus.ended;
+          if (isActive) {
+            return FilledButton.icon(
+              onPressed: () => Navigator.of(context).push(
+                MaterialPageRoute(builder: (_) => LiveStreamScreen(stream: stream)),
+              ),
+              icon: const Icon(Icons.podcasts),
+              label: Text(l10n.khadaraJoinLive),
+            );
+          }
+          return OutlinedButton.icon(
+            onPressed: () => Navigator.of(context).push(
+              MaterialPageRoute(builder: (_) => StartLiveStreamScreen.forGroup(groupId: group.id, contextTitle: group.name)),
+            ),
+            icon: const Icon(Icons.podcasts_outlined),
+            label: Text(l10n.khadaraStartLive),
+          );
+        },
+        orElse: () => const SizedBox.shrink(),
       ),
     );
   }

@@ -15,10 +15,13 @@ import 'live_stream_screen.dart';
 /// affichée mais désactivée, avec une explication honnête plutôt
 /// qu'omise en silence.
 class StartLiveStreamScreen extends ConsumerStatefulWidget {
-  const StartLiveStreamScreen({super.key, required this.eventId, required this.eventTitle});
+  const StartLiveStreamScreen.forEvent({super.key, required this.eventId, required this.contextTitle}) : groupId = null;
 
-  final String eventId;
-  final String eventTitle;
+  const StartLiveStreamScreen.forGroup({super.key, required this.groupId, required this.contextTitle}) : eventId = null;
+
+  final String? eventId;
+  final String? groupId;
+  final String contextTitle;
 
   @override
   ConsumerState<StartLiveStreamScreen> createState() => _StartLiveStreamScreenState();
@@ -43,10 +46,14 @@ class _StartLiveStreamScreenState extends ConsumerState<StartLiveStreamScreen> {
     try {
       final stream = await ref.read(liveStreamRepositoryProvider).startLiveStream(
             eventId: widget.eventId,
+            groupId: widget.groupId,
             sourceType: _source,
             externalUrl: _urlController.text.trim(),
           );
-      ref.invalidate(latestStreamForEventProvider(widget.eventId));
+      final eventId = widget.eventId;
+      final groupId = widget.groupId;
+      if (eventId != null) ref.invalidate(latestStreamForEventProvider(eventId));
+      if (groupId != null) ref.invalidate(latestStreamForGroupProvider(groupId));
       ref.invalidate(allLiveStreamsProvider);
       if (mounted) {
         Navigator.of(context).pushReplacement(
@@ -74,7 +81,7 @@ class _StartLiveStreamScreenState extends ConsumerState<StartLiveStreamScreen> {
         child: ListView(
           padding: const EdgeInsets.all(20),
           children: [
-            Text(widget.eventTitle, style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 16)),
+            Text(widget.contextTitle, style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 16)),
             const SizedBox(height: 8),
             Text(l10n.khadaraStartLiveBody, style: const TextStyle(color: AppColors.bronze, fontSize: 13)),
             const SizedBox(height: 20),
