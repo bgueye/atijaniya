@@ -961,6 +961,29 @@ class AppLocalizationsFr extends AppLocalizations {
       'Votre silsila remonte déjà jusqu\'à Cheikh Ahmed Tijani — aucun maillon supplémentaire à ajouter.';
 
   @override
+  String get mouqaddamChainReplayButton => 'Revivre l\'ascension';
+
+  @override
+  String get mouqaddamChainShareButton => 'Partager ma silsila';
+
+  @override
+  String get mouqaddamChainShareCardLockedNode => 'Maillon privé';
+
+  @override
+  String get mouqaddamChainShareCardFooter =>
+      'Reconstruite via At-Tijaniya — retrouvez votre lignée spirituelle';
+
+  @override
+  String get mouqaddamChainShareCardAction => 'Partager l\'image';
+
+  @override
+  String get mouqaddamChainShareError =>
+      'Impossible de générer l\'image à partager.';
+
+  @override
+  String get mouqaddamChainShareCardClose => 'Fermer';
+
+  @override
   String get settingsTitle => 'Paramètres';
 
   @override

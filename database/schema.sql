@@ -346,6 +346,30 @@ returns table (
   order by 1;
 $$ language sql stable security definer set search_path = public;
 
+-- Carte de partage de la silsila d'ijaza (docs/08-spec-animation-silsila.md
+-- §7) : un maillon n'affiche son nom sur la carte QUE si son titulaire a
+-- lui-même activé privacy_settings.mouqaddam_status_visible — distinct de
+-- la visibilité sur l'écran privé du titulaire de la chaîne (get_ijaza_chain
+-- affiche déjà tous les noms au titulaire, qui voit sa propre chaîne).
+-- SECURITY DEFINER indispensable : privacy_settings a une RLS "owner only"
+-- (privacy_settings_owner_only), même famille de contournement contrôlé que
+-- mouqaddam_status_visible_to()/is_verified_mouqaddam() — ne renvoie jamais
+-- qu'un booléen par id demandé, jamais d'autre donnée de privacy_settings.
+create or replace function public.get_ijaza_share_visibility(p_user_ids uuid[])
+returns table (user_id uuid, visible boolean)
+language sql
+stable
+security definer
+set search_path = public
+as $$
+  select u.id as user_id, coalesce(ps.mouqaddam_status_visible, false) as visible
+  from unnest(p_user_ids) as u(id)
+  left join public.privacy_settings ps on ps.user_id = u.id;
+$$;
+revoke all on function public.get_ijaza_share_visibility(uuid[]) from public;
+revoke all on function public.get_ijaza_share_visibility(uuid[]) from anon;
+grant execute on function public.get_ijaza_share_visibility(uuid[]) to authenticated;
+
 -- Réponse du parrain à une demande de parrainage ("Demandes de
 -- parrainage") : accepter confirme le statut du candidat de façon atomique
 -- (jamais de champ "je suis mouqaddam" auto-déclaratif côté client, cf.

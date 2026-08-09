@@ -314,6 +314,13 @@
   "mouqaddamChainAddSuccess": "تمت إضافة الحلقة.",
   "mouqaddamChainUltimateSourceQuestion": "هل هذا الشخص هو الشيخ أحمد التيجاني، أصل الطريقة؟",
   "mouqaddamChainCompleteDone": "سلسلتك تصل بالفعل إلى الشيخ أحمد التيجاني — لا حاجة لإضافة أي حلقة أخرى.",
+  "mouqaddamChainReplayButton": "إعادة معايشة الصعود",
+  "mouqaddamChainShareButton": "مشاركة سلسلتي",
+  "mouqaddamChainShareCardLockedNode": "حلقة خاصة",
+  "mouqaddamChainShareCardFooter": "أُعيد بناؤها عبر التجانية — اعثر على سلسلتك الروحية",
+  "mouqaddamChainShareCardAction": "مشاركة الصورة",
+  "mouqaddamChainShareError": "تعذّر إنشاء الصورة المراد مشاركتها.",
+  "mouqaddamChainShareCardClose": "إغلاق",
 
   "settingsTitle": "الإعدادات",
   "settingsLanguageSection": "اللغة",

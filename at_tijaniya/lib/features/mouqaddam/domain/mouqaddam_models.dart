@@ -131,6 +131,7 @@ class IjazaChainLink {
     this.yearText,
     this.resolvedName,
     this.isUltimateSource = false,
+    this.isVisibleForSharing = true,
   });
 
   final int depth;
@@ -149,6 +150,20 @@ class IjazaChainLink {
   /// `false` pour un maillon automatique (`isManual = false`).
   final bool isUltimateSource;
 
+  /// Alias explicite pour l'animation de révélation (§3/§6 de la spec) :
+  /// même valeur qu'`isUltimateSource`, sous le nom utilisé par la spec.
+  bool get isFounder => isUltimateSource;
+
+  /// Visibilité du nom de CE maillon sur la carte de partage (§7 de la
+  /// spec) — distinct de la visibilité sur l'écran privé du titulaire de la
+  /// chaîne, qui voit toujours tous les noms de sa propre silsila. `true`
+  /// par défaut : un maillon manuel (texte libre, jamais lié à un compte)
+  /// ou le maillon "soi-même" sont toujours affichables ; seul un maillon
+  /// automatique (`isManual = false`, un AUTRE mouqaddam de l'app) peut
+  /// valoir `false`, résolu séparément via `get_ijaza_share_visibility`
+  /// (`MouqaddamRepository.fetchMyIjazaChain`).
+  final bool isVisibleForSharing;
+
   String displayName(String fallback) => isManual ? (nameText ?? fallback) : (resolvedName ?? fallback);
 
   IjazaChainLink withResolvedName(String? resolvedName) {
@@ -161,6 +176,21 @@ class IjazaChainLink {
       yearText: yearText,
       resolvedName: resolvedName,
       isUltimateSource: isUltimateSource,
+      isVisibleForSharing: isVisibleForSharing,
+    );
+  }
+
+  IjazaChainLink withSharingVisibility(bool visible) {
+    return IjazaChainLink(
+      depth: depth,
+      userId: userId,
+      ijazaYear: ijazaYear,
+      isManual: isManual,
+      nameText: nameText,
+      yearText: yearText,
+      resolvedName: resolvedName,
+      isUltimateSource: isUltimateSource,
+      isVisibleForSharing: visible,
     );
   }
 

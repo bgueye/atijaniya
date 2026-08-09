@@ -1856,6 +1856,48 @@ abstract class AppLocalizations {
   /// **'Votre silsila remonte déjà jusqu\'à Cheikh Ahmed Tijani — aucun maillon supplémentaire à ajouter.'**
   String get mouqaddamChainCompleteDone;
 
+  /// No description provided for @mouqaddamChainReplayButton.
+  ///
+  /// In fr, this message translates to:
+  /// **'Revivre l\'ascension'**
+  String get mouqaddamChainReplayButton;
+
+  /// No description provided for @mouqaddamChainShareButton.
+  ///
+  /// In fr, this message translates to:
+  /// **'Partager ma silsila'**
+  String get mouqaddamChainShareButton;
+
+  /// No description provided for @mouqaddamChainShareCardLockedNode.
+  ///
+  /// In fr, this message translates to:
+  /// **'Maillon privé'**
+  String get mouqaddamChainShareCardLockedNode;
+
+  /// No description provided for @mouqaddamChainShareCardFooter.
+  ///
+  /// In fr, this message translates to:
+  /// **'Reconstruite via At-Tijaniya — retrouvez votre lignée spirituelle'**
+  String get mouqaddamChainShareCardFooter;
+
+  /// No description provided for @mouqaddamChainShareCardAction.
+  ///
+  /// In fr, this message translates to:
+  /// **'Partager l\'image'**
+  String get mouqaddamChainShareCardAction;
+
+  /// No description provided for @mouqaddamChainShareError.
+  ///
+  /// In fr, this message translates to:
+  /// **'Impossible de générer l\'image à partager.'**
+  String get mouqaddamChainShareError;
+
+  /// No description provided for @mouqaddamChainShareCardClose.
+  ///
+  /// In fr, this message translates to:
+  /// **'Fermer'**
+  String get mouqaddamChainShareCardClose;
+
   /// No description provided for @settingsTitle.
   ///
   /// In fr, this message translates to:

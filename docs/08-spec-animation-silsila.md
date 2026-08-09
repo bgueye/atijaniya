@@ -170,7 +170,27 @@ courant de `privacy_settings`).
   partage à cet écran existant.
 - Le mécanisme de parrainage et la reconstruction de chaîne (déjà
   implémentés en base, `database/schema.sql` §3).
-- L'animation de révélation et la carte de partage elles-mêmes (écran,
-  timing, `RenderRepaintBoundary`...) restent à construire — seul le
-  champ `is_ultimate_source` (§6) est en place à ce stade, sur l'écran
-  "Ma silsila d'ijaza" déjà existant, sans aucune animation pour l'instant.
+
+## 10. Implémentation (2026-08-09)
+
+Spec entièrement implémentée — `ijaza_chain_screen.dart`
+(`_SilsilaRevealSection`/`_RevealNode`/`_RevealThread`/`_NodeCard`) et
+`silsila_share_card.dart`. Détail dans `CLAUDE.md`. Écarts assumés par
+rapport à cette spec et au prototype HTML :
+
+- **§2 (déclenchement)** : pas de notification push dans l'app (seuls des
+  rappels locaux existent, pour le Wird) — approximé par une signature
+  locale (longueur de la chaîne, `SilsilaIntroStore`) : l'auto-lecture se
+  rejoue dès que la chaîne s'est allongée depuis le dernier auto-play
+  mémorisé sur l'appareil.
+- **§5 (nœud manuel)** : bordure bronze + méta en italique plutôt que la
+  texture à motif diagonal du prototype HTML — un `CustomPainter` de
+  hachures aurait ajouté de la complexité pour un gain visuel marginal à
+  cette taille de carte.
+- Non repris du prototype (flourish visuel, pas dans le texte de spec
+  numéroté) : le burst "ping" par maillon et les particules de poussière
+  ambiantes (`.dust`). Le retour haptique (`HapticFeedback.lightImpact()`)
+  et le climax fondateur (rosace + pulsation), eux, sont bien implémentés.
+- Toggle explicite d'accessibilité dans les paramètres de l'app (§4) : non
+  construit — seul `MediaQuery.disableAnimations` (réglage système
+  "réduire les animations") est respecté pour l'instant.

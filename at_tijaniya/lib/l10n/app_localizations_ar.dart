@@ -926,6 +926,28 @@ class AppLocalizationsAr extends AppLocalizations {
       'سلسلتك تصل بالفعل إلى الشيخ أحمد التيجاني — لا حاجة لإضافة أي حلقة أخرى.';
 
   @override
+  String get mouqaddamChainReplayButton => 'إعادة معايشة الصعود';
+
+  @override
+  String get mouqaddamChainShareButton => 'مشاركة سلسلتي';
+
+  @override
+  String get mouqaddamChainShareCardLockedNode => 'حلقة خاصة';
+
+  @override
+  String get mouqaddamChainShareCardFooter =>
+      'أُعيد بناؤها عبر التجانية — اعثر على سلسلتك الروحية';
+
+  @override
+  String get mouqaddamChainShareCardAction => 'مشاركة الصورة';
+
+  @override
+  String get mouqaddamChainShareError => 'تعذّر إنشاء الصورة المراد مشاركتها.';
+
+  @override
+  String get mouqaddamChainShareCardClose => 'إغلاق';
+
+  @override
   String get settingsTitle => 'الإعدادات';
 
   @override

@@ -314,6 +314,13 @@
   "mouqaddamChainAddSuccess": "Maillon ajouté.",
   "mouqaddamChainUltimateSourceQuestion": "Cette personne est-elle Cheikh Ahmed Tijani, à l'origine de la tarikha ?",
   "mouqaddamChainCompleteDone": "Votre silsila remonte déjà jusqu'à Cheikh Ahmed Tijani — aucun maillon supplémentaire à ajouter.",
+  "mouqaddamChainReplayButton": "Revivre l'ascension",
+  "mouqaddamChainShareButton": "Partager ma silsila",
+  "mouqaddamChainShareCardLockedNode": "Maillon privé",
+  "mouqaddamChainShareCardFooter": "Reconstruite via At-Tijaniya — retrouvez votre lignée spirituelle",
+  "mouqaddamChainShareCardAction": "Partager l'image",
+  "mouqaddamChainShareError": "Impossible de générer l'image à partager.",
+  "mouqaddamChainShareCardClose": "Fermer",
 
   "settingsTitle": "Paramètres",
   "settingsLanguageSection": "Langue",

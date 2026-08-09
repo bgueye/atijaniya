@@ -105,7 +105,29 @@ class MouqaddamRepository {
     final names = await _fetchDisplayNames(
       links.where((l) => !l.isManual && l.userId != null).map((l) => l.userId!).toSet(),
     );
-    return links.map((l) => l.isManual ? l : l.withResolvedName(names[l.userId])).toList();
+    final withNames = links.map((l) => l.isManual ? l : l.withResolvedName(names[l.userId])).toList();
+
+    // Visibilité de partage (§7 de la spec animation) : seuls les maillons
+    // AUTOMATIQUES d'un AUTRE mouqaddam que soi-même dépendent de son
+    // privacy_settings.mouqaddam_status_visible — un maillon manuel (texte
+    // libre) ou "soi-même" reste toujours affichable, valeur par défaut de
+    // IjazaChainLink.isVisibleForSharing.
+    final otherUserIds = withNames.where((l) => !l.isManual && l.userId != null && l.userId != userId).map((l) => l.userId!).toSet();
+    if (otherUserIds.isEmpty) return withNames;
+
+    final visibility = await _fetchShareVisibility(otherUserIds);
+    return withNames.map((l) {
+      if (l.isManual || l.userId == null || l.userId == userId) return l;
+      return l.withSharingVisibility(visibility[l.userId] ?? false);
+    }).toList();
+  }
+
+  Future<Map<String, bool>> _fetchShareVisibility(Set<String> userIds) async {
+    final rows = await SupabaseConfig.client.rpc(
+      'get_ijaza_share_visibility',
+      params: {'p_user_ids': userIds.toList()},
+    );
+    return {for (final row in rows as List) (row as Map<String, dynamic>)['user_id'] as String: row['visible'] as bool};
   }
 
   /// Ajoute le maillon suivant du complément manuel (au-delà de l'app),

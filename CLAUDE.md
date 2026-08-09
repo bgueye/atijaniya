@@ -999,6 +999,86 @@ n'avait pas ce problème (`مريد`/`مريدون` sans suffixe possessif ne po
 aucune connotation de hiérarchie transmetteur→destinataire) — laissé
 inchangé.
 
+Animation de révélation de la silsila d'ijaza + carte de partage
+(`docs/08-spec-animation-silsila.md`, addendum à l'écran "Ma silsila
+d'ijaza" existant, § 5.4.2) fonctionnelles — dernier grand morceau du
+périmètre P2 restant après le workflow Mouqaddam. Deux temps :
+
+1. **Marquage du fondateur (option A retenue le 2026-08-09)** : colonne
+   `is_ultimate_source` sur `mouqaddam_manual_chain_links` (migration
+   `add_is_ultimate_source_to_manual_chain_links`), cochée explicitement
+   par l'utilisateur qui saisit le complément manuel via une question
+   dédiée ("Cette personne est-elle Cheikh Ahmed Tijani, à l'origine de la
+   tarikha ?", `ijaza_chain_screen.dart`) plutôt que déduite d'une
+   comparaison de texte sur le nom (fragile, cf. variantes orthographiques
+   déjà documentées comme risque). Une fois ce flag posé sur le dernier
+   maillon, le formulaire d'ajout cède la place à un message de
+   complétion — aucun maillon possible après le fondateur.
+   `get_ijaza_chain()` renvoie désormais ce flag pour chaque maillon
+   (toujours `false` pour un maillon automatique).
+2. **L'animation elle-même** : `_SilsilaRevealSection` dans
+   `ijaza_chain_screen.dart` — révélation séquentielle bas (soi-même) vers
+   haut (fondateur), fil doré + fade/scale/translateY par maillon,
+   `HapticFeedback.lightImpact()` à chaque apparition, climax sur le
+   fondateur (rosace — `RosacePainter`, extrait de
+   `figure_detail_screen.dart` vers `core/theme/rosace_painter.dart` pour
+   être réutilisable — en fondu/rotation/échelle puis pulsation douce en
+   boucle via `AnimationController.repeat(reverse: true)`), respect de
+   `MediaQuery.disableAnimations`. Design volontairement scindé de
+   `_SilsilaTab` (silsila historique, module Figures) : deux graphes
+   distincts qui ne partagent pas de widgets, cf. commentaire déjà présent
+   dans `ijaza_chain_screen.dart`.
+
+   **Déclenchement** : la spec prévoit une notification push "parrainage
+   accepté" absente de l'app (seuls des rappels locaux existent, pour le
+   Wird) — approximée par `SilsilaIntroStore` (SharedPreferences) : la
+   longueur de la chaîne au dernier auto-play est mémorisée sur l'appareil,
+   l'animation se rejoue automatiquement dès qu'elle s'est allongée depuis
+   (nouvelle acceptation de parrainage, ou nouveau maillon manuel saisi) ;
+   sinon état final statique + bouton "Revivre l'ascension". Cas limite
+   chaîne à un seul maillon (mouqaddam fondateur bootstrap sans parrain) :
+   jamais d'animation, juste le nœud affiché directement (§8 de la spec).
+
+   **Carte de partage** (`silsila_share_card.dart`, nouvelles dépendances
+   `share_plus`/`path_provider`) : aperçu plein écran (format story 9:16,
+   `RepaintBoundary.toImage()` à pixelRatio 4) avant tout partage réel — un
+   maillon automatique n'affiche son nom que si son titulaire a activé
+   `privacy_settings.mouqaddam_status_visible`, résolu via une nouvelle
+   fonction dédiée `get_ijaza_share_visibility(uuid[])` (`SECURITY
+   DEFINER`, migration `add_get_ijaza_share_visibility` — jamais une
+   requête directe sur `privacy_settings`, RLS "owner only" ; jamais
+   réutilisé `mouqaddam_status_visible_to()` existante malgré la
+   ressemblance, pour garder une fonction nommée et auditable
+   spécifiquement pour ce cas d'usage). Un maillon manuel ou "soi-même"
+   reste toujours affichable (texte libre / pas une donnée d'un tiers).
+   Image générée à la demande uniquement (jamais pré-générée/cache), pour
+   toujours refléter l'état courant de `privacy_settings`.
+
+   Écarts assumés par rapport au prototype HTML fourni, documentés dans
+   `docs/08-spec-animation-silsila.md` §10 : pas de texture à motif
+   diagonal pour un maillon manuel (bordure bronze + italique à la place),
+   pas de burst "ping" par maillon ni de particules de poussière ambiantes
+   (flourishes du prototype, absents du texte de spec numéroté), pas de
+   toggle d'accessibilité dédié dans les paramètres (seul le réglage
+   système "réduire les animations" est respecté pour l'instant).
+
+Validé en conditions réelles sur émulateur Android avec le compte réel
+`bgueye@gmail.com`, deux maillons manuels de test temporaires ("Serigne
+Fallou D." puis "Cheikh Ahmed Tijani", ce dernier coché comme source
+ultime) : animation complète bas→haut avec fil doré, climax rosace +
+pulsation sur le fondateur, boutons "Revivre l'ascension"/"Partager ma
+silsila" apparaissant après la première lecture ; replay fonctionnel ;
+carte de partage correctement composée (filigrane, chaîne, pied de page) ;
+partage réel confirmé via le sélecteur natif Android ("Sharing image",
+image PNG bien jointe) après correction d'une erreur de coordonnées de tap
+pendant le test (bouton localisé au mauvais endroit dans un premier temps
+à cause d'une mauvaise mise à l'échelle des captures d'écran — sans lien
+avec le code de l'app). Revalidé intégralement en arabe (RTL) : titre,
+flèche retour, boutons, pied de carte et message de complétion tous
+correctement traduits et positionnés. Données de test supprimées après
+coup, `get_ijaza_chain` reconfirmé revenu à l'état d'origine (Bocar seul,
+profondeur 0).
+
 ## Commandes utiles
 - `flutter pub get`
 - `flutter analyze`

@@ -61,6 +61,11 @@ dependencies:
   # `messages_repository.dart`. Déjà résolue en dépendance transitive
   # (supabase_flutter/gotrue), déclarée ici explicitement.
   uuid: ^4.6.0
+  # Carte de partage de la silsila d'ijaza (docs/08-spec-animation-silsila.md
+  # §7) : capture d'un widget hors-écran en PNG (path_provider, dossier
+  # temporaire) puis ouverture de la feuille de partage native (share_plus).
+  path_provider: ^2.1.5
+  share_plus: ^10.1.4
 
 dev_dependencies:
   flutter_test:

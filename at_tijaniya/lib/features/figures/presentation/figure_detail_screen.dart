@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_theme.dart';
+import '../../../core/theme/rosace_painter.dart';
 import '../../../l10n/app_localizations.dart';
 import '../domain/figure_models.dart';
 import 'figures_providers.dart';
@@ -113,7 +114,7 @@ class _FigureHero extends StatelessWidget {
               top: 4,
               child: Opacity(
                 opacity: 0.12,
-                child: SizedBox(width: 110, height: 110, child: CustomPaint(painter: _RosacePainter())),
+                child: SizedBox(width: 110, height: 110, child: CustomPaint(painter: RosacePainter())),
               ),
             ),
             Padding(
@@ -146,49 +147,6 @@ class _FigureHero extends StatelessWidget {
       ),
     );
   }
-}
-
-/// Rosace à huit branches — motif signature du design system (§03 de la
-/// charte graphique), reproduit ici en trait fin pour servir de filigrane
-/// derrière les noms de la figure. Un seul tracé, jamais répété en pattern
-/// (règle du design system) : `CustomPainter` plutôt qu'un asset SVG, pour
-/// obtenir exactement le tracé de la maquette (deux cercles + étoile à huit
-/// pointes, sans le disque de fond ni le texte du logo d'app).
-class _RosacePainter extends CustomPainter {
-  const _RosacePainter();
-
-  static const _starPoints = [
-    Offset(100, 20),
-    Offset(112, 80),
-    Offset(172, 80),
-    Offset(122, 112),
-    Offset(140, 172),
-    Offset(100, 132),
-    Offset(60, 172),
-    Offset(78, 112),
-    Offset(28, 80),
-    Offset(88, 80),
-  ];
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    final scale = size.width / 200;
-    final paint = Paint()
-      ..color = AppColors.gold
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 1.4 * scale;
-
-    final center = Offset(size.width / 2, size.height / 2);
-    canvas.drawCircle(center, 92 * scale, paint);
-    canvas.drawCircle(center, 78 * scale, paint);
-    canvas.drawPath(
-      Path()..addPolygon([for (final point in _starPoints) point * scale], true),
-      paint,
-    );
-  }
-
-  @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
 }
 
 class _PendingTab extends StatelessWidget {
