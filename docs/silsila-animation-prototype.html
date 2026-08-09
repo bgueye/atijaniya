@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>At-Tijaniya — Prototype : révélation de la silsila d'ijaza</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Cormorant+Garamond:wght@500;600;700&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#2B2620; --zaytoune:#0F3D2E; --emerald:#1C6E4A; --emerald-soft:#E4EEE8;
+    --gold:#C9A24B; --gold-soft:#F1E6C9; --parchment:#F7F2E7; --bronze:#8C7A5B; --white:#FFFDF8;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0; background:#EDE7D8; font-family:'Jost',sans-serif; color:var(--ink);
+    display:flex; flex-direction:column; align-items:center; padding:36px 16px 60px;
+  }
+  h1{font-family:'Cormorant Garamond',serif; color:var(--zaytoune); font-size:26px; margin:0 0 6px;}
+  .sub{color:var(--bronze); font-size:13px; max-width:480px; text-align:center; margin:0 0 28px; line-height:1.6;}
+
+  .phone{ width:300px; height:620px; background:#0a0a0a; border-radius:40px; padding:12px; box-shadow:0 24px 60px rgba(15,61,46,.32); position:relative; }
+  .notch{ position:absolute; top:12px; left:50%; transform:translateX(-50%); width:110px; height:20px; background:#0a0a0a; border-radius:0 0 14px 14px; z-index:10;}
+  .screen{ width:100%; height:100%; background:var(--zaytoune); border-radius:30px; overflow:hidden; position:relative; display:flex; flex-direction:column;}
+
+  .statusbar{ height:28px; flex-shrink:0; display:flex; justify-content:space-between; align-items:center; padding:0 20px; color:var(--parchment); font-size:10px; font-weight:600;}
+  .hdr{ padding:2px 20px 10px; display:flex; align-items:center; justify-content:space-between; color:var(--parchment); flex-shrink:0;}
+  .hdr .back{font-size:15px;}
+  .hdr .t{font-family:'Amiri',serif; color:var(--gold-soft); font-size:14px;}
+
+  .chain-viewport{ flex:1; position:relative; overflow:hidden; }
+  .rosace-bg{ position:absolute; width:260px; height:260px; top:50%; left:50%; transform:translate(-50%,-50%); opacity:.05; }
+  .dust{ position:absolute; width:3px; height:3px; border-radius:50%; background:var(--gold); opacity:0; }
+
+  .chain-scroll{
+    position:absolute; top:0; left:0; right:0; bottom:0; display:flex; flex-direction:column-reverse; align-items:center;
+    padding:22px 22px 18px; gap:0; overflow:hidden;
+  }
+  .node-wrap{ display:flex; flex-direction:column-reverse; align-items:center; opacity:0; transform:translateY(14px) scale(.94); transition:opacity .5s ease, transform .5s ease; width:100%; }
+  .node-wrap.in{ opacity:1; transform:translateY(0) scale(1); }
+
+  .thread{ width:2px; height:0; background:linear-gradient(180deg, var(--gold), rgba(201,162,75,.15)); transition:height .5s ease; }
+  .thread.grown{ height:26px; }
+
+  .node{
+    width:100%; max-width:230px; background:var(--white); border-radius:12px; padding:12px 14px;
+    text-align:center; box-shadow:0 3px 12px rgba(0,0,0,.18); position:relative;
+  }
+  .node .name{ font-size:12.5px; font-weight:600; color:var(--zaytoune); }
+  .node .meta{ font-size:9.5px; color:var(--bronze); margin-top:3px; }
+
+  .node.self{ border:2px solid var(--gold); }
+  .node.manual{
+    background:repeating-linear-gradient(135deg, var(--white) 0 8px, #F1EADA 8px 16px);
+    border:1px dashed var(--bronze);
+  }
+  .node.manual .meta{ font-style:italic; }
+  .node.founder{
+    max-width:250px; background:var(--zaytoune); padding:20px 16px; border:1px solid var(--gold);
+    box-shadow:0 0 0 0 rgba(201,162,75,.5);
+  }
+  .node.founder .name{ font-family:'Amiri',serif; color:var(--gold-soft); font-size:19px; }
+  .node.founder .meta{ color:#CFE0D6; }
+  .node.founder.pulse{ animation: foundpulse 2.2s ease-in-out infinite; }
+  @keyframes foundpulse{
+    0%,100%{ box-shadow:0 0 0 0 rgba(201,162,75,.35); }
+    50%{ box-shadow:0 0 0 10px rgba(201,162,75,0); }
+  }
+
+  .rosace-close{ position:absolute; top:50%; left:50%; width:130px; height:130px; transform:translate(-50%,-50%) scale(.4) rotate(-25deg); opacity:0; transition:opacity .7s ease, transform .9s cubic-bezier(.2,.8,.2,1); pointer-events:none; }
+  .rosace-close.show{ opacity:1; transform:translate(-50%,-50%) scale(1) rotate(0deg); }
+
+  .ping{ position:absolute; top:50%; left:50%; width:10px; height:10px; margin:-5px; border-radius:50%; background:var(--gold); opacity:0; }
+  .ping.fire{ animation: pingfire .6s ease-out; }
+  @keyframes pingfire{
+    0%{ opacity:.9; transform:scale(0); }
+    100%{ opacity:0; transform:scale(9); }
+  }
+
+  .controls{ margin-top:22px; display:flex; flex-direction:column; gap:10px; width:300px; }
+  .btn{ border:none; border-radius:9px; padding:12px 16px; font-family:'Jost'; font-size:12.5px; font-weight:600; cursor:pointer; }
+  .btn-primary{ background:var(--emerald); color:var(--white); }
+  .btn-secondary{ background:transparent; color:var(--emerald); border:1.5px solid var(--emerald); }
+  .toggle-row{ display:flex; align-items:center; justify-content:space-between; font-size:11.5px; color:var(--bronze); padding:2px 4px; }
+  .switch{ width:36px; height:20px; border-radius:11px; background:#DBD2BC; position:relative; cursor:pointer; flex-shrink:0; }
+  .switch.on{ background:var(--emerald); }
+  .switch::after{ content:''; width:16px; height:16px; border-radius:50%; background:white; position:absolute; top:2px; left:2px; transition:left .2s; }
+  .switch.on::after{ left:18px; }
+
+  /* Share card modal */
+  .overlay{ position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(15,10,5,.6); display:none; align-items:center; justify-content:center; z-index:50; padding:20px; }
+  .overlay.show{ display:flex; }
+  .card9x16{ width:270px; height:480px; background:linear-gradient(160deg, var(--zaytoune), #16493a); border-radius:18px; position:relative; overflow:hidden; box-shadow:0 30px 60px rgba(0,0,0,.4); display:flex; flex-direction:column; padding:26px 20px; color:var(--parchment); }
+  .card9x16 .wm{ position:absolute; width:320px; height:320px; top:-40px; right:-90px; opacity:.06; }
+  .card9x16 .brand{ font-family:'Amiri',serif; color:var(--gold-soft); font-size:15px; text-align:center; }
+  .card9x16 h2{ font-family:'Cormorant Garamond',serif; text-align:center; font-size:19px; margin:4px 0 22px; color:var(--white); }
+  .card-chain{ flex:1; display:flex; flex-direction:column-reverse; align-items:center; gap:8px; overflow:hidden; }
+  .card-node{ font-size:11px; text-align:center; padding:6px 10px; border-radius:8px; background:rgba(255,255,255,.08); }
+  .card-node.locked{ color:#B9C9BE; font-style:italic; }
+  .card-node.named{ color:var(--gold-soft); font-weight:600; }
+  .card-link{ width:1px; height:10px; background:var(--gold); }
+  .card-footer{ text-align:center; font-size:9.5px; color:#CFE0D6; margin-top:14px; }
+  .card-footer b{ color:var(--gold-soft); }
+  .close-overlay{ position:absolute; top:16px; right:20px; color:white; background:none; border:none; font-size:20px; cursor:pointer; z-index:60;}
+
+  .note{ max-width:520px; font-size:12px; color:var(--bronze); text-align:center; margin-top:26px; line-height:1.7; }
+</style>
+</head>
+<body>
+
+<h1>Ma silsila d'ijaza</h1>
+<p class="sub">Prototype de l'animation de révélation — déclenchée une fois, à l'acceptation d'un parrainage. Rejouable ensuite à la demande.</p>
+
+<div class="phone">
+  <div class="notch"></div>
+  <div class="screen">
+    <div class="statusbar"><span>9:41</span><span>●●●●</span></div>
+    <div class="hdr"><span class="back">←</span><span class="t">حضرة السلسلة</span><span></span></div>
+    <div class="chain-viewport">
+      <svg class="rosace-bg" viewBox="0 0 200 200"><g fill="none" stroke="#C9A24B" stroke-width="1"><circle cx="100" cy="100" r="92"/><polygon points="100,20 112,80 172,80 122,112 140,172 100,132 60,172 78,112 28,80 88,80"/></g></svg>
+      <div id="dustLayer"></div>
+      <div class="chain-scroll" id="chainScroll"></div>
+      <svg class="rosace-close" id="rosaceClose" viewBox="0 0 200 200">
+        <g fill="none" stroke="#C9A24B" stroke-width="2.2">
+          <circle cx="100" cy="100" r="94"/><circle cx="100" cy="100" r="80"/>
+          <polygon points="100,18 113,78 174,78 124,112 142,174 100,136 58,174 76,112 26,78 87,78"/>
+        </g>
+      </svg>
+    </div>
+  </div>
+</div>
+
+<div class="controls">
+  <button class="btn btn-primary" id="replayBtn">▶ Rejouer l'animation</button>
+  <button class="btn btn-secondary" id="shareBtn">Partager ma silsila</button>
+  <div class="toggle-row">
+    <span>Réduire les animations (accessibilité)</span>
+    <div class="switch" id="reduceMotion"></div>
+  </div>
+</div>
+
+<p class="note">
+  Note de conception : le nœud en trait pointillé représente un maillon saisi manuellement
+  (hors du graphe vérifié de l'app) — texture volontairement différente pour rester honnête sur
+  la source de la donnée, sans casser l'élan de l'animation. Le climax ne se déclenche que si le
+  dernier maillon de la chaîne correspond réellement au fondateur — sinon l'animation s'arrête
+  sobrement sur le dernier maillon connu.
+</p>
+
+<!-- Share card overlay -->
+<div class="overlay" id="overlay">
+  <button class="close-overlay" id="closeOverlay">✕</button>
+  <div class="card9x16">
+    <svg class="wm" viewBox="0 0 200 200"><g fill="none" stroke="#C9A24B" stroke-width="1"><circle cx="100" cy="100" r="92"/><polygon points="100,20 112,80 172,80 122,112 140,172 100,132 60,172 78,112 28,80 88,80"/></g></svg>
+    <div class="brand">التجانية</div>
+    <h2>Ma silsila d'ijaza</h2>
+    <div class="card-chain" id="cardChain"></div>
+    <div class="card-footer">Reconstruite via <b>At-Tijaniya</b> — retrouvez votre lignée spirituelle</div>
+  </div>
+</div>
+
+<script>
+// Exemple de chaîne (données de démonstration — en prod : sortie de get_ijaza_chain()
+// enrichie par jointure profiles + privacy_settings).
+const chain = [
+  { role:'self',    name:'Moi — Amadou Diallo',       meta:'2019',                         visible:true  },
+  { role:'verified',name:'Cheikh Ibrahima N.',        meta:'Parrain vérifié — 2005',        visible:true  },
+  { role:'verified',name:'Serigne Fallou D.',         meta:'Parrain vérifié — 1988',        visible:false }, // maillon privé (démo)
+  { role:'manual',  name:'El Hadj Ibrahima Niasse',   meta:'1948 (saisi manuellement)',     visible:true  },
+  { role:'founder', name:'الشيخ أحمد التجاني',         meta:'Fondateur',                     visible:true  },
+];
+
+const chainScroll = document.getElementById('chainScroll');
+const rosaceClose = document.getElementById('rosaceClose');
+const dustLayer = document.getElementById('dustLayer');
+let reduceMotion = false;
+let playing = false;
+
+function buildDust(n){
+  dustLayer.innerHTML = '';
+  for(let i=0;i<n;i++){
+    const d = document.createElement('div');
+    d.className = 'dust';
+    d.style.left = (10 + Math.random()*80) + '%';
+    d.style.top = (20 + Math.random()*60) + '%';
+    d.style.animation = `dustFloat ${4+Math.random()*3}s ease-in-out ${Math.random()*2}s infinite`;
+    dustLayer.appendChild(d);
+  }
+  const styleTag = document.createElement('style');
+  styleTag.textContent = `@keyframes dustFloat{0%{opacity:0;transform:translateY(0)}20%{opacity:.5}80%{opacity:.3}100%{opacity:0;transform:translateY(-40px)}}`;
+  document.head.appendChild(styleTag);
+}
+
+function renderStatic(){
+  chainScroll.innerHTML = '';
+  chain.forEach((node, i) => {
+    if(i>0){
+      const t = document.createElement('div');
+      t.className = 'thread grown';
+      chainScroll.appendChild(t);
+    }
+    chainScroll.appendChild(makeNode(node, true));
+  });
+  rosaceClose.classList.toggle('show', chain[chain.length-1].role === 'founder');
+}
+
+function makeNode(node, revealed){
+  const wrap = document.createElement('div');
+  wrap.className = 'node-wrap' + (revealed ? ' in' : '');
+  const div = document.createElement('div');
+  div.className = 'node ' + (node.role === 'self' ? 'self' : node.role === 'manual' ? 'manual' : node.role === 'founder' ? 'founder' : '');
+  div.innerHTML = `<div class="name">${node.name}</div><div class="meta">${node.meta}</div>`;
+  wrap.appendChild(div);
+  return wrap;
+}
+
+async function playAnimation(){
+  if(playing) return;
+  playing = true;
+  chainScroll.innerHTML = '';
+  rosaceClose.classList.remove('show');
+
+  if(reduceMotion){
+    renderStatic();
+    playing = false;
+    return;
+  }
+
+  for(let i=0;i<chain.length;i++){
+    if(i>0){
+      const t = document.createElement('div');
+      t.className = 'thread';
+      chainScroll.appendChild(t);
+      await sleep(30);
+      t.classList.add('grown');
+      await sleep(520);
+    }
+    const wrap = makeNode(chain[i], false);
+    chainScroll.appendChild(wrap);
+    await sleep(30);
+    wrap.classList.add('in');
+
+    // ping haptique visuel (proxy de HapticFeedback.lightImpact() en Flutter)
+    const ping = document.createElement('div');
+    ping.className = 'ping fire';
+    wrap.querySelector('.node').style.position = 'relative';
+    wrap.querySelector('.node').appendChild(ping);
+
+    await sleep(450);
+  }
+
+  if(chain[chain.length-1].role === 'founder'){
+    await sleep(200);
+    rosaceClose.classList.add('show');
+    chainScroll.lastElementChild.querySelector('.node').classList.add('pulse');
+  }
+
+  playing = false;
+}
+
+function sleep(ms){ return new Promise(r => setTimeout(r, ms)); }
+
+function renderShareCard(){
+  const cardChain = document.getElementById('cardChain');
+  cardChain.innerHTML = '';
+  chain.forEach((node, i) => {
+    if(i>0){
+      const link = document.createElement('div');
+      link.className = 'card-link';
+      cardChain.appendChild(link);
+    }
+    const el = document.createElement('div');
+    if(node.visible){
+      el.className = 'card-node named';
+      el.textContent = node.role === 'founder' ? 'الشيخ أحمد التجاني' : node.name;
+    } else {
+      el.className = 'card-node locked';
+      el.textContent = '🔒 maillon privé';
+    }
+    cardChain.appendChild(el);
+  });
+}
+
+document.getElementById('replayBtn').addEventListener('click', playAnimation);
+document.getElementById('shareBtn').addEventListener('click', () => {
+  renderShareCard();
+  document.getElementById('overlay').classList.add('show');
+});
+document.getElementById('closeOverlay').addEventListener('click', () => {
+  document.getElementById('overlay').classList.remove('show');
+});
+document.getElementById('reduceMotion').addEventListener('click', (e) => {
+  reduceMotion = !reduceMotion;
+  e.target.classList.toggle('on', reduceMotion);
+});
+
+buildDust(14);
+playAnimation();
+</script>
+
+</body>
+</html>
