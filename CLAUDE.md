@@ -1196,6 +1196,69 @@ son propre appareil (le lien dupliqué pouvant être un copier-coller
 accidentel) ou d'un résidu de test non identifié. À vérifier/nettoyer par
 le porteur de projet si ce n'est pas un direct réel.
 
+Gestion audio des wirds (P0, infrastructure) — sprints 1 et 2 de
+`docs/decision-gestion-audio-wirds.md` (document de décision confirmé par
+le porteur de projet le 2026-08-11 avant implémentation). Contrairement au
+reste du module Wirds (corpus texte statique local, `wirds_content.dart`),
+les récitations audio vivent désormais dans Supabase (`wird_recitations`,
+liée à `wird_steps` — table déjà présente en base mais jusque-là jamais
+lue par l'app) : validation dédiée à l'audio, indépendante de celle du
+texte, et multi-récitant prêt pour la V2 sans redesign.
+
+**Sprint 1 (backend)** — trouvé déjà fait en base au moment de préparer le
+plan (migrations `34_wird_recitations_with_validation` et
+`35_wird_audio_storage_bucket`, 2026-08-10, avant cette session) : table
+`wird_recitations` + RLS, bucket Storage privé `wird-audio` + policies
+`storage.objects` répliquant exactement la condition `content_status =
+'valide'` de la table (même défense en profondeur qu'ailleurs dans le
+projet). `wird_steps.audio_url` (colonne plus ancienne, jamais utilisée
+par l'app) conservée avec un commentaire de dépréciation plutôt que
+supprimée — décision déjà prise en base, laissée telle quelle.
+`database/schema.sql` était en retard sur cet état (table/bucket absents
+du fichier) — régénéré pour le refléter.
+
+**Sprint 2 (Flutter — téléchargement à la demande + lecteur)** :
+`lib/features/wird/domain/wird_recitation.dart` (modèle + états de
+disponibilité par pilier), `data/wird_recitation_repository.dart`
+(résolution pilier local → `wird_step_id` par position — la place d'un
+pilier dans `Wird.pillars`, index + 1, correspond exactement à
+`wird_steps.order_index`, vérifié sur les trois wirds ; logique de mapping
+pure testée dans `test/wird_recitation_repository_test.dart`, sans
+dépendance réseau), `data/wird_recitation_download_store.dart` (cache
+fichier local — l'existence du fichier est l'unique source de vérité du
+statut "téléchargé", pas d'index séparé qui pourrait se désynchroniser ;
+écriture atomique via un fichier `.part` renommé à la fin, pour qu'un
+téléchargement interrompu ne soit jamais pris pour un fichier valide),
+`presentation/wird_pillar_audio_controller.dart` (disponibilité +
+téléchargement par pilier, séparé de `WirdAudioController` qui ne gère que
+la lecture). `WirdAudioPlayerService` bascule de `setUrl` à `setFilePath`
+(`just_audio`) : le lecteur ne lit plus que des fichiers locaux déjà
+téléchargés, jamais un flux réseau — téléchargement définitif, pas de
+streaming répété. Le champ `WirdPillar.audioUrl` (toujours resté `null`
+depuis la V1, cf. paragraphe plus haut) est supprimé, devenu mort.
+
+Écarté volontairement de ce sprint, pour ne pas construire une mécanique
+dont la forme dépend d'une décision non encore tranchée
+(docs/decision-gestion-audio-wirds.md §8, décision 1 — échantillon court
+vs récitation complète) : `just_audio_background`/contrôles écran
+verrouillé, et le mécanisme `ConcatenatingAudioSource` +
+`List.filled(N, ...)` pour rejouer un pilier N fois — chaque récitation
+est traitée comme un seul fichier joué une fois, ce qui reste correct quel
+que soit ce que la production audio choisira d'y mettre.
+
+Validé en conditions réelles sur émulateur Android, avec le compte réel
+`bgueye@gmail.com` (Bocar, session déjà persistée) : ouverture de l'écran
+"Guide du Wird" (Lazim) sans crash ni exception (`adb logcat` vérifié,
+tag `flutter` propre), chaque pilier affichant l'icône grisée "pas de
+récitation" et la barre de lecture "Récitation audio bientôt disponible"
+— comportement strictement identique à avant le refactor, `wird_recitations`
+étant vide (aucun contenu réel produit à ce stade, cf. Sprint 5 du plan).
+Limite assumée : le téléchargement et la lecture réelle d'un fichier ne
+sont donc pas encore vérifiables de bout en bout — seulement la logique de
+résolution (testée) et l'absence de régression sur l'état "sans audio".
+Se revalidera naturellement dès le premier lot de contenu réel (§7 du
+document de décision).
+
 ## Commandes utiles
 - `flutter pub get`
 - `flutter analyze`

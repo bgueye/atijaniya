@@ -1,10 +1,12 @@
 /// Enrobe `just_audio` pour le lecteur audio du Wird (P0 —
 /// docs/03-architecture-ecrans.md : "Récitation modèle, synchronisée au
-/// texte"). Lit les URL publiques du bucket Supabase Storage `wird-audio`
-/// (docs/06-architecture-backend.md), une piste par pilier.
+/// texte"). Lit exclusivement des fichiers locaux déjà téléchargés
+/// (`WirdRecitationDownloadStore`, docs/decision-gestion-audio-wirds.md §4)
+/// — jamais une URL réseau : le principe retenu est le téléchargement
+/// définitif, pas le streaming répété.
 ///
 /// Ne connaît rien de la notion de "pilier" ni de wird — c'est un simple
-/// lecteur d'URL, orchestré par `WirdAudioController`.
+/// lecteur de fichier local, orchestré par `WirdAudioController`.
 library;
 
 import 'package:just_audio/just_audio.dart';
@@ -20,7 +22,7 @@ class WirdAudioPlayerService {
 
   Stream<PlayerState> get playerStateStream => _player.playerStateStream;
 
-  Future<void> load(String url) => _player.setUrl(url);
+  Future<void> load(String localPath) => _player.setFilePath(localPath);
 
   Future<void> play() => _player.play();
 

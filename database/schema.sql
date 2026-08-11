@@ -540,6 +540,28 @@ create table public.wird_steps (
   audio_url text,
   unique (wird_id, order_index)
 );
+comment on column public.wird_steps.audio_url is
+  'Conservée pour compatibilité mais dépréciée : utiliser wird_recitations (support multi-récitant + validation dédiée à l''audio, distincte de la validation du texte).';
+
+-- Récitation(s) audio d'un pilier — table séparée plutôt qu'une simple
+-- réutilisation de wird_steps.audio_url : validation dédiée à l'audio
+-- (indépendante de celle du texte), et prête pour le multi-récitant en V2
+-- sans redesign (docs/decision-gestion-audio-wirds.md §2).
+create table public.wird_recitations (
+  id uuid primary key default gen_random_uuid(),
+  wird_step_id uuid not null references public.wird_steps(id) on delete cascade,
+  reciter_name text not null default 'Récitation de référence',
+  audio_path text not null, -- chemin Storage (bucket wird-audio), jamais une URL signée
+  duration_seconds int,
+  is_default boolean not null default true,
+  content_status text not null default 'brouillon' check (content_status in ('brouillon','valide')),
+  content_version int not null default 1,
+  validated_by uuid references auth.users(id),
+  validated_at timestamptz,
+  created_at timestamptz not null default now()
+);
+comment on column public.wird_recitations.content_status is
+  'brouillon = audio non validé par un moqaddam, jamais servi au disciple (cf. §8 document de projet, même principe que figures.content_status).';
 
 create table public.wird_completions (
   id uuid primary key default gen_random_uuid(),
@@ -843,6 +865,7 @@ alter table public.stream_replays enable row level security;
 alter table public.live_chat_messages enable row level security;
 alter table public.wirds enable row level security;
 alter table public.wird_steps enable row level security;
+alter table public.wird_recitations enable row level security;
 alter table public.figures enable row level security;
 alter table public.figure_quotes enable row level security;
 alter table public.historical_silsila_links enable row level security;
@@ -1033,6 +1056,13 @@ create policy wird_steps_read_all on public.wird_steps for select using (true);
 create policy wird_steps_admin_write on public.wird_steps for insert with check (public.is_admin((select auth.uid())));
 create policy wird_steps_admin_update on public.wird_steps for update using (public.is_admin((select auth.uid())));
 
+create policy wird_recitations_read_valid_or_admin on public.wird_recitations
+  for select using (content_status = 'valide' or public.is_admin((select auth.uid())));
+create policy wird_recitations_admin_write on public.wird_recitations
+  for insert with check (public.is_admin((select auth.uid())));
+create policy wird_recitations_admin_update on public.wird_recitations
+  for update using (public.is_admin((select auth.uid())));
+
 -- Laisse volontairement passer les lignes "brouillon" pour un compte admin
 -- (nécessaire pour un futur back-office de relecture) — l'app filtre malgré
 -- tout explicitement content_status='valide' côté client, en plus de cette
@@ -1212,6 +1242,35 @@ create policy event_images_owner_delete on storage.objects
     bucket_id = 'event-images'
     and auth.uid() in (select created_by from public.events where id::text = (storage.foldername(name))[1])
   );
+
+-- ============================================================================
+-- 11.3 STORAGE — récitations audio des wirds (bucket wird-audio, privé)
+-- ============================================================================
+-- Bucket privé (contrairement à event-images) : la protection "brouillon
+-- invisible" ne doit pas dépendre d'un seul point de contrôle. Les policies
+-- répliquent exactement la condition de wird_recitations.content_status en
+-- reliant par le chemin (docs/decision-gestion-audio-wirds.md §3).
+
+insert into storage.buckets (id, name, public)
+values ('wird-audio', 'wird-audio', false);
+
+create policy wird_audio_read_valid_or_admin on storage.objects
+  for select using (
+    bucket_id = 'wird-audio' and (
+      public.is_admin((select auth.uid()))
+      or exists (
+        select 1 from public.wird_recitations wr
+        where wr.audio_path = storage.objects.name
+          and wr.content_status = 'valide'
+      )
+    )
+  );
+
+create policy wird_audio_admin_write on storage.objects
+  for insert with check (bucket_id = 'wird-audio' and public.is_admin((select auth.uid())));
+
+create policy wird_audio_admin_update on storage.objects
+  for update using (bucket_id = 'wird-audio' and public.is_admin((select auth.uid())));
 
 -- ============================================================================
 -- 12. INDEX SUR CLÉS ÉTRANGÈRES (performance)

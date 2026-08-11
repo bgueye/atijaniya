@@ -16,7 +16,6 @@ class WirdPillar {
     this.note,
     this.fullText,
     this.conditions,
-    this.audioUrl,
   });
 
   /// Texte arabe — à afficher avec la police Amiri (jamais Jost).
@@ -40,14 +39,6 @@ class WirdPillar {
   /// Conditions de validité spécifiques à ce seul pilier (ex. conditions
   /// strictes de Jawharatoul Kamal), affichées comme un avertissement.
   final List<String>? conditions;
-
-  /// URL publique de la récitation modèle (bucket Supabase Storage
-  /// `wird-audio`, docs/06-architecture-backend.md). `null` tant que
-  /// l'enregistrement n'a pas été produit — voir CLAUDE.md, aucun contenu
-  /// religieux (texte ou audio) ne doit être inventé : ce champ ne doit être
-  /// renseigné dans `wirds_content.dart` que par le porteur de projet, une
-  /// fois la récitation validée.
-  final String? audioUrl;
 }
 
 /// Un paragraphe d'un texte long (arabe + translittération + traduction).

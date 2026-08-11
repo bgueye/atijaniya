@@ -4,22 +4,24 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_theme.dart';
 import '../domain/wird_models.dart';
+import '../domain/wird_recitation.dart';
 import 'tasbih_screen.dart';
 import 'wird_audio_controller.dart';
 import 'wird_history_screen.dart';
+import 'wird_pillar_audio_controller.dart';
 import 'wird_reminders_screen.dart';
 
 /// Guide d'un Wird — arabe, translittération, traduction, lecture séquencée,
 /// lecteur audio synchronisé au texte. Priorité P0
 /// (docs/03-architecture-ecrans.md).
 ///
-/// Le contenu affiché ici provient exclusivement de
+/// Le contenu texte affiché ici provient exclusivement de
 /// `lib/features/wird/data/wirds_content.dart` (corpus validé) — voir la
-/// règle impérative en tête de ce fichier. Les récitations audio ne sont pas
-/// encore produites (`WirdPillar.audioUrl` reste `null` tant qu'un
-/// enregistrement validé n'est pas ajouté à cette source) : le lecteur
-/// affiche alors un état "bientôt disponible" plutôt que de rester muet
-/// sans explication.
+/// règle impérative en tête de ce fichier. Les récitations audio, elles,
+/// viennent de Supabase (`wird_recitations`, résolu par
+/// `WirdPillarAudioController` — docs/decision-gestion-audio-wirds.md) :
+/// tant qu'aucune n'est validée pour un pilier, le lecteur affiche un état
+/// "bientôt disponible" plutôt que de rester muet sans explication.
 class WirdDetailScreen extends ConsumerStatefulWidget {
   const WirdDetailScreen({super.key, required this.wird});
 
@@ -66,6 +68,8 @@ class _WirdDetailScreenState extends ConsumerState<WirdDetailScreen> {
 
     final audioState = ref.watch(wirdAudioControllerProvider(wird));
     final audioController = ref.read(wirdAudioControllerProvider(wird).notifier);
+    final pillarAudio = ref.watch(wirdPillarAudioProvider(wird));
+    final hasAnyAudio = pillarAudio.values.any((s) => s.recitation != null);
 
     // Le titre d'AppBar (et tout autre widget qui lit Theme.of(context))
     // doit passer par le thème immersif : sans ce wrapper, le titre hérite
@@ -106,7 +110,15 @@ class _WirdDetailScreenState extends ConsumerState<WirdDetailScreen> {
           MaterialPageRoute(builder: (_) => TasbihScreen(wird: wird)),
         ),
       ),
-      bottomNavigationBar: _AudioPlayerBar(wird: wird, state: audioState, controller: audioController),
+      bottomNavigationBar: _AudioPlayerBar(
+        wird: wird,
+        state: audioState,
+        controller: audioController,
+        hasAnyAudio: hasAnyAudio,
+        activePillarAvailability: audioState.activePillarIndex != null
+            ? pillarAudio[audioState.activePillarIndex]?.availability
+            : null,
+      ),
       body: SafeArea(
         bottom: false,
         child: ListView(
@@ -139,9 +151,11 @@ class _WirdDetailScreenState extends ConsumerState<WirdDetailScreen> {
               _PillarCard(
                 key: _keyFor(i),
                 pillar: wird.pillars[i],
+                availability: pillarAudio[i]?.availability ?? PillarAudioAvailability.noRecitation,
                 isActive: audioState.activePillarIndex == i,
                 isPlaying: audioState.activePillarIndex == i && audioState.isPlaying,
-                isBuffering: audioState.activePillarIndex == i && audioState.isBuffering,
+                isBuffering: audioState.activePillarIndex == i &&
+                    (audioState.isBuffering || pillarAudio[i]?.availability == PillarAudioAvailability.downloading),
                 onTogglePlay: () => audioController.playPillar(i),
               ),
               const SizedBox(height: 12),
@@ -216,6 +230,7 @@ class _PillarCard extends StatelessWidget {
   const _PillarCard({
     super.key,
     required this.pillar,
+    required this.availability,
     required this.isActive,
     required this.isPlaying,
     required this.isBuffering,
@@ -223,6 +238,7 @@ class _PillarCard extends StatelessWidget {
   });
 
   final WirdPillar pillar;
+  final PillarAudioAvailability availability;
   final bool isActive;
   final bool isPlaying;
   final bool isBuffering;
@@ -245,7 +261,7 @@ class _PillarCard extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               _AudioPillarButton(
-                hasAudio: pillar.audioUrl != null,
+                availability: availability,
                 isPlaying: isPlaying,
                 isBuffering: isBuffering,
                 onPressed: onTogglePlay,
@@ -332,26 +348,38 @@ class _PillarCard extends StatelessWidget {
 }
 
 /// Bouton de lecture individuel affiché sur chaque pilier — grisé et
-/// désactivé tant que sa récitation n'a pas été produite.
+/// désactivé tant qu'aucune récitation validée n'existe pour ce pilier ;
+/// une icône de téléchargement quand elle existe mais n'est pas encore sur
+/// l'appareil (docs/decision-gestion-audio-wirds.md §4).
 class _AudioPillarButton extends StatelessWidget {
   const _AudioPillarButton({
-    required this.hasAudio,
+    required this.availability,
     required this.isPlaying,
     required this.isBuffering,
     required this.onPressed,
   });
 
-  final bool hasAudio;
+  final PillarAudioAvailability availability;
   final bool isPlaying;
   final bool isBuffering;
   final VoidCallback onPressed;
 
   @override
   Widget build(BuildContext context) {
-    if (!hasAudio) {
+    if (availability == PillarAudioAvailability.noRecitation) {
       return const Padding(
         padding: EdgeInsets.only(top: 2),
         child: Icon(Icons.music_off, color: AppColors.bronze, size: 22),
+      );
+    }
+    if (availability == PillarAudioAvailability.error) {
+      return InkWell(
+        borderRadius: BorderRadius.circular(20),
+        onTap: onPressed,
+        child: const Padding(
+          padding: EdgeInsets.only(top: 2),
+          child: Icon(Icons.error_outline, color: AppColors.bronze, size: 22),
+        ),
       );
     }
     return InkWell(
@@ -365,11 +393,13 @@ class _AudioPillarButton extends StatelessWidget {
                 height: 22,
                 child: CircularProgressIndicator(strokeWidth: 2, color: AppColors.emerald),
               )
-            : Icon(
-                isPlaying ? Icons.pause_circle_filled : Icons.play_circle_fill,
-                color: AppColors.emerald,
-                size: 26,
-              ),
+            : availability == PillarAudioAvailability.notDownloaded
+                ? const Icon(Icons.download_for_offline_outlined, color: AppColors.emerald, size: 26)
+                : Icon(
+                    isPlaying ? Icons.pause_circle_filled : Icons.play_circle_fill,
+                    color: AppColors.emerald,
+                    size: 26,
+                  ),
       ),
     );
   }
@@ -379,18 +409,31 @@ class _AudioPillarButton extends StatelessWidget {
 /// au texte" (docs/03-architecture-ecrans.md) : surligne le pilier en cours
 /// dans la liste et avance automatiquement au suivant.
 class _AudioPlayerBar extends StatelessWidget {
-  const _AudioPlayerBar({required this.wird, required this.state, required this.controller});
+  const _AudioPlayerBar({
+    required this.wird,
+    required this.state,
+    required this.controller,
+    required this.hasAnyAudio,
+    required this.activePillarAvailability,
+  });
 
   final Wird wird;
   final WirdAudioState state;
   final WirdAudioController controller;
+  final bool hasAnyAudio;
+
+  /// Disponibilité du pilier en cours (`state.activePillarIndex`), `null`
+  /// si aucun pilier actif. Sert uniquement à afficher "Téléchargement en
+  /// cours…" pendant que `WirdPillarAudioController.ensureDownloaded`
+  /// travaille (docs/decision-gestion-audio-wirds.md §4).
+  final PillarAudioAvailability? activePillarAvailability;
 
   @override
   Widget build(BuildContext context) {
-    final hasAnyAudio = controller.hasAnyAudio;
     final activeIndex = state.activePillarIndex;
+    final isDownloading = activePillarAvailability == PillarAudioAvailability.downloading;
     final label = activeIndex != null
-        ? wird.pillars[activeIndex].transliteration
+        ? (isDownloading ? 'Téléchargement en cours…' : wird.pillars[activeIndex].transliteration)
         : hasAnyAudio
             ? 'Lecture audio du Wird'
             : 'Récitation audio bientôt disponible';
