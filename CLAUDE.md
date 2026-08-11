@@ -1259,6 +1259,55 @@ résolution (testée) et l'absence de régression sur l'état "sans audio".
 Se revalidera naturellement dès le premier lot de contenu réel (§7 du
 document de décision).
 
+**Sprint 3 (mise à jour de contenu et rétention)**, même session :
+`data/wird_recitation_version_store.dart` (nouveau — retient quel
+`audio_path` est "actif" par pilier, `shared_preferences`) et
+`wird_pillar_audio_controller.dart` complété. Écart par rapport au plan :
+pas de minuteur "24h" explicite (aurait demandé une tâche de fond, absente
+du reste de l'app) — la rétention est obtenue par séquence garantie :
+l'ancien fichier n'est supprimé qu'une fois le nouveau confirmé sur le
+disque, jamais avant, jamais sur un échec (`content_version` n'est donc
+pas comparé séparément : `audio_path` change 1:1 avec lui). Mise à jour
+tentée silencieusement en tâche de fond dès l'ouverture de l'écran,
+ancienne version toujours servie en cas d'échec (§8 décision 4,
+remplacement silencieux — recommandation retenue) ; erreur de stockage
+(`FileSystemException`) distinguée d'une erreur réseau dans le message
+affiché au disciple. `flutter analyze` propre, suite de tests complète
+repassée en entier (`flutter test --concurrency=1`, 19 fichiers/97 tests,
+tous verts — nécessaire pour contourner un artefact d'affichage du
+reporter compact de `flutter test` qui masque certaines lignes de
+résultat en sortie non interactive, sans rapport avec le code de l'app).
+Non re-testé sur émulateur : les chemins ajoutés (mise à jour/rétention)
+ne se déclenchent que si une récitation existe côté serveur, ce qui n'est
+toujours pas le cas (`wird_recitations` vide) — le seul chemin
+effectivement exercé aujourd'hui (aucune récitation nulle part) est
+identique à celui déjà validé au sprint 2.
+
+Décision #8-1 du document de décision (échantillon court vs récitation
+complète) **tranchée par le porteur de projet le 2026-08-11 : échantillon
+court** — débloque les sprints 4 et 5.
+
+**Sprint 4 (bundling en assets)**, même session :
+`assets/audio/manifest.json` (déclaré dans `pubspec.yaml`), vide pour
+l'instant (`{"recitations": []}`, aucun contenu audio validé à ce jour) ;
+`data/wird_recitation_asset_manifest.dart` (lecture + parsing pur testé,
+`test/wird_recitation_asset_manifest_test.dart`) ;
+`WirdRecitationDownloadStore.copyFromAsset` copie un asset embarqué vers
+le même cache qu'un téléchargement classique dès qu'il n'y a pas encore de
+fichier local et que le manifeste a une entrée dont `audio_path`
+correspond à la version courante côté serveur — conforme à la formulation
+du §4 ("un asset embarqué devient une simple entrée de cache local
+pré-remplie à l'installation") : au-delà de cette copie initiale, aucune
+distinction asset/téléchargement nulle part ailleurs, la rétention et la
+mise à jour silencieuse du sprint 3 s'appliquent telles quelles. Le
+dossier `assets/audio/wirds/` (fichiers eux-mêmes) n'est volontairement
+pas encore déclaré dans `pubspec.yaml` — Flutter refuse un dossier
+d'assets vide au build — à ajouter avec le premier vrai fichier audio
+(sprint 5). `flutter analyze`/`flutter pub get`/suite de tests complète
+(100 tests, dont les 3 nouveaux) tous verts. Non testé sur émulateur pour
+la même raison qu'au sprint 3 (manifeste vide → chemin inerte,
+comportement déjà validé au sprint 2).
+
 ## Commandes utiles
 - `flutter pub get`
 - `flutter analyze`

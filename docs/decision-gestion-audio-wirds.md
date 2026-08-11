@@ -249,7 +249,7 @@ l'audio à maintenir en plus :
 
 | # | Décision | Recommandation par défaut |
 |---|---|---|
-| 1 | Un pilier audio = échantillon court ou récitation complète du nombre de répétitions ? | Échantillon court (§4) — conditionne la taille réelle du bundle |
+| ~~1~~ | ~~Un pilier audio = échantillon court ou récitation complète du nombre de répétitions ?~~ **Tranchée le 2026-08-11 : échantillon court.** | — |
 | 2 | `is_admin` réutilisé pour valider l'audio, ou un rôle `is_moqaddam` dédié, distinct des droits d'administration technique ? | Rester sur `is_admin` en V1, réévaluer si le nombre de validateurs grandit |
 | 3 | Synchro audio → compteur : accepter le report en V2/V3, ou budgéter un outil d'annotation dès la V1 ? | Reporter (§6) |
 | 4 | Politique en cas de contenu déjà téléchargé/embarqué puis corrigé : notifier le disciple ou remplacer silencieusement ? | Remplacement silencieux + message discret optionnel |
@@ -347,20 +347,54 @@ des wirds"). Résumé des écarts par rapport à ce qui était prévu ici :
 - Peut être développé/testé avec des fichiers de test (peu importe la
   durée) — ne dépend pas non plus de la décision #1.
 
-### Sprint 3 — Mise à jour de contenu et rétention
+### Sprint 3 — Mise à jour de contenu et rétention — **fait**
 
-- Comparaison `content_version` distant/local au démarrage/refresh.
-- Règle de rétention ~24h (§4) : ne jamais supprimer l'ancienne version
-  avant confirmation du téléchargement de la nouvelle.
-- Gestion d'erreur dédiée (espace disque, réseau) avec message clair.
+Détail complet et validation : voir CLAUDE.md (même paragraphe que les
+sprints 1-2). Écarts par rapport à ce qui était prévu ici :
 
-### Sprint 4 — Bundling en assets (bloqué)
+- Pas de comparaison de `content_version` en tant que tel : `audio_path`
+  change à chaque correction exactement comme `content_version` (§2), donc
+  comparer les chemins (déjà fait pour le téléchargement) suffit à
+  détecter une mise à jour — `content_version` reste porté par le modèle
+  (métadonnée utile) mais n'est comparé nulle part côté client.
+- Rétention implémentée comme une séquence garantie plutôt qu'un minuteur
+  24h explicite (qui aurait demandé une exécution en tâche de fond,
+  absente du reste de l'app) : `WirdRecitationVersionStore` retient quel
+  `audio_path` est "actif" par pilier ; l'ancien fichier n'est supprimé
+  qu'après confirmation que le nouveau est bien sur le disque — jamais
+  avant, jamais sur un téléchargement en échec. Ça obtient la même
+  garantie que la règle du §4 ("jamais supprimer l'ancienne avant que la
+  nouvelle soit prête") sans minuteur ni tâche de fond planifiée.
+- Remplacement silencieux (§8, décision 4, recommandation retenue) : la
+  mise à jour se fait en tâche de fond dès l'ouverture de l'écran
+  (`WirdPillarAudioController._loadRecitations`), échec ignoré sans
+  affecter l'ancienne version toujours servie — jamais d'erreur affichée
+  pour une mise à jour que le disciple n'a pas demandée lui-même.
+- Erreur de stockage distinguée d'une erreur réseau (`FileSystemException`
+  → message dédié "espace de stockage insuffisant").
 
-- Ne démarre qu'une fois la décision #8-1 (échantillon court vs
-  récitation complète) tranchée par le porteur de projet — conditionne la
-  taille réelle du corpus et donc la viabilité du bundling intégral.
-- Manifeste `assets/audio/manifest.json`, réconciliation avec la version
-  distante au runtime (§4).
+### Sprint 4 — Bundling en assets — **fait** (décision #8-1 tranchée le 2026-08-11 : échantillon court)
+
+Détail complet : voir CLAUDE.md. Résumé :
+
+- Manifeste `assets/audio/manifest.json` (déclaré dans `pubspec.yaml`),
+  vide pour l'instant (`{"recitations": []}`) — aucun contenu audio validé
+  à ce jour, cf. règle "contenu religieux" de CLAUDE.md. Parsing pur testé
+  (`test/wird_recitation_asset_manifest_test.dart`).
+- Réconciliation implémentée exactement comme décrite en fin de §4 :
+  "un asset embarqué devient une simple entrée de cache local pré-remplie
+  à l'installation" — `WirdRecitationDownloadStore.copyFromAsset` copie
+  l'asset vers le même cache qu'un téléchargement classique dès qu'un
+  pilier n'est pas encore téléchargé et que le manifeste a une entrée dont
+  `audio_path` correspond exactement à la version courante côté serveur.
+  Au-delà de cette copie initiale, aucune distinction "asset vs
+  téléchargement" nulle part ailleurs : rétention, mise à jour silencieuse
+  et lecture (sprint 3) s'appliquent à l'identique, sans code parallèle à
+  maintenir.
+- `assets/audio/wirds/` (dossier des fichiers audio eux-mêmes) volontairement
+  pas encore déclaré dans `pubspec.yaml` : Flutter refuse un dossier
+  d'assets vide au build. À ajouter avec le premier vrai fichier audio
+  (sprint 5), en même temps qu'une entrée dans le manifeste.
 
 ### Sprint 5 — Premier lot de contenu (opérationnel, pas de code)
 

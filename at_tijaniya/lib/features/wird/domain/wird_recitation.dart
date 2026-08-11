@@ -31,6 +31,32 @@ class WirdRecitation {
   }
 }
 
+/// Entrée du manifeste d'assets embarqués
+/// (`assets/audio/manifest.json`, docs/decision-gestion-audio-wirds.md §4)
+/// — la version validée au moment du build, figée dans l'APK/IPA. Utilisée
+/// seulement si `audioPath` correspond encore à la version courante côté
+/// serveur (sinon l'asset est périmé, on retombe sur un téléchargement
+/// normal).
+class WirdRecitationAsset {
+  const WirdRecitationAsset({
+    required this.audioPath,
+    required this.assetPath,
+    required this.contentVersion,
+  });
+
+  final String audioPath;
+  final String assetPath;
+  final int contentVersion;
+
+  factory WirdRecitationAsset.fromJson(Map<String, dynamic> json) {
+    return WirdRecitationAsset(
+      audioPath: json['audio_path'] as String,
+      assetPath: json['asset_path'] as String,
+      contentVersion: json['content_version'] as int,
+    );
+  }
+}
+
 /// État de disponibilité audio d'un pilier, tel qu'exposé à l'écran "Guide
 /// du Wird" — combine "existe-t-il une récitation validée ?" et "est-elle
 /// déjà téléchargée sur l'appareil ?" (docs/decision-gestion-audio-wirds.md §4).
