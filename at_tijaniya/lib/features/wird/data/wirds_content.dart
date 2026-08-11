@@ -1,17 +1,38 @@
 // At-Tijaniya — contenu validé du module Wirds.
 //
 // Source : document "At-Tijaniya — Module Wirds" (validé par un moqaddam
-// référent du projet, confirmé le [à horodater par le porteur de projet]).
-// Cf. docs/01-perimetre-fonctionnel.md § 5.1 et § 8, et CLAUDE.md.
+// référent du projet, confirmé le [à horodater par le porteur de projet]),
+// complété par la "forme complète et parfaite" de chaque wird décrite dans
+// docs/Lazim-Etapes-Detaillees.md, docs/Wazifa-Etapes-Detaillees.md et
+// docs/Hadratou-l-Jouma-Etapes-Detaillees.md (validés par le porteur de
+// projet le 2026-08-12 — intention d'ouverture, Fatiha et versets de
+// clôture, jusque-là seulement illustratifs, sont désormais de vrais
+// piliers comptés dans le Tasbih). Cf. docs/01-perimetre-fonctionnel.md
+// § 5.1 et § 8, et CLAUDE.md.
 //
 // RÈGLE IMPÉRATIVE : ce fichier est la SEULE source de texte de wird dans
 // l'app. Ne jamais ajouter/modifier une formule ici sans qu'elle provienne
 // d'une nouvelle version explicitement marquée "validée" du document source.
 //
-// Nombre de répétitions de Hadratou-l-Jouma : fixé à 1600 conformément à
-// docs/01-perimetre-fonctionnel.md § 5.1 (le document source mentionnait
-// 1000/1200/1600 "à confirmer selon l'usage du foyer" — 1600 est la valeur
-// retenue par le porteur de projet).
+// Nombre de répétitions de Hadratou-l-Jouma (pilier Tahlil) : fixé à 1600
+// conformément à docs/01-perimetre-fonctionnel.md § 5.1 (le document source
+// mentionnait 1000/1200/1600 "à confirmer selon l'usage du foyer", et la
+// mise à jour du document via tidjaniya.com indique 1200 — 1600 reste la
+// valeur explicitement retenue par le porteur de projet, décision reconfirmée
+// à deux reprises malgré cette nouvelle source).
+//
+// Pilier "Nom Allah" de Hadratou-l-Jouma : cible fixe de 600 répétitions.
+// Aucun document source ne donne de chiffre pour cette phase (elle n'y est
+// décrite que par durée, "jusqu'à l'approche du Maghreb") — 600 est une
+// décision produit assumée par le porteur de projet, au lieu d'une mécanique
+// de compteur par durée : l'app n'a et n'aura pas de calcul d'horaire de
+// prière en V1 (même choix que pour les rappels, voir wird_reminder_slots.dart).
+//
+// Translittération : les textes nouvellement ajoutés (intention, Fatiha,
+// versets de clôture, sourcés sur tidjaniya.com) ont été normalisés sans
+// accents/apostrophes de style académique, pour rester cohérents avec la
+// translittération déjà utilisée dans ce fichier (ex. "Astaghfirullah",
+// "La ilaha illAllah").
 
 import '../domain/wird_models.dart';
 
@@ -31,6 +52,115 @@ const _salatoulFatihiTranslation =
     "la vérité, celui qui guide vers Ta voie droite, et sur sa famille, à "
     "la mesure de sa valeur et de son immense grandeur.";
 
+// Istighfar long (utilisé par la Wazifa et par la Hadratou-l-Jouma, qui
+// partagent le même texte selon docs/Hadratou-l-Jouma-Etapes-Detaillees.md).
+const _istighfarLongArabic =
+    'أَسْتَغْفِرُ اللَّهَ الْعَظِيمَ الَّذِي لَا إِلَهَ إِلَّا هُوَ الْحَيُّ الْقَيُّومُ';
+const _istighfarLongTranslit =
+    "Astaghfirullah al-'Adhim alladhi la ilaha illa Houwa-l-Hayyou-l-Qayyoum";
+const _istighfarLongTranslation =
+    "Je demande pardon à Allah, l'Immense, il n'y a de divinité que "
+    "Lui, le Vivant, le Subsistant par Lui-même.";
+
+// Versets de clôture réutilisés après plusieurs piliers, selon les 3
+// documents "Étapes Détaillées" (confirmés par tidjaniya.com).
+const _saffatClosingArabic =
+    'سُبْحَانَ رَبِّكَ رَبِّ الْعِزَّةِ عَمَّا يَصِفُونَ وَسَلَامٌ عَلَى الْمُرْسَلِينَ وَالْحَمْدُ لِلَّهِ رَبِّ الْعَالَمِينَ';
+const _saffatClosingTranslit =
+    "Soubhana rabbika rabbi-l-'izzati 'amma yasifouna wa salamoun "
+    "'ala-l-moursalina wa-l-hamdou li-Llahi rabbi-l-'alamin.";
+
+const _ahzabClosingArabic =
+    'إِنَّ اللَّهَ وَمَلَائِكَتَهُ يُصَلُّونَ عَلَى النَّبِيِّ يَا أَيُّهَا الَّذِينَ آمَنُوا صَلُّوا عَلَيْهِ وَسَلِّمُوا تَسْلِيمًا';
+const _ahzabClosingTranslit =
+    "Innallaha wa mala-ikatahou yousalouna 'ala-n-Nabiyyi ya ayyouha-l-"
+    "ladhina amanou sallou 'alayhi wa sallimou tasliman.";
+
+// Intention d'ouverture (niyya) — identique pour les 3 wirds. Texte arabe
+// complet sourcé sur tidjaniya.com (« Aoraad Tariqa Tijaniyya »).
+const _intentionPillar = WirdPillar(
+  arabic:
+      'اللَّهُمَّ إِنِّي نَوَيْتُ تِلَاوَةَ هَذَا الْوِرْدِ تَعْظِيمًا وَإِجْلَالًا لَكَ '
+      'وَابْتِغَاءَ مَرْضَاتِكَ وَقَصْدًا لِوَجْهِكَ الْكَرِيمِ، مُخْلِصًا لَكَ مِنْ أَجْلِكَ '
+      'وَأَقُولُ بِإِمْدَادِكَ وَعَوْنِكَ وَحَوْلِكَ وَقُوَّتِكَ، وَمَا وَهَبْتَنِي مِنْ '
+      'إِنْعَامِكَ وَتَوْفِيقِكَ مُسْتَعِينًا بِكَ',
+  transliteration:
+      "Allahoumma inni nawaytou tilawata hadha-l-wirdi ta'dhiman wa "
+      "ijlalan laka wa btighaa mardatika wa qasdan li wajhika-l-karim, "
+      "moukhlisan laka min ajlika wa aqoulou bi imdadika wa awnika wa "
+      "hawlika wa qouwwatika, wa ma wahhabtani min in'amika wa tawfiqika "
+      "mousta'inan bika.",
+  translation:
+      "Ô Allah, j'ai mis l'intention au travers de ce wird de proclamer "
+      "Ton incommensurabilité et Ta magnificence, souhaitant par cela "
+      "obtenir Ta satisfaction et ne recherchant que Ta noble Face ; en "
+      "toute sincérité envers Toi et par Ta cause, reconnaissant Ton "
+      "afflux, Ton aide, Ta capacité et Ta puissance, ainsi que ce dont "
+      "Tu m'as gratifié comme bienfaits et comme réussite, en implorant "
+      "Ton secours.",
+  repetitions: 1,
+  note: 'Source : tidjaniya.com (« Aoraad Tariqa Tijaniyya »).',
+);
+
+// Fatiha — texte coranique standard (universel, hors périmètre de la règle
+// de validation propre au contenu de la Tariqa), identique pour les 3 wirds.
+const _fatihaParagraphs = [
+  WirdParagraph(
+    arabic: 'بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ',
+    transliteration: 'Bismi-Llahi r-Rahmani r-Rahim',
+    translation:
+        "Au nom d'Allah, le Tout Miséricordieux, le Très Miséricordieux.",
+  ),
+  WirdParagraph(
+    arabic: 'الْحَمْدُ لِلَّهِ رَبِّ الْعَالَمِينَ',
+    transliteration: "Al-hamdou li-Llahi rabbi-l-'alamin",
+    translation: 'Louange à Allah, Seigneur des mondes.',
+  ),
+  WirdParagraph(
+    arabic: 'الرَّحْمَٰنِ الرَّحِيمِ',
+    transliteration: 'Ar-Rahmani r-Rahim',
+    translation: 'Le Tout Miséricordieux, le Très Miséricordieux.',
+  ),
+  WirdParagraph(
+    arabic: 'مَالِكِ يَوْمِ الدِّينِ',
+    transliteration: 'Maliki yawmi-d-din',
+    translation: 'Maître du Jour de la rétribution.',
+  ),
+  WirdParagraph(
+    arabic: 'إِيَّاكَ نَعْبُدُ وَإِيَّاكَ نَسْتَعِينُ',
+    transliteration: "Iyyaka na'boudou wa iyyaka nasta'in",
+    translation:
+        "C'est Toi seul que nous adorons, et c'est Toi seul dont nous "
+        "implorons secours.",
+  ),
+  WirdParagraph(
+    arabic: 'اهْدِنَا الصِّرَاطَ الْمُسْتَقِيمَ',
+    transliteration: 'Ihdina-s-sirata-l-moustaqim',
+    translation: 'Guide-nous dans le droit chemin.',
+  ),
+  WirdParagraph(
+    arabic:
+        'صِرَاطَ الَّذِينَ أَنْعَمْتَ عَلَيْهِمْ غَيْرِ الْمَغْضُوبِ عَلَيْهِمْ وَلَا الضَّالِّينَ',
+    transliteration:
+        "Sirata-l-ladhina an'amta 'alayhim ghayri-l-maghdoubi 'alayhim "
+        "wa la-d-dallin",
+    translation:
+        'Le chemin de ceux que Tu as comblés de faveurs, non pas de ceux '
+        'qui ont encouru Ta colère, ni des égarés.',
+  ),
+];
+
+const _fatihaPillar = WirdPillar(
+  arabic: 'سُورَةُ الْفَاتِحَةِ',
+  transliteration: 'Al-Fatiha',
+  translation: "L'Ouverture",
+  repetitions: 1,
+  note:
+      "Précédée du ta'awwudh (A'oudhou bi-Llahi mina ch-Chaytani r-Rajim) "
+      "et de la basmala, clôturée par « Amine ».",
+  fullText: _fatihaParagraphs,
+);
+
 const lazim = Wird(
   id: 'lazim',
   nameArabic: 'اللازم',
@@ -38,48 +168,43 @@ const lazim = Wird(
   frequency: WirdFrequency.daily,
   conditionsNote:
       'Oraison quotidienne obligatoire, matin et soir, sans exception. '
-      'Les trois formules ci-dessous doivent être récitées dans cet ordre.',
+      'Les formules ci-dessous doivent être récitées dans cet ordre.',
   pillars: [
+    _intentionPillar,
+    _fatihaPillar,
     WirdPillar(
       arabic: 'أَسْتَغْفِرُ اللَّهَ',
       transliteration: 'Astaghfirullah',
       translation: 'Je demande pardon à Allah.',
       repetitions: 100,
+      note:
+          'Clôture après la 100ᵉ récitation (Sourate As-Saffat, 37:180-182) : '
+          '$_saffatClosingArabic ($_saffatClosingTranslit)',
     ),
     WirdPillar(
       arabic: _salatoulFatihiArabic,
       transliteration: _salatoulFatihiTranslit,
       translation: _salatoulFatihiTranslation,
       repetitions: 100,
-      note: 'Salatoul Fatihi — propre à la Tariqa Tijaniyya, ne doit pas être '
-          'remplacée par une autre salat pendant le Lazim.',
+      note:
+          'Salatoul Fatihi — propre à la Tariqa Tijaniyya, ne doit pas être '
+          'remplacée par une autre salat pendant le Lazim. Clôture après la '
+          '100ᵉ récitation (Sourate As-Saffat, 37:180-182) : '
+          '$_saffatClosingArabic ($_saffatClosingTranslit)',
     ),
     WirdPillar(
       arabic: 'لَا إِلَهَ إِلَّا اللَّهُ',
       transliteration: 'La ilaha illAllah',
       translation: "Il n'y a de divinité qu'Allah.",
       repetitions: 100,
-      note: "Après la 100ᵉ récitation, ajouter une fois : "
+      note:
+          "Après la 100ᵉ récitation, ajouter une fois : "
           "مُحَمَّدٌ رَسُولُ اللَّهِ عَلَيْهِ سَلَامُ اللَّهِ "
-          "(Muhammadun Rasoulullah, 'alayhi Salamoullah).",
+          "(Muhammadun Rasoulullah, 'alayhi Salamoullah). Puis (Sourate "
+          "Al-Ahzab, 33:56) : $_ahzabClosingArabic ($_ahzabClosingTranslit) "
+          "Puis, en clôture finale (Sourate As-Saffat, 37:180-182) : "
+          "$_saffatClosingArabic ($_saffatClosingTranslit)",
     ),
-  ],
-  sequence: [
-    WirdSequenceStep(label: "Formulation de l'intention (niyya)"),
-    WirdSequenceStep(label: "A'oûdhou billâhi mina-chaytâni-r-rajîm", repetitions: 1),
-    WirdSequenceStep(label: 'Sourate Al-Fatiha, suivie de « Amine »', repetitions: 1),
-    WirdSequenceStep(label: 'Astaghfirullah', repetitions: 100),
-    WirdSequenceStep(label: 'Verset de clôture (Sourate As-Saffat, 37:180-182)'),
-    WirdSequenceStep(label: 'Salatoul Fatihi', repetitions: 100),
-    WirdSequenceStep(label: 'Verset de clôture (Sourate As-Saffat, 37:180-182)'),
-    WirdSequenceStep(
-      label: "La ilaha illAllah, suivi de « Muhammadun Rasoulullah, 'alayhi Salamoullah »",
-      repetitions: 100,
-    ),
-    WirdSequenceStep(label: 'Verset Innallaha wa mala-ikatahou... (Sourate Al-Ahzab, 33:56)'),
-    WirdSequenceStep(label: "Sallallahou ta'ala 'alayhi wa 'ala alihi wa sahbihi wa sallama tasliman"),
-    WirdSequenceStep(label: 'Verset de clôture (Sourate As-Saffat, 37:180-182)'),
-    WirdSequenceStep(label: "Du'a personnelle"),
   ],
 );
 
@@ -149,12 +274,12 @@ const wazifa = Wird(
       "Prophète que Salatoul Fatihi et Jawharatoul Kamal ne doit être "
       "intercalée, sous peine d'invalider l'oraison.",
   pillars: [
+    _intentionPillar,
+    _fatihaPillar,
     WirdPillar(
-      arabic: "أَسْتَغْفِرُ اللَّهَ الْعَظِيمَ الَّذِي لَا إِلَهَ إِلَّا هُوَ الْحَيُّ الْقَيُّومُ",
-      transliteration: "Astaghfirullah al-'Adhim alladhi la ilaha illa Houwa-l-Hayyou-l-Qayyoum",
-      translation:
-          "Je demande pardon à Allah, l'Immense, il n'y a de divinité que "
-          "Lui, le Vivant, le Subsistant par Lui-même.",
+      arabic: _istighfarLongArabic,
+      transliteration: _istighfarLongTranslit,
+      translation: _istighfarLongTranslation,
       repetitions: 30,
     ),
     WirdPillar(
@@ -162,6 +287,11 @@ const wazifa = Wird(
       transliteration: _salatoulFatihiTranslit,
       translation: _salatoulFatihiTranslation,
       repetitions: 50,
+      note:
+          'Salatoul Fatihi — propre à la Tariqa Tijaniyya, ne doit pas être '
+          'remplacée par une autre salat pendant le Lazim ou la Wazifa. '
+          'Clôture après la 50ᵉ récitation (Sourate As-Saffat, 37:180-182) : '
+          '$_saffatClosingArabic ($_saffatClosingTranslit)',
     ),
     WirdPillar(
       arabic: 'لَا إِلَهَ إِلَّا اللَّهُ',
@@ -175,8 +305,11 @@ const wazifa = Wird(
       transliteration: 'Jawharatoul Kamal',
       translation: '« La Perle de la Perfection » — prière spéciale sur le Prophète ﷺ.',
       repetitions: 12,
-      note: "Si les conditions ne sont pas réunies, remplacer par 20 "
-          "récitations supplémentaires de Salatoul Fatihi.",
+      note:
+          "Si les conditions ne sont pas réunies, remplacer par 20 "
+          "récitations supplémentaires de Salatoul Fatihi. Clôture après "
+          "la 12ᵉ récitation (Sourate Al-Ahzab, 33:56) : "
+          "$_ahzabClosingArabic ($_ahzabClosingTranslit)",
       conditions: [
         "Être en état d'ablution à l'eau (le tayammoum ne suffit pas).",
         "Se trouver dans un lieu propre, suffisamment large pour six personnes.",
@@ -186,13 +319,6 @@ const wazifa = Wird(
       fullText: _jawharatoulKamalParagraphs,
     ),
   ],
-  sequence: [
-    WirdSequenceStep(label: "Formulation de l'intention (niyya)"),
-    WirdSequenceStep(label: "Astaghfirullah al-'Adhim...", repetitions: 30),
-    WirdSequenceStep(label: 'Salatoul Fatihi', repetitions: 50),
-    WirdSequenceStep(label: "La ilaha illAllah, suivi de « Muhammadun Rasoulullah »", repetitions: 100),
-    WirdSequenceStep(label: 'Jawharatoul Kamal (ou 20 Salatoul Fatihi à défaut)', repetitions: 12),
-  ],
 );
 
 const hadratouJouma = Wird(
@@ -200,11 +326,30 @@ const hadratouJouma = Wird(
   nameArabic: 'حضرة الجمعة',
   nameFrench: 'Hadratou-l-Jouma',
   frequency: WirdFrequency.weekly,
-  repetitionsNote: '1600 répétitions (valeur retenue pour le projet).',
+  repetitionsNote:
+      '1600 répétitions du tahlil (valeur retenue pour le projet), puis 600 '
+      'répétitions du Nom Allah.',
   conditionsNote:
       "Dhikr collectif hebdomadaire, uniquement le vendredi entre l'Asr et "
       "le Maghreb. Aucun rattrapage possible en cas de créneau manqué.",
   pillars: [
+    _intentionPillar,
+    _fatihaPillar,
+    WirdPillar(
+      arabic: _istighfarLongArabic,
+      transliteration: _istighfarLongTranslit,
+      translation: _istighfarLongTranslation,
+      repetitions: 3,
+    ),
+    WirdPillar(
+      arabic: _salatoulFatihiArabic,
+      transliteration: _salatoulFatihiTranslit,
+      translation: _salatoulFatihiTranslation,
+      repetitions: 3,
+      note:
+          'Clôture après la 3ᵉ récitation (Sourate Al-Ahzab, 33:56) : '
+          '$_ahzabClosingArabic ($_ahzabClosingTranslit)',
+    ),
     WirdPillar(
       arabic: 'لَا إِلَهَ إِلَّا اللَّهُ',
       transliteration: 'La ilaha illAllah',
@@ -214,22 +359,20 @@ const hadratouJouma = Wird(
           "سَيِّدُنَا مُحَمَّدٌ رَسُولُ اللَّهِ عَلَيْهِ سَلَامُ اللَّهِ "
           "(Seyidouna Muhammadoun Rasoulullah, 'alayhi Salamoullah).",
     ),
-  ],
-  sequence: [
-    WirdSequenceStep(label: "Formulation de l'intention (niyya)"),
-    WirdSequenceStep(label: "A'oûdhou billâhi mina-chaytâni-r-rajîm", repetitions: 1),
-    WirdSequenceStep(label: 'Sourate Al-Fatiha, suivie de « Amine »', repetitions: 1),
-    WirdSequenceStep(label: "Astaghfirullah al-'Adhim...", repetitions: 3),
-    WirdSequenceStep(label: 'Salatoul Fatihi', repetitions: 1),
-    WirdSequenceStep(label: 'Verset Innallaha wa mala-ikatahou... (Sourate Al-Ahzab, 33:56)'),
-    WirdSequenceStep(label: "Sallallahou ta'ala 'alayhi wa 'ala alihi wa sahbihi wa sallama tasliman"),
-    WirdSequenceStep(label: 'Verset de clôture (Sourate As-Saffat, 37:180-182)'),
-    WirdSequenceStep(
-      label: "La ilaha illAllah, suivi de « Seyidouna Muhammadoun Rasoulullah »",
-      repetitions: 1600,
+    WirdPillar(
+      arabic: 'اللَّهُ',
+      transliteration: 'Allah',
+      translation: '« Allah » — récitation répétée du Nom suprême.',
+      repetitions: 600,
+      note:
+          "Récitation répétée du Nom suprême, jusqu'à l'approche du "
+          "Maghreb — cible de 600 répétitions retenue par le porteur de "
+          "projet (l'app ne calcule pas les horaires de prière en V1). La "
+          "forme complète prévoit ensuite une clôture non comptée comme "
+          "pilier séparé : reprise de la Fatiha (ta'awwudh, basmala), puis "
+          "3 fois Salatoul Fatihi, conclue par (Sourate Al-Ahzab, 33:56) : "
+          "$_ahzabClosingArabic ($_ahzabClosingTranslit)",
     ),
-    WirdSequenceStep(label: 'Reprise : Ta’awwudh, Fatiha, Salatoul Fatihi, versets de clôture'),
-    WirdSequenceStep(label: "Du'a final"),
   ],
 );
 

@@ -160,32 +160,6 @@ class _WirdDetailScreenState extends ConsumerState<WirdDetailScreen> {
               ),
               const SizedBox(height: 12),
             ],
-            const SizedBox(height: 12),
-            ExpansionTile(
-              iconColor: AppColors.gold,
-              collapsedIconColor: AppColors.gold,
-              title: const Text(
-                'Déroulé complet (exemple)',
-                style: TextStyle(color: AppColors.parchment, fontWeight: FontWeight.w500),
-              ),
-              children: [
-                for (final step in wird.sequence)
-                  ListTile(
-                    dense: true,
-                    leading: const Icon(Icons.chevron_right, color: AppColors.gold, size: 18),
-                    title: Text(
-                      step.label,
-                      style: const TextStyle(color: AppColors.parchment),
-                    ),
-                    trailing: step.repetitions != null
-                        ? Text(
-                            '×${step.repetitions}',
-                            style: const TextStyle(color: AppColors.gold),
-                          )
-                        : null,
-                  ),
-              ],
-            ),
             // Espace pour ne pas laisser la barre de lecture masquer le
             // dernier élément.
             const SizedBox(height: 96),

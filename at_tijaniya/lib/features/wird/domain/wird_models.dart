@@ -55,17 +55,6 @@ class WirdParagraph {
 }
 
 
-/// Une étape du déroulé complet d'un wird (ouverture, clôture, du'a...),
-/// distincte des piliers obligatoires : utile pour afficher la séquence
-/// complète recommandée sans la confondre avec ce qui est strictement
-/// obligatoire.
-class WirdSequenceStep {
-  const WirdSequenceStep({required this.label, this.repetitions});
-
-  final String label;
-  final int? repetitions;
-}
-
 enum WirdFrequency { daily, weekly }
 
 class Wird {
@@ -75,7 +64,6 @@ class Wird {
     required this.nameFrench,
     required this.frequency,
     required this.pillars,
-    required this.sequence,
     this.repetitionsNote,
     this.conditionsNote,
   });
@@ -85,12 +73,11 @@ class Wird {
   final String nameFrench;
   final WirdFrequency frequency;
 
-  /// Piliers obligatoires, dans l'ordre impératif de récitation.
+  /// Piliers obligatoires, dans l'ordre impératif de récitation — inclut
+  /// désormais l'intention d'ouverture et la Fatiha comme piliers à part
+  /// entière (forme complète), les versets de clôture restant fondus dans
+  /// le champ [WirdPillar.note] du pilier qu'ils suivent.
   final List<WirdPillar> pillars;
-
-  /// Déroulé complet recommandé (piliers + formules méritoires + du'a),
-  /// donné à titre d'exemple — peut varier légèrement d'un foyer à l'autre.
-  final List<WirdSequenceStep> sequence;
 
   /// Précision sur un nombre de répétitions variable selon le foyer.
   final String? repetitionsNote;

@@ -84,6 +84,14 @@ class _TasbihBody extends StatelessWidget {
             textDirection: TextDirection.rtl,
             style: AppTheme.sacredText(fontSize: 26, color: AppColors.gold),
           ),
+          if (pillar.note != null) ...[
+            const SizedBox(height: 8),
+            Text(
+              pillar.note!,
+              textAlign: TextAlign.center,
+              style: const TextStyle(fontSize: 12, color: AppColors.bronze),
+            ),
+          ],
           const SizedBox(height: 20),
           SegmentedButton<TasbihMode>(
             segments: const [

@@ -1323,46 +1323,72 @@ create index idx_wird_completions_wird_id on public.wird_completions (wird_id);
 -- 13. CONTENU INITIAL — WIRDS (données de référence, validées)
 -- ============================================================================
 -- Texte, translittération et traduction du document « At-Tijaniya — Module
--- Wirds », validé par un moqaddam référent du projet (Hadratou-l-Jouma fixé
--- à 1600 répétitions). Deux limites connues, héritées du document source et
--- listées dans ses "prochaines étapes" : la translittération de Salatoul
--- Fatihi n'est pas encore fixée (laissée NULL ci-dessous) et la vocalisation
--- exacte (tachkil) de Jawharatoul Kamal reste à revérifier mot à mot.
+-- Wirds », complété par la "forme complète et parfaite" de chaque wird
+-- (intention d'ouverture, Fatiha, piliers additionnels de la Hadratou-l-Jouma)
+-- décrite dans docs/Lazim-Etapes-Detaillees.md, docs/Wazifa-Etapes-Detaillees.md
+-- et docs/Hadratou-l-Jouma-Etapes-Detaillees.md, validés par le porteur de
+-- projet le 2026-08-12. Hadratou-l-Jouma : tahlil fixé à 1600 répétitions
+-- (le document source mentionnait 1000/1200/1600, et tidjaniya.com indique
+-- 1200 — 1600 reste la valeur explicitement retenue, reconfirmée malgré
+-- cette nouvelle source) ; le pilier "Nom Allah" est une cible fixe de 600
+-- répétitions, décision produit sans mécanique de calcul d'horaire de
+-- prière (voir wirds_content.dart pour la justification complète).
+--
+-- `arabic_text`/`transliteration`/`french_translation` dans cette table sont
+-- des libellés réservés à l'écran d'administration (jamais montrés au
+-- disciple, voir wird_recitation_repository.dart) — le texte affiché dans
+-- l'app vient exclusivement de wirds_content.dart. Deux limites connues,
+-- héritées du document source initial : la translittération de Salatoul
+-- Fatihi n'est pas fixée ici (laissée NULL) et la vocalisation exacte
+-- (tachkil) de Jawharatoul Kamal reste à revérifier mot à mot.
+--
+-- Alignement `order_index` ↔ position dans `Wird.pillars` (voir
+-- wird_recitation_repository.dart — mapping purement positionnel,
+-- order_index - 1 = index local) : migration
+-- `wird_steps_add_intention_fatiha_and_hadra_pillars` a réalignié les piliers
+-- existants (dont Jawharatoul Kamal, dont l'UUID n'a pas changé pour
+-- préserver la récitation audio déjà validée en production) après insertion
+-- de l'intention/Fatiha en tête de chaque wird.
 
 insert into public.wirds (key, name_ar, name_fr, frequency, description) values
-('lazim', 'اللازم', 'Lazim', 'daily', $$Wird obligatoire quotidien de tout disciple tijani, matin et soir. Composé de trois piliers récités dans cet ordre : Istighfar, Salatoul Fatihi, Tahlil.$$),
-('wazifa', 'الوظيفة', 'Wazifa', 'daily', $$Deuxième oraison obligatoire, à réciter au moins une fois par jour (deux fois de préférence), en assemblée si possible. Composée de quatre piliers : Istighfar, Salatoul Fatihi, Tahlil, Jawharatoul Kamal.$$),
-('hadratou_jouma', 'حضرة الجمعة', 'Hadratou-l-Jouma', 'weekly', $$Troisième oraison obligatoire, dhikr collectif hebdomadaire récité uniquement le vendredi entre la prière de l'Asr et celle du Maghreb. Aucun rattrapage possible en cas d'oubli du créneau.$$);
+('lazim', 'اللازم', 'Lazim', 'daily', $$Wird obligatoire quotidien de tout disciple tijani, matin et soir. Composé, dans sa forme complète, de : intention d'ouverture, Fatiha, puis les trois piliers Istighfar, Salatoul Fatihi, Tahlil.$$),
+('wazifa', 'الوظيفة', 'Wazifa', 'daily', $$Deuxième oraison obligatoire, à réciter au moins une fois par jour (deux fois de préférence), en assemblée si possible. Composée, dans sa forme complète, de : intention d'ouverture, Fatiha, puis les quatre piliers Istighfar, Salatoul Fatihi, Tahlil, Jawharatoul Kamal.$$),
+('hadratou_jouma', 'حضرة الجمعة', 'Hadratou-l-Jouma', 'weekly', $$Troisième oraison obligatoire, dhikr collectif hebdomadaire récité uniquement le vendredi entre la prière de l'Asr et celle du Maghreb. Aucun rattrapage possible en cas d'oubli du créneau. Forme complète : intention d'ouverture, Fatiha, Istighfar, Salatoul Fatihi, Tahlil (1600), Nom Allah (600).$$);
 
 -- LAZIM
 insert into public.wird_steps (wird_id, order_index, arabic_text, transliteration, french_translation, repetitions) values
 ((select id from public.wirds where key='lazim'), 1,
- $$أَسْتَغْفِرُ اللَّهَ$$, $$Astaghfirullah$$, $$Je demande pardon à Allah.$$, 100),
+ $$اللَّهُمَّ إِنِّي نَوَيْتُ تِلَاوَةَ هَذَا الْوِرْدِ$$, $$Allahoumma inni nawaytou tilawata hadha-l-wirdi...$$, $$Intention d'ouverture$$, 1),
 ((select id from public.wirds where key='lazim'), 2,
+ $$سُورَةُ الْفَاتِحَةِ$$, $$Al-Fatiha$$, $$La Fatiha$$, 1),
+((select id from public.wirds where key='lazim'), 3,
+ $$أَسْتَغْفِرُ اللَّهَ$$, $$Astaghfirullah$$, $$Je demande pardon à Allah.$$, 100),
+((select id from public.wirds where key='lazim'), 4,
  $$اللَّهُمَّ صَلِّ عَلَى سَيِّدِنَا مُحَمَّدٍ الْفَاتِحِ لِمَا أُغْلِقَ، وَالْخَاتِمِ لِمَا سَبَقَ، نَاصِرِ الْحَقِّ بِالْحَقِّ، وَالْهَادِي إِلَى صِرَاطِكَ الْمُسْتَقِيمِ، وَعَلَى آلِهِ حَقَّ قَدْرِهِ وَمِقْدَارِهِ الْعَظِيمِ$$,
  null,
  $$Ô Allah, prie sur notre maître Muhammad l'Ouvreur de ce qui était fermé, le Sceau de ce qui a précédé, celui qui secourt la vérité par la vérité, celui qui guide vers Ta voie droite, et sur sa famille, à la mesure de sa valeur et de son immense grandeur. (Salatoul Fatihi)$$,
  100),
-((select id from public.wirds where key='lazim'), 3,
- $$لَا إِلَهَ إِلَّا اللَّهُ$$, $$La ilaha illAllah$$, $$Il n'y a de divinité qu'Allah.$$, 100),
-((select id from public.wirds where key='lazim'), 4,
- $$مُحَمَّدٌ رَسُولُ اللَّهِ عَلَيْهِ سَلَامُ اللَّهِ$$, $$Muhammadun Rasoulullah, 'alayhi Salamoullah$$,
- $$Muhammad est le Messager d'Allah, sur lui la paix d'Allah. (formule de clôture, une fois)$$, 1);
+((select id from public.wirds where key='lazim'), 5,
+ $$لَا إِلَهَ إِلَّا اللَّهُ$$, $$La ilaha illAllah$$, $$Il n'y a de divinité qu'Allah.$$, 100);
 
 -- WAZIFA
 insert into public.wird_steps (wird_id, order_index, arabic_text, transliteration, french_translation, repetitions) values
 ((select id from public.wirds where key='wazifa'), 1,
+ $$اللَّهُمَّ إِنِّي نَوَيْتُ تِلَاوَةَ هَذَا الْوِرْدِ$$, $$Allahoumma inni nawaytou tilawata hadha-l-wirdi...$$, $$Intention d'ouverture$$, 1),
+((select id from public.wirds where key='wazifa'), 2,
+ $$سُورَةُ الْفَاتِحَةِ$$, $$Al-Fatiha$$, $$La Fatiha$$, 1),
+((select id from public.wirds where key='wazifa'), 3,
  $$أَسْتَغْفِرُ اللَّهَ الْعَظِيمَ الَّذِي لَا إِلَهَ إِلَّا هُوَ الْحَيُّ الْقَيُّومُ$$,
  $$Astaghfirullah al-'Adhim alladhi la ilaha illa Houwa-l-Hayyou-l-Qayyoum$$,
  $$Je demande pardon à Allah, l'Immense, il n'y a de divinité que Lui, le Vivant, le Subsistant par Lui-même.$$, 30),
-((select id from public.wirds where key='wazifa'), 2,
+((select id from public.wirds where key='wazifa'), 4,
  $$اللَّهُمَّ صَلِّ عَلَى سَيِّدِنَا مُحَمَّدٍ الْفَاتِحِ لِمَا أُغْلِقَ، وَالْخَاتِمِ لِمَا سَبَقَ، نَاصِرِ الْحَقِّ بِالْحَقِّ، وَالْهَادِي إِلَى صِرَاطِكَ الْمُسْتَقِيمِ، وَعَلَى آلِهِ حَقَّ قَدْرِهِ وَمِقْدَارِهِ الْعَظِيمِ$$,
  null,
  $$Ô Allah, prie sur notre maître Muhammad l'Ouvreur de ce qui était fermé, le Sceau de ce qui a précédé, celui qui secourt la vérité par la vérité, celui qui guide vers Ta voie droite, et sur sa famille, à la mesure de sa valeur et de son immense grandeur. (Salatoul Fatihi)$$,
  50),
-((select id from public.wirds where key='wazifa'), 3,
+((select id from public.wirds where key='wazifa'), 5,
  $$لَا إِلَهَ إِلَّا اللَّهُ$$, $$La ilaha illAllah$$, $$Il n'y a de divinité qu'Allah.$$, 100),
-((select id from public.wirds where key='wazifa'), 4,
+((select id from public.wirds where key='wazifa'), 6,
  $$اللَّهُمَّ صَلِّ وَسَلِّمْ عَلَى عَيْنِ الرَّحْمَةِ الرَّبَّانِيَّةِ وَالْيَاقُوتَةِ الْمُتَحَقِّقَةِ الْحَائِطَةِ بِمَرْكَزِ الْفُهُومِ وَالْمَعَانِي ❁ وَنُورِ الْأَكْوَانِ الْمُتَكَوِّنَةِ الْآدَمِي صَاحِبِ الْحَقِّ الرَّبَّانِي ❁ الْبَرْقِ الْأَسْطَعِ بِمُزُونِ الْأَرْبَاحِ الْمَالِئَةِ لِكُلِّ مُتَعَرِّضٍ مِنَ الْبُحُورِ وَالْأَوَانِي ❁ وَنُورِكَ اللَّامِعِ الَّذِي مَلَأْتَ بِهِ كَوْنَكَ الْحَائِطِ بِأَمْكِنَةِ الْمَكَانِي
 
 اللَّهُمَّ صَلِّ وَسَلِّمْ عَلَى عَيْنِ الْحَقِّ الَّتِي تَتَجَلَّى مِنْهَا عُرُوشُ الْحَقَائِقِ عَيْنِ الْمَعَارِفِ الْأَقْوَمِ صِرَاطِكَ التَّامِّ الْأَسْقَمِ
@@ -1375,10 +1401,21 @@ insert into public.wird_steps (wird_id, order_index, arabic_text, transliteratio
 -- HADRATOU-L-JOUMA
 insert into public.wird_steps (wird_id, order_index, arabic_text, transliteration, french_translation, repetitions) values
 ((select id from public.wirds where key='hadratou_jouma'), 1,
- $$لَا إِلَهَ إِلَّا اللَّهُ$$, $$La ilaha illAllah$$, $$Il n'y a de divinité qu'Allah.$$, 1600),
+ $$اللَّهُمَّ إِنِّي نَوَيْتُ تِلَاوَةَ هَذَا الْوِرْدِ$$, $$Allahoumma inni nawaytou tilawata hadha-l-wirdi...$$, $$Intention d'ouverture$$, 1),
 ((select id from public.wirds where key='hadratou_jouma'), 2,
- $$سَيِّدُنَا مُحَمَّدٌ رَسُولُ اللَّهِ عَلَيْهِ سَلَامُ اللَّهِ$$, $$Seyidouna Muhammadoun Rasoulullah, 'alayhi Salamoullah$$,
- $$Notre maître Muhammad est le Messager d'Allah, sur lui la paix d'Allah. (formule de clôture, une fois)$$, 1);
+ $$سُورَةُ الْفَاتِحَةِ$$, $$Al-Fatiha$$, $$La Fatiha$$, 1),
+((select id from public.wirds where key='hadratou_jouma'), 3,
+ $$أَسْتَغْفِرُ اللَّهَ الْعَظِيمَ الَّذِي لَا إِلَهَ إِلَّا هُوَ الْحَيُّ الْقَيُّومُ$$,
+ $$Astaghfirullah al-'Adhim alladhi la ilaha illa Houwa-l-Hayyou-l-Qayyoum$$,
+ $$Istighfar$$, 3),
+((select id from public.wirds where key='hadratou_jouma'), 4,
+ $$اللَّهُمَّ صَلِّ عَلَى سَيِّدِنَا مُحَمَّدٍ الْفَاتِحِ لِمَا أُغْلِقَ$$,
+ $$Allahoumma salli 'ala sayyidina Mouhammadin-il-Fatihi...$$,
+ $$Salatoul Fatihi$$, 3),
+((select id from public.wirds where key='hadratou_jouma'), 5,
+ $$لَا إِلَهَ إِلَّا اللَّهُ$$, $$La ilaha illAllah$$, $$Il n'y a de divinité qu'Allah.$$, 1600),
+((select id from public.wirds where key='hadratou_jouma'), 6,
+ $$اللَّهُ$$, $$Allah$$, $$Nom Allah$$, 600);
 
 -- ============================================================================
 -- 14. AMORÇAGE DU PREMIER MOUQADDAM FONDATEUR (modèle, à personnaliser)

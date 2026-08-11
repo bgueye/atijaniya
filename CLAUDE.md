@@ -1406,6 +1406,128 @@ embarqué. Écart mineur (l'admin dispose déjà de l'écran normal du disciple
 pour vérifier à l'oreille, comme fait ici), mais à garder en tête si
 `WirdRecitationsReviewScreen` est retouché.
 
+Forme complète des wirds (intention d'ouverture, Fatiha, versets de
+clôture, et piliers additionnels de la Hadratou-l-Jouma) intégrée aux trois
+wirds validés — jusque-là, l'app n'affichait que les piliers "obligatoires
+au minimum" (3 pour Lazim, 4 pour Wazifa, 1 pour Hadratou-l-Jouma), alors
+que `docs/Lazim-Etapes-Detaillees.md`, `docs/Wazifa-Etapes-Detaillees.md`
+et `docs/Hadratou-l-Jouma-Etapes-Detaillees.md` décrivent une forme plus
+complète. Ces trois documents, d'abord marqués "brouillon, non validé"
+puis complétés (texte arabe intégral de l'intention, sourcé sur
+tidjaniya.com) et **validés explicitement par le porteur de projet le
+2026-08-12** (même précédent que la silsila historique) — bandeaux de
+statut mis à jour en conséquence dans les trois fichiers. Décisions
+produit actées avec le porteur de projet : intention et Fatiha ajoutées
+comme piliers réels (comptés dans le Tasbih, pas seulement illustratifs)
+en tête des 3 wirds, Fatiha au texte coranique standard (universel, hors
+périmètre de la règle de validation propre à la Tariqa) ; Lazim confirme
+la clôture "Soubhana rabbika..." après CHAQUE pilier (istighfar, Salatoul
+Fatihi, tahlil), pas seulement une fois ; Hadratou-l-Jouma garde 1600
+répétitions pour le tahlil (reconfirmé deux fois malgré la découverte que
+tidjaniya.com indique 1200 — décision assumée) et gagne un second pilier
+"Nom Allah" à cible fixe de 600 répétitions (pas de mécanique par durée :
+l'app n'a et n'aura pas de calcul d'horaire de prière en V1) ainsi
+qu'Istighfar ×3 et Salatoul Fatihi ×3 (forme complète intégrale, ce wird
+n'avait jusqu'ici qu'un seul pilier). Toute la nouvelle translittération
+est normalisée au style non accentué déjà en place dans l'app. Les
+versets de clôture restent fondus dans le champ `note` du pilier concerné
+(comme déjà fait pour "Muhammadun Rasoulullah..." sur le Tahlil), plutôt
+que de devenir des piliers comptés séparés — limite le risque sur le
+mapping audio Supabase et reste cohérent avec le pattern déjà en place.
+
+Nouveaux piliers : `lazim` passe à 5 piliers, `wazifa` à 6, `hadratou_jouma`
+à 6 (`wirds_content.dart`, deux `const WirdPillar` partagés — intention et
+Fatiha — réutilisés par référence dans les 3 listes plutôt que triplés).
+`WirdSequenceStep`/`Wird.sequence` (`wird_models.dart`) et le bloc
+"Déroulé complet (exemple)" de `wird_detail_screen.dart` supprimés :
+devenus redondants une fois intention/Fatiha/clôtures réellement modélisés
+comme piliers, cette liste n'a jamais été lue par `TasbihController` ni le
+mapping audio. `tasbih_screen.dart` affiche désormais `pillar.note` sous
+la formule arabe (texte secondaire, même style que `_PillarCard`) : les
+clôtures sont visibles pendant la pratique, pas seulement dans le guide.
+Aucun changement de modèle nécessaire ailleurs : `WirdPillar.repetitions`
+(int non nullable) couvre déjà les étapes à une seule répétition
+(`repetitions: 1`), et `wird_progress_stats.dart`/`wird_completion_store.dart`/
+`wird_reminder_slots.dart` sont entièrement découplés de la forme des
+piliers (clés par `wird.id`/dates/fréquence uniquement).
+
+**Point de vigilance identifié et traité avant tout changement de
+contenu** : le mapping audio Supabase (`wird_recitations` ↔ pilier local,
+`wird_recitation_repository.dart`) est purement positionnel
+(`wird_steps.order_index - 1` = index local dans `Wird.pillars`), sans
+correspondance par nom/UUID — c'est exactement la même classe de bug déjà
+rencontrée une fois sur ce projet (migration
+`fix_wazifa_wird_steps_alignment`). Insérer intention/Fatiha en tête
+décale tous les index existants, avec un risque concret : la Wazifa a une
+vraie récitation validée en production (Jawharatoul Kamal, alors
+`order_index=4`). Migration Supabase
+`wird_steps_add_intention_fatiha_and_hadra_pillars` : suppression des 2
+lignes orphelines jamais modélisées localement (closing formula de Lazim
+et Hadratou-l-Jouma, sans récitation), décalage des `order_index` des
+lignes existantes (UPDATE sur les mêmes UUID, jamais delete+recreate — la
+ligne Jawharatoul Kamal passe de `order_index=4` à `6` sans jamais changer
+d'identité, préservant la clé étrangère `wird_recitations.wird_step_id`),
+puis insertion des nouvelles lignes (intention/Fatiha pour les 3 wirds,
+Istighfar/Salatoul Fatihi/Nom Allah en plus pour la Hadratou-l-Jouma).
+Vérifié avant/après par `execute_sql` : comptes par wird conformes
+(lazim=5, wazifa=6, hadratou_jouma=6), et surtout la récitation
+Jawharatoul Kamal résout bien vers `order_index=6` après migration — la
+régression la plus grave possible ici. `database/schema.sql` régénéré en
+conséquence (section `wird_steps`, même pratique que la précédente
+régénération post-`fix_wazifa_wird_steps_alignment`).
+
+Nouveau test de non-régression `test/wirds_content_test.dart` — gap réel
+identifié pendant la préparation de ce travail : le seul test existant
+sur le mapping audio (`wird_recitation_repository_test.dart`) utilise des
+fixtures synthétiques, jamais le vrai contenu de `wirds_content.dart`,
+donc ne peut pas détecter un décalage réel entre le corpus local et les
+lignes Supabase. Le nouveau test protège directement contre une
+régression du même type que `fix_wazifa_wird_steps_alignment`
+(`wazifa.pillars[5].transliteration` doit rester "Jawharatoul Kamal"),
+plus les comptes de piliers par wird et l'identité partagée des piliers
+intention/Fatiha entre les 3 wirds. `flutter analyze` et
+`flutter test --concurrency=1` (105 tests, dont les 5 nouveaux) tous
+verts.
+
+Validé en conditions réelles sur émulateur Android, compte admin réel
+`bgueye@gmail.com` (session persistée) : écran guide de Lazim — 5 piliers
+rendus correctement (Amiri/RTL, intention et Fatiha avec leur note,
+Fatiha "Texte intégral" affichant les 7 ayats, Istighfar/Salatoul
+Fatihi/Tahlil avec les nouvelles clôtures concaténées), section "Déroulé
+complet" confirmée disparue. Tasbih Lazim : "Pilier 1/5" puis "2/5"
+confirmés, note visible sous la formule arabe pendant la pratique (pas
+seulement dans le guide), comptage et "Pilier suivant" fonctionnels sur
+les nouveaux piliers intention (×1) et Fatiha (×1). **Vérification
+prioritaire** : écran guide Wazifa — barre de lecture passée de
+"Récitation audio bientôt disponible" à "Lecture audio du Wird" dès
+l'ouverture, pilier Jawharatoul Kamal (désormais 6ᵉ, après le décalage)
+affichant l'icône de lecture verte (pas l'icône grisée "pas de
+récitation"), lecture réelle déclenchée par tap confirmée en progression
+(`00:19 / 01:25`) — la récitation déjà validée en production n'a pas été
+mésattribuée par le décalage des piliers. Hadratou-l-Jouma : "Pilier 1/6"
+confirmé, bandeau `repetitionsNote` affichant "1600 répétitions du tahlil
+..., puis 600 répétitions du Nom Allah", piliers Tahlil (×1600, note
+inchangée) et Nom Allah (×600, nouvelle note) rendus correctement en fin
+de liste.
+
+**Écart transitoire noté, non corrigé** : en ouvrant le Tasbih de la
+Hadratou-l-Jouma pendant cette validation, le pilier 1 (désormais
+Intention, cible ×1) s'est affiché directement à "108 / 1" (déjà complet)
+au lieu de "0 / 1" — reprise d'une session `TasbihSession` locale
+persistée (`SharedPreferences`, clé par `wird.id` uniquement) datant d'une
+pratique réelle antérieure de l'ancien pilier unique (Tahlil ×1600, dont
+108 était une progression partielle légitime). `TasbihController._load()`
+ne vérifie que `pillarIndex < wird.pillars.length` avant de reprendre une
+session, pas que le `currentCount` sauvegardé reste cohérent avec la
+cible du pilier désormais à cet index — un décalage de piliers en tête de
+liste peut donc faire "hériter" un ancien compte à un nouveau pilier plus
+court. Sans conséquence fonctionnelle (le pilier s'affiche simplement déjà
+complet, un tap sur "Pilier suivant" et l'écart disparaît définitivement,
+propre à cet appareil/compte et à cette unique transition de contenu — pas
+un bug qui se reproduira en usage normal), mais à garder en tête si une
+future restructuration de piliers déplace à nouveau des positions déjà
+utilisées en pratique réelle.
+
 ## Commandes utiles
 - `flutter pub get`
 - `flutter analyze`
