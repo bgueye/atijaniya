@@ -1,3 +1,9 @@
 {
-  "recitations": []
+  "recitations": [
+    {
+      "audio_path": "wazifa/4.aac",
+      "asset_path": "assets/audio/wirds/wazifa_4.aac",
+      "content_version": 1
+    }
+  ]
 }

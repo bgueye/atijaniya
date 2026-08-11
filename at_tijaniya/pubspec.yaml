@@ -79,3 +79,4 @@ flutter:
   assets:
     - assets/branding/
     - assets/audio/manifest.json
+    - assets/audio/wirds/

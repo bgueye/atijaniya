@@ -1343,6 +1343,69 @@ en son temps, pour ne jamais publier de contenu de test même minimal) —
 donnée de test supprimée après coup, base reconfirmée à 0 ligne par
 `execute_sql`. `flutter analyze`/suite de tests complète tous verts.
 
+Premier vrai audio de wird ajouté et validé — Jawharatoul Kamal (Wazifa,
+4ᵉ pilier), fourni par le porteur de projet
+(`Jawharatulkamaal_duduken_1x.aac`, AAC-LC mono 44,1 kHz, ~85 secondes,
+suffixe "1x" = une seule récitation par fichier, cohérent avec la
+décision #8-1 "échantillon court"). Bug réel trouvé et corrigé **avant**
+d'insérer quoi que ce soit, en revérifiant pour de vrai l'hypothèse du
+sprint 2 ("position locale = `wird_steps.order_index`", jusque-là jamais
+vérifiée qu'approximativement) : `wird_steps` contenait une ligne
+supplémentaire par wird pour la formule de clôture ("Muhammadun
+Rasoulullah...", "Seyidouna Muhammadoun Rasoulullah...") que
+`wirds_content.dart` ne traite jamais comme un pilier séparé — elle est
+fondue dans la `note` du pilier précédent. Pour Lazim et Hadratou-l-Jouma,
+cette ligne en trop est la dernière (sans conséquence). **Pour Wazifa,
+elle était insérée avant Jawharatoul Kamal** (`order_index=4`, poussant
+Jawharatoul Kamal à `order_index=5`) : sans correction, l'audio se serait
+retrouvé attaché à la mauvaise ligne, et de toute façon jamais résolu par
+l'app (qui calcule `order_index` attendu à partir de la seule position
+locale). Corrigé par migration
+(`fix_wazifa_wird_steps_alignment`) : suppression de la ligne orpheline de
+Wazifa, renumérotation de Jawharatoul Kamal 5→4 — Lazim/Hadratou-l-Jouma
+laissés inchangés (leur ligne orpheline finale est inoffensive).
+`database/schema.sql` mis à jour en conséquence.
+
+Le fichier ne pouvait pas être mis en ligne dans le bucket Storage
+`wird-audio` (aucun outil disponible ne permet d'y écrire — les policies
+exigent un compte `is_admin` authentifié, hors de portée d'un simple appel
+HTTP avec la clé anon). Utilisé à la place exactement comme prévu par le
+sprint 4 : copié dans `assets/audio/wirds/wazifa_4.aac`, déclaré dans
+`pubspec.yaml`, référencé dans `assets/audio/manifest.json`
+(`audio_path: "wazifa/4.aac"`) — puis une ligne `wird_recitations` réelle
+insérée en base pour le bon `wird_step_id` (`brouillon` d'abord, puis
+`valide`, `validated_by`/`validated_at` renseignés). **Limite assumée** :
+`audio_path` ne correspond aujourd'hui à aucun fichier réel dans le bucket
+Storage — l'app ne fonctionne que parce que l'asset embarqué est présent
+dans CE build précis. Un appareil dont le cache serait vidé sans avoir
+cette version de l'app échouerait au téléchargement. Le porteur de projet
+devrait, quand possible, uploader aussi le fichier dans le bucket
+`wird-audio` (via Supabase Studio) pour la robustesse complète prévue par
+l'architecture — pas fait ici, hors de portée des outils disponibles côté
+modèle.
+
+Validé en conditions réelles sur émulateur Android avec le compte réel
+`bgueye@gmail.com` : écran "Guide du Wird" de Wazifa — barre de lecture du
+bas passée de "Récitation audio bientôt disponible" à "Lecture audio du
+Wird" (dorée), pilier Jawharatoul Kamal affichant l'icône de lecture verte
+(au lieu de l'icône grisée "pas de récitation") dès l'ouverture de l'écran
+— confirme la copie automatique depuis l'asset embarqué au chargement
+(`WirdPillarAudioController._loadRecitations`), sans action du disciple.
+Lecture réelle déclenchée par tap : pilier mis en évidence (bordure dorée,
+défilement automatique), barre du bas affichant "Jawharatoul Kamal" et la
+progression réelle (`00:23 / 01:25`, curseur avançant). Pilier précédent
+(Tahlil) confirmé inchangé (icône grisée) — pas de fuite d'attribution
+malgré la correction de `wird_steps`.
+
+**Écart noté, non corrigé** : le lecteur de prévisualisation de
+`WirdRecitationsReviewScreen` (sprint 5bis) ne connaît que le
+téléchargement Storage (`downloadAudioBytes`), pas le manifeste d'assets
+— prévisualiser cette récitation depuis l'écran de review afficherait donc
+"Lecture impossible" même si elle est en réalité disponible via l'asset
+embarqué. Écart mineur (l'admin dispose déjà de l'écran normal du disciple
+pour vérifier à l'oreille, comme fait ici), mais à garder en tête si
+`WirdRecitationsReviewScreen` est retouché.
+
 ## Commandes utiles
 - `flutter pub get`
 - `flutter analyze`

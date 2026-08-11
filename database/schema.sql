@@ -1363,9 +1363,6 @@ insert into public.wird_steps (wird_id, order_index, arabic_text, transliteratio
 ((select id from public.wirds where key='wazifa'), 3,
  $$لَا إِلَهَ إِلَّا اللَّهُ$$, $$La ilaha illAllah$$, $$Il n'y a de divinité qu'Allah.$$, 100),
 ((select id from public.wirds where key='wazifa'), 4,
- $$مُحَمَّدٌ رَسُولُ اللَّهِ عَلَيْهِ سَلَامُ اللَّهِ$$, $$Muhammadun Rasoulullah, 'alayhi Salamoullah$$,
- $$Muhammad est le Messager d'Allah, sur lui la paix d'Allah. (formule de clôture, une fois)$$, 1),
-((select id from public.wirds where key='wazifa'), 5,
  $$اللَّهُمَّ صَلِّ وَسَلِّمْ عَلَى عَيْنِ الرَّحْمَةِ الرَّبَّانِيَّةِ وَالْيَاقُوتَةِ الْمُتَحَقِّقَةِ الْحَائِطَةِ بِمَرْكَزِ الْفُهُومِ وَالْمَعَانِي ❁ وَنُورِ الْأَكْوَانِ الْمُتَكَوِّنَةِ الْآدَمِي صَاحِبِ الْحَقِّ الرَّبَّانِي ❁ الْبَرْقِ الْأَسْطَعِ بِمُزُونِ الْأَرْبَاحِ الْمَالِئَةِ لِكُلِّ مُتَعَرِّضٍ مِنَ الْبُحُورِ وَالْأَوَانِي ❁ وَنُورِكَ اللَّامِعِ الَّذِي مَلَأْتَ بِهِ كَوْنَكَ الْحَائِطِ بِأَمْكِنَةِ الْمَكَانِي
 
 اللَّهُمَّ صَلِّ وَسَلِّمْ عَلَى عَيْنِ الْحَقِّ الَّتِي تَتَجَلَّى مِنْهَا عُرُوشُ الْحَقَائِقِ عَيْنِ الْمَعَارِفِ الْأَقْوَمِ صِرَاطِكَ التَّامِّ الْأَسْقَمِ
