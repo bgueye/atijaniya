@@ -57,6 +57,49 @@ class WirdRecitationAsset {
   }
 }
 
+/// Récitation en `brouillon`, avec assez de contexte (wird + pilier) pour
+/// l'écran de review admin (`WirdRecitationsReviewScreen`,
+/// docs/decision-gestion-audio-wirds.md §7) — `WirdRecitation` seul ne
+/// suffit pas ici : la liste mélange des piliers de wirds différents.
+class WirdRecitationDraft {
+  const WirdRecitationDraft({
+    required this.id,
+    required this.reciterName,
+    required this.audioPath,
+    required this.contentVersion,
+    required this.wirdNameFrench,
+    required this.pillarLabel,
+    this.durationSeconds,
+  });
+
+  final String id;
+  final String reciterName;
+  final String audioPath;
+  final int contentVersion;
+  final String wirdNameFrench;
+
+  /// Translittération du pilier (ou, à défaut, son texte arabe) — juste de
+  /// quoi identifier lequel des piliers du wird est concerné, pas un
+  /// affichage complet du texte religieux (hors sujet pour cet écran).
+  final String pillarLabel;
+
+  final int? durationSeconds;
+
+  factory WirdRecitationDraft.fromRow(Map<String, dynamic> row) {
+    final step = row['wird_steps'] as Map<String, dynamic>;
+    final wird = step['wirds'] as Map<String, dynamic>;
+    return WirdRecitationDraft(
+      id: row['id'] as String,
+      reciterName: row['reciter_name'] as String,
+      audioPath: row['audio_path'] as String,
+      contentVersion: row['content_version'] as int,
+      durationSeconds: row['duration_seconds'] as int?,
+      wirdNameFrench: wird['name_fr'] as String,
+      pillarLabel: (step['transliteration'] as String?) ?? (step['arabic_text'] as String),
+    );
+  }
+}
+
 /// État de disponibilité audio d'un pilier, tel qu'exposé à l'écran "Guide
 /// du Wird" — combine "existe-t-il une récitation validée ?" et "est-elle
 /// déjà téléchargée sur l'appareil ?" (docs/decision-gestion-audio-wirds.md §4).

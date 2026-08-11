@@ -53,6 +53,41 @@ class WirdRecitationRepository {
   Future<List<int>> downloadAudioBytes(String audioPath) {
     return SupabaseConfig.client.storage.from('wird-audio').download(audioPath);
   }
+
+  /// Récitations en `brouillon`, pour l'écran de review admin
+  /// (`WirdRecitationsReviewScreen`). La RLS `wird_recitations_read_valid_or_admin`
+  /// ne renvoie ces lignes qu'à un compte `is_admin` — un compte non-admin
+  /// qui appellerait cette méthode par erreur obtient une liste vide, jamais
+  /// les brouillons eux-mêmes. Embarque le wird et le pilier concernés
+  /// (`wird_steps`/`wirds`) en un aller-retour, nécessaires pour identifier
+  /// la récitation à l'écran.
+  Future<List<WirdRecitationDraft>> fetchDraftRecitations() async {
+    final rows = await SupabaseConfig.client
+        .from('wird_recitations')
+        .select(
+          'id, reciter_name, audio_path, content_version, duration_seconds, '
+          'wird_steps!inner(order_index, transliteration, arabic_text, wirds!inner(name_fr))',
+        )
+        .eq('content_status', 'brouillon')
+        .order('created_at');
+    return (rows as List)
+        .map((row) => WirdRecitationDraft.fromRow(row as Map<String, dynamic>))
+        .toList();
+  }
+
+  /// Fait passer une récitation de "brouillon" à "valide" — la RLS
+  /// `wird_recitations_admin_update` exige `is_admin` côté serveur, donc
+  /// échoue pour tout autre compte même si cette méthode était appelée par
+  /// erreur. Renseigne `validated_by`/`validated_at` (trace d'audit, colonnes
+  /// dédiées du schéma — §2 du document de décision).
+  Future<void> validateRecitation(String recitationId) async {
+    final userId = SupabaseConfig.client.auth.currentUser?.id;
+    await SupabaseConfig.client.from('wird_recitations').update({
+      'content_status': 'valide',
+      'validated_by': userId,
+      'validated_at': DateTime.now().toUtc().toIso8601String(),
+    }).eq('id', recitationId);
+  }
 }
 
 /// Logique pure (sans réseau, testée dans `test/wird_recitation_repository_test.dart`) :

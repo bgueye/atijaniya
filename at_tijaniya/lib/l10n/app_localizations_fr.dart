@@ -234,6 +234,46 @@ class AppLocalizationsFr extends AppLocalizations {
   String get wirdFreeNewCounterButton => 'Nouveau compteur';
 
   @override
+  String get wirdRecitationsReviewButton => 'Récitations à valider';
+
+  @override
+  String get wirdRecitationsReviewTitle => 'Récitations à valider';
+
+  @override
+  String get wirdRecitationsReviewEmpty =>
+      'Aucune récitation en attente de validation.';
+
+  @override
+  String get wirdRecitationsReviewLoadError =>
+      'Impossible de charger les récitations en attente.';
+
+  @override
+  String get wirdRecitationsReviewRetry => 'Réessayer';
+
+  @override
+  String get wirdRecitationsReviewValidate => 'Valider';
+
+  @override
+  String get wirdRecitationsReviewConfirmTitle => 'Valider cette récitation ?';
+
+  @override
+  String get wirdRecitationsReviewConfirmBody =>
+      'Elle deviendra audible par tous les disciples dans l\'app.';
+
+  @override
+  String get wirdRecitationsReviewConfirmAction => 'Valider';
+
+  @override
+  String get wirdRecitationsReviewCancel => 'Annuler';
+
+  @override
+  String get wirdRecitationsReviewSuccess => 'Récitation validée et publiée.';
+
+  @override
+  String get wirdRecitationsReviewPreviewError =>
+      'Lecture impossible — vérifiez votre connexion.';
+
+  @override
   String get tariqaConditionsCardTitle => 'Conditions de la Tariqa';
 
   @override

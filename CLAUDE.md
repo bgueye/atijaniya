@@ -1308,6 +1308,41 @@ d'assets vide au build — à ajouter avec le premier vrai fichier audio
 la même raison qu'au sprint 3 (manifeste vide → chemin inerte,
 comportement déjà validé au sprint 2).
 
+Écran d'administration pour la validation audio (sprint 5bis, anticipé —
+le porteur de projet a préféré un écran plutôt que d'attendre le premier
+lot de contenu et de passer par l'éditeur SQL, contrairement à la
+recommandation §8-2 initiale du document de décision), même session :
+`WirdRecitationsReviewScreen`
+(`lib/features/wird/presentation/wird_recitations_review_screen.dart`),
+accessible depuis une carte "Récitations à valider" en haut de
+`WirdListScreen`, visible seulement si `isAdminProvider` vaut `true` —
+même principe que `FiguresReviewScreen` (`figures_review_screen.dart`) :
+"mouqaddam vérifié" n'accorde aucun droit ici, seul `profiles.is_admin`
+compte. `WirdRecitationRepository.fetchDraftRecitations()` embarque wird
+et pilier (`wird_steps!inner(..., wirds!inner(name_fr))`, deux niveaux
+d'embedding PostgREST) en un aller-retour ; `validateRecitation()`
+renseigne aussi `validated_by`/`validated_at` (colonnes du schéma jusque-là
+jamais utilisées côté client, contrairement à `figures` qui n'a pas ces
+colonnes). Écoute d'un brouillon via un lecteur de prévisualisation dédié
+(fichier temporaire, `getTemporaryDirectory()`) — jamais via
+`WirdRecitationDownloadStore`, le cache réservé au contenu déjà validé
+côté disciple.
+
+Validé en conditions réelles sur émulateur Android avec le compte admin
+réel `bgueye@gmail.com` : état vide honnête confirmé (base réellement
+vide) ; puis avec une ligne de test temporaire insérée par SQL
+(`is_default = false`, donc jamais visible du disciple même validée) —
+liste affichant correctement "Lazim — Astaghfirullah" (wird + pilier) et
+"Récitant de test QA", aperçu audio échouant proprement avec le message
+dédié ("Lecture impossible — vérifiez votre connexion.", chemin factice
+inexistant en Storage — confirme aussi que l'erreur de téléchargement de
+`ensureDownloaded`/prévisualisation se comporte comme prévu), boîte de
+confirmation "Valider cette récitation ?" fonctionnelle. Annulation testée
+plutôt que la validation réelle (même principe que `FiguresReviewScreen`
+en son temps, pour ne jamais publier de contenu de test même minimal) —
+donnée de test supprimée après coup, base reconfirmée à 0 ligne par
+`execute_sql`. `flutter analyze`/suite de tests complète tous verts.
+
 ## Commandes utiles
 - `flutter pub get`
 - `flutter analyze`

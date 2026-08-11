@@ -396,12 +396,43 @@ Détail complet : voir CLAUDE.md. Résumé :
   d'assets vide au build. À ajouter avec le premier vrai fichier audio
   (sprint 5), en même temps qu'une entrée dans le manifeste.
 
+### Sprint 5bis — Écran d'administration pour la validation — **fait**
+
+Anticipé plus tôt que prévu : le §7/étape 3 laissait le choix entre un
+écran minimal et l'éditeur SQL Supabase (recommandation §8-2 : SQL
+suffisant en V1) — le porteur de projet a préféré l'écran, construit tout
+de suite plutôt que d'attendre le sprint 5. Détail complet : voir
+CLAUDE.md. Résumé :
+
+- `WirdRecitationsReviewScreen` (accessible depuis `WirdListScreen` via
+  une carte "Récitations à valider", visible seulement si `isAdminProvider`
+  vaut `true` — même principe que `FiguresReviewScreen`, "mouqaddam
+  vérifié" n'accorde aucun droit ici) liste les récitations `brouillon`
+  (`WirdRecitationRepository.fetchDraftRecitations()`, embarque wird +
+  pilier en un aller-retour) avec un lecteur de prévisualisation (fichier
+  temporaire, jamais le cache disciple) et un bouton "Valider" avec
+  confirmation, qui renseigne aussi `validated_by`/`validated_at` (colonnes
+  du schéma jusque-là jamais utilisées côté client).
+- Validé en conditions réelles sur émulateur Android avec le compte admin
+  réel (`bgueye@gmail.com`) : état vide honnête confirmé (aucune ligne en
+  base), puis avec une ligne de test temporaire insérée par SQL
+  (`is_default = false`, jamais visible du disciple même une fois validée)
+  — liste affichant correctement "Lazim — Astaghfirullah" + nom du
+  récitant, aperçu audio échouant proprement ("Lecture impossible…", chemin
+  factice inexistant en Storage), boîte de confirmation "Valider cette
+  récitation ?" fonctionnelle. Annulation testée plutôt que la validation
+  réelle (même principe que `FiguresReviewScreen` en son temps) — donnée de
+  test supprimée après coup, base reconfirmée à 0 ligne.
+
 ### Sprint 5 — Premier lot de contenu (opérationnel, pas de code)
 
-- Upload + validation du premier lot (Lazim en priorité) via le workflow
-  §7 (SQL Supabase, pas d'écran d'admin dédié en V1, recommandation §8-2
-  retenue).
-- Ne peut démarrer qu'après la décision #8-1.
+- Upload du premier lot (Lazim en priorité) dans le bucket `wird-audio` +
+  insertion des lignes `wird_recitations` correspondantes (SQL ou upload
+  direct Supabase Storage) — reste un geste humain, pas du code.
+- Validation ensuite via `WirdRecitationsReviewScreen` (sprint 5bis,
+  au-dessus) plutôt que l'éditeur SQL — mise à jour par rapport à la
+  recommandation §8-2 initiale.
+- Pouvait démarrer dès la décision #8-1 tranchée (2026-08-11).
 
 ### Hors-sprint, en parallèle
 

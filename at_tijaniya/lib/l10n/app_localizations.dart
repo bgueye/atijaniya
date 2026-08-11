@@ -512,6 +512,78 @@ abstract class AppLocalizations {
   /// **'Nouveau compteur'**
   String get wirdFreeNewCounterButton;
 
+  /// No description provided for @wirdRecitationsReviewButton.
+  ///
+  /// In fr, this message translates to:
+  /// **'Récitations à valider'**
+  String get wirdRecitationsReviewButton;
+
+  /// No description provided for @wirdRecitationsReviewTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Récitations à valider'**
+  String get wirdRecitationsReviewTitle;
+
+  /// No description provided for @wirdRecitationsReviewEmpty.
+  ///
+  /// In fr, this message translates to:
+  /// **'Aucune récitation en attente de validation.'**
+  String get wirdRecitationsReviewEmpty;
+
+  /// No description provided for @wirdRecitationsReviewLoadError.
+  ///
+  /// In fr, this message translates to:
+  /// **'Impossible de charger les récitations en attente.'**
+  String get wirdRecitationsReviewLoadError;
+
+  /// No description provided for @wirdRecitationsReviewRetry.
+  ///
+  /// In fr, this message translates to:
+  /// **'Réessayer'**
+  String get wirdRecitationsReviewRetry;
+
+  /// No description provided for @wirdRecitationsReviewValidate.
+  ///
+  /// In fr, this message translates to:
+  /// **'Valider'**
+  String get wirdRecitationsReviewValidate;
+
+  /// No description provided for @wirdRecitationsReviewConfirmTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Valider cette récitation ?'**
+  String get wirdRecitationsReviewConfirmTitle;
+
+  /// No description provided for @wirdRecitationsReviewConfirmBody.
+  ///
+  /// In fr, this message translates to:
+  /// **'Elle deviendra audible par tous les disciples dans l\'app.'**
+  String get wirdRecitationsReviewConfirmBody;
+
+  /// No description provided for @wirdRecitationsReviewConfirmAction.
+  ///
+  /// In fr, this message translates to:
+  /// **'Valider'**
+  String get wirdRecitationsReviewConfirmAction;
+
+  /// No description provided for @wirdRecitationsReviewCancel.
+  ///
+  /// In fr, this message translates to:
+  /// **'Annuler'**
+  String get wirdRecitationsReviewCancel;
+
+  /// No description provided for @wirdRecitationsReviewSuccess.
+  ///
+  /// In fr, this message translates to:
+  /// **'Récitation validée et publiée.'**
+  String get wirdRecitationsReviewSuccess;
+
+  /// No description provided for @wirdRecitationsReviewPreviewError.
+  ///
+  /// In fr, this message translates to:
+  /// **'Lecture impossible — vérifiez votre connexion.'**
+  String get wirdRecitationsReviewPreviewError;
+
   /// No description provided for @tariqaConditionsCardTitle.
   ///
   /// In fr, this message translates to:

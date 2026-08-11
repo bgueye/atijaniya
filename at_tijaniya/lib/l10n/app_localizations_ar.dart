@@ -229,6 +229,46 @@ class AppLocalizationsAr extends AppLocalizations {
   String get wirdFreeNewCounterButton => 'عداد جديد';
 
   @override
+  String get wirdRecitationsReviewButton => 'تلاوات قيد التحقق';
+
+  @override
+  String get wirdRecitationsReviewTitle => 'تلاوات قيد التحقق';
+
+  @override
+  String get wirdRecitationsReviewEmpty => 'لا توجد تلاوة في انتظار التحقق.';
+
+  @override
+  String get wirdRecitationsReviewLoadError =>
+      'تعذّر تحميل التلاوات قيد الانتظار.';
+
+  @override
+  String get wirdRecitationsReviewRetry => 'إعادة المحاولة';
+
+  @override
+  String get wirdRecitationsReviewValidate => 'تحقّق';
+
+  @override
+  String get wirdRecitationsReviewConfirmTitle =>
+      'تأكيد التحقق من هذه التلاوة؟';
+
+  @override
+  String get wirdRecitationsReviewConfirmBody =>
+      'ستصبح مسموعة لجميع المريدين في التطبيق.';
+
+  @override
+  String get wirdRecitationsReviewConfirmAction => 'تحقّق';
+
+  @override
+  String get wirdRecitationsReviewCancel => 'إلغاء';
+
+  @override
+  String get wirdRecitationsReviewSuccess => 'تم التحقق من التلاوة ونشرها.';
+
+  @override
+  String get wirdRecitationsReviewPreviewError =>
+      'تعذّر التشغيل — تحقّق من اتصالك.';
+
+  @override
   String get tariqaConditionsCardTitle => 'شروط الطريقة';
 
   @override
