@@ -63,6 +63,7 @@ class KhadaraEvent {
     this.endsAt,
     this.latitude,
     this.longitude,
+    this.createdBy,
   });
 
   final String id;
@@ -79,6 +80,11 @@ class KhadaraEvent {
   final double? latitude;
   final double? longitude;
 
+  /// Auteur de l'évènement (`events.created_by`, nullable — un évènement
+  /// "système" créé avant cette fonctionnalité peut ne pas en avoir).
+  /// Détermine, avec `canManageEvent`, qui peut modifier/supprimer.
+  final String? createdBy;
+
   bool get hasLocation => latitude != null && longitude != null;
 
   factory KhadaraEvent.fromRow(Map<String, dynamic> row) {
@@ -94,8 +100,20 @@ class KhadaraEvent {
       endsAt: row['ends_at'] != null ? DateTime.parse(row['ends_at'] as String).toLocal() : null,
       latitude: (row['latitude'] as num?)?.toDouble(),
       longitude: (row['longitude'] as num?)?.toDouble(),
+      createdBy: row['created_by'] as String?,
     );
   }
+}
+
+/// Un compte peut modifier/supprimer un évènement s'il est administrateur,
+/// ou s'il en est l'auteur (`events.created_by`) — reflet côté client des
+/// RLS `events_owner_or_admin_update`/`_delete` ; la RLS reste la source de
+/// vérité en cas de désaccord (ex. profil rechargé après une modification
+/// serveur). Logique pure, testable sans Riverpod ni Supabase — même esprit
+/// que `classifyAuthError` (`auth/domain/auth_error_message.dart`).
+bool canManageEvent(KhadaraEvent event, {required String? userId, required bool isAdmin}) {
+  if (isAdmin) return true;
+  return userId != null && userId == event.createdBy;
 }
 
 /// Direct (`live_streams`) — "Lecteur natif + agrégation de flux externes"

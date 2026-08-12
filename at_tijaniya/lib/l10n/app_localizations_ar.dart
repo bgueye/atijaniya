@@ -338,6 +338,75 @@ class AppLocalizationsAr extends AppLocalizations {
   String get khadaraEventTypeOther => 'أخرى';
 
   @override
+  String get khadaraCreateEventButton => 'إنشاء مناسبة';
+
+  @override
+  String get khadaraEditEventTooltip => 'تعديل';
+
+  @override
+  String get khadaraDeleteEventTooltip => 'حذف';
+
+  @override
+  String get khadaraDeleteEventConfirmTitle => 'حذف هذه المناسبة؟';
+
+  @override
+  String get khadaraDeleteEventConfirmBody =>
+      'هذا الإجراء نهائي. سيتم أيضًا فصل الشخصيات التاريخية المرتبطة بهذه المناسبة.';
+
+  @override
+  String get khadaraDeleteEventConfirmAction => 'حذف';
+
+  @override
+  String get khadaraDeleteEventBlockedByLiveStream =>
+      'تعذّر حذف هذه المناسبة: لا يزال هناك بث مباشر مرتبط بها.';
+
+  @override
+  String get khadaraDeleteEventError => 'تعذّر حذف هذه المناسبة.';
+
+  @override
+  String get eventFormCreateTitle => 'مناسبة جديدة';
+
+  @override
+  String get eventFormEditTitle => 'تعديل المناسبة';
+
+  @override
+  String get eventFormTitleLabel => 'العنوان';
+
+  @override
+  String get eventFormTitleRequired => 'العنوان إلزامي.';
+
+  @override
+  String get eventFormDescriptionLabel => 'الوصف';
+
+  @override
+  String get eventFormTypeLabel => 'نوع المناسبة';
+
+  @override
+  String get eventFormStartsAtLabel => 'تاريخ ووقت البداية';
+
+  @override
+  String get eventFormStartsAtRequired => 'تاريخ البداية إلزامي.';
+
+  @override
+  String get eventFormPickDateTime => 'اختيار تاريخ ووقت';
+
+  @override
+  String get eventFormEndsAtLabel => 'تاريخ ووقت النهاية (اختياري)';
+
+  @override
+  String get eventFormEndsAtInvalid =>
+      'يجب أن يكون تاريخ النهاية بعد تاريخ البداية.';
+
+  @override
+  String get eventFormZawiyaLabel => 'الزاوية';
+
+  @override
+  String get eventFormSave => 'حفظ';
+
+  @override
+  String get eventFormSaveError => 'تعذّر حفظ المناسبة.';
+
+  @override
   String get khadaraUpcomingEventsAtZawiya => 'المناسبات القادمة';
 
   @override

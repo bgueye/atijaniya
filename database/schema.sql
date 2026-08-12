@@ -975,9 +975,36 @@ create policy zawiyas_admin_update on public.zawiyas for update using (public.is
 create policy zawiyas_admin_delete on public.zawiyas for delete using (public.is_admin((select auth.uid())));
 
 create policy events_read_all on public.events for select using (true);
-create policy events_authenticated_create on public.events for insert with check ((select auth.uid()) is not null);
+-- Admin, ou mouqaddam vérifié créant un évènement en son propre nom pour SA
+-- zawiya de rattachement (profiles.zawiya_id) — exception explicite et
+-- scopée aux évènements Khadara à la règle "le statut mouqaddam n'accorde
+-- aucune permission technique" (CLAUDE.md), actée avec le porteur de projet.
+-- Remplace events_authenticated_create (trop permissif : n'importe quel
+-- utilisateur connecté), migration
+-- restrict_events_create_update_to_admin_or_own_zawiya_mouqaddam.
+create policy events_create_admin_or_own_zawiya_mouqaddam on public.events for insert
+  with check (
+    public.is_admin((select auth.uid()))
+    or (
+      public.is_verified_mouqaddam((select auth.uid()))
+      and created_by = (select auth.uid())
+      and zawiya_id = (select p.zawiya_id from public.profiles p where p.user_id = (select auth.uid()))
+    )
+  );
+-- WITH CHECK ajouté (même migration) : admin illimité ; le créateur non-admin
+-- ne peut garder son évènement que sur SA zawiya actuelle, pour empêcher de
+-- le réassigner à une autre zawiya via édition (contournerait sinon la
+-- contrainte de création ci-dessus). USING (qui peut tenter la
+-- modification) inchangé.
 create policy events_owner_or_admin_update on public.events for update
-  using ((select auth.uid()) = created_by or public.is_admin((select auth.uid())));
+  using ((select auth.uid()) = created_by or public.is_admin((select auth.uid())))
+  with check (
+    public.is_admin((select auth.uid()))
+    or (
+      (select auth.uid()) = created_by
+      and zawiya_id = (select p.zawiya_id from public.profiles p where p.user_id = (select auth.uid()))
+    )
+  );
 create policy events_owner_or_admin_delete on public.events for delete
   using ((select auth.uid()) = created_by or public.is_admin((select auth.uid())));
 

@@ -6,6 +6,7 @@ import '../../../core/theme/app_colors.dart';
 import '../../../l10n/app_localizations.dart';
 import '../domain/khadara_models.dart';
 import 'event_detail_screen.dart';
+import 'event_form_screen.dart';
 import 'khadara_format.dart';
 import 'khadara_providers.dart';
 import 'khadara_understanding_screen.dart';
@@ -82,23 +83,36 @@ class _EventsTab extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context)!;
     final events = ref.watch(upcomingEventsProvider);
+    final canCreate = ref.watch(canCreateEventProvider);
 
-    return _AsyncSection<KhadaraEvent>(
-      value: events,
-      emptyMessage: l10n.khadaraNoEvents,
-      onRetry: () => ref.invalidate(upcomingEventsProvider),
-      itemBuilder: (context, event) => Card(
-        child: ListTile(
-          leading: Icon(khadaraEventTypeIcon(event.type), color: AppColors.emerald),
-          title: Text(event.title),
-          subtitle: Text(
-            event.zawiyaName != null
-                ? '${formatKhadaraDateTime(event.startsAt)} · ${event.zawiyaName}'
-                : formatKhadaraDateTime(event.startsAt),
-          ),
-          trailing: const Icon(Icons.chevron_right, color: AppColors.bronze),
-          onTap: () => Navigator.of(context).push(
-            MaterialPageRoute(builder: (_) => EventDetailScreen(event: event)),
+    return Scaffold(
+      floatingActionButton: canCreate
+          ? FloatingActionButton.extended(
+              onPressed: () => Navigator.of(context).push(
+                MaterialPageRoute(builder: (_) => const EventFormScreen()),
+              ),
+              icon: const Icon(Icons.add),
+              label: Text(l10n.khadaraCreateEventButton),
+            )
+          : null,
+      body: _AsyncSection<KhadaraEvent>(
+        value: events,
+        emptyMessage: l10n.khadaraNoEvents,
+        onRetry: () => ref.invalidate(upcomingEventsProvider),
+        padding: const EdgeInsets.fromLTRB(16, 16, 16, 88),
+        itemBuilder: (context, event) => Card(
+          child: ListTile(
+            leading: Icon(khadaraEventTypeIcon(event.type), color: AppColors.emerald),
+            title: Text(event.title),
+            subtitle: Text(
+              event.zawiyaName != null
+                  ? '${formatKhadaraDateTime(event.startsAt)} · ${event.zawiyaName}'
+                  : formatKhadaraDateTime(event.startsAt),
+            ),
+            trailing: const Icon(Icons.chevron_right, color: AppColors.bronze),
+            onTap: () => Navigator.of(context).push(
+              MaterialPageRoute(builder: (_) => EventDetailScreen(event: event)),
+            ),
           ),
         ),
       ),
@@ -235,12 +249,17 @@ class _AsyncSection<T> extends StatelessWidget {
     required this.itemBuilder,
     required this.emptyMessage,
     required this.onRetry,
+    this.padding = const EdgeInsets.all(16),
   });
 
   final AsyncValue<List<T>> value;
   final Widget Function(BuildContext, T) itemBuilder;
   final String emptyMessage;
   final VoidCallback onRetry;
+
+  /// Padding de la liste de résultats — personnalisable pour laisser de la
+  /// place à un FAB (voir `_EventsTab`) sans affecter les autres onglets.
+  final EdgeInsetsGeometry padding;
 
   @override
   Widget build(BuildContext context) {
@@ -270,7 +289,7 @@ class _AsyncSection<T> extends StatelessWidget {
               ),
             )
           : ListView.builder(
-              padding: const EdgeInsets.all(16),
+              padding: padding,
               itemCount: items.length,
               itemBuilder: (context, i) => itemBuilder(context, items[i]),
             ),

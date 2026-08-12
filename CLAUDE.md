@@ -62,6 +62,11 @@ disciple, avec un réglage opt-in distinct pour "disponible comme parrain". Ce s
 aucune permission technique (modération, contenu, administration de zawiya) — voir
 `docs/01-perimetre-fonctionnel.md` § 5.4.2 et § 6.
 
+**Unique exception actée, scopée et datée** (2026-08-13) : la gestion des évènements Khadara
+(créer/modifier/supprimer, voir paragraphe "Gestion des évènements Khadara" plus bas) — décision
+explicite du porteur de projet, à ne pas généraliser par analogie à d'autres fonctionnalités sans
+nouvelle confirmation explicite.
+
 ## Écrans et priorités
 Liste complète des écrans par module et par priorité (P0 à P3) : `docs/03-architecture-ecrans.md`.
 Développer dans l'ordre des priorités sauf indication contraire.
@@ -1599,6 +1604,115 @@ français à la fin de la session. `flutter analyze` et
 `flutter test --concurrency=1` (105 tests, dont `community_models_test.dart`
 adapté à la résolution par relation embarquée plutôt que par paramètre)
 tous verts.
+
+Gestion des évènements Khadara par admin ou mouqaddam vérifié (module Khadara,
+complément à l'écran "Calendrier des évènements") fonctionnelle — première
+fonctionnalité d'écriture cliente sur `public.events` (jusque-là lecture
+seule côté app, création/édition uniquement par SQL direct).
+
+**Exception explicite et scopée à cette seule fonctionnalité** à la règle
+impérative "le statut mouqaddam n'accorde aucune permission technique" (voir
+plus haut, § 5.4.2) — actée avec le porteur de projet le 2026-08-13, à ne
+pas généraliser à d'autres modules sans nouvelle confirmation explicite.
+Deux garde-fous validés en même temps : un mouqaddam ne peut créer/garder un
+évènement que pour **sa propre zawiya de rattachement** (`profiles.zawiya_id`),
+et ne peut modifier/supprimer que les évènements qu'il a lui-même créés ; un
+admin (`profiles.is_admin`) n'a aucune de ces deux restrictions.
+
+**Trou de sécurité préexistant corrigé au passage**, indépendant de cette
+demande : la policy RLS `events_authenticated_create` héritée du schéma
+initial autorisait déjà **n'importe quel utilisateur connecté** (pas
+seulement admin/mouqaddam) à créer un évènement — jamais exploité par l'app
+(`KhadaraRepository` n'avait aucune méthode d'écriture avant cet incrément),
+mais un appel REST direct avec un token de session aurait pu l'exploiter.
+Migration `restrict_events_create_update_to_admin_or_own_zawiya_mouqaddam` :
+remplace cette policy par `events_create_admin_or_own_zawiya_mouqaddam`
+(admin, ou mouqaddam vérifié via la fonction déjà existante
+`is_verified_mouqaddam()`, créant en son propre nom pour sa zawiya exacte —
+comparaison stricte : un mouqaddam sans zawiya ne peut créer aucun
+évènement, cohérent avec "sa propre zawiya" — s'il n'en a pas, il n'y a pas
+de "sienne") ; ajoute un `WITH CHECK` à `events_owner_or_admin_update`
+(inexistant jusqu'ici, seul un `USING` gérait qui peut *tenter* une
+modification) pour qu'un mouqaddam ne puisse pas réassigner par édition un
+évènement à une zawiya qui n'est pas la sienne, ce qui aurait sinon
+contourné la restriction de création. `events_owner_or_admin_delete` déjà
+correcte (owner ou admin), inchangée. `database/schema.sql` régénéré en
+conséquence.
+
+Suppression d'un évènement ayant un direct (`live_streams`) rattaché :
+volontairement **bloquée** plutôt qu'en cascade — `live_streams.event_id`
+n'a pas de `on delete cascade` (contrainte existante, non modifiée), donc
+l'erreur Postgres `23503` (violation de clé étrangère) remonte telle quelle
+au client, classifiée côté app (`classifyEventDeleteError`,
+`khadara_errors.dart`, même pattern que `classifyAuthError` de l'écran
+Auth) en un message clair plutôt qu'un échec silencieux ou un crash.
+`figure_events.event_id`, lui, a un `on delete cascade` préexistant :
+supprimer un évènement dissocie donc silencieusement les figures
+historiques qui y étaient rattachées — mentionné explicitement dans la
+boîte de confirmation de suppression plutôt que découvert après coup.
+
+Côté app : `KhadaraEvent.createdBy` (`khadara_models.dart`) et une fonction
+pure `canManageEvent(event, {userId, isAdmin})` (reflet côté client des RLS
+`events_owner_or_admin_update`/`_delete`, la RLS restant la source de
+vérité), `canCreateEventProvider` (`khadara_providers.dart`, même forme que
+`isAdminProvider`/`canCreatePostProvider` : admin, ou mouqaddam vérifié
+rattaché à une zawiya), trois nouvelles méthodes d'écriture sur
+`KhadaraRepository` (`createEvent`/`updateEvent`/`deleteEvent`). Nouvel
+écran `EventFormScreen` (création/édition, poussé en plein écran plutôt
+qu'en bottom sheet — seul écran de l'app à enchaîner `showDatePicker` puis
+`showTimePicker`, aucun précédent de sélecteur date+heure combiné) : champ
+zawiya verrouillé en lecture seule pour un mouqaddam (jamais un choix
+libre), `DropdownButtonFormField` pour un admin. `EventDetailScreen`
+converti de `ConsumerWidget` à `ConsumerStatefulWidget` (même précédent que
+`GroupDetailScreen`) pour resynchroniser son état local après une édition
+sans réouvrir l'écran. FAB "Créer un évènement" sur l'onglet Évènements de
+`KhadaraScreen`, gated par `canCreateEventProvider` (pas de snackbar de
+garde : le provider encode déjà tous les cas refusés en `false`, donc le
+bouton ne s'affiche simplement pas). **Hors périmètre de cet incrément**,
+choix assumé comme ailleurs dans le module Khadara (absence de carte
+interactive, audio des wirds non produit) : gestion des zawiyas (reste
+admin-only via SQL), coordonnées latitude/longitude et image de couverture
+dans le formulaire (`events.image_url`, bucket Storage `event-images`,
+policies déjà existantes mais owner-only, non touchées ici faute
+d'écriture cliente vers ce bucket).
+
+Tests : `khadara_models_test.dart` complété (`createdBy` présent/absent,
+groupe `canManageEvent` — admin/auteur/non-auteur/invité), nouveau
+`khadara_errors_test.dart` (`classifyEventDeleteError` sur les codes
+Postgrest). `flutter analyze` et `flutter test --concurrency=1` (114 tests)
+tous verts.
+
+Validé en conditions réelles sur émulateur Android contre le projet
+Supabase live, avec le compte réel `bgueye@gmail.com` (Bocar, admin +
+mouqaddam vérifié + zawiya Tivaouane), en basculant temporairement son
+`profiles.is_admin`/`zawiya_id`/`mouqaddam_status.status` pour rejouer
+chacun des quatre profils (restaurés après coup, `execute_sql` confirmant
+l'état d'origine et zéro donnée de test résiduelle) :
+- **Admin** : création d'un évènement pour une zawiya différente de la
+  sienne (Fès, alors que son propre compte est rattaché à Tivaouane —
+  confirme qu'un admin n'est pas contraint par la restriction "sa propre
+  zawiya"), édition du titre avec resynchronisation immédiate de l'écran
+  de détail (sans réouverture), suppression bloquée par un message clair
+  tant qu'un `live_streams` de test était rattaché (`23503`), suppression
+  réussie une fois le direct retiré.
+- **Mouqaddam vérifié avec zawiya, non-admin** : FAB visible, champ zawiya
+  du formulaire verrouillé en lecture seule (jamais de sélecteur), création
+  réussie avec `zawiya_id` = sa propre zawiya confirmée par `execute_sql`,
+  aucune icône modifier/supprimer sur un évènement créé par un autre
+  compte.
+- **Mouqaddam vérifié sans zawiya** : FAB absent (cohérent avec la policy
+  RLS, qui rejetterait de toute façon la création).
+- **Disciple normal (ni admin, ni mouqaddam)** : FAB absent, aucune icône
+  de gestion sur les évènements existants.
+- **Arabe (RTL)** : écran de formulaire entièrement traduit et inversé
+  (flèche retour, alignement des libellés, dropdowns, bouton "حفظ" pleine
+  largeur) — aucun défaut RTL relevé.
+
+Écart mineur relevé, non corrigé (esthétique, pas fonctionnel) : le titre
+de `EventDetailScreen` peut être tronqué avec ellipsis dans l'AppBar une
+fois les deux icônes modifier/supprimer ajoutées, sur un titre long — le
+titre réel (`event.title`) n'est jamais altéré, seul l'affichage se
+resserre.
 
 ## Commandes utiles
 - `flutter pub get`

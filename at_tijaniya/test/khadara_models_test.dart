@@ -63,5 +63,52 @@ void main() {
       });
       expect(event.hasLocation, isTrue);
     });
+
+    test('parse created_by quand présent', () {
+      final event = KhadaraEvent.fromRow({
+        'id': 'e4',
+        'title': 'Gamou',
+        'event_type': 'hadra',
+        'starts_at': '2026-08-07T14:00:00.000Z',
+        'created_by': 'u1',
+      });
+      expect(event.createdBy, 'u1');
+    });
+
+    test('createdBy est null quand absent', () {
+      final event = KhadaraEvent.fromRow({
+        'id': 'e5',
+        'title': 'Évènement',
+        'event_type': 'hadra',
+        'starts_at': '2026-08-07T14:00:00.000Z',
+      });
+      expect(event.createdBy, isNull);
+    });
+  });
+
+  group('canManageEvent', () {
+    final event = KhadaraEvent.fromRow({
+      'id': 'e6',
+      'title': 'Hadra',
+      'event_type': 'hadra',
+      'starts_at': '2026-08-07T14:00:00.000Z',
+      'created_by': 'u1',
+    });
+
+    test('un admin peut toujours gérer', () {
+      expect(canManageEvent(event, userId: 'other', isAdmin: true), isTrue);
+    });
+
+    test("l'auteur peut gérer son propre évènement", () {
+      expect(canManageEvent(event, userId: 'u1', isAdmin: false), isTrue);
+    });
+
+    test('un non-auteur non-admin ne peut pas gérer', () {
+      expect(canManageEvent(event, userId: 'other', isAdmin: false), isFalse);
+    });
+
+    test('un invité (userId null) ne peut pas gérer', () {
+      expect(canManageEvent(event, userId: null, isAdmin: false), isFalse);
+    });
   });
 }

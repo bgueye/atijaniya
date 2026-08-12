@@ -346,6 +346,76 @@ class AppLocalizationsFr extends AppLocalizations {
   String get khadaraEventTypeOther => 'Autre';
 
   @override
+  String get khadaraCreateEventButton => 'Créer un évènement';
+
+  @override
+  String get khadaraEditEventTooltip => 'Modifier';
+
+  @override
+  String get khadaraDeleteEventTooltip => 'Supprimer';
+
+  @override
+  String get khadaraDeleteEventConfirmTitle => 'Supprimer cet évènement ?';
+
+  @override
+  String get khadaraDeleteEventConfirmBody =>
+      'Cette action est définitive. Les figures historiques associées à cet évènement seront également dissociées.';
+
+  @override
+  String get khadaraDeleteEventConfirmAction => 'Supprimer';
+
+  @override
+  String get khadaraDeleteEventBlockedByLiveStream =>
+      'Impossible de supprimer cet évènement : un direct y est encore rattaché.';
+
+  @override
+  String get khadaraDeleteEventError =>
+      'Impossible de supprimer cet évènement.';
+
+  @override
+  String get eventFormCreateTitle => 'Nouvel évènement';
+
+  @override
+  String get eventFormEditTitle => 'Modifier l\'évènement';
+
+  @override
+  String get eventFormTitleLabel => 'Titre';
+
+  @override
+  String get eventFormTitleRequired => 'Le titre est obligatoire.';
+
+  @override
+  String get eventFormDescriptionLabel => 'Description';
+
+  @override
+  String get eventFormTypeLabel => 'Type d\'évènement';
+
+  @override
+  String get eventFormStartsAtLabel => 'Date et heure de début';
+
+  @override
+  String get eventFormStartsAtRequired => 'La date de début est obligatoire.';
+
+  @override
+  String get eventFormPickDateTime => 'Choisir une date et une heure';
+
+  @override
+  String get eventFormEndsAtLabel => 'Date et heure de fin (optionnel)';
+
+  @override
+  String get eventFormEndsAtInvalid =>
+      'La date de fin doit être postérieure à la date de début.';
+
+  @override
+  String get eventFormZawiyaLabel => 'Zawiya';
+
+  @override
+  String get eventFormSave => 'Enregistrer';
+
+  @override
+  String get eventFormSaveError => 'Impossible d\'enregistrer l\'évènement.';
+
+  @override
   String get khadaraUpcomingEventsAtZawiya => 'Prochains évènements';
 
   @override

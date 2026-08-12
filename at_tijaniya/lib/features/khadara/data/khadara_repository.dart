@@ -27,4 +27,71 @@ class KhadaraRepository {
         .order('starts_at', ascending: true);
     return rows.map((row) => KhadaraEvent.fromRow(row)).toList();
   }
+
+  /// Création réservée par RLS (`events_create_admin_or_own_zawiya_mouqaddam`)
+  /// à un admin ou un mouqaddam vérifié créant pour sa propre zawiya — voir
+  /// `canCreateEventProvider`. `created_by` renseigné côté client, même
+  /// pattern que `CommunityRepository.createPost`.
+  Future<void> createEvent({
+    required String title,
+    String? description,
+    required KhadaraEventType type,
+    required DateTime startsAt,
+    DateTime? endsAt,
+    String? zawiyaId,
+    double? latitude,
+    double? longitude,
+  }) async {
+    final userId = SupabaseConfig.client.auth.currentUser!.id;
+    await SupabaseConfig.client.from('events').insert({
+      'title': title,
+      'description': description,
+      'event_type': type.name,
+      'starts_at': startsAt.toUtc().toIso8601String(),
+      'ends_at': endsAt?.toUtc().toIso8601String(),
+      'zawiya_id': zawiyaId,
+      'latitude': latitude,
+      'longitude': longitude,
+      'created_by': userId,
+    });
+  }
+
+  /// Renvoie la ligne fraîche (avec `zawiyas(name)` résolu côté serveur)
+  /// pour que l'appelant (`EventDetailScreen`) synchronise son état local
+  /// sans requête séparée.
+  Future<KhadaraEvent> updateEvent(
+    String id, {
+    required String title,
+    String? description,
+    required KhadaraEventType type,
+    required DateTime startsAt,
+    DateTime? endsAt,
+    String? zawiyaId,
+    double? latitude,
+    double? longitude,
+  }) async {
+    final row = await SupabaseConfig.client
+        .from('events')
+        .update({
+          'title': title,
+          'description': description,
+          'event_type': type.name,
+          'starts_at': startsAt.toUtc().toIso8601String(),
+          'ends_at': endsAt?.toUtc().toIso8601String(),
+          'zawiya_id': zawiyaId,
+          'latitude': latitude,
+          'longitude': longitude,
+        })
+        .eq('id', id)
+        .select('*, zawiyas(name)')
+        .single();
+    return KhadaraEvent.fromRow(row);
+  }
+
+  /// Peut lever une `PostgrestException` (code `23503`) si un `live_streams`
+  /// référence encore cet évènement — volontairement non catchée ici, voir
+  /// `classifyEventDeleteError` (`khadara_errors.dart`) côté appelant.
+  Future<void> deleteEvent(String id) async {
+    await SupabaseConfig.client.from('events').delete().eq('id', id);
+  }
 }

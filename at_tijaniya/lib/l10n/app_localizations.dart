@@ -716,6 +716,138 @@ abstract class AppLocalizations {
   /// **'Autre'**
   String get khadaraEventTypeOther;
 
+  /// No description provided for @khadaraCreateEventButton.
+  ///
+  /// In fr, this message translates to:
+  /// **'Créer un évènement'**
+  String get khadaraCreateEventButton;
+
+  /// No description provided for @khadaraEditEventTooltip.
+  ///
+  /// In fr, this message translates to:
+  /// **'Modifier'**
+  String get khadaraEditEventTooltip;
+
+  /// No description provided for @khadaraDeleteEventTooltip.
+  ///
+  /// In fr, this message translates to:
+  /// **'Supprimer'**
+  String get khadaraDeleteEventTooltip;
+
+  /// No description provided for @khadaraDeleteEventConfirmTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Supprimer cet évènement ?'**
+  String get khadaraDeleteEventConfirmTitle;
+
+  /// No description provided for @khadaraDeleteEventConfirmBody.
+  ///
+  /// In fr, this message translates to:
+  /// **'Cette action est définitive. Les figures historiques associées à cet évènement seront également dissociées.'**
+  String get khadaraDeleteEventConfirmBody;
+
+  /// No description provided for @khadaraDeleteEventConfirmAction.
+  ///
+  /// In fr, this message translates to:
+  /// **'Supprimer'**
+  String get khadaraDeleteEventConfirmAction;
+
+  /// No description provided for @khadaraDeleteEventBlockedByLiveStream.
+  ///
+  /// In fr, this message translates to:
+  /// **'Impossible de supprimer cet évènement : un direct y est encore rattaché.'**
+  String get khadaraDeleteEventBlockedByLiveStream;
+
+  /// No description provided for @khadaraDeleteEventError.
+  ///
+  /// In fr, this message translates to:
+  /// **'Impossible de supprimer cet évènement.'**
+  String get khadaraDeleteEventError;
+
+  /// No description provided for @eventFormCreateTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Nouvel évènement'**
+  String get eventFormCreateTitle;
+
+  /// No description provided for @eventFormEditTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Modifier l\'évènement'**
+  String get eventFormEditTitle;
+
+  /// No description provided for @eventFormTitleLabel.
+  ///
+  /// In fr, this message translates to:
+  /// **'Titre'**
+  String get eventFormTitleLabel;
+
+  /// No description provided for @eventFormTitleRequired.
+  ///
+  /// In fr, this message translates to:
+  /// **'Le titre est obligatoire.'**
+  String get eventFormTitleRequired;
+
+  /// No description provided for @eventFormDescriptionLabel.
+  ///
+  /// In fr, this message translates to:
+  /// **'Description'**
+  String get eventFormDescriptionLabel;
+
+  /// No description provided for @eventFormTypeLabel.
+  ///
+  /// In fr, this message translates to:
+  /// **'Type d\'évènement'**
+  String get eventFormTypeLabel;
+
+  /// No description provided for @eventFormStartsAtLabel.
+  ///
+  /// In fr, this message translates to:
+  /// **'Date et heure de début'**
+  String get eventFormStartsAtLabel;
+
+  /// No description provided for @eventFormStartsAtRequired.
+  ///
+  /// In fr, this message translates to:
+  /// **'La date de début est obligatoire.'**
+  String get eventFormStartsAtRequired;
+
+  /// No description provided for @eventFormPickDateTime.
+  ///
+  /// In fr, this message translates to:
+  /// **'Choisir une date et une heure'**
+  String get eventFormPickDateTime;
+
+  /// No description provided for @eventFormEndsAtLabel.
+  ///
+  /// In fr, this message translates to:
+  /// **'Date et heure de fin (optionnel)'**
+  String get eventFormEndsAtLabel;
+
+  /// No description provided for @eventFormEndsAtInvalid.
+  ///
+  /// In fr, this message translates to:
+  /// **'La date de fin doit être postérieure à la date de début.'**
+  String get eventFormEndsAtInvalid;
+
+  /// No description provided for @eventFormZawiyaLabel.
+  ///
+  /// In fr, this message translates to:
+  /// **'Zawiya'**
+  String get eventFormZawiyaLabel;
+
+  /// No description provided for @eventFormSave.
+  ///
+  /// In fr, this message translates to:
+  /// **'Enregistrer'**
+  String get eventFormSave;
+
+  /// No description provided for @eventFormSaveError.
+  ///
+  /// In fr, this message translates to:
+  /// **'Impossible d\'enregistrer l\'évènement.'**
+  String get eventFormSaveError;
+
   /// No description provided for @khadaraUpcomingEventsAtZawiya.
   ///
   /// In fr, this message translates to:
