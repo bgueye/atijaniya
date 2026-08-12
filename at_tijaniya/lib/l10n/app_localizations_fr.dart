@@ -587,6 +587,34 @@ class AppLocalizationsFr extends AppLocalizations {
   String get communitySend => 'Envoyer';
 
   @override
+  String get communityCreatePostButton => 'Publier';
+
+  @override
+  String get communityCreatePostTitle => 'Nouvelle publication';
+
+  @override
+  String get communityCreatePostContentLabel => 'Votre message';
+
+  @override
+  String get communityCreatePostContentRequired =>
+      'Le message est obligatoire.';
+
+  @override
+  String get communityCreatePostSubmit => 'Publier';
+
+  @override
+  String get communityCreatePostZawiyaNote =>
+      'Publié au nom de votre zawiya de rattachement.';
+
+  @override
+  String get communityCreatePostSignInRequired =>
+      'Connectez-vous pour publier.';
+
+  @override
+  String get communityCreatePostNeedsZawiya =>
+      'Seuls les comptes rattachés à une zawiya peuvent publier pour le moment. Renseignez votre zawiya de rattachement depuis votre profil.';
+
+  @override
   String get communityFeedTab => 'Fil';
 
   @override

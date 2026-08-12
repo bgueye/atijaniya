@@ -19,15 +19,15 @@ class CommunityPost {
     required this.createdAt,
     required this.likeCount,
     required this.commentCount,
+    this.isLikedByMe = false,
   });
 
   final String id;
   final String? authorUserId;
   final String? authorZawiyaId;
 
-  /// Résolu via une requête `profiles` séparée (pas de FK directe
-  /// `posts.author_user_id -> profiles.user_id`, toutes deux référençant
-  /// `auth.users(id)` en parallèle — voir `CommunityRepository`).
+  /// Résolu via l'embedding PostgREST (`profiles(display_name)`), FK directe
+  /// `posts.author_user_id -> profiles.user_id` — voir `CommunityRepository`.
   final String? authorDisplayName;
 
   /// Résolu via l'embedding PostgREST (`zawiyas(name)`), FK directe.
@@ -39,28 +39,34 @@ class CommunityPost {
   final int likeCount;
   final int commentCount;
 
+  /// Résolu par `CommunityRepository.fetchFeed` via une requête `post_likes`
+  /// filtrée sur l'utilisateur courant — `false` par défaut (invité).
+  final bool isLikedByMe;
+
   /// Nom affiché : zawiya auteure en priorité, sinon le disciple, sinon un
   /// repli générique (compte supprimé, profil introuvable...).
   String authorLabel(String fallback) => authorZawiyaName ?? authorDisplayName ?? fallback;
 
   factory CommunityPost.fromRow(
     Map<String, dynamic> row, {
-    String? authorDisplayName,
     required int likeCount,
     required int commentCount,
+    bool isLikedByMe = false,
   }) {
     final zawiyaRelation = row['zawiyas'] as Map<String, dynamic>?;
+    final profileRelation = row['profiles'] as Map<String, dynamic>?;
     return CommunityPost(
       id: row['id'] as String,
       authorUserId: row['author_user_id'] as String?,
       authorZawiyaId: row['author_zawiya_id'] as String?,
-      authorDisplayName: authorDisplayName,
+      authorDisplayName: profileRelation?['display_name'] as String?,
       authorZawiyaName: zawiyaRelation?['name'] as String?,
       contentText: row['content_text'] as String,
       mediaUrl: row['media_url'] as String?,
       createdAt: DateTime.parse(row['created_at'] as String).toLocal(),
       likeCount: likeCount,
       commentCount: commentCount,
+      isLikedByMe: isLikedByMe,
     );
   }
 }

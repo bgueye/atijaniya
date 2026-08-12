@@ -1166,6 +1166,54 @@ abstract class AppLocalizations {
   /// **'Envoyer'**
   String get communitySend;
 
+  /// No description provided for @communityCreatePostButton.
+  ///
+  /// In fr, this message translates to:
+  /// **'Publier'**
+  String get communityCreatePostButton;
+
+  /// No description provided for @communityCreatePostTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Nouvelle publication'**
+  String get communityCreatePostTitle;
+
+  /// No description provided for @communityCreatePostContentLabel.
+  ///
+  /// In fr, this message translates to:
+  /// **'Votre message'**
+  String get communityCreatePostContentLabel;
+
+  /// No description provided for @communityCreatePostContentRequired.
+  ///
+  /// In fr, this message translates to:
+  /// **'Le message est obligatoire.'**
+  String get communityCreatePostContentRequired;
+
+  /// No description provided for @communityCreatePostSubmit.
+  ///
+  /// In fr, this message translates to:
+  /// **'Publier'**
+  String get communityCreatePostSubmit;
+
+  /// No description provided for @communityCreatePostZawiyaNote.
+  ///
+  /// In fr, this message translates to:
+  /// **'Publié au nom de votre zawiya de rattachement.'**
+  String get communityCreatePostZawiyaNote;
+
+  /// No description provided for @communityCreatePostSignInRequired.
+  ///
+  /// In fr, this message translates to:
+  /// **'Connectez-vous pour publier.'**
+  String get communityCreatePostSignInRequired;
+
+  /// No description provided for @communityCreatePostNeedsZawiya.
+  ///
+  /// In fr, this message translates to:
+  /// **'Seuls les comptes rattachés à une zawiya peuvent publier pour le moment. Renseignez votre zawiya de rattachement depuis votre profil.'**
+  String get communityCreatePostNeedsZawiya;
+
   /// No description provided for @communityFeedTab.
   ///
   /// In fr, this message translates to:

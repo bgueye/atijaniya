@@ -1,13 +1,11 @@
 /// Accès aux données du fil d'actualité (Supabase — `posts`, `post_likes`,
-/// `post_comments`, `profiles`). Lecture publique côté RLS
-/// (`posts_read_all`, `post_likes_read_all`, `post_comments_read_all` :
-/// `using (true)`) : fonctionne en mode invité. Les écritures (aimer,
-/// commenter, publier) exigent en revanche un `auth.uid()` réel
-/// (`posts_author_create`, `post_likes_owner_only`,
-/// `post_comments_author_create`) — indisponible tant que l'authentification
-/// Supabase n'est pas branchée côté app (voir TODO dans `auth_screen.dart`).
-/// Les méthodes d'écriture ci-dessous sont donc prêtes mais non exposées
-/// dans l'UI pour l'instant (voir `communaute_screen.dart`).
+/// `post_comments`, `profiles`). Lecture publique côté RLS pour les
+/// publications déjà validées (`posts_read_valid_or_admin` :
+/// `content_status = 'valide' or is_admin(...)`, `post_likes_read_all`,
+/// `post_comments_read_all` : `using (true)`) : fonctionne en mode invité.
+/// Les écritures (aimer, commenter, publier) exigent en revanche un
+/// `auth.uid()` réel (`posts_author_create`, `post_likes_owner_only`,
+/// `post_comments_author_create`).
 library;
 
 import '../../../core/supabase/supabase_config.dart';
@@ -17,27 +15,58 @@ class CommunityRepository {
   const CommunityRepository();
 
   Future<List<CommunityPost>> fetchFeed() async {
+    // .eq('content_status', 'valide') en plus de la RLS : même défense en
+    // profondeur que FiguresRepository.fetchFigures() — un compte admin ne
+    // doit jamais voir un brouillon dans le fil public.
     final postRows = await SupabaseConfig.client
         .from('posts')
-        .select('*, zawiyas(name)')
+        .select('*, zawiyas(name), profiles(display_name)')
+        .eq('content_status', 'valide')
         .order('created_at', ascending: false);
 
     final postIds = postRows.map((row) => row['id'] as String).toList();
-    final authorIds = postRows.map((row) => row['author_user_id'] as String?).whereType<String>().toSet();
 
-    final names = await _fetchDisplayNames(authorIds);
     final likeCounts = await _fetchCountsByPost('post_likes', postIds);
     final commentCounts = await _fetchCountsByPost('post_comments', postIds);
+    final myLikedIds = await _fetchMyLikedPostIds(postIds);
 
     return postRows.map((row) {
       final id = row['id'] as String;
       return CommunityPost.fromRow(
         row,
-        authorDisplayName: names[row['author_user_id']],
         likeCount: likeCounts[id] ?? 0,
         commentCount: commentCounts[id] ?? 0,
+        isLikedByMe: myLikedIds.contains(id),
       );
     }).toList();
+  }
+
+  /// Ensemble vide en mode invité (pas de requête inutile) — `post_likes` a
+  /// une RLS de lecture publique (`using (true)`), mais filtrer sur
+  /// `auth.uid()` sans utilisateur connecté n'a pas de sens ici.
+  Future<Set<String>> _fetchMyLikedPostIds(List<String> postIds) async {
+    final userId = SupabaseConfig.client.auth.currentUser?.id;
+    if (userId == null || postIds.isEmpty) return {};
+    final rows = await SupabaseConfig.client
+        .from('post_likes')
+        .select('post_id')
+        .eq('user_id', userId)
+        .inFilter('post_id', postIds);
+    return rows.map((row) => row['post_id'] as String).toSet();
+  }
+
+  /// Réservé en V1 aux comptes rattachés à une zawiya (`profiles.zawiya_id`
+  /// non nul, vérifié côté écran — `canCreatePostProvider`) pour ne pas
+  /// ouvrir la modération à tous les disciples dès cette itération ; la RLS
+  /// `posts_author_create` elle-même n'impose que `auth.uid() = author_user_id`,
+  /// donc cette restriction n'est aujourd'hui appliquée que côté client.
+  Future<void> createPost(String contentText, {String? zawiyaId}) async {
+    final userId = SupabaseConfig.client.auth.currentUser!.id;
+    await SupabaseConfig.client.from('posts').insert({
+      'author_user_id': userId,
+      'author_zawiya_id': zawiyaId,
+      'content_text': contentText,
+    });
   }
 
   Future<List<CommunityComment>> fetchComments(String postId) async {
@@ -75,9 +104,6 @@ class CommunityRepository {
     return counts;
   }
 
-  /// Prêt pour quand l'authentification sera branchée — non appelé par l'UI
-  /// tant qu'il n'y a pas de session réelle (voir le commentaire en tête de
-  /// fichier).
   Future<void> toggleLike(String postId, {required bool currentlyLiked}) async {
     final userId = SupabaseConfig.client.auth.currentUser!.id;
     if (currentlyLiked) {

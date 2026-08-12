@@ -78,38 +78,150 @@ class _FeedTab extends ConsumerWidget {
     final l10n = AppLocalizations.of(context)!;
     final feed = ref.watch(communityFeedProvider);
 
-    return feed.when(
-      loading: () => const Center(child: CircularProgressIndicator(color: AppColors.emerald)),
-      error: (error, stackTrace) => Center(
-        child: Padding(
-          padding: const EdgeInsets.all(24),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              const Icon(Icons.wifi_off, color: AppColors.bronze, size: 32),
-              const SizedBox(height: 12),
-              Text(l10n.communityLoadError, textAlign: TextAlign.center, style: const TextStyle(color: AppColors.bronze)),
-              const SizedBox(height: 12),
-              OutlinedButton(
-                onPressed: () => ref.invalidate(communityFeedProvider),
-                child: Text(l10n.communityRetry),
-              ),
-            ],
+    return Scaffold(
+      floatingActionButton: FloatingActionButton.extended(
+        onPressed: () => _openCreateSheet(context, ref),
+        icon: const Icon(Icons.add),
+        label: Text(l10n.communityCreatePostButton),
+      ),
+      body: feed.when(
+        loading: () => const Center(child: CircularProgressIndicator(color: AppColors.emerald)),
+        error: (error, stackTrace) => Center(
+          child: Padding(
+            padding: const EdgeInsets.all(24),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Icon(Icons.wifi_off, color: AppColors.bronze, size: 32),
+                const SizedBox(height: 12),
+                Text(l10n.communityLoadError, textAlign: TextAlign.center, style: const TextStyle(color: AppColors.bronze)),
+                const SizedBox(height: 12),
+                OutlinedButton(
+                  onPressed: () => ref.invalidate(communityFeedProvider),
+                  child: Text(l10n.communityRetry),
+                ),
+              ],
+            ),
           ),
         ),
-      ),
-      data: (posts) => posts.isEmpty
-          ? Center(
-              child: Padding(
-                padding: const EdgeInsets.all(24),
-                child: Text(l10n.communityFeedEmpty, textAlign: TextAlign.center, style: const TextStyle(color: AppColors.bronze)),
+        data: (posts) => posts.isEmpty
+            ? Center(
+                child: Padding(
+                  padding: const EdgeInsets.all(24),
+                  child: Text(l10n.communityFeedEmpty, textAlign: TextAlign.center, style: const TextStyle(color: AppColors.bronze)),
+                ),
+              )
+            : ListView.builder(
+                padding: const EdgeInsets.fromLTRB(16, 16, 16, 88),
+                itemCount: posts.length,
+                itemBuilder: (context, i) => _PostCard(post: posts[i], fallbackAuthor: l10n.communityDefaultAuthor),
               ),
-            )
-          : ListView.builder(
-              padding: const EdgeInsets.all(16),
-              itemCount: posts.length,
-              itemBuilder: (context, i) => _PostCard(post: posts[i], fallbackAuthor: l10n.communityDefaultAuthor),
+      ),
+    );
+  }
+
+  void _openCreateSheet(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
+    if (ref.read(currentUserIdProvider) == null) {
+      ScaffoldMessenger.of(context)
+        ..hideCurrentSnackBar()
+        ..showSnackBar(SnackBar(content: Text(l10n.communityCreatePostSignInRequired)));
+      return;
+    }
+    final profile = ref.read(myProfileProvider).valueOrNull;
+    if (profile?.zawiyaId == null) {
+      ScaffoldMessenger.of(context)
+        ..hideCurrentSnackBar()
+        ..showSnackBar(SnackBar(content: Text(l10n.communityCreatePostNeedsZawiya)));
+      return;
+    }
+    showModalBottomSheet<void>(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: AppColors.offWhite,
+      shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
+      builder: (context) => _CreatePostSheet(zawiyaId: profile!.zawiyaId!, zawiyaName: profile.zawiyaName),
+    );
+  }
+}
+
+class _CreatePostSheet extends ConsumerStatefulWidget {
+  const _CreatePostSheet({required this.zawiyaId, this.zawiyaName});
+
+  final String zawiyaId;
+  final String? zawiyaName;
+
+  @override
+  ConsumerState<_CreatePostSheet> createState() => _CreatePostSheetState();
+}
+
+class _CreatePostSheetState extends ConsumerState<_CreatePostSheet> {
+  final _formKey = GlobalKey<FormState>();
+  final _contentController = TextEditingController();
+  bool _saving = false;
+
+  @override
+  void dispose() {
+    _contentController.dispose();
+    super.dispose();
+  }
+
+  Future<void> _submit() async {
+    if (!_formKey.currentState!.validate()) return;
+    setState(() => _saving = true);
+    try {
+      await ref
+          .read(communityRepositoryProvider)
+          .createPost(_contentController.text.trim(), zawiyaId: widget.zawiyaId);
+      ref.invalidate(communityFeedProvider);
+      if (mounted) Navigator.of(context).pop();
+    } finally {
+      if (mounted) setState(() => _saving = false);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+
+    return Padding(
+      padding: EdgeInsets.fromLTRB(20, 20, 20, MediaQuery.of(context).viewInsets.bottom + 20),
+      child: Form(
+        key: _formKey,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Text(l10n.communityCreatePostTitle, style: Theme.of(context).textTheme.titleLarge),
+            if (widget.zawiyaName != null) ...[
+              const SizedBox(height: 4),
+              Text(
+                '${l10n.communityCreatePostZawiyaNote} (${widget.zawiyaName})',
+                style: const TextStyle(color: AppColors.bronze, fontSize: 12),
+              ),
+            ],
+            const SizedBox(height: 16),
+            TextFormField(
+              controller: _contentController,
+              decoration: InputDecoration(labelText: l10n.communityCreatePostContentLabel),
+              maxLines: 5,
+              validator: (value) =>
+                  (value == null || value.trim().isEmpty) ? l10n.communityCreatePostContentRequired : null,
             ),
+            const SizedBox(height: 24),
+            ElevatedButton(
+              onPressed: _saving ? null : _submit,
+              child: _saving
+                  ? const SizedBox(
+                      height: 18,
+                      width: 18,
+                      child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
+                    )
+                  : Text(l10n.communityCreatePostSubmit),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }

@@ -1528,6 +1528,78 @@ un bug qui se reproduira en usage normal), mais à garder en tête si une
 future restructuration de piliers déplace à nouveau des positions déjà
 utilisées en pratique réelle.
 
+Fil d'actualité — déblocage du contenu (module Communauté) fonctionnel,
+suite au plan `docs/implantation-fil-communaute.md` (constat du 2026-08-12 :
+écran déjà codé et validé, mais jamais vu de contenu réel — `posts` restait
+vide). Trois chantiers traités dans l'ordre revu par le plan (FK d'abord,
+pendant que `posts` est encore vide, avant tout contenu) :
+
+1. **FK `posts.author_user_id -> profiles.user_id`** (au lieu de
+   `-> auth.users(id)` d'origine) : la contrainte existait déjà sous ce nom
+   mais pointait vers `auth.users`, empêchant l'embedding PostgREST
+   `profiles(display_name)` — `DROP`/`ADD CONSTRAINT` du même nom, sûr
+   puisque `posts` était vide (vérifié par `execute_sql` juste avant).
+2. **`content_status` sur `posts`** (défaut `'valide'`, pas `'brouillon'`
+   comme `figures` : la création reste réservée en V1 aux comptes rattachés
+   à une zawiya, trust implicite, pas de flux de review) + RLS
+   `posts_read_valid_or_admin` (remplace `posts_read_all`), même famille que
+   `figures_read_valid_or_admin`.
+3. **Écran de création** (`_CreatePostSheet` dans `communaute_screen.dart`,
+   FAB "Publier" sur l'onglet Fil, `CommunityRepository.createPost()`) :
+   réservé aux comptes avec `profiles.zawiya_id` non nul
+   (`canCreatePostProvider`, `community_providers.dart`) — publication au
+   nom de la zawiya de rattachement, pas de choix d'auteur. `fetchFeed()`
+   embarque désormais `profiles(display_name)` en plus de `zawiyas(name)`
+   et filtre `.eq('content_status', 'valide')` en défense en profondeur
+   (même logique que `FiguresRepository.fetchFigures()`).
+
+**Bug trouvé et corrigé pendant ce travail, sans lien avec le plan
+d'origine** : le bouton "aimer" de `post_detail_screen.dart` appelait
+systématiquement `_promptSignIn()`, y compris pour un compte connecté —
+reliquat du commentaire de tête de fichier ("indisponible tant que l'auth
+n'est pas branchée"), jamais mis à jour quand l'authentification a été
+branchée dans une session antérieure (contrairement à `addComment`, déjà
+correctement câblé sur `_isSignedIn`). Corrigé : `_toggleLike()` avec état
+optimiste local (`_liked`/`_likeCount`, rollback silencieux sur échec
+réseau) appelant réellement `CommunityRepository.toggleLike()` ;
+`CommunityRepository.fetchFeed()` résout désormais aussi `isLikedByMe` par
+utilisateur (`_fetchMyLikedPostIds`, nouvelle requête `post_likes` filtrée
+sur `auth.uid()`, vide en mode invité).
+
+`database/schema.sql` régénéré (FK `posts.author_user_id`, colonne
+`content_status`, policy `posts_read_valid_or_admin`). Doc de plan
+corrigée avant implémentation : coquille `content` → `content_text` dans le
+SQL de stopgap, note sur `author_user_id` déjà nullable (le point
+"à trancher" ne l'était plus), séparation de vraiment poster du contenu
+réel du QA jetable.
+
+Validé en conditions réelles sur émulateur Android contre le projet
+Supabase live, avec le compte réel `bgueye@gmail.com` (Bocar, déjà
+rattaché à la "Zawiya de Tivaouane") : publication de test QA créée via
+l'écran (FAB "Publier" → bottom sheet → `Publier`), confirmée en base avec
+`author_user_id`/`author_zawiya_id`/`content_status='valide'` corrects,
+affichée dans le fil avec "Zawiya de Tivaouane" comme auteur (résolution
+via la nouvelle FK) ; like/unlike testés sur cette publication (compteur et
+icône réactifs, ligne `post_likes` créée puis supprimée) ; commentaire
+testé (auteur "Bocar" affiché, résolution via la requête `profiles`
+séparée déjà en place). Publication de test puis son like/commentaire
+supprimés par `execute_sql` une fois la mécanique confirmée (donnée jetable
+explicitement nommée "a supprimer", même principe que les autres comptes/
+données QA du projet) — remplacés par le vrai texte de bienvenue fourni par
+le porteur de projet, inséré directement en base (accents et emoji 🤲
+non saisissables via `adb shell input text` sur cet émulateur, limitation
+de l'outil de test, pas de l'app — contournée en réutilisant le stopgap SQL
+du plan avec le texte réel). Revalidé sur cette publication réelle : rendu
+correct du texte accentué et de l'emoji, like et commentaire ("Ahsante")
+ajoutés par le compte réel et laissés en base (interactions réelles, pas
+des données de test à nettoyer). Revalidé intégralement en arabe (RTL) :
+FAB "نشر" repositionné à gauche, bouton like et champ commentaire
+fonctionnels en miroir, flèche de retour inversée — langue remise en
+français à la fin de la session. `flutter analyze` et
+`flutter test --concurrency=1` (105 tests, dont `community_models_test.dart`
+adapté à la résolution par relation embarquée plutôt que par paramètre)
+tous verts.
+
 ## Commandes utiles
 - `flutter pub get`
 - `flutter analyze`

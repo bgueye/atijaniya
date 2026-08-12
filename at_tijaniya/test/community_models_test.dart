@@ -14,7 +14,6 @@ void main() {
           'created_at': '2026-08-06T10:00:00.000Z',
           'zawiyas': {'name': 'Zawiya Test'},
         },
-        authorDisplayName: null,
         likeCount: 3,
         commentCount: 2,
       );
@@ -31,8 +30,8 @@ void main() {
           'author_zawiya_id': null,
           'content_text': 'Post personnel',
           'created_at': '2026-08-06T10:00:00.000Z',
+          'profiles': {'display_name': 'Amina'},
         },
-        authorDisplayName: 'Amina',
         likeCount: 0,
         commentCount: 0,
       );

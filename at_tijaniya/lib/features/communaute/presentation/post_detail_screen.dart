@@ -15,10 +15,9 @@ import 'messages_providers.dart';
 /// (docs/03-architecture-ecrans.md).
 ///
 /// Aimer/commenter exige une session Supabase réelle (RLS
-/// `post_likes_owner_only`, `post_comments_author_create`), indisponible
-/// tant que l'authentification n'est pas branchée (voir
-/// `community_repository.dart`) : ces actions affichent alors une invite à
-/// se connecter plutôt que d'échouer silencieusement.
+/// `post_likes_owner_only`, `post_comments_author_create`) : en mode invité,
+/// ces actions affichent une invite à se connecter plutôt que d'échouer
+/// silencieusement.
 class PostDetailScreen extends ConsumerStatefulWidget {
   const PostDetailScreen({super.key, required this.post});
 
@@ -30,6 +29,12 @@ class PostDetailScreen extends ConsumerStatefulWidget {
 
 class _PostDetailScreenState extends ConsumerState<PostDetailScreen> {
   final _commentController = TextEditingController();
+
+  // État local optimiste : évite un rechargement complet du fil (invalidate
+  // communityFeedProvider) juste pour refléter un like, cf. _toggleLike.
+  late bool _liked = widget.post.isLikedByMe;
+  late int _likeCount = widget.post.likeCount;
+  bool _likeInFlight = false;
 
   bool get _isSignedIn => SupabaseConfig.client.auth.currentUser != null;
 
@@ -44,6 +49,32 @@ class _PostDetailScreenState extends ConsumerState<PostDetailScreen> {
     ScaffoldMessenger.of(context)
       ..hideCurrentSnackBar()
       ..showSnackBar(SnackBar(content: Text(l10n.communitySignInToInteract)));
+  }
+
+  Future<void> _toggleLike() async {
+    if (!_isSignedIn) {
+      _promptSignIn();
+      return;
+    }
+    if (_likeInFlight) return;
+    final wasLiked = _liked;
+    setState(() {
+      _liked = !wasLiked;
+      _likeCount += wasLiked ? -1 : 1;
+      _likeInFlight = true;
+    });
+    try {
+      await ref.read(communityRepositoryProvider).toggleLike(widget.post.id, currentlyLiked: wasLiked);
+    } catch (_) {
+      if (mounted) {
+        setState(() {
+          _liked = wasLiked;
+          _likeCount += wasLiked ? 1 : -1;
+        });
+      }
+    } finally {
+      if (mounted) setState(() => _likeInFlight = false);
+    }
   }
 
   Future<void> _submitComment() async {
@@ -98,12 +129,16 @@ class _PostDetailScreenState extends ConsumerState<PostDetailScreen> {
                 Row(
                   children: [
                     InkWell(
-                      onTap: _promptSignIn,
+                      onTap: _toggleLike,
                       child: Row(
                         children: [
-                          const Icon(Icons.favorite_border, color: AppColors.bronze, size: 20),
+                          Icon(
+                            _liked ? Icons.favorite : Icons.favorite_border,
+                            color: _liked ? AppColors.emerald : AppColors.bronze,
+                            size: 20,
+                          ),
                           const SizedBox(width: 6),
-                          Text('${post.likeCount}', style: const TextStyle(color: AppColors.bronze)),
+                          Text('$_likeCount', style: const TextStyle(color: AppColors.bronze)),
                         ],
                       ),
                     ),

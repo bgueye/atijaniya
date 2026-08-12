@@ -573,6 +573,32 @@ class AppLocalizationsAr extends AppLocalizations {
   String get communitySend => 'إرسال';
 
   @override
+  String get communityCreatePostButton => 'نشر';
+
+  @override
+  String get communityCreatePostTitle => 'منشور جديد';
+
+  @override
+  String get communityCreatePostContentLabel => 'رسالتك';
+
+  @override
+  String get communityCreatePostContentRequired => 'الرسالة إلزامية.';
+
+  @override
+  String get communityCreatePostSubmit => 'نشر';
+
+  @override
+  String get communityCreatePostZawiyaNote =>
+      'سيُنشر باسم الزاوية التي تنتمي إليها.';
+
+  @override
+  String get communityCreatePostSignInRequired => 'سجّل الدخول للنشر.';
+
+  @override
+  String get communityCreatePostNeedsZawiya =>
+      'يمكن للحسابات المرتبطة بزاوية فقط النشر حاليًا. يرجى تحديد زاويتك من ملفك الشخصي.';
+
+  @override
   String get communityFeedTab => 'المستجدات';
 
   @override

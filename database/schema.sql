@@ -718,11 +718,19 @@ comment on column public.tariqa_conditions.category is
 
 create table public.posts (
   id uuid primary key default gen_random_uuid(),
-  author_user_id uuid references auth.users(id),
+  -- Référence profiles(user_id), pas directement auth.users(id) : permet
+  -- l'embedding PostgREST direct (posts.select('*, profiles(display_name)')),
+  -- sur le modèle de author_zawiya_id -> zawiyas déjà embeddable.
+  author_user_id uuid references public.profiles(user_id),
   author_zawiya_id uuid references public.zawiyas(id),
   content_text text not null,
   media_url text,
   created_at timestamptz not null default now(),
+  -- Défaut 'valide' (contrairement à figures.content_status, défaut
+  -- 'brouillon') : la création reste pour l'instant réservée aux comptes
+  -- rattachés à une zawiya (trust implicite), pas de flux de review avant
+  -- publication en V1 — voir docs/implantation-fil-communaute.md.
+  content_status text not null default 'valide' check (content_status in ('brouillon', 'valide')),
   check (author_user_id is not null or author_zawiya_id is not null)
 );
 
@@ -1114,7 +1122,8 @@ create policy donations_owner_create on public.donations for insert
   with check ((select auth.uid()) = user_id or user_id is null);
 
 -- --- Communauté : fil, groupes, messagerie ---
-create policy posts_read_all on public.posts for select using (true);
+create policy posts_read_valid_or_admin on public.posts for select
+  using (content_status = 'valide' or public.is_admin((select auth.uid())));
 create policy posts_author_create on public.posts for insert with check ((select auth.uid()) = author_user_id);
 create policy posts_author_delete on public.posts for delete using ((select auth.uid()) = author_user_id);
 
