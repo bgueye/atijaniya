@@ -200,6 +200,18 @@ abstract class AppLocalizations {
   /// **'Retrouvez votre entourage spirituel et suivez l\'actualité de votre zawiya.'**
   String get onboardingCommunityBody;
 
+  /// No description provided for @authTabLogin.
+  ///
+  /// In fr, this message translates to:
+  /// **'Connexion'**
+  String get authTabLogin;
+
+  /// No description provided for @authTabSignup.
+  ///
+  /// In fr, this message translates to:
+  /// **'Créer un compte'**
+  String get authTabSignup;
+
   /// No description provided for @authTitle.
   ///
   /// In fr, this message translates to:
@@ -209,8 +221,32 @@ abstract class AppLocalizations {
   /// No description provided for @authSubtitle.
   ///
   /// In fr, this message translates to:
-  /// **'Connectez-vous pour retrouver votre communauté, ou continuez sans compte pour réciter vos wirds.'**
+  /// **'Connectez-vous pour retrouver votre communauté.'**
   String get authSubtitle;
+
+  /// No description provided for @authSignupTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Créer un compte'**
+  String get authSignupTitle;
+
+  /// No description provided for @authSignupSubtitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Rejoignez la communauté et commencez à réciter vos wirds.'**
+  String get authSignupSubtitle;
+
+  /// No description provided for @authFullNameLabel.
+  ///
+  /// In fr, this message translates to:
+  /// **'Nom complet'**
+  String get authFullNameLabel;
+
+  /// No description provided for @authFullNameRequired.
+  ///
+  /// In fr, this message translates to:
+  /// **'Le nom complet est obligatoire.'**
+  String get authFullNameRequired;
 
   /// No description provided for @authEmailLabel.
   ///
@@ -229,6 +265,24 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'Mot de passe'**
   String get authPasswordLabel;
+
+  /// No description provided for @authPasswordMinCharsHint.
+  ///
+  /// In fr, this message translates to:
+  /// **'8 caractères minimum'**
+  String get authPasswordMinCharsHint;
+
+  /// No description provided for @authForgotPassword.
+  ///
+  /// In fr, this message translates to:
+  /// **'Mot de passe oublié ?'**
+  String get authForgotPassword;
+
+  /// No description provided for @authResetPasswordSent.
+  ///
+  /// In fr, this message translates to:
+  /// **'E-mail de réinitialisation envoyé. Vérifiez votre boîte mail.'**
+  String get authResetPasswordSent;
 
   /// No description provided for @authSignInAction.
   ///
@@ -272,6 +326,12 @@ abstract class AppLocalizations {
   /// **'Le mot de passe doit contenir au moins 6 caractères.'**
   String get authPasswordTooShort;
 
+  /// No description provided for @authPasswordTooShortSignup.
+  ///
+  /// In fr, this message translates to:
+  /// **'Le mot de passe doit contenir au moins 8 caractères.'**
+  String get authPasswordTooShortSignup;
+
   /// No description provided for @authInvalidCredentials.
   ///
   /// In fr, this message translates to:
@@ -313,6 +373,36 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'Compte créé. Vérifiez votre boîte mail pour confirmer votre adresse avant de vous connecter.'**
   String get authCheckEmailToConfirm;
+
+  /// No description provided for @authLegalPrefix.
+  ///
+  /// In fr, this message translates to:
+  /// **'En créant un compte, vous acceptez nos '**
+  String get authLegalPrefix;
+
+  /// No description provided for @authLegalTerms.
+  ///
+  /// In fr, this message translates to:
+  /// **'Conditions d\'utilisation'**
+  String get authLegalTerms;
+
+  /// No description provided for @authLegalMiddle.
+  ///
+  /// In fr, this message translates to:
+  /// **' et notre '**
+  String get authLegalMiddle;
+
+  /// No description provided for @authLegalPrivacy.
+  ///
+  /// In fr, this message translates to:
+  /// **'Politique de confidentialité'**
+  String get authLegalPrivacy;
+
+  /// No description provided for @authLegalSuffix.
+  ///
+  /// In fr, this message translates to:
+  /// **'.'**
+  String get authLegalSuffix;
 
   /// No description provided for @navHome.
   ///

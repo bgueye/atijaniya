@@ -65,11 +65,29 @@ class AppLocalizationsFr extends AppLocalizations {
       'Retrouvez votre entourage spirituel et suivez l\'actualité de votre zawiya.';
 
   @override
+  String get authTabLogin => 'Connexion';
+
+  @override
+  String get authTabSignup => 'Créer un compte';
+
+  @override
   String get authTitle => 'Bienvenue';
 
   @override
-  String get authSubtitle =>
-      'Connectez-vous pour retrouver votre communauté, ou continuez sans compte pour réciter vos wirds.';
+  String get authSubtitle => 'Connectez-vous pour retrouver votre communauté.';
+
+  @override
+  String get authSignupTitle => 'Créer un compte';
+
+  @override
+  String get authSignupSubtitle =>
+      'Rejoignez la communauté et commencez à réciter vos wirds.';
+
+  @override
+  String get authFullNameLabel => 'Nom complet';
+
+  @override
+  String get authFullNameRequired => 'Le nom complet est obligatoire.';
 
   @override
   String get authEmailLabel => 'E-mail';
@@ -79,6 +97,16 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get authPasswordLabel => 'Mot de passe';
+
+  @override
+  String get authPasswordMinCharsHint => '8 caractères minimum';
+
+  @override
+  String get authForgotPassword => 'Mot de passe oublié ?';
+
+  @override
+  String get authResetPasswordSent =>
+      'E-mail de réinitialisation envoyé. Vérifiez votre boîte mail.';
 
   @override
   String get authSignInAction => 'Se connecter';
@@ -102,6 +130,10 @@ class AppLocalizationsFr extends AppLocalizations {
   @override
   String get authPasswordTooShort =>
       'Le mot de passe doit contenir au moins 6 caractères.';
+
+  @override
+  String get authPasswordTooShortSignup =>
+      'Le mot de passe doit contenir au moins 8 caractères.';
 
   @override
   String get authInvalidCredentials =>
@@ -129,6 +161,21 @@ class AppLocalizationsFr extends AppLocalizations {
   @override
   String get authCheckEmailToConfirm =>
       'Compte créé. Vérifiez votre boîte mail pour confirmer votre adresse avant de vous connecter.';
+
+  @override
+  String get authLegalPrefix => 'En créant un compte, vous acceptez nos ';
+
+  @override
+  String get authLegalTerms => 'Conditions d\'utilisation';
+
+  @override
+  String get authLegalMiddle => ' et notre ';
+
+  @override
+  String get authLegalPrivacy => 'Politique de confidentialité';
+
+  @override
+  String get authLegalSuffix => '.';
 
   @override
   String get navHome => 'Accueil';

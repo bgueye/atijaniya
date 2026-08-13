@@ -1714,6 +1714,100 @@ fois les deux icônes modifier/supprimer ajoutées, sur un titre long — le
 titre réel (`event.title`) n'est jamais altéré, seul l'affichage se
 resserre.
 
+Écran d'authentification (Connexion/Créer un compte) refondu avec toggle
+segmenté (P0, complément) fonctionnel — remplace l'ancien formulaire à
+bouton unique par un écran conforme à la maquette validée
+`docs/atijaniya_login_signup_toggle.html` et au cahier des charges
+`docs/maj-ecran-auth-at-tijaniya.md` fournis par le porteur de projet.
+
+**Décision actée avant implémentation** : pas de boutons de connexion
+sociale (Google/Apple/Facebook), malgré leur présence dans la maquette.
+Nécessiteraient une configuration OAuth côté Supabase (aucun provider
+activé) et un deep link natif Android/iOS pour le retour vers l'app (aucun
+schème personnalisé déclaré, navigation en `Navigator` classique sans
+`go_router`) — chantier d'infrastructure à part, même statut que le
+prestataire de paiement des dons ou le streaming natif Khadara. Même
+principe déjà appliqué ailleurs dans l'app (audio des wirds, dons) : pas
+d'UI pour une fonctionnalité sans implémentation réelle derrière.
+
+**Deux écarts corrigés par rapport au cahier des charges fourni**, vérifiés
+avant implémentation : (1) le document proposait `data: {'full_name':
+...}` à l'inscription, alors que le trigger serveur `handle_new_user` lit
+`raw_user_meta_data->>'display_name'` (`database/schema.sql`) — corrigé en
+envoyant la clé `display_name`, sinon le nom saisi n'aurait jamais
+alimenté `profiles.display_name`. (2) le document affichait "8 caractères
+minimum" alors que la validation existante (partagée par les deux
+actions) exigeait 6 — la création exige désormais 8 caractères, la
+connexion reste à "non vide" (aucun changement) pour ne jamais bloquer un
+compte existant créé avec un mot de passe plus court, dont le compte réel
+du porteur de projet.
+
+Côté app (`lib/features/auth/presentation/auth_screen.dart`, réécrit
+intégralement, API publique inchangée — `onAuthenticated`/
+`onContinueAsGuest`, aucun changement dans `app.dart`) : toggle segmenté
+maison (pas de package, `Container` + `AnimatedContainer`, fond
+`goldSoft`/actif `emerald`), deux panneaux indépendants avec leurs propres
+`GlobalKey<FormState>` et controllers (bascule d'onglet réinitialise
+naturellement les erreurs/saisies du panneau quitté, sans logique dédiée).
+Panneau Connexion : email, mot de passe (icône œil), nouveau lien "Mot de
+passe oublié ?" (`resetPasswordForEmail`, confirmation inline réutilisant
+le pattern `_infoMessage` déjà existant), bouton "Se connecter",
+"Continuer sans compte" inchangé. Panneau Créer un compte : nouveau champ
+"Nom complet" (obligatoire, envoyé en `display_name`), email, mot de passe
+(icône œil + hint permanent "8 caractères minimum"), bouton "Créer un
+compte", texte légal statique (aucune page Conditions d'utilisation/
+Politique de confidentialité n'existe encore dans l'app — vérifié par
+recherche — donc texte non cliquable, spans colorés seulement, conforme à
+la maquette). `classifyAuthError`/`AuthErrorKind`/`_messageFor`
+(`domain/auth_error_message.dart`) réutilisés tels quels. Nouvelles clés
+`.arb` (FR/AR) : `authTabLogin`/`authTabSignup`, `authSignupTitle`/
+`authSignupSubtitle`, `authFullNameLabel`/`authFullNameRequired`,
+`authForgotPassword`/`authResetPasswordSent`,
+`authPasswordMinCharsHint`/`authPasswordTooShortSignup`,
+`authLegalPrefix`/`authLegalTerms`/`authLegalMiddle`/`authLegalPrivacy`/
+`authLegalSuffix` ; `authSubtitle` légèrement raccourci pour coller à la
+maquette (le renvoi vers le mode invité est désormais un lien séparé, déjà
+présent).
+
+`flutter analyze` et `flutter test --concurrency=1` (114 tests) tous verts
+— aucun test existant ne référençait l'ancien layout de l'écran Auth.
+
+Validé en conditions réelles sur émulateur Android contre le projet
+Supabase live : toggle Connexion/Créer un compte fonctionnel (bascule
+visuelle correcte, erreurs et saisies du panneau quitté bien
+réinitialisées) ; validation inline testée sur le panneau Créer un compte
+(nom/e-mail/mot de passe obligatoires, puis mot de passe < 8 caractères
+bloqué avec le message dédié) ; icône œil testée sur les deux panneaux
+(bascule affichage/masquage confirmée) ; "Mot de passe oublié ?"
+déclenché une fois pour de vrai avec l'e-mail réel du porteur de projet
+(`bgueye@gmail.com`) — confirmation "E-mail de réinitialisation envoyé"
+affichée, appel réel à `resetPasswordForEmail` confirmé. Revalidé
+intégralement en arabe (RTL) : ordre du toggle inversé, champs et icône
+œil repositionnés à gauche, texte légal avec ses deux liens colorés
+lisible et grammaticalement correct, hint "8 أحرف على الأقل" bien
+positionné.
+
+**Effet de bord non planifié pendant ce test, à signaler au porteur de
+projet** : l'émulateur avait une session réelle déjà persistée pour un
+compte non documenté ailleurs dans cet historique, "daba Ndiaye"
+(`profiles.display_name`, zawiya non renseignée) — nécessaire à
+déconnecter (bouton "Se déconnecter" existant, avec confirmation) pour
+atteindre l'écran Auth et le tester. Ce compte reste intact côté Supabase
+(aucune donnée modifiée ni supprimée), seule sa session locale sur cet
+émulateur a été fermée ; ses identifiants n'étaient pas disponibles pour
+le reconnecter après le test — à reconnecter manuellement si ce compte est
+utilisé activement.
+
+Note technique de session, sans lien avec le code de l'écran : la machine
+de développement était sous forte contention CPU pendant ce test (un
+daemon Gradle orphelin issu d'une première tentative de build en mode
+`--release`, abandonnée au profit du mode debug habituel de ce projet,
+continuait de tourner en tâche de fond) — a causé un gel d'affichage
+temporaire (écran noir) juste après la déconnexion, résolu par un
+redémarrage propre de l'app (`am force-stop` + relance). Confirmé sans
+rapport avec `auth_screen.dart` par les logs (`adb logcat`) : aucune
+exception, seulement des frames très lentes pendant la contention.
+
 ## Commandes utiles
 - `flutter pub get`
 - `flutter analyze`

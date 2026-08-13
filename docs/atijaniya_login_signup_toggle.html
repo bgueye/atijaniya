@@ -1,0 +1,108 @@
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600&family=Jost:wght@400;500;600&display=swap');
+.atj{--ink:#2B2620;--zaytoune:#0F3D2E;--emerald:#1C6E4A;--gold-soft:#F1E6C9;--parchment:#F7F2E7;--bronze:#8C7A5B;--white:#FFFDF8;--line:#ECE4D0;font-family:'Jost',sans-serif}
+.atj h2{font-family:'Cormorant Garamond',serif;font-size:23px;color:var(--zaytoune);font-weight:600;margin:0 0 4px}
+.atj .fsub{font-size:11px;color:var(--bronze);margin:0 0 18px;line-height:1.5}
+.atj .tgl{display:none}
+.atj .panel{display:none}
+.atj .tabs{display:flex;background:var(--gold-soft);border-radius:22px;padding:4px;margin-bottom:20px}
+.atj .tabs label{flex:1;text-align:center;padding:9px 0;border-radius:18px;font-size:12px;font-weight:600;cursor:pointer;color:var(--bronze)}
+#tab-login:checked ~ .tabs label[for="tab-login"]{background:var(--emerald);color:var(--white)}
+#tab-signup:checked ~ .tabs label[for="tab-signup"]{background:var(--emerald);color:var(--white)}
+#tab-login:checked ~ .content #panel-login{display:block}
+#tab-signup:checked ~ .content #panel-signup{display:block}
+.atj .ffield{margin-bottom:12px}
+.atj .ffield label{font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--bronze);font-weight:600;display:block;margin-bottom:5px}
+.atj .ffield input{width:100%;background:var(--white);border:1px solid var(--line);border-radius:8px;padding:9px 11px;font-size:12px;color:var(--ink);font-family:'Jost',sans-serif;outline:none;box-sizing:border-box}
+.atj .ffield input::placeholder{color:#B8AD94}
+.atj .eye{position:absolute;right:5px;top:22px;background:none;border:none;color:var(--bronze);cursor:pointer;padding:4px;line-height:0}
+.atj .btn-primary{background:var(--emerald);color:var(--white);border:none;padding:12px 20px;border-radius:8px;font-size:12.5px;font-weight:600;width:100%;margin-bottom:9px;cursor:pointer;font-family:inherit}
+.atj .btn-social{background:var(--white);color:var(--ink);border:1px solid var(--line);padding:10px 14px;border-radius:8px;font-size:12px;font-weight:500;width:100%;display:flex;align-items:center;justify-content:center;gap:8px;cursor:pointer;box-sizing:border-box;font-family:inherit}
+.atj .glink{text-align:center;font-size:11px;color:var(--emerald);text-decoration:underline;cursor:pointer}
+.atj .fwd{text-align:right;font-size:11px;color:var(--emerald);text-decoration:underline;cursor:pointer;margin:-4px 0 16px}
+</style>
+<h2 style="position:absolute;width:1px;height:1px;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0;">Maquette de l'écran de connexion et de création de compte pour At-Tijaniya, avec bascule entre les deux vues</h2>
+<div style="display:flex;justify-content:center;padding:1rem 0;">
+  <div class="atj" style="background:#0a0a0a;border-radius:38px;padding:11px;width:280px;position:relative;">
+    <div style="position:absolute;top:11px;left:50%;transform:translateX(-50%);width:100px;height:20px;background:#0a0a0a;border-radius:0 0 14px 14px;z-index:10;"></div>
+    <div style="background:var(--parchment);border-radius:29px;overflow:hidden;">
+      <div style="height:30px;display:flex;align-items:center;justify-content:space-between;padding:0 20px;font-size:11px;color:var(--ink);font-weight:600;box-sizing:border-box;">
+        <span>9:41</span><span>●●●●</span>
+      </div>
+      <div style="padding:16px 20px 22px;">
+
+        <input type="radio" name="screen" id="tab-login" class="tgl" checked>
+        <input type="radio" name="screen" id="tab-signup" class="tgl">
+        <div class="tabs">
+          <label for="tab-login">Connexion</label>
+          <label for="tab-signup">Créer un compte</label>
+        </div>
+
+        <div class="content">
+          <div id="panel-login" class="panel">
+            <h2>Bienvenue</h2>
+            <p class="fsub">Connectez-vous pour retrouver votre communauté.</p>
+
+            <div class="ffield"><label>Email</label><input type="email" placeholder="nom@exemple.com"></div>
+
+            <div class="ffield" style="position:relative;">
+              <label>Mot de passe</label>
+              <input type="password" id="pw-login" placeholder="••••••••" style="padding-right:30px;">
+              <button type="button" class="eye" aria-label="Afficher le mot de passe" onclick="const i=document.getElementById('pw-login');const show=i.type==='password';i.type=show?'text':'password';this.querySelector('i').className='ti '+(show?'ti-eye-off':'ti-eye');this.setAttribute('aria-label',show?'Masquer le mot de passe':'Afficher le mot de passe');"><i class="ti ti-eye" style="font-size:15px;" aria-hidden="true"></i></button>
+            </div>
+
+            <div class="fwd">Mot de passe oublié ?</div>
+
+            <button class="btn-primary">Se connecter</button>
+
+            <div style="display:flex;align-items:center;gap:8px;margin:14px 0;">
+              <div style="flex:1;height:1px;background:var(--line);"></div>
+              <span style="font-size:11px;color:var(--bronze);">ou continuer avec</span>
+              <div style="flex:1;height:1px;background:var(--line);"></div>
+            </div>
+
+            <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:16px;">
+              <button class="btn-social"><i class="ti ti-brand-google" style="font-size:15px;" aria-hidden="true"></i>Google</button>
+              <button class="btn-social"><i class="ti ti-brand-apple" style="font-size:15px;" aria-hidden="true"></i>Apple</button>
+              <button class="btn-social"><i class="ti ti-brand-facebook" style="font-size:15px;" aria-hidden="true"></i>Facebook</button>
+            </div>
+
+            <div class="glink">Continuer sans compte (pratique du Wird uniquement)</div>
+          </div>
+
+          <div id="panel-signup" class="panel">
+            <h2>Créer un compte</h2>
+            <p class="fsub">Rejoignez la communauté et commencez à réciter vos wirds.</p>
+
+            <div class="ffield"><label>Nom complet</label><input type="text" placeholder="Votre nom"></div>
+            <div class="ffield"><label>Email</label><input type="email" placeholder="nom@exemple.com"></div>
+
+            <div class="ffield" style="position:relative;">
+              <label>Mot de passe</label>
+              <input type="password" id="pw-signup" placeholder="••••••••" style="padding-right:30px;">
+              <button type="button" class="eye" aria-label="Afficher le mot de passe" onclick="const i=document.getElementById('pw-signup');const show=i.type==='password';i.type=show?'text':'password';this.querySelector('i').className='ti '+(show?'ti-eye-off':'ti-eye');this.setAttribute('aria-label',show?'Masquer le mot de passe':'Afficher le mot de passe');"><i class="ti ti-eye" style="font-size:15px;" aria-hidden="true"></i></button>
+            </div>
+            <p style="font-size:11px;color:var(--bronze);margin:-4px 0 16px;">8 caractères minimum</p>
+
+            <button class="btn-primary">Créer mon compte</button>
+
+            <div style="display:flex;align-items:center;gap:8px;margin:14px 0;">
+              <div style="flex:1;height:1px;background:var(--line);"></div>
+              <span style="font-size:11px;color:var(--bronze);">ou continuer avec</span>
+              <div style="flex:1;height:1px;background:var(--line);"></div>
+            </div>
+
+            <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:16px;">
+              <button class="btn-social"><i class="ti ti-brand-google" style="font-size:15px;" aria-hidden="true"></i>Google</button>
+              <button class="btn-social"><i class="ti ti-brand-apple" style="font-size:15px;" aria-hidden="true"></i>Apple</button>
+              <button class="btn-social"><i class="ti ti-brand-facebook" style="font-size:15px;" aria-hidden="true"></i>Facebook</button>
+            </div>
+
+            <p style="text-align:center;font-size:11px;color:var(--bronze);line-height:1.5;margin:0;">En créant un compte, vous acceptez nos <span style="color:var(--emerald);">Conditions d'utilisation</span> et notre <span style="color:var(--emerald);">Politique de confidentialité</span>.</p>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>

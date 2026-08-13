@@ -64,11 +64,28 @@ class AppLocalizationsAr extends AppLocalizations {
       'تواصل مع محيطك الروحي وتابع مستجدات زاويتك.';
 
   @override
+  String get authTabLogin => 'تسجيل الدخول';
+
+  @override
+  String get authTabSignup => 'إنشاء حساب';
+
+  @override
   String get authTitle => 'مرحبًا بك';
 
   @override
-  String get authSubtitle =>
-      'سجّل الدخول للتواصل مع جماعتك، أو استمر بدون حساب لأداء الورد فقط.';
+  String get authSubtitle => 'سجّل الدخول للتواصل مع جماعتك.';
+
+  @override
+  String get authSignupTitle => 'إنشاء حساب';
+
+  @override
+  String get authSignupSubtitle => 'انضم إلى الجماعة وابدأ في أداء أورادك.';
+
+  @override
+  String get authFullNameLabel => 'الاسم الكامل';
+
+  @override
+  String get authFullNameRequired => 'الاسم الكامل إلزامي.';
 
   @override
   String get authEmailLabel => 'البريد الإلكتروني';
@@ -78,6 +95,16 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get authPasswordLabel => 'كلمة السر';
+
+  @override
+  String get authPasswordMinCharsHint => '8 أحرف على الأقل';
+
+  @override
+  String get authForgotPassword => 'نسيت كلمة السر؟';
+
+  @override
+  String get authResetPasswordSent =>
+      'تم إرسال بريد إعادة التعيين. تحقّق من بريدك الإلكتروني.';
 
   @override
   String get authSignInAction => 'تسجيل الدخول';
@@ -100,6 +127,10 @@ class AppLocalizationsAr extends AppLocalizations {
   @override
   String get authPasswordTooShort =>
       'يجب أن تتكوّن كلمة السر من 6 أحرف على الأقل.';
+
+  @override
+  String get authPasswordTooShortSignup =>
+      'يجب أن تتكوّن كلمة السر من 8 أحرف على الأقل.';
 
   @override
   String get authInvalidCredentials =>
@@ -126,6 +157,21 @@ class AppLocalizationsAr extends AppLocalizations {
   @override
   String get authCheckEmailToConfirm =>
       'تم إنشاء الحساب. تحقّق من بريدك الإلكتروني لتأكيد عنوانك قبل تسجيل الدخول.';
+
+  @override
+  String get authLegalPrefix => 'عند إنشاء حساب، فإنك توافق على ';
+
+  @override
+  String get authLegalTerms => 'شروط الاستخدام';
+
+  @override
+  String get authLegalMiddle => ' و';
+
+  @override
+  String get authLegalPrivacy => 'سياسة الخصوصية';
+
+  @override
+  String get authLegalSuffix => '.';
 
   @override
   String get navHome => 'الرئيسية';
