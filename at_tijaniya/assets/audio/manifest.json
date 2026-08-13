@@ -4,6 +4,36 @@
       "audio_path": "wazifa/4.aac",
       "asset_path": "assets/audio/wirds/wazifa_4.aac",
       "content_version": 1
+    },
+    {
+      "audio_path": "wazifa/6_v2.aac",
+      "asset_path": "assets/audio/wirds/wazifa_jawharatoul_kamal_v2.aac",
+      "content_version": 2
+    },
+    {
+      "audio_path": "lazim/3.aac",
+      "asset_path": "assets/audio/wirds/lazim_3.aac",
+      "content_version": 1
+    },
+    {
+      "audio_path": "shared/fatiha.aac",
+      "asset_path": "assets/audio/wirds/fatiha.aac",
+      "content_version": 1
+    },
+    {
+      "audio_path": "shared/tahlil.aac",
+      "asset_path": "assets/audio/wirds/tahlil.aac",
+      "content_version": 1
+    },
+    {
+      "audio_path": "shared/salatoul_fatihi_tivaouane.aac",
+      "asset_path": "assets/audio/wirds/salatoul_fatihi_tivaouane.aac",
+      "content_version": 1
+    },
+    {
+      "audio_path": "shared/salatoul_fatihi_bayeniass.aac",
+      "asset_path": "assets/audio/wirds/salatoul_fatihi_bayeniass.aac",
+      "content_version": 1
     }
   ]
 }
