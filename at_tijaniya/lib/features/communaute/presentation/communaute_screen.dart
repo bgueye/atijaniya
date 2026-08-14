@@ -252,13 +252,7 @@ class _CreatePostSheetState extends ConsumerState<_CreatePostSheet> {
             if (_pickedImageBytes != null) ...[
               ClipRRect(
                 borderRadius: BorderRadius.circular(12),
-                child: Image.memory(
-                  _pickedImageBytes!,
-                  height: 140,
-                  width: double.infinity,
-                  fit: BoxFit.cover,
-                  alignment: Alignment.topCenter,
-                ),
+                child: Image.memory(_pickedImageBytes!, width: double.infinity, fit: BoxFit.fitWidth),
               ),
               const SizedBox(height: 8),
             ],
@@ -526,14 +520,63 @@ class _CreateGroupSheetState extends ConsumerState<_CreateGroupSheet> {
   }
 }
 
-class _PostCard extends StatelessWidget {
+class _PostCard extends ConsumerStatefulWidget {
   const _PostCard({required this.post, required this.fallbackAuthor});
 
   final CommunityPost post;
   final String fallbackAuthor;
 
   @override
+  ConsumerState<_PostCard> createState() => _PostCardState();
+}
+
+class _PostCardState extends ConsumerState<_PostCard> {
+  // État local optimiste — même principe que PostDetailScreen._toggleLike :
+  // aimer depuis le fil ne doit pas recharger toute la liste juste pour
+  // refléter un compteur.
+  late bool _liked = widget.post.isLikedByMe;
+  late int _likeCount = widget.post.likeCount;
+  bool _likeInFlight = false;
+
+  bool get _isSignedIn => SupabaseConfig.client.auth.currentUser != null;
+
+  void _promptSignIn() {
+    final l10n = AppLocalizations.of(context)!;
+    ScaffoldMessenger.of(context)
+      ..hideCurrentSnackBar()
+      ..showSnackBar(SnackBar(content: Text(l10n.communitySignInToInteract)));
+  }
+
+  Future<void> _toggleLike() async {
+    if (!_isSignedIn) {
+      _promptSignIn();
+      return;
+    }
+    if (_likeInFlight) return;
+    final wasLiked = _liked;
+    setState(() {
+      _liked = !wasLiked;
+      _likeCount += wasLiked ? -1 : 1;
+      _likeInFlight = true;
+    });
+    try {
+      await ref.read(communityRepositoryProvider).toggleLike(widget.post.id, currentlyLiked: wasLiked);
+    } catch (_) {
+      if (mounted) {
+        setState(() {
+          _liked = wasLiked;
+          _likeCount += wasLiked ? 1 : -1;
+        });
+      }
+    } finally {
+      if (mounted) setState(() => _likeInFlight = false);
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final post = widget.post;
+    final fallbackAuthor = widget.fallbackAuthor;
     return Card(
       child: InkWell(
         borderRadius: BorderRadius.circular(16),
@@ -569,10 +612,11 @@ class _PostCard extends StatelessWidget {
                   borderRadius: BorderRadius.circular(12),
                   child: Image.network(
                     post.mediaUrl!,
-                    height: 160,
+                    // Pas de hauteur fixe — même choix que le bandeau de
+                    // couverture Khadara (event_detail_screen.dart) : une
+                    // hauteur fixe coupe la photo selon son orientation.
                     width: double.infinity,
-                    fit: BoxFit.cover,
-                    alignment: Alignment.topCenter,
+                    fit: BoxFit.fitWidth,
                     errorBuilder: (context, error, stackTrace) => const SizedBox.shrink(),
                   ),
                 ),
@@ -580,9 +624,27 @@ class _PostCard extends StatelessWidget {
               const SizedBox(height: 10),
               Row(
                 children: [
-                  const Icon(Icons.favorite_border, color: AppColors.bronze, size: 18),
-                  const SizedBox(width: 4),
-                  Text('${post.likeCount}', style: const TextStyle(color: AppColors.bronze, fontSize: 13)),
+                  // InkWell propre à cette zone : intercepte le tap avant
+                  // qu'il n'atteigne l'InkWell de la carte (qui ouvre le
+                  // détail), pour pouvoir aimer sans quitter le fil.
+                  InkWell(
+                    borderRadius: BorderRadius.circular(8),
+                    onTap: _toggleLike,
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 2),
+                      child: Row(
+                        children: [
+                          Icon(
+                            _liked ? Icons.favorite : Icons.favorite_border,
+                            color: _liked ? AppColors.emerald : AppColors.bronze,
+                            size: 18,
+                          ),
+                          const SizedBox(width: 4),
+                          Text('$_likeCount', style: const TextStyle(color: AppColors.bronze, fontSize: 13)),
+                        ],
+                      ),
+                    ),
+                  ),
                   const SizedBox(width: 16),
                   const Icon(Icons.mode_comment_outlined, color: AppColors.bronze, size: 18),
                   const SizedBox(width: 4),
