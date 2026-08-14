@@ -117,10 +117,12 @@ class _EventDetailScreenState extends ConsumerState<EventDetailScreen> {
               borderRadius: BorderRadius.circular(14),
               child: Image.network(
                 _event.imageUrl!,
-                height: 180,
+                // Pas de hauteur fixe : la largeur remplit l'écran et la
+                // hauteur s'ajuste au ratio réel de la photo, plutôt que de
+                // recadrer/deviner une hauteur qui coupe une partie de
+                // l'image selon son orientation.
                 width: double.infinity,
-                fit: BoxFit.cover,
-                alignment: Alignment.topCenter,
+                fit: BoxFit.fitWidth,
                 errorBuilder: (context, error, stackTrace) => const SizedBox.shrink(),
               ),
             ),

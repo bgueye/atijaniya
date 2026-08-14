@@ -233,20 +233,13 @@ class _EventFormScreenState extends ConsumerState<EventFormScreen> {
 
     Widget preview;
     if (hasPickedImage) {
-      preview = Image.memory(
-        _pickedImageBytes!,
-        height: 160,
-        width: double.infinity,
-        fit: BoxFit.cover,
-        alignment: Alignment.topCenter,
-      );
+      // Pas de hauteur fixe — voir la même remarque dans event_detail_screen.dart.
+      preview = Image.memory(_pickedImageBytes!, width: double.infinity, fit: BoxFit.fitWidth);
     } else if (hasExistingImage) {
       preview = Image.network(
         _existingImageUrl!,
-        height: 160,
         width: double.infinity,
-        fit: BoxFit.cover,
-        alignment: Alignment.topCenter,
+        fit: BoxFit.fitWidth,
         errorBuilder: (context, error, stackTrace) => const SizedBox.shrink(),
       );
     } else {
