@@ -9,6 +9,12 @@
          ouverture d'un écran de wird plutôt qu'automatiquement au boot — voir
          WirdReminderController._load(). -->
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
+    <!-- Photo d'un évènement Khadara / portrait d'une figure / publication du
+         fil communautaire — capture directe avec l'appareil photo (docs/09-
+         journal-implementation-frontend.md). La sélection dans la galerie
+         passe par le sélecteur système et ne nécessite pas de permission
+         dédiée sur les versions d'Android ciblées par ce projet. -->
+    <uses-permission android:name="android.permission.CAMERA"/>
     <application
         android:label="at_tijaniya"
         android:name="${applicationName}"

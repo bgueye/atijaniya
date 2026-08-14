@@ -102,7 +102,19 @@ class _EventsTab extends ConsumerWidget {
         padding: const EdgeInsets.fromLTRB(16, 16, 16, 88),
         itemBuilder: (context, event) => Card(
           child: ListTile(
-            leading: Icon(khadaraEventTypeIcon(event.type), color: AppColors.emerald),
+            leading: event.imageUrl != null
+                ? ClipRRect(
+                    borderRadius: BorderRadius.circular(8),
+                    child: Image.network(
+                      event.imageUrl!,
+                      width: 40,
+                      height: 40,
+                      fit: BoxFit.cover,
+                      errorBuilder: (context, error, stackTrace) =>
+                          Icon(khadaraEventTypeIcon(event.type), color: AppColors.emerald),
+                    ),
+                  )
+                : Icon(khadaraEventTypeIcon(event.type), color: AppColors.emerald),
             title: Text(event.title),
             subtitle: Text(
               event.zawiyaName != null

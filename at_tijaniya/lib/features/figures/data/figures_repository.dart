@@ -50,6 +50,14 @@ class FiguresRepository {
     await SupabaseConfig.client.from('figures').update({'content_status': 'valide'}).eq('id', figureId);
   }
 
+  /// Enregistre l'URL publique d'un portrait déjà téléversé vers le bucket
+  /// `figure-portraits` (voir `ImageUploadService`, appelé côté écran juste
+  /// avant) — RLS `figures_admin_update`, même protection que
+  /// `validateFigure`. `null` pour retirer le portrait existant.
+  Future<void> updatePortrait(String figureId, String? portraitUrl) async {
+    await SupabaseConfig.client.from('figures').update({'portrait_url': portraitUrl}).eq('id', figureId);
+  }
+
   /// Silsila historique (généalogie spirituelle) depuis le fondateur
   /// jusqu'à [figureId], via la fonction Postgres `get_historical_silsila_chain`
   /// (`SECURITY DEFINER` — nécessaire pour résoudre les maillons

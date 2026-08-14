@@ -60,12 +60,18 @@ class CommunityRepository {
   /// ouvrir la modération à tous les disciples dès cette itération ; la RLS
   /// `posts_author_create` elle-même n'impose que `auth.uid() = author_user_id`,
   /// donc cette restriction n'est aujourd'hui appliquée que côté client.
-  Future<void> createPost(String contentText, {String? zawiyaId}) async {
+  ///
+  /// [mediaUrl] : URL publique d'une image déjà téléversée par l'appelant
+  /// vers le bucket `post-media` (voir `ImageUploadService`,
+  /// `_CreatePostSheet`) — cette méthode ne fait que l'enregistrer, `null`
+  /// si aucune image n'a été jointe.
+  Future<void> createPost(String contentText, {String? zawiyaId, String? mediaUrl}) async {
     final userId = SupabaseConfig.client.auth.currentUser!.id;
     await SupabaseConfig.client.from('posts').insert({
       'author_user_id': userId,
       'author_zawiya_id': zawiyaId,
       'content_text': contentText,
+      'media_url': mediaUrl,
     });
   }
 

@@ -1,6 +1,10 @@
+import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../core/storage/image_source_sheet.dart';
+import '../../../core/storage/image_upload_service.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../profil/presentation/profile_providers.dart';
@@ -32,6 +36,7 @@ class _EventFormScreenState extends ConsumerState<EventFormScreen> {
   final _formKey = GlobalKey<FormState>();
   final _titleController = TextEditingController();
   final _descriptionController = TextEditingController();
+  final _imageUploadService = ImageUploadService();
 
   KhadaraEventType _type = KhadaraEventType.hadra;
   DateTime? _startsAt;
@@ -39,6 +44,18 @@ class _EventFormScreenState extends ConsumerState<EventFormScreen> {
   String? _zawiyaId;
   bool _saving = false;
   String? _errorMessage;
+
+  // Image de couverture : soit une nouvelle image choisie sur l'appareil
+  // (_pickedImageBytes non nul, pas encore téléversée), soit l'image déjà
+  // en base pour un évènement existant (_existingImageUrl), soit aucune des
+  // deux (_removeImage) si le disciple a explicitement retiré l'image
+  // existante — le fichier Storage lui-même n'est pas supprimé dans ce cas
+  // (juste la référence en base), même sobriété que le reste du module
+  // (aucun nettoyage de Storage à la suppression d'un évènement non plus).
+  Uint8List? _pickedImageBytes;
+  String? _pickedImageExtension;
+  String? _existingImageUrl;
+  bool _removeImage = false;
 
   @override
   void initState() {
@@ -51,7 +68,29 @@ class _EventFormScreenState extends ConsumerState<EventFormScreen> {
       _startsAt = event.startsAt;
       _endsAt = event.endsAt;
       _zawiyaId = event.zawiyaId;
+      _existingImageUrl = event.imageUrl;
     }
+  }
+
+  Future<void> _pickImage() async {
+    final source = await showImageSourceSheet(context);
+    if (source == null || !mounted) return;
+    final file = await _imageUploadService.pickImage(source);
+    if (file == null || !mounted) return;
+    final bytes = await file.readAsBytes();
+    setState(() {
+      _pickedImageBytes = bytes;
+      _pickedImageExtension = imageExtensionFromPath(file.path);
+      _removeImage = false;
+    });
+  }
+
+  void _clearImage() {
+    setState(() {
+      _pickedImageBytes = null;
+      _pickedImageExtension = null;
+      _removeImage = _existingImageUrl != null;
+    });
   }
 
   @override
@@ -120,8 +159,9 @@ class _EventFormScreenState extends ConsumerState<EventFormScreen> {
 
     try {
       final repo = ref.read(khadaraRepositoryProvider);
+      KhadaraEvent saved;
       if (widget.event == null) {
-        await repo.createEvent(
+        saved = await repo.createEvent(
           title: _titleController.text.trim(),
           description: descriptionText.isEmpty ? null : descriptionText,
           type: _type,
@@ -131,10 +171,8 @@ class _EventFormScreenState extends ConsumerState<EventFormScreen> {
           latitude: null,
           longitude: null,
         );
-        ref.invalidate(upcomingEventsProvider);
-        if (mounted) Navigator.of(context).pop();
       } else {
-        final updated = await repo.updateEvent(
+        saved = await repo.updateEvent(
           widget.event!.id,
           title: _titleController.text.trim(),
           description: descriptionText.isEmpty ? null : descriptionText,
@@ -145,14 +183,96 @@ class _EventFormScreenState extends ConsumerState<EventFormScreen> {
           latitude: widget.event!.latitude,
           longitude: widget.event!.longitude,
         );
-        ref.invalidate(upcomingEventsProvider);
-        if (mounted) Navigator.of(context).pop(updated);
+      }
+
+      // Image : étape séparée, après coup — le chemin de Storage exige un
+      // event_id déjà existant (voir KhadaraRepository.updateEventImage).
+      String? imageUrl = saved.imageUrl;
+      if (_pickedImageBytes != null) {
+        imageUrl = await _imageUploadService.uploadImage(
+          bucket: 'event-images',
+          path: '${saved.id}/cover.$_pickedImageExtension',
+          bytes: _pickedImageBytes!,
+          contentType: imageContentTypeForExtension(_pickedImageExtension!),
+        );
+        await repo.updateEventImage(saved.id, imageUrl);
+      } else if (_removeImage) {
+        await repo.updateEventImage(saved.id, null);
+        imageUrl = null;
+      }
+
+      ref.invalidate(upcomingEventsProvider);
+      if (mounted) {
+        Navigator.of(context).pop(
+          KhadaraEvent(
+            id: saved.id,
+            zawiyaId: saved.zawiyaId,
+            zawiyaName: saved.zawiyaName,
+            title: saved.title,
+            description: saved.description,
+            type: saved.type,
+            startsAt: saved.startsAt,
+            endsAt: saved.endsAt,
+            latitude: saved.latitude,
+            longitude: saved.longitude,
+            createdBy: saved.createdBy,
+            imageUrl: imageUrl,
+          ),
+        );
       }
     } catch (_) {
       if (mounted) setState(() => _errorMessage = l10n.eventFormSaveError);
     } finally {
       if (mounted) setState(() => _saving = false);
     }
+  }
+
+  Widget _buildImagePicker(AppLocalizations l10n) {
+    final hasPickedImage = _pickedImageBytes != null;
+    final hasExistingImage = !hasPickedImage && !_removeImage && _existingImageUrl != null;
+
+    Widget preview;
+    if (hasPickedImage) {
+      preview = Image.memory(_pickedImageBytes!, height: 160, width: double.infinity, fit: BoxFit.cover);
+    } else if (hasExistingImage) {
+      preview = Image.network(
+        _existingImageUrl!,
+        height: 160,
+        width: double.infinity,
+        fit: BoxFit.cover,
+        errorBuilder: (context, error, stackTrace) => const SizedBox.shrink(),
+      );
+    } else {
+      preview = const SizedBox.shrink();
+    }
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        if (hasPickedImage || hasExistingImage) ...[
+          ClipRRect(borderRadius: BorderRadius.circular(12), child: preview),
+          const SizedBox(height: 8),
+        ],
+        Row(
+          children: [
+            Expanded(
+              child: OutlinedButton.icon(
+                onPressed: _pickImage,
+                icon: const Icon(Icons.image_outlined),
+                label: Text(hasPickedImage || hasExistingImage ? l10n.imagePickerChange : l10n.imagePickerAdd),
+              ),
+            ),
+            if (hasPickedImage || hasExistingImage) ...[
+              const SizedBox(width: 8),
+              IconButton(
+                icon: const Icon(Icons.close, color: AppColors.bronze),
+                onPressed: _clearImage,
+              ),
+            ],
+          ],
+        ),
+      ],
+    );
   }
 
   @override
@@ -183,6 +303,10 @@ class _EventFormScreenState extends ConsumerState<EventFormScreen> {
                 decoration: InputDecoration(labelText: l10n.eventFormDescriptionLabel),
                 maxLines: 4,
               ),
+              const SizedBox(height: 16),
+              Text(l10n.eventFormImageLabel, style: const TextStyle(color: AppColors.bronze, fontSize: 13)),
+              const SizedBox(height: 6),
+              _buildImagePicker(l10n),
               const SizedBox(height: 16),
               DropdownButtonFormField<KhadaraEventType>(
                 initialValue: _type,

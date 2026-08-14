@@ -66,6 +66,11 @@ dependencies:
   # temporaire) puis ouverture de la feuille de partage native (share_plus).
   path_provider: ^2.1.5
   share_plus: ^10.1.4
+  # Sélection d'une image (galerie ou appareil photo) pour l'image de
+  # couverture d'un évènement Khadara, le portrait d'une figure et une
+  # publication du fil communautaire — téléversée ensuite vers Supabase
+  # Storage (`lib/core/storage/image_upload_service.dart`).
+  image_picker: ^1.1.2
 
 dev_dependencies:
   flutter_test:

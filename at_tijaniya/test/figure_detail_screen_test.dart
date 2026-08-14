@@ -5,23 +5,33 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'package:at_tijaniya/features/figures/domain/figure_models.dart';
 import 'package:at_tijaniya/features/figures/presentation/figure_detail_screen.dart';
+import 'package:at_tijaniya/features/profil/presentation/profile_providers.dart';
 import 'package:at_tijaniya/l10n/app_localizations.dart';
 
+// isAdminProvider surchargé à `false` : sa valeur par défaut dépend de
+// currentUserIdProvider -> authStateChangesProvider, qui appelle
+// SupabaseConfig.client (donc Supabase.instance) — non initialisé dans ce
+// test. La surcharge évite d'évaluer cette chaîne, sans rapport avec ce que
+// ce fichier vérifie (rendu de la biographie/citations/ziyara).
 Widget _wrap(Widget child) {
-  return MaterialApp(
-    locale: const Locale('fr'),
-    supportedLocales: const [Locale('fr'), Locale('ar')],
-    localizationsDelegates: const [
-      AppLocalizations.delegate,
-      GlobalMaterialLocalizations.delegate,
-      GlobalWidgetsLocalizations.delegate,
-      GlobalCupertinoLocalizations.delegate,
-    ],
-    home: child,
+  return ProviderScope(
+    overrides: [isAdminProvider.overrideWithValue(false)],
+    child: MaterialApp(
+      locale: const Locale('fr'),
+      supportedLocales: const [Locale('fr'), Locale('ar')],
+      localizationsDelegates: const [
+        AppLocalizations.delegate,
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
+      home: child,
+    ),
   );
 }
 

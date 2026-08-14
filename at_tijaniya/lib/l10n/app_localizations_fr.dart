@@ -28,6 +28,24 @@ class AppLocalizationsFr extends AppLocalizations {
   String get continueLabel => 'Continuer';
 
   @override
+  String get imagePickerAdd => 'Ajouter une image';
+
+  @override
+  String get imagePickerChange => 'Changer l\'image';
+
+  @override
+  String get imagePickerRemove => 'Retirer l\'image';
+
+  @override
+  String get imagePickerGallery => 'Galerie';
+
+  @override
+  String get imagePickerCamera => 'Appareil photo';
+
+  @override
+  String get imagePickerUploadError => 'Impossible de téléverser l\'image.';
+
+  @override
   String get onboardingSkip => 'Passer';
 
   @override
@@ -452,6 +470,9 @@ class AppLocalizationsFr extends AppLocalizations {
   @override
   String get eventFormEndsAtInvalid =>
       'La date de fin doit être postérieure à la date de début.';
+
+  @override
+  String get eventFormImageLabel => 'Image de couverture';
 
   @override
   String get eventFormZawiyaLabel => 'Zawiya';

@@ -84,6 +84,27 @@ void main() {
       });
       expect(event.createdBy, isNull);
     });
+
+    test('parse image_url quand présent', () {
+      final event = KhadaraEvent.fromRow({
+        'id': 'e6',
+        'title': 'Évènement illustré',
+        'event_type': 'hadra',
+        'starts_at': '2026-08-07T14:00:00.000Z',
+        'image_url': 'https://example.com/event-images/e6/cover.jpg',
+      });
+      expect(event.imageUrl, 'https://example.com/event-images/e6/cover.jpg');
+    });
+
+    test('imageUrl est null quand absent', () {
+      final event = KhadaraEvent.fromRow({
+        'id': 'e7',
+        'title': 'Évènement sans image',
+        'event_type': 'hadra',
+        'starts_at': '2026-08-07T14:00:00.000Z',
+      });
+      expect(event.imageUrl, isNull);
+    });
   });
 
   group('canManageEvent', () {

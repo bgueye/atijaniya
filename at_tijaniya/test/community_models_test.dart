@@ -51,6 +51,35 @@ void main() {
       );
       expect(post.authorLabel('Disciple'), 'Disciple');
     });
+
+    test('parse media_url quand présent', () {
+      final post = CommunityPost.fromRow(
+        {
+          'id': 'p4',
+          'author_user_id': 'u1',
+          'content_text': 'Post avec image',
+          'created_at': '2026-08-06T10:00:00.000Z',
+          'media_url': 'https://example.com/post-media/u1/photo.jpg',
+        },
+        likeCount: 0,
+        commentCount: 0,
+      );
+      expect(post.mediaUrl, 'https://example.com/post-media/u1/photo.jpg');
+    });
+
+    test('mediaUrl est null quand absent', () {
+      final post = CommunityPost.fromRow(
+        {
+          'id': 'p5',
+          'author_user_id': 'u1',
+          'content_text': 'Post sans image',
+          'created_at': '2026-08-06T10:00:00.000Z',
+        },
+        likeCount: 0,
+        commentCount: 0,
+      );
+      expect(post.mediaUrl, isNull);
+    });
   });
 
   group('CommunityComment.fromRow', () {

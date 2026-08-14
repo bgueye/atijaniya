@@ -27,6 +27,24 @@ class AppLocalizationsAr extends AppLocalizations {
   String get continueLabel => 'استمرار';
 
   @override
+  String get imagePickerAdd => 'إضافة صورة';
+
+  @override
+  String get imagePickerChange => 'تغيير الصورة';
+
+  @override
+  String get imagePickerRemove => 'إزالة الصورة';
+
+  @override
+  String get imagePickerGallery => 'المعرض';
+
+  @override
+  String get imagePickerCamera => 'الكاميرا';
+
+  @override
+  String get imagePickerUploadError => 'تعذّر رفع الصورة.';
+
+  @override
   String get onboardingSkip => 'تخطي';
 
   @override
@@ -442,6 +460,9 @@ class AppLocalizationsAr extends AppLocalizations {
   @override
   String get eventFormEndsAtInvalid =>
       'يجب أن يكون تاريخ النهاية بعد تاريخ البداية.';
+
+  @override
+  String get eventFormImageLabel => 'صورة الغلاف';
 
   @override
   String get eventFormZawiyaLabel => 'الزاوية';

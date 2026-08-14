@@ -9,6 +9,13 @@
   "languageArabic": "العربية",
   "continueLabel": "استمرار",
 
+  "imagePickerAdd": "إضافة صورة",
+  "imagePickerChange": "تغيير الصورة",
+  "imagePickerRemove": "إزالة الصورة",
+  "imagePickerGallery": "المعرض",
+  "imagePickerCamera": "الكاميرا",
+  "imagePickerUploadError": "تعذّر رفع الصورة.",
+
   "onboardingSkip": "تخطي",
   "onboardingNext": "التالي",
   "onboardingStart": "ابدأ",
@@ -148,6 +155,7 @@
   "eventFormPickDateTime": "اختيار تاريخ ووقت",
   "eventFormEndsAtLabel": "تاريخ ووقت النهاية (اختياري)",
   "eventFormEndsAtInvalid": "يجب أن يكون تاريخ النهاية بعد تاريخ البداية.",
+  "eventFormImageLabel": "صورة الغلاف",
   "eventFormZawiyaLabel": "الزاوية",
   "eventFormSave": "حفظ",
   "eventFormSaveError": "تعذّر حفظ المناسبة.",

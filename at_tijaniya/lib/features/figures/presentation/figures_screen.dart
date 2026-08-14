@@ -153,6 +153,9 @@ class _FigureTile extends StatelessWidget {
     return Card(
       child: ListTile(
         contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        leading: figure.portraitUrl != null
+            ? CircleAvatar(backgroundImage: NetworkImage(figure.portraitUrl!))
+            : const CircleAvatar(child: Icon(Icons.person_outline)),
         title: Text(figure.nameFrench, style: const TextStyle(fontWeight: FontWeight.w500)),
         subtitle: figure.summary != null
             ? Text(figure.summary!, maxLines: 2, overflow: TextOverflow.ellipsis)

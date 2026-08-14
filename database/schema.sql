@@ -1259,24 +1259,99 @@ values ('event-images', 'event-images', true, 5242880, array['image/jpeg','image
 create policy event_images_public_read on storage.objects
   for select using (bucket_id = 'event-images');
 
--- Seul le créateur de l'événement peut uploader/remplacer/supprimer l'image
--- de SON événement. events.created_by est nullable : un événement "système"
--- sans créateur (import/seed admin) ne peut recevoir d'image que via la clé
--- service_role, qui bypass RLS.
+-- Le créateur de l'événement, ou un admin, peut uploader/remplacer/
+-- supprimer l'image de l'événement. events.created_by est nullable : un
+-- événement "système" sans créateur (import/seed admin) ne peut recevoir
+-- d'image que via la clé service_role (bypass RLS) ou un compte admin.
+-- Le is_admin() a été ajouté après coup (migration
+-- allow_admin_on_event_images_storage, 2026-08-14) : sans lui, un admin
+-- gérant un évènement hors de sa propre zawiya (déjà une capacité admin
+-- actée, voir CLAUDE.md § "Gestion des évènements Khadara") ne pouvait pas
+-- ajouter d'image à cet évènement-là.
 create policy event_images_owner_insert on storage.objects
   for insert with check (
     bucket_id = 'event-images'
-    and auth.uid() in (select created_by from public.events where id::text = (storage.foldername(name))[1])
+    and (
+      public.is_admin((select auth.uid()))
+      or auth.uid() in (select created_by from public.events where id::text = (storage.foldername(name))[1])
+    )
   );
 create policy event_images_owner_update on storage.objects
   for update using (
     bucket_id = 'event-images'
-    and auth.uid() in (select created_by from public.events where id::text = (storage.foldername(name))[1])
+    and (
+      public.is_admin((select auth.uid()))
+      or auth.uid() in (select created_by from public.events where id::text = (storage.foldername(name))[1])
+    )
   );
 create policy event_images_owner_delete on storage.objects
   for delete using (
     bucket_id = 'event-images'
-    and auth.uid() in (select created_by from public.events where id::text = (storage.foldername(name))[1])
+    and (
+      public.is_admin((select auth.uid()))
+      or auth.uid() in (select created_by from public.events where id::text = (storage.foldername(name))[1])
+    )
+  );
+
+-- ============================================================================
+-- 11.2bis STORAGE — portrait d'une figure (bucket figure-portraits)
+-- ============================================================================
+-- figures.portrait_url existe depuis le schéma d'origine mais n'a jamais été
+-- exploité côté client avant ce bucket (2026-08-14). Convention de chemin :
+-- figure-portraits/{figure_id}/{nom_de_fichier}. Écriture réservée à
+-- is_admin() (pas de "propriétaire" pour une figure, contrairement à un
+-- évènement) — même règle que l'écriture sur public.figures elle-même
+-- (figures_admin_update).
+
+insert into storage.buckets (id, name, public, file_size_limit, allowed_mime_types)
+values ('figure-portraits', 'figure-portraits', true, 5242880, array['image/jpeg','image/png','image/webp']);
+
+create policy figure_portraits_public_read on storage.objects
+  for select using (bucket_id = 'figure-portraits');
+
+create policy figure_portraits_admin_insert on storage.objects
+  for insert with check (bucket_id = 'figure-portraits' and public.is_admin((select auth.uid())));
+
+create policy figure_portraits_admin_update on storage.objects
+  for update using (bucket_id = 'figure-portraits' and public.is_admin((select auth.uid())));
+
+create policy figure_portraits_admin_delete on storage.objects
+  for delete using (bucket_id = 'figure-portraits' and public.is_admin((select auth.uid())));
+
+-- ============================================================================
+-- 11.2ter STORAGE — image d'une publication du fil communautaire (bucket
+-- post-media)
+-- ============================================================================
+-- posts.media_url existe depuis le schéma d'origine et est déjà affiché
+-- côté client, mais n'avait jamais de bucket pour l'alimenter avant celui-ci
+-- (2026-08-14). Convention de chemin : post-media/{auth.uid()}/{nom_de_fichier}
+-- — par utilisateur plutôt que par post_id, car l'image est téléversée AVANT
+-- l'insertion de la ligne posts (pas d'id de post disponible à ce moment-là).
+-- Cohérent avec posts_author_create, qui ne vérifie que
+-- auth.uid() = author_user_id (aucune contrainte de zawiya au niveau base).
+
+insert into storage.buckets (id, name, public, file_size_limit, allowed_mime_types)
+values ('post-media', 'post-media', true, 5242880, array['image/jpeg','image/png','image/webp']);
+
+create policy post_media_public_read on storage.objects
+  for select using (bucket_id = 'post-media');
+
+create policy post_media_owner_insert on storage.objects
+  for insert with check (
+    bucket_id = 'post-media'
+    and (select auth.uid())::text = (storage.foldername(name))[1]
+  );
+
+create policy post_media_owner_update on storage.objects
+  for update using (
+    bucket_id = 'post-media'
+    and (select auth.uid())::text = (storage.foldername(name))[1]
+  );
+
+create policy post_media_owner_delete on storage.objects
+  for delete using (
+    bucket_id = 'post-media'
+    and (select auth.uid())::text = (storage.foldername(name))[1]
   );
 
 -- ============================================================================

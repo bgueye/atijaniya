@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../core/storage/image_source_sheet.dart';
+import '../../../core/storage/image_upload_service.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../core/theme/rosace_painter.dart';
 import '../../../l10n/app_localizations.dart';
+import '../../profil/presentation/profile_providers.dart';
 import '../domain/figure_models.dart';
 import 'figures_providers.dart';
 
@@ -24,21 +27,68 @@ import 'figures_providers.dart';
 /// (`Figure.ziyaraNote` reste donc toujours `null` pour une figure venant
 /// de la base) — même principe que "Comprendre la Khadara"
 /// (`khadara_understanding_screen.dart`).
-class FigureDetailScreen extends StatelessWidget {
+class FigureDetailScreen extends ConsumerStatefulWidget {
   const FigureDetailScreen({super.key, required this.figure});
 
   final Figure figure;
 
   @override
+  ConsumerState<FigureDetailScreen> createState() => _FigureDetailScreenState();
+}
+
+class _FigureDetailScreenState extends ConsumerState<FigureDetailScreen> {
+  late Figure _figure = widget.figure;
+  final _imageUploadService = ImageUploadService();
+  bool _changingPortrait = false;
+
+  Future<void> _changePortrait() async {
+    final l10n = AppLocalizations.of(context)!;
+    final source = await showImageSourceSheet(context);
+    if (source == null || !mounted) return;
+    final file = await _imageUploadService.pickImage(source);
+    if (file == null || !mounted) return;
+
+    setState(() => _changingPortrait = true);
+    try {
+      final bytes = await file.readAsBytes();
+      final extension = imageExtensionFromPath(file.path);
+      final url = await _imageUploadService.uploadImage(
+        bucket: 'figure-portraits',
+        path: '${_figure.id}/portrait.$extension',
+        bytes: bytes,
+        contentType: imageContentTypeForExtension(extension),
+      );
+      await ref.read(figuresRepositoryProvider).updatePortrait(_figure.id, url);
+      ref.invalidate(figuresProvider);
+      if (mounted) setState(() => _figure = _figure.copyWithPortraitUrl(url));
+    } catch (_) {
+      if (mounted) {
+        ScaffoldMessenger.of(context)
+          ..hideCurrentSnackBar()
+          ..showSnackBar(SnackBar(content: Text(l10n.imagePickerUploadError)));
+      }
+    } finally {
+      if (mounted) setState(() => _changingPortrait = false);
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
+    final figure = _figure;
+    final isAdmin = ref.watch(isAdminProvider);
 
     return DefaultTabController(
       length: 4,
       child: Scaffold(
         body: Column(
           children: [
-            _FigureHero(figure: figure),
+            _FigureHero(
+              figure: figure,
+              isAdmin: isAdmin,
+              changingPortrait: _changingPortrait,
+              onChangePortrait: _changePortrait,
+            ),
             DecoratedBox(
               decoration: BoxDecoration(
                 color: AppColors.offWhite,
@@ -77,9 +127,22 @@ class FigureDetailScreen extends StatelessWidget {
 }
 
 class _FigureHero extends StatelessWidget {
-  const _FigureHero({required this.figure});
+  const _FigureHero({
+    required this.figure,
+    required this.isAdmin,
+    required this.changingPortrait,
+    required this.onChangePortrait,
+  });
 
   final Figure figure;
+
+  /// Action "Changer le portrait" réservée à un admin (`profiles.is_admin`)
+  /// — un statut "Mouqaddam vérifié" n'accorde aucune permission technique
+  /// (CLAUDE.md), même règle que le bouton "Contenu à valider" de
+  /// `figures_screen.dart`.
+  final bool isAdmin;
+  final bool changingPortrait;
+  final VoidCallback onChangePortrait;
 
   /// Teinte du sous-titre français — spécifique à ce dégradé sombre, absente
   /// de `design_tokens.yaml` (qui ne couvre que la palette de marque, pas
@@ -122,6 +185,47 @@ class _FigureHero extends StatelessWidget {
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
+                  if (figure.portraitUrl != null || isAdmin) ...[
+                    GestureDetector(
+                      onTap: isAdmin ? onChangePortrait : null,
+                      child: Stack(
+                        clipBehavior: Clip.none,
+                        children: [
+                          CircleAvatar(
+                            radius: 36,
+                            backgroundColor: AppColors.parchment.withValues(alpha: 0.2),
+                            backgroundImage:
+                                figure.portraitUrl != null ? NetworkImage(figure.portraitUrl!) : null,
+                            child: figure.portraitUrl == null
+                                ? const Icon(Icons.person_outline, color: AppColors.parchment, size: 32)
+                                : null,
+                          ),
+                          if (changingPortrait)
+                            const Positioned.fill(
+                              child: CircleAvatar(
+                                backgroundColor: Colors.black45,
+                                child: SizedBox(
+                                  width: 20,
+                                  height: 20,
+                                  child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
+                                ),
+                              ),
+                            )
+                          else if (isAdmin)
+                            PositionedDirectional(
+                              end: -2,
+                              bottom: -2,
+                              child: Container(
+                                padding: const EdgeInsets.all(4),
+                                decoration: const BoxDecoration(color: AppColors.gold, shape: BoxShape.circle),
+                                child: const Icon(Icons.edit, size: 14, color: AppColors.zaytoune),
+                              ),
+                            ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: 10),
+                  ],
                   Text(
                     figure.nameArabic,
                     textDirection: TextDirection.rtl,

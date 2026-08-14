@@ -53,6 +53,10 @@
 	<string>Le microphone est utilisé pour compter vos récitations à voix haute dans le tasbih digital.</string>
 	<key>NSSpeechRecognitionUsageDescription</key>
 	<string>La reconnaissance vocale est utilisée pour compter vos récitations à voix haute dans le tasbih digital.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>La photothèque est utilisée pour choisir une image d'évènement, de figure ou de publication communautaire.</string>
+	<key>NSCameraUsageDescription</key>
+	<string>L'appareil photo est utilisé pour prendre une image d'évènement, de figure ou de publication communautaire.</string>
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>
 	<key>UIMainStoryboardFile</key>

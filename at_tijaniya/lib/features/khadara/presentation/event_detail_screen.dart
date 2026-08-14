@@ -112,6 +112,19 @@ class _EventDetailScreenState extends ConsumerState<EventDetailScreen> {
       body: ListView(
         padding: const EdgeInsets.all(20),
         children: [
+          if (_event.imageUrl != null) ...[
+            ClipRRect(
+              borderRadius: BorderRadius.circular(14),
+              child: Image.network(
+                _event.imageUrl!,
+                height: 180,
+                width: double.infinity,
+                fit: BoxFit.cover,
+                errorBuilder: (context, error, stackTrace) => const SizedBox.shrink(),
+              ),
+            ),
+            const SizedBox(height: 16),
+          ],
           Chip(
             avatar: Icon(khadaraEventTypeIcon(_event.type), size: 18, color: AppColors.emerald),
             label: Text(khadaraEventTypeLabel(_event.type, l10n)),

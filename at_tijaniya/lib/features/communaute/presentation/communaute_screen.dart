@@ -1,6 +1,11 @@
+import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../core/storage/image_source_sheet.dart';
+import '../../../core/storage/image_upload_service.dart';
+import '../../../core/supabase/supabase_config.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../khadara/presentation/khadara_providers.dart';
@@ -158,7 +163,11 @@ class _CreatePostSheet extends ConsumerStatefulWidget {
 class _CreatePostSheetState extends ConsumerState<_CreatePostSheet> {
   final _formKey = GlobalKey<FormState>();
   final _contentController = TextEditingController();
+  final _imageUploadService = ImageUploadService();
   bool _saving = false;
+
+  Uint8List? _pickedImageBytes;
+  String? _pickedImageExtension;
 
   @override
   void dispose() {
@@ -166,13 +175,44 @@ class _CreatePostSheetState extends ConsumerState<_CreatePostSheet> {
     super.dispose();
   }
 
+  Future<void> _pickImage() async {
+    final source = await showImageSourceSheet(context);
+    if (source == null || !mounted) return;
+    final file = await _imageUploadService.pickImage(source);
+    if (file == null || !mounted) return;
+    final bytes = await file.readAsBytes();
+    setState(() {
+      _pickedImageBytes = bytes;
+      _pickedImageExtension = imageExtensionFromPath(file.path);
+    });
+  }
+
+  void _clearImage() {
+    setState(() {
+      _pickedImageBytes = null;
+      _pickedImageExtension = null;
+    });
+  }
+
   Future<void> _submit() async {
     if (!_formKey.currentState!.validate()) return;
     setState(() => _saving = true);
     try {
-      await ref
-          .read(communityRepositoryProvider)
-          .createPost(_contentController.text.trim(), zawiyaId: widget.zawiyaId);
+      String? mediaUrl;
+      if (_pickedImageBytes != null) {
+        final userId = SupabaseConfig.client.auth.currentUser!.id;
+        mediaUrl = await _imageUploadService.uploadImage(
+          bucket: 'post-media',
+          path: '$userId/${DateTime.now().microsecondsSinceEpoch}.$_pickedImageExtension',
+          bytes: _pickedImageBytes!,
+          contentType: imageContentTypeForExtension(_pickedImageExtension!),
+        );
+      }
+      await ref.read(communityRepositoryProvider).createPost(
+            _contentController.text.trim(),
+            zawiyaId: widget.zawiyaId,
+            mediaUrl: mediaUrl,
+          );
       ref.invalidate(communityFeedProvider);
       if (mounted) Navigator.of(context).pop();
     } finally {
@@ -208,7 +248,33 @@ class _CreatePostSheetState extends ConsumerState<_CreatePostSheet> {
               validator: (value) =>
                   (value == null || value.trim().isEmpty) ? l10n.communityCreatePostContentRequired : null,
             ),
-            const SizedBox(height: 24),
+            const SizedBox(height: 12),
+            if (_pickedImageBytes != null) ...[
+              ClipRRect(
+                borderRadius: BorderRadius.circular(12),
+                child: Image.memory(_pickedImageBytes!, height: 140, width: double.infinity, fit: BoxFit.cover),
+              ),
+              const SizedBox(height: 8),
+            ],
+            Row(
+              children: [
+                Expanded(
+                  child: OutlinedButton.icon(
+                    onPressed: _pickImage,
+                    icon: const Icon(Icons.image_outlined),
+                    label: Text(_pickedImageBytes != null ? l10n.imagePickerChange : l10n.imagePickerAdd),
+                  ),
+                ),
+                if (_pickedImageBytes != null) ...[
+                  const SizedBox(width: 8),
+                  IconButton(
+                    icon: const Icon(Icons.close, color: AppColors.bronze),
+                    onPressed: _clearImage,
+                  ),
+                ],
+              ],
+            ),
+            const SizedBox(height: 12),
             ElevatedButton(
               onPressed: _saving ? null : _submit,
               child: _saving

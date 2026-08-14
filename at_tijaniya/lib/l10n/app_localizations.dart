@@ -134,6 +134,42 @@ abstract class AppLocalizations {
   /// **'Continuer'**
   String get continueLabel;
 
+  /// No description provided for @imagePickerAdd.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ajouter une image'**
+  String get imagePickerAdd;
+
+  /// No description provided for @imagePickerChange.
+  ///
+  /// In fr, this message translates to:
+  /// **'Changer l\'image'**
+  String get imagePickerChange;
+
+  /// No description provided for @imagePickerRemove.
+  ///
+  /// In fr, this message translates to:
+  /// **'Retirer l\'image'**
+  String get imagePickerRemove;
+
+  /// No description provided for @imagePickerGallery.
+  ///
+  /// In fr, this message translates to:
+  /// **'Galerie'**
+  String get imagePickerGallery;
+
+  /// No description provided for @imagePickerCamera.
+  ///
+  /// In fr, this message translates to:
+  /// **'Appareil photo'**
+  String get imagePickerCamera;
+
+  /// No description provided for @imagePickerUploadError.
+  ///
+  /// In fr, this message translates to:
+  /// **'Impossible de téléverser l\'image.'**
+  String get imagePickerUploadError;
+
   /// No description provided for @onboardingSkip.
   ///
   /// In fr, this message translates to:
@@ -919,6 +955,12 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'La date de fin doit être postérieure à la date de début.'**
   String get eventFormEndsAtInvalid;
+
+  /// No description provided for @eventFormImageLabel.
+  ///
+  /// In fr, this message translates to:
+  /// **'Image de couverture'**
+  String get eventFormImageLabel;
 
   /// No description provided for @eventFormZawiyaLabel.
   ///

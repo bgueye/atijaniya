@@ -125,5 +125,57 @@ void main() {
       });
       expect(figure.works, isNull);
     });
+
+    test('parse portrait_url quand présent', () {
+      final figure = Figure.fromRow({
+        'id': 'f9',
+        'name_ar': 'اسم',
+        'name_fr': 'Nom',
+        'category': 'founder',
+        'bio_text': null,
+        'portrait_url': 'https://example.com/figure-portraits/f9/portrait.jpg',
+      });
+      expect(figure.portraitUrl, 'https://example.com/figure-portraits/f9/portrait.jpg');
+    });
+
+    test('portraitUrl est null quand absent', () {
+      final figure = Figure.fromRow({
+        'id': 'f10',
+        'name_ar': 'اسم',
+        'name_fr': 'Nom',
+        'category': 'founder',
+        'bio_text': null,
+      });
+      expect(figure.portraitUrl, isNull);
+    });
+  });
+
+  group('Figure.copyWithPortraitUrl', () {
+    test('remplace uniquement portraitUrl, garde le reste inchangé', () {
+      final original = Figure.fromRow({
+        'id': 'f11',
+        'name_ar': 'اسم',
+        'name_fr': 'Nom',
+        'category': 'founder',
+        'bio_text': null,
+      });
+      final updated = original.copyWithPortraitUrl('https://example.com/new-portrait.jpg');
+      expect(updated.portraitUrl, 'https://example.com/new-portrait.jpg');
+      expect(updated.id, original.id);
+      expect(updated.nameFrench, original.nameFrench);
+    });
+
+    test('accepte null pour retirer le portrait', () {
+      final original = Figure.fromRow({
+        'id': 'f12',
+        'name_ar': 'اسم',
+        'name_fr': 'Nom',
+        'category': 'founder',
+        'bio_text': null,
+        'portrait_url': 'https://example.com/old-portrait.jpg',
+      });
+      final updated = original.copyWithPortraitUrl(null);
+      expect(updated.portraitUrl, isNull);
+    });
   });
 }

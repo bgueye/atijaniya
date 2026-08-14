@@ -9,6 +9,13 @@
   "languageArabic": "العربية",
   "continueLabel": "Continuer",
 
+  "imagePickerAdd": "Ajouter une image",
+  "imagePickerChange": "Changer l'image",
+  "imagePickerRemove": "Retirer l'image",
+  "imagePickerGallery": "Galerie",
+  "imagePickerCamera": "Appareil photo",
+  "imagePickerUploadError": "Impossible de téléverser l'image.",
+
   "onboardingSkip": "Passer",
   "onboardingNext": "Suivant",
   "onboardingStart": "Commencer",
@@ -148,6 +155,7 @@
   "eventFormPickDateTime": "Choisir une date et une heure",
   "eventFormEndsAtLabel": "Date et heure de fin (optionnel)",
   "eventFormEndsAtInvalid": "La date de fin doit être postérieure à la date de début.",
+  "eventFormImageLabel": "Image de couverture",
   "eventFormZawiyaLabel": "Zawiya",
   "eventFormSave": "Enregistrer",
   "eventFormSaveError": "Impossible d'enregistrer l'évènement.",

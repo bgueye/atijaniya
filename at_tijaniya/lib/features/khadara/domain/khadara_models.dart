@@ -64,6 +64,7 @@ class KhadaraEvent {
     this.latitude,
     this.longitude,
     this.createdBy,
+    this.imageUrl,
   });
 
   final String id;
@@ -85,6 +86,10 @@ class KhadaraEvent {
   /// Détermine, avec `canManageEvent`, qui peut modifier/supprimer.
   final String? createdBy;
 
+  /// Image de couverture (`events.image_url`, bucket Storage
+  /// `event-images`) — `null` tant qu'aucune image n'a été ajoutée.
+  final String? imageUrl;
+
   bool get hasLocation => latitude != null && longitude != null;
 
   factory KhadaraEvent.fromRow(Map<String, dynamic> row) {
@@ -101,6 +106,7 @@ class KhadaraEvent {
       latitude: (row['latitude'] as num?)?.toDouble(),
       longitude: (row['longitude'] as num?)?.toDouble(),
       createdBy: row['created_by'] as String?,
+      imageUrl: row['image_url'] as String?,
     );
   }
 }

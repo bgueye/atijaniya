@@ -31,8 +31,11 @@ class KhadaraRepository {
   /// Création réservée par RLS (`events_create_admin_or_own_zawiya_mouqaddam`)
   /// à un admin ou un mouqaddam vérifié créant pour sa propre zawiya — voir
   /// `canCreateEventProvider`. `created_by` renseigné côté client, même
-  /// pattern que `CommunityRepository.createPost`.
-  Future<void> createEvent({
+  /// pattern que `CommunityRepository.createPost`. Renvoie la ligne fraîche
+  /// (même raison que `updateEvent`) : `EventFormScreen` a besoin de l'`id`
+  /// généré pour pouvoir ensuite téléverser une image de couverture, le
+  /// chemin `event-images/{event_id}/...` exigeant un évènement déjà créé.
+  Future<KhadaraEvent> createEvent({
     required String title,
     String? description,
     required KhadaraEventType type,
@@ -43,17 +46,22 @@ class KhadaraRepository {
     double? longitude,
   }) async {
     final userId = SupabaseConfig.client.auth.currentUser!.id;
-    await SupabaseConfig.client.from('events').insert({
-      'title': title,
-      'description': description,
-      'event_type': type.name,
-      'starts_at': startsAt.toUtc().toIso8601String(),
-      'ends_at': endsAt?.toUtc().toIso8601String(),
-      'zawiya_id': zawiyaId,
-      'latitude': latitude,
-      'longitude': longitude,
-      'created_by': userId,
-    });
+    final row = await SupabaseConfig.client
+        .from('events')
+        .insert({
+          'title': title,
+          'description': description,
+          'event_type': type.name,
+          'starts_at': startsAt.toUtc().toIso8601String(),
+          'ends_at': endsAt?.toUtc().toIso8601String(),
+          'zawiya_id': zawiyaId,
+          'latitude': latitude,
+          'longitude': longitude,
+          'created_by': userId,
+        })
+        .select('*, zawiyas(name)')
+        .single();
+    return KhadaraEvent.fromRow(row);
   }
 
   /// Renvoie la ligne fraîche (avec `zawiyas(name)` résolu côté serveur)
@@ -86,6 +94,14 @@ class KhadaraRepository {
         .select('*, zawiyas(name)')
         .single();
     return KhadaraEvent.fromRow(row);
+  }
+
+  /// Enregistre l'URL publique d'une image déjà téléversée vers le bucket
+  /// `event-images` (voir `ImageUploadService`, appelé côté écran juste
+  /// avant) — étape séparée du reste du formulaire, car le chemin de
+  /// Storage exige un `event_id` déjà existant.
+  Future<void> updateEventImage(String id, String? imageUrl) async {
+    await SupabaseConfig.client.from('events').update({'image_url': imageUrl}).eq('id', id);
   }
 
   /// Peut lever une `PostgrestException` (code `23503`) si un `live_streams`

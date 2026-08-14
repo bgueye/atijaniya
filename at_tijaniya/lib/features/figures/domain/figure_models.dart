@@ -60,6 +60,7 @@ class Figure {
     this.citations,
     this.works,
     this.ziyaraNote,
+    this.portraitUrl,
   });
 
   final String id;
@@ -80,6 +81,13 @@ class Figure {
   /// l'instant (à faire une fois le module Khadara connecté à des données
   /// réelles).
   final String? ziyaraNote;
+
+  /// Portrait (`figures.portrait_url`, bucket Storage `figure-portraits`) —
+  /// `null` tant qu'aucun portrait n'a été ajouté. Contrairement au reste du
+  /// contenu de cette figure, ce n'est pas du texte religieux soumis à la
+  /// règle de validation de CLAUDE.md — juste une image, modifiable par un
+  /// admin depuis `FigureDetailScreen`.
+  final String? portraitUrl;
 
   /// Construit une figure à partir d'une ligne de la table Supabase
   /// `figures` (embarquant `figure_quotes` via PostgREST — voir
@@ -103,6 +111,25 @@ class Figure {
       biography: _biographyFrom(row['bio_text'] as String?),
       citations: _citationsFrom(quotesRows),
       works: _worksFrom(worksRows),
+      portraitUrl: row['portrait_url'] as String?,
+    );
+  }
+
+  /// `portraitUrl` explicitement passable à `null` (retrait du portrait) —
+  /// utilisé par `FigureDetailScreen` pour refléter localement un
+  /// changement de portrait sans refetch réseau immédiat.
+  Figure copyWithPortraitUrl(String? portraitUrl) {
+    return Figure(
+      id: id,
+      nameArabic: nameArabic,
+      nameFrench: nameFrench,
+      category: category,
+      summary: summary,
+      biography: biography,
+      citations: citations,
+      works: works,
+      ziyaraNote: ziyaraNote,
+      portraitUrl: portraitUrl,
     );
   }
 }
