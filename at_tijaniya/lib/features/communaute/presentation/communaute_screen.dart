@@ -252,7 +252,13 @@ class _CreatePostSheetState extends ConsumerState<_CreatePostSheet> {
             if (_pickedImageBytes != null) ...[
               ClipRRect(
                 borderRadius: BorderRadius.circular(12),
-                child: Image.memory(_pickedImageBytes!, height: 140, width: double.infinity, fit: BoxFit.cover),
+                child: Image.memory(
+                  _pickedImageBytes!,
+                  height: 140,
+                  width: double.infinity,
+                  fit: BoxFit.cover,
+                  alignment: Alignment.topCenter,
+                ),
               ),
               const SizedBox(height: 8),
             ],
@@ -566,6 +572,7 @@ class _PostCard extends StatelessWidget {
                     height: 160,
                     width: double.infinity,
                     fit: BoxFit.cover,
+                    alignment: Alignment.topCenter,
                     errorBuilder: (context, error, stackTrace) => const SizedBox.shrink(),
                   ),
                 ),

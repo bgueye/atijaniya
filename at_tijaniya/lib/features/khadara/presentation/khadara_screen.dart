@@ -110,6 +110,10 @@ class _EventsTab extends ConsumerWidget {
                       width: 40,
                       height: 40,
                       fit: BoxFit.cover,
+                      // alignment: topCenter — le sujet d'une photo d'évènement est
+                      // rarement centré verticalement ; un centrage strict coupe
+                      // souvent la partie utile sur une miniature aussi petite.
+                      alignment: Alignment.topCenter,
                       errorBuilder: (context, error, stackTrace) =>
                           Icon(khadaraEventTypeIcon(event.type), color: AppColors.emerald),
                     ),

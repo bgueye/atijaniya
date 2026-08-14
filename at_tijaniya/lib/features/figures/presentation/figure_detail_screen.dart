@@ -191,11 +191,24 @@ class _FigureHero extends StatelessWidget {
                       child: Stack(
                         clipBehavior: Clip.none,
                         children: [
-                          CircleAvatar(
-                            radius: 36,
-                            backgroundColor: AppColors.parchment.withValues(alpha: 0.2),
-                            backgroundImage:
-                                figure.portraitUrl != null ? NetworkImage(figure.portraitUrl!) : null,
+                          Container(
+                            width: 72,
+                            height: 72,
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              color: AppColors.parchment.withValues(alpha: 0.2),
+                              // alignment: topCenter plutôt que le centrage par défaut —
+                              // le sujet d'un portrait est presque toujours dans le
+                              // haut de la photo, un centrage strict coupe souvent le
+                              // visage sur une photo au format portrait.
+                              image: figure.portraitUrl != null
+                                  ? DecorationImage(
+                                      image: NetworkImage(figure.portraitUrl!),
+                                      fit: BoxFit.cover,
+                                      alignment: Alignment.topCenter,
+                                    )
+                                  : null,
+                            ),
                             child: figure.portraitUrl == null
                                 ? const Icon(Icons.person_outline, color: AppColors.parchment, size: 32)
                                 : null,

@@ -153,9 +153,25 @@ class _FigureTile extends StatelessWidget {
     return Card(
       child: ListTile(
         contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-        leading: figure.portraitUrl != null
-            ? CircleAvatar(backgroundImage: NetworkImage(figure.portraitUrl!))
-            : const CircleAvatar(child: Icon(Icons.person_outline)),
+        leading: Container(
+          width: 40,
+          height: 40,
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            color: AppColors.emeraldSoft,
+            // alignment: topCenter — voir figure_detail_screen.dart, même raison.
+            image: figure.portraitUrl != null
+                ? DecorationImage(
+                    image: NetworkImage(figure.portraitUrl!),
+                    fit: BoxFit.cover,
+                    alignment: Alignment.topCenter,
+                  )
+                : null,
+          ),
+          child: figure.portraitUrl == null
+              ? const Icon(Icons.person_outline, color: AppColors.emerald)
+              : null,
+        ),
         title: Text(figure.nameFrench, style: const TextStyle(fontWeight: FontWeight.w500)),
         subtitle: figure.summary != null
             ? Text(figure.summary!, maxLines: 2, overflow: TextOverflow.ellipsis)

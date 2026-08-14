@@ -233,13 +233,20 @@ class _EventFormScreenState extends ConsumerState<EventFormScreen> {
 
     Widget preview;
     if (hasPickedImage) {
-      preview = Image.memory(_pickedImageBytes!, height: 160, width: double.infinity, fit: BoxFit.cover);
+      preview = Image.memory(
+        _pickedImageBytes!,
+        height: 160,
+        width: double.infinity,
+        fit: BoxFit.cover,
+        alignment: Alignment.topCenter,
+      );
     } else if (hasExistingImage) {
       preview = Image.network(
         _existingImageUrl!,
         height: 160,
         width: double.infinity,
         fit: BoxFit.cover,
+        alignment: Alignment.topCenter,
         errorBuilder: (context, error, stackTrace) => const SizedBox.shrink(),
       );
     } else {

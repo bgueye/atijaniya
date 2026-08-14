@@ -120,6 +120,7 @@ class _EventDetailScreenState extends ConsumerState<EventDetailScreen> {
                 height: 180,
                 width: double.infinity,
                 fit: BoxFit.cover,
+                alignment: Alignment.topCenter,
                 errorBuilder: (context, error, stackTrace) => const SizedBox.shrink(),
               ),
             ),
