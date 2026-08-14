@@ -1004,6 +1004,126 @@ abstract class AppLocalizations {
   /// **'Contact'**
   String get khadaraContactLabel;
 
+  /// No description provided for @khadaraAddZawiyaButton.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ajouter une zawiya'**
+  String get khadaraAddZawiyaButton;
+
+  /// No description provided for @khadaraEditZawiyaTooltip.
+  ///
+  /// In fr, this message translates to:
+  /// **'Modifier'**
+  String get khadaraEditZawiyaTooltip;
+
+  /// No description provided for @khadaraDeleteZawiyaTooltip.
+  ///
+  /// In fr, this message translates to:
+  /// **'Supprimer'**
+  String get khadaraDeleteZawiyaTooltip;
+
+  /// No description provided for @khadaraDeleteZawiyaConfirmTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Supprimer cette zawiya ?'**
+  String get khadaraDeleteZawiyaConfirmTitle;
+
+  /// No description provided for @khadaraDeleteZawiyaConfirmBody.
+  ///
+  /// In fr, this message translates to:
+  /// **'Cette action est définitive.'**
+  String get khadaraDeleteZawiyaConfirmBody;
+
+  /// No description provided for @khadaraDeleteZawiyaConfirmAction.
+  ///
+  /// In fr, this message translates to:
+  /// **'Supprimer'**
+  String get khadaraDeleteZawiyaConfirmAction;
+
+  /// No description provided for @khadaraDeleteZawiyaBlockedByReferences.
+  ///
+  /// In fr, this message translates to:
+  /// **'Impossible de supprimer cette zawiya : elle est encore utilisée (disciples rattachés, évènements, publications ou groupes).'**
+  String get khadaraDeleteZawiyaBlockedByReferences;
+
+  /// No description provided for @khadaraDeleteZawiyaError.
+  ///
+  /// In fr, this message translates to:
+  /// **'Impossible de supprimer cette zawiya.'**
+  String get khadaraDeleteZawiyaError;
+
+  /// No description provided for @zawiyaFormCreateTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Nouvelle zawiya'**
+  String get zawiyaFormCreateTitle;
+
+  /// No description provided for @zawiyaFormEditTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Modifier la zawiya'**
+  String get zawiyaFormEditTitle;
+
+  /// No description provided for @zawiyaFormNameLabel.
+  ///
+  /// In fr, this message translates to:
+  /// **'Nom'**
+  String get zawiyaFormNameLabel;
+
+  /// No description provided for @zawiyaFormNameRequired.
+  ///
+  /// In fr, this message translates to:
+  /// **'Le nom est obligatoire.'**
+  String get zawiyaFormNameRequired;
+
+  /// No description provided for @zawiyaFormDescriptionLabel.
+  ///
+  /// In fr, this message translates to:
+  /// **'Description'**
+  String get zawiyaFormDescriptionLabel;
+
+  /// No description provided for @zawiyaFormAddressLabel.
+  ///
+  /// In fr, this message translates to:
+  /// **'Adresse'**
+  String get zawiyaFormAddressLabel;
+
+  /// No description provided for @zawiyaFormContactLabel.
+  ///
+  /// In fr, this message translates to:
+  /// **'Contact'**
+  String get zawiyaFormContactLabel;
+
+  /// No description provided for @zawiyaFormLatitudeLabel.
+  ///
+  /// In fr, this message translates to:
+  /// **'Latitude (optionnel)'**
+  String get zawiyaFormLatitudeLabel;
+
+  /// No description provided for @zawiyaFormLongitudeLabel.
+  ///
+  /// In fr, this message translates to:
+  /// **'Longitude (optionnel)'**
+  String get zawiyaFormLongitudeLabel;
+
+  /// No description provided for @zawiyaFormCoordinateInvalid.
+  ///
+  /// In fr, this message translates to:
+  /// **'Doit être un nombre valide.'**
+  String get zawiyaFormCoordinateInvalid;
+
+  /// No description provided for @zawiyaFormSave.
+  ///
+  /// In fr, this message translates to:
+  /// **'Enregistrer'**
+  String get zawiyaFormSave;
+
+  /// No description provided for @zawiyaFormSaveError.
+  ///
+  /// In fr, this message translates to:
+  /// **'Impossible d\'enregistrer la zawiya.'**
+  String get zawiyaFormSaveError;
+
   /// No description provided for @khadaraUnderstandingTooltip.
   ///
   /// In fr, this message translates to:

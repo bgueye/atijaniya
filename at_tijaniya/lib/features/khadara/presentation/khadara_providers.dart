@@ -35,3 +35,8 @@ final canCreateEventProvider = Provider<bool>((ref) {
   if (!ref.watch(isVerifiedMouqaddamProvider)) return false;
   return ref.watch(myProfileProvider).maybeWhen(data: (profile) => profile.zawiyaId != null, orElse: () => false);
 });
+
+/// `true` si le compte peut créer/modifier/supprimer une zawiya — reflet
+/// direct de `zawiyas_admin_write`/`_update`/`_delete` (`is_admin`
+/// uniquement, aucune exception mouqaddam contrairement aux évènements).
+final canManageZawiyasProvider = Provider<bool>((ref) => ref.watch(isAdminProvider));

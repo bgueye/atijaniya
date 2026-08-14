@@ -13,6 +13,7 @@ import 'khadara_understanding_screen.dart';
 import 'live_stream_providers.dart';
 import 'live_stream_screen.dart';
 import 'zawiya_detail_screen.dart';
+import 'zawiya_form_screen.dart';
 
 /// Module Khadara — calendrier des évènements et annuaire des zawiyas.
 /// Priorité P1 (docs/03-architecture-ecrans.md).
@@ -143,21 +144,34 @@ class _ZawiyasTab extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context)!;
     final zawiyas = ref.watch(zawiyasProvider);
+    final canManage = ref.watch(canManageZawiyasProvider);
 
-    return _AsyncSection<Zawiya>(
-      value: zawiyas,
-      emptyMessage: l10n.khadaraNoZawiyas,
-      onRetry: () => ref.invalidate(zawiyasProvider),
-      itemBuilder: (context, zawiya) => Card(
-        child: ListTile(
-          leading: const Icon(Icons.mosque_outlined, color: AppColors.emerald),
-          title: Text(zawiya.name),
-          subtitle: zawiya.addressText != null
-              ? Text(zawiya.addressText!, maxLines: 1, overflow: TextOverflow.ellipsis)
-              : null,
-          trailing: const Icon(Icons.chevron_right, color: AppColors.bronze),
-          onTap: () => Navigator.of(context).push(
-            MaterialPageRoute(builder: (_) => ZawiyaDetailScreen(zawiya: zawiya)),
+    return Scaffold(
+      floatingActionButton: canManage
+          ? FloatingActionButton.extended(
+              onPressed: () => Navigator.of(context).push(
+                MaterialPageRoute(builder: (_) => const ZawiyaFormScreen()),
+              ),
+              icon: const Icon(Icons.add),
+              label: Text(l10n.khadaraAddZawiyaButton),
+            )
+          : null,
+      body: _AsyncSection<Zawiya>(
+        value: zawiyas,
+        emptyMessage: l10n.khadaraNoZawiyas,
+        onRetry: () => ref.invalidate(zawiyasProvider),
+        padding: const EdgeInsets.fromLTRB(16, 16, 16, 88),
+        itemBuilder: (context, zawiya) => Card(
+          child: ListTile(
+            leading: const Icon(Icons.mosque_outlined, color: AppColors.emerald),
+            title: Text(zawiya.name),
+            subtitle: zawiya.addressText != null
+                ? Text(zawiya.addressText!, maxLines: 1, overflow: TextOverflow.ellipsis)
+                : null,
+            trailing: const Icon(Icons.chevron_right, color: AppColors.bronze),
+            onTap: () => Navigator.of(context).push(
+              MaterialPageRoute(builder: (_) => ZawiyaDetailScreen(zawiya: zawiya)),
+            ),
           ),
         ),
       ),

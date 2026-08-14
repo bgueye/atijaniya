@@ -487,6 +487,67 @@ class AppLocalizationsAr extends AppLocalizations {
   String get khadaraContactLabel => 'التواصل';
 
   @override
+  String get khadaraAddZawiyaButton => 'إضافة زاوية';
+
+  @override
+  String get khadaraEditZawiyaTooltip => 'تعديل';
+
+  @override
+  String get khadaraDeleteZawiyaTooltip => 'حذف';
+
+  @override
+  String get khadaraDeleteZawiyaConfirmTitle => 'حذف هذه الزاوية؟';
+
+  @override
+  String get khadaraDeleteZawiyaConfirmBody => 'هذا الإجراء نهائي.';
+
+  @override
+  String get khadaraDeleteZawiyaConfirmAction => 'حذف';
+
+  @override
+  String get khadaraDeleteZawiyaBlockedByReferences =>
+      'تعذّر حذف هذه الزاوية: لا تزال مستخدمة (مريدون مرتبطون، مناسبات، منشورات أو مجموعات).';
+
+  @override
+  String get khadaraDeleteZawiyaError => 'تعذّر حذف هذه الزاوية.';
+
+  @override
+  String get zawiyaFormCreateTitle => 'زاوية جديدة';
+
+  @override
+  String get zawiyaFormEditTitle => 'تعديل الزاوية';
+
+  @override
+  String get zawiyaFormNameLabel => 'الاسم';
+
+  @override
+  String get zawiyaFormNameRequired => 'الاسم إلزامي.';
+
+  @override
+  String get zawiyaFormDescriptionLabel => 'الوصف';
+
+  @override
+  String get zawiyaFormAddressLabel => 'العنوان';
+
+  @override
+  String get zawiyaFormContactLabel => 'التواصل';
+
+  @override
+  String get zawiyaFormLatitudeLabel => 'خط العرض (اختياري)';
+
+  @override
+  String get zawiyaFormLongitudeLabel => 'خط الطول (اختياري)';
+
+  @override
+  String get zawiyaFormCoordinateInvalid => 'يجب أن يكون رقمًا صالحًا.';
+
+  @override
+  String get zawiyaFormSave => 'حفظ';
+
+  @override
+  String get zawiyaFormSaveError => 'تعذّر حفظ الزاوية.';
+
+  @override
   String get khadaraUnderstandingTooltip => 'فهم الحضرة';
 
   @override

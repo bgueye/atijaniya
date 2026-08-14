@@ -15,6 +15,67 @@ class KhadaraRepository {
     return rows.map((row) => Zawiya.fromRow(row)).toList();
   }
 
+  /// Création réservée par RLS (`zawiyas_admin_write`) à un compte admin —
+  /// pas d'exception mouqaddam ici, contrairement aux évènements (voir
+  /// `canManageZawiyasProvider`).
+  Future<Zawiya> createZawiya({
+    required String name,
+    String? description,
+    double? latitude,
+    double? longitude,
+    String? addressText,
+    String? contactInfo,
+  }) async {
+    final row = await SupabaseConfig.client
+        .from('zawiyas')
+        .insert({
+          'name': name,
+          'description': description,
+          'latitude': latitude,
+          'longitude': longitude,
+          'address_text': addressText,
+          'contact_info': contactInfo,
+        })
+        .select()
+        .single();
+    return Zawiya.fromRow(row);
+  }
+
+  Future<Zawiya> updateZawiya(
+    String id, {
+    required String name,
+    String? description,
+    double? latitude,
+    double? longitude,
+    String? addressText,
+    String? contactInfo,
+  }) async {
+    final row = await SupabaseConfig.client
+        .from('zawiyas')
+        .update({
+          'name': name,
+          'description': description,
+          'latitude': latitude,
+          'longitude': longitude,
+          'address_text': addressText,
+          'contact_info': contactInfo,
+        })
+        .eq('id', id)
+        .select()
+        .single();
+    return Zawiya.fromRow(row);
+  }
+
+  /// Peut lever une `PostgrestException` (code `23503`) si la zawiya est
+  /// encore référencée ailleurs (`profiles.zawiya_id`, `events.zawiya_id`,
+  /// `posts.author_zawiya_id`, `groups.zawiya_id` — aucune de ces clés
+  /// étrangères n'a `on delete cascade`, voir `database/schema.sql`) —
+  /// volontairement non catchée ici, voir `classifyZawiyaDeleteError`
+  /// (`khadara_errors.dart`) côté appelant.
+  Future<void> deleteZawiya(String id) async {
+    await SupabaseConfig.client.from('zawiyas').delete().eq('id', id);
+  }
+
   /// Évènements à venir (`starts_at >= maintenant`), triés du plus proche au
   /// plus lointain. Le nom de la zawiya est résolu en une seule requête via
   /// l'embedding PostgREST plutôt qu'un aller-retour supplémentaire.

@@ -18,3 +18,18 @@ EventDeleteErrorKind classifyEventDeleteError(Object error) {
   }
   return EventDeleteErrorKind.generic;
 }
+
+enum ZawiyaDeleteErrorKind { blockedByReferences, generic }
+
+/// Code Postgres `23503` = violation de clé étrangère — plusieurs tables
+/// peuvent référencer une zawiya (`profiles.zawiya_id`, `events.zawiya_id`,
+/// `posts.author_zawiya_id`, `groups.zawiya_id`, aucune avec `on delete
+/// cascade`), d'où un message générique plutôt qu'une table précise
+/// (contrairement à `classifyEventDeleteError`, où une seule table —
+/// `live_streams` — peut bloquer).
+ZawiyaDeleteErrorKind classifyZawiyaDeleteError(Object error) {
+  if (error is PostgrestException && error.code == '23503') {
+    return ZawiyaDeleteErrorKind.blockedByReferences;
+  }
+  return ZawiyaDeleteErrorKind.generic;
+}

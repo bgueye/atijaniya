@@ -3,26 +3,106 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/theme/app_colors.dart';
 import '../../../l10n/app_localizations.dart';
+import '../domain/khadara_errors.dart';
 import '../domain/khadara_models.dart';
 import 'event_detail_screen.dart';
 import 'khadara_format.dart';
 import 'khadara_providers.dart';
 import 'open_in_maps.dart';
+import 'zawiya_form_screen.dart';
 
 /// Fiche détail d'une zawiya/daara — annuaire des zawiyas, priorité P1
-/// (docs/03-architecture-ecrans.md).
-class ZawiyaDetailScreen extends ConsumerWidget {
+/// (docs/03-architecture-ecrans.md). Modifier/supprimer réservés à un admin
+/// (`canManageZawiyasProvider`) — voir `zawiya_form_screen.dart`.
+class ZawiyaDetailScreen extends ConsumerStatefulWidget {
   const ZawiyaDetailScreen({super.key, required this.zawiya});
 
   final Zawiya zawiya;
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<ZawiyaDetailScreen> createState() => _ZawiyaDetailScreenState();
+}
+
+class _ZawiyaDetailScreenState extends ConsumerState<ZawiyaDetailScreen> {
+  late Zawiya _zawiya = widget.zawiya;
+  bool _deleting = false;
+
+  Future<void> _editZawiya() async {
+    final updated = await Navigator.of(context).push<Zawiya>(
+      MaterialPageRoute(builder: (_) => ZawiyaFormScreen(zawiya: _zawiya)),
+    );
+    if (updated != null && mounted) setState(() => _zawiya = updated);
+  }
+
+  Future<void> _confirmDelete() async {
     final l10n = AppLocalizations.of(context)!;
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(l10n.khadaraDeleteZawiyaConfirmTitle),
+        content: Text(l10n.khadaraDeleteZawiyaConfirmBody),
+        actions: [
+          TextButton(onPressed: () => Navigator.of(context).pop(false), child: Text(l10n.profileCancel)),
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(true),
+            child: Text(l10n.khadaraDeleteZawiyaConfirmAction, style: const TextStyle(color: Colors.redAccent)),
+          ),
+        ],
+      ),
+    );
+    if (confirmed != true || !mounted) return;
+
+    setState(() => _deleting = true);
+    try {
+      await ref.read(khadaraRepositoryProvider).deleteZawiya(_zawiya.id);
+      ref.invalidate(zawiyasProvider);
+      if (mounted) Navigator.of(context).pop();
+    } catch (error) {
+      final kind = classifyZawiyaDeleteError(error);
+      final message = kind == ZawiyaDeleteErrorKind.blockedByReferences
+          ? l10n.khadaraDeleteZawiyaBlockedByReferences
+          : l10n.khadaraDeleteZawiyaError;
+      if (mounted) {
+        ScaffoldMessenger.of(context)
+          ..hideCurrentSnackBar()
+          ..showSnackBar(SnackBar(content: Text(message)));
+      }
+    } finally {
+      if (mounted) setState(() => _deleting = false);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    final zawiya = _zawiya;
+    final canManage = ref.watch(canManageZawiyasProvider);
     final upcoming = ref.watch(eventsForZawiyaProvider(zawiya.id));
 
     return Scaffold(
-      appBar: AppBar(title: Text(zawiya.name)),
+      appBar: AppBar(
+        title: Text(zawiya.name),
+        actions: canManage
+            ? [
+                IconButton(
+                  icon: const Icon(Icons.edit_outlined),
+                  tooltip: l10n.khadaraEditZawiyaTooltip,
+                  onPressed: _deleting ? null : _editZawiya,
+                ),
+                IconButton(
+                  icon: _deleting
+                      ? const SizedBox(
+                          width: 18,
+                          height: 18,
+                          child: CircularProgressIndicator(strokeWidth: 2),
+                        )
+                      : const Icon(Icons.delete_outline),
+                  tooltip: l10n.khadaraDeleteZawiyaTooltip,
+                  onPressed: _deleting ? null : _confirmDelete,
+                ),
+              ]
+            : null,
+      ),
       body: ListView(
         padding: const EdgeInsets.all(20),
         children: [

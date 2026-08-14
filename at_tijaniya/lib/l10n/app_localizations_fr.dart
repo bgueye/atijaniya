@@ -497,6 +497,68 @@ class AppLocalizationsFr extends AppLocalizations {
   String get khadaraContactLabel => 'Contact';
 
   @override
+  String get khadaraAddZawiyaButton => 'Ajouter une zawiya';
+
+  @override
+  String get khadaraEditZawiyaTooltip => 'Modifier';
+
+  @override
+  String get khadaraDeleteZawiyaTooltip => 'Supprimer';
+
+  @override
+  String get khadaraDeleteZawiyaConfirmTitle => 'Supprimer cette zawiya ?';
+
+  @override
+  String get khadaraDeleteZawiyaConfirmBody => 'Cette action est définitive.';
+
+  @override
+  String get khadaraDeleteZawiyaConfirmAction => 'Supprimer';
+
+  @override
+  String get khadaraDeleteZawiyaBlockedByReferences =>
+      'Impossible de supprimer cette zawiya : elle est encore utilisée (disciples rattachés, évènements, publications ou groupes).';
+
+  @override
+  String get khadaraDeleteZawiyaError =>
+      'Impossible de supprimer cette zawiya.';
+
+  @override
+  String get zawiyaFormCreateTitle => 'Nouvelle zawiya';
+
+  @override
+  String get zawiyaFormEditTitle => 'Modifier la zawiya';
+
+  @override
+  String get zawiyaFormNameLabel => 'Nom';
+
+  @override
+  String get zawiyaFormNameRequired => 'Le nom est obligatoire.';
+
+  @override
+  String get zawiyaFormDescriptionLabel => 'Description';
+
+  @override
+  String get zawiyaFormAddressLabel => 'Adresse';
+
+  @override
+  String get zawiyaFormContactLabel => 'Contact';
+
+  @override
+  String get zawiyaFormLatitudeLabel => 'Latitude (optionnel)';
+
+  @override
+  String get zawiyaFormLongitudeLabel => 'Longitude (optionnel)';
+
+  @override
+  String get zawiyaFormCoordinateInvalid => 'Doit être un nombre valide.';
+
+  @override
+  String get zawiyaFormSave => 'Enregistrer';
+
+  @override
+  String get zawiyaFormSaveError => 'Impossible d\'enregistrer la zawiya.';
+
+  @override
   String get khadaraUnderstandingTooltip => 'Comprendre la Khadara';
 
   @override
