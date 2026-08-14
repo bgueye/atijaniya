@@ -6,6 +6,7 @@ import '../../../core/theme/app_theme.dart';
 import '../../../l10n/app_localizations.dart';
 import '../domain/figure_models.dart';
 import 'figure_detail_screen.dart';
+import 'figure_form_screen.dart';
 import 'figures_providers.dart';
 import 'figures_review_screen.dart';
 import '../../profil/presentation/profile_providers.dart';
@@ -38,15 +39,25 @@ class FiguresScreen extends ConsumerWidget {
         if (isAdmin)
           Padding(
             padding: const EdgeInsets.fromLTRB(16, 12, 16, 0),
-            child: Align(
-              alignment: Alignment.centerLeft,
-              child: OutlinedButton.icon(
-                onPressed: () => Navigator.of(context).push(
-                  MaterialPageRoute(builder: (_) => const FiguresReviewScreen()),
+            child: Wrap(
+              spacing: 8,
+              runSpacing: 8,
+              children: [
+                OutlinedButton.icon(
+                  onPressed: () => Navigator.of(context).push(
+                    MaterialPageRoute(builder: (_) => const FiguresReviewScreen()),
+                  ),
+                  icon: const Icon(Icons.fact_check_outlined, size: 18),
+                  label: Text(l10n.figuresReviewButton),
                 ),
-                icon: const Icon(Icons.fact_check_outlined, size: 18),
-                label: Text(l10n.figuresReviewButton),
-              ),
+                OutlinedButton.icon(
+                  onPressed: () => Navigator.of(context).push(
+                    MaterialPageRoute(builder: (_) => const FigureFormScreen()),
+                  ),
+                  icon: const Icon(Icons.add, size: 18),
+                  label: Text(l10n.figuresCreateButton),
+                ),
+              ],
             ),
           ),
         Expanded(

@@ -12,6 +12,8 @@
 /// modèle — seul un enregistrement marqué `valide` en base fait foi.
 library;
 
+import '../../lineage/domain/lineage_models.dart' show Foyer, foyerFromString;
+
 enum FigureCategory { founder, religiousFamily }
 
 /// Un paragraphe de biographie (arabe optionnel + traduction), même forme que
@@ -61,6 +63,9 @@ class Figure {
     this.works,
     this.ziyaraNote,
     this.portraitUrl,
+    this.bioText,
+    this.foyer,
+    this.birthYearHijri,
   });
 
   final String id;
@@ -89,6 +94,19 @@ class Figure {
   /// admin depuis `FigureDetailScreen`.
   final String? portraitUrl;
 
+  /// `figures.bio_text` brut, sans le découpage/filtrage fait par
+  /// [_biographyFrom]/[_summaryFrom] pour l'affichage — nécessaire pour
+  /// préremplir `FigureFormScreen` sans effacer silencieusement la section
+  /// "SOURCES CONSULTÉES" ni la mise en forme d'origine.
+  final String? bioText;
+
+  /// `figures.foyer` — même énumération que la lignée du disciple
+  /// (`Foyer`, `lineage/domain/lineage_models.dart`), réutilisée telle
+  /// quelle plutôt que dupliquée.
+  final Foyer? foyer;
+
+  final int? birthYearHijri;
+
   /// Construit une figure à partir d'une ligne de la table Supabase
   /// `figures` (embarquant `figure_quotes` via PostgREST — voir
   /// `FiguresRepository.fetchFigures`).
@@ -112,27 +130,51 @@ class Figure {
       citations: _citationsFrom(quotesRows),
       works: _worksFrom(worksRows),
       portraitUrl: row['portrait_url'] as String?,
+      bioText: row['bio_text'] as String?,
+      foyer: row['foyer'] != null ? foyerFromString(row['foyer'] as String) : null,
+      birthYearHijri: row['birth_year_hijri'] as int?,
     );
   }
 
-  /// `portraitUrl` explicitement passable à `null` (retrait du portrait) —
+  /// Reconstruit une `Figure` en ne remplaçant que les champs fournis —
   /// utilisé par `FigureDetailScreen` pour refléter localement un
-  /// changement de portrait sans refetch réseau immédiat.
-  Figure copyWithPortraitUrl(String? portraitUrl) {
+  /// changement de portrait ou une édition, sans refetch réseau immédiat.
+  /// Les champs non modifiables depuis l'app (`citations`/`works`/
+  /// `ziyaraNote`) sont toujours repris de l'instance courante.
+  Figure copyWith({
+    String? nameArabic,
+    String? nameFrench,
+    FigureCategory? category,
+    String? summary,
+    List<FigureBiographyParagraph>? biography,
+    Object? portraitUrl = _unset,
+    String? bioText,
+    Object? foyer = _unset,
+    Object? birthYearHijri = _unset,
+  }) {
     return Figure(
       id: id,
-      nameArabic: nameArabic,
-      nameFrench: nameFrench,
-      category: category,
-      summary: summary,
-      biography: biography,
+      nameArabic: nameArabic ?? this.nameArabic,
+      nameFrench: nameFrench ?? this.nameFrench,
+      category: category ?? this.category,
+      summary: summary ?? this.summary,
+      biography: biography ?? this.biography,
       citations: citations,
       works: works,
       ziyaraNote: ziyaraNote,
-      portraitUrl: portraitUrl,
+      portraitUrl: identical(portraitUrl, _unset) ? this.portraitUrl : portraitUrl as String?,
+      bioText: bioText ?? this.bioText,
+      foyer: identical(foyer, _unset) ? this.foyer : foyer as Foyer?,
+      birthYearHijri: identical(birthYearHijri, _unset) ? this.birthYearHijri : birthYearHijri as int?,
     );
   }
 }
+
+/// Sentinelle distincte de `null` — permet à [Figure.copyWith] de
+/// distinguer "champ non fourni, garder la valeur actuelle" de "champ
+/// fourni à `null`, effacer la valeur" pour les champs déjà nullables
+/// (`portraitUrl`/`foyer`/`birthYearHijri`).
+const Object _unset = Object();
 
 FigureCategory _categoryFromDb(String value) {
   return value == 'founder' ? FigureCategory.founder : FigureCategory.religiousFamily;

@@ -756,6 +756,87 @@ class AppLocalizationsFr extends AppLocalizations {
       'Aucune ziyara associée n\'est encore renseignée.';
 
   @override
+  String get figuresCreateButton => 'Créer une figure';
+
+  @override
+  String get figureEditTooltip => 'Modifier';
+
+  @override
+  String get figureDeleteTooltip => 'Supprimer';
+
+  @override
+  String get figureDeleteConfirmTitle => 'Supprimer cette figure ?';
+
+  @override
+  String get figureDeleteConfirmBody =>
+      'Cette action est définitive. Ses citations, œuvres et son maillon de silsila seront également supprimés.';
+
+  @override
+  String get figureDeleteConfirmAction => 'Supprimer';
+
+  @override
+  String get figureDeleteBlockedBySilsila =>
+      'Impossible de supprimer cette figure : elle est encore référencée dans la silsila d\'une autre figure.';
+
+  @override
+  String get figureDeleteError => 'Impossible de supprimer cette figure.';
+
+  @override
+  String get figureFormCreateTitle => 'Nouvelle figure';
+
+  @override
+  String get figureFormEditTitle => 'Modifier la figure';
+
+  @override
+  String get figureFormNameArabicLabel => 'Nom (arabe)';
+
+  @override
+  String get figureFormNameArabicRequired => 'Le nom en arabe est obligatoire.';
+
+  @override
+  String get figureFormNameFrenchLabel => 'Nom (français)';
+
+  @override
+  String get figureFormNameFrenchRequired =>
+      'Le nom en français est obligatoire.';
+
+  @override
+  String get figureFormCategoryLabel => 'Catégorie';
+
+  @override
+  String get figureFormCategoryFounder => 'Fondateur';
+
+  @override
+  String get figureFormCategoryFamily => 'Famille religieuse';
+
+  @override
+  String get figureFormFoyerLabel => 'Foyer (optionnel)';
+
+  @override
+  String get figureFormFoyerNone => '—';
+
+  @override
+  String get figureFormBirthYearHijriLabel =>
+      'Année de naissance (hégirienne, optionnel)';
+
+  @override
+  String get figureFormBirthYearHijriInvalid =>
+      'Doit être un nombre entier valide.';
+
+  @override
+  String get figureFormBioTextLabel => 'Biographie';
+
+  @override
+  String get figureFormBioTextHint =>
+      'Paragraphes séparés par une ligne vide. Une section finale \"SOURCES CONSULTÉES\" est possible (traçabilité interne, jamais montrée au disciple).';
+
+  @override
+  String get figureFormSave => 'Enregistrer';
+
+  @override
+  String get figureFormSaveError => 'Impossible d\'enregistrer la figure.';
+
+  @override
   String get communityFeedEmpty => 'Aucune publication pour le moment.';
 
   @override

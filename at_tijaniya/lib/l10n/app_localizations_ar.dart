@@ -739,6 +739,85 @@ class AppLocalizationsAr extends AppLocalizations {
   String get figureZiyarasPending => 'لم تُسجَّل بعد أي زيارة مرتبطة.';
 
   @override
+  String get figuresCreateButton => 'إضافة شخصية';
+
+  @override
+  String get figureEditTooltip => 'تعديل';
+
+  @override
+  String get figureDeleteTooltip => 'حذف';
+
+  @override
+  String get figureDeleteConfirmTitle => 'حذف هذه الشخصية؟';
+
+  @override
+  String get figureDeleteConfirmBody =>
+      'هذا الإجراء نهائي. سيتم أيضًا حذف اقتباساتها ومؤلفاتها وحلقتها في السلسلة.';
+
+  @override
+  String get figureDeleteConfirmAction => 'حذف';
+
+  @override
+  String get figureDeleteBlockedBySilsila =>
+      'تعذّر حذف هذه الشخصية: لا تزال مرجعًا في سلسلة شخصية أخرى.';
+
+  @override
+  String get figureDeleteError => 'تعذّر حذف هذه الشخصية.';
+
+  @override
+  String get figureFormCreateTitle => 'شخصية جديدة';
+
+  @override
+  String get figureFormEditTitle => 'تعديل الشخصية';
+
+  @override
+  String get figureFormNameArabicLabel => 'الاسم (بالعربية)';
+
+  @override
+  String get figureFormNameArabicRequired => 'الاسم بالعربية إلزامي.';
+
+  @override
+  String get figureFormNameFrenchLabel => 'الاسم (بالفرنسية)';
+
+  @override
+  String get figureFormNameFrenchRequired => 'الاسم بالفرنسية إلزامي.';
+
+  @override
+  String get figureFormCategoryLabel => 'الفئة';
+
+  @override
+  String get figureFormCategoryFounder => 'مؤسس';
+
+  @override
+  String get figureFormCategoryFamily => 'أسرة دينية';
+
+  @override
+  String get figureFormFoyerLabel => 'الزاوية الأصلية (اختياري)';
+
+  @override
+  String get figureFormFoyerNone => '—';
+
+  @override
+  String get figureFormBirthYearHijriLabel => 'سنة الميلاد (هجري، اختياري)';
+
+  @override
+  String get figureFormBirthYearHijriInvalid =>
+      'يجب أن يكون رقمًا صحيحًا صالحًا.';
+
+  @override
+  String get figureFormBioTextLabel => 'السيرة الذاتية';
+
+  @override
+  String get figureFormBioTextHint =>
+      'الفقرات مفصولة بسطر فارغ. يمكن إضافة قسم أخير \"SOURCES CONSULTÉES\" (تتبّع داخلي، لا يُعرض على المريد أبدًا).';
+
+  @override
+  String get figureFormSave => 'حفظ';
+
+  @override
+  String get figureFormSaveError => 'تعذّر حفظ الشخصية.';
+
+  @override
   String get communityFeedEmpty => 'لا توجد منشورات حاليًا.';
 
   @override

@@ -8,7 +8,9 @@ import '../../../core/theme/app_theme.dart';
 import '../../../core/theme/rosace_painter.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../profil/presentation/profile_providers.dart';
+import '../domain/figure_errors.dart';
 import '../domain/figure_models.dart';
+import 'figure_form_screen.dart';
 import 'figures_providers.dart';
 
 /// Biographie détaillée d'une figure — en-tête immersif (rosace + noms) et
@@ -40,6 +42,52 @@ class _FigureDetailScreenState extends ConsumerState<FigureDetailScreen> {
   late Figure _figure = widget.figure;
   final _imageUploadService = ImageUploadService();
   bool _changingPortrait = false;
+  bool _deleting = false;
+
+  Future<void> _editFigure() async {
+    final updated = await Navigator.of(context).push<Figure>(
+      MaterialPageRoute(builder: (_) => FigureFormScreen(figure: _figure)),
+    );
+    if (updated != null && mounted) setState(() => _figure = updated);
+  }
+
+  Future<void> _confirmDelete() async {
+    final l10n = AppLocalizations.of(context)!;
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(l10n.figureDeleteConfirmTitle),
+        content: Text(l10n.figureDeleteConfirmBody),
+        actions: [
+          TextButton(onPressed: () => Navigator.of(context).pop(false), child: Text(l10n.profileCancel)),
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(true),
+            child: Text(l10n.figureDeleteConfirmAction, style: const TextStyle(color: Colors.redAccent)),
+          ),
+        ],
+      ),
+    );
+    if (confirmed != true || !mounted) return;
+
+    setState(() => _deleting = true);
+    try {
+      await ref.read(figuresRepositoryProvider).deleteFigure(_figure.id);
+      ref.invalidate(figuresProvider);
+      ref.invalidate(draftFiguresProvider);
+      if (mounted) Navigator.of(context).pop();
+    } catch (error) {
+      final kind = classifyFigureDeleteError(error);
+      final message =
+          kind == FigureDeleteErrorKind.blockedBySilsila ? l10n.figureDeleteBlockedBySilsila : l10n.figureDeleteError;
+      if (mounted) {
+        ScaffoldMessenger.of(context)
+          ..hideCurrentSnackBar()
+          ..showSnackBar(SnackBar(content: Text(message)));
+      }
+    } finally {
+      if (mounted) setState(() => _deleting = false);
+    }
+  }
 
   Future<void> _changePortrait() async {
     final l10n = AppLocalizations.of(context)!;
@@ -60,7 +108,7 @@ class _FigureDetailScreenState extends ConsumerState<FigureDetailScreen> {
       );
       await ref.read(figuresRepositoryProvider).updatePortrait(_figure.id, url);
       ref.invalidate(figuresProvider);
-      if (mounted) setState(() => _figure = _figure.copyWithPortraitUrl(url));
+      if (mounted) setState(() => _figure = _figure.copyWith(portraitUrl: url));
     } catch (_) {
       if (mounted) {
         ScaffoldMessenger.of(context)
@@ -88,6 +136,11 @@ class _FigureDetailScreenState extends ConsumerState<FigureDetailScreen> {
               isAdmin: isAdmin,
               changingPortrait: _changingPortrait,
               onChangePortrait: _changePortrait,
+              deleting: _deleting,
+              onEdit: _editFigure,
+              onDelete: _confirmDelete,
+              editTooltip: l10n.figureEditTooltip,
+              deleteTooltip: l10n.figureDeleteTooltip,
             ),
             DecoratedBox(
               decoration: BoxDecoration(
@@ -132,9 +185,23 @@ class _FigureHero extends StatelessWidget {
     required this.isAdmin,
     required this.changingPortrait,
     required this.onChangePortrait,
+    required this.deleting,
+    required this.onEdit,
+    required this.onDelete,
+    required this.editTooltip,
+    required this.deleteTooltip,
   });
 
   final Figure figure;
+
+  /// Modifier/supprimer la fiche elle-même (nom, catégorie, biographie...)
+  /// — distinct de [onChangePortrait] (juste l'image). Même règle
+  /// d'accès : admin uniquement.
+  final bool deleting;
+  final VoidCallback onEdit;
+  final VoidCallback onDelete;
+  final String editTooltip;
+  final String deleteTooltip;
 
   /// Action "Changer le portrait" réservée à un admin (`profiles.is_admin`)
   /// — un statut "Mouqaddam vérifié" n'accorde aucune permission technique
@@ -259,6 +326,31 @@ class _FigureHero extends StatelessWidget {
               start: 4,
               child: BackButton(color: AppColors.parchment),
             ),
+            if (isAdmin)
+              PositionedDirectional(
+                top: 4,
+                end: 4,
+                child: Row(
+                  children: [
+                    IconButton(
+                      icon: const Icon(Icons.edit_outlined, color: AppColors.parchment),
+                      tooltip: editTooltip,
+                      onPressed: deleting ? null : onEdit,
+                    ),
+                    IconButton(
+                      icon: deleting
+                          ? const SizedBox(
+                              width: 18,
+                              height: 18,
+                              child: CircularProgressIndicator(strokeWidth: 2, color: AppColors.parchment),
+                            )
+                          : const Icon(Icons.delete_outline, color: AppColors.parchment),
+                      tooltip: deleteTooltip,
+                      onPressed: deleting ? null : onDelete,
+                    ),
+                  ],
+                ),
+              ),
           ],
         ),
       ),

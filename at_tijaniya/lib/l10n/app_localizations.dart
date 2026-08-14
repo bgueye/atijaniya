@@ -1490,6 +1490,156 @@ abstract class AppLocalizations {
   /// **'Aucune ziyara associée n\'est encore renseignée.'**
   String get figureZiyarasPending;
 
+  /// No description provided for @figuresCreateButton.
+  ///
+  /// In fr, this message translates to:
+  /// **'Créer une figure'**
+  String get figuresCreateButton;
+
+  /// No description provided for @figureEditTooltip.
+  ///
+  /// In fr, this message translates to:
+  /// **'Modifier'**
+  String get figureEditTooltip;
+
+  /// No description provided for @figureDeleteTooltip.
+  ///
+  /// In fr, this message translates to:
+  /// **'Supprimer'**
+  String get figureDeleteTooltip;
+
+  /// No description provided for @figureDeleteConfirmTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Supprimer cette figure ?'**
+  String get figureDeleteConfirmTitle;
+
+  /// No description provided for @figureDeleteConfirmBody.
+  ///
+  /// In fr, this message translates to:
+  /// **'Cette action est définitive. Ses citations, œuvres et son maillon de silsila seront également supprimés.'**
+  String get figureDeleteConfirmBody;
+
+  /// No description provided for @figureDeleteConfirmAction.
+  ///
+  /// In fr, this message translates to:
+  /// **'Supprimer'**
+  String get figureDeleteConfirmAction;
+
+  /// No description provided for @figureDeleteBlockedBySilsila.
+  ///
+  /// In fr, this message translates to:
+  /// **'Impossible de supprimer cette figure : elle est encore référencée dans la silsila d\'une autre figure.'**
+  String get figureDeleteBlockedBySilsila;
+
+  /// No description provided for @figureDeleteError.
+  ///
+  /// In fr, this message translates to:
+  /// **'Impossible de supprimer cette figure.'**
+  String get figureDeleteError;
+
+  /// No description provided for @figureFormCreateTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Nouvelle figure'**
+  String get figureFormCreateTitle;
+
+  /// No description provided for @figureFormEditTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Modifier la figure'**
+  String get figureFormEditTitle;
+
+  /// No description provided for @figureFormNameArabicLabel.
+  ///
+  /// In fr, this message translates to:
+  /// **'Nom (arabe)'**
+  String get figureFormNameArabicLabel;
+
+  /// No description provided for @figureFormNameArabicRequired.
+  ///
+  /// In fr, this message translates to:
+  /// **'Le nom en arabe est obligatoire.'**
+  String get figureFormNameArabicRequired;
+
+  /// No description provided for @figureFormNameFrenchLabel.
+  ///
+  /// In fr, this message translates to:
+  /// **'Nom (français)'**
+  String get figureFormNameFrenchLabel;
+
+  /// No description provided for @figureFormNameFrenchRequired.
+  ///
+  /// In fr, this message translates to:
+  /// **'Le nom en français est obligatoire.'**
+  String get figureFormNameFrenchRequired;
+
+  /// No description provided for @figureFormCategoryLabel.
+  ///
+  /// In fr, this message translates to:
+  /// **'Catégorie'**
+  String get figureFormCategoryLabel;
+
+  /// No description provided for @figureFormCategoryFounder.
+  ///
+  /// In fr, this message translates to:
+  /// **'Fondateur'**
+  String get figureFormCategoryFounder;
+
+  /// No description provided for @figureFormCategoryFamily.
+  ///
+  /// In fr, this message translates to:
+  /// **'Famille religieuse'**
+  String get figureFormCategoryFamily;
+
+  /// No description provided for @figureFormFoyerLabel.
+  ///
+  /// In fr, this message translates to:
+  /// **'Foyer (optionnel)'**
+  String get figureFormFoyerLabel;
+
+  /// No description provided for @figureFormFoyerNone.
+  ///
+  /// In fr, this message translates to:
+  /// **'—'**
+  String get figureFormFoyerNone;
+
+  /// No description provided for @figureFormBirthYearHijriLabel.
+  ///
+  /// In fr, this message translates to:
+  /// **'Année de naissance (hégirienne, optionnel)'**
+  String get figureFormBirthYearHijriLabel;
+
+  /// No description provided for @figureFormBirthYearHijriInvalid.
+  ///
+  /// In fr, this message translates to:
+  /// **'Doit être un nombre entier valide.'**
+  String get figureFormBirthYearHijriInvalid;
+
+  /// No description provided for @figureFormBioTextLabel.
+  ///
+  /// In fr, this message translates to:
+  /// **'Biographie'**
+  String get figureFormBioTextLabel;
+
+  /// No description provided for @figureFormBioTextHint.
+  ///
+  /// In fr, this message translates to:
+  /// **'Paragraphes séparés par une ligne vide. Une section finale \"SOURCES CONSULTÉES\" est possible (traçabilité interne, jamais montrée au disciple).'**
+  String get figureFormBioTextHint;
+
+  /// No description provided for @figureFormSave.
+  ///
+  /// In fr, this message translates to:
+  /// **'Enregistrer'**
+  String get figureFormSave;
+
+  /// No description provided for @figureFormSaveError.
+  ///
+  /// In fr, this message translates to:
+  /// **'Impossible d\'enregistrer la figure.'**
+  String get figureFormSaveError;
+
   /// No description provided for @communityFeedEmpty.
   ///
   /// In fr, this message translates to:

@@ -1106,6 +1106,13 @@ create policy figures_read_valid_or_admin on public.figures for select
   using (content_status = 'valide' or public.is_admin((select auth.uid())));
 create policy figures_admin_write on public.figures for insert with check (public.is_admin((select auth.uid())));
 create policy figures_admin_update on public.figures for update using (public.is_admin((select auth.uid())));
+-- Ajoutée après coup (migration add_figures_admin_delete_policy, 2026-08-15)
+-- pour le CRUD Figures côté app. historical_silsila_links.parent_figure_id
+-- n'a pas de on delete cascade (contrairement à figure_id sur cette même
+-- table) : supprimer une figure encore référencée comme parent dans une
+-- silsila est donc bloqué par une violation de clé étrangère (23503),
+-- comportement voulu — voir classifyFigureDeleteError côté client.
+create policy figures_admin_delete on public.figures for delete using (public.is_admin((select auth.uid())));
 
 -- Filtre par jointure sur le content_status de la figure parente : une
 -- citation ne doit jamais fuiter tant que sa figure n'est pas validée.

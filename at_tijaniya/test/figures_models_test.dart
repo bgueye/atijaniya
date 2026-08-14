@@ -7,6 +7,7 @@
 import 'package:flutter_test/flutter_test.dart';
 
 import 'package:at_tijaniya/features/figures/domain/figure_models.dart';
+import 'package:at_tijaniya/features/lineage/domain/lineage_models.dart' show Foyer;
 
 void main() {
   group('Figure.fromRow', () {
@@ -148,34 +149,108 @@ void main() {
       });
       expect(figure.portraitUrl, isNull);
     });
-  });
 
-  group('Figure.copyWithPortraitUrl', () {
-    test('remplace uniquement portraitUrl, garde le reste inchangé', () {
-      final original = Figure.fromRow({
-        'id': 'f11',
+    test('parse bioText brut, distinct de biography déjà découpé/filtré', () {
+      final figure = Figure.fromRow({
+        'id': 'f13',
+        'name_ar': 'اسم',
+        'name_fr': 'Nom',
+        'category': 'founder',
+        'bio_text': 'PARAGRAPHE.\n\nSOURCES CONSULTÉES\nRéférence interne.',
+      });
+      expect(figure.bioText, 'PARAGRAPHE.\n\nSOURCES CONSULTÉES\nRéférence interne.');
+      // biography (affichage) exclut toujours la section sources — rappel
+      // du comportement existant, non affecté par l'ajout de bioText.
+      expect(figure.biography, hasLength(1));
+    });
+
+    test('parse foyer quand présent, foyer null quand absent', () {
+      final withFoyer = Figure.fromRow({
+        'id': 'f14',
+        'name_ar': 'اسم',
+        'name_fr': 'Nom',
+        'category': 'family_lineage',
+        'bio_text': null,
+        'foyer': 'kaolack',
+      });
+      expect(withFoyer.foyer, Foyer.kaolack);
+
+      final withoutFoyer = Figure.fromRow({
+        'id': 'f15',
+        'name_ar': 'اسم',
+        'name_fr': 'Nom',
+        'category': 'family_lineage',
+        'bio_text': null,
+      });
+      expect(withoutFoyer.foyer, isNull);
+    });
+
+    test('parse birthYearHijri quand présent', () {
+      final figure = Figure.fromRow({
+        'id': 'f16',
         'name_ar': 'اسم',
         'name_fr': 'Nom',
         'category': 'founder',
         'bio_text': null,
+        'birth_year_hijri': 1150,
       });
-      final updated = original.copyWithPortraitUrl('https://example.com/new-portrait.jpg');
+      expect(figure.birthYearHijri, 1150);
+    });
+  });
+
+  group('Figure.copyWith', () {
+    Figure baseFigure() => Figure.fromRow({
+          'id': 'f17',
+          'name_ar': 'اسم',
+          'name_fr': 'Nom',
+          'category': 'founder',
+          'bio_text': null,
+        });
+
+    test('remplace uniquement portraitUrl, garde le reste inchangé', () {
+      final updated = baseFigure().copyWith(portraitUrl: 'https://example.com/new-portrait.jpg');
       expect(updated.portraitUrl, 'https://example.com/new-portrait.jpg');
-      expect(updated.id, original.id);
-      expect(updated.nameFrench, original.nameFrench);
+      expect(updated.id, 'f17');
+      expect(updated.nameFrench, 'Nom');
     });
 
-    test('accepte null pour retirer le portrait', () {
+    test('portraitUrl accepte explicitement null pour retirer le portrait', () {
       final original = Figure.fromRow({
-        'id': 'f12',
+        'id': 'f18',
         'name_ar': 'اسم',
         'name_fr': 'Nom',
         'category': 'founder',
         'bio_text': null,
         'portrait_url': 'https://example.com/old-portrait.jpg',
       });
-      final updated = original.copyWithPortraitUrl(null);
+      final updated = original.copyWith(portraitUrl: null);
       expect(updated.portraitUrl, isNull);
+    });
+
+    test('sans argument, ne modifie rien', () {
+      final original = baseFigure();
+      final updated = original.copyWith();
+      expect(updated.nameArabic, original.nameArabic);
+      expect(updated.nameFrench, original.nameFrench);
+      expect(updated.category, original.category);
+      expect(updated.foyer, original.foyer);
+      expect(updated.birthYearHijri, original.birthYearHijri);
+      expect(updated.bioText, original.bioText);
+    });
+
+    test('remplace nameFrench/category/foyer/birthYearHijri/bioText', () {
+      final updated = baseFigure().copyWith(
+        nameFrench: 'Nouveau nom',
+        category: FigureCategory.religiousFamily,
+        foyer: Foyer.tivaouane,
+        birthYearHijri: 1200,
+        bioText: 'Nouveau texte.',
+      );
+      expect(updated.nameFrench, 'Nouveau nom');
+      expect(updated.category, FigureCategory.religiousFamily);
+      expect(updated.foyer, Foyer.tivaouane);
+      expect(updated.birthYearHijri, 1200);
+      expect(updated.bioText, 'Nouveau texte.');
     });
   });
 }

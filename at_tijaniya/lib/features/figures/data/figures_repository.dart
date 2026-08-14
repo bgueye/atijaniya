@@ -13,7 +13,11 @@
 library;
 
 import '../../../core/supabase/supabase_config.dart';
+import '../../lineage/domain/lineage_models.dart' show Foyer, foyerToDbValue;
 import '../domain/figure_models.dart';
+
+const _figuresSelect =
+    '*, figure_quotes(text_ar, text_fr, source_note), figure_works(title, description, order_index)';
 
 class FiguresRepository {
   const FiguresRepository();
@@ -21,7 +25,7 @@ class FiguresRepository {
   Future<List<Figure>> fetchFigures() async {
     final rows = await SupabaseConfig.client
         .from('figures')
-        .select('*, figure_quotes(text_ar, text_fr, source_note), figure_works(title, description, order_index)')
+        .select(_figuresSelect)
         .eq('content_status', 'valide')
         .order('category', ascending: true)
         .order('name_fr', ascending: true);
@@ -36,7 +40,7 @@ class FiguresRepository {
   Future<List<Figure>> fetchDraftFigures() async {
     final rows = await SupabaseConfig.client
         .from('figures')
-        .select('*, figure_quotes(text_ar, text_fr, source_note), figure_works(title, description, order_index)')
+        .select(_figuresSelect)
         .eq('content_status', 'brouillon')
         .order('category', ascending: true)
         .order('name_fr', ascending: true);
@@ -56,6 +60,73 @@ class FiguresRepository {
   /// `validateFigure`. `null` pour retirer le portrait existant.
   Future<void> updatePortrait(String figureId, String? portraitUrl) async {
     await SupabaseConfig.client.from('figures').update({'portrait_url': portraitUrl}).eq('id', figureId);
+  }
+
+  /// Création réservée par RLS (`figures_admin_write`) à un compte admin.
+  /// `content_status` jamais envoyé : la colonne défaut à `brouillon` côté
+  /// base — publier reste un geste séparé et explicite via
+  /// `validateFigure()`/`FiguresReviewScreen`, pour garder intact le
+  /// garde-fou éditorial déjà en place (voir la note "contenu religieux"
+  /// en tête de `figure_models.dart`).
+  Future<Figure> createFigure({
+    required String nameArabic,
+    required String nameFrench,
+    required FigureCategory category,
+    Foyer? foyer,
+    int? birthYearHijri,
+    String? bioText,
+  }) async {
+    final row = await SupabaseConfig.client
+        .from('figures')
+        .insert({
+          'name_ar': nameArabic,
+          'name_fr': nameFrench,
+          'category': category == FigureCategory.founder ? 'founder' : 'family_lineage',
+          'foyer': foyer != null ? foyerToDbValue(foyer) : null,
+          'birth_year_hijri': birthYearHijri,
+          'bio_text': bioText,
+        })
+        .select(_figuresSelect)
+        .single();
+    return Figure.fromRow(row);
+  }
+
+  /// `content_status` jamais dans le payload — une correction de coquille
+  /// sur une figure déjà `valide` ne la dépublie jamais, même principe que
+  /// `createFigure`.
+  Future<Figure> updateFigure(
+    String id, {
+    required String nameArabic,
+    required String nameFrench,
+    required FigureCategory category,
+    Foyer? foyer,
+    int? birthYearHijri,
+    String? bioText,
+  }) async {
+    final row = await SupabaseConfig.client
+        .from('figures')
+        .update({
+          'name_ar': nameArabic,
+          'name_fr': nameFrench,
+          'category': category == FigureCategory.founder ? 'founder' : 'family_lineage',
+          'foyer': foyer != null ? foyerToDbValue(foyer) : null,
+          'birth_year_hijri': birthYearHijri,
+          'bio_text': bioText,
+        })
+        .eq('id', id)
+        .select(_figuresSelect)
+        .single();
+    return Figure.fromRow(row);
+  }
+
+  /// Peut lever une `PostgrestException` (code `23503`) si cette figure est
+  /// encore référencée comme `parent_figure_id` dans la silsila historique
+  /// d'une autre figure (`historical_silsila_links`, sans `on delete
+  /// cascade` sur cette colonne précise — voir `database/schema.sql`) —
+  /// volontairement non catchée ici, voir `classifyFigureDeleteError`
+  /// (`figure_errors.dart`) côté appelant.
+  Future<void> deleteFigure(String id) async {
+    await SupabaseConfig.client.from('figures').delete().eq('id', id);
   }
 
   /// Silsila historique (généalogie spirituelle) depuis le fondateur
