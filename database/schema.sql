@@ -1123,6 +1123,11 @@ create policy figure_quotes_read_valid_or_admin on public.figure_quotes for sele
       and (f.content_status = 'valide' or public.is_admin((select auth.uid())))
   ));
 create policy figure_quotes_admin_write on public.figure_quotes for insert with check (public.is_admin((select auth.uid())));
+-- Ajoutées après coup (migration
+-- add_figure_quotes_and_works_admin_update_delete_policies, 2026-08-16) pour
+-- le CRUD citations/œuvres côté app — aucune des deux n'existait jusqu'ici.
+create policy figure_quotes_admin_update on public.figure_quotes for update using (public.is_admin((select auth.uid())));
+create policy figure_quotes_admin_delete on public.figure_quotes for delete using (public.is_admin((select auth.uid())));
 
 create policy silsila_links_read_valid_or_admin on public.historical_silsila_links for select
   using (exists (
@@ -1139,6 +1144,9 @@ create policy figure_works_read_valid_or_admin on public.figure_works for select
       and (f.content_status = 'valide' or public.is_admin((select auth.uid())))
   ));
 create policy figure_works_admin_write on public.figure_works for insert with check (public.is_admin((select auth.uid())));
+-- Voir la même note pour figure_quotes juste au-dessus.
+create policy figure_works_admin_update on public.figure_works for update using (public.is_admin((select auth.uid())));
+create policy figure_works_admin_delete on public.figure_works for delete using (public.is_admin((select auth.uid())));
 
 create policy figure_events_read_all on public.figure_events for select using (true);
 create policy figure_events_admin_write on public.figure_events for insert with check (public.is_admin((select auth.uid())));

@@ -17,7 +17,7 @@ import '../../lineage/domain/lineage_models.dart' show Foyer, foyerToDbValue;
 import '../domain/figure_models.dart';
 
 const _figuresSelect =
-    '*, figure_quotes(text_ar, text_fr, source_note), figure_works(title, description, order_index)';
+    '*, figure_quotes(id, text_ar, text_fr, source_note), figure_works(id, title, description, order_index)';
 
 class FiguresRepository {
   const FiguresRepository();
@@ -127,6 +127,81 @@ class FiguresRepository {
   /// (`figure_errors.dart`) côté appelant.
   Future<void> deleteFigure(String id) async {
     await SupabaseConfig.client.from('figures').delete().eq('id', id);
+  }
+
+  /// Recharge une figure (avec ses citations/œuvres à jour) après une
+  /// création/modification/suppression de citation ou d'œuvre — plus simple
+  /// et plus fiable que de reconstruire `Figure.citations`/`works`
+  /// localement pour un cas peu fréquent (édition admin).
+  Future<Figure> fetchFigureById(String id) async {
+    final row = await SupabaseConfig.client.from('figures').select(_figuresSelect).eq('id', id).single();
+    return Figure.fromRow(row);
+  }
+
+  /// Création/modification réservées par RLS
+  /// (`figure_quotes_admin_write`/`_admin_update`) à un compte admin.
+  Future<void> createCitation({
+    required String figureId,
+    String? textArabic,
+    String? textFrench,
+    String? sourceNote,
+  }) async {
+    await SupabaseConfig.client.from('figure_quotes').insert({
+      'figure_id': figureId,
+      'text_ar': textArabic,
+      'text_fr': textFrench,
+      'source_note': sourceNote,
+    });
+  }
+
+  Future<void> updateCitation(
+    String id, {
+    String? textArabic,
+    String? textFrench,
+    String? sourceNote,
+  }) async {
+    await SupabaseConfig.client.from('figure_quotes').update({
+      'text_ar': textArabic,
+      'text_fr': textFrench,
+      'source_note': sourceNote,
+    }).eq('id', id);
+  }
+
+  /// RLS `figure_quotes_admin_delete` — `figure_quotes` n'est référencée
+  /// par aucune autre table (voir `database/schema.sql`), donc pas de
+  /// violation de clé étrangère possible ici.
+  Future<void> deleteCitation(String id) async {
+    await SupabaseConfig.client.from('figure_quotes').delete().eq('id', id);
+  }
+
+  /// [orderIndex] : position d'affichage — l'appelant passe le nombre
+  /// d'œuvres déjà listées pour ajouter la nouvelle à la fin (voir
+  /// `FigureWork.orderIndex`).
+  Future<void> createWork({
+    required String figureId,
+    required String title,
+    String? description,
+    required int orderIndex,
+  }) async {
+    await SupabaseConfig.client.from('figure_works').insert({
+      'figure_id': figureId,
+      'title': title,
+      'description': description,
+      'order_index': orderIndex,
+    });
+  }
+
+  Future<void> updateWork(String id, {required String title, String? description}) async {
+    await SupabaseConfig.client.from('figure_works').update({
+      'title': title,
+      'description': description,
+    }).eq('id', id);
+  }
+
+  /// RLS `figure_works_admin_delete` — même absence de référence externe
+  /// que `deleteCitation`.
+  Future<void> deleteWork(String id) async {
+    await SupabaseConfig.client.from('figure_works').delete().eq('id', id);
   }
 
   /// Silsila historique (généalogie spirituelle) depuis le fondateur

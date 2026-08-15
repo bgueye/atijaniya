@@ -765,6 +765,97 @@ class AppLocalizationsAr extends AppLocalizations {
   String get figureDeleteError => 'تعذّر حذف هذه الشخصية.';
 
   @override
+  String get figureCitationsAddButton => 'إضافة اقتباس';
+
+  @override
+  String get figureCitationEditTooltip => 'تعديل';
+
+  @override
+  String get figureCitationDeleteTooltip => 'حذف';
+
+  @override
+  String get figureCitationDeleteConfirmTitle => 'حذف هذا الاقتباس؟';
+
+  @override
+  String get figureCitationDeleteConfirmBody => 'هذا الإجراء نهائي.';
+
+  @override
+  String get figureCitationDeleteConfirmAction => 'حذف';
+
+  @override
+  String get figureCitationDeleteError => 'تعذّر حذف هذا الاقتباس.';
+
+  @override
+  String get figureCitationFormCreateTitle => 'اقتباس جديد';
+
+  @override
+  String get figureCitationFormEditTitle => 'تعديل الاقتباس';
+
+  @override
+  String get figureCitationFormArabicLabel => 'النص العربي (اختياري)';
+
+  @override
+  String get figureCitationFormFrenchLabel => 'الترجمة الفرنسية';
+
+  @override
+  String get figureCitationFormTextRequired =>
+      'أدخل النص العربي أو الترجمة على الأقل.';
+
+  @override
+  String get figureCitationFormSourceLabel => 'المصدر';
+
+  @override
+  String get figureCitationFormSourceRequired => 'المصدر إلزامي.';
+
+  @override
+  String get figureCitationFormSave => 'حفظ';
+
+  @override
+  String get figureCitationFormSaveError => 'تعذّر حفظ هذا الاقتباس.';
+
+  @override
+  String get figureWorksAddButton => 'إضافة مؤلَّف';
+
+  @override
+  String get figureWorkEditTooltip => 'تعديل';
+
+  @override
+  String get figureWorkDeleteTooltip => 'حذف';
+
+  @override
+  String get figureWorkDeleteConfirmTitle => 'حذف هذا المؤلَّف؟';
+
+  @override
+  String get figureWorkDeleteConfirmBody => 'هذا الإجراء نهائي.';
+
+  @override
+  String get figureWorkDeleteConfirmAction => 'حذف';
+
+  @override
+  String get figureWorkDeleteError => 'تعذّر حذف هذا المؤلَّف.';
+
+  @override
+  String get figureWorkFormCreateTitle => 'مؤلَّف جديد';
+
+  @override
+  String get figureWorkFormEditTitle => 'تعديل المؤلَّف';
+
+  @override
+  String get figureWorkFormTitleLabel => 'العنوان';
+
+  @override
+  String get figureWorkFormTitleRequired => 'العنوان إلزامي.';
+
+  @override
+  String get figureWorkFormDescriptionLabel => 'الوصف (اختياري)';
+
+  @override
+  String get figureWorkFormSave => 'حفظ';
+
+  @override
+  String get figureWorkFormSaveError => 'تعذّر حفظ هذا المؤلَّف.';
+
+  @override
   String get figureFormCreateTitle => 'شخصية جديدة';
 
   @override

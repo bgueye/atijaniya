@@ -63,10 +63,11 @@ void main() {
         'category': 'founder',
         'bio_text': null,
         'figure_quotes': [
-          {'text_ar': 'نص عربي', 'text_fr': 'Traduction française', 'source_note': 'Source X'},
+          {'id': 'q1', 'text_ar': 'نص عربي', 'text_fr': 'Traduction française', 'source_note': 'Source X'},
         ],
       });
       expect(figure.citations, hasLength(1));
+      expect(figure.citations!.single.id, 'q1');
       expect(figure.citations!.single.translation, 'Traduction française');
       expect(figure.citations!.single.source, 'Source X');
     });
@@ -105,15 +106,18 @@ void main() {
         'category': 'founder',
         'bio_text': null,
         'figure_works': [
-          {'title': 'Second ouvrage', 'description': null, 'order_index': 1},
-          {'title': 'Premier ouvrage', 'description': 'Description test.', 'order_index': 0},
+          {'id': 'w2', 'title': 'Second ouvrage', 'description': null, 'order_index': 1},
+          {'id': 'w1', 'title': 'Premier ouvrage', 'description': 'Description test.', 'order_index': 0},
         ],
       });
       expect(figure.works, hasLength(2));
+      expect(figure.works![0].id, 'w1');
       expect(figure.works![0].title, 'Premier ouvrage');
       expect(figure.works![0].description, 'Description test.');
+      expect(figure.works![0].orderIndex, 0);
       expect(figure.works![1].title, 'Second ouvrage');
       expect(figure.works![1].description, isNull);
+      expect(figure.works![1].orderIndex, 1);
     });
 
     test('figure_works absent ou vide donne des œuvres nulles', () {

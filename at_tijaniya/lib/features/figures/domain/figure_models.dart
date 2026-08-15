@@ -29,8 +29,12 @@ class FigureBiographyParagraph {
 /// Une citation attribuée à la figure — toujours avec sa source, pour rester
 /// traçable (docs/01 § 8 : "Recueil de citations et enseignements", P2).
 class FigureCitation {
-  const FigureCitation({this.arabic, this.transliteration, required this.translation, required this.source});
+  const FigureCitation({this.id, this.arabic, this.transliteration, required this.translation, required this.source});
 
+  /// `figure_quotes.id` — `null` seulement pour une citation pas encore
+  /// enregistrée (formulaire de création). Nécessaire pour cibler
+  /// `updateCitation`/`deleteCitation`.
+  final String? id;
   final String? arabic;
   final String? transliteration;
   final String translation;
@@ -45,10 +49,18 @@ class FigureCitation {
 /// du 2026-08-08). `description` reste `null` quand le texte source ne
 /// donne aucun détail au-delà du titre (pas de résumé inventé).
 class FigureWork {
-  const FigureWork({required this.title, this.description});
+  const FigureWork({this.id, required this.title, this.description, this.orderIndex = 0});
 
+  /// `figure_works.id` — `null` seulement pour une œuvre pas encore
+  /// enregistrée (formulaire de création). Nécessaire pour cibler
+  /// `updateWork`/`deleteWork`.
+  final String? id;
   final String title;
   final String? description;
+
+  /// `figure_works.order_index` — position d'affichage (`created_at` seul
+  /// n'est pas fiable pour un même insert groupé, voir `database/schema.sql`).
+  final int orderIndex;
 }
 
 class Figure {
@@ -239,6 +251,7 @@ List<FigureCitation>? _citationsFrom(List<dynamic>? quotesRows) {
   return [
     for (final raw in quotesRows.cast<Map<String, dynamic>>())
       FigureCitation(
+        id: raw['id'] as String?,
         arabic: raw['text_ar'] as String?,
         translation: (raw['text_fr'] as String?) ?? (raw['text_ar'] as String?) ?? '',
         source: (raw['source_note'] as String?) ?? '—',
@@ -251,6 +264,12 @@ List<FigureWork>? _worksFrom(List<dynamic>? worksRows) {
   final rows = worksRows.cast<Map<String, dynamic>>().toList()
     ..sort((a, b) => (a['order_index'] as int).compareTo(b['order_index'] as int));
   return [
-    for (final raw in rows) FigureWork(title: raw['title'] as String, description: raw['description'] as String?),
+    for (final raw in rows)
+      FigureWork(
+        id: raw['id'] as String?,
+        title: raw['title'] as String,
+        description: raw['description'] as String?,
+        orderIndex: raw['order_index'] as int,
+      ),
   ];
 }

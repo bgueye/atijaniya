@@ -10,7 +10,9 @@ import '../../../l10n/app_localizations.dart';
 import '../../profil/presentation/profile_providers.dart';
 import '../domain/figure_errors.dart';
 import '../domain/figure_models.dart';
+import 'figure_citation_form_screen.dart';
 import 'figure_form_screen.dart';
+import 'figure_work_form_screen.dart';
 import 'figures_providers.dart';
 
 /// Biographie détaillée d'une figure — en-tête immersif (rosace + noms) et
@@ -87,6 +89,13 @@ class _FigureDetailScreenState extends ConsumerState<FigureDetailScreen> {
     } finally {
       if (mounted) setState(() => _deleting = false);
     }
+  }
+
+  /// Recharge la figure (citations/œuvres à jour) après une action admin sur
+  /// l'onglet Citations — voir `FiguresRepository.fetchFigureById`.
+  Future<void> _refreshFigureContent() async {
+    final updated = await ref.read(figuresRepositoryProvider).fetchFigureById(_figure.id);
+    if (mounted) setState(() => _figure = updated);
   }
 
   Future<void> _changePortrait() async {
@@ -167,7 +176,7 @@ class _FigureDetailScreenState extends ConsumerState<FigureDetailScreen> {
                 children: [
                   _BiographyTab(figure: figure),
                   _SilsilaTab(figure: figure),
-                  _CitationsTab(figure: figure),
+                  _CitationsTab(figure: figure, isAdmin: isAdmin, onContentChanged: _refreshFigureContent),
                   _ZiyarasTab(figure: figure),
                 ],
               ),
@@ -518,32 +527,180 @@ class _SilsilaNode extends StatelessWidget {
 /// œuvres écrites (livres, traités, diwan...). Les deux sources
 /// (`figure_quotes`/`figure_works`) sont indépendantes : chacune s'affiche
 /// dès qu'elle a du contenu, même si l'autre est encore vide.
-class _CitationsTab extends StatelessWidget {
-  const _CitationsTab({required this.figure});
+/// Onglet Citations, avec ajout/édition/suppression réservés à un admin
+/// (`isAdmin`, RLS `figure_quotes_admin_*`/`figure_works_admin_*`) — un
+/// `ConsumerStatefulWidget` plutôt que `StatelessWidget` (contrairement à la
+/// version précédente) pour porter [_busy], qui désactive les actions
+/// pendant un appel réseau en cours et évite un double envoi.
+class _CitationsTab extends ConsumerStatefulWidget {
+  const _CitationsTab({required this.figure, required this.isAdmin, required this.onContentChanged});
 
   final Figure figure;
+  final bool isAdmin;
+
+  /// Recharge la figure parente (`FigureDetailScreen._refreshFigureContent`)
+  /// après une création/modification/suppression réussie.
+  final VoidCallback onContentChanged;
+
+  @override
+  ConsumerState<_CitationsTab> createState() => _CitationsTabState();
+}
+
+class _CitationsTabState extends ConsumerState<_CitationsTab> {
+  bool _busy = false;
+
+  Future<void> _addCitation() async {
+    final saved = await Navigator.of(context).push<bool>(
+      MaterialPageRoute(builder: (_) => FigureCitationFormScreen(figureId: widget.figure.id)),
+    );
+    if (saved == true) widget.onContentChanged();
+  }
+
+  Future<void> _editCitation(FigureCitation citation) async {
+    final saved = await Navigator.of(context).push<bool>(
+      MaterialPageRoute(builder: (_) => FigureCitationFormScreen(figureId: widget.figure.id, citation: citation)),
+    );
+    if (saved == true) widget.onContentChanged();
+  }
+
+  Future<void> _deleteCitation(FigureCitation citation) async {
+    final l10n = AppLocalizations.of(context)!;
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(l10n.figureCitationDeleteConfirmTitle),
+        content: Text(l10n.figureCitationDeleteConfirmBody),
+        actions: [
+          TextButton(onPressed: () => Navigator.of(context).pop(false), child: Text(l10n.profileCancel)),
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(true),
+            child: Text(l10n.figureCitationDeleteConfirmAction, style: const TextStyle(color: Colors.redAccent)),
+          ),
+        ],
+      ),
+    );
+    if (confirmed != true || !mounted) return;
+
+    setState(() => _busy = true);
+    try {
+      await ref.read(figuresRepositoryProvider).deleteCitation(citation.id!);
+      widget.onContentChanged();
+    } catch (_) {
+      if (mounted) {
+        ScaffoldMessenger.of(context)
+          ..hideCurrentSnackBar()
+          ..showSnackBar(SnackBar(content: Text(l10n.figureCitationDeleteError)));
+      }
+    } finally {
+      if (mounted) setState(() => _busy = false);
+    }
+  }
+
+  Future<void> _addWork() async {
+    final saved = await Navigator.of(context).push<bool>(
+      MaterialPageRoute(
+        builder: (_) => FigureWorkFormScreen(figureId: widget.figure.id, nextOrderIndex: widget.figure.works?.length ?? 0),
+      ),
+    );
+    if (saved == true) widget.onContentChanged();
+  }
+
+  Future<void> _editWork(FigureWork work) async {
+    final saved = await Navigator.of(context).push<bool>(
+      MaterialPageRoute(builder: (_) => FigureWorkFormScreen(figureId: widget.figure.id, work: work)),
+    );
+    if (saved == true) widget.onContentChanged();
+  }
+
+  Future<void> _deleteWork(FigureWork work) async {
+    final l10n = AppLocalizations.of(context)!;
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(l10n.figureWorkDeleteConfirmTitle),
+        content: Text(l10n.figureWorkDeleteConfirmBody),
+        actions: [
+          TextButton(onPressed: () => Navigator.of(context).pop(false), child: Text(l10n.profileCancel)),
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(true),
+            child: Text(l10n.figureWorkDeleteConfirmAction, style: const TextStyle(color: Colors.redAccent)),
+          ),
+        ],
+      ),
+    );
+    if (confirmed != true || !mounted) return;
+
+    setState(() => _busy = true);
+    try {
+      await ref.read(figuresRepositoryProvider).deleteWork(work.id!);
+      widget.onContentChanged();
+    } catch (_) {
+      if (mounted) {
+        ScaffoldMessenger.of(context)
+          ..hideCurrentSnackBar()
+          ..showSnackBar(SnackBar(content: Text(l10n.figureWorkDeleteError)));
+      }
+    } finally {
+      if (mounted) setState(() => _busy = false);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-    final citations = figure.citations;
-    final works = figure.works;
+    final citations = widget.figure.citations;
+    final works = widget.figure.works;
     final hasCitations = citations != null && citations.isNotEmpty;
     final hasWorks = works != null && works.isNotEmpty;
 
-    if (!hasCitations && !hasWorks) {
+    if (!hasCitations && !hasWorks && !widget.isAdmin) {
       return _PendingTab(message: l10n.figureCitationsEmpty);
     }
 
     return ListView(
       padding: const EdgeInsets.all(20),
       children: [
-        if (hasCitations) for (final citation in citations) _CitationCard(citation: citation),
+        if (widget.isAdmin) ...[
+          Wrap(
+            spacing: 8,
+            runSpacing: 8,
+            children: [
+              OutlinedButton.icon(
+                onPressed: _busy ? null : _addCitation,
+                icon: const Icon(Icons.add, size: 18),
+                label: Text(l10n.figureCitationsAddButton),
+              ),
+              OutlinedButton.icon(
+                onPressed: _busy ? null : _addWork,
+                icon: const Icon(Icons.add, size: 18),
+                label: Text(l10n.figureWorksAddButton),
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+        ],
+        if (!hasCitations && !hasWorks) Text(l10n.figureCitationsEmpty, style: const TextStyle(color: AppColors.bronze)),
+        if (hasCitations)
+          for (final citation in citations)
+            _CitationCard(
+              citation: citation,
+              isAdmin: widget.isAdmin,
+              busy: _busy,
+              onEdit: () => _editCitation(citation),
+              onDelete: () => _deleteCitation(citation),
+            ),
         if (hasWorks) ...[
           if (hasCitations) const SizedBox(height: 8),
           _SectionTitle(l10n.figureWorksSectionTitle),
           const SizedBox(height: 8),
-          for (final work in works) _WorkCard(work: work),
+          for (final work in works)
+            _WorkCard(
+              work: work,
+              isAdmin: widget.isAdmin,
+              busy: _busy,
+              onEdit: () => _editWork(work),
+              onDelete: () => _deleteWork(work),
+            ),
         ],
       ],
     );
@@ -562,9 +719,13 @@ class _SectionTitle extends StatelessWidget {
 }
 
 class _WorkCard extends StatelessWidget {
-  const _WorkCard({required this.work});
+  const _WorkCard({required this.work, this.isAdmin = false, this.busy = false, this.onEdit, this.onDelete});
 
   final FigureWork work;
+  final bool isAdmin;
+  final bool busy;
+  final VoidCallback? onEdit;
+  final VoidCallback? onDelete;
 
   @override
   Widget build(BuildContext context) {
@@ -578,14 +739,22 @@ class _WorkCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          Text(
-            work.title,
-            style: const TextStyle(
-              fontFamily: AppFonts.titlesFr,
-              fontSize: 17,
-              fontWeight: FontWeight.w600,
-              color: AppColors.zaytoune,
-            ),
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Expanded(
+                child: Text(
+                  work.title,
+                  style: const TextStyle(
+                    fontFamily: AppFonts.titlesFr,
+                    fontSize: 17,
+                    fontWeight: FontWeight.w600,
+                    color: AppColors.zaytoune,
+                  ),
+                ),
+              ),
+              if (isAdmin) _AdminItemActions(busy: busy, onEdit: onEdit, onDelete: onDelete),
+            ],
           ),
           if (work.description != null) ...[
             const SizedBox(height: 6),
@@ -593,6 +762,41 @@ class _WorkCard extends StatelessWidget {
           ],
         ],
       ),
+    );
+  }
+}
+
+/// Icônes Modifier/Supprimer compactes, réutilisées par `_CitationCard` et
+/// `_WorkCard` — même paire d'icônes que `ZawiyaDetailScreen`/
+/// `FigureDetailScreen`, mais en taille réduite pour tenir dans une carte de
+/// liste plutôt qu'une AppBar.
+class _AdminItemActions extends StatelessWidget {
+  const _AdminItemActions({required this.busy, this.onEdit, this.onDelete});
+
+  final bool busy;
+  final VoidCallback? onEdit;
+  final VoidCallback? onDelete;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        IconButton(
+          icon: const Icon(Icons.edit_outlined, size: 18, color: AppColors.bronze),
+          padding: EdgeInsets.zero,
+          constraints: const BoxConstraints(minWidth: 32, minHeight: 32),
+          onPressed: busy ? null : onEdit,
+        ),
+        IconButton(
+          icon: busy
+              ? const SizedBox(width: 14, height: 14, child: CircularProgressIndicator(strokeWidth: 2))
+              : const Icon(Icons.delete_outline, size: 18, color: AppColors.bronze),
+          padding: EdgeInsets.zero,
+          constraints: const BoxConstraints(minWidth: 32, minHeight: 32),
+          onPressed: busy ? null : onDelete,
+        ),
+      ],
     );
   }
 }
@@ -652,9 +856,13 @@ class _BiographyParagraph extends StatelessWidget {
 }
 
 class _CitationCard extends StatelessWidget {
-  const _CitationCard({required this.citation});
+  const _CitationCard({required this.citation, this.isAdmin = false, this.busy = false, this.onEdit, this.onDelete});
 
   final FigureCitation citation;
+  final bool isAdmin;
+  final bool busy;
+  final VoidCallback? onEdit;
+  final VoidCallback? onDelete;
 
   @override
   Widget build(BuildContext context) {
@@ -668,6 +876,11 @@ class _CitationCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
+          if (isAdmin)
+            Align(
+              alignment: AlignmentDirectional.centerEnd,
+              child: _AdminItemActions(busy: busy, onEdit: onEdit, onDelete: onDelete),
+            ),
           if (citation.arabic != null) ...[
             Text(
               citation.arabic!,

@@ -1538,6 +1538,186 @@ abstract class AppLocalizations {
   /// **'Impossible de supprimer cette figure.'**
   String get figureDeleteError;
 
+  /// No description provided for @figureCitationsAddButton.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ajouter une citation'**
+  String get figureCitationsAddButton;
+
+  /// No description provided for @figureCitationEditTooltip.
+  ///
+  /// In fr, this message translates to:
+  /// **'Modifier'**
+  String get figureCitationEditTooltip;
+
+  /// No description provided for @figureCitationDeleteTooltip.
+  ///
+  /// In fr, this message translates to:
+  /// **'Supprimer'**
+  String get figureCitationDeleteTooltip;
+
+  /// No description provided for @figureCitationDeleteConfirmTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Supprimer cette citation ?'**
+  String get figureCitationDeleteConfirmTitle;
+
+  /// No description provided for @figureCitationDeleteConfirmBody.
+  ///
+  /// In fr, this message translates to:
+  /// **'Cette action est définitive.'**
+  String get figureCitationDeleteConfirmBody;
+
+  /// No description provided for @figureCitationDeleteConfirmAction.
+  ///
+  /// In fr, this message translates to:
+  /// **'Supprimer'**
+  String get figureCitationDeleteConfirmAction;
+
+  /// No description provided for @figureCitationDeleteError.
+  ///
+  /// In fr, this message translates to:
+  /// **'Impossible de supprimer cette citation.'**
+  String get figureCitationDeleteError;
+
+  /// No description provided for @figureCitationFormCreateTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Nouvelle citation'**
+  String get figureCitationFormCreateTitle;
+
+  /// No description provided for @figureCitationFormEditTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Modifier la citation'**
+  String get figureCitationFormEditTitle;
+
+  /// No description provided for @figureCitationFormArabicLabel.
+  ///
+  /// In fr, this message translates to:
+  /// **'Texte arabe (optionnel)'**
+  String get figureCitationFormArabicLabel;
+
+  /// No description provided for @figureCitationFormFrenchLabel.
+  ///
+  /// In fr, this message translates to:
+  /// **'Traduction française'**
+  String get figureCitationFormFrenchLabel;
+
+  /// No description provided for @figureCitationFormTextRequired.
+  ///
+  /// In fr, this message translates to:
+  /// **'Renseignez au moins le texte arabe ou la traduction.'**
+  String get figureCitationFormTextRequired;
+
+  /// No description provided for @figureCitationFormSourceLabel.
+  ///
+  /// In fr, this message translates to:
+  /// **'Source'**
+  String get figureCitationFormSourceLabel;
+
+  /// No description provided for @figureCitationFormSourceRequired.
+  ///
+  /// In fr, this message translates to:
+  /// **'La source est obligatoire.'**
+  String get figureCitationFormSourceRequired;
+
+  /// No description provided for @figureCitationFormSave.
+  ///
+  /// In fr, this message translates to:
+  /// **'Enregistrer'**
+  String get figureCitationFormSave;
+
+  /// No description provided for @figureCitationFormSaveError.
+  ///
+  /// In fr, this message translates to:
+  /// **'Impossible d\'enregistrer cette citation.'**
+  String get figureCitationFormSaveError;
+
+  /// No description provided for @figureWorksAddButton.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ajouter une œuvre'**
+  String get figureWorksAddButton;
+
+  /// No description provided for @figureWorkEditTooltip.
+  ///
+  /// In fr, this message translates to:
+  /// **'Modifier'**
+  String get figureWorkEditTooltip;
+
+  /// No description provided for @figureWorkDeleteTooltip.
+  ///
+  /// In fr, this message translates to:
+  /// **'Supprimer'**
+  String get figureWorkDeleteTooltip;
+
+  /// No description provided for @figureWorkDeleteConfirmTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Supprimer cette œuvre ?'**
+  String get figureWorkDeleteConfirmTitle;
+
+  /// No description provided for @figureWorkDeleteConfirmBody.
+  ///
+  /// In fr, this message translates to:
+  /// **'Cette action est définitive.'**
+  String get figureWorkDeleteConfirmBody;
+
+  /// No description provided for @figureWorkDeleteConfirmAction.
+  ///
+  /// In fr, this message translates to:
+  /// **'Supprimer'**
+  String get figureWorkDeleteConfirmAction;
+
+  /// No description provided for @figureWorkDeleteError.
+  ///
+  /// In fr, this message translates to:
+  /// **'Impossible de supprimer cette œuvre.'**
+  String get figureWorkDeleteError;
+
+  /// No description provided for @figureWorkFormCreateTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Nouvelle œuvre'**
+  String get figureWorkFormCreateTitle;
+
+  /// No description provided for @figureWorkFormEditTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Modifier l\'œuvre'**
+  String get figureWorkFormEditTitle;
+
+  /// No description provided for @figureWorkFormTitleLabel.
+  ///
+  /// In fr, this message translates to:
+  /// **'Titre'**
+  String get figureWorkFormTitleLabel;
+
+  /// No description provided for @figureWorkFormTitleRequired.
+  ///
+  /// In fr, this message translates to:
+  /// **'Le titre est obligatoire.'**
+  String get figureWorkFormTitleRequired;
+
+  /// No description provided for @figureWorkFormDescriptionLabel.
+  ///
+  /// In fr, this message translates to:
+  /// **'Description (optionnel)'**
+  String get figureWorkFormDescriptionLabel;
+
+  /// No description provided for @figureWorkFormSave.
+  ///
+  /// In fr, this message translates to:
+  /// **'Enregistrer'**
+  String get figureWorkFormSave;
+
+  /// No description provided for @figureWorkFormSaveError.
+  ///
+  /// In fr, this message translates to:
+  /// **'Impossible d\'enregistrer cette œuvre.'**
+  String get figureWorkFormSaveError;
+
   /// No description provided for @figureFormCreateTitle.
   ///
   /// In fr, this message translates to:

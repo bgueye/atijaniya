@@ -782,6 +782,100 @@ class AppLocalizationsFr extends AppLocalizations {
   String get figureDeleteError => 'Impossible de supprimer cette figure.';
 
   @override
+  String get figureCitationsAddButton => 'Ajouter une citation';
+
+  @override
+  String get figureCitationEditTooltip => 'Modifier';
+
+  @override
+  String get figureCitationDeleteTooltip => 'Supprimer';
+
+  @override
+  String get figureCitationDeleteConfirmTitle => 'Supprimer cette citation ?';
+
+  @override
+  String get figureCitationDeleteConfirmBody => 'Cette action est définitive.';
+
+  @override
+  String get figureCitationDeleteConfirmAction => 'Supprimer';
+
+  @override
+  String get figureCitationDeleteError =>
+      'Impossible de supprimer cette citation.';
+
+  @override
+  String get figureCitationFormCreateTitle => 'Nouvelle citation';
+
+  @override
+  String get figureCitationFormEditTitle => 'Modifier la citation';
+
+  @override
+  String get figureCitationFormArabicLabel => 'Texte arabe (optionnel)';
+
+  @override
+  String get figureCitationFormFrenchLabel => 'Traduction française';
+
+  @override
+  String get figureCitationFormTextRequired =>
+      'Renseignez au moins le texte arabe ou la traduction.';
+
+  @override
+  String get figureCitationFormSourceLabel => 'Source';
+
+  @override
+  String get figureCitationFormSourceRequired => 'La source est obligatoire.';
+
+  @override
+  String get figureCitationFormSave => 'Enregistrer';
+
+  @override
+  String get figureCitationFormSaveError =>
+      'Impossible d\'enregistrer cette citation.';
+
+  @override
+  String get figureWorksAddButton => 'Ajouter une œuvre';
+
+  @override
+  String get figureWorkEditTooltip => 'Modifier';
+
+  @override
+  String get figureWorkDeleteTooltip => 'Supprimer';
+
+  @override
+  String get figureWorkDeleteConfirmTitle => 'Supprimer cette œuvre ?';
+
+  @override
+  String get figureWorkDeleteConfirmBody => 'Cette action est définitive.';
+
+  @override
+  String get figureWorkDeleteConfirmAction => 'Supprimer';
+
+  @override
+  String get figureWorkDeleteError => 'Impossible de supprimer cette œuvre.';
+
+  @override
+  String get figureWorkFormCreateTitle => 'Nouvelle œuvre';
+
+  @override
+  String get figureWorkFormEditTitle => 'Modifier l\'œuvre';
+
+  @override
+  String get figureWorkFormTitleLabel => 'Titre';
+
+  @override
+  String get figureWorkFormTitleRequired => 'Le titre est obligatoire.';
+
+  @override
+  String get figureWorkFormDescriptionLabel => 'Description (optionnel)';
+
+  @override
+  String get figureWorkFormSave => 'Enregistrer';
+
+  @override
+  String get figureWorkFormSaveError =>
+      'Impossible d\'enregistrer cette œuvre.';
+
+  @override
   String get figureFormCreateTitle => 'Nouvelle figure';
 
   @override
