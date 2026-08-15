@@ -1944,8 +1944,35 @@ Auth (même flux que la déconnexion classique).
 
 `flutter analyze` (0 issue) et `flutter test --concurrency=1` (137 tests,
 dont l'extension de `figures_models_test.dart` pour `id`/`orderIndex`)
-tous verts après chacun des quatre points. **Pas de validation manuelle sur
-émulateur/appareil physique** pour ce lot non plus, notamment pour le point
-le plus sensible (suppression de compte réelle contre le projet Supabase
-live) — à tester avant toute mise en avant de cette fonctionnalité auprès
-d'un disciple réel.
+tous verts après chacun des quatre points.
+
+**Mise à jour (2026-08-16, plus tard le même jour) : suppression de compte
+validée en conditions réelles sur émulateur Android**, contre le projet
+Supabase live. Protocole (pour ne jamais risquer un compte réel) : compte
+jetable créé depuis l'écran "Créer un compte"
+(`claude.tijaniya.qa.delete-test@gmail.com`), `email_confirmed_at` forcé en
+base via SQL (confirmation par e-mail non atteignable depuis cet
+environnement) pour pouvoir se connecter, session ouverte, puis
+"Supprimer mon compte" déclenché depuis `profil_screen.dart`. Confirmé :
+- Le champ de confirmation ("Tapez SUPPRIMER pour confirmer") bloque bien
+  le bouton tant que le mot exact n'est pas saisi.
+- Après validation, l'app revient bien à l'écran Auth (session locale
+  fermée malgré la suppression déjà effective côté serveur).
+- Vérifié en base après coup : la ligne `auth.users` et la ligne
+  `profiles` du compte de test ont bien disparu (`select count(*) ... = 0`
+  sur les deux tables).
+- Les autres comptes réels du projet (`bgueye@gmail.com`,
+  `dabandiaye08@gmail.com`, et un ancien compte de test
+  `claude.tijaniya.qa.test1@gmail.com` déjà présent) sont restés intacts et
+  inchangés — vérifié par une requête listant tous les `auth.users` après
+  le test.
+
+Le compte de test n'avait ni zawiya, ni post, ni évènement : cette
+validation couvre donc le mécanisme de suppression lui-même (Edge
+Function, confirmation renforcée, déconnexion) mais **pas encore** le
+chemin d'anonymisation du contenu institutionnel (`events.created_by`,
+`live_streams.started_by`, `wird_recitations.validated_by`,
+`posts.author_user_id` mis à `null`) ni la suppression du contenu
+personnel non-cascade (`post_comments`, `group_posts`, `messages`) — à
+tester avec un compte de test qui a réellement produit ce genre de contenu
+avant de considérer ce chantier entièrement validé.
