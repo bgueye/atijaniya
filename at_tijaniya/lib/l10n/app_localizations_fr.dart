@@ -1202,6 +1202,31 @@ class AppLocalizationsFr extends AppLocalizations {
   String get profileSignOutConfirmAction => 'Se déconnecter';
 
   @override
+  String get profileDeleteAccount => 'Supprimer mon compte';
+
+  @override
+  String get profileDeleteAccountConfirmTitle =>
+      'Supprimer définitivement votre compte ?';
+
+  @override
+  String get profileDeleteAccountConfirmBody =>
+      'Cette action est irréversible. Votre profil, vos wirds enregistrés, votre lignée spirituelle et vos messages seront supprimés. Vos publications et évènements créés seront conservés, mais ne seront plus associés à votre compte.';
+
+  @override
+  String get profileDeleteAccountConfirmInstruction =>
+      'Tapez SUPPRIMER pour confirmer.';
+
+  @override
+  String get profileDeleteAccountConfirmWord => 'SUPPRIMER';
+
+  @override
+  String get profileDeleteAccountConfirmAction => 'Supprimer mon compte';
+
+  @override
+  String get profileDeleteAccountError =>
+      'Impossible de supprimer votre compte pour le moment. Réessayez plus tard.';
+
+  @override
   String get profileCancel => 'Annuler';
 
   @override

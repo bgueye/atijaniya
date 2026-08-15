@@ -2324,6 +2324,48 @@ abstract class AppLocalizations {
   /// **'Se déconnecter'**
   String get profileSignOutConfirmAction;
 
+  /// No description provided for @profileDeleteAccount.
+  ///
+  /// In fr, this message translates to:
+  /// **'Supprimer mon compte'**
+  String get profileDeleteAccount;
+
+  /// No description provided for @profileDeleteAccountConfirmTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Supprimer définitivement votre compte ?'**
+  String get profileDeleteAccountConfirmTitle;
+
+  /// No description provided for @profileDeleteAccountConfirmBody.
+  ///
+  /// In fr, this message translates to:
+  /// **'Cette action est irréversible. Votre profil, vos wirds enregistrés, votre lignée spirituelle et vos messages seront supprimés. Vos publications et évènements créés seront conservés, mais ne seront plus associés à votre compte.'**
+  String get profileDeleteAccountConfirmBody;
+
+  /// No description provided for @profileDeleteAccountConfirmInstruction.
+  ///
+  /// In fr, this message translates to:
+  /// **'Tapez SUPPRIMER pour confirmer.'**
+  String get profileDeleteAccountConfirmInstruction;
+
+  /// No description provided for @profileDeleteAccountConfirmWord.
+  ///
+  /// In fr, this message translates to:
+  /// **'SUPPRIMER'**
+  String get profileDeleteAccountConfirmWord;
+
+  /// No description provided for @profileDeleteAccountConfirmAction.
+  ///
+  /// In fr, this message translates to:
+  /// **'Supprimer mon compte'**
+  String get profileDeleteAccountConfirmAction;
+
+  /// No description provided for @profileDeleteAccountError.
+  ///
+  /// In fr, this message translates to:
+  /// **'Impossible de supprimer votre compte pour le moment. Réessayez plus tard.'**
+  String get profileDeleteAccountError;
+
   /// No description provided for @profileCancel.
   ///
   /// In fr, this message translates to:

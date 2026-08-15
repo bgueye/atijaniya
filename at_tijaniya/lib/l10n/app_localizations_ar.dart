@@ -1169,6 +1169,29 @@ class AppLocalizationsAr extends AppLocalizations {
   String get profileSignOutConfirmAction => 'تسجيل الخروج';
 
   @override
+  String get profileDeleteAccount => 'حذف حسابي';
+
+  @override
+  String get profileDeleteAccountConfirmTitle => 'حذف حسابك نهائيًا؟';
+
+  @override
+  String get profileDeleteAccountConfirmBody =>
+      'هذا الإجراء نهائي. سيتم حذف ملفك الشخصي وأورادك المسجلة وسلسلتكم الروحية ورسائلك. أما منشوراتك ومناسباتك التي أنشأتها فستبقى، لكنها لن تُنسب بعد الآن إلى حسابك.';
+
+  @override
+  String get profileDeleteAccountConfirmInstruction => 'اكتب حذف للتأكيد.';
+
+  @override
+  String get profileDeleteAccountConfirmWord => 'حذف';
+
+  @override
+  String get profileDeleteAccountConfirmAction => 'حذف حسابي';
+
+  @override
+  String get profileDeleteAccountError =>
+      'تعذّر حذف حسابك حاليًا. أعد المحاولة لاحقًا.';
+
+  @override
   String get profileCancel => 'إلغاء';
 
   @override

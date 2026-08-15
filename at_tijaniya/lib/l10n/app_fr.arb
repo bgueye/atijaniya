@@ -392,6 +392,13 @@
   "profileSignOutConfirmTitle": "Se déconnecter ?",
   "profileSignOutConfirmBody": "Vous devrez vous reconnecter pour retrouver votre communauté.",
   "profileSignOutConfirmAction": "Se déconnecter",
+  "profileDeleteAccount": "Supprimer mon compte",
+  "profileDeleteAccountConfirmTitle": "Supprimer définitivement votre compte ?",
+  "profileDeleteAccountConfirmBody": "Cette action est irréversible. Votre profil, vos wirds enregistrés, votre lignée spirituelle et vos messages seront supprimés. Vos publications et évènements créés seront conservés, mais ne seront plus associés à votre compte.",
+  "profileDeleteAccountConfirmInstruction": "Tapez SUPPRIMER pour confirmer.",
+  "profileDeleteAccountConfirmWord": "SUPPRIMER",
+  "profileDeleteAccountConfirmAction": "Supprimer mon compte",
+  "profileDeleteAccountError": "Impossible de supprimer votre compte pour le moment. Réessayez plus tard.",
   "profileCancel": "Annuler",
 
   "lineageTitle": "Ma lignée spirituelle",

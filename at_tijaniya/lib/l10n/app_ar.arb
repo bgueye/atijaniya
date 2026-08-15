@@ -391,6 +391,13 @@
   "profileSignOutConfirmTitle": "تسجيل الخروج؟",
   "profileSignOutConfirmBody": "سيتوجب عليك تسجيل الدخول مجددًا للتواصل مع جماعتك.",
   "profileSignOutConfirmAction": "تسجيل الخروج",
+  "profileDeleteAccount": "حذف حسابي",
+  "profileDeleteAccountConfirmTitle": "حذف حسابك نهائيًا؟",
+  "profileDeleteAccountConfirmBody": "هذا الإجراء نهائي. سيتم حذف ملفك الشخصي وأورادك المسجلة وسلسلتكم الروحية ورسائلك. أما منشوراتك ومناسباتك التي أنشأتها فستبقى، لكنها لن تُنسب بعد الآن إلى حسابك.",
+  "profileDeleteAccountConfirmInstruction": "اكتب حذف للتأكيد.",
+  "profileDeleteAccountConfirmWord": "حذف",
+  "profileDeleteAccountConfirmAction": "حذف حسابي",
+  "profileDeleteAccountError": "تعذّر حذف حسابك حاليًا. أعد المحاولة لاحقًا.",
   "profileCancel": "إلغاء",
 
   "lineageTitle": "سلسلتي الروحية",

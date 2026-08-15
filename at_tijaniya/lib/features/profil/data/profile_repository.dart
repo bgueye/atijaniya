@@ -37,4 +37,18 @@ class ProfileRepository {
       'zawiya_id': zawiyaId,
     }).eq('user_id', userId);
   }
+
+  /// Suppression définitive du compte connecté — via l'Edge Function
+  /// `delete-account` (`supabase/functions/delete-account/index.ts`),
+  /// nécessaire car `auth.admin.deleteUser` exige la clé service_role,
+  /// jamais atteignable depuis le client. Voir le commentaire de la
+  /// fonction pour le détail de ce qui est supprimé (contenu personnel :
+  /// commentaires, messages, publications de groupe) vs conservé mais
+  /// anonymisé (évènements créés, rediffusions validées, publications du
+  /// fil). Peut échouer (compte admin avec des entrées non couvertes dans
+  /// `admin_actions_log`/`sensitive_data_access_log`) — non catché ici,
+  /// message générique affiché côté écran.
+  Future<void> deleteMyAccount() async {
+    await SupabaseConfig.client.functions.invoke('delete-account');
+  }
 }

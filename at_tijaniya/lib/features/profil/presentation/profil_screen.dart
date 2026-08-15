@@ -168,6 +168,11 @@ class _ProfileBody extends ConsumerWidget {
             title: Text(l10n.profileSignOut, style: const TextStyle(color: Colors.redAccent)),
             onTap: () => _confirmSignOut(context, l10n),
           ),
+          ListTile(
+            leading: const Icon(Icons.delete_forever_outlined, color: Colors.redAccent),
+            title: Text(l10n.profileDeleteAccount, style: const TextStyle(color: Colors.redAccent)),
+            onTap: () => _confirmDeleteAccount(context),
+          ),
         ],
       ),
     );
@@ -192,6 +197,103 @@ class _ProfileBody extends ConsumerWidget {
       await SupabaseConfig.client.auth.signOut();
       if (context.mounted) Navigator.of(context).pop();
     }
+  }
+
+  /// `_DeleteAccountDialog` fait elle-même l'appel réseau (voir sa
+  /// justification) et ne se ferme (`pop(true)`) qu'après succès — cet
+  /// appelant n'a donc plus qu'à quitter l'écran Profil, même geste que
+  /// `_confirmSignOut` ci-dessus.
+  Future<void> _confirmDeleteAccount(BuildContext context) async {
+    final deleted = await showDialog<bool>(context: context, builder: (_) => const _DeleteAccountDialog());
+    if (deleted == true && context.mounted) Navigator.of(context).pop();
+  }
+}
+
+/// Suppression définitive du compte — confirmation renforcée (taper le mot
+/// exact plutôt qu'un simple bouton "Supprimer") vu l'irréversibilité,
+/// contrairement aux suppressions zawiya/figure/post qui n'utilisent qu'une
+/// AlertDialog à deux boutons. Voir `ProfileRepository.deleteMyAccount` pour
+/// ce qui est effectivement supprimé vs conservé-anonymisé.
+class _DeleteAccountDialog extends ConsumerStatefulWidget {
+  const _DeleteAccountDialog();
+
+  @override
+  ConsumerState<_DeleteAccountDialog> createState() => _DeleteAccountDialogState();
+}
+
+class _DeleteAccountDialogState extends ConsumerState<_DeleteAccountDialog> {
+  final _confirmController = TextEditingController();
+  bool _deleting = false;
+  String? _errorMessage;
+
+  @override
+  void dispose() {
+    _confirmController.dispose();
+    super.dispose();
+  }
+
+  Future<void> _submit(String expectedWord) async {
+    if (_confirmController.text.trim() != expectedWord || _deleting) return;
+    setState(() {
+      _deleting = true;
+      _errorMessage = null;
+    });
+    try {
+      await ref.read(profileRepositoryProvider).deleteMyAccount();
+      await SupabaseConfig.client.auth.signOut();
+      if (mounted) Navigator.of(context).pop(true);
+    } catch (_) {
+      if (mounted) {
+        final l10n = AppLocalizations.of(context)!;
+        setState(() {
+          _deleting = false;
+          _errorMessage = l10n.profileDeleteAccountError;
+        });
+      }
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    final expectedWord = l10n.profileDeleteAccountConfirmWord;
+    final canSubmit = !_deleting && _confirmController.text.trim() == expectedWord;
+
+    return AlertDialog(
+      title: Text(l10n.profileDeleteAccountConfirmTitle),
+      content: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Text(l10n.profileDeleteAccountConfirmBody),
+          const SizedBox(height: 12),
+          Text(l10n.profileDeleteAccountConfirmInstruction, style: const TextStyle(fontWeight: FontWeight.w600)),
+          const SizedBox(height: 8),
+          TextField(
+            controller: _confirmController,
+            onChanged: (_) => setState(() {}),
+            decoration: InputDecoration(hintText: expectedWord),
+            enabled: !_deleting,
+          ),
+          if (_errorMessage != null) ...[
+            const SizedBox(height: 12),
+            Text(_errorMessage!, style: const TextStyle(color: Colors.redAccent)),
+          ],
+        ],
+      ),
+      actions: [
+        TextButton(
+          onPressed: _deleting ? null : () => Navigator.of(context).pop(false),
+          child: Text(l10n.profileCancel),
+        ),
+        TextButton(
+          onPressed: canSubmit ? () => _submit(expectedWord) : null,
+          child: _deleting
+              ? const SizedBox(width: 16, height: 16, child: CircularProgressIndicator(strokeWidth: 2))
+              : Text(l10n.profileDeleteAccountConfirmAction, style: const TextStyle(color: Colors.redAccent)),
+        ),
+      ],
+    );
   }
 }
 
