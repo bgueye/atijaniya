@@ -26,6 +26,8 @@ class LiveStreamScreen extends ConsumerStatefulWidget {
 
 class _LiveStreamScreenState extends ConsumerState<LiveStreamScreen> {
   final _messageController = TextEditingController();
+  final _replayUrlController = TextEditingController();
+  final _replayDurationController = TextEditingController();
   Timer? _pollTimer;
 
   @override
@@ -44,7 +46,82 @@ class _LiveStreamScreenState extends ConsumerState<LiveStreamScreen> {
   void dispose() {
     _pollTimer?.cancel();
     _messageController.dispose();
+    _replayUrlController.dispose();
+    _replayDurationController.dispose();
     super.dispose();
+  }
+
+  /// Réservé à un admin (`replays_admin_write`) sur un direct déjà terminé —
+  /// voir `LiveStreamRepository.createReplay`. Formulaire minimal (lien +
+  /// durée optionnelle) en `AlertDialog` plutôt qu'un écran dédié : deux
+  /// champs seulement, pas de justification pour une navigation séparée.
+  Future<void> _addReplay() async {
+    final l10n = AppLocalizations.of(context)!;
+    _replayUrlController.clear();
+    _replayDurationController.clear();
+    final formKey = GlobalKey<FormState>();
+
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: Text(l10n.khadaraAddReplayTitle),
+        content: Form(
+          key: formKey,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              TextFormField(
+                controller: _replayUrlController,
+                decoration: InputDecoration(labelText: l10n.khadaraAddReplayUrlLabel),
+                keyboardType: TextInputType.url,
+                validator: (value) =>
+                    (value == null || Uri.tryParse(value.trim())?.hasScheme != true) ? l10n.khadaraAddReplayUrlInvalid : null,
+              ),
+              const SizedBox(height: 12),
+              TextFormField(
+                controller: _replayDurationController,
+                decoration: InputDecoration(labelText: l10n.khadaraAddReplayDurationLabel),
+                keyboardType: TextInputType.number,
+              ),
+            ],
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(dialogContext).pop(false),
+            child: Text(MaterialLocalizations.of(dialogContext).cancelButtonLabel),
+          ),
+          FilledButton(
+            onPressed: () {
+              if (formKey.currentState!.validate()) Navigator.of(dialogContext).pop(true);
+            },
+            child: Text(l10n.khadaraAddReplaySave),
+          ),
+        ],
+      ),
+    );
+    if (confirmed != true || !mounted) return;
+
+    final minutes = int.tryParse(_replayDurationController.text.trim());
+    try {
+      await ref.read(liveStreamRepositoryProvider).createReplay(
+            streamId: widget.stream.id,
+            videoUrl: _replayUrlController.text.trim(),
+            durationSeconds: minutes != null ? minutes * 60 : null,
+          );
+      ref.invalidate(streamReplaysProvider);
+      if (mounted) {
+        ScaffoldMessenger.of(context)
+          ..hideCurrentSnackBar()
+          ..showSnackBar(SnackBar(content: Text(l10n.khadaraAddReplaySuccess)));
+      }
+    } catch (_) {
+      if (mounted) {
+        ScaffoldMessenger.of(context)
+          ..hideCurrentSnackBar()
+          ..showSnackBar(SnackBar(content: Text(l10n.khadaraAddReplayError)));
+      }
+    }
   }
 
   Future<void> _openExternal() async {
@@ -94,6 +171,7 @@ class _LiveStreamScreenState extends ConsumerState<LiveStreamScreen> {
     final l10n = AppLocalizations.of(context)!;
     final myUserId = ref.watch(currentUserIdProvider);
     final isOwner = myUserId != null && myUserId == widget.stream.startedBy;
+    final isAdmin = ref.watch(isAdminProvider);
     final isEnded = widget.stream.status == LiveStreamStatus.ended;
     final messages = ref.watch(chatMessagesProvider(widget.stream.id));
 
@@ -105,6 +183,12 @@ class _LiveStreamScreenState extends ConsumerState<LiveStreamScreen> {
             TextButton(
               onPressed: _confirmEnd,
               child: Text(l10n.khadaraEndLiveButton, style: const TextStyle(color: Colors.red)),
+            ),
+          if (isAdmin && isEnded)
+            IconButton(
+              icon: const Icon(Icons.video_call_outlined),
+              tooltip: l10n.khadaraAddReplayTooltip,
+              onPressed: _addReplay,
             ),
         ],
       ),

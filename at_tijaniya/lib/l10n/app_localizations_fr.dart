@@ -672,6 +672,31 @@ class AppLocalizationsFr extends AppLocalizations {
   String get khadaraOpenReplayError => 'Impossible d\'ouvrir ce lien.';
 
   @override
+  String get khadaraAddReplayTooltip => 'Ajouter une rediffusion';
+
+  @override
+  String get khadaraAddReplayTitle => 'Ajouter une rediffusion';
+
+  @override
+  String get khadaraAddReplayUrlLabel => 'Lien de la vidéo';
+
+  @override
+  String get khadaraAddReplayUrlInvalid => 'Entrez un lien valide.';
+
+  @override
+  String get khadaraAddReplayDurationLabel => 'Durée en minutes (optionnel)';
+
+  @override
+  String get khadaraAddReplaySave => 'Enregistrer';
+
+  @override
+  String get khadaraAddReplaySuccess => 'Rediffusion ajoutée.';
+
+  @override
+  String get khadaraAddReplayError =>
+      'Impossible d\'ajouter cette rediffusion.';
+
+  @override
   String get figuresSectionFounders => 'Fondateurs';
 
   @override

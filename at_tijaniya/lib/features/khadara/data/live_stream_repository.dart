@@ -80,6 +80,23 @@ class LiveStreamRepository {
     return rows.map((row) => StreamReplay.fromRow(row)).toList();
   }
 
+  /// Enregistre une rediffusion pour un direct déjà terminé — réservé par
+  /// RLS (`replays_admin_write`) à un compte admin. [durationSeconds] reste
+  /// `null` tant que l'admin ne l'a pas renseignée (pas de calcul
+  /// automatique à partir de `started_at`/`ended_at` : un direct suspendu
+  /// puis repris fausserait ce calcul).
+  Future<void> createReplay({
+    required String streamId,
+    required String videoUrl,
+    int? durationSeconds,
+  }) async {
+    await SupabaseConfig.client.from('stream_replays').insert({
+      'stream_id': streamId,
+      'video_url': videoUrl,
+      'duration_seconds': durationSeconds,
+    });
+  }
+
   /// Démarre un direct pour un évènement OU un groupe (jamais les deux —
   /// exactement un des deux doit être renseigné) — toujours `status:
   /// 'live'` immédiatement (pas de programmation à l'avance dans cet

@@ -1334,6 +1334,54 @@ abstract class AppLocalizations {
   /// **'Impossible d\'ouvrir ce lien.'**
   String get khadaraOpenReplayError;
 
+  /// No description provided for @khadaraAddReplayTooltip.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ajouter une rediffusion'**
+  String get khadaraAddReplayTooltip;
+
+  /// No description provided for @khadaraAddReplayTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ajouter une rediffusion'**
+  String get khadaraAddReplayTitle;
+
+  /// No description provided for @khadaraAddReplayUrlLabel.
+  ///
+  /// In fr, this message translates to:
+  /// **'Lien de la vidéo'**
+  String get khadaraAddReplayUrlLabel;
+
+  /// No description provided for @khadaraAddReplayUrlInvalid.
+  ///
+  /// In fr, this message translates to:
+  /// **'Entrez un lien valide.'**
+  String get khadaraAddReplayUrlInvalid;
+
+  /// No description provided for @khadaraAddReplayDurationLabel.
+  ///
+  /// In fr, this message translates to:
+  /// **'Durée en minutes (optionnel)'**
+  String get khadaraAddReplayDurationLabel;
+
+  /// No description provided for @khadaraAddReplaySave.
+  ///
+  /// In fr, this message translates to:
+  /// **'Enregistrer'**
+  String get khadaraAddReplaySave;
+
+  /// No description provided for @khadaraAddReplaySuccess.
+  ///
+  /// In fr, this message translates to:
+  /// **'Rediffusion ajoutée.'**
+  String get khadaraAddReplaySuccess;
+
+  /// No description provided for @khadaraAddReplayError.
+  ///
+  /// In fr, this message translates to:
+  /// **'Impossible d\'ajouter cette rediffusion.'**
+  String get khadaraAddReplayError;
+
   /// No description provided for @figuresSectionFounders.
   ///
   /// In fr, this message translates to:

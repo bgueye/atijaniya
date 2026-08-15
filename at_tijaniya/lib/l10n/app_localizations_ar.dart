@@ -658,6 +658,30 @@ class AppLocalizationsAr extends AppLocalizations {
   String get khadaraOpenReplayError => 'تعذّر فتح هذا الرابط.';
 
   @override
+  String get khadaraAddReplayTooltip => 'إضافة إعادة بث';
+
+  @override
+  String get khadaraAddReplayTitle => 'إضافة إعادة بث';
+
+  @override
+  String get khadaraAddReplayUrlLabel => 'رابط الفيديو';
+
+  @override
+  String get khadaraAddReplayUrlInvalid => 'أدخل رابطًا صالحًا.';
+
+  @override
+  String get khadaraAddReplayDurationLabel => 'المدة بالدقائق (اختياري)';
+
+  @override
+  String get khadaraAddReplaySave => 'حفظ';
+
+  @override
+  String get khadaraAddReplaySuccess => 'تمت إضافة إعادة البث.';
+
+  @override
+  String get khadaraAddReplayError => 'تعذّر إضافة إعادة البث.';
+
+  @override
   String get figuresSectionFounders => 'المؤسسون';
 
   @override
