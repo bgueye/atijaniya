@@ -763,6 +763,31 @@ class AppLocalizationsAr extends AppLocalizations {
   String get figureZiyarasPending => 'لم تُسجَّل بعد أي زيارة مرتبطة.';
 
   @override
+  String get figureZiyarasAddButton => 'ربط مناسبة';
+
+  @override
+  String get figureZiyarasLinkError => 'تعذّر ربط هذه المناسبة.';
+
+  @override
+  String get figureZiyarasLinkPickerTitle => 'اختر مناسبة';
+
+  @override
+  String get figureZiyarasLinkPickerEmpty => 'لا توجد مناسبة متاحة للربط.';
+
+  @override
+  String get figureZiyarasUnlinkConfirmTitle => 'فصل هذه المناسبة؟';
+
+  @override
+  String get figureZiyarasUnlinkConfirmBody =>
+      'لن تعود المناسبة مرتبطة بهذه الشخصية.';
+
+  @override
+  String get figureZiyarasUnlinkConfirmAction => 'فصل';
+
+  @override
+  String get figureZiyarasUnlinkError => 'تعذّر فصل هذه المناسبة.';
+
+  @override
   String get figuresCreateButton => 'إضافة شخصية';
 
   @override

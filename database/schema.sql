@@ -677,6 +677,10 @@ create table public.figure_works (
   created_at timestamptz not null default now()
 );
 
+-- Relie une figure aux évènements Khadara qui la célèbrent/commémorent
+-- (ex. Gamou de Tivaouane <-> El Hadj Malick Sy) — sert d'onglet "Ziyaras"
+-- sur FigureDetailScreen (voir figures_repository.dart), à la place d'un
+-- champ ziyaraNote libre jamais alimenté.
 create table public.figure_events (
   figure_id uuid not null references public.figures(id) on delete cascade,
   event_id uuid not null references public.events(id) on delete cascade,
@@ -1150,6 +1154,12 @@ create policy figure_works_admin_delete on public.figure_works for delete using 
 
 create policy figure_events_read_all on public.figure_events for select using (true);
 create policy figure_events_admin_write on public.figure_events for insert with check (public.is_admin((select auth.uid())));
+-- Ajoutée après coup (migration add_figure_events_admin_delete_policy,
+-- 2026-08-16) pour permettre à un admin de délier une figure d'un
+-- évènement depuis l'onglet Ziyaras de FigureDetailScreen — pas de policy
+-- update, `figure_events` n'a que sa clé composite (figure_id, event_id),
+-- rien d'autre à modifier sur une ligne existante (délier puis relier).
+create policy figure_events_admin_delete on public.figure_events for delete using (public.is_admin((select auth.uid())));
 
 -- Pas de policy d'écriture cliente exposée : contenu validé une fois pour
 -- toutes en base par le porteur de projet (voir commentaire de la table,

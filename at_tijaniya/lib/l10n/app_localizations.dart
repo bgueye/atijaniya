@@ -1538,6 +1538,54 @@ abstract class AppLocalizations {
   /// **'Aucune ziyara associée n\'est encore renseignée.'**
   String get figureZiyarasPending;
 
+  /// No description provided for @figureZiyarasAddButton.
+  ///
+  /// In fr, this message translates to:
+  /// **'Lier un évènement'**
+  String get figureZiyarasAddButton;
+
+  /// No description provided for @figureZiyarasLinkError.
+  ///
+  /// In fr, this message translates to:
+  /// **'Impossible de lier cet évènement.'**
+  String get figureZiyarasLinkError;
+
+  /// No description provided for @figureZiyarasLinkPickerTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Choisir un évènement'**
+  String get figureZiyarasLinkPickerTitle;
+
+  /// No description provided for @figureZiyarasLinkPickerEmpty.
+  ///
+  /// In fr, this message translates to:
+  /// **'Aucun évènement disponible à lier.'**
+  String get figureZiyarasLinkPickerEmpty;
+
+  /// No description provided for @figureZiyarasUnlinkConfirmTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Délier cet évènement ?'**
+  String get figureZiyarasUnlinkConfirmTitle;
+
+  /// No description provided for @figureZiyarasUnlinkConfirmBody.
+  ///
+  /// In fr, this message translates to:
+  /// **'L\'évènement ne sera plus associé à cette figure.'**
+  String get figureZiyarasUnlinkConfirmBody;
+
+  /// No description provided for @figureZiyarasUnlinkConfirmAction.
+  ///
+  /// In fr, this message translates to:
+  /// **'Délier'**
+  String get figureZiyarasUnlinkConfirmAction;
+
+  /// No description provided for @figureZiyarasUnlinkError.
+  ///
+  /// In fr, this message translates to:
+  /// **'Impossible de délier cet évènement.'**
+  String get figureZiyarasUnlinkError;
+
   /// No description provided for @figuresCreateButton.
   ///
   /// In fr, this message translates to:

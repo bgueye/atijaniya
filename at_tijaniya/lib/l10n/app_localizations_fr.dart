@@ -781,6 +781,32 @@ class AppLocalizationsFr extends AppLocalizations {
       'Aucune ziyara associée n\'est encore renseignée.';
 
   @override
+  String get figureZiyarasAddButton => 'Lier un évènement';
+
+  @override
+  String get figureZiyarasLinkError => 'Impossible de lier cet évènement.';
+
+  @override
+  String get figureZiyarasLinkPickerTitle => 'Choisir un évènement';
+
+  @override
+  String get figureZiyarasLinkPickerEmpty =>
+      'Aucun évènement disponible à lier.';
+
+  @override
+  String get figureZiyarasUnlinkConfirmTitle => 'Délier cet évènement ?';
+
+  @override
+  String get figureZiyarasUnlinkConfirmBody =>
+      'L\'évènement ne sera plus associé à cette figure.';
+
+  @override
+  String get figureZiyarasUnlinkConfirmAction => 'Délier';
+
+  @override
+  String get figureZiyarasUnlinkError => 'Impossible de délier cet évènement.';
+
+  @override
   String get figuresCreateButton => 'Créer une figure';
 
   @override

@@ -7,6 +7,10 @@ import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../core/theme/rosace_painter.dart';
 import '../../../l10n/app_localizations.dart';
+import '../../khadara/domain/khadara_models.dart';
+import '../../khadara/presentation/event_detail_screen.dart';
+import '../../khadara/presentation/khadara_format.dart';
+import '../../khadara/presentation/khadara_providers.dart';
 import '../../profil/presentation/profile_providers.dart';
 import '../domain/figure_errors.dart';
 import '../domain/figure_models.dart';
@@ -26,11 +30,13 @@ import 'figures_providers.dart';
 /// L'onglet Silsila lit `get_historical_silsila_chain()` (RPC, voir
 /// `FiguresRepository.fetchHistoricalSilsilaChain`) et affiche un état
 /// honnête "pas encore disponible" pour toute figure qui n'a pas encore de
-/// silsila documentée. L'onglet Ziyaras suit la même logique : aucune
-/// colonne "ziyara" n'est encore alimentée sur `figures`
-/// (`Figure.ziyaraNote` reste donc toujours `null` pour une figure venant
-/// de la base) — même principe que "Comprendre la Khadara"
-/// (`khadara_understanding_screen.dart`).
+/// silsila documentée. L'onglet Ziyaras suit une logique similaire : liste
+/// les évènements Khadara liés via `figure_events`
+/// (`FiguresRepository.fetchLinkedEvents`), état "pas encore renseigné"
+/// tant qu'aucun lien n'existe — même principe que "Comprendre la Khadara"
+/// (`khadara_understanding_screen.dart`) pour ce qui est du contenu encore
+/// manquant, mais ici la donnée elle-même (pas juste sa validation) reste à
+/// construire par un admin au fil de l'eau.
 class FigureDetailScreen extends ConsumerStatefulWidget {
   const FigureDetailScreen({super.key, required this.figure});
 
@@ -177,7 +183,7 @@ class _FigureDetailScreenState extends ConsumerState<FigureDetailScreen> {
                   _BiographyTab(figure: figure),
                   _SilsilaTab(figure: figure),
                   _CitationsTab(figure: figure, isAdmin: isAdmin, onContentChanged: _refreshFigureContent),
-                  _ZiyarasTab(figure: figure),
+                  _ZiyarasTab(figure: figure, isAdmin: isAdmin),
                 ],
               ),
             ),
@@ -801,21 +807,221 @@ class _AdminItemActions extends StatelessWidget {
   }
 }
 
-class _ZiyarasTab extends StatelessWidget {
-  const _ZiyarasTab({required this.figure});
+/// Onglet Ziyaras — évènements Khadara qui célèbrent/commémorent cette
+/// figure (`figure_events`), avec lier/délier réservé à un admin. Remplace
+/// l'ancien texte libre `Figure.ziyaraNote`, qui n'a jamais été relié à une
+/// colonne réelle (toujours `null`) — voir le commentaire de ce champ dans
+/// `figure_models.dart`.
+class _ZiyarasTab extends ConsumerStatefulWidget {
+  const _ZiyarasTab({required this.figure, required this.isAdmin});
 
   final Figure figure;
+  final bool isAdmin;
+
+  @override
+  ConsumerState<_ZiyarasTab> createState() => _ZiyarasTabState();
+}
+
+class _ZiyarasTabState extends ConsumerState<_ZiyarasTab> {
+  bool _busy = false;
+
+  Future<void> _openLinkPicker() async {
+    final linked = ref.read(linkedEventsForFigureProvider(widget.figure.id)).valueOrNull ?? const [];
+    final linkedIds = linked.map((e) => e.id).toSet();
+    final l10n = AppLocalizations.of(context)!;
+
+    final picked = await showModalBottomSheet<KhadaraEvent>(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: AppColors.offWhite,
+      shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
+      builder: (context) => _EventLinkPickerSheet(excludedEventIds: linkedIds),
+    );
+    if (picked == null || !mounted) return;
+
+    setState(() => _busy = true);
+    try {
+      await ref.read(figuresRepositoryProvider).linkEvent(figureId: widget.figure.id, eventId: picked.id);
+      ref.invalidate(linkedEventsForFigureProvider(widget.figure.id));
+    } catch (_) {
+      if (mounted) {
+        ScaffoldMessenger.of(context)
+          ..hideCurrentSnackBar()
+          ..showSnackBar(SnackBar(content: Text(l10n.figureZiyarasLinkError)));
+      }
+    } finally {
+      if (mounted) setState(() => _busy = false);
+    }
+  }
+
+  Future<void> _unlink(KhadaraEvent event) async {
+    final l10n = AppLocalizations.of(context)!;
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(l10n.figureZiyarasUnlinkConfirmTitle),
+        content: Text(l10n.figureZiyarasUnlinkConfirmBody),
+        actions: [
+          TextButton(onPressed: () => Navigator.of(context).pop(false), child: Text(l10n.profileCancel)),
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(true),
+            child: Text(l10n.figureZiyarasUnlinkConfirmAction, style: const TextStyle(color: Colors.redAccent)),
+          ),
+        ],
+      ),
+    );
+    if (confirmed != true || !mounted) return;
+
+    setState(() => _busy = true);
+    try {
+      await ref.read(figuresRepositoryProvider).unlinkEvent(figureId: widget.figure.id, eventId: event.id);
+      ref.invalidate(linkedEventsForFigureProvider(widget.figure.id));
+    } catch (_) {
+      if (mounted) {
+        ScaffoldMessenger.of(context)
+          ..hideCurrentSnackBar()
+          ..showSnackBar(SnackBar(content: Text(l10n.figureZiyarasUnlinkError)));
+      }
+    } finally {
+      if (mounted) setState(() => _busy = false);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-    final ziyaraNote = figure.ziyaraNote;
-    if (ziyaraNote == null) {
-      return _PendingTab(message: l10n.figureZiyarasPending);
-    }
+    final eventsAsync = ref.watch(linkedEventsForFigureProvider(widget.figure.id));
+
     return ListView(
       padding: const EdgeInsets.all(20),
-      children: [Text(ziyaraNote, style: const TextStyle(color: AppColors.ink, fontSize: 16, height: 1.4))],
+      children: [
+        if (widget.isAdmin) ...[
+          OutlinedButton.icon(
+            onPressed: _busy ? null : _openLinkPicker,
+            icon: const Icon(Icons.add, size: 18),
+            label: Text(l10n.figureZiyarasAddButton),
+          ),
+          const SizedBox(height: 12),
+        ],
+        eventsAsync.when(
+          loading: () => const Center(child: Padding(
+            padding: EdgeInsets.symmetric(vertical: 16),
+            child: CircularProgressIndicator(color: AppColors.emerald),
+          )),
+          error: (error, stackTrace) => Text(l10n.khadaraLoadError, style: const TextStyle(color: AppColors.bronze)),
+          data: (events) => events.isEmpty
+              ? Text(l10n.figureZiyarasPending, style: const TextStyle(color: AppColors.bronze))
+              : Column(
+                  children: [
+                    for (final event in events)
+                      _ZiyaraEventCard(
+                        event: event,
+                        isAdmin: widget.isAdmin,
+                        busy: _busy,
+                        onUnlink: () => _unlink(event),
+                      ),
+                  ],
+                ),
+        ),
+      ],
+    );
+  }
+}
+
+class _ZiyaraEventCard extends StatelessWidget {
+  const _ZiyaraEventCard({required this.event, required this.isAdmin, required this.busy, required this.onUnlink});
+
+  final KhadaraEvent event;
+  final bool isAdmin;
+  final bool busy;
+  final VoidCallback onUnlink;
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      margin: const EdgeInsets.only(bottom: 12),
+      child: ListTile(
+        leading: Icon(khadaraEventTypeIcon(event.type), color: AppColors.emerald),
+        title: Text(event.title),
+        subtitle: Text(formatKhadaraDateTime(event.startsAt)),
+        // Un seul bouton Délier ici, pas `_AdminItemActions` (Modifier +
+        // Supprimer) : un lien figure↔évènement n'a rien à modifier, un
+        // bouton Modifier inerte serait trompeur pour l'admin.
+        trailing: isAdmin
+            ? IconButton(
+                icon: busy
+                    ? const SizedBox(width: 14, height: 14, child: CircularProgressIndicator(strokeWidth: 2))
+                    : const Icon(Icons.link_off, size: 20, color: AppColors.bronze),
+                onPressed: busy ? null : onUnlink,
+              )
+            : const Icon(Icons.chevron_right, color: AppColors.bronze),
+        onTap: () => Navigator.of(context).push(
+          MaterialPageRoute(builder: (_) => EventDetailScreen(event: event)),
+        ),
+      ),
+    );
+  }
+}
+
+/// Feuille de sélection d'un évènement à lier — liste `upcomingEventsProvider`
+/// (mêmes évènements que le calendrier Khadara), moins ceux déjà liés
+/// ([excludedEventIds]). Pas de recherche/filtre : le calendrier reste de
+/// taille modeste pour l'instant, cohérent avec le reste de l'app (pas de
+/// pagination sur `KhadaraScreen` non plus).
+class _EventLinkPickerSheet extends ConsumerWidget {
+  const _EventLinkPickerSheet({required this.excludedEventIds});
+
+  final Set<String> excludedEventIds;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
+    final eventsAsync = ref.watch(upcomingEventsProvider);
+
+    return SafeArea(
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(20, 20, 20, 20),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Text(l10n.figureZiyarasLinkPickerTitle, style: Theme.of(context).textTheme.titleLarge),
+            const SizedBox(height: 12),
+            ConstrainedBox(
+              constraints: BoxConstraints(maxHeight: MediaQuery.of(context).size.height * 0.5),
+              child: eventsAsync.when(
+                loading: () => const Center(child: Padding(
+                  padding: EdgeInsets.symmetric(vertical: 24),
+                  child: CircularProgressIndicator(color: AppColors.emerald),
+                )),
+                error: (error, stackTrace) =>
+                    Text(l10n.khadaraLoadError, style: const TextStyle(color: AppColors.bronze)),
+                data: (events) {
+                  final selectable = events.where((e) => !excludedEventIds.contains(e.id)).toList();
+                  if (selectable.isEmpty) {
+                    return Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 16),
+                      child: Text(l10n.figureZiyarasLinkPickerEmpty, style: const TextStyle(color: AppColors.bronze)),
+                    );
+                  }
+                  return ListView(
+                    shrinkWrap: true,
+                    children: [
+                      for (final event in selectable)
+                        ListTile(
+                          leading: Icon(khadaraEventTypeIcon(event.type), color: AppColors.emerald),
+                          title: Text(event.title),
+                          subtitle: Text(formatKhadaraDateTime(event.startsAt)),
+                          onTap: () => Navigator.of(context).pop(event),
+                        ),
+                    ],
+                  );
+                },
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }

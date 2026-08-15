@@ -73,7 +73,6 @@ class Figure {
     this.biography,
     this.citations,
     this.works,
-    this.ziyaraNote,
     this.portraitUrl,
     this.bioText,
     this.foyer,
@@ -92,12 +91,6 @@ class Figure {
   final List<FigureBiographyParagraph>? biography;
   final List<FigureCitation>? citations;
   final List<FigureWork>? works;
-
-  /// Ziyara associée (lieu/évènement de pèlerinage lié à cette figure) —
-  /// simple note textuelle, pas de lien direct au calendrier Khadara pour
-  /// l'instant (à faire une fois le module Khadara connecté à des données
-  /// réelles).
-  final String? ziyaraNote;
 
   /// Portrait (`figures.portrait_url`, bucket Storage `figure-portraits`) —
   /// `null` tant qu'aucun portrait n'a été ajouté. Contrairement au reste du
@@ -151,8 +144,8 @@ class Figure {
   /// Reconstruit une `Figure` en ne remplaçant que les champs fournis —
   /// utilisé par `FigureDetailScreen` pour refléter localement un
   /// changement de portrait ou une édition, sans refetch réseau immédiat.
-  /// Les champs non modifiables depuis l'app (`citations`/`works`/
-  /// `ziyaraNote`) sont toujours repris de l'instance courante.
+  /// Les champs non modifiables depuis l'app (`citations`/`works`) sont
+  /// toujours repris de l'instance courante.
   Figure copyWith({
     String? nameArabic,
     String? nameFrench,
@@ -173,7 +166,6 @@ class Figure {
       biography: biography ?? this.biography,
       citations: citations,
       works: works,
-      ziyaraNote: ziyaraNote,
       portraitUrl: identical(portraitUrl, _unset) ? this.portraitUrl : portraitUrl as String?,
       bioText: bioText ?? this.bioText,
       foyer: identical(foyer, _unset) ? this.foyer : foyer as Foyer?,

@@ -1976,3 +1976,89 @@ chemin d'anonymisation du contenu institutionnel (`events.created_by`,
 personnel non-cascade (`post_comments`, `group_posts`, `messages`) — à
 tester avec un compte de test qui a réellement produit ce genre de contenu
 avant de considérer ce chantier entièrement validé.
+
+## Onglet Ziyaras reconstruit autour de figure_events (2026-08-16)
+
+Après l'audit CRUD, tour de la roadmap P1/P2 (`docs/03-architecture-ecrans.md`) :
+la quasi-totalité des écrans y sont déjà fonctionnels. Deux zones ouvertes
+identifiées : "Comprendre la Khadara" (bloqué contenu, pas code — hors de
+portée) et `figure_events`, une table de jonction figure↔évènement présente
+dans le schéma avec RLS `_read_all`/`_admin_write` mais jamais consommée
+nulle part dans `lib/`. Confirmé avec le porteur de projet avant de coder :
+le sens de la table est "évènements Khadara qui célèbrent/commémorent une
+figure" (ex. Gamou de Tivaouane ↔ El Hadj Malick Sy), et la gestion du lien
+reste admin uniquement, depuis la fiche figure (pas de gestion symétrique
+depuis la fiche évènement dans ce lot).
+
+Point de départ trouvé en creusant `figure_models.dart` : l'onglet
+"Ziyaras" de `FigureDetailScreen` s'appuyait sur `Figure.ziyaraNote`, un
+champ jamais relié à aucune colonne (`fromRow` ne l'alimente jamais) —
+donc toujours `null`, l'onglet affichait systématiquement l'état "pas
+encore renseigné". **`ziyaraNote` supprimé du modèle** (`figure_models.dart`,
+`copyWith`) plutôt que laissé mort à côté de la vraie implémentation.
+
+**Migration live** `add_figure_events_admin_delete_policy` : seule
+`_admin_write` (insert) existait, ajout de `_admin_delete` (pas d'`_update`
+nécessaire — table de jonction à clé composite `(figure_id, event_id)`,
+rien d'autre à modifier sur une ligne existante que délier/relier).
+Commentaire ajouté sur la table elle-même dans `database/schema.sql`
+(absent jusqu'ici, seul indice du sens de la table était son nom).
+
+Côté app : `FiguresRepository.fetchLinkedEvents`/`linkEvent`/`unlinkEvent`
+(`figures_repository.dart`, import croisé vers `khadara/domain/khadara_models.dart`
+pour réutiliser `KhadaraEvent` — même pattern que l'import croisé vers
+`lineage/domain/lineage_models.dart` pour `Foyer`, déjà en place). Nouveau
+provider `linkedEventsForFigureProvider` (`family<KhadaraEvent, String>`).
+`_ZiyarasTab` passé de `StatelessWidget` à `ConsumerStatefulWidget` : liste
+les évènements liés (icône/titre/date, tap → `EventDetailScreen`), bouton
+"Lier un évènement" visible admin uniquement ouvrant une feuille de
+sélection (`_EventLinkPickerSheet`, réutilise `upcomingEventsProvider` du
+calendrier Khadara existant, filtré des évènements déjà liés — pas de
+requête réseau dédiée), icône Délier par évènement lié (réutilise
+`_AdminItemActions`, déjà partagée par les cartes citation/œuvre).
+
+Test widget existant (`figure_detail_screen_test.dart`) mis à jour :
+l'ancienne assertion sur le texte `ziyaraNote` remplacée par une surcharge
+Riverpod de `linkedEventsForFigureProvider('test-figure')` (même
+nécessité que la surcharge déjà en place pour `isAdminProvider` — éviter
+un appel réseau réel dans un test widget) renvoyant un `KhadaraEvent`
+factice, puis vérification que son titre s'affiche dans l'onglet Ziyaras.
+
+`flutter analyze` (0 issue) et `flutter test --concurrency=1` (137 tests)
+tous verts.
+
+**Mise à jour (2026-08-16, même jour) : validé en conditions réelles sur
+émulateur Android**, contre le projet Supabase live. Protocole habituel :
+compte jetable créé et confirmé par SQL, cette fois promu admin
+temporairement (`update profiles set is_admin = true`) pour accéder aux
+actions de gestion — compte entièrement supprimé en fin de test (via
+"Supprimer mon compte", qui a donc aussi revalidé la suppression de compte
+elle-même dans la foulée, cf. entrée précédente).
+
+Découverte notable pendant le test : **4 lignes `figure_events` existaient
+déjà en base** (El Hadj Malick Sy ↔ Gamou de Tivaouane, Baye Niasse ↔ Gamou
+de Médina Baye, Thierno Mawdo ↔ Daaka de Médina Gounass, Cheikh Amary
+Ndack Seck ↔ Gamou de Thiénaba) — du contenu déjà saisi par le porteur de
+projet mais jamais visible dans l'app faute d'écran. Confirmé à l'ouverture
+de la fiche Baye Niasse : "Gamou (Mawlid) international de Médina Baye
+2026" s'affiche immédiatement dans l'onglet Ziyaras, sans action
+supplémentaire. Testé et confirmé également : lier un évènement (sélecteur,
+Cheikh Ahmed Tijani ↔ Gamou de Tivaouane), tap sur la carte → navigation
+correcte vers `EventDetailScreen`, délier (confirmation + suppression),
+état vide correct. Vérifié à chaque étape via `select` direct sur
+`figure_events` que l'état base correspond exactement à l'état affiché.
+
+**Un défaut trouvé et corrigé pendant ce test** : `_ZiyaraEventCard`
+réutilisait initialement `_AdminItemActions` (Modifier + Supprimer, partagé
+avec les cartes citation/œuvre), affichant un bouton crayon "Modifier"
+visible mais inerte (`onEdit` toujours `null` — rien à modifier sur un
+simple lien composite). Remplacé par un unique `IconButton` "Délier"
+(icône `link_off`), pas de bouton mort visible pour l'admin.
+
+**Précaution suivie pendant le test** : un tap mal placé a failli
+déclencher la suppression de la fiche **Baye Niasse** (icône Supprimer de
+`FigureDetailScreen`, même zone d'écran que l'icône profil sur les écrans
+de premier niveau) — annulé immédiatement via "Annuler", figure vérifiée
+intacte en base après coup. Aucune donnée réelle affectée, mais à garder en
+tête : les coordonnées de tap ne sont pas interchangeables d'un écran à
+l'autre lors de tests manuels par capture d'écran.

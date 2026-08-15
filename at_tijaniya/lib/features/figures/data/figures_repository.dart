@@ -13,6 +13,7 @@
 library;
 
 import '../../../core/supabase/supabase_config.dart';
+import '../../khadara/domain/khadara_models.dart' show KhadaraEvent;
 import '../../lineage/domain/lineage_models.dart' show Foyer, foyerToDbValue;
 import '../domain/figure_models.dart';
 
@@ -202,6 +203,36 @@ class FiguresRepository {
   /// que `deleteCitation`.
   Future<void> deleteWork(String id) async {
     await SupabaseConfig.client.from('figure_works').delete().eq('id', id);
+  }
+
+  /// Évènements Khadara liés à cette figure (`figure_events`) — sert
+  /// l'onglet Ziyaras de `FigureDetailScreen`, à la place d'un
+  /// `ziyaraNote` libre jamais alimenté. RLS `events_read_all` +
+  /// `figure_events_read_all` : lisible en mode invité comme le reste de
+  /// Khadara.
+  Future<List<KhadaraEvent>> fetchLinkedEvents(String figureId) async {
+    final rows = await SupabaseConfig.client
+        .from('figure_events')
+        .select('events(*, zawiyas(name))')
+        .eq('figure_id', figureId);
+    return rows
+        .map((row) => KhadaraEvent.fromRow(row['events'] as Map<String, dynamic>))
+        .toList()
+      ..sort((a, b) => a.startsAt.compareTo(b.startsAt));
+  }
+
+  /// Réservé par RLS (`figure_events_admin_write`) à un compte admin.
+  Future<void> linkEvent({required String figureId, required String eventId}) async {
+    await SupabaseConfig.client.from('figure_events').insert({'figure_id': figureId, 'event_id': eventId});
+  }
+
+  /// RLS `figure_events_admin_delete` — table de jonction pure (clé
+  /// composite), rien d'autre à supprimer en cascade derrière ce lien.
+  Future<void> unlinkEvent({required String figureId, required String eventId}) async {
+    await SupabaseConfig.client
+        .from('figure_events')
+        .delete()
+        .match({'figure_id': figureId, 'event_id': eventId});
   }
 
   /// Silsila historique (généalogie spirituelle) depuis le fondateur

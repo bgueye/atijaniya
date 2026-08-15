@@ -1,5 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../khadara/domain/khadara_models.dart' show KhadaraEvent;
 import '../data/figures_repository.dart';
 import '../domain/figure_models.dart';
 
@@ -20,4 +21,10 @@ final draftFiguresProvider = FutureProvider<List<Figure>>((ref) {
 /// `figure_detail_screen.dart`) — `family` car paramétré par `figureId`.
 final historicalSilsilaChainProvider = FutureProvider.family<List<HistoricalSilsilaLink>, String>((ref, figureId) {
   return ref.watch(figuresRepositoryProvider).fetchHistoricalSilsilaChain(figureId);
+});
+
+/// Évènements Khadara liés à une figure donnée (onglet "Ziyaras",
+/// `figure_detail_screen.dart`) — `family` car paramétré par `figureId`.
+final linkedEventsForFigureProvider = FutureProvider.family<List<KhadaraEvent>, String>((ref, figureId) {
+  return ref.watch(figuresRepositoryProvider).fetchLinkedEvents(figureId);
 });
