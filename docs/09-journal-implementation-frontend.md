@@ -1845,3 +1845,107 @@ consignée pour ce chantier** à ce jour — contrairement aux autres entrées d
 ce journal, aucun test de bout en bout (création/édition/suppression réelle
 contre le projet Supabase live, comportement des messages de blocage
 `23503`) n'a encore été effectué ni documenté ici.
+
+## Audit CRUD et fermeture de 4 lacunes (2026-08-16)
+
+Suite à la demande du porteur de projet de vérifier si tout le CRUD
+nécessaire était implémenté, un audit complet (agent forké, lecture seule)
+a passé en revue chaque `*_repository.dart` et croisé avec les policies RLS
+de `database/schema.sql`. Verdict global : couverture saine et cohérente
+avec les règles du projet (ex. `mouqaddam_status` volontairement sans
+update/delete libre, cf. CLAUDE.md). Quatre lacunes réelles identifiées et
+toutes fermées dans la foulée, dans l'ordre demandé.
+
+**1. Suppression de publication** (`community_repository.dart` :
+`deletePost`) — la RLS `posts_author_delete` existait déjà côté base
+(`auth.uid() = author_user_id`, **sans exception admin**, contrairement à
+zawiyas/figures) mais aucune méthode ni bouton n'existait côté app. Aucune
+migration nécessaire. `post_likes`/`post_comments` étant en `on delete
+cascade` sur `posts.id`, pas de cas de blocage `23503` à gérer ici,
+contrairement aux suppressions zawiya/figure — juste un bouton Supprimer
+dans l'AppBar de `post_detail_screen.dart`, visible seulement pour l'auteur
+(`post.authorUserId == currentUserIdProvider`).
+
+**2. CRUD citations/œuvres d'une figure** (`figure_quotes`/`figure_works`)
+— seules les policies `select`/`insert` existaient ; migration live
+`add_figure_quotes_and_works_admin_update_delete_policies` ajoutant
+`_admin_update`/`_admin_delete` pour les deux tables (répercutée dans
+`database/schema.sql`). `FigureCitation`/`FigureWork`
+(`figure_models.dart`) exposent désormais `id` (et `orderIndex` pour les
+œuvres), nécessaire pour cibler une ligne précise — `_figuresSelect`
+(`figures_repository.dart`) sélectionne maintenant `id` sur les deux
+embeddings. Nouvelles méthodes `create/update/deleteCitation` et
+`create/update/deleteWork`, plus `fetchFigureById` (recharge la figure
+entière après une action, plus simple qu'une reconstruction locale des
+listes). Deux nouveaux écrans (`figure_citation_form_screen.dart`,
+`figure_work_form_screen.dart`, même structure que `ZawiyaFormScreen`) et
+l'onglet Citations de `figure_detail_screen.dart` passé de `StatelessWidget`
+à `ConsumerStatefulWidget` (`_CitationsTab`) pour porter l'état `_busy`
+pendant une suppression et éviter un double envoi ; boutons Ajouter
+(citation/œuvre) visibles admin uniquement, icônes Modifier/Supprimer
+compactes par carte (`_AdminItemActions`, partagée entre les deux types de
+carte). Aucun des deux tableaux (`figure_quotes`, `figure_works`) n'étant
+référencé ailleurs par clé étrangère, pas de cas de blocage `23503` à gérer
+non plus.
+
+**3. Création de rediffusion** (`stream_replays`) — la policy
+`replays_admin_write` (insert) existait déjà, donc aucune migration requise
+(à la différence des deux points précédents) : seuls la méthode
+`createReplay` (`live_stream_repository.dart`) et un point d'entrée UI
+manquaient. Formulaire minimal (lien vidéo + durée optionnelle en minutes,
+convertie en secondes) en `AlertDialog` sur `live_stream_screen.dart` plutôt
+qu'un écran dédié — deux champs seulement. Visible uniquement pour un admin
+sur un direct déjà `ended` (bouton dans l'AppBar). La lecture/l'affichage
+existaient déjà et fonctionnaient (`khadara_screen.dart`, onglet Directs,
+section Rediffusions) : seule la création manquait, confirmant précisément
+le constat de l'audit.
+
+**4. Suppression de compte** — la plus lourde des quatre, seule à
+nécessiter une vraie décision produit avant codage (demandée et obtenue du
+porteur de projet avant d'implémenter, cf. mémoire `project_crud_audit_gaps`
+côté assistant) : `auth.admin.deleteUser` exige la clé `service_role`,
+jamais atteignable depuis le client, d'où une nouvelle Edge Function
+`delete-account` (`supabase/functions/delete-account/index.ts`, déployée
+sur le projet live). Complication découverte en vérifiant les contraintes
+de clé étrangère avant d'écrire la fonction : plusieurs colonnes
+référençant `auth.users`/`profiles` sont `NOT NULL` **sans** `on delete
+cascade` (`post_comments.user_id`, `group_posts.author_user_id`,
+`messages.sender_id`) — sans traitement préalable, `deleteUser` aurait
+échoué pour tout disciple ayant déjà commenté, posté dans un groupe ou
+envoyé un message privé. Politique retenue : contenu personnel
+(commentaires, publications de groupe, messages privés) **supprimé** avec
+le compte ; contenu "institutionnel" (évènements créés, rediffusions
+validées, publications du fil communautaire — colonnes nullable) **conservé,
+auteur mis à `null`**. Tout le reste (profil, lignée spirituelle, statut
+mouqaddam, parrainages, likes, appartenances aux groupes, sessions de wird,
+rappels, notifications...) est déjà en `on delete cascade` sur
+`auth.users(id)`, directement ou via `profiles`, donc nettoyé
+automatiquement par `deleteUser`.
+
+**Limite assumée, non traitée dans cette fonction** : `admin_actions_log`
+et `sensitive_data_access_log` n'ont ni cascade ni colonne nullable
+partout — un compte admin ayant des actions journalisées, ou ayant été la
+cible/le sujet d'une consultation de donnée sensible (silsila, lignée),
+ferait échouer la suppression avec une erreur explicite plutôt qu'une perte
+silencieuse de piste d'audit. Jugé acceptable : très peu de comptes
+concernés (admin/mouqaddam vérifié) ; à traiter séparément si ça se
+présente en pratique.
+
+Côté app : `ProfileRepository.deleteMyAccount` (appelle la Edge Function
+via `SupabaseConfig.client.functions.invoke`) et un nouveau bouton
+"Supprimer mon compte" sur `profil_screen.dart`, sous "Se déconnecter".
+Confirmation renforcée par rapport aux autres suppressions de l'app
+(`_DeleteAccountDialog`) : taper le mot exact ("SUPPRIMER"/"حذف" selon la
+langue) plutôt qu'un simple bouton à deux choix, vu l'irréversibilité totale
+(perte de compte, pas juste d'un contenu). Après succès : `signOut()` côté
+client (la session locale reste sinon en cache malgré la suppression
+serveur) puis retour à l'écran précédent, qui redirige naturellement vers
+Auth (même flux que la déconnexion classique).
+
+`flutter analyze` (0 issue) et `flutter test --concurrency=1` (137 tests,
+dont l'extension de `figures_models_test.dart` pour `id`/`orderIndex`)
+tous verts après chacun des quatre points. **Pas de validation manuelle sur
+émulateur/appareil physique** pour ce lot non plus, notamment pour le point
+le plus sensible (suppression de compte réelle contre le projet Supabase
+live) — à tester avant toute mise en avant de cette fonctionnalité auprès
+d'un disciple réel.

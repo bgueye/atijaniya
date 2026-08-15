@@ -86,7 +86,10 @@ en local.
 **P0 complet** : Splash → langue → onboarding → Auth (email/mot de passe,
 écran à toggle Connexion/Créer un compte — pas de connexion sociale, pas de
 téléphone/OTP) → Shell 5 onglets → Profil (infos de base, paramètres
-généraux + confidentialité). Module Wirds : liste, guide (Lazim/Wazifa/
+généraux + confidentialité, **suppression de compte depuis le 2026-08-16**
+via Edge Function `delete-account` — contenu personnel supprimé,
+évènements/publications créés conservés mais anonymisés, voir le journal).
+Module Wirds : liste, guide (Lazim/Wazifa/
 Hadratou-l-Jouma, forme complète avec intention/Fatiha/clôtures), Tasbih
 (tape manuelle + reconnaissance vocale), historique/progression, rappels
 locaux, lecteur audio (téléchargement à la demande + cache + mise à jour
@@ -97,12 +100,14 @@ audio produit par le porteur de projet).
 **P1** : Figures (biographies Supabase, silsila historique, œuvres/
 citations, écran de review admin, **CRUD complet créer/modifier/supprimer
 réservé à l'admin depuis le 2026-08-15** — une figure créée reste en
-brouillon par défaut, la publication passe toujours par l'écran de review),
-Khadara (calendrier évènements/zawiyas, **CRUD zawiyas créer/modifier/
-supprimer réservé à l'admin depuis le 2026-08-15** ; "Comprendre la Khadara"
-en attente de contenu validé), Fil d'actualité communautaire (publication
-réservée aux comptes rattachés à une zawiya, like/commentaire fonctionnels),
-Ma lignée spirituelle (saisie + "Retrouver mes condisciples"), Faire un don
+brouillon par défaut, la publication passe toujours par l'écran de review ;
+**CRUD citations/œuvres également admin depuis le 2026-08-16**), Khadara
+(calendrier évènements/zawiyas, **CRUD zawiyas créer/modifier/supprimer
+réservé à l'admin depuis le 2026-08-15** ; "Comprendre la Khadara" en
+attente de contenu validé), Fil d'actualité communautaire (publication
+réservée aux comptes rattachés à une zawiya, like/commentaire fonctionnels,
+**suppression de sa propre publication depuis le 2026-08-16**), Ma lignée
+spirituelle (saisie + "Retrouver mes condisciples"), Faire un don
 (enregistre une intention de don, **aucun paiement réel** — aucun
 prestataire choisi). Détail du CRUD admin (RLS, gestion des suppressions
 bloquées par clé étrangère) dans `docs/09-journal-implementation-frontend.md`
@@ -113,9 +118,11 @@ animation de révélation + carte de partage), Direct et rediffusions Khadara
 (agrégation de liens externes YouTube/Facebook/etc. — **pas de streaming
 natif**, aucun prestataire choisi ; un direct peut être rattaché à un
 évènement ou à un groupe, visibilité restreinte aux membres dans ce dernier
-cas), gestion des évènements Khadara par un admin ou un mouqaddam vérifié
-pour sa propre zawiya (**seule exception actée** à la règle "le statut
-mouqaddam n'accorde aucune permission technique", voir plus haut).
+cas ; **création d'une rediffusion par un admin depuis le 2026-08-16**, une
+fois le direct terminé), gestion des évènements Khadara par un admin ou un
+mouqaddam vérifié pour sa propre zawiya (**seule exception actée** à la
+règle "le statut mouqaddam n'accorde aucune permission technique", voir
+plus haut).
 
 **Groupes et messagerie privée** (`lib/features/communaute/` :
 `groups_repository.dart`, `messages_repository.dart`, `group_detail_screen.dart`,
