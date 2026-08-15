@@ -119,6 +119,16 @@ class CommunityRepository {
     }
   }
 
+  /// Réservé à l'auteur de la publication par la RLS `posts_author_delete`
+  /// (`auth.uid() = author_user_id`) — contrairement aux zawiyas/figures,
+  /// aucune exception admin n'existe ici : un disciple ne peut retirer que
+  /// sa propre publication. `post_likes`/`post_comments` référencent
+  /// `posts.id` avec `on delete cascade` (`database/schema.sql`), donc
+  /// aucune violation de clé étrangère possible à ce niveau.
+  Future<void> deletePost(String id) async {
+    await SupabaseConfig.client.from('posts').delete().eq('id', id);
+  }
+
   Future<void> addComment(String postId, String contentText) async {
     final userId = SupabaseConfig.client.auth.currentUser!.id;
     await SupabaseConfig.client.from('post_comments').insert({

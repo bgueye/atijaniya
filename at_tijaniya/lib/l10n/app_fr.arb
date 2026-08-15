@@ -327,6 +327,11 @@
   "communityConversationsRetry": "Réessayer",
   "communityConversationsNoMessages": "Aucun message pour le moment. Écrivez le premier !",
   "communitySendMessageButton": "Envoyer un message",
+  "communityDeletePostTooltip": "Supprimer",
+  "communityDeletePostConfirmTitle": "Supprimer cette publication ?",
+  "communityDeletePostConfirmBody": "Cette action est définitive.",
+  "communityDeletePostConfirmAction": "Supprimer",
+  "communityDeletePostError": "Impossible de supprimer cette publication.",
 
   "profileTitle": "Mon profil",
   "profileMyLineage": "Ma lignée spirituelle",

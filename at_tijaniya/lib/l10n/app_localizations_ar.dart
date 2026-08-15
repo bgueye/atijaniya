@@ -975,6 +975,21 @@ class AppLocalizationsAr extends AppLocalizations {
   String get communitySendMessageButton => 'إرسال رسالة';
 
   @override
+  String get communityDeletePostTooltip => 'حذف';
+
+  @override
+  String get communityDeletePostConfirmTitle => 'حذف هذا المنشور؟';
+
+  @override
+  String get communityDeletePostConfirmBody => 'هذا الإجراء نهائي.';
+
+  @override
+  String get communityDeletePostConfirmAction => 'حذف';
+
+  @override
+  String get communityDeletePostError => 'تعذّر حذف هذا المنشور.';
+
+  @override
   String get profileTitle => 'ملفي الشخصي';
 
   @override

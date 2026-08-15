@@ -35,6 +35,7 @@ class _PostDetailScreenState extends ConsumerState<PostDetailScreen> {
   late bool _liked = widget.post.isLikedByMe;
   late int _likeCount = widget.post.likeCount;
   bool _likeInFlight = false;
+  bool _deleting = false;
 
   bool get _isSignedIn => SupabaseConfig.client.auth.currentUser != null;
 
@@ -77,6 +78,40 @@ class _PostDetailScreenState extends ConsumerState<PostDetailScreen> {
     }
   }
 
+  Future<void> _confirmDelete() async {
+    final l10n = AppLocalizations.of(context)!;
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(l10n.communityDeletePostConfirmTitle),
+        content: Text(l10n.communityDeletePostConfirmBody),
+        actions: [
+          TextButton(onPressed: () => Navigator.of(context).pop(false), child: Text(l10n.profileCancel)),
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(true),
+            child: Text(l10n.communityDeletePostConfirmAction, style: const TextStyle(color: Colors.redAccent)),
+          ),
+        ],
+      ),
+    );
+    if (confirmed != true || !mounted) return;
+
+    setState(() => _deleting = true);
+    try {
+      await ref.read(communityRepositoryProvider).deletePost(widget.post.id);
+      ref.invalidate(communityFeedProvider);
+      if (mounted) Navigator.of(context).pop();
+    } catch (_) {
+      if (mounted) {
+        ScaffoldMessenger.of(context)
+          ..hideCurrentSnackBar()
+          ..showSnackBar(SnackBar(content: Text(l10n.communityDeletePostError)));
+      }
+    } finally {
+      if (mounted) setState(() => _deleting = false);
+    }
+  }
+
   Future<void> _submitComment() async {
     final l10n = AppLocalizations.of(context)!;
     if (!_isSignedIn) {
@@ -97,9 +132,27 @@ class _PostDetailScreenState extends ConsumerState<PostDetailScreen> {
     final l10n = AppLocalizations.of(context)!;
     final post = widget.post;
     final comments = ref.watch(postCommentsProvider(post.id));
+    final isAuthor = post.authorUserId != null && post.authorUserId == ref.watch(currentUserIdProvider);
 
     return Scaffold(
-      appBar: AppBar(title: Text(post.authorLabel(l10n.communityDefaultAuthor))),
+      appBar: AppBar(
+        title: Text(post.authorLabel(l10n.communityDefaultAuthor)),
+        actions: isAuthor
+            ? [
+                IconButton(
+                  icon: _deleting
+                      ? const SizedBox(
+                          width: 18,
+                          height: 18,
+                          child: CircularProgressIndicator(strokeWidth: 2),
+                        )
+                      : const Icon(Icons.delete_outline),
+                  tooltip: l10n.communityDeletePostTooltip,
+                  onPressed: _deleting ? null : _confirmDelete,
+                ),
+              ]
+            : null,
+      ),
       body: Column(
         children: [
           Expanded(

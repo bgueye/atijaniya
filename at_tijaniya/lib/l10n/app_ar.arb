@@ -326,6 +326,11 @@
   "communityConversationsRetry": "إعادة المحاولة",
   "communityConversationsNoMessages": "لا توجد رسائل حاليًا. اكتب أول رسالة!",
   "communitySendMessageButton": "إرسال رسالة",
+  "communityDeletePostTooltip": "حذف",
+  "communityDeletePostConfirmTitle": "حذف هذا المنشور؟",
+  "communityDeletePostConfirmBody": "هذا الإجراء نهائي.",
+  "communityDeletePostConfirmAction": "حذف",
+  "communityDeletePostError": "تعذّر حذف هذا المنشور.",
 
   "profileTitle": "ملفي الشخصي",
   "profileMyLineage": "سلسلتي الروحية",

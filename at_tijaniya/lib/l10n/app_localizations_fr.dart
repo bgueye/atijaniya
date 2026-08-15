@@ -1001,6 +1001,22 @@ class AppLocalizationsFr extends AppLocalizations {
   String get communitySendMessageButton => 'Envoyer un message';
 
   @override
+  String get communityDeletePostTooltip => 'Supprimer';
+
+  @override
+  String get communityDeletePostConfirmTitle => 'Supprimer cette publication ?';
+
+  @override
+  String get communityDeletePostConfirmBody => 'Cette action est définitive.';
+
+  @override
+  String get communityDeletePostConfirmAction => 'Supprimer';
+
+  @override
+  String get communityDeletePostError =>
+      'Impossible de supprimer cette publication.';
+
+  @override
   String get profileTitle => 'Mon profil';
 
   @override

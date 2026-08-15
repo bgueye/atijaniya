@@ -1940,6 +1940,36 @@ abstract class AppLocalizations {
   /// **'Envoyer un message'**
   String get communitySendMessageButton;
 
+  /// No description provided for @communityDeletePostTooltip.
+  ///
+  /// In fr, this message translates to:
+  /// **'Supprimer'**
+  String get communityDeletePostTooltip;
+
+  /// No description provided for @communityDeletePostConfirmTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Supprimer cette publication ?'**
+  String get communityDeletePostConfirmTitle;
+
+  /// No description provided for @communityDeletePostConfirmBody.
+  ///
+  /// In fr, this message translates to:
+  /// **'Cette action est définitive.'**
+  String get communityDeletePostConfirmBody;
+
+  /// No description provided for @communityDeletePostConfirmAction.
+  ///
+  /// In fr, this message translates to:
+  /// **'Supprimer'**
+  String get communityDeletePostConfirmAction;
+
+  /// No description provided for @communityDeletePostError.
+  ///
+  /// In fr, this message translates to:
+  /// **'Impossible de supprimer cette publication.'**
+  String get communityDeletePostError;
+
   /// No description provided for @profileTitle.
   ///
   /// In fr, this message translates to:
