@@ -1771,3 +1771,77 @@ de pilier très variables, 1 à 1600, sans notion de "tour" dans
 `TasbihController`/`TasbihSession`) — si une revisite de ce widget est
 redemandée, cette incompatibilité de fond reste entière, indépendamment de
 la forme cercle/ellipse.
+
+## CRUD admin — Zawiyas puis Figures (2026-08-15)
+
+Ouverture d'un chantier CRUD réservé au compte admin (`profiles.is_admin`),
+annoncé en deux lots successifs : zawiyas d'abord, figures ensuite. Objectif :
+permettre au porteur de projet d'alimenter/corriger ces deux référentiels
+directement depuis l'app plutôt que par intervention manuelle en base.
+
+**Zawiyas** (`lib/features/khadara/data/khadara_repository.dart` :
+`createZawiya`/`updateZawiya`/`deleteZawiya`) : s'appuie sur les policies RLS
+admin déjà en place côté base (`zawiyas_admin_write`/`_update`/`_delete`,
+aucune migration nécessaire) — nouveau provider
+`canManageZawiyasProvider` (`khadara_providers.dart`), reflet direct de
+`isAdminProvider` sans l'exception mouqaddam-de-sa-propre-zawiya qui existe
+pour la création d'évènements (`canCreateEventProvider`). Onglet Zawiyas de
+`khadara_screen.dart` : FAB "Ajouter une zawiya" visible seulement si
+`canManage` ; `ZawiyaDetailScreen` passé en `ConsumerStatefulWidget` pour
+porter l'état d'édition locale, actions Modifier/Supprimer dans l'AppBar
+(admin uniquement) vers le nouveau `ZawiyaFormScreen` (nom, description,
+latitude/longitude, adresse, contact). Suppression : aucune des clés
+étrangères qui référencent une zawiya (`profiles.zawiya_id`,
+`events.zawiya_id`, `posts.author_zawiya_id`, `groups.zawiya_id`) n'a `on
+delete cascade` — violation Postgres `23503` volontairement non catchée dans
+le repository, classifiée côté domaine par `classifyZawiyaDeleteError`
+(`khadara_errors.dart`, message générique plutôt qu'une table précise
+puisque plusieurs tables peuvent bloquer, contrairement au cas
+`classifyEventDeleteError` où seule `live_streams` peut bloquer) pour
+afficher un message explicite "zawiya encore rattachée à..." plutôt qu'une
+erreur brute.
+
+**Figures** (`lib/features/figures/data/figures_repository.dart` :
+`createFigure`/`updateFigure`/`deleteFigure`) : création/modification déjà
+couvertes par les policies existantes (`figures_admin_write`/`_update`),
+mais **aucune policy de suppression n'existait** — migration
+`add_figures_admin_delete_policy` ajoutant `figures_admin_delete` (RLS,
+`is_admin` uniquement). Choix de sécurité éditoriale délibéré :
+`content_status` n'est jamais envoyé par `createFigure`/`updateFigure` — une
+figure créée depuis l'app reste en `brouillon` par défaut (valeur par défaut
+côté colonne), la publication reste un geste séparé et explicite via
+`FiguresReviewScreen`/`validateFigure()` déjà en place, pour ne pas
+contourner le garde-fou éditorial documenté dans `figure_models.dart` ("ne
+jamais publier de contenu religieux non validé"). `Figure.bioText` (texte
+brut de `figures.bio_text`) désormais exposé côté modèle, en plus du
+découpage biographie/résumé déjà utilisé pour l'affichage — nécessaire pour
+préremplir `FigureFormScreen` en édition sans effacer silencieusement la
+section "SOURCES CONSULTÉES" ni la mise en forme d'origine. `Figure.foyer`
+réutilise l'énumération `Foyer` déjà définie pour la lignée du disciple
+(`lineage/domain/lineage_models.dart`) plutôt que d'en dupliquer une copie.
+`Figure.copyWithPortraitUrl` généralisé en `Figure.copyWith` (sentinelle
+`_unset` distincte de `null`, pour distinguer "champ non fourni" de "champ
+remis à `null`" sur les champs déjà nullables). Écrans : bouton "Ajouter une
+figure" sur `figures_screen.dart` (admin, à côté du bouton "Contenu à
+valider" existant), actions Modifier/Supprimer en overlay sur le portrait
+de `figure_detail_screen.dart` (`_FigureHero`, admin uniquement, même
+émplacement que le bouton "Changer le portrait"). Suppression bloquée
+(`23503`, non catchée puis classifiée par `classifyFigureDeleteError`,
+`figure_errors.dart`) si la figure est encore référencée comme
+`parent_figure_id` dans la silsila historique d'une autre figure
+(`historical_silsila_links`, pas de `on delete cascade` sur cette colonne
+précise — volontaire).
+
+Les deux lots suivent le même pattern déjà établi par
+`classifyEventDeleteError` (évènements Khadara, voir plus haut) :
+classification pure de l'erreur Postgres côté `domain/`, sans dépendance à
+`BuildContext`, traduction du message côté écran.
+
+`flutter analyze` (0 issue) et `flutter test --concurrency=1` (137 tests,
+dont les nouveaux `figure_errors_test.dart`/`khadara_errors_test.dart` et
+l'extension de `figures_models_test.dart` pour `copyWith`) tous verts au
+15/08. **Pas de validation manuelle sur émulateur/appareil physique
+consignée pour ce chantier** à ce jour — contrairement aux autres entrées de
+ce journal, aucun test de bout en bout (création/édition/suppression réelle
+contre le projet Supabase live, comportement des messages de blocage
+`23503`) n'a encore été effectué ni documenté ici.

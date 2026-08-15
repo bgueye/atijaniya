@@ -95,12 +95,18 @@ production à ce jour, Jawharatoul Kamal/Wazifa ; le reste attend du contenu
 audio produit par le porteur de projet).
 
 **P1** : Figures (biographies Supabase, silsila historique, œuvres/
-citations, écran de review admin), Khadara (calendrier évènements/zawiyas ;
-"Comprendre la Khadara" en attente de contenu validé), Fil d'actualité
-communautaire (publication réservée aux comptes rattachés à une zawiya,
-like/commentaire fonctionnels), Ma lignée spirituelle (saisie + "Retrouver
-mes condisciples"), Faire un don (enregistre une intention de don,
-**aucun paiement réel** — aucun prestataire choisi).
+citations, écran de review admin, **CRUD complet créer/modifier/supprimer
+réservé à l'admin depuis le 2026-08-15** — une figure créée reste en
+brouillon par défaut, la publication passe toujours par l'écran de review),
+Khadara (calendrier évènements/zawiyas, **CRUD zawiyas créer/modifier/
+supprimer réservé à l'admin depuis le 2026-08-15** ; "Comprendre la Khadara"
+en attente de contenu validé), Fil d'actualité communautaire (publication
+réservée aux comptes rattachés à une zawiya, like/commentaire fonctionnels),
+Ma lignée spirituelle (saisie + "Retrouver mes condisciples"), Faire un don
+(enregistre une intention de don, **aucun paiement réel** — aucun
+prestataire choisi). Détail du CRUD admin (RLS, gestion des suppressions
+bloquées par clé étrangère) dans `docs/09-journal-implementation-frontend.md`
+— **non encore validé manuellement sur émulateur/appareil**.
 
 **P2** : Statut Mouqaddam vérifié (demande/parrainage/silsila d'ijaza,
 animation de révélation + carte de partage), Direct et rediffusions Khadara
