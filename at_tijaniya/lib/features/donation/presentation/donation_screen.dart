@@ -37,8 +37,9 @@ class _DonationScreenState extends ConsumerState<DonationScreen> {
     super.dispose();
   }
 
-  double? get _effectiveAmount =>
-      _selectedPreset != null ? _selectedPreset!.toDouble() : parseDonationAmount(_customAmountController.text);
+  double? get _effectiveAmount => _selectedPreset != null
+      ? _selectedPreset!.toDouble()
+      : parseDonationAmount(_customAmountController.text);
 
   void _selectPreset(int amount) {
     setState(() {
@@ -67,7 +68,9 @@ class _DonationScreenState extends ConsumerState<DonationScreen> {
       _errorMessage = null;
     });
     try {
-      await ref.read(donationRepositoryProvider).recordDonationIntent(amount: amount);
+      await ref
+          .read(donationRepositoryProvider)
+          .recordDonationIntent(amount: amount);
       if (mounted) setState(() => _submitted = true);
     } catch (_) {
       if (mounted) setState(() => _errorMessage = l10n.donationSubmitError);
@@ -87,56 +90,69 @@ class _DonationScreenState extends ConsumerState<DonationScreen> {
   }
 
   Widget _buildForm(AppLocalizations l10n) {
-    return SingleChildScrollView(
-      padding: const EdgeInsets.all(20),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Text(l10n.donationSubtitle, style: const TextStyle(color: AppColors.bronze, fontSize: 15)),
-          const SizedBox(height: 24),
-          Row(
-            children: [
-              for (final amount in donationPresetAmounts) ...[
-                Expanded(
-                  child: _AmountChip(
-                    amount: amount,
-                    selected: _selectedPreset == amount,
-                    onTap: () => _selectPreset(amount),
+    // `SafeArea` : évite que le bouton de don se retrouve masqué sous la
+    // barre de navigation Android (3 boutons).
+    return SafeArea(
+      child: SingleChildScrollView(
+        padding: const EdgeInsets.all(20),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Text(l10n.donationSubtitle,
+                style: const TextStyle(color: AppColors.bronze, fontSize: 15)),
+            const SizedBox(height: 24),
+            Row(
+              children: [
+                for (final amount in donationPresetAmounts) ...[
+                  Expanded(
+                    child: _AmountChip(
+                      amount: amount,
+                      selected: _selectedPreset == amount,
+                      onTap: () => _selectPreset(amount),
+                    ),
                   ),
-                ),
-                if (amount != donationPresetAmounts.last) const SizedBox(width: 8),
+                  if (amount != donationPresetAmounts.last)
+                    const SizedBox(width: 8),
+                ],
               ],
-            ],
-          ),
-          const SizedBox(height: 20),
-          TextField(
-            controller: _customAmountController,
-            keyboardType: const TextInputType.numberWithOptions(decimal: true),
-            inputFormatters: [FilteringTextInputFormatter.allow(RegExp(r'[0-9.,]'))],
-            onChanged: _onCustomAmountChanged,
-            decoration: InputDecoration(
-              labelText: l10n.donationCustomAmountLabel,
-              hintText: l10n.donationCustomAmountHint,
-              suffixText: 'F CFA',
             ),
-          ),
-          if (_errorMessage != null) ...[
-            const SizedBox(height: 16),
-            Text(_errorMessage!, style: const TextStyle(color: Colors.redAccent)),
+            const SizedBox(height: 20),
+            TextField(
+              controller: _customAmountController,
+              keyboardType:
+                  const TextInputType.numberWithOptions(decimal: true),
+              inputFormatters: [
+                FilteringTextInputFormatter.allow(RegExp(r'[0-9.,]'))
+              ],
+              onChanged: _onCustomAmountChanged,
+              decoration: InputDecoration(
+                labelText: l10n.donationCustomAmountLabel,
+                hintText: l10n.donationCustomAmountHint,
+                suffixText: 'F CFA',
+              ),
+            ),
+            if (_errorMessage != null) ...[
+              const SizedBox(height: 16),
+              Text(_errorMessage!,
+                  style: const TextStyle(color: Colors.redAccent)),
+            ],
+            const SizedBox(height: 28),
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                  backgroundColor: AppColors.gold,
+                  foregroundColor: AppColors.zaytoune),
+              onPressed: _submitting ? null : _submit,
+              child: _submitting
+                  ? const SizedBox(
+                      height: 18,
+                      width: 18,
+                      child: CircularProgressIndicator(
+                          strokeWidth: 2, color: AppColors.zaytoune),
+                    )
+                  : Text(l10n.donationSubmitButton),
+            ),
           ],
-          const SizedBox(height: 28),
-          ElevatedButton(
-            style: ElevatedButton.styleFrom(backgroundColor: AppColors.gold, foregroundColor: AppColors.zaytoune),
-            onPressed: _submitting ? null : _submit,
-            child: _submitting
-                ? const SizedBox(
-                    height: 18,
-                    width: 18,
-                    child: CircularProgressIndicator(strokeWidth: 2, color: AppColors.zaytoune),
-                  )
-                : Text(l10n.donationSubmitButton),
-          ),
-        ],
+        ),
       ),
     );
   }
@@ -148,7 +164,8 @@ class _DonationScreenState extends ConsumerState<DonationScreen> {
 /// l'app (aucun `chipTheme` personnalisé, voir `app_theme.dart`) ne rend pas
 /// les couleurs de marque de façon fiable sur ce widget.
 class _AmountChip extends StatelessWidget {
-  const _AmountChip({required this.amount, required this.selected, required this.onTap});
+  const _AmountChip(
+      {required this.amount, required this.selected, required this.onTap});
 
   final int amount;
   final bool selected;
@@ -165,7 +182,9 @@ class _AmountChip extends StatelessWidget {
         decoration: BoxDecoration(
           color: selected ? AppColors.goldSoft : Colors.transparent,
           borderRadius: BorderRadius.circular(10),
-          border: Border.all(color: selected ? AppColors.gold : AppColors.bronze, width: selected ? 1.5 : 1),
+          border: Border.all(
+              color: selected ? AppColors.gold : AppColors.bronze,
+              width: selected ? 1.5 : 1),
         ),
         child: Text(
           _formatXof(amount),
@@ -213,13 +232,19 @@ class _DonationRecordedState extends StatelessWidget {
             Container(
               width: 72,
               height: 72,
-              decoration: const BoxDecoration(color: AppColors.goldSoft, shape: BoxShape.circle),
-              child: const Icon(Icons.favorite, color: AppColors.gold, size: 32),
+              decoration: const BoxDecoration(
+                  color: AppColors.goldSoft, shape: BoxShape.circle),
+              child:
+                  const Icon(Icons.favorite, color: AppColors.gold, size: 32),
             ),
             const SizedBox(height: 20),
-            Text(l10n.donationRecordedTitle, style: Theme.of(context).textTheme.headlineSmall, textAlign: TextAlign.center),
+            Text(l10n.donationRecordedTitle,
+                style: Theme.of(context).textTheme.headlineSmall,
+                textAlign: TextAlign.center),
             const SizedBox(height: 8),
-            Text(l10n.donationRecordedBody, textAlign: TextAlign.center, style: const TextStyle(color: AppColors.bronze)),
+            Text(l10n.donationRecordedBody,
+                textAlign: TextAlign.center,
+                style: const TextStyle(color: AppColors.bronze)),
             const SizedBox(height: 24),
             OutlinedButton(
               onPressed: () => Navigator.of(context).pop(),

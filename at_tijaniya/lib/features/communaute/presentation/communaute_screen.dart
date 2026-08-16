@@ -56,7 +56,8 @@ class CommunauteScreen extends StatelessWidget {
                 icon: const Icon(Icons.mail_outline, color: AppColors.bronze),
                 tooltip: l10n.communityMessagesTooltip,
                 onPressed: () => Navigator.of(context).push(
-                  MaterialPageRoute(builder: (_) => const ConversationsScreen()),
+                  MaterialPageRoute(
+                      builder: (_) => const ConversationsScreen()),
                 ),
               ),
             ],
@@ -90,7 +91,8 @@ class _FeedTab extends ConsumerWidget {
         label: Text(l10n.communityCreatePostButton),
       ),
       body: feed.when(
-        loading: () => const Center(child: CircularProgressIndicator(color: AppColors.emerald)),
+        loading: () => const Center(
+            child: CircularProgressIndicator(color: AppColors.emerald)),
         error: (error, stackTrace) => Center(
           child: Padding(
             padding: const EdgeInsets.all(24),
@@ -99,7 +101,9 @@ class _FeedTab extends ConsumerWidget {
               children: [
                 const Icon(Icons.wifi_off, color: AppColors.bronze, size: 32),
                 const SizedBox(height: 12),
-                Text(l10n.communityLoadError, textAlign: TextAlign.center, style: const TextStyle(color: AppColors.bronze)),
+                Text(l10n.communityLoadError,
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(color: AppColors.bronze)),
                 const SizedBox(height: 12),
                 OutlinedButton(
                   onPressed: () => ref.invalidate(communityFeedProvider),
@@ -113,13 +117,17 @@ class _FeedTab extends ConsumerWidget {
             ? Center(
                 child: Padding(
                   padding: const EdgeInsets.all(24),
-                  child: Text(l10n.communityFeedEmpty, textAlign: TextAlign.center, style: const TextStyle(color: AppColors.bronze)),
+                  child: Text(l10n.communityFeedEmpty,
+                      textAlign: TextAlign.center,
+                      style: const TextStyle(color: AppColors.bronze)),
                 ),
               )
             : ListView.builder(
                 padding: const EdgeInsets.fromLTRB(16, 16, 16, 88),
                 itemCount: posts.length,
-                itemBuilder: (context, i) => _PostCard(post: posts[i], fallbackAuthor: l10n.communityDefaultAuthor),
+                itemBuilder: (context, i) => _PostCard(
+                    post: posts[i],
+                    fallbackAuthor: l10n.communityDefaultAuthor),
               ),
       ),
     );
@@ -130,22 +138,26 @@ class _FeedTab extends ConsumerWidget {
     if (ref.read(currentUserIdProvider) == null) {
       ScaffoldMessenger.of(context)
         ..hideCurrentSnackBar()
-        ..showSnackBar(SnackBar(content: Text(l10n.communityCreatePostSignInRequired)));
+        ..showSnackBar(
+            SnackBar(content: Text(l10n.communityCreatePostSignInRequired)));
       return;
     }
     final profile = ref.read(myProfileProvider).valueOrNull;
     if (profile?.zawiyaId == null) {
       ScaffoldMessenger.of(context)
         ..hideCurrentSnackBar()
-        ..showSnackBar(SnackBar(content: Text(l10n.communityCreatePostNeedsZawiya)));
+        ..showSnackBar(
+            SnackBar(content: Text(l10n.communityCreatePostNeedsZawiya)));
       return;
     }
     showModalBottomSheet<void>(
       context: context,
       isScrollControlled: true,
       backgroundColor: AppColors.offWhite,
-      shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
-      builder: (context) => _CreatePostSheet(zawiyaId: profile!.zawiyaId!, zawiyaName: profile.zawiyaName),
+      shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
+      builder: (context) => _CreatePostSheet(
+          zawiyaId: profile!.zawiyaId!, zawiyaName: profile.zawiyaName),
     );
   }
 }
@@ -203,7 +215,8 @@ class _CreatePostSheetState extends ConsumerState<_CreatePostSheet> {
         final userId = SupabaseConfig.client.auth.currentUser!.id;
         mediaUrl = await _imageUploadService.uploadImage(
           bucket: 'post-media',
-          path: '$userId/${DateTime.now().microsecondsSinceEpoch}.$_pickedImageExtension',
+          path:
+              '$userId/${DateTime.now().microsecondsSinceEpoch}.$_pickedImageExtension',
           bytes: _pickedImageBytes!,
           contentType: imageContentTypeForExtension(_pickedImageExtension!),
         );
@@ -224,68 +237,81 @@ class _CreatePostSheetState extends ConsumerState<_CreatePostSheet> {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
 
-    return Padding(
-      padding: EdgeInsets.fromLTRB(20, 20, 20, MediaQuery.of(context).viewInsets.bottom + 20),
-      child: Form(
-        key: _formKey,
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Text(l10n.communityCreatePostTitle, style: Theme.of(context).textTheme.titleLarge),
-            if (widget.zawiyaName != null) ...[
-              const SizedBox(height: 4),
-              Text(
-                '${l10n.communityCreatePostZawiyaNote} (${widget.zawiyaName})',
-                style: const TextStyle(color: AppColors.bronze, fontSize: 12),
-              ),
-            ],
-            const SizedBox(height: 16),
-            TextFormField(
-              controller: _contentController,
-              decoration: InputDecoration(labelText: l10n.communityCreatePostContentLabel),
-              maxLines: 5,
-              validator: (value) =>
-                  (value == null || value.trim().isEmpty) ? l10n.communityCreatePostContentRequired : null,
-            ),
-            const SizedBox(height: 12),
-            if (_pickedImageBytes != null) ...[
-              ClipRRect(
-                borderRadius: BorderRadius.circular(12),
-                child: Image.memory(_pickedImageBytes!, width: double.infinity, fit: BoxFit.fitWidth),
-              ),
-              const SizedBox(height: 8),
-            ],
-            Row(
-              children: [
-                Expanded(
-                  child: OutlinedButton.icon(
-                    onPressed: _pickImage,
-                    icon: const Icon(Icons.image_outlined),
-                    label: Text(_pickedImageBytes != null ? l10n.imagePickerChange : l10n.imagePickerAdd),
-                  ),
+    // `SafeArea` : évite que le bouton Publier se retrouve masqué sous la
+    // barre de navigation Android (3 boutons) — `viewInsets.bottom` seul ne
+    // couvre que le clavier, jamais la zone système.
+    return SafeArea(
+      child: Padding(
+        padding: EdgeInsets.fromLTRB(
+            20, 20, 20, MediaQuery.of(context).viewInsets.bottom + 20),
+        child: Form(
+          key: _formKey,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Text(l10n.communityCreatePostTitle,
+                  style: Theme.of(context).textTheme.titleLarge),
+              if (widget.zawiyaName != null) ...[
+                const SizedBox(height: 4),
+                Text(
+                  '${l10n.communityCreatePostZawiyaNote} (${widget.zawiyaName})',
+                  style: const TextStyle(color: AppColors.bronze, fontSize: 12),
                 ),
-                if (_pickedImageBytes != null) ...[
-                  const SizedBox(width: 8),
-                  IconButton(
-                    icon: const Icon(Icons.close, color: AppColors.bronze),
-                    onPressed: _clearImage,
-                  ),
-                ],
               ],
-            ),
-            const SizedBox(height: 12),
-            ElevatedButton(
-              onPressed: _saving ? null : _submit,
-              child: _saving
-                  ? const SizedBox(
-                      height: 18,
-                      width: 18,
-                      child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
-                    )
-                  : Text(l10n.communityCreatePostSubmit),
-            ),
-          ],
+              const SizedBox(height: 16),
+              TextFormField(
+                controller: _contentController,
+                decoration: InputDecoration(
+                    labelText: l10n.communityCreatePostContentLabel),
+                maxLines: 5,
+                validator: (value) => (value == null || value.trim().isEmpty)
+                    ? l10n.communityCreatePostContentRequired
+                    : null,
+              ),
+              const SizedBox(height: 12),
+              if (_pickedImageBytes != null) ...[
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(12),
+                  child: Image.memory(_pickedImageBytes!,
+                      width: double.infinity, fit: BoxFit.fitWidth),
+                ),
+                const SizedBox(height: 8),
+              ],
+              Row(
+                children: [
+                  Expanded(
+                    child: OutlinedButton.icon(
+                      onPressed: _pickImage,
+                      icon: const Icon(Icons.image_outlined),
+                      label: Text(_pickedImageBytes != null
+                          ? l10n.imagePickerChange
+                          : l10n.imagePickerAdd),
+                    ),
+                  ),
+                  if (_pickedImageBytes != null) ...[
+                    const SizedBox(width: 8),
+                    IconButton(
+                      icon: const Icon(Icons.close, color: AppColors.bronze),
+                      onPressed: _clearImage,
+                    ),
+                  ],
+                ],
+              ),
+              const SizedBox(height: 12),
+              ElevatedButton(
+                onPressed: _saving ? null : _submit,
+                child: _saving
+                    ? const SizedBox(
+                        height: 18,
+                        width: 18,
+                        child: CircularProgressIndicator(
+                            strokeWidth: 2, color: Colors.white),
+                      )
+                    : Text(l10n.communityCreatePostSubmit),
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -307,7 +333,8 @@ class _GroupsTab extends ConsumerWidget {
         label: Text(l10n.communityGroupsCreateButton),
       ),
       body: groups.when(
-        loading: () => const Center(child: CircularProgressIndicator(color: AppColors.emerald)),
+        loading: () => const Center(
+            child: CircularProgressIndicator(color: AppColors.emerald)),
         error: (error, stackTrace) => Center(
           child: Padding(
             padding: const EdgeInsets.all(24),
@@ -316,7 +343,9 @@ class _GroupsTab extends ConsumerWidget {
               children: [
                 const Icon(Icons.wifi_off, color: AppColors.bronze, size: 32),
                 const SizedBox(height: 12),
-                Text(l10n.communityGroupsLoadError, textAlign: TextAlign.center, style: const TextStyle(color: AppColors.bronze)),
+                Text(l10n.communityGroupsLoadError,
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(color: AppColors.bronze)),
                 const SizedBox(height: 12),
                 OutlinedButton(
                   onPressed: () => ref.invalidate(groupsProvider),
@@ -330,7 +359,9 @@ class _GroupsTab extends ConsumerWidget {
             ? Center(
                 child: Padding(
                   padding: const EdgeInsets.all(24),
-                  child: Text(l10n.communityGroupsEmpty, textAlign: TextAlign.center, style: const TextStyle(color: AppColors.bronze)),
+                  child: Text(l10n.communityGroupsEmpty,
+                      textAlign: TextAlign.center,
+                      style: const TextStyle(color: AppColors.bronze)),
                 ),
               )
             : ListView.builder(
@@ -347,14 +378,16 @@ class _GroupsTab extends ConsumerWidget {
     if (ref.read(currentUserIdProvider) == null) {
       ScaffoldMessenger.of(context)
         ..hideCurrentSnackBar()
-        ..showSnackBar(SnackBar(content: Text(l10n.communityGroupsSignInToCreate)));
+        ..showSnackBar(
+            SnackBar(content: Text(l10n.communityGroupsSignInToCreate)));
       return;
     }
     showModalBottomSheet<void>(
       context: context,
       isScrollControlled: true,
       backgroundColor: AppColors.offWhite,
-      shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
+      shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
       builder: (context) => const _CreateGroupSheet(),
     );
   }
@@ -378,7 +411,11 @@ class _GroupCard extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              Text(group.name, style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 16, color: AppColors.ink)),
+              Text(group.name,
+                  style: const TextStyle(
+                      fontWeight: FontWeight.w600,
+                      fontSize: 16,
+                      color: AppColors.ink)),
               if (group.description != null) ...[
                 const SizedBox(height: 6),
                 Text(
@@ -392,20 +429,25 @@ class _GroupCard extends StatelessWidget {
               Row(
                 children: [
                   if (group.locationLabel != null) ...[
-                    const Icon(Icons.place_outlined, size: 16, color: AppColors.bronze),
+                    const Icon(Icons.place_outlined,
+                        size: 16, color: AppColors.bronze),
                     const SizedBox(width: 4),
                     Expanded(
                       child: Text(
                         group.locationLabel!,
                         overflow: TextOverflow.ellipsis,
-                        style: const TextStyle(color: AppColors.bronze, fontSize: 13),
+                        style: const TextStyle(
+                            color: AppColors.bronze, fontSize: 13),
                       ),
                     ),
                   ] else
                     const Spacer(),
-                  const Icon(Icons.people_alt_outlined, size: 16, color: AppColors.bronze),
+                  const Icon(Icons.people_alt_outlined,
+                      size: 16, color: AppColors.bronze),
                   const SizedBox(width: 4),
-                  Text('${group.memberCount}', style: const TextStyle(color: AppColors.bronze, fontSize: 13)),
+                  Text('${group.memberCount}',
+                      style: const TextStyle(
+                          color: AppColors.bronze, fontSize: 13)),
                 ],
               ),
             ],
@@ -445,9 +487,13 @@ class _CreateGroupSheetState extends ConsumerState<_CreateGroupSheet> {
     try {
       await ref.read(groupsRepositoryProvider).createGroup(
             name: _nameController.text.trim(),
-            description: _descriptionController.text.trim().isEmpty ? null : _descriptionController.text.trim(),
+            description: _descriptionController.text.trim().isEmpty
+                ? null
+                : _descriptionController.text.trim(),
             zawiyaId: _zawiyaId,
-            regionText: _regionController.text.trim().isEmpty ? null : _regionController.text.trim(),
+            regionText: _regionController.text.trim().isEmpty
+                ? null
+                : _regionController.text.trim(),
           );
       ref.invalidate(groupsProvider);
       if (mounted) Navigator.of(context).pop();
@@ -461,59 +507,75 @@ class _CreateGroupSheetState extends ConsumerState<_CreateGroupSheet> {
     final l10n = AppLocalizations.of(context)!;
     final zawiyas = ref.watch(zawiyasProvider);
 
-    return Padding(
-      padding: EdgeInsets.fromLTRB(20, 20, 20, MediaQuery.of(context).viewInsets.bottom + 20),
-      child: Form(
-        key: _formKey,
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Text(l10n.communityGroupsCreateTitle, style: Theme.of(context).textTheme.titleLarge),
-            const SizedBox(height: 16),
-            TextFormField(
-              controller: _nameController,
-              decoration: InputDecoration(labelText: l10n.communityGroupsNameLabel),
-              validator: (value) =>
-                  (value == null || value.trim().isEmpty) ? l10n.communityGroupsNameRequired : null,
-            ),
-            const SizedBox(height: 16),
-            TextFormField(
-              controller: _descriptionController,
-              decoration: InputDecoration(labelText: l10n.communityGroupsDescriptionLabel),
-              maxLines: 3,
-            ),
-            const SizedBox(height: 16),
-            zawiyas.when(
-              loading: () => const LinearProgressIndicator(color: AppColors.emerald),
-              error: (error, stackTrace) => const SizedBox.shrink(),
-              data: (list) => DropdownButtonFormField<String?>(
-                initialValue: _zawiyaId,
-                decoration: InputDecoration(labelText: l10n.communityGroupsZawiyaLabel),
-                items: [
-                  const DropdownMenuItem<String?>(value: null, child: Text('—')),
-                  ...list.map((z) => DropdownMenuItem<String?>(value: z.id, child: Text(z.name))),
-                ],
-                onChanged: (value) => setState(() => _zawiyaId = value),
+    // `SafeArea` : évite que le bouton Créer se retrouve masqué sous la
+    // barre de navigation Android (3 boutons) — `viewInsets.bottom` seul ne
+    // couvre que le clavier, jamais la zone système.
+    return SafeArea(
+      child: Padding(
+        padding: EdgeInsets.fromLTRB(
+            20, 20, 20, MediaQuery.of(context).viewInsets.bottom + 20),
+        child: Form(
+          key: _formKey,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Text(l10n.communityGroupsCreateTitle,
+                  style: Theme.of(context).textTheme.titleLarge),
+              const SizedBox(height: 16),
+              TextFormField(
+                controller: _nameController,
+                decoration:
+                    InputDecoration(labelText: l10n.communityGroupsNameLabel),
+                validator: (value) => (value == null || value.trim().isEmpty)
+                    ? l10n.communityGroupsNameRequired
+                    : null,
               ),
-            ),
-            const SizedBox(height: 16),
-            TextFormField(
-              controller: _regionController,
-              decoration: InputDecoration(labelText: l10n.communityGroupsRegionLabel),
-            ),
-            const SizedBox(height: 24),
-            ElevatedButton(
-              onPressed: _saving ? null : _submit,
-              child: _saving
-                  ? const SizedBox(
-                      height: 18,
-                      width: 18,
-                      child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
-                    )
-                  : Text(l10n.communityGroupsCreateSubmit),
-            ),
-          ],
+              const SizedBox(height: 16),
+              TextFormField(
+                controller: _descriptionController,
+                decoration: InputDecoration(
+                    labelText: l10n.communityGroupsDescriptionLabel),
+                maxLines: 3,
+              ),
+              const SizedBox(height: 16),
+              zawiyas.when(
+                loading: () =>
+                    const LinearProgressIndicator(color: AppColors.emerald),
+                error: (error, stackTrace) => const SizedBox.shrink(),
+                data: (list) => DropdownButtonFormField<String?>(
+                  initialValue: _zawiyaId,
+                  decoration: InputDecoration(
+                      labelText: l10n.communityGroupsZawiyaLabel),
+                  items: [
+                    const DropdownMenuItem<String?>(
+                        value: null, child: Text('—')),
+                    ...list.map((z) => DropdownMenuItem<String?>(
+                        value: z.id, child: Text(z.name))),
+                  ],
+                  onChanged: (value) => setState(() => _zawiyaId = value),
+                ),
+              ),
+              const SizedBox(height: 16),
+              TextFormField(
+                controller: _regionController,
+                decoration:
+                    InputDecoration(labelText: l10n.communityGroupsRegionLabel),
+              ),
+              const SizedBox(height: 24),
+              ElevatedButton(
+                onPressed: _saving ? null : _submit,
+                child: _saving
+                    ? const SizedBox(
+                        height: 18,
+                        width: 18,
+                        child: CircularProgressIndicator(
+                            strokeWidth: 2, color: Colors.white),
+                      )
+                    : Text(l10n.communityGroupsCreateSubmit),
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -560,7 +622,9 @@ class _PostCardState extends ConsumerState<_PostCard> {
       _likeInFlight = true;
     });
     try {
-      await ref.read(communityRepositoryProvider).toggleLike(widget.post.id, currentlyLiked: wasLiked);
+      await ref
+          .read(communityRepositoryProvider)
+          .toggleLike(widget.post.id, currentlyLiked: wasLiked);
     } catch (_) {
       if (mounted) {
         setState(() {
@@ -593,10 +657,13 @@ class _PostCardState extends ConsumerState<_PostCard> {
                   Expanded(
                     child: Text(
                       post.authorLabel(fallbackAuthor),
-                      style: const TextStyle(fontWeight: FontWeight.w600, color: AppColors.ink),
+                      style: const TextStyle(
+                          fontWeight: FontWeight.w600, color: AppColors.ink),
                     ),
                   ),
-                  Text(formatCommunityDateTime(post.createdAt), style: const TextStyle(color: AppColors.bronze, fontSize: 11)),
+                  Text(formatCommunityDateTime(post.createdAt),
+                      style: const TextStyle(
+                          color: AppColors.bronze, fontSize: 11)),
                 ],
               ),
               const SizedBox(height: 8),
@@ -617,7 +684,8 @@ class _PostCardState extends ConsumerState<_PostCard> {
                     // hauteur fixe coupe la photo selon son orientation.
                     width: double.infinity,
                     fit: BoxFit.fitWidth,
-                    errorBuilder: (context, error, stackTrace) => const SizedBox.shrink(),
+                    errorBuilder: (context, error, stackTrace) =>
+                        const SizedBox.shrink(),
                   ),
                 ),
               ],
@@ -631,24 +699,31 @@ class _PostCardState extends ConsumerState<_PostCard> {
                     borderRadius: BorderRadius.circular(8),
                     onTap: _toggleLike,
                     child: Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 2),
+                      padding: const EdgeInsets.symmetric(
+                          vertical: 4, horizontal: 2),
                       child: Row(
                         children: [
                           Icon(
                             _liked ? Icons.favorite : Icons.favorite_border,
-                            color: _liked ? AppColors.emerald : AppColors.bronze,
+                            color:
+                                _liked ? AppColors.emerald : AppColors.bronze,
                             size: 18,
                           ),
                           const SizedBox(width: 4),
-                          Text('$_likeCount', style: const TextStyle(color: AppColors.bronze, fontSize: 13)),
+                          Text('$_likeCount',
+                              style: const TextStyle(
+                                  color: AppColors.bronze, fontSize: 13)),
                         ],
                       ),
                     ),
                   ),
                   const SizedBox(width: 16),
-                  const Icon(Icons.mode_comment_outlined, color: AppColors.bronze, size: 18),
+                  const Icon(Icons.mode_comment_outlined,
+                      color: AppColors.bronze, size: 18),
                   const SizedBox(width: 4),
-                  Text('${post.commentCount}', style: const TextStyle(color: AppColors.bronze, fontSize: 13)),
+                  Text('${post.commentCount}',
+                      style: const TextStyle(
+                          color: AppColors.bronze, fontSize: 13)),
                 ],
               ),
             ],

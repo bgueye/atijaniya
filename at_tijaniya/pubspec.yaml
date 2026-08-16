@@ -71,6 +71,11 @@ dependencies:
   # publication du fil communautaire — téléversée ensuite vers Supabase
   # Storage (`lib/core/storage/image_upload_service.dart`).
   image_picker: ^1.1.2
+  # Sélection d'un fichier audio arbitraire (pas une image) par un admin,
+  # pour ajouter une récitation de pilier de wird
+  # (`lib/features/wird/data/wird_audio_picker_service.dart`) —
+  # image_picker ne convient pas à ce cas.
+  file_picker: ^10.3.4
 
 dev_dependencies:
   flutter_test:

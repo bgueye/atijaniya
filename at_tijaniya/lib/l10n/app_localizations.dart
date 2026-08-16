@@ -710,6 +710,156 @@ abstract class AppLocalizations {
   /// **'Lecture impossible — vérifiez votre connexion.'**
   String get wirdRecitationsReviewPreviewError;
 
+  /// No description provided for @wirdRecitationsReviewDelete.
+  ///
+  /// In fr, this message translates to:
+  /// **'Supprimer'**
+  String get wirdRecitationsReviewDelete;
+
+  /// No description provided for @wirdRecitationsReviewDeleteConfirmTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Supprimer ce brouillon ?'**
+  String get wirdRecitationsReviewDeleteConfirmTitle;
+
+  /// No description provided for @wirdRecitationsReviewDeleteConfirmBody.
+  ///
+  /// In fr, this message translates to:
+  /// **'Cette action est définitive.'**
+  String get wirdRecitationsReviewDeleteConfirmBody;
+
+  /// No description provided for @wirdRecitationsReviewDeleteError.
+  ///
+  /// In fr, this message translates to:
+  /// **'Suppression impossible — vérifiez votre connexion.'**
+  String get wirdRecitationsReviewDeleteError;
+
+  /// No description provided for @wirdRecitationsReviewDeleteSuccess.
+  ///
+  /// In fr, this message translates to:
+  /// **'Brouillon supprimé.'**
+  String get wirdRecitationsReviewDeleteSuccess;
+
+  /// No description provided for @wirdRecitationsReviewManageButton.
+  ///
+  /// In fr, this message translates to:
+  /// **'Gérer tous les enregistrements'**
+  String get wirdRecitationsReviewManageButton;
+
+  /// No description provided for @wirdRecitationsManageTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Gestion des récitations audio'**
+  String get wirdRecitationsManageTitle;
+
+  /// No description provided for @wirdRecitationsManageLoadError.
+  ///
+  /// In fr, this message translates to:
+  /// **'Impossible de charger les récitations.'**
+  String get wirdRecitationsManageLoadError;
+
+  /// No description provided for @wirdRecitationsManageEmpty.
+  ///
+  /// In fr, this message translates to:
+  /// **'Aucun enregistrement pour ce pilier.'**
+  String get wirdRecitationsManageEmpty;
+
+  /// No description provided for @wirdRecitationsManageStatusDraft.
+  ///
+  /// In fr, this message translates to:
+  /// **'Brouillon'**
+  String get wirdRecitationsManageStatusDraft;
+
+  /// No description provided for @wirdRecitationsManageStatusValidated.
+  ///
+  /// In fr, this message translates to:
+  /// **'Validé'**
+  String get wirdRecitationsManageStatusValidated;
+
+  /// No description provided for @wirdRecitationsManageAddButton.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ajouter un enregistrement'**
+  String get wirdRecitationsManageAddButton;
+
+  /// No description provided for @wirdRecitationsManageDeleteConfirmTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Supprimer cet enregistrement ?'**
+  String get wirdRecitationsManageDeleteConfirmTitle;
+
+  /// No description provided for @wirdRecitationsManageDeleteConfirmBodyDraft.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ce brouillon sera définitivement supprimé.'**
+  String get wirdRecitationsManageDeleteConfirmBodyDraft;
+
+  /// No description provided for @wirdRecitationsManageDeleteConfirmBodyLive.
+  ///
+  /// In fr, this message translates to:
+  /// **'Cet audio est actuellement celui entendu par les disciples — il deviendra indisponible pour ce pilier jusqu\'à validation d\'un nouvel enregistrement.'**
+  String get wirdRecitationsManageDeleteConfirmBodyLive;
+
+  /// No description provided for @wirdRecitationsManageDeleteError.
+  ///
+  /// In fr, this message translates to:
+  /// **'Suppression impossible — vérifiez votre connexion.'**
+  String get wirdRecitationsManageDeleteError;
+
+  /// No description provided for @wirdRecitationsManageDeleteSuccess.
+  ///
+  /// In fr, this message translates to:
+  /// **'Enregistrement supprimé.'**
+  String get wirdRecitationsManageDeleteSuccess;
+
+  /// No description provided for @wirdRecitationsManageUploadReciterLabel.
+  ///
+  /// In fr, this message translates to:
+  /// **'Nom du récitant'**
+  String get wirdRecitationsManageUploadReciterLabel;
+
+  /// No description provided for @wirdRecitationsManageUploadPickFile.
+  ///
+  /// In fr, this message translates to:
+  /// **'Choisir un fichier audio'**
+  String get wirdRecitationsManageUploadPickFile;
+
+  /// No description provided for @wirdRecitationsManageUploadFileChosen.
+  ///
+  /// In fr, this message translates to:
+  /// **'Fichier sélectionné : {fileName}'**
+  String wirdRecitationsManageUploadFileChosen(String fileName);
+
+  /// No description provided for @wirdRecitationsManageUploadHint.
+  ///
+  /// In fr, this message translates to:
+  /// **'Format recommandé : AAC, mono, 64 kbit/s.'**
+  String get wirdRecitationsManageUploadHint;
+
+  /// No description provided for @wirdRecitationsManageUploadSubmit.
+  ///
+  /// In fr, this message translates to:
+  /// **'Téléverser'**
+  String get wirdRecitationsManageUploadSubmit;
+
+  /// No description provided for @wirdRecitationsManageUploadError.
+  ///
+  /// In fr, this message translates to:
+  /// **'Téléversement impossible — réessayez.'**
+  String get wirdRecitationsManageUploadError;
+
+  /// No description provided for @wirdRecitationsManageUploadSuccess.
+  ///
+  /// In fr, this message translates to:
+  /// **'Enregistrement ajouté (brouillon).'**
+  String get wirdRecitationsManageUploadSuccess;
+
+  /// No description provided for @wirdRecitationsManageValidate.
+  ///
+  /// In fr, this message translates to:
+  /// **'Valider'**
+  String get wirdRecitationsManageValidate;
+
   /// No description provided for @tariqaConditionsCardTitle.
   ///
   /// In fr, this message translates to:

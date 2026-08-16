@@ -76,7 +76,9 @@ class _LineageScreenState extends ConsumerState<LineageScreen> {
       final zawiyaText = _zawiyaController.text.trim();
       await ref.read(lineageRepositoryProvider).saveMyLineage(
             foyer: _foyer,
-            foyerAutreText: _foyer == Foyer.autre ? _foyerAutreController.text.trim() : null,
+            foyerAutreText: _foyer == Foyer.autre
+                ? _foyerAutreController.text.trim()
+                : null,
             moqaddamNameText: _moqaddamNameController.text.trim(),
             transmissionYear: yearText.isEmpty ? null : int.parse(yearText),
             zawiyaText: zawiyaText.isEmpty ? null : zawiyaText,
@@ -98,10 +100,13 @@ class _LineageScreenState extends ConsumerState<LineageScreen> {
         title: Text(l10n.lineageDeleteConfirmTitle),
         content: Text(l10n.lineageDeleteConfirmBody),
         actions: [
-          TextButton(onPressed: () => Navigator.of(context).pop(false), child: Text(l10n.profileCancel)),
+          TextButton(
+              onPressed: () => Navigator.of(context).pop(false),
+              child: Text(l10n.profileCancel)),
           TextButton(
             onPressed: () => Navigator.of(context).pop(true),
-            child: Text(l10n.lineageDeleteConfirmAction, style: const TextStyle(color: Colors.redAccent)),
+            child: Text(l10n.lineageDeleteConfirmAction,
+                style: const TextStyle(color: Colors.redAccent)),
           ),
         ],
       ),
@@ -160,143 +165,169 @@ class _LineageScreenState extends ConsumerState<LineageScreen> {
 
     return Scaffold(
       appBar: AppBar(title: Text(l10n.lineageTitle)),
-      body: lineageAsync.when(
-        loading: () => const Center(child: CircularProgressIndicator(color: AppColors.emerald)),
-        error: (error, stackTrace) => Center(
-          child: Padding(
-            padding: const EdgeInsets.all(24),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                const Icon(Icons.wifi_off, color: AppColors.bronze, size: 32),
-                const SizedBox(height: 12),
-                Text(
-                  l10n.lineageLoadError,
-                  textAlign: TextAlign.center,
-                  style: const TextStyle(color: AppColors.bronze),
-                ),
-                const SizedBox(height: 12),
-                OutlinedButton(
-                  onPressed: () => ref.invalidate(myLineageProvider),
-                  child: Text(l10n.lineageRetry),
-                ),
-              ],
-            ),
-          ),
-        ),
-        data: (lineage) {
-          _applyExisting(lineage);
-          return SingleChildScrollView(
-            padding: const EdgeInsets.all(20),
-            child: Form(
-              key: _formKey,
+      // `SafeArea` : évite que le bouton Enregistrer se retrouve masqué sous
+      // la barre de navigation Android (3 boutons).
+      body: SafeArea(
+        child: lineageAsync.when(
+          loading: () => const Center(
+              child: CircularProgressIndicator(color: AppColors.emerald)),
+          error: (error, stackTrace) => Center(
+            child: Padding(
+              padding: const EdgeInsets.all(24),
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
+                mainAxisSize: MainAxisSize.min,
                 children: [
-                  if (lineage != null) ...[
-                    OutlinedButton.icon(
-                      onPressed: () => Navigator.of(context).push(
-                        MaterialPageRoute(builder: (_) => const LineageMatchesScreen()),
-                      ),
-                      icon: const Icon(Icons.people_outline, size: 18),
-                      label: Text(l10n.lineageFindDisciplesCta),
-                    ),
-                    const SizedBox(height: 20),
-                  ],
-                  Card(
-                    color: AppColors.goldSoft,
-                    child: Padding(
-                      padding: const EdgeInsets.all(16),
-                      child: Row(
-                        children: [
-                          const Icon(Icons.lock_outline, color: AppColors.bronze),
-                          const SizedBox(width: 12),
-                          Expanded(
-                            child: Text(
-                              l10n.lineagePrivacyNote,
-                              style: const TextStyle(color: AppColors.ink, fontSize: 15),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
+                  const Icon(Icons.wifi_off, color: AppColors.bronze, size: 32),
+                  const SizedBox(height: 12),
+                  Text(
+                    l10n.lineageLoadError,
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(color: AppColors.bronze),
                   ),
-                  const SizedBox(height: 24),
-                  DropdownButtonFormField<Foyer>(
-                    initialValue: _foyer,
-                    decoration: InputDecoration(labelText: l10n.lineageFoyerLabel),
-                    items: [
-                      for (final foyer in Foyer.values)
-                        DropdownMenuItem(value: foyer, child: Text(_foyerLabel(foyer, l10n))),
-                    ],
-                    onChanged: (value) => setState(() => _foyer = value ?? Foyer.tivaouane),
+                  const SizedBox(height: 12),
+                  OutlinedButton(
+                    onPressed: () => ref.invalidate(myLineageProvider),
+                    child: Text(l10n.lineageRetry),
                   ),
-                  if (_foyer == Foyer.autre) ...[
-                    const SizedBox(height: 16),
-                    TextFormField(
-                      controller: _foyerAutreController,
-                      decoration: InputDecoration(labelText: l10n.lineageFoyerAutreLabel),
-                      validator: (value) =>
-                          (value == null || value.trim().isEmpty) ? l10n.lineageFoyerAutreRequired : null,
-                    ),
-                  ],
-                  const SizedBox(height: 16),
-                  TextFormField(
-                    controller: _moqaddamNameController,
-                    decoration: InputDecoration(labelText: l10n.lineageMoqaddamNameLabel),
-                    validator: (value) =>
-                        (value == null || value.trim().isEmpty) ? l10n.lineageMoqaddamNameRequired : null,
-                  ),
-                  const SizedBox(height: 16),
-                  TextFormField(
-                    controller: _yearController,
-                    decoration: InputDecoration(labelText: l10n.lineageYearLabel),
-                    keyboardType: TextInputType.number,
-                    validator: (value) {
-                      final text = value?.trim() ?? '';
-                      if (text.isEmpty) return null;
-                      final year = int.tryParse(text);
-                      if (year == null || year < 1900 || year > 2100) return l10n.lineageYearInvalid;
-                      return null;
-                    },
-                  ),
-                  const SizedBox(height: 16),
-                  TextFormField(
-                    controller: _zawiyaController,
-                    decoration: InputDecoration(labelText: l10n.lineageZawiyaLabel),
-                  ),
-                  if (_errorMessage != null) ...[
-                    const SizedBox(height: 16),
-                    Text(_errorMessage!, style: const TextStyle(color: Colors.redAccent)),
-                  ],
-                  if (_infoMessage != null) ...[
-                    const SizedBox(height: 16),
-                    Text(_infoMessage!, style: const TextStyle(color: AppColors.emerald)),
-                  ],
-                  const SizedBox(height: 24),
-                  ElevatedButton(
-                    onPressed: _saving ? null : _save,
-                    child: _saving
-                        ? const SizedBox(
-                            height: 18,
-                            width: 18,
-                            child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
-                          )
-                        : Text(l10n.lineageSave),
-                  ),
-                  if (lineage != null) ...[
-                    const SizedBox(height: 12),
-                    OutlinedButton(
-                      onPressed: _saving ? null : _delete,
-                      style: OutlinedButton.styleFrom(foregroundColor: Colors.redAccent),
-                      child: Text(l10n.lineageDelete),
-                    ),
-                  ],
                 ],
               ),
             ),
-          );
-        },
+          ),
+          data: (lineage) {
+            _applyExisting(lineage);
+            return SingleChildScrollView(
+              padding: const EdgeInsets.all(20),
+              child: Form(
+                key: _formKey,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    if (lineage != null) ...[
+                      OutlinedButton.icon(
+                        onPressed: () => Navigator.of(context).push(
+                          MaterialPageRoute(
+                              builder: (_) => const LineageMatchesScreen()),
+                        ),
+                        icon: const Icon(Icons.people_outline, size: 18),
+                        label: Text(l10n.lineageFindDisciplesCta),
+                      ),
+                      const SizedBox(height: 20),
+                    ],
+                    Card(
+                      color: AppColors.goldSoft,
+                      child: Padding(
+                        padding: const EdgeInsets.all(16),
+                        child: Row(
+                          children: [
+                            const Icon(Icons.lock_outline,
+                                color: AppColors.bronze),
+                            const SizedBox(width: 12),
+                            Expanded(
+                              child: Text(
+                                l10n.lineagePrivacyNote,
+                                style: const TextStyle(
+                                    color: AppColors.ink, fontSize: 15),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 24),
+                    DropdownButtonFormField<Foyer>(
+                      initialValue: _foyer,
+                      decoration:
+                          InputDecoration(labelText: l10n.lineageFoyerLabel),
+                      items: [
+                        for (final foyer in Foyer.values)
+                          DropdownMenuItem(
+                              value: foyer,
+                              child: Text(_foyerLabel(foyer, l10n))),
+                      ],
+                      onChanged: (value) =>
+                          setState(() => _foyer = value ?? Foyer.tivaouane),
+                    ),
+                    if (_foyer == Foyer.autre) ...[
+                      const SizedBox(height: 16),
+                      TextFormField(
+                        controller: _foyerAutreController,
+                        decoration: InputDecoration(
+                            labelText: l10n.lineageFoyerAutreLabel),
+                        validator: (value) =>
+                            (value == null || value.trim().isEmpty)
+                                ? l10n.lineageFoyerAutreRequired
+                                : null,
+                      ),
+                    ],
+                    const SizedBox(height: 16),
+                    TextFormField(
+                      controller: _moqaddamNameController,
+                      decoration: InputDecoration(
+                          labelText: l10n.lineageMoqaddamNameLabel),
+                      validator: (value) =>
+                          (value == null || value.trim().isEmpty)
+                              ? l10n.lineageMoqaddamNameRequired
+                              : null,
+                    ),
+                    const SizedBox(height: 16),
+                    TextFormField(
+                      controller: _yearController,
+                      decoration:
+                          InputDecoration(labelText: l10n.lineageYearLabel),
+                      keyboardType: TextInputType.number,
+                      validator: (value) {
+                        final text = value?.trim() ?? '';
+                        if (text.isEmpty) return null;
+                        final year = int.tryParse(text);
+                        if (year == null || year < 1900 || year > 2100) {
+                          return l10n.lineageYearInvalid;
+                        }
+                        return null;
+                      },
+                    ),
+                    const SizedBox(height: 16),
+                    TextFormField(
+                      controller: _zawiyaController,
+                      decoration:
+                          InputDecoration(labelText: l10n.lineageZawiyaLabel),
+                    ),
+                    if (_errorMessage != null) ...[
+                      const SizedBox(height: 16),
+                      Text(_errorMessage!,
+                          style: const TextStyle(color: Colors.redAccent)),
+                    ],
+                    if (_infoMessage != null) ...[
+                      const SizedBox(height: 16),
+                      Text(_infoMessage!,
+                          style: const TextStyle(color: AppColors.emerald)),
+                    ],
+                    const SizedBox(height: 24),
+                    ElevatedButton(
+                      onPressed: _saving ? null : _save,
+                      child: _saving
+                          ? const SizedBox(
+                              height: 18,
+                              width: 18,
+                              child: CircularProgressIndicator(
+                                  strokeWidth: 2, color: Colors.white),
+                            )
+                          : Text(l10n.lineageSave),
+                    ),
+                    if (lineage != null) ...[
+                      const SizedBox(height: 12),
+                      OutlinedButton(
+                        onPressed: _saving ? null : _delete,
+                        style: OutlinedButton.styleFrom(
+                            foregroundColor: Colors.redAccent),
+                        child: Text(l10n.lineageDelete),
+                      ),
+                    ],
+                  ],
+                ),
+              ),
+            );
+          },
+        ),
       ),
     );
   }

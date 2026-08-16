@@ -46,10 +46,13 @@ class _EventDetailScreenState extends ConsumerState<EventDetailScreen> {
         title: Text(l10n.khadaraDeleteEventConfirmTitle),
         content: Text(l10n.khadaraDeleteEventConfirmBody),
         actions: [
-          TextButton(onPressed: () => Navigator.of(context).pop(false), child: Text(l10n.profileCancel)),
+          TextButton(
+              onPressed: () => Navigator.of(context).pop(false),
+              child: Text(l10n.profileCancel)),
           TextButton(
             onPressed: () => Navigator.of(context).pop(true),
-            child: Text(l10n.khadaraDeleteEventConfirmAction, style: const TextStyle(color: Colors.redAccent)),
+            child: Text(l10n.khadaraDeleteEventConfirmAction,
+                style: const TextStyle(color: Colors.redAccent)),
           ),
         ],
       ),
@@ -109,59 +112,67 @@ class _EventDetailScreenState extends ConsumerState<EventDetailScreen> {
               ]
             : null,
       ),
-      body: ListView(
-        padding: const EdgeInsets.all(20),
-        children: [
-          if (_event.imageUrl != null) ...[
-            ClipRRect(
-              borderRadius: BorderRadius.circular(14),
-              child: Image.network(
-                _event.imageUrl!,
-                // Pas de hauteur fixe : la largeur remplit l'écran et la
-                // hauteur s'ajuste au ratio réel de la photo, plutôt que de
-                // recadrer/deviner une hauteur qui coupe une partie de
-                // l'image selon son orientation.
-                width: double.infinity,
-                fit: BoxFit.fitWidth,
-                errorBuilder: (context, error, stackTrace) => const SizedBox.shrink(),
+      // `SafeArea` : évite que le bouton Démarrer un direct se retrouve
+      // masqué sous la barre de navigation Android (3 boutons).
+      body: SafeArea(
+        child: ListView(
+          padding: const EdgeInsets.all(20),
+          children: [
+            if (_event.imageUrl != null) ...[
+              ClipRRect(
+                borderRadius: BorderRadius.circular(14),
+                child: Image.network(
+                  _event.imageUrl!,
+                  // Pas de hauteur fixe : la largeur remplit l'écran et la
+                  // hauteur s'ajuste au ratio réel de la photo, plutôt que de
+                  // recadrer/deviner une hauteur qui coupe une partie de
+                  // l'image selon son orientation.
+                  width: double.infinity,
+                  fit: BoxFit.fitWidth,
+                  errorBuilder: (context, error, stackTrace) =>
+                      const SizedBox.shrink(),
+                ),
               ),
+              const SizedBox(height: 16),
+            ],
+            Chip(
+              avatar: Icon(khadaraEventTypeIcon(_event.type),
+                  size: 18, color: AppColors.emerald),
+              label: Text(khadaraEventTypeLabel(_event.type, l10n)),
+              backgroundColor: AppColors.emeraldSoft,
             ),
             const SizedBox(height: 16),
-          ],
-          Chip(
-            avatar: Icon(khadaraEventTypeIcon(_event.type), size: 18, color: AppColors.emerald),
-            label: Text(khadaraEventTypeLabel(_event.type, l10n)),
-            backgroundColor: AppColors.emeraldSoft,
-          ),
-          const SizedBox(height: 16),
-          _InfoRow(
-            icon: Icons.schedule,
-            text: _event.endsAt == null
-                ? formatKhadaraDateTime(_event.startsAt)
-                : '${formatKhadaraDateTime(_event.startsAt)} → ${formatKhadaraDateTime(_event.endsAt!)}',
-          ),
-          if (_event.zawiyaName != null) ...[
-            const SizedBox(height: 8),
-            _InfoRow(icon: Icons.mosque_outlined, text: _event.zawiyaName!),
-          ],
-          if (_event.description != null) ...[
-            const SizedBox(height: 20),
-            Text(
-              _event.description!,
-              style: const TextStyle(color: AppColors.ink, fontSize: 16, height: 1.4),
+            _InfoRow(
+              icon: Icons.schedule,
+              text: _event.endsAt == null
+                  ? formatKhadaraDateTime(_event.startsAt)
+                  : '${formatKhadaraDateTime(_event.startsAt)} → ${formatKhadaraDateTime(_event.endsAt!)}',
             ),
-          ],
-          if (_event.hasLocation) ...[
+            if (_event.zawiyaName != null) ...[
+              const SizedBox(height: 8),
+              _InfoRow(icon: Icons.mosque_outlined, text: _event.zawiyaName!),
+            ],
+            if (_event.description != null) ...[
+              const SizedBox(height: 20),
+              Text(
+                _event.description!,
+                style: const TextStyle(
+                    color: AppColors.ink, fontSize: 16, height: 1.4),
+              ),
+            ],
+            if (_event.hasLocation) ...[
+              const SizedBox(height: 24),
+              OutlinedButton.icon(
+                onPressed: () => openInMaps(context,
+                    latitude: _event.latitude!, longitude: _event.longitude!),
+                icon: const Icon(Icons.map_outlined),
+                label: Text(l10n.khadaraOpenInMaps),
+              ),
+            ],
             const SizedBox(height: 24),
-            OutlinedButton.icon(
-              onPressed: () => openInMaps(context, latitude: _event.latitude!, longitude: _event.longitude!),
-              icon: const Icon(Icons.map_outlined),
-              label: Text(l10n.khadaraOpenInMaps),
-            ),
+            _LiveStreamSection(event: _event, l10n: l10n),
           ],
-          const SizedBox(height: 24),
-          _LiveStreamSection(event: _event, l10n: l10n),
-        ],
+        ),
       ),
     );
   }
@@ -185,11 +196,13 @@ class _LiveStreamSection extends ConsumerWidget {
 
     return streamAsync.maybeWhen(
       data: (stream) {
-        final isActive = stream != null && stream.status != LiveStreamStatus.ended;
+        final isActive =
+            stream != null && stream.status != LiveStreamStatus.ended;
         if (isActive) {
           return FilledButton.icon(
             onPressed: () => Navigator.of(context).push(
-              MaterialPageRoute(builder: (_) => LiveStreamScreen(stream: stream)),
+              MaterialPageRoute(
+                  builder: (_) => LiveStreamScreen(stream: stream)),
             ),
             icon: const Icon(Icons.podcasts),
             label: Text(l10n.khadaraJoinLive),
@@ -198,7 +211,9 @@ class _LiveStreamSection extends ConsumerWidget {
         if (myUserId == null) return const SizedBox.shrink();
         return OutlinedButton.icon(
           onPressed: () => Navigator.of(context).push(
-            MaterialPageRoute(builder: (_) => StartLiveStreamScreen.forEvent(eventId: event.id, contextTitle: event.title)),
+            MaterialPageRoute(
+                builder: (_) => StartLiveStreamScreen.forEvent(
+                    eventId: event.id, contextTitle: event.title)),
           ),
           icon: const Icon(Icons.podcasts_outlined),
           label: Text(l10n.khadaraStartLive),
@@ -222,7 +237,8 @@ class _InfoRow extends StatelessWidget {
       children: [
         Icon(icon, size: 18, color: AppColors.bronze),
         const SizedBox(width: 8),
-        Expanded(child: Text(text, style: const TextStyle(color: AppColors.ink))),
+        Expanded(
+            child: Text(text, style: const TextStyle(color: AppColors.ink))),
       ],
     );
   }

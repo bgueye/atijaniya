@@ -16,16 +16,19 @@ import 'figures_providers.dart';
 /// `citation == null` → création ; sinon édition, préremplie depuis l'objet
 /// déjà en mémoire.
 class FigureCitationFormScreen extends ConsumerStatefulWidget {
-  const FigureCitationFormScreen({super.key, required this.figureId, this.citation});
+  const FigureCitationFormScreen(
+      {super.key, required this.figureId, this.citation});
 
   final String figureId;
   final FigureCitation? citation;
 
   @override
-  ConsumerState<FigureCitationFormScreen> createState() => _FigureCitationFormScreenState();
+  ConsumerState<FigureCitationFormScreen> createState() =>
+      _FigureCitationFormScreenState();
 }
 
-class _FigureCitationFormScreenState extends ConsumerState<FigureCitationFormScreen> {
+class _FigureCitationFormScreenState
+    extends ConsumerState<FigureCitationFormScreen> {
   final _formKey = GlobalKey<FormState>();
   final _arabicController = TextEditingController();
   final _frenchController = TextEditingController();
@@ -85,7 +88,9 @@ class _FigureCitationFormScreenState extends ConsumerState<FigureCitationFormScr
       }
       if (mounted) Navigator.of(context).pop(true);
     } catch (_) {
-      if (mounted) setState(() => _errorMessage = l10n.figureCitationFormSaveError);
+      if (mounted) {
+        setState(() => _errorMessage = l10n.figureCitationFormSaveError);
+      }
     } finally {
       if (mounted) setState(() => _saving = false);
     }
@@ -97,52 +102,69 @@ class _FigureCitationFormScreenState extends ConsumerState<FigureCitationFormScr
     final isEdit = widget.citation != null;
 
     return Scaffold(
-      appBar: AppBar(title: Text(isEdit ? l10n.figureCitationFormEditTitle : l10n.figureCitationFormCreateTitle)),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(20),
-        child: Form(
-          key: _formKey,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              TextFormField(
-                controller: _arabicController,
-                decoration: InputDecoration(labelText: l10n.figureCitationFormArabicLabel),
-                textDirection: TextDirection.rtl,
-                maxLines: 3,
-              ),
-              const SizedBox(height: 16),
-              TextFormField(
-                controller: _frenchController,
-                decoration: InputDecoration(labelText: l10n.figureCitationFormFrenchLabel),
-                maxLines: 3,
-                validator: (value) => (value == null || value.trim().isEmpty) && _arabicController.text.trim().isEmpty
-                    ? l10n.figureCitationFormTextRequired
-                    : null,
-              ),
-              const SizedBox(height: 16),
-              TextFormField(
-                controller: _sourceController,
-                decoration: InputDecoration(labelText: l10n.figureCitationFormSourceLabel),
-                validator: (value) =>
-                    (value == null || value.trim().isEmpty) ? l10n.figureCitationFormSourceRequired : null,
-              ),
-              if (_errorMessage != null) ...[
+      appBar: AppBar(
+          title: Text(isEdit
+              ? l10n.figureCitationFormEditTitle
+              : l10n.figureCitationFormCreateTitle)),
+      // `SafeArea` : sans elle, le bouton Enregistrer peut se retrouver
+      // masqué sous la barre de navigation Android (3 boutons) — le même
+      // défaut que celui corrigé sur le bottom sheet d'upload audio des
+      // wirds, généralisé à tous les formulaires plein écran de l'app.
+      body: SafeArea(
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.all(20),
+          child: Form(
+            key: _formKey,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                TextFormField(
+                  controller: _arabicController,
+                  decoration: InputDecoration(
+                      labelText: l10n.figureCitationFormArabicLabel),
+                  textDirection: TextDirection.rtl,
+                  maxLines: 3,
+                ),
                 const SizedBox(height: 16),
-                Text(_errorMessage!, style: const TextStyle(color: Colors.redAccent)),
+                TextFormField(
+                  controller: _frenchController,
+                  decoration: InputDecoration(
+                      labelText: l10n.figureCitationFormFrenchLabel),
+                  maxLines: 3,
+                  validator: (value) =>
+                      (value == null || value.trim().isEmpty) &&
+                              _arabicController.text.trim().isEmpty
+                          ? l10n.figureCitationFormTextRequired
+                          : null,
+                ),
+                const SizedBox(height: 16),
+                TextFormField(
+                  controller: _sourceController,
+                  decoration: InputDecoration(
+                      labelText: l10n.figureCitationFormSourceLabel),
+                  validator: (value) => (value == null || value.trim().isEmpty)
+                      ? l10n.figureCitationFormSourceRequired
+                      : null,
+                ),
+                if (_errorMessage != null) ...[
+                  const SizedBox(height: 16),
+                  Text(_errorMessage!,
+                      style: const TextStyle(color: Colors.redAccent)),
+                ],
+                const SizedBox(height: 24),
+                ElevatedButton(
+                  onPressed: _saving ? null : _submit,
+                  child: _saving
+                      ? const SizedBox(
+                          height: 18,
+                          width: 18,
+                          child: CircularProgressIndicator(
+                              strokeWidth: 2, color: Colors.white),
+                        )
+                      : Text(l10n.figureCitationFormSave),
+                ),
               ],
-              const SizedBox(height: 24),
-              ElevatedButton(
-                onPressed: _saving ? null : _submit,
-                child: _saving
-                    ? const SizedBox(
-                        height: 18,
-                        width: 18,
-                        child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
-                      )
-                    : Text(l10n.figureCitationFormSave),
-              ),
-            ],
+            ),
           ),
         ),
       ),

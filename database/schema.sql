@@ -563,6 +563,41 @@ create table public.wird_recitations (
 comment on column public.wird_recitations.content_status is
   'brouillon = audio non validé par un moqaddam, jamais servi au disciple (cf. §8 document de projet, même principe que figures.content_status).';
 
+-- Valide une récitation ET démote l'ancienne récitation par défaut du
+-- même pilier (s'il y en a une) en une seule transaction serveur —
+-- garantit qu'au plus une ligne valide+is_default=true existe par
+-- wird_step_id, condition dont dépend fetchRecitationsForWird côté
+-- client. security invoker : les deux UPDATE restent soumis à
+-- wird_recitations_admin_update, donc no-op pour un appelant non-admin.
+create or replace function public.validate_wird_recitation(p_recitation_id uuid)
+returns void
+language plpgsql
+security invoker
+set search_path = public
+as $$
+declare
+  v_wird_step_id uuid;
+begin
+  select wird_step_id into v_wird_step_id
+    from public.wird_recitations where id = p_recitation_id;
+  if v_wird_step_id is null then return; end if;
+
+  update public.wird_recitations
+    set is_default = false
+    where wird_step_id = v_wird_step_id
+      and content_status = 'valide' and is_default = true
+      and id <> p_recitation_id;
+
+  update public.wird_recitations
+    set content_status = 'valide', is_default = true,
+        validated_by = (select auth.uid()), validated_at = now()
+    where id = p_recitation_id;
+end;
+$$;
+
+revoke all on function public.validate_wird_recitation(uuid) from public;
+grant execute on function public.validate_wird_recitation(uuid) to authenticated;
+
 create table public.wird_completions (
   id uuid primary key default gen_random_uuid(),
   user_id uuid not null references auth.users(id) on delete cascade,
@@ -1101,6 +1136,8 @@ create policy wird_recitations_admin_write on public.wird_recitations
   for insert with check (public.is_admin((select auth.uid())));
 create policy wird_recitations_admin_update on public.wird_recitations
   for update using (public.is_admin((select auth.uid())));
+create policy wird_recitations_admin_delete on public.wird_recitations
+  for delete using (public.is_admin((select auth.uid())));
 
 -- Laisse volontairement passer les lignes "brouillon" pour un compte admin
 -- (nécessaire pour un futur back-office de relecture) — l'app filtre malgré
@@ -1387,8 +1424,12 @@ create policy post_media_owner_delete on storage.objects
 -- répliquent exactement la condition de wird_recitations.content_status en
 -- reliant par le chemin (docs/decision-gestion-audio-wirds.md §3).
 
-insert into storage.buckets (id, name, public)
-values ('wird-audio', 'wird-audio', false);
+-- file_size_limit généreux (20 Mo) en garde-fou uniquement — pas de
+-- allowed_mime_types : le type MIME réel d'un .m4a/.aac varie trop selon
+-- la plateforme d'enregistrement pour contraindre sans faux rejets ; le
+-- filtrage par extension se fait côté client (WirdAudioPickerService).
+insert into storage.buckets (id, name, public, file_size_limit)
+values ('wird-audio', 'wird-audio', false, 20971520);
 
 create policy wird_audio_read_valid_or_admin on storage.objects
   for select using (
@@ -1407,6 +1448,9 @@ create policy wird_audio_admin_write on storage.objects
 
 create policy wird_audio_admin_update on storage.objects
   for update using (bucket_id = 'wird-audio' and public.is_admin((select auth.uid())));
+
+create policy wird_audio_admin_delete on storage.objects
+  for delete using (bucket_id = 'wird-audio' and public.is_admin((select auth.uid())));
 
 -- ============================================================================
 -- 12. INDEX SUR CLÉS ÉTRANGÈRES (performance)

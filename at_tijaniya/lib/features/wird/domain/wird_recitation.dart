@@ -95,9 +95,69 @@ class WirdRecitationDraft {
       contentVersion: row['content_version'] as int,
       durationSeconds: row['duration_seconds'] as int?,
       wirdNameFrench: wird['name_fr'] as String,
-      pillarLabel: (step['transliteration'] as String?) ?? (step['arabic_text'] as String),
+      pillarLabel: (step['transliteration'] as String?) ??
+          (step['arabic_text'] as String),
     );
   }
+}
+
+/// Une ligne `wird_recitations` complète, tout statut confondu — pour
+/// l'écran de gestion admin par pilier (`WirdRecitationsManagementScreen`).
+/// Distincte de [WirdRecitation] (disciple, toujours valide+is_default
+/// implicite) et de [WirdRecitationDraft] (brouillons à plat, tous wirds
+/// confondus) : porte [wirdStepId], nécessaire ici pour uploader/démoter
+/// au bon pilier.
+class WirdRecitationEntry {
+  const WirdRecitationEntry({
+    required this.id,
+    required this.wirdStepId,
+    required this.reciterName,
+    required this.audioPath,
+    required this.contentVersion,
+    required this.contentStatus,
+    required this.isDefault,
+    this.durationSeconds,
+  });
+
+  final String id;
+  final String wirdStepId;
+  final String reciterName;
+  final String audioPath;
+  final int contentVersion;
+
+  /// 'brouillon' | 'valide' — voir la contrainte `check` de la colonne en base.
+  final String contentStatus;
+  final bool isDefault;
+  final int? durationSeconds;
+
+  factory WirdRecitationEntry.fromRow(Map<String, dynamic> row) {
+    return WirdRecitationEntry(
+      id: row['id'] as String,
+      wirdStepId: row['wird_step_id'] as String,
+      reciterName: row['reciter_name'] as String,
+      audioPath: row['audio_path'] as String,
+      contentVersion: row['content_version'] as int,
+      contentStatus: row['content_status'] as String,
+      isDefault: row['is_default'] as bool,
+      durationSeconds: row['duration_seconds'] as int?,
+    );
+  }
+}
+
+/// Toutes les récitations d'un même pilier (`wird_step`), triées et prêtes
+/// à afficher dans une section de `WirdRecitationsManagementScreen`.
+/// [orderIndex] permet l'association avec `Wird.pillars[orderIndex - 1]`
+/// (même convention que `buildRecitationsByPillarIndex`).
+class WirdStepRecitations {
+  const WirdStepRecitations({
+    required this.wirdStepId,
+    required this.orderIndex,
+    required this.recitations,
+  });
+
+  final String wirdStepId;
+  final int orderIndex;
+  final List<WirdRecitationEntry> recitations;
 }
 
 /// État de disponibilité audio d'un pilier, tel qu'exposé à l'écran "Guide

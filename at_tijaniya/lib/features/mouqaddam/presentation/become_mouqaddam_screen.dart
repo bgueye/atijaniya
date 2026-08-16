@@ -24,32 +24,41 @@ class BecomeMouqaddamScreen extends ConsumerWidget {
 
     return Scaffold(
       appBar: AppBar(title: Text(l10n.mouqaddamBecomeTitle)),
-      body: requestAsync.when(
-        loading: () => const Center(child: CircularProgressIndicator(color: AppColors.emerald)),
-        error: (error, stackTrace) => Center(
-          child: Padding(
-            padding: const EdgeInsets.all(24),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                const Icon(Icons.wifi_off, color: AppColors.bronze, size: 32),
-                const SizedBox(height: 12),
-                Text(l10n.mouqaddamLoadError, textAlign: TextAlign.center, style: const TextStyle(color: AppColors.bronze)),
-                const SizedBox(height: 12),
-                OutlinedButton(
-                  onPressed: () => ref.invalidate(myLatestSponsorshipRequestProvider),
-                  child: Text(l10n.mouqaddamRetry),
-                ),
-              ],
+      // `SafeArea` : évite que le bouton Enregistrer/Annuler se retrouve
+      // masqué sous la barre de navigation Android (3 boutons).
+      body: SafeArea(
+        child: requestAsync.when(
+          loading: () => const Center(
+              child: CircularProgressIndicator(color: AppColors.emerald)),
+          error: (error, stackTrace) => Center(
+            child: Padding(
+              padding: const EdgeInsets.all(24),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Icon(Icons.wifi_off, color: AppColors.bronze, size: 32),
+                  const SizedBox(height: 12),
+                  Text(l10n.mouqaddamLoadError,
+                      textAlign: TextAlign.center,
+                      style: const TextStyle(color: AppColors.bronze)),
+                  const SizedBox(height: 12),
+                  OutlinedButton(
+                    onPressed: () =>
+                        ref.invalidate(myLatestSponsorshipRequestProvider),
+                    child: Text(l10n.mouqaddamRetry),
+                  ),
+                ],
+              ),
             ),
           ),
+          data: (request) {
+            if (request != null &&
+                request.status == SponsorshipRequestStatus.pending) {
+              return _PendingRequestView(request: request, l10n: l10n);
+            }
+            return _RequestForm(previousRequest: request, l10n: l10n);
+          },
         ),
-        data: (request) {
-          if (request != null && request.status == SponsorshipRequestStatus.pending) {
-            return _PendingRequestView(request: request, l10n: l10n);
-          }
-          return _RequestForm(previousRequest: request, l10n: l10n);
-        },
       ),
     );
   }
@@ -68,17 +77,22 @@ class _PendingRequestView extends ConsumerWidget {
         title: Text(l10n.mouqaddamPendingCancelConfirmTitle),
         content: Text(l10n.mouqaddamPendingCancelConfirmBody),
         actions: [
-          TextButton(onPressed: () => Navigator.of(context).pop(false), child: Text(l10n.profileCancel)),
+          TextButton(
+              onPressed: () => Navigator.of(context).pop(false),
+              child: Text(l10n.profileCancel)),
           TextButton(
             onPressed: () => Navigator.of(context).pop(true),
-            child: Text(l10n.mouqaddamPendingCancelConfirmAction, style: const TextStyle(color: Colors.redAccent)),
+            child: Text(l10n.mouqaddamPendingCancelConfirmAction,
+                style: const TextStyle(color: Colors.redAccent)),
           ),
         ],
       ),
     );
     if (confirmed != true) return;
     try {
-      await ref.read(mouqaddamRepositoryProvider).cancelMyPendingRequest(request.id);
+      await ref
+          .read(mouqaddamRepositoryProvider)
+          .cancelMyPendingRequest(request.id);
       ref.invalidate(myLatestSponsorshipRequestProvider);
     } catch (_) {
       if (context.mounted) {
@@ -104,18 +118,26 @@ class _PendingRequestView extends ConsumerWidget {
                 children: [
                   Row(
                     children: [
-                      const Icon(Icons.hourglass_top_outlined, color: AppColors.gold),
+                      const Icon(Icons.hourglass_top_outlined,
+                          color: AppColors.gold),
                       const SizedBox(width: 12),
-                      Text(l10n.mouqaddamPendingTitle, style: Theme.of(context).textTheme.titleMedium),
+                      Text(l10n.mouqaddamPendingTitle,
+                          style: Theme.of(context).textTheme.titleMedium),
                     ],
                   ),
                   const SizedBox(height: 16),
-                  Text(l10n.mouqaddamPendingSponsorLabel, style: const TextStyle(color: AppColors.bronze, fontSize: 13)),
-                  Text(request.sponsorName ?? '—', style: const TextStyle(fontSize: 16)),
+                  Text(l10n.mouqaddamPendingSponsorLabel,
+                      style: const TextStyle(
+                          color: AppColors.bronze, fontSize: 13)),
+                  Text(request.sponsorName ?? '—',
+                      style: const TextStyle(fontSize: 16)),
                   if (request.ijazaYear != null) ...[
                     const SizedBox(height: 12),
-                    Text(l10n.mouqaddamYearFieldLabel, style: const TextStyle(color: AppColors.bronze, fontSize: 13)),
-                    Text('${request.ijazaYear}', style: const TextStyle(fontSize: 16)),
+                    Text(l10n.mouqaddamYearFieldLabel,
+                        style: const TextStyle(
+                            color: AppColors.bronze, fontSize: 13)),
+                    Text('${request.ijazaYear}',
+                        style: const TextStyle(fontSize: 16)),
                   ],
                 ],
               ),
@@ -160,7 +182,9 @@ class _RequestFormState extends ConsumerState<_RequestForm> {
     final selected = await Navigator.of(context).push<AvailableSponsor>(
       MaterialPageRoute(builder: (_) => const SearchSponsorScreen()),
     );
-    if (selected != null && mounted) setState(() => _selectedSponsor = selected);
+    if (selected != null && mounted) {
+      setState(() => _selectedSponsor = selected);
+    }
   }
 
   Future<void> _submit() async {
@@ -206,17 +230,23 @@ class _RequestFormState extends ConsumerState<_RequestForm> {
                   children: [
                     const Icon(Icons.info_outline, color: AppColors.bronze),
                     const SizedBox(width: 12),
-                    Expanded(child: Text(l10n.mouqaddamIntro, style: const TextStyle(color: AppColors.ink, fontSize: 15))),
+                    Expanded(
+                        child: Text(l10n.mouqaddamIntro,
+                            style: const TextStyle(
+                                color: AppColors.ink, fontSize: 15))),
                   ],
                 ),
               ),
             ),
-            if (widget.previousRequest?.status == SponsorshipRequestStatus.rejected) ...[
+            if (widget.previousRequest?.status ==
+                SponsorshipRequestStatus.rejected) ...[
               const SizedBox(height: 16),
-              Text(l10n.mouqaddamRejectedNote, style: const TextStyle(color: Colors.redAccent)),
+              Text(l10n.mouqaddamRejectedNote,
+                  style: const TextStyle(color: Colors.redAccent)),
             ],
             const SizedBox(height: 24),
-            Text(l10n.mouqaddamSelectedSponsorLabel, style: const TextStyle(color: AppColors.bronze, fontSize: 13)),
+            Text(l10n.mouqaddamSelectedSponsorLabel,
+                style: const TextStyle(color: AppColors.bronze, fontSize: 13)),
             const SizedBox(height: 4),
             Text(
               _selectedSponsor?.displayName ?? l10n.mouqaddamNoSponsorChosen,
@@ -226,24 +256,30 @@ class _RequestFormState extends ConsumerState<_RequestForm> {
             OutlinedButton.icon(
               onPressed: _chooseSponsor,
               icon: const Icon(Icons.search, size: 18),
-              label: Text(_selectedSponsor == null ? l10n.mouqaddamChooseSponsorButton : l10n.mouqaddamChangeSponsorButton),
+              label: Text(_selectedSponsor == null
+                  ? l10n.mouqaddamChooseSponsorButton
+                  : l10n.mouqaddamChangeSponsorButton),
             ),
             const SizedBox(height: 16),
             TextFormField(
               controller: _yearController,
-              decoration: InputDecoration(labelText: l10n.mouqaddamYearFieldLabel),
+              decoration:
+                  InputDecoration(labelText: l10n.mouqaddamYearFieldLabel),
               keyboardType: TextInputType.number,
               validator: (value) {
                 final text = value?.trim() ?? '';
                 if (text.isEmpty) return null;
                 final year = int.tryParse(text);
-                if (year == null || year < 1200 || year > 2100) return l10n.mouqaddamYearInvalid;
+                if (year == null || year < 1200 || year > 2100) {
+                  return l10n.mouqaddamYearInvalid;
+                }
                 return null;
               },
             ),
             if (_errorMessage != null) ...[
               const SizedBox(height: 16),
-              Text(_errorMessage!, style: const TextStyle(color: Colors.redAccent)),
+              Text(_errorMessage!,
+                  style: const TextStyle(color: Colors.redAccent)),
             ],
             const SizedBox(height: 24),
             ElevatedButton(
@@ -252,7 +288,8 @@ class _RequestFormState extends ConsumerState<_RequestForm> {
                   ? const SizedBox(
                       height: 18,
                       width: 18,
-                      child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
+                      child: CircularProgressIndicator(
+                          strokeWidth: 2, color: Colors.white),
                     )
                   : Text(l10n.mouqaddamSubmitButton),
             ),

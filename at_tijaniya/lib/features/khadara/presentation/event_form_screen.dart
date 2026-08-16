@@ -113,7 +113,8 @@ class _EventFormScreenState extends ConsumerState<EventFormScreen> {
       initialTime: TimeOfDay.fromDateTime(_startsAt ?? DateTime.now()),
     );
     if (time == null || !mounted) return;
-    setState(() => _startsAt = DateTime(date.year, date.month, date.day, time.hour, time.minute));
+    setState(() => _startsAt =
+        DateTime(date.year, date.month, date.day, time.hour, time.minute));
   }
 
   Future<void> _pickEndsAt() async {
@@ -126,10 +127,12 @@ class _EventFormScreenState extends ConsumerState<EventFormScreen> {
     if (date == null || !mounted) return;
     final time = await showTimePicker(
       context: context,
-      initialTime: TimeOfDay.fromDateTime(_endsAt ?? _startsAt ?? DateTime.now()),
+      initialTime:
+          TimeOfDay.fromDateTime(_endsAt ?? _startsAt ?? DateTime.now()),
     );
     if (time == null || !mounted) return;
-    setState(() => _endsAt = DateTime(date.year, date.month, date.day, time.hour, time.minute));
+    setState(() => _endsAt =
+        DateTime(date.year, date.month, date.day, time.hour, time.minute));
   }
 
   Future<void> _submit() async {
@@ -229,12 +232,14 @@ class _EventFormScreenState extends ConsumerState<EventFormScreen> {
 
   Widget _buildImagePicker(AppLocalizations l10n) {
     final hasPickedImage = _pickedImageBytes != null;
-    final hasExistingImage = !hasPickedImage && !_removeImage && _existingImageUrl != null;
+    final hasExistingImage =
+        !hasPickedImage && !_removeImage && _existingImageUrl != null;
 
     Widget preview;
     if (hasPickedImage) {
       // Pas de hauteur fixe — voir la même remarque dans event_detail_screen.dart.
-      preview = Image.memory(_pickedImageBytes!, width: double.infinity, fit: BoxFit.fitWidth);
+      preview = Image.memory(_pickedImageBytes!,
+          width: double.infinity, fit: BoxFit.fitWidth);
     } else if (hasExistingImage) {
       preview = Image.network(
         _existingImageUrl!,
@@ -259,7 +264,9 @@ class _EventFormScreenState extends ConsumerState<EventFormScreen> {
               child: OutlinedButton.icon(
                 onPressed: _pickImage,
                 icon: const Icon(Icons.image_outlined),
-                label: Text(hasPickedImage || hasExistingImage ? l10n.imagePickerChange : l10n.imagePickerAdd),
+                label: Text(hasPickedImage || hasExistingImage
+                    ? l10n.imagePickerChange
+                    : l10n.imagePickerAdd),
               ),
             ),
             if (hasPickedImage || hasExistingImage) ...[
@@ -283,104 +290,137 @@ class _EventFormScreenState extends ConsumerState<EventFormScreen> {
     final isEdit = widget.event != null;
 
     return Scaffold(
-      appBar: AppBar(title: Text(isEdit ? l10n.eventFormEditTitle : l10n.eventFormCreateTitle)),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(20),
-        child: Form(
-          key: _formKey,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              TextFormField(
-                controller: _titleController,
-                decoration: InputDecoration(labelText: l10n.eventFormTitleLabel),
-                validator: (value) =>
-                    (value == null || value.trim().isEmpty) ? l10n.eventFormTitleRequired : null,
-              ),
-              const SizedBox(height: 16),
-              TextFormField(
-                controller: _descriptionController,
-                decoration: InputDecoration(labelText: l10n.eventFormDescriptionLabel),
-                maxLines: 4,
-              ),
-              const SizedBox(height: 16),
-              Text(l10n.eventFormImageLabel, style: const TextStyle(color: AppColors.bronze, fontSize: 13)),
-              const SizedBox(height: 6),
-              _buildImagePicker(l10n),
-              const SizedBox(height: 16),
-              DropdownButtonFormField<KhadaraEventType>(
-                initialValue: _type,
-                decoration: InputDecoration(labelText: l10n.eventFormTypeLabel),
-                items: [
-                  for (final type in KhadaraEventType.values)
-                    DropdownMenuItem(value: type, child: Text(khadaraEventTypeLabel(type, l10n))),
-                ],
-                onChanged: (value) => setState(() => _type = value ?? KhadaraEventType.hadra),
-              ),
-              const SizedBox(height: 16),
-              Text(l10n.eventFormStartsAtLabel, style: const TextStyle(color: AppColors.bronze, fontSize: 13)),
-              const SizedBox(height: 6),
-              OutlinedButton.icon(
-                onPressed: _pickStartsAt,
-                icon: const Icon(Icons.event_outlined),
-                label: Text(_startsAt != null ? formatKhadaraDateTime(_startsAt!) : l10n.eventFormPickDateTime),
-              ),
-              const SizedBox(height: 16),
-              Text(l10n.eventFormEndsAtLabel, style: const TextStyle(color: AppColors.bronze, fontSize: 13)),
-              const SizedBox(height: 6),
-              Row(
-                children: [
-                  Expanded(
-                    child: OutlinedButton.icon(
-                      onPressed: _pickEndsAt,
-                      icon: const Icon(Icons.event_outlined),
-                      label: Text(_endsAt != null ? formatKhadaraDateTime(_endsAt!) : l10n.eventFormPickDateTime),
-                    ),
-                  ),
-                  if (_endsAt != null)
-                    IconButton(
-                      icon: const Icon(Icons.close, color: AppColors.bronze),
-                      onPressed: () => setState(() => _endsAt = null),
-                    ),
-                ],
-              ),
-              const SizedBox(height: 16),
-              if (isAdmin)
-                ref.watch(zawiyasProvider).when(
-                      loading: () => const LinearProgressIndicator(color: AppColors.emerald),
-                      error: (error, stackTrace) => Text(l10n.khadaraLoadError, style: const TextStyle(color: AppColors.bronze)),
-                      data: (list) => DropdownButtonFormField<String?>(
-                        initialValue: _zawiyaId,
-                        decoration: InputDecoration(labelText: l10n.eventFormZawiyaLabel),
-                        items: [
-                          const DropdownMenuItem<String?>(value: null, child: Text('—')),
-                          ...list.map((z) => DropdownMenuItem<String?>(value: z.id, child: Text(z.name))),
-                        ],
-                        onChanged: (value) => setState(() => _zawiyaId = value),
-                      ),
-                    )
-              else
+      appBar: AppBar(
+          title: Text(
+              isEdit ? l10n.eventFormEditTitle : l10n.eventFormCreateTitle)),
+      // `SafeArea` : évite que le bouton Enregistrer se retrouve masqué sous
+      // la barre de navigation Android (3 boutons).
+      body: SafeArea(
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.all(20),
+          child: Form(
+            key: _formKey,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
                 TextFormField(
-                  enabled: false,
-                  initialValue: myProfileAsync.valueOrNull?.zawiyaName ?? '—',
-                  decoration: InputDecoration(labelText: l10n.eventFormZawiyaLabel),
+                  controller: _titleController,
+                  decoration:
+                      InputDecoration(labelText: l10n.eventFormTitleLabel),
+                  validator: (value) => (value == null || value.trim().isEmpty)
+                      ? l10n.eventFormTitleRequired
+                      : null,
                 ),
-              if (_errorMessage != null) ...[
                 const SizedBox(height: 16),
-                Text(_errorMessage!, style: const TextStyle(color: Colors.redAccent)),
-              ],
-              const SizedBox(height: 24),
-              ElevatedButton(
-                onPressed: _saving ? null : _submit,
-                child: _saving
-                    ? const SizedBox(
-                        height: 18,
-                        width: 18,
-                        child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
+                TextFormField(
+                  controller: _descriptionController,
+                  decoration: InputDecoration(
+                      labelText: l10n.eventFormDescriptionLabel),
+                  maxLines: 4,
+                ),
+                const SizedBox(height: 16),
+                Text(l10n.eventFormImageLabel,
+                    style:
+                        const TextStyle(color: AppColors.bronze, fontSize: 13)),
+                const SizedBox(height: 6),
+                _buildImagePicker(l10n),
+                const SizedBox(height: 16),
+                DropdownButtonFormField<KhadaraEventType>(
+                  initialValue: _type,
+                  decoration:
+                      InputDecoration(labelText: l10n.eventFormTypeLabel),
+                  items: [
+                    for (final type in KhadaraEventType.values)
+                      DropdownMenuItem(
+                          value: type,
+                          child: Text(khadaraEventTypeLabel(type, l10n))),
+                  ],
+                  onChanged: (value) =>
+                      setState(() => _type = value ?? KhadaraEventType.hadra),
+                ),
+                const SizedBox(height: 16),
+                Text(l10n.eventFormStartsAtLabel,
+                    style:
+                        const TextStyle(color: AppColors.bronze, fontSize: 13)),
+                const SizedBox(height: 6),
+                OutlinedButton.icon(
+                  onPressed: _pickStartsAt,
+                  icon: const Icon(Icons.event_outlined),
+                  label: Text(_startsAt != null
+                      ? formatKhadaraDateTime(_startsAt!)
+                      : l10n.eventFormPickDateTime),
+                ),
+                const SizedBox(height: 16),
+                Text(l10n.eventFormEndsAtLabel,
+                    style:
+                        const TextStyle(color: AppColors.bronze, fontSize: 13)),
+                const SizedBox(height: 6),
+                Row(
+                  children: [
+                    Expanded(
+                      child: OutlinedButton.icon(
+                        onPressed: _pickEndsAt,
+                        icon: const Icon(Icons.event_outlined),
+                        label: Text(_endsAt != null
+                            ? formatKhadaraDateTime(_endsAt!)
+                            : l10n.eventFormPickDateTime),
+                      ),
+                    ),
+                    if (_endsAt != null)
+                      IconButton(
+                        icon: const Icon(Icons.close, color: AppColors.bronze),
+                        onPressed: () => setState(() => _endsAt = null),
+                      ),
+                  ],
+                ),
+                const SizedBox(height: 16),
+                if (isAdmin)
+                  ref.watch(zawiyasProvider).when(
+                        loading: () => const LinearProgressIndicator(
+                            color: AppColors.emerald),
+                        error: (error, stackTrace) => Text(
+                            l10n.khadaraLoadError,
+                            style: const TextStyle(color: AppColors.bronze)),
+                        data: (list) => DropdownButtonFormField<String?>(
+                          initialValue: _zawiyaId,
+                          decoration: InputDecoration(
+                              labelText: l10n.eventFormZawiyaLabel),
+                          items: [
+                            const DropdownMenuItem<String?>(
+                                value: null, child: Text('—')),
+                            ...list.map((z) => DropdownMenuItem<String?>(
+                                value: z.id, child: Text(z.name))),
+                          ],
+                          onChanged: (value) =>
+                              setState(() => _zawiyaId = value),
+                        ),
                       )
-                    : Text(l10n.eventFormSave),
-              ),
-            ],
+                else
+                  TextFormField(
+                    enabled: false,
+                    initialValue: myProfileAsync.valueOrNull?.zawiyaName ?? '—',
+                    decoration:
+                        InputDecoration(labelText: l10n.eventFormZawiyaLabel),
+                  ),
+                if (_errorMessage != null) ...[
+                  const SizedBox(height: 16),
+                  Text(_errorMessage!,
+                      style: const TextStyle(color: Colors.redAccent)),
+                ],
+                const SizedBox(height: 24),
+                ElevatedButton(
+                  onPressed: _saving ? null : _submit,
+                  child: _saving
+                      ? const SizedBox(
+                          height: 18,
+                          width: 18,
+                          child: CircularProgressIndicator(
+                              strokeWidth: 2, color: Colors.white),
+                        )
+                      : Text(l10n.eventFormSave),
+                ),
+              ],
+            ),
           ),
         ),
       ),

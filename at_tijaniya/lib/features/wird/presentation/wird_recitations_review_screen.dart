@@ -22,6 +22,7 @@ import '../../../core/theme/app_colors.dart';
 import '../../../l10n/app_localizations.dart';
 import '../domain/wird_recitation.dart';
 import 'wird_recitation_providers.dart';
+import 'wird_recitations_management_screen.dart';
 
 class WirdRecitationsReviewScreen extends ConsumerWidget {
   const WirdRecitationsReviewScreen({super.key});
@@ -32,9 +33,22 @@ class WirdRecitationsReviewScreen extends ConsumerWidget {
     final draftsAsync = ref.watch(draftWirdRecitationsProvider);
 
     return Scaffold(
-      appBar: AppBar(title: Text(l10n.wirdRecitationsReviewTitle)),
+      appBar: AppBar(
+        title: Text(l10n.wirdRecitationsReviewTitle),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.library_music_outlined),
+            tooltip: l10n.wirdRecitationsReviewManageButton,
+            onPressed: () => Navigator.of(context).push(
+              MaterialPageRoute(
+                  builder: (_) => const WirdRecitationsManagementScreen()),
+            ),
+          ),
+        ],
+      ),
       body: draftsAsync.when(
-        loading: () => const Center(child: CircularProgressIndicator(color: AppColors.emerald)),
+        loading: () => const Center(
+            child: CircularProgressIndicator(color: AppColors.emerald)),
         error: (error, stackTrace) => Center(
           child: Padding(
             padding: const EdgeInsets.all(24),
@@ -74,7 +88,8 @@ class WirdRecitationsReviewScreen extends ConsumerWidget {
             padding: const EdgeInsets.all(16),
             itemCount: drafts.length,
             separatorBuilder: (_, __) => const SizedBox(height: 12),
-            itemBuilder: (context, i) => _DraftCard(draft: drafts[i], l10n: l10n),
+            itemBuilder: (context, i) =>
+                _DraftCard(draft: drafts[i], l10n: l10n),
           );
         },
       ),
@@ -120,14 +135,19 @@ class _DraftCardState extends ConsumerState<_DraftCard> {
       _previewError = null;
     });
     try {
-      final bytes = await ref.read(wirdRecitationRepositoryProvider).downloadAudioBytes(widget.draft.audioPath);
+      final bytes = await ref
+          .read(wirdRecitationRepositoryProvider)
+          .downloadAudioBytes(widget.draft.audioPath);
       final dir = await getTemporaryDirectory();
       final file = File('${dir.path}/wird_recitation_review_preview.audio');
       await file.writeAsBytes(bytes, flush: true);
       await _previewPlayer.setFilePath(file.path);
       await _previewPlayer.play();
     } catch (_) {
-      if (mounted) setState(() => _previewError = widget.l10n.wirdRecitationsReviewPreviewError);
+      if (mounted) {
+        setState(
+            () => _previewError = widget.l10n.wirdRecitationsReviewPreviewError);
+      }
     } finally {
       if (mounted) setState(() => _isLoadingPreview = false);
     }
@@ -141,23 +161,70 @@ class _DraftCardState extends ConsumerState<_DraftCard> {
         title: Text(l10n.wirdRecitationsReviewConfirmTitle),
         content: Text(l10n.wirdRecitationsReviewConfirmBody),
         actions: [
-          TextButton(onPressed: () => Navigator.of(context).pop(false), child: Text(l10n.wirdRecitationsReviewCancel)),
+          TextButton(
+              onPressed: () => Navigator.of(context).pop(false),
+              child: Text(l10n.wirdRecitationsReviewCancel)),
           TextButton(
             onPressed: () => Navigator.of(context).pop(true),
-            child: Text(l10n.wirdRecitationsReviewConfirmAction, style: const TextStyle(color: AppColors.emerald)),
+            child: Text(l10n.wirdRecitationsReviewConfirmAction,
+                style: const TextStyle(color: AppColors.emerald)),
           ),
         ],
       ),
     );
     if (confirmed != true || !context.mounted) return;
 
-    await ref.read(wirdRecitationRepositoryProvider).validateRecitation(widget.draft.id);
+    await ref
+        .read(wirdRecitationRepositoryProvider)
+        .validateRecitation(widget.draft.id);
     ref.invalidate(draftWirdRecitationsProvider);
 
     if (!context.mounted) return;
     ScaffoldMessenger.of(context)
       ..hideCurrentSnackBar()
-      ..showSnackBar(SnackBar(content: Text(l10n.wirdRecitationsReviewSuccess)));
+      ..showSnackBar(
+          SnackBar(content: Text(l10n.wirdRecitationsReviewSuccess)));
+  }
+
+  Future<void> _confirmAndDelete(BuildContext context) async {
+    final l10n = widget.l10n;
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(l10n.wirdRecitationsReviewDeleteConfirmTitle),
+        content: Text(l10n.wirdRecitationsReviewDeleteConfirmBody),
+        actions: [
+          TextButton(
+              onPressed: () => Navigator.of(context).pop(false),
+              child: Text(l10n.wirdRecitationsReviewCancel)),
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(true),
+            child: Text(l10n.wirdRecitationsReviewDelete,
+                style: const TextStyle(color: AppColors.bronze)),
+          ),
+        ],
+      ),
+    );
+    if (confirmed != true || !context.mounted) return;
+
+    try {
+      await ref.read(wirdRecitationRepositoryProvider).deleteRecitation(
+            recitationId: widget.draft.id,
+            audioPath: widget.draft.audioPath,
+          );
+      ref.invalidate(draftWirdRecitationsProvider);
+      if (!context.mounted) return;
+      ScaffoldMessenger.of(context)
+        ..hideCurrentSnackBar()
+        ..showSnackBar(
+            SnackBar(content: Text(l10n.wirdRecitationsReviewDeleteSuccess)));
+    } catch (_) {
+      if (!context.mounted) return;
+      ScaffoldMessenger.of(context)
+        ..hideCurrentSnackBar()
+        ..showSnackBar(
+            SnackBar(content: Text(l10n.wirdRecitationsReviewDeleteError)));
+    }
   }
 
   @override
@@ -177,7 +244,8 @@ class _DraftCardState extends ConsumerState<_DraftCard> {
                       height: 24,
                       child: Padding(
                         padding: EdgeInsets.all(4),
-                        child: CircularProgressIndicator(strokeWidth: 2, color: AppColors.emerald),
+                        child: CircularProgressIndicator(
+                            strokeWidth: 2, color: AppColors.emerald),
                       ),
                     )
                   : StreamBuilder<PlayerState>(
@@ -186,28 +254,43 @@ class _DraftCardState extends ConsumerState<_DraftCard> {
                         final playing = snapshot.data?.playing ?? false;
                         return IconButton(
                           icon: Icon(
-                            playing ? Icons.pause_circle_filled : Icons.play_circle_fill,
+                            playing
+                                ? Icons.pause_circle_filled
+                                : Icons.play_circle_fill,
                             color: AppColors.emerald,
                           ),
                           onPressed: _togglePreview,
                         );
                       },
                     ),
-              title: Text('${draft.wirdNameFrench} — ${draft.pillarLabel}', style: const TextStyle(fontWeight: FontWeight.w500)),
+              title: Text('${draft.wirdNameFrench} — ${draft.pillarLabel}',
+                  style: const TextStyle(fontWeight: FontWeight.w500)),
               subtitle: Text(draft.reciterName),
             ),
             if (_previewError != null)
               Padding(
                 padding: const EdgeInsets.only(bottom: 8),
-                child: Text(_previewError!, style: const TextStyle(color: AppColors.bronze, fontSize: 12)),
+                child: Text(_previewError!,
+                    style:
+                        const TextStyle(color: AppColors.bronze, fontSize: 12)),
               ),
-            Align(
-              alignment: Alignment.centerRight,
-              child: OutlinedButton.icon(
-                onPressed: () => _confirmAndValidate(context),
-                icon: const Icon(Icons.check_circle_outline, size: 18),
-                label: Text(widget.l10n.wirdRecitationsReviewValidate),
-              ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                TextButton.icon(
+                  onPressed: () => _confirmAndDelete(context),
+                  icon: const Icon(Icons.delete_outline,
+                      size: 18, color: AppColors.bronze),
+                  label: Text(widget.l10n.wirdRecitationsReviewDelete,
+                      style: const TextStyle(color: AppColors.bronze)),
+                ),
+                const SizedBox(width: 8),
+                OutlinedButton.icon(
+                  onPressed: () => _confirmAndValidate(context),
+                  icon: const Icon(Icons.check_circle_outline, size: 18),
+                  label: Text(widget.l10n.wirdRecitationsReviewValidate),
+                ),
+              ],
             ),
           ],
         ),

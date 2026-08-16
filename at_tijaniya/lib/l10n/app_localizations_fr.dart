@@ -339,6 +339,96 @@ class AppLocalizationsFr extends AppLocalizations {
       'Lecture impossible — vérifiez votre connexion.';
 
   @override
+  String get wirdRecitationsReviewDelete => 'Supprimer';
+
+  @override
+  String get wirdRecitationsReviewDeleteConfirmTitle =>
+      'Supprimer ce brouillon ?';
+
+  @override
+  String get wirdRecitationsReviewDeleteConfirmBody =>
+      'Cette action est définitive.';
+
+  @override
+  String get wirdRecitationsReviewDeleteError =>
+      'Suppression impossible — vérifiez votre connexion.';
+
+  @override
+  String get wirdRecitationsReviewDeleteSuccess => 'Brouillon supprimé.';
+
+  @override
+  String get wirdRecitationsReviewManageButton =>
+      'Gérer tous les enregistrements';
+
+  @override
+  String get wirdRecitationsManageTitle => 'Gestion des récitations audio';
+
+  @override
+  String get wirdRecitationsManageLoadError =>
+      'Impossible de charger les récitations.';
+
+  @override
+  String get wirdRecitationsManageEmpty =>
+      'Aucun enregistrement pour ce pilier.';
+
+  @override
+  String get wirdRecitationsManageStatusDraft => 'Brouillon';
+
+  @override
+  String get wirdRecitationsManageStatusValidated => 'Validé';
+
+  @override
+  String get wirdRecitationsManageAddButton => 'Ajouter un enregistrement';
+
+  @override
+  String get wirdRecitationsManageDeleteConfirmTitle =>
+      'Supprimer cet enregistrement ?';
+
+  @override
+  String get wirdRecitationsManageDeleteConfirmBodyDraft =>
+      'Ce brouillon sera définitivement supprimé.';
+
+  @override
+  String get wirdRecitationsManageDeleteConfirmBodyLive =>
+      'Cet audio est actuellement celui entendu par les disciples — il deviendra indisponible pour ce pilier jusqu\'à validation d\'un nouvel enregistrement.';
+
+  @override
+  String get wirdRecitationsManageDeleteError =>
+      'Suppression impossible — vérifiez votre connexion.';
+
+  @override
+  String get wirdRecitationsManageDeleteSuccess => 'Enregistrement supprimé.';
+
+  @override
+  String get wirdRecitationsManageUploadReciterLabel => 'Nom du récitant';
+
+  @override
+  String get wirdRecitationsManageUploadPickFile => 'Choisir un fichier audio';
+
+  @override
+  String wirdRecitationsManageUploadFileChosen(String fileName) {
+    return 'Fichier sélectionné : $fileName';
+  }
+
+  @override
+  String get wirdRecitationsManageUploadHint =>
+      'Format recommandé : AAC, mono, 64 kbit/s.';
+
+  @override
+  String get wirdRecitationsManageUploadSubmit => 'Téléverser';
+
+  @override
+  String get wirdRecitationsManageUploadError =>
+      'Téléversement impossible — réessayez.';
+
+  @override
+  String get wirdRecitationsManageUploadSuccess =>
+      'Enregistrement ajouté (brouillon).';
+
+  @override
+  String get wirdRecitationsManageValidate => 'Valider';
+
+  @override
   String get tariqaConditionsCardTitle => 'Conditions de la Tariqa';
 
   @override

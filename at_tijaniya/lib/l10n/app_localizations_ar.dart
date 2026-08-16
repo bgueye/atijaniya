@@ -333,6 +333,90 @@ class AppLocalizationsAr extends AppLocalizations {
       'تعذّر التشغيل — تحقّق من اتصالك.';
 
   @override
+  String get wirdRecitationsReviewDelete => 'حذف';
+
+  @override
+  String get wirdRecitationsReviewDeleteConfirmTitle =>
+      'هل تريد حذف هذه المسودة؟';
+
+  @override
+  String get wirdRecitationsReviewDeleteConfirmBody => 'هذا الإجراء نهائي.';
+
+  @override
+  String get wirdRecitationsReviewDeleteError =>
+      'تعذّر الحذف — تحقّق من اتصالك.';
+
+  @override
+  String get wirdRecitationsReviewDeleteSuccess => 'تم حذف المسودة.';
+
+  @override
+  String get wirdRecitationsReviewManageButton => 'إدارة جميع التسجيلات';
+
+  @override
+  String get wirdRecitationsManageTitle => 'إدارة التلاوات الصوتية';
+
+  @override
+  String get wirdRecitationsManageLoadError => 'تعذّر تحميل التلاوات.';
+
+  @override
+  String get wirdRecitationsManageEmpty => 'لا يوجد تسجيل لهذا الركن.';
+
+  @override
+  String get wirdRecitationsManageStatusDraft => 'مسودة';
+
+  @override
+  String get wirdRecitationsManageStatusValidated => 'تم التحقق';
+
+  @override
+  String get wirdRecitationsManageAddButton => 'إضافة تسجيل';
+
+  @override
+  String get wirdRecitationsManageDeleteConfirmTitle =>
+      'هل تريد حذف هذا التسجيل؟';
+
+  @override
+  String get wirdRecitationsManageDeleteConfirmBodyDraft =>
+      'سيتم حذف هذه المسودة نهائيًا.';
+
+  @override
+  String get wirdRecitationsManageDeleteConfirmBodyLive =>
+      'هذا الصوت هو الذي يسمعه المريدون حاليًا — سيصبح غير متاح لهذا الركن إلى حين التحقق من تسجيل جديد.';
+
+  @override
+  String get wirdRecitationsManageDeleteError =>
+      'تعذّر الحذف — تحقّق من اتصالك.';
+
+  @override
+  String get wirdRecitationsManageDeleteSuccess => 'تم حذف التسجيل.';
+
+  @override
+  String get wirdRecitationsManageUploadReciterLabel => 'اسم القارئ';
+
+  @override
+  String get wirdRecitationsManageUploadPickFile => 'اختيار ملف صوتي';
+
+  @override
+  String wirdRecitationsManageUploadFileChosen(String fileName) {
+    return 'الملف المختار: $fileName';
+  }
+
+  @override
+  String get wirdRecitationsManageUploadHint =>
+      'الصيغة الموصى بها: AAC، أحادي القناة، 64 kbit/s.';
+
+  @override
+  String get wirdRecitationsManageUploadSubmit => 'رفع';
+
+  @override
+  String get wirdRecitationsManageUploadError => 'تعذّر الرفع — أعد المحاولة.';
+
+  @override
+  String get wirdRecitationsManageUploadSuccess => 'تمت إضافة التسجيل (مسودة).';
+
+  @override
+  String get wirdRecitationsManageValidate => 'تحقّق';
+
+  @override
   String get tariqaConditionsCardTitle => 'شروط الطريقة';
 
   @override

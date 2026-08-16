@@ -69,7 +69,9 @@ class _ZawiyaFormScreenState extends ConsumerState<ZawiyaFormScreen> {
   String? _validateOptionalDouble(String? value, AppLocalizations l10n) {
     final trimmed = value?.trim() ?? '';
     if (trimmed.isEmpty) return null;
-    return double.tryParse(trimmed.replaceAll(',', '.')) == null ? l10n.zawiyaFormCoordinateInvalid : null;
+    return double.tryParse(trimmed.replaceAll(',', '.')) == null
+        ? l10n.zawiyaFormCoordinateInvalid
+        : null;
   }
 
   Future<void> _submit() async {
@@ -123,74 +125,93 @@ class _ZawiyaFormScreenState extends ConsumerState<ZawiyaFormScreen> {
     final isEdit = widget.zawiya != null;
 
     return Scaffold(
-      appBar: AppBar(title: Text(isEdit ? l10n.zawiyaFormEditTitle : l10n.zawiyaFormCreateTitle)),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(20),
-        child: Form(
-          key: _formKey,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              TextFormField(
-                controller: _nameController,
-                decoration: InputDecoration(labelText: l10n.zawiyaFormNameLabel),
-                validator: (value) =>
-                    (value == null || value.trim().isEmpty) ? l10n.zawiyaFormNameRequired : null,
-              ),
-              const SizedBox(height: 16),
-              TextFormField(
-                controller: _descriptionController,
-                decoration: InputDecoration(labelText: l10n.zawiyaFormDescriptionLabel),
-                maxLines: 4,
-              ),
-              const SizedBox(height: 16),
-              TextFormField(
-                controller: _addressController,
-                decoration: InputDecoration(labelText: l10n.zawiyaFormAddressLabel),
-              ),
-              const SizedBox(height: 16),
-              TextFormField(
-                controller: _contactController,
-                decoration: InputDecoration(labelText: l10n.zawiyaFormContactLabel),
-              ),
-              const SizedBox(height: 16),
-              Row(
-                children: [
-                  Expanded(
-                    child: TextFormField(
-                      controller: _latitudeController,
-                      decoration: InputDecoration(labelText: l10n.zawiyaFormLatitudeLabel),
-                      keyboardType: const TextInputType.numberWithOptions(decimal: true, signed: true),
-                      validator: (value) => _validateOptionalDouble(value, l10n),
-                    ),
-                  ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: TextFormField(
-                      controller: _longitudeController,
-                      decoration: InputDecoration(labelText: l10n.zawiyaFormLongitudeLabel),
-                      keyboardType: const TextInputType.numberWithOptions(decimal: true, signed: true),
-                      validator: (value) => _validateOptionalDouble(value, l10n),
-                    ),
-                  ),
-                ],
-              ),
-              if (_errorMessage != null) ...[
+      appBar: AppBar(
+          title: Text(
+              isEdit ? l10n.zawiyaFormEditTitle : l10n.zawiyaFormCreateTitle)),
+      // `SafeArea` : évite que le bouton Enregistrer se retrouve masqué sous
+      // la barre de navigation Android (3 boutons).
+      body: SafeArea(
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.all(20),
+          child: Form(
+            key: _formKey,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                TextFormField(
+                  controller: _nameController,
+                  decoration:
+                      InputDecoration(labelText: l10n.zawiyaFormNameLabel),
+                  validator: (value) => (value == null || value.trim().isEmpty)
+                      ? l10n.zawiyaFormNameRequired
+                      : null,
+                ),
                 const SizedBox(height: 16),
-                Text(_errorMessage!, style: const TextStyle(color: Colors.redAccent)),
+                TextFormField(
+                  controller: _descriptionController,
+                  decoration: InputDecoration(
+                      labelText: l10n.zawiyaFormDescriptionLabel),
+                  maxLines: 4,
+                ),
+                const SizedBox(height: 16),
+                TextFormField(
+                  controller: _addressController,
+                  decoration:
+                      InputDecoration(labelText: l10n.zawiyaFormAddressLabel),
+                ),
+                const SizedBox(height: 16),
+                TextFormField(
+                  controller: _contactController,
+                  decoration:
+                      InputDecoration(labelText: l10n.zawiyaFormContactLabel),
+                ),
+                const SizedBox(height: 16),
+                Row(
+                  children: [
+                    Expanded(
+                      child: TextFormField(
+                        controller: _latitudeController,
+                        decoration: InputDecoration(
+                            labelText: l10n.zawiyaFormLatitudeLabel),
+                        keyboardType: const TextInputType.numberWithOptions(
+                            decimal: true, signed: true),
+                        validator: (value) =>
+                            _validateOptionalDouble(value, l10n),
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: TextFormField(
+                        controller: _longitudeController,
+                        decoration: InputDecoration(
+                            labelText: l10n.zawiyaFormLongitudeLabel),
+                        keyboardType: const TextInputType.numberWithOptions(
+                            decimal: true, signed: true),
+                        validator: (value) =>
+                            _validateOptionalDouble(value, l10n),
+                      ),
+                    ),
+                  ],
+                ),
+                if (_errorMessage != null) ...[
+                  const SizedBox(height: 16),
+                  Text(_errorMessage!,
+                      style: const TextStyle(color: Colors.redAccent)),
+                ],
+                const SizedBox(height: 24),
+                ElevatedButton(
+                  onPressed: _saving ? null : _submit,
+                  child: _saving
+                      ? const SizedBox(
+                          height: 18,
+                          width: 18,
+                          child: CircularProgressIndicator(
+                              strokeWidth: 2, color: Colors.white),
+                        )
+                      : Text(l10n.zawiyaFormSave),
+                ),
               ],
-              const SizedBox(height: 24),
-              ElevatedButton(
-                onPressed: _saving ? null : _submit,
-                child: _saving
-                    ? const SizedBox(
-                        height: 18,
-                        width: 18,
-                        child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
-                      )
-                    : Text(l10n.zawiyaFormSave),
-              ),
-            ],
+            ),
           ),
         ),
       ),
