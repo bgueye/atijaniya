@@ -2062,3 +2062,44 @@ de premier niveau) — annulé immédiatement via "Annuler", figure vérifiée
 intacte en base après coup. Aucune donnée réelle affectée, mais à garder en
 tête : les coordonnées de tap ne sont pas interchangeables d'un écran à
 l'autre lors de tests manuels par capture d'écran.
+
+## Écran Tasbih (Lazim/Wazifa/Hadratou-l-Jouma) — cercle écrasé et écran non scrollable (2026-08-16)
+
+Signalé par le porteur de projet : sur les trois wirds, le cercle de
+comptage (`TasbihBeadsRing`) s'affichait mal et l'écran Tasbih n'était pas
+scrollable.
+
+**Cause identifiée** : `_TasbihBody` (`tasbih_screen.dart`) empilait tout
+son contenu (titre du pilier, translittération, texte arabe, note,
+`SegmentedButton`, compteur) dans un simple `Column` sans
+`SingleChildScrollView`, avec le compteur logé dans un `Expanded`. Le
+pilier "Intention" (`pillars[0]` des 3 wirds, ajouté le 12/08 — paragraphe
+complet, contrairement aux formules courtes des autres piliers) dépasse la
+hauteur d'écran sur la plupart des appareils : l'espace résiduel laissé à
+l'`Expanded` devenait insuffisant pour la taille fixe du cercle (240px
+manuel / 220px vocal, `SizedBox` dans `TasbihBeadsRing`), qui débordait/se
+faisait écraser au lieu de s'afficher pleinement — et sans scroll,
+impossible d'atteindre le reste du contenu.
+
+**Solutions possibles présentées au porteur de projet** : (a) rendre tout
+l'écran scrollable, cercle à taille fixe garantie ; (b) idem mais cercle
+toujours visible en premier (avant le texte du pilier) ; (c) texte du
+pilier 1 repliable ("voir plus"), mise en page actuelle conservée. Option
+(a) retenue — la plus simple et sûre, cohérente avec le reste de l'app,
+seul inconvénient : sur le pilier 1 il faut scroller pour atteindre le
+cercle.
+
+**Correctif** : `Padding` + `Column` remplacés par
+`SingleChildScrollView(padding: ...)` + `Column` ; `Expanded(child:
+Center(...))` autour du compteur remplacé par le compteur directement
+(plus de contrainte de hauteur imposée, taille fixe toujours respectée),
+espacement par `SizedBox` explicite avant/après au lieu du centrage
+automatique de l'`Expanded`.
+
+`flutter analyze` (0 issue) et `flutter test --concurrency=1` (137 tests,
+aucun test existant ne couvrait `TasbihScreen`) verts. **Validé en
+conditions réelles sur émulateur Android** sur les trois wirds : pilier 1
+de Lazim (texte long, cercle intact, scroll fonctionnel jusqu'au bouton
+"Pilier suivant"), pilier 2 de Lazim/Al-Fatiha (texte court, aucune
+régression, tout tient sans scroll), pilier 5/6 de Hadratou-l-Jouma (cible
+1600 répétitions, gros nombre affiché correctement).

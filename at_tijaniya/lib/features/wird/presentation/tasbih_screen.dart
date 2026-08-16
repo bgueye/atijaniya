@@ -63,7 +63,15 @@ class _TasbihBody extends StatelessWidget {
     final count = state.session.currentCount;
     final complete = controller.isPillarComplete;
 
-    return Padding(
+    // SingleChildScrollView plutôt qu'un Column simple : le pilier
+    // "Intention" (piliers[0], ajouté le 2026-08-12) est un paragraphe
+    // complet — bien plus haut que les formules courtes des autres piliers
+    // — qui dépasse la hauteur d'écran sur la plupart des appareils. Le
+    // cercle de comptage (TasbihBeadsRing) a une taille fixe (voir
+    // _ManualCounter/_VoiceCounter) : sans scroll, il se retrouvait écrasé
+    // dans l'espace résiduel laissé par un Expanded plutôt que de
+    // s'afficher à sa taille prévue.
+    return SingleChildScrollView(
       padding: const EdgeInsets.all(20),
       child: Column(
         children: [
@@ -101,22 +109,19 @@ class _TasbihBody extends StatelessWidget {
             selected: {state.session.mode},
             onSelectionChanged: (selection) => controller.setMode(selection.first),
           ),
-          const SizedBox(height: 8),
-          Expanded(
-            child: Center(
-              child: state.session.mode == TasbihMode.manual
-                  ? _ManualCounter(
-                      count: count,
-                      target: target,
-                      complete: complete,
-                      onTap: () {
-                        HapticFeedback.lightImpact();
-                        controller.increment();
-                      },
-                    )
-                  : _VoiceCounter(state: state, count: count, target: target, complete: complete, controller: controller),
-            ),
-          ),
+          const SizedBox(height: 24),
+          state.session.mode == TasbihMode.manual
+              ? _ManualCounter(
+                  count: count,
+                  target: target,
+                  complete: complete,
+                  onTap: () {
+                    HapticFeedback.lightImpact();
+                    controller.increment();
+                  },
+                )
+              : _VoiceCounter(state: state, count: count, target: target, complete: complete, controller: controller),
+          const SizedBox(height: 24),
           if (!complete)
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
