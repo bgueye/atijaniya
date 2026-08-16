@@ -2,8 +2,8 @@
   <circle cx="100" cy="100" r="94" fill="#F7F2E7"/>
   <circle cx="100" cy="100" r="94" fill="none" stroke="#0F3D2E" stroke-width="3"/>
   <circle cx="100" cy="100" r="82" fill="none" stroke="#C9A24B" stroke-width="1.5"/>
-  <g fill="none" stroke="#0F3D2E" stroke-width="2.5">
-    <polygon points="100,26 111,80 165,80 121,110 137,164 100,130 63,164 79,110 35,80 89,80"/>
+  <g fill="none" stroke="#0F3D2E" stroke-width="2.2">
+    <polygon points="100.00,26.00 111.48,72.28 152.33,47.67 127.72,88.52 174.00,100.00 127.72,111.48 152.33,152.33 111.48,127.72 100.00,174.00 88.52,127.72 47.67,152.33 72.28,111.48 26.00,100.00 72.28,88.52 47.67,47.67 88.52,72.28"/>
   </g>
-  <text x="100" y="107" text-anchor="middle" font-family="Amiri, serif" font-size="24" fill="#0F3D2E" font-weight="700">التجانية</text>
+  <text x="100" y="107" text-anchor="middle" font-family="Amiri, serif" font-size="22" fill="#0F3D2E" font-weight="700">التجانية</text>
 </svg>

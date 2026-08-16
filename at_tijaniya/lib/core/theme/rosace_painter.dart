@@ -20,16 +20,22 @@ class RosacePainter extends CustomPainter {
   final double strokeWidth;
 
   static const _starPoints = [
-    Offset(100, 20),
-    Offset(112, 80),
-    Offset(172, 80),
-    Offset(122, 112),
-    Offset(140, 172),
-    Offset(100, 132),
-    Offset(60, 172),
-    Offset(78, 112),
-    Offset(28, 80),
-    Offset(88, 80),
+    Offset(100.00, 26.00),
+    Offset(111.48, 72.28),
+    Offset(152.33, 47.67),
+    Offset(127.72, 88.52),
+    Offset(174.00, 100.00),
+    Offset(127.72, 111.48),
+    Offset(152.33, 152.33),
+    Offset(111.48, 127.72),
+    Offset(100.00, 174.00),
+    Offset(88.52, 127.72),
+    Offset(47.67, 152.33),
+    Offset(72.28, 111.48),
+    Offset(26.00, 100.00),
+    Offset(72.28, 88.52),
+    Offset(47.67, 47.67),
+    Offset(88.52, 72.28),
   ];
 
   @override
