@@ -364,6 +364,10 @@ class AppLocalizationsFr extends AppLocalizations {
   String get wirdRecitationsManageTitle => 'Gestion des récitations audio';
 
   @override
+  String get wirdRecitationsManageCardSubtitle =>
+      'Ajouter ou supprimer un audio de pilier';
+
+  @override
   String get wirdRecitationsManageLoadError =>
       'Impossible de charger les récitations.';
 

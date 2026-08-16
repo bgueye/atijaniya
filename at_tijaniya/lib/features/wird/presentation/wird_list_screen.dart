@@ -9,6 +9,7 @@ import '../data/wirds_content.dart';
 import '../domain/wird_models.dart';
 import 'free_wird_screen.dart';
 import 'wird_detail_screen.dart';
+import 'wird_recitations_management_screen.dart';
 import 'wird_recitations_review_screen.dart';
 
 /// Liste des Wirds — Lazim, Wazifa, Hadratou-l-Jouma, puis le Wird libre.
@@ -32,6 +33,8 @@ class WirdListScreen extends ConsumerWidget {
       children: [
         if (isAdmin) ...[
           _RecitationsReviewCard(l10n: l10n),
+          const SizedBox(height: 12),
+          _RecitationsManageCard(l10n: l10n),
           const SizedBox(height: 12),
         ],
         for (final wird in validatedWirds) ...[
@@ -64,6 +67,35 @@ class _RecitationsReviewCard extends StatelessWidget {
         trailing: const Icon(Icons.chevron_right, color: AppColors.bronze),
         onTap: () => Navigator.of(context).push(
           MaterialPageRoute(builder: (_) => const WirdRecitationsReviewScreen()),
+        ),
+      ),
+    );
+  }
+}
+
+/// Accès à `WirdRecitationsManagementScreen` — ajouter/supprimer un audio de
+/// pilier, par wird puis par pilier. Carte séparée de
+/// `_RecitationsReviewCard` plutôt qu'un simple lien caché dans l'app bar de
+/// cet écran (essayé en premier, jugé peu découvrable à l'usage) : les deux
+/// tâches (trier les brouillons à plat / gérer un pilier précis) restent
+/// distinctes, mais doivent être aussi visibles l'une que l'autre pour un
+/// admin.
+class _RecitationsManageCard extends StatelessWidget {
+  const _RecitationsManageCard({required this.l10n});
+
+  final AppLocalizations l10n;
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      child: ListTile(
+        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        leading: const Icon(Icons.library_music_outlined, color: AppColors.emerald),
+        title: Text(l10n.wirdRecitationsManageTitle, style: const TextStyle(fontWeight: FontWeight.w500)),
+        subtitle: Text(l10n.wirdRecitationsManageCardSubtitle, style: const TextStyle(color: AppColors.bronze)),
+        trailing: const Icon(Icons.chevron_right, color: AppColors.bronze),
+        onTap: () => Navigator.of(context).push(
+          MaterialPageRoute(builder: (_) => const WirdRecitationsManagementScreen()),
         ),
       ),
     );

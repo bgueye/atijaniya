@@ -752,6 +752,12 @@ abstract class AppLocalizations {
   /// **'Gestion des récitations audio'**
   String get wirdRecitationsManageTitle;
 
+  /// No description provided for @wirdRecitationsManageCardSubtitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ajouter ou supprimer un audio de pilier'**
+  String get wirdRecitationsManageCardSubtitle;
+
   /// No description provided for @wirdRecitationsManageLoadError.
   ///
   /// In fr, this message translates to:

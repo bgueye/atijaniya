@@ -119,6 +119,7 @@
   "wirdRecitationsReviewManageButton": "إدارة جميع التسجيلات",
 
   "wirdRecitationsManageTitle": "إدارة التلاوات الصوتية",
+  "wirdRecitationsManageCardSubtitle": "إضافة أو حذف تسجيل صوتي لركن",
   "wirdRecitationsManageLoadError": "تعذّر تحميل التلاوات.",
   "wirdRecitationsManageEmpty": "لا يوجد تسجيل لهذا الركن.",
   "wirdRecitationsManageStatusDraft": "مسودة",

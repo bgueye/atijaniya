@@ -119,6 +119,7 @@
   "wirdRecitationsReviewManageButton": "Gérer tous les enregistrements",
 
   "wirdRecitationsManageTitle": "Gestion des récitations audio",
+  "wirdRecitationsManageCardSubtitle": "Ajouter ou supprimer un audio de pilier",
   "wirdRecitationsManageLoadError": "Impossible de charger les récitations.",
   "wirdRecitationsManageEmpty": "Aucun enregistrement pour ce pilier.",
   "wirdRecitationsManageStatusDraft": "Brouillon",

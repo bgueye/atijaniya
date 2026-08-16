@@ -356,6 +356,10 @@ class AppLocalizationsAr extends AppLocalizations {
   String get wirdRecitationsManageTitle => 'إدارة التلاوات الصوتية';
 
   @override
+  String get wirdRecitationsManageCardSubtitle =>
+      'إضافة أو حذف تسجيل صوتي لركن';
+
+  @override
   String get wirdRecitationsManageLoadError => 'تعذّر تحميل التلاوات.';
 
   @override
