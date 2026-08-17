@@ -2103,3 +2103,71 @@ de Lazim (texte long, cercle intact, scroll fonctionnel jusqu'au bouton
 "Pilier suivant"), pilier 2 de Lazim/Al-Fatiha (texte court, aucune
 régression, tout tient sans scroll), pilier 5/6 de Hadratou-l-Jouma (cible
 1600 répétitions, gros nombre affiché correctement).
+
+## Carte "Figure de la semaine" sur l'accueil (2026-08-17)
+
+Demande du porteur de projet : une carte sur l'accueil mettant en avant une
+figure différente chaque semaine (photo, citation, date de ziara), avec la
+question ouverte "par qui/comment est-elle choisie ?" explicitement laissée
+à trancher.
+
+**État des lieux constaté avant de concevoir la fonctionnalité** (requête
+directe sur le projet live, le résumé du journal était périmé sur ce
+point) : 10 figures `content_status = 'valide'`, mais seulement 2 avec un
+portrait (Baye Niasse, El Hadj Malick Sy), 3 avec au moins une citation, 4
+avec une ziyara liée (`figure_events`). Une seule figure (Baye Niasse)
+réunit les trois. Ce constat a directement conditionné la conception : un
+algorithme exigeant photo+citation n'aurait eu qu'une seule figure à faire
+tourner.
+
+**Décisions actées avec le porteur de projet** (questions posées
+explicitement, pas de choix par défaut silencieux) :
+- **Qui choisit** : hybride. Rotation automatique déterministe par défaut
+  (aucune intervention requise) + table `featured_figures` permettant à un
+  admin d'épingler volontairement une figure sur une semaine précise (ex.
+  aligner sur un Gamou) — l'épinglage gagne toujours sur la rotation.
+- **Éligibilité à la rotation** : portrait obligatoire uniquement
+  (`eligibleForRotation`, `figures/domain/featured_figure.dart`) — pas de
+  citation/ziyara requises, ce sont des bonus affichés seulement s'ils
+  existent. Avec seulement 2 figures illustrées aujourd'hui, la rotation
+  alterne entre les deux ; elle s'enrichira au fur et à mesure que des
+  portraits sont ajoutés côté admin.
+- Citation et date de ziara : dégradation gracieuse, section masquée si
+  absente plutôt qu'un contenu inventé — même principe que les états vides
+  déjà appliqués ailleurs (`figures_screen.dart`,
+  `khadara_understanding_screen.dart`).
+
+**Modèle de données** : nouvelle table `public.featured_figures
+(week_start date primary key, figure_id, created_by, created_at)`, RLS
+lecture publique (comme `figure_events`) / écriture admin (migration
+`add_featured_figures_table_and_policies`, appliquée au projet live et
+reportée dans `database/schema.sql`, section 6). `week_start` = lundi ISO
+de la semaine (`weekStartFor()`).
+
+**Logique de résolution** (`pickFigureOfTheWeek`,
+`figures/domain/featured_figure.dart`, pure et testée indépendamment de
+Riverpod/Supabase — même principe que `home/domain/home_dashboard.dart`) :
+épinglage de la semaine courante s'il désigne une figure encore valide,
+sinon rotation déterministe sur les figures éligibles, indexée par le
+nombre de semaines entières écoulées depuis une époque fixe (lundi
+2026-01-05) plutôt que le numéro de semaine ISO — évite les ambiguïtés de
+fin/début d'année (semaine 52/53 à cheval sur deux années).
+
+**Côté app** : `featuredFigureProvider` (`figures_providers.dart`) résout
+la figure de la semaine courante et sa prochaine ziyara à venir (première
+ligne de `fetchLinkedEvents` avec `startsAt` dans le futur — jamais une
+date déjà passée présentée comme à venir). Carte affichée sur
+`home_screen.dart` uniquement si une figure est résolue (pas de section
+vide si aucune figure valide n'a encore de portrait), tap → écran de détail
+figure existant. Écran admin `FeaturedFigureAdminScreen` (accessible depuis
+`FiguresScreen` si `isAdminProvider`) : sélecteur de semaine (précédente/
+suivante, pour préparer un épinglage à l'avance) + liste déroulante
+restreinte aux figures éligibles + épingler/retirer.
+
+`flutter analyze` (0 issue) et `flutter test` (167 tests, dont 10 nouveaux
+pour `pickFigureOfTheWeek`/`eligibleForRotation`/`weekStartFor`) verts.
+**Non encore validé manuellement sur émulateur/appareil** — à faire avant
+de considérer la fonctionnalité définitivement close, même statut que le
+CRUD zawiyas/figures/citations-œuvres.
+
+1600 répétitions, gros nombre affiché correctement).

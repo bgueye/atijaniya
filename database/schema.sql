@@ -722,6 +722,21 @@ create table public.figure_events (
   primary key (figure_id, event_id)
 );
 
+-- Épinglage admin de la "Figure de la semaine" affichée sur l'accueil
+-- (migration add_featured_figures_table_and_policies, 2026-08-17).
+-- week_start = lundi ISO de la semaine ciblée (voir weekStartFor(),
+-- lib/features/figures/domain/featured_figure.dart). Sans ligne pour la
+-- semaine courante, l'app retombe sur une rotation automatique déterministe
+-- parmi les figures valides dotées d'un portrait — voir
+-- featured_figure_providers.dart. L'admin peut préparer un épinglage pour
+-- une semaine future (ex. aligner une figure sur un Gamou à venir).
+create table public.featured_figures (
+  week_start date primary key,
+  figure_id uuid not null references public.figures(id) on delete cascade,
+  created_by uuid references auth.users(id),
+  created_at timestamptz not null default now()
+);
+
 -- ============================================================================
 -- 6.1. CONDITIONS DE LA TARIQA (chouroutes) — table de référence indépendante
 -- ============================================================================
@@ -918,6 +933,7 @@ alter table public.figure_quotes enable row level security;
 alter table public.historical_silsila_links enable row level security;
 alter table public.figure_works enable row level security;
 alter table public.figure_events enable row level security;
+alter table public.featured_figures enable row level security;
 alter table public.tariqa_conditions enable row level security;
 alter table public.profiles enable row level security;
 alter table public.devices enable row level security;
@@ -1198,6 +1214,13 @@ create policy figure_events_admin_write on public.figure_events for insert with 
 -- rien d'autre à modifier sur une ligne existante (délier puis relier).
 create policy figure_events_admin_delete on public.figure_events for delete using (public.is_admin((select auth.uid())));
 
+-- Lisible par tous (y compris invité) comme figure_events, pour que la
+-- carte "Figure de la semaine" fonctionne sans session.
+create policy featured_figures_read_all on public.featured_figures for select using (true);
+create policy featured_figures_admin_write on public.featured_figures for insert with check (public.is_admin((select auth.uid())));
+create policy featured_figures_admin_update on public.featured_figures for update using (public.is_admin((select auth.uid())));
+create policy featured_figures_admin_delete on public.featured_figures for delete using (public.is_admin((select auth.uid())));
+
 -- Pas de policy d'écriture cliente exposée : contenu validé une fois pour
 -- toutes en base par le porteur de projet (voir commentaire de la table,
 -- section 6.1), pas de flux de review admin comme pour figures.
@@ -1465,6 +1488,7 @@ create index idx_conversation_participants_user_id on public.conversation_partic
 create index idx_donations_user_id on public.donations (user_id);
 create index idx_events_created_by on public.events (created_by);
 create index idx_events_zawiya_id on public.events (zawiya_id);
+create index idx_featured_figures_figure_id on public.featured_figures (figure_id);
 create index idx_figure_events_event_id on public.figure_events (event_id);
 create index idx_figure_quotes_figure_id on public.figure_quotes (figure_id);
 create index idx_figure_works_figure_id on public.figure_works (figure_id);

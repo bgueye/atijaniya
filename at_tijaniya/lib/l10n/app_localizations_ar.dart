@@ -213,7 +213,74 @@ class AppLocalizationsAr extends AppLocalizations {
   String get homeGreetingPrefix => 'السلام عليكم';
 
   @override
-  String get homeTodayStatus => 'حالة اليوم';
+  String get homeLoadError => 'تعذّر تحميل لوحتك.';
+
+  @override
+  String get homeRetry => 'إعادة المحاولة';
+
+  @override
+  String get homeStatusAllDone => 'جميع أوراد اليوم أُنجزت';
+
+  @override
+  String get homeStatusNoneDone => 'لم يُنجز أي ورد اليوم بعد';
+
+  @override
+  String homeStatusPartial(int done, int total) {
+    return '$done من $total أوراد أُنجزت اليوم';
+  }
+
+  @override
+  String get homeSectionToday => 'اليوم';
+
+  @override
+  String homeStreakDaily(int count) {
+    return '$count أيام متتالية';
+  }
+
+  @override
+  String homeStreakWeekly(int count) {
+    return '$count جُمَع متتالية';
+  }
+
+  @override
+  String get homeWirdSubtitlePendingDaily => 'لم يُبدأ اليوم بعد';
+
+  @override
+  String get homeWirdSubtitlePendingFridayToday => 'اليوم، الجمعة';
+
+  @override
+  String get homeWirdSubtitleWeeklyInfo => 'أسبوعي — يوم الجمعة';
+
+  @override
+  String get homeSectionNextMoment => 'اللحظة القادمة';
+
+  @override
+  String get homeResumeTasbihTitle => 'متابعة التسبيح';
+
+  @override
+  String homeResumeTasbihSubtitle(String pillar, int count, int target) {
+    return '$pillar — $count / $target';
+  }
+
+  @override
+  String get homeResumeTasbihCta => 'متابعة';
+
+  @override
+  String homeNextReminderSubtitle(String wird, String time) {
+    return '$wird — اليوم الساعة $time';
+  }
+
+  @override
+  String get homeSectionQuickAccess => 'وصول سريع';
+
+  @override
+  String get homeQuickTasbihLabel => 'تسبيح حر';
+
+  @override
+  String get homeSectionKhadara => 'الخدرة القادمة';
+
+  @override
+  String get homeSectionFeaturedFigure => 'شخصية الأسبوع';
 
   @override
   String get wirdListTitle => 'أورادي';
@@ -790,6 +857,39 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get figuresReviewButton => 'محتوى قيد التحقق';
+
+  @override
+  String get featuredFigureAdminButton => 'شخصية الأسبوع';
+
+  @override
+  String get featuredFigureAdminTitle => 'شخصية الأسبوع';
+
+  @override
+  String get featuredFigureAdminIntro =>
+      'بدون تثبيت لأسبوع معيّن، يختار التطبيق تلقائيًا شخصية معتمدة لديها صورة.';
+
+  @override
+  String get featuredFigureAdminPinnedLabel => 'مثبّتة لهذا الأسبوع';
+
+  @override
+  String get featuredFigureAdminClear => 'إزالة';
+
+  @override
+  String get featuredFigureAdminNoPin =>
+      'لا توجد شخصية مثبّتة — سيختار التدوير التلقائي واحدة.';
+
+  @override
+  String get featuredFigureAdminNoEligible =>
+      'لا توجد بعد شخصية معتمدة لديها صورة. أضف صورة من صفحة إحدى الشخصيات لتتمكن من تثبيتها هنا.';
+
+  @override
+  String get featuredFigureAdminPickLabel => 'اختر شخصية';
+
+  @override
+  String get featuredFigureAdminPinCta => 'تثبيت لهذا الأسبوع';
+
+  @override
+  String get featuredFigureAdminSaveError => 'حدث خطأ. أعد المحاولة.';
 
   @override
   String get figuresReviewTitle => 'شخصيات قيد التحقق';

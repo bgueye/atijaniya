@@ -217,7 +217,75 @@ class AppLocalizationsFr extends AppLocalizations {
   String get homeGreetingPrefix => 'Salam,';
 
   @override
-  String get homeTodayStatus => 'Statut du jour';
+  String get homeLoadError => 'Impossible de charger votre tableau de bord.';
+
+  @override
+  String get homeRetry => 'Réessayer';
+
+  @override
+  String get homeStatusAllDone => 'Tous les wirds du jour sont accomplis';
+
+  @override
+  String get homeStatusNoneDone =>
+      'Aucun wird accompli aujourd\'hui pour l\'instant';
+
+  @override
+  String homeStatusPartial(int done, int total) {
+    return '$done sur $total wirds accomplis aujourd\'hui';
+  }
+
+  @override
+  String get homeSectionToday => 'Aujourd\'hui';
+
+  @override
+  String homeStreakDaily(int count) {
+    return '$count jours de suite';
+  }
+
+  @override
+  String homeStreakWeekly(int count) {
+    return '$count vendredis de suite';
+  }
+
+  @override
+  String get homeWirdSubtitlePendingDaily => 'Non commencé aujourd\'hui';
+
+  @override
+  String get homeWirdSubtitlePendingFridayToday => 'Aujourd\'hui, vendredi';
+
+  @override
+  String get homeWirdSubtitleWeeklyInfo => 'Hebdomadaire — vendredi';
+
+  @override
+  String get homeSectionNextMoment => 'Prochain moment';
+
+  @override
+  String get homeResumeTasbihTitle => 'Reprendre le Tasbih';
+
+  @override
+  String homeResumeTasbihSubtitle(String pillar, int count, int target) {
+    return '$pillar — $count / $target';
+  }
+
+  @override
+  String get homeResumeTasbihCta => 'Continuer';
+
+  @override
+  String homeNextReminderSubtitle(String wird, String time) {
+    return '$wird — aujourd\'hui à $time';
+  }
+
+  @override
+  String get homeSectionQuickAccess => 'Accès rapide';
+
+  @override
+  String get homeQuickTasbihLabel => 'Tasbih libre';
+
+  @override
+  String get homeSectionKhadara => 'Khadara à venir';
+
+  @override
+  String get homeSectionFeaturedFigure => 'Figure de la semaine';
 
   @override
   String get wirdListTitle => 'Mes Wirds';
@@ -811,6 +879,40 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get figuresReviewButton => 'Contenu à valider';
+
+  @override
+  String get featuredFigureAdminButton => 'Figure de la semaine';
+
+  @override
+  String get featuredFigureAdminTitle => 'Figure de la semaine';
+
+  @override
+  String get featuredFigureAdminIntro =>
+      'Sans épinglage pour une semaine, l\'app choisit automatiquement une figure valide dotée d\'un portrait.';
+
+  @override
+  String get featuredFigureAdminPinnedLabel => 'Épinglée pour cette semaine';
+
+  @override
+  String get featuredFigureAdminClear => 'Retirer';
+
+  @override
+  String get featuredFigureAdminNoPin =>
+      'Aucune figure épinglée — la rotation automatique choisira.';
+
+  @override
+  String get featuredFigureAdminNoEligible =>
+      'Aucune figure valide n\'a encore de portrait. Ajoutez-en un depuis la fiche d\'une figure pour pouvoir l\'épingler ici.';
+
+  @override
+  String get featuredFigureAdminPickLabel => 'Choisir une figure';
+
+  @override
+  String get featuredFigureAdminPinCta => 'Épingler pour cette semaine';
+
+  @override
+  String get featuredFigureAdminSaveError =>
+      'Une erreur est survenue. Réessayez.';
 
   @override
   String get figuresReviewTitle => 'Figures à valider';

@@ -71,7 +71,45 @@
 
   "homeGreeting": "Salam, disciple",
   "homeGreetingPrefix": "Salam,",
-  "homeTodayStatus": "Statut du jour",
+  "homeLoadError": "Impossible de charger votre tableau de bord.",
+  "homeRetry": "Réessayer",
+  "homeStatusAllDone": "Tous les wirds du jour sont accomplis",
+  "homeStatusNoneDone": "Aucun wird accompli aujourd'hui pour l'instant",
+  "homeStatusPartial": "{done} sur {total} wirds accomplis aujourd'hui",
+  "@homeStatusPartial": {
+    "placeholders": { "done": { "type": "int" }, "total": { "type": "int" } }
+  },
+  "homeSectionToday": "Aujourd'hui",
+  "homeStreakDaily": "{count} jours de suite",
+  "@homeStreakDaily": {
+    "placeholders": { "count": { "type": "int" } }
+  },
+  "homeStreakWeekly": "{count} vendredis de suite",
+  "@homeStreakWeekly": {
+    "placeholders": { "count": { "type": "int" } }
+  },
+  "homeWirdSubtitlePendingDaily": "Non commencé aujourd'hui",
+  "homeWirdSubtitlePendingFridayToday": "Aujourd'hui, vendredi",
+  "homeWirdSubtitleWeeklyInfo": "Hebdomadaire — vendredi",
+  "homeSectionNextMoment": "Prochain moment",
+  "homeResumeTasbihTitle": "Reprendre le Tasbih",
+  "homeResumeTasbihSubtitle": "{pillar} — {count} / {target}",
+  "@homeResumeTasbihSubtitle": {
+    "placeholders": {
+      "pillar": { "type": "String" },
+      "count": { "type": "int" },
+      "target": { "type": "int" }
+    }
+  },
+  "homeResumeTasbihCta": "Continuer",
+  "homeNextReminderSubtitle": "{wird} — aujourd'hui à {time}",
+  "@homeNextReminderSubtitle": {
+    "placeholders": { "wird": { "type": "String" }, "time": { "type": "String" } }
+  },
+  "homeSectionQuickAccess": "Accès rapide",
+  "homeQuickTasbihLabel": "Tasbih libre",
+  "homeSectionKhadara": "Khadara à venir",
+  "homeSectionFeaturedFigure": "Figure de la semaine",
 
   "wirdListTitle": "Mes Wirds",
   "wirdLazim": "Lazim",
@@ -267,6 +305,16 @@
   "figuresLoadError": "Impossible de charger les données.",
   "figuresRetry": "Réessayer",
   "figuresReviewButton": "Contenu à valider",
+  "featuredFigureAdminButton": "Figure de la semaine",
+  "featuredFigureAdminTitle": "Figure de la semaine",
+  "featuredFigureAdminIntro": "Sans épinglage pour une semaine, l'app choisit automatiquement une figure valide dotée d'un portrait.",
+  "featuredFigureAdminPinnedLabel": "Épinglée pour cette semaine",
+  "featuredFigureAdminClear": "Retirer",
+  "featuredFigureAdminNoPin": "Aucune figure épinglée — la rotation automatique choisira.",
+  "featuredFigureAdminNoEligible": "Aucune figure valide n'a encore de portrait. Ajoutez-en un depuis la fiche d'une figure pour pouvoir l'épingler ici.",
+  "featuredFigureAdminPickLabel": "Choisir une figure",
+  "featuredFigureAdminPinCta": "Épingler pour cette semaine",
+  "featuredFigureAdminSaveError": "Une erreur est survenue. Réessayez.",
   "figuresReviewTitle": "Figures à valider",
   "figuresReviewEmpty": "Aucune figure en attente de validation.",
   "figuresReviewValidate": "Valider",

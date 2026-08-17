@@ -106,7 +106,13 @@ Ziyaras reconstruit le 2026-08-16 autour de `figure_events`, validé en
 conditions réelles sur émulateur** — évènements Khadara liés, lier/délier
 réservé à l'admin depuis la fiche figure ; a révélé 4 liens déjà saisis en
 base mais jamais affichés faute d'écran (`Figure.ziyaraNote`, jamais relié
-à une colonne réelle, supprimé du modèle)), Khadara
+à une colonne réelle, supprimé du modèle) ; **carte "Figure de la semaine"
+sur l'accueil depuis le 2026-08-17** — rotation automatique déterministe
+parmi les figures valides dotées d'un portrait (`eligibleForRotation`),
+avec épinglage admin optionnel par semaine (table `featured_figures`,
+écran dédié depuis `FiguresScreen`) qui prime toujours sur la rotation ;
+citation et date de ziara affichées seulement si elles existent, jamais
+inventées), Khadara
 (calendrier évènements/zawiyas, **CRUD zawiyas créer/modifier/supprimer
 réservé à l'admin depuis le 2026-08-15** ; "Comprendre la Khadara" en
 attente de contenu validé), Fil d'actualité communautaire (publication
@@ -116,9 +122,9 @@ spirituelle (saisie + "Retrouver mes condisciples"), Faire un don
 (enregistre une intention de don, **aucun paiement réel** — aucun
 prestataire choisi). Détail du CRUD admin (RLS, gestion des suppressions
 bloquées par clé étrangère) dans `docs/09-journal-implementation-frontend.md`
-— **CRUD zawiyas/figures (15/08) et citations/œuvres (16/08) toujours pas
-validés manuellement sur émulateur/appareil**, contrairement à Ziyaras et
-à la suppression de compte/publication.
+— **CRUD zawiyas/figures (15/08), citations/œuvres (16/08) et "Figure de la
+semaine" (17/08) toujours pas validés manuellement sur émulateur/appareil**,
+contrairement à Ziyaras et à la suppression de compte/publication.
 
 **P2** : Statut Mouqaddam vérifié (demande/parrainage/silsila d'ijaza,
 animation de révélation + carte de partage), Direct et rediffusions Khadara

@@ -248,4 +248,45 @@ class FiguresRepository {
     );
     return (rows as List).map((row) => HistoricalSilsilaLink.fromRow(row as Map<String, dynamic>)).toList();
   }
+
+  /// Figure épinglée par un admin pour la semaine de [weekStart]
+  /// (`featured_figures.week_start`, voir `featured_figure.dart` pour la
+  /// convention "lundi de la semaine") — `null` si aucun épinglage n'existe
+  /// pour cette semaine, auquel cas `pickFigureOfTheWeek` retombe sur la
+  /// rotation automatique.
+  Future<String?> fetchFeaturedFigureOverride(DateTime weekStart) async {
+    final row = await SupabaseConfig.client
+        .from('featured_figures')
+        .select('figure_id')
+        .eq('week_start', _dateOnly(weekStart))
+        .maybeSingle();
+    return row?['figure_id'] as String?;
+  }
+
+  /// Épingle [figureId] pour la semaine de [weekStart] — `upsert` : ré-épingler
+  /// la même semaine remplace le choix précédent plutôt que d'échouer sur la
+  /// clé primaire (`week_start`). RLS `featured_figures_admin_write`/`_update`.
+  Future<void> setFeaturedFigure({required DateTime weekStart, required String figureId}) async {
+    final userId = SupabaseConfig.client.auth.currentUser!.id;
+    await SupabaseConfig.client.from('featured_figures').upsert({
+      'week_start': _dateOnly(weekStart),
+      'figure_id': figureId,
+      'created_by': userId,
+    });
+  }
+
+  /// Retire l'épinglage de la semaine de [weekStart], pour retomber sur la
+  /// rotation automatique. RLS `featured_figures_admin_delete`.
+  Future<void> clearFeaturedFigure(DateTime weekStart) async {
+    await SupabaseConfig.client.from('featured_figures').delete().eq('week_start', _dateOnly(weekStart));
+  }
+}
+
+/// Formate une date en `yyyy-MM-dd` pour la colonne `date`
+/// `featured_figures.week_start` — jamais d'heure/fuseau à transmettre ici.
+String _dateOnly(DateTime date) {
+  final y = date.year.toString().padLeft(4, '0');
+  final m = date.month.toString().padLeft(2, '0');
+  final d = date.day.toString().padLeft(2, '0');
+  return '$y-$m-$d';
 }

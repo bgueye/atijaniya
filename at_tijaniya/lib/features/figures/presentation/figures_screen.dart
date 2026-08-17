@@ -5,6 +5,7 @@ import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../l10n/app_localizations.dart';
 import '../domain/figure_models.dart';
+import 'featured_figure_admin_screen.dart';
 import 'figure_detail_screen.dart';
 import 'figure_form_screen.dart';
 import 'figures_providers.dart';
@@ -56,6 +57,13 @@ class FiguresScreen extends ConsumerWidget {
                   ),
                   icon: const Icon(Icons.add, size: 18),
                   label: Text(l10n.figuresCreateButton),
+                ),
+                OutlinedButton.icon(
+                  onPressed: () => Navigator.of(context).push(
+                    MaterialPageRoute(builder: (_) => const FeaturedFigureAdminScreen()),
+                  ),
+                  icon: const Icon(Icons.push_pin_outlined, size: 18),
+                  label: Text(l10n.featuredFigureAdminButton),
                 ),
               ],
             ),

@@ -71,7 +71,45 @@
 
   "homeGreeting": "السلام عليكم",
   "homeGreetingPrefix": "السلام عليكم",
-  "homeTodayStatus": "حالة اليوم",
+  "homeLoadError": "تعذّر تحميل لوحتك.",
+  "homeRetry": "إعادة المحاولة",
+  "homeStatusAllDone": "جميع أوراد اليوم أُنجزت",
+  "homeStatusNoneDone": "لم يُنجز أي ورد اليوم بعد",
+  "homeStatusPartial": "{done} من {total} أوراد أُنجزت اليوم",
+  "@homeStatusPartial": {
+    "placeholders": { "done": { "type": "int" }, "total": { "type": "int" } }
+  },
+  "homeSectionToday": "اليوم",
+  "homeStreakDaily": "{count} أيام متتالية",
+  "@homeStreakDaily": {
+    "placeholders": { "count": { "type": "int" } }
+  },
+  "homeStreakWeekly": "{count} جُمَع متتالية",
+  "@homeStreakWeekly": {
+    "placeholders": { "count": { "type": "int" } }
+  },
+  "homeWirdSubtitlePendingDaily": "لم يُبدأ اليوم بعد",
+  "homeWirdSubtitlePendingFridayToday": "اليوم، الجمعة",
+  "homeWirdSubtitleWeeklyInfo": "أسبوعي — يوم الجمعة",
+  "homeSectionNextMoment": "اللحظة القادمة",
+  "homeResumeTasbihTitle": "متابعة التسبيح",
+  "homeResumeTasbihSubtitle": "{pillar} — {count} / {target}",
+  "@homeResumeTasbihSubtitle": {
+    "placeholders": {
+      "pillar": { "type": "String" },
+      "count": { "type": "int" },
+      "target": { "type": "int" }
+    }
+  },
+  "homeResumeTasbihCta": "متابعة",
+  "homeNextReminderSubtitle": "{wird} — اليوم الساعة {time}",
+  "@homeNextReminderSubtitle": {
+    "placeholders": { "wird": { "type": "String" }, "time": { "type": "String" } }
+  },
+  "homeSectionQuickAccess": "وصول سريع",
+  "homeQuickTasbihLabel": "تسبيح حر",
+  "homeSectionKhadara": "الخدرة القادمة",
+  "homeSectionFeaturedFigure": "شخصية الأسبوع",
 
   "wirdListTitle": "أورادي",
   "wirdLazim": "اللازم",
@@ -266,6 +304,16 @@
   "figuresLoadError": "تعذّر تحميل البيانات.",
   "figuresRetry": "إعادة المحاولة",
   "figuresReviewButton": "محتوى قيد التحقق",
+  "featuredFigureAdminButton": "شخصية الأسبوع",
+  "featuredFigureAdminTitle": "شخصية الأسبوع",
+  "featuredFigureAdminIntro": "بدون تثبيت لأسبوع معيّن، يختار التطبيق تلقائيًا شخصية معتمدة لديها صورة.",
+  "featuredFigureAdminPinnedLabel": "مثبّتة لهذا الأسبوع",
+  "featuredFigureAdminClear": "إزالة",
+  "featuredFigureAdminNoPin": "لا توجد شخصية مثبّتة — سيختار التدوير التلقائي واحدة.",
+  "featuredFigureAdminNoEligible": "لا توجد بعد شخصية معتمدة لديها صورة. أضف صورة من صفحة إحدى الشخصيات لتتمكن من تثبيتها هنا.",
+  "featuredFigureAdminPickLabel": "اختر شخصية",
+  "featuredFigureAdminPinCta": "تثبيت لهذا الأسبوع",
+  "featuredFigureAdminSaveError": "حدث خطأ. أعد المحاولة.",
   "figuresReviewTitle": "شخصيات قيد التحقق",
   "figuresReviewEmpty": "لا توجد شخصية في انتظار التحقق.",
   "figuresReviewValidate": "تحقّق",

@@ -482,11 +482,125 @@ abstract class AppLocalizations {
   /// **'Salam,'**
   String get homeGreetingPrefix;
 
-  /// No description provided for @homeTodayStatus.
+  /// No description provided for @homeLoadError.
   ///
   /// In fr, this message translates to:
-  /// **'Statut du jour'**
-  String get homeTodayStatus;
+  /// **'Impossible de charger votre tableau de bord.'**
+  String get homeLoadError;
+
+  /// No description provided for @homeRetry.
+  ///
+  /// In fr, this message translates to:
+  /// **'Réessayer'**
+  String get homeRetry;
+
+  /// No description provided for @homeStatusAllDone.
+  ///
+  /// In fr, this message translates to:
+  /// **'Tous les wirds du jour sont accomplis'**
+  String get homeStatusAllDone;
+
+  /// No description provided for @homeStatusNoneDone.
+  ///
+  /// In fr, this message translates to:
+  /// **'Aucun wird accompli aujourd\'hui pour l\'instant'**
+  String get homeStatusNoneDone;
+
+  /// No description provided for @homeStatusPartial.
+  ///
+  /// In fr, this message translates to:
+  /// **'{done} sur {total} wirds accomplis aujourd\'hui'**
+  String homeStatusPartial(int done, int total);
+
+  /// No description provided for @homeSectionToday.
+  ///
+  /// In fr, this message translates to:
+  /// **'Aujourd\'hui'**
+  String get homeSectionToday;
+
+  /// No description provided for @homeStreakDaily.
+  ///
+  /// In fr, this message translates to:
+  /// **'{count} jours de suite'**
+  String homeStreakDaily(int count);
+
+  /// No description provided for @homeStreakWeekly.
+  ///
+  /// In fr, this message translates to:
+  /// **'{count} vendredis de suite'**
+  String homeStreakWeekly(int count);
+
+  /// No description provided for @homeWirdSubtitlePendingDaily.
+  ///
+  /// In fr, this message translates to:
+  /// **'Non commencé aujourd\'hui'**
+  String get homeWirdSubtitlePendingDaily;
+
+  /// No description provided for @homeWirdSubtitlePendingFridayToday.
+  ///
+  /// In fr, this message translates to:
+  /// **'Aujourd\'hui, vendredi'**
+  String get homeWirdSubtitlePendingFridayToday;
+
+  /// No description provided for @homeWirdSubtitleWeeklyInfo.
+  ///
+  /// In fr, this message translates to:
+  /// **'Hebdomadaire — vendredi'**
+  String get homeWirdSubtitleWeeklyInfo;
+
+  /// No description provided for @homeSectionNextMoment.
+  ///
+  /// In fr, this message translates to:
+  /// **'Prochain moment'**
+  String get homeSectionNextMoment;
+
+  /// No description provided for @homeResumeTasbihTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Reprendre le Tasbih'**
+  String get homeResumeTasbihTitle;
+
+  /// No description provided for @homeResumeTasbihSubtitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'{pillar} — {count} / {target}'**
+  String homeResumeTasbihSubtitle(String pillar, int count, int target);
+
+  /// No description provided for @homeResumeTasbihCta.
+  ///
+  /// In fr, this message translates to:
+  /// **'Continuer'**
+  String get homeResumeTasbihCta;
+
+  /// No description provided for @homeNextReminderSubtitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'{wird} — aujourd\'hui à {time}'**
+  String homeNextReminderSubtitle(String wird, String time);
+
+  /// No description provided for @homeSectionQuickAccess.
+  ///
+  /// In fr, this message translates to:
+  /// **'Accès rapide'**
+  String get homeSectionQuickAccess;
+
+  /// No description provided for @homeQuickTasbihLabel.
+  ///
+  /// In fr, this message translates to:
+  /// **'Tasbih libre'**
+  String get homeQuickTasbihLabel;
+
+  /// No description provided for @homeSectionKhadara.
+  ///
+  /// In fr, this message translates to:
+  /// **'Khadara à venir'**
+  String get homeSectionKhadara;
+
+  /// No description provided for @homeSectionFeaturedFigure.
+  ///
+  /// In fr, this message translates to:
+  /// **'Figure de la semaine'**
+  String get homeSectionFeaturedFigure;
 
   /// No description provided for @wirdListTitle.
   ///
@@ -1579,6 +1693,66 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'Contenu à valider'**
   String get figuresReviewButton;
+
+  /// No description provided for @featuredFigureAdminButton.
+  ///
+  /// In fr, this message translates to:
+  /// **'Figure de la semaine'**
+  String get featuredFigureAdminButton;
+
+  /// No description provided for @featuredFigureAdminTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Figure de la semaine'**
+  String get featuredFigureAdminTitle;
+
+  /// No description provided for @featuredFigureAdminIntro.
+  ///
+  /// In fr, this message translates to:
+  /// **'Sans épinglage pour une semaine, l\'app choisit automatiquement une figure valide dotée d\'un portrait.'**
+  String get featuredFigureAdminIntro;
+
+  /// No description provided for @featuredFigureAdminPinnedLabel.
+  ///
+  /// In fr, this message translates to:
+  /// **'Épinglée pour cette semaine'**
+  String get featuredFigureAdminPinnedLabel;
+
+  /// No description provided for @featuredFigureAdminClear.
+  ///
+  /// In fr, this message translates to:
+  /// **'Retirer'**
+  String get featuredFigureAdminClear;
+
+  /// No description provided for @featuredFigureAdminNoPin.
+  ///
+  /// In fr, this message translates to:
+  /// **'Aucune figure épinglée — la rotation automatique choisira.'**
+  String get featuredFigureAdminNoPin;
+
+  /// No description provided for @featuredFigureAdminNoEligible.
+  ///
+  /// In fr, this message translates to:
+  /// **'Aucune figure valide n\'a encore de portrait. Ajoutez-en un depuis la fiche d\'une figure pour pouvoir l\'épingler ici.'**
+  String get featuredFigureAdminNoEligible;
+
+  /// No description provided for @featuredFigureAdminPickLabel.
+  ///
+  /// In fr, this message translates to:
+  /// **'Choisir une figure'**
+  String get featuredFigureAdminPickLabel;
+
+  /// No description provided for @featuredFigureAdminPinCta.
+  ///
+  /// In fr, this message translates to:
+  /// **'Épingler pour cette semaine'**
+  String get featuredFigureAdminPinCta;
+
+  /// No description provided for @featuredFigureAdminSaveError.
+  ///
+  /// In fr, this message translates to:
+  /// **'Une erreur est survenue. Réessayez.'**
+  String get featuredFigureAdminSaveError;
 
   /// No description provided for @figuresReviewTitle.
   ///
