@@ -47,8 +47,8 @@ class KhadaraScreen extends StatelessWidget {
                   unselectedLabelColor: AppColors.bronze,
                   indicatorColor: AppColors.emerald,
                   tabs: [
-                    Tab(text: l10n.khadaraEventsTab),
                     Tab(text: l10n.khadaraZawiyasTab),
+                    Tab(text: l10n.khadaraEventsTab),
                     Tab(text: l10n.khadaraLiveTab),
                   ],
                 ),
@@ -65,8 +65,8 @@ class KhadaraScreen extends StatelessWidget {
           const Expanded(
             child: TabBarView(
               children: [
-                _EventsTab(),
                 _ZawiyasTab(),
+                _EventsTab(),
                 _LiveTab(),
               ],
             ),
