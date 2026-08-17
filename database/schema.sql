@@ -664,7 +664,12 @@ comment on column public.figure_quotes.text_ar is
 -- graphe de parrainage vivant (mouqaddam_sponsorships, section 3).
 create table public.historical_silsila_links (
   id uuid primary key default gen_random_uuid(),
-  figure_id uuid not null references public.figures(id) on delete cascade,
+  -- Au plus un maillon par figure (son propre lien vers sa figure parente)
+  -- — contrainte ajoutée après coup (migration
+  -- add_silsila_links_unique_figure_and_admin_update_delete_policies,
+  -- 2026-08-17) pour permettre un upsert sûr côté app
+  -- (FiguresRepository.setSilsilaLink) plutôt que de risquer un doublon.
+  figure_id uuid not null references public.figures(id) on delete cascade unique,
   parent_figure_id uuid references public.figures(id),
   order_index int not null
 );
@@ -1193,6 +1198,12 @@ create policy silsila_links_read_valid_or_admin on public.historical_silsila_lin
       and (f.content_status = 'valide' or public.is_admin((select auth.uid())))
   ));
 create policy silsila_links_admin_write on public.historical_silsila_links for insert with check (public.is_admin((select auth.uid())));
+-- Ajoutées après coup (migration
+-- add_silsila_links_unique_figure_and_admin_update_delete_policies,
+-- 2026-08-17) pour le CRUD silsila côté app — jusque-là seule l'insertion
+-- était possible, même un correctif manuel en base était bloqué.
+create policy silsila_links_admin_update on public.historical_silsila_links for update using (public.is_admin((select auth.uid())));
+create policy silsila_links_admin_delete on public.historical_silsila_links for delete using (public.is_admin((select auth.uid())));
 
 create policy figure_works_read_valid_or_admin on public.figure_works for select
   using (exists (

@@ -16,6 +16,7 @@ import '../domain/figure_errors.dart';
 import '../domain/figure_models.dart';
 import 'figure_citation_form_screen.dart';
 import 'figure_form_screen.dart';
+import 'figure_silsila_form_screen.dart';
 import 'figure_work_form_screen.dart';
 import 'figures_providers.dart';
 
@@ -181,7 +182,7 @@ class _FigureDetailScreenState extends ConsumerState<FigureDetailScreen> {
               child: TabBarView(
                 children: [
                   _BiographyTab(figure: figure),
-                  _SilsilaTab(figure: figure),
+                  _SilsilaTab(figure: figure, isAdmin: isAdmin),
                   _CitationsTab(figure: figure, isAdmin: isAdmin, onContentChanged: _refreshFigureContent),
                   _ZiyarasTab(figure: figure, isAdmin: isAdmin),
                 ],
@@ -415,15 +416,89 @@ class _BiographyTab extends StatelessWidget {
   }
 }
 
-class _SilsilaTab extends ConsumerWidget {
-  const _SilsilaTab({required this.figure});
+/// Onglet Silsila — chaîne historique lue via `get_historical_silsila_chain`
+/// (`historicalSilsilaChainProvider`), avec création/modification/retrait du
+/// maillon propre à cette figure réservés à un admin (RLS
+/// `silsila_links_admin_*`). Contrairement à Citations/Œuvres/Ziyaras, il
+/// n'y a jamais qu'un maillon à gérer par figure (voir
+/// `FigureSilsilaFormScreen`) : le bouton bascule "Ajouter"/"Modifier"
+/// selon qu'un maillon existe déjà (`silsilaLinksProvider`, cherché par
+/// `figureId` plutôt qu'une requête dédiée pour rester cohérent avec la
+/// suggestion de rang du formulaire, qui a besoin de tous les maillons).
+class _SilsilaTab extends ConsumerStatefulWidget {
+  const _SilsilaTab({required this.figure, required this.isAdmin});
 
   final Figure figure;
+  final bool isAdmin;
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<_SilsilaTab> createState() => _SilsilaTabState();
+}
+
+class _SilsilaTabState extends ConsumerState<_SilsilaTab> {
+  bool _busy = false;
+
+  void _invalidateSilsila() {
+    ref.invalidate(silsilaLinksProvider);
+    ref.invalidate(historicalSilsilaChainProvider(widget.figure.id));
+  }
+
+  Future<void> _editOwnLink(FigureSilsilaLink? existingLink) async {
+    final saved = await Navigator.of(context).push<bool>(
+      MaterialPageRoute(
+        builder: (_) => FigureSilsilaFormScreen(figure: widget.figure, existingLink: existingLink),
+      ),
+    );
+    if (saved == true) _invalidateSilsila();
+  }
+
+  Future<void> _removeOwnLink() async {
     final l10n = AppLocalizations.of(context)!;
-    final chainAsync = ref.watch(historicalSilsilaChainProvider(figure.id));
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(l10n.figureSilsilaRemoveConfirmTitle),
+        content: Text(l10n.figureSilsilaRemoveConfirmBody),
+        actions: [
+          TextButton(onPressed: () => Navigator.of(context).pop(false), child: Text(l10n.profileCancel)),
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(true),
+            child: Text(l10n.figureSilsilaRemoveConfirmAction, style: const TextStyle(color: Colors.redAccent)),
+          ),
+        ],
+      ),
+    );
+    if (confirmed != true || !mounted) return;
+
+    setState(() => _busy = true);
+    try {
+      await ref.read(figuresRepositoryProvider).removeSilsilaLink(widget.figure.id);
+      _invalidateSilsila();
+    } catch (_) {
+      if (mounted) {
+        ScaffoldMessenger.of(context)
+          ..hideCurrentSnackBar()
+          ..showSnackBar(SnackBar(content: Text(l10n.figureSilsilaRemoveError)));
+      }
+    } finally {
+      if (mounted) setState(() => _busy = false);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    final chainAsync = ref.watch(historicalSilsilaChainProvider(widget.figure.id));
+
+    FigureSilsilaLink? ownLink;
+    if (widget.isAdmin) {
+      for (final link in ref.watch(silsilaLinksProvider).valueOrNull ?? const <FigureSilsilaLink>[]) {
+        if (link.figureId == widget.figure.id) {
+          ownLink = link;
+          break;
+        }
+      }
+    }
 
     return chainAsync.when(
       loading: () => const Center(child: CircularProgressIndicator(color: AppColors.emerald)),
@@ -442,7 +517,7 @@ class _SilsilaTab extends ConsumerWidget {
               ),
               const SizedBox(height: 12),
               OutlinedButton(
-                onPressed: () => ref.invalidate(historicalSilsilaChainProvider(figure.id)),
+                onPressed: () => ref.invalidate(historicalSilsilaChainProvider(widget.figure.id)),
                 child: Text(l10n.figuresRetry),
               ),
             ],
@@ -450,18 +525,43 @@ class _SilsilaTab extends ConsumerWidget {
         ),
       ),
       data: (chain) {
-        if (chain.isEmpty) return _PendingTab(message: l10n.figureSilsilaPending);
+        if (chain.isEmpty && !widget.isAdmin) return _PendingTab(message: l10n.figureSilsilaPending);
         return ListView(
           padding: const EdgeInsets.all(20),
           children: [
-            for (var i = 0; i < chain.length; i++) ...[
-              _SilsilaNode(
-                link: chain[i],
-                isSelf: chain[i].figureId == figure.id,
-                founderLabel: l10n.figureSilsilaFounderLabel,
+            if (widget.isAdmin) ...[
+              Wrap(
+                spacing: 8,
+                runSpacing: 8,
+                children: [
+                  OutlinedButton.icon(
+                    onPressed: _busy ? null : () => _editOwnLink(ownLink),
+                    icon: Icon(ownLink == null ? Icons.add : Icons.edit_outlined, size: 18),
+                    label: Text(ownLink == null ? l10n.figureSilsilaAddButton : l10n.figureSilsilaEditButton),
+                  ),
+                  if (ownLink != null)
+                    OutlinedButton.icon(
+                      onPressed: _busy ? null : _removeOwnLink,
+                      icon: _busy
+                          ? const SizedBox(width: 14, height: 14, child: CircularProgressIndicator(strokeWidth: 2))
+                          : const Icon(Icons.link_off, size: 18),
+                      label: Text(l10n.figureSilsilaRemoveButton),
+                    ),
+                ],
               ),
-              if (i != chain.length - 1) const _SilsilaConnector(),
+              const SizedBox(height: 12),
             ],
+            if (chain.isEmpty)
+              Text(l10n.figureSilsilaPending, style: const TextStyle(color: AppColors.bronze))
+            else
+              for (var i = 0; i < chain.length; i++) ...[
+                _SilsilaNode(
+                  link: chain[i],
+                  isSelf: chain[i].figureId == widget.figure.id,
+                  founderLabel: l10n.figureSilsilaFounderLabel,
+                ),
+                if (i != chain.length - 1) const _SilsilaConnector(),
+              ],
           ],
         );
       },

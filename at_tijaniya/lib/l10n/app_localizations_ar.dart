@@ -1041,6 +1041,64 @@ class AppLocalizationsAr extends AppLocalizations {
   String get figureSilsilaFounderLabel => 'مؤسس الطريقة';
 
   @override
+  String get figureSilsilaAddButton => 'إضافة إلى السلسلة';
+
+  @override
+  String get figureSilsilaEditButton => 'تعديل الموقع';
+
+  @override
+  String get figureSilsilaRemoveButton => 'إزالة من السلسلة';
+
+  @override
+  String get figureSilsilaRemoveConfirmTitle => 'إزالة هذه الشخصية من السلسلة؟';
+
+  @override
+  String get figureSilsilaRemoveConfirmBody =>
+      'ستتوقف السلسلة المعروضة لأي شخصية لاحقة لهذه الحلقة عند هذا الموضع.';
+
+  @override
+  String get figureSilsilaRemoveConfirmAction => 'إزالة';
+
+  @override
+  String get figureSilsilaRemoveError => 'تعذّرت إزالة هذه الحلقة.';
+
+  @override
+  String get figureSilsilaFormCreateTitle => 'إضافة إلى السلسلة';
+
+  @override
+  String get figureSilsilaFormEditTitle => 'تعديل الموقع';
+
+  @override
+  String get figureSilsilaFormIntro =>
+      'تحدّد الشخصية الأصل والرتبة موقع هذه الشخصية في السلسلة التاريخية المعروضة للمريدين.';
+
+  @override
+  String get figureSilsilaFormParentLabel => 'الشخصية الأصل';
+
+  @override
+  String get figureSilsilaFormParentNone => 'لا شيء — أصل السلسلة (المؤسس)';
+
+  @override
+  String get figureSilsilaFormOrderLabel => 'الرتبة في السلسلة';
+
+  @override
+  String get figureSilsilaFormOrderHint =>
+      '٠ للمؤسس، ثم بالتزايد مع كل جيل — عادةً رتبة الشخصية الأصل + ١.';
+
+  @override
+  String get figureSilsilaFormOrderRequired => 'الرتبة مطلوبة.';
+
+  @override
+  String get figureSilsilaFormOrderInvalid =>
+      'يجب أن تكون الرتبة رقمًا صحيحًا.';
+
+  @override
+  String get figureSilsilaFormSave => 'حفظ';
+
+  @override
+  String get figureSilsilaFormSaveError => 'تعذّر حفظ هذا الموضع.';
+
+  @override
   String get figureCitationsEmpty => 'لا توجد أقوال مسجَّلة حاليًا.';
 
   @override

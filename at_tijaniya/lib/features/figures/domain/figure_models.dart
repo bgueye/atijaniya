@@ -216,6 +216,37 @@ class HistoricalSilsilaLink {
   }
 }
 
+/// Le maillon d'UNE figure dans la silsila historique — sa propre ligne
+/// dans `historical_silsila_links` (figure parente + rang), distinct de
+/// [HistoricalSilsilaLink] qui représente toute la chaîne reconstruite par
+/// `get_historical_silsila_chain()` pour l'affichage disciple. Sert
+/// uniquement à l'édition admin (`FigureSilsilaFormScreen`) — au plus un
+/// par figure (contrainte `unique(figure_id)`, voir `database/schema.sql`).
+class FigureSilsilaLink {
+  const FigureSilsilaLink({
+    required this.id,
+    required this.figureId,
+    this.parentFigureId,
+    required this.orderIndex,
+  });
+
+  final String id;
+  final String figureId;
+
+  /// `null` pour la racine de la chaîne (le fondateur).
+  final String? parentFigureId;
+  final int orderIndex;
+
+  factory FigureSilsilaLink.fromRow(Map<String, dynamic> row) {
+    return FigureSilsilaLink(
+      id: row['id'] as String,
+      figureId: row['figure_id'] as String,
+      parentFigureId: row['parent_figure_id'] as String?,
+      orderIndex: row['order_index'] as int,
+    );
+  }
+}
+
 List<String> _biographySections(String bioText) {
   return bioText
       .split('\n\n')

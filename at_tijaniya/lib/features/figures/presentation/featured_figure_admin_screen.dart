@@ -146,9 +146,14 @@ class _FeaturedFigureAdminScreenState extends ConsumerState<FeaturedFigureAdminS
                   else ...[
                     DropdownButtonFormField<String>(
                       initialValue: _selectedFigureId,
+                      isExpanded: true,
                       decoration: InputDecoration(labelText: l10n.featuredFigureAdminPickLabel),
                       items: [
-                        for (final figure in eligible) DropdownMenuItem(value: figure.id, child: Text(figure.nameFrench)),
+                        for (final figure in eligible)
+                          DropdownMenuItem(
+                            value: figure.id,
+                            child: Text(figure.nameFrench, overflow: TextOverflow.ellipsis),
+                          ),
                       ],
                       onChanged: (value) => setState(() => _selectedFigureId = value),
                     ),

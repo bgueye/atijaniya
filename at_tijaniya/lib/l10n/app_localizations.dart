@@ -2043,6 +2043,114 @@ abstract class AppLocalizations {
   /// **'Fondateur de la tarikha'**
   String get figureSilsilaFounderLabel;
 
+  /// No description provided for @figureSilsilaAddButton.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ajouter à la silsila'**
+  String get figureSilsilaAddButton;
+
+  /// No description provided for @figureSilsilaEditButton.
+  ///
+  /// In fr, this message translates to:
+  /// **'Modifier la position'**
+  String get figureSilsilaEditButton;
+
+  /// No description provided for @figureSilsilaRemoveButton.
+  ///
+  /// In fr, this message translates to:
+  /// **'Retirer de la silsila'**
+  String get figureSilsilaRemoveButton;
+
+  /// No description provided for @figureSilsilaRemoveConfirmTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Retirer cette figure de la silsila ?'**
+  String get figureSilsilaRemoveConfirmTitle;
+
+  /// No description provided for @figureSilsilaRemoveConfirmBody.
+  ///
+  /// In fr, this message translates to:
+  /// **'La chaîne affichée pour toute figure descendante de celle-ci s\'arrêtera à ce maillon.'**
+  String get figureSilsilaRemoveConfirmBody;
+
+  /// No description provided for @figureSilsilaRemoveConfirmAction.
+  ///
+  /// In fr, this message translates to:
+  /// **'Retirer'**
+  String get figureSilsilaRemoveConfirmAction;
+
+  /// No description provided for @figureSilsilaRemoveError.
+  ///
+  /// In fr, this message translates to:
+  /// **'Impossible de retirer ce maillon.'**
+  String get figureSilsilaRemoveError;
+
+  /// No description provided for @figureSilsilaFormCreateTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ajouter à la silsila'**
+  String get figureSilsilaFormCreateTitle;
+
+  /// No description provided for @figureSilsilaFormEditTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Modifier la position'**
+  String get figureSilsilaFormEditTitle;
+
+  /// No description provided for @figureSilsilaFormIntro.
+  ///
+  /// In fr, this message translates to:
+  /// **'La figure parente et le rang déterminent la place de cette figure dans la chaîne historique affichée aux disciples.'**
+  String get figureSilsilaFormIntro;
+
+  /// No description provided for @figureSilsilaFormParentLabel.
+  ///
+  /// In fr, this message translates to:
+  /// **'Figure parente'**
+  String get figureSilsilaFormParentLabel;
+
+  /// No description provided for @figureSilsilaFormParentNone.
+  ///
+  /// In fr, this message translates to:
+  /// **'Aucune — racine de la chaîne (fondateur)'**
+  String get figureSilsilaFormParentNone;
+
+  /// No description provided for @figureSilsilaFormOrderLabel.
+  ///
+  /// In fr, this message translates to:
+  /// **'Rang dans la chaîne'**
+  String get figureSilsilaFormOrderLabel;
+
+  /// No description provided for @figureSilsilaFormOrderHint.
+  ///
+  /// In fr, this message translates to:
+  /// **'0 pour le fondateur, puis en augmentant à chaque génération — généralement le rang de la figure parente + 1.'**
+  String get figureSilsilaFormOrderHint;
+
+  /// No description provided for @figureSilsilaFormOrderRequired.
+  ///
+  /// In fr, this message translates to:
+  /// **'Le rang est requis.'**
+  String get figureSilsilaFormOrderRequired;
+
+  /// No description provided for @figureSilsilaFormOrderInvalid.
+  ///
+  /// In fr, this message translates to:
+  /// **'Le rang doit être un nombre entier.'**
+  String get figureSilsilaFormOrderInvalid;
+
+  /// No description provided for @figureSilsilaFormSave.
+  ///
+  /// In fr, this message translates to:
+  /// **'Enregistrer'**
+  String get figureSilsilaFormSave;
+
+  /// No description provided for @figureSilsilaFormSaveError.
+  ///
+  /// In fr, this message translates to:
+  /// **'Impossible d\'enregistrer cette position.'**
+  String get figureSilsilaFormSaveError;
+
   /// No description provided for @figureCitationsEmpty.
   ///
   /// In fr, this message translates to:

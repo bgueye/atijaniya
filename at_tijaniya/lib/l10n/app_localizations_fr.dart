@@ -1065,6 +1065,67 @@ class AppLocalizationsFr extends AppLocalizations {
   String get figureSilsilaFounderLabel => 'Fondateur de la tarikha';
 
   @override
+  String get figureSilsilaAddButton => 'Ajouter à la silsila';
+
+  @override
+  String get figureSilsilaEditButton => 'Modifier la position';
+
+  @override
+  String get figureSilsilaRemoveButton => 'Retirer de la silsila';
+
+  @override
+  String get figureSilsilaRemoveConfirmTitle =>
+      'Retirer cette figure de la silsila ?';
+
+  @override
+  String get figureSilsilaRemoveConfirmBody =>
+      'La chaîne affichée pour toute figure descendante de celle-ci s\'arrêtera à ce maillon.';
+
+  @override
+  String get figureSilsilaRemoveConfirmAction => 'Retirer';
+
+  @override
+  String get figureSilsilaRemoveError => 'Impossible de retirer ce maillon.';
+
+  @override
+  String get figureSilsilaFormCreateTitle => 'Ajouter à la silsila';
+
+  @override
+  String get figureSilsilaFormEditTitle => 'Modifier la position';
+
+  @override
+  String get figureSilsilaFormIntro =>
+      'La figure parente et le rang déterminent la place de cette figure dans la chaîne historique affichée aux disciples.';
+
+  @override
+  String get figureSilsilaFormParentLabel => 'Figure parente';
+
+  @override
+  String get figureSilsilaFormParentNone =>
+      'Aucune — racine de la chaîne (fondateur)';
+
+  @override
+  String get figureSilsilaFormOrderLabel => 'Rang dans la chaîne';
+
+  @override
+  String get figureSilsilaFormOrderHint =>
+      '0 pour le fondateur, puis en augmentant à chaque génération — généralement le rang de la figure parente + 1.';
+
+  @override
+  String get figureSilsilaFormOrderRequired => 'Le rang est requis.';
+
+  @override
+  String get figureSilsilaFormOrderInvalid =>
+      'Le rang doit être un nombre entier.';
+
+  @override
+  String get figureSilsilaFormSave => 'Enregistrer';
+
+  @override
+  String get figureSilsilaFormSaveError =>
+      'Impossible d\'enregistrer cette position.';
+
+  @override
   String get figureCitationsEmpty =>
       'Aucune citation renseignée pour le moment.';
 

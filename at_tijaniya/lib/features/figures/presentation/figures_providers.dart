@@ -24,6 +24,14 @@ final historicalSilsilaChainProvider = FutureProvider.family<List<HistoricalSils
   return ref.watch(figuresRepositoryProvider).fetchHistoricalSilsilaChain(figureId);
 });
 
+/// Tous les maillons de la silsila historique — utilisé par l'onglet
+/// Silsila (admin) pour retrouver le maillon propre à la figure consultée
+/// et par `FigureSilsilaFormScreen` pour suggérer un rang à partir de celui
+/// de la figure parente choisie.
+final silsilaLinksProvider = FutureProvider<List<FigureSilsilaLink>>((ref) {
+  return ref.watch(figuresRepositoryProvider).fetchAllSilsilaLinks();
+});
+
 /// Évènements Khadara liés à une figure donnée (onglet "Ziyaras",
 /// `figure_detail_screen.dart`) — `family` car paramétré par `figureId`.
 final linkedEventsForFigureProvider = FutureProvider.family<List<KhadaraEvent>, String>((ref, figureId) {

@@ -249,6 +249,42 @@ class FiguresRepository {
     return (rows as List).map((row) => HistoricalSilsilaLink.fromRow(row as Map<String, dynamic>)).toList();
   }
 
+  /// Tous les maillons de la silsila historique, un au plus par figure —
+  /// petite table (une dizaine de lignes), lue en entier plutôt que
+  /// figure par figure pour permettre à `FigureSilsilaFormScreen` de
+  /// suggérer un rang (rang de la figure parente + 1) sans requête
+  /// supplémentaire par figure candidate.
+  Future<List<FigureSilsilaLink>> fetchAllSilsilaLinks() async {
+    final rows = await SupabaseConfig.client.from('historical_silsila_links').select();
+    return rows.map((row) => FigureSilsilaLink.fromRow(row)).toList();
+  }
+
+  /// Crée ou remplace le maillon de [figureId] dans la silsila historique —
+  /// `upsert` sur la contrainte `unique(figure_id)` : ré-enregistrer la
+  /// position d'une figure déjà placée modifie son maillon existant plutôt
+  /// que d'en créer un second. RLS `silsila_links_admin_write`/`_update`.
+  Future<void> setSilsilaLink({
+    required String figureId,
+    required String? parentFigureId,
+    required int orderIndex,
+  }) async {
+    await SupabaseConfig.client.from('historical_silsila_links').upsert({
+      'figure_id': figureId,
+      'parent_figure_id': parentFigureId,
+      'order_index': orderIndex,
+    }, onConflict: 'figure_id');
+  }
+
+  /// Retire [figureId] de la silsila historique — RLS
+  /// `silsila_links_admin_delete`. `parent_figure_id` n'a pas de `on delete
+  /// cascade` (voir le commentaire de la table dans `database/schema.sql`) :
+  /// retirer un maillon intermédiaire rompt silencieusement la chaîne
+  /// affichée pour toute figure descendante, à faire savoir à l'admin avant
+  /// confirmation côté écran plutôt que de bloquer ici.
+  Future<void> removeSilsilaLink(String figureId) async {
+    await SupabaseConfig.client.from('historical_silsila_links').delete().eq('figure_id', figureId);
+  }
+
   /// Figure épinglée par un admin pour la semaine de [weekStart]
   /// (`featured_figures.week_start`, voir `featured_figure.dart` pour la
   /// convention "lundi de la semaine") — `null` si aucun épinglage n'existe
