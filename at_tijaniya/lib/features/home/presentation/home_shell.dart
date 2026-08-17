@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../core/theme/nav_icons.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../communaute/presentation/communaute_screen.dart';
 import '../../figures/presentation/figures_screen.dart';
@@ -61,11 +62,11 @@ class _HomeShellState extends ConsumerState<HomeShell> {
           setState(() => _index = i);
         },
         items: [
-          BottomNavigationBarItem(icon: const Icon(Icons.home_outlined), label: l10n.navHome),
-          BottomNavigationBarItem(icon: const Icon(Icons.menu_book_outlined), label: l10n.navWird),
-          BottomNavigationBarItem(icon: const Icon(Icons.groups_outlined), label: l10n.navKhadara),
-          BottomNavigationBarItem(icon: const Icon(Icons.auto_stories_outlined), label: l10n.navFigures),
-          BottomNavigationBarItem(icon: const Icon(Icons.people_alt_outlined), label: l10n.navCommunity),
+          BottomNavigationBarItem(icon: const AppNavIcon(AppNavIconType.home), label: l10n.navHome),
+          BottomNavigationBarItem(icon: const AppNavIcon(AppNavIconType.wird), label: l10n.navWird),
+          BottomNavigationBarItem(icon: const AppNavIcon(AppNavIconType.khadara), label: l10n.navKhadara),
+          BottomNavigationBarItem(icon: const AppNavIcon(AppNavIconType.figures), label: l10n.navFigures),
+          BottomNavigationBarItem(icon: const AppNavIcon(AppNavIconType.communaute), label: l10n.navCommunity),
         ],
       ),
     );
