@@ -274,6 +274,11 @@ class _PillarCard extends StatelessWidget {
               style: const TextStyle(fontSize: 12, color: AppColors.bronze),
             ),
           ],
+          if (pillar.closingFormulas != null)
+            for (final formula in pillar.closingFormulas!) ...[
+              const SizedBox(height: 10),
+              _ClosingFormulaBlock(formula: formula),
+            ],
           if (pillar.conditions != null) ...[
             const SizedBox(height: 10),
             Container(
@@ -317,6 +322,41 @@ class _PillarCard extends StatelessWidget {
           ],
         ],
       ),
+    );
+  }
+}
+
+/// Une formule de clôture (`WirdPillar.closingFormulas`) — introduction
+/// française, puis arabe (police Amiri, RTL) et translittération dans leur
+/// propre bloc, jamais fondus dans la même phrase que le français (retour
+/// du porteur de projet, 2026-08-17 : le mélange arabe/français dans
+/// `note` empêchait une mise en forme correcte du texte arabe).
+class _ClosingFormulaBlock extends StatelessWidget {
+  const _ClosingFormulaBlock({required this.formula});
+
+  final WirdClosingFormula formula;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        Text(formula.intro, style: const TextStyle(fontSize: 12, color: AppColors.bronze)),
+        const SizedBox(height: 4),
+        Text(
+          formula.arabic,
+          textAlign: TextAlign.right,
+          textDirection: TextDirection.rtl,
+          style: AppTheme.sacredText(fontSize: 17, color: AppColors.ink),
+        ),
+        if (formula.transliteration != null) ...[
+          const SizedBox(height: 2),
+          Text(
+            formula.transliteration!,
+            style: const TextStyle(fontStyle: FontStyle.italic, fontSize: 12, color: AppColors.bronze),
+          ),
+        ],
+      ],
     );
   }
 }

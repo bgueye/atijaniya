@@ -177,9 +177,13 @@ const lazim = Wird(
       transliteration: 'Astaghfirullah',
       translation: 'Je demande pardon à Allah.',
       repetitions: 100,
-      note:
-          'Clôture après la 100ᵉ récitation (Sourate As-Saffat, 37:180-182) : '
-          '$_saffatClosingArabic ($_saffatClosingTranslit)',
+      closingFormulas: [
+        WirdClosingFormula(
+          intro: 'Clôture après la 100ᵉ récitation (Sourate As-Saffat, 37:180-182) :',
+          arabic: _saffatClosingArabic,
+          transliteration: _saffatClosingTranslit,
+        ),
+      ],
     ),
     WirdPillar(
       arabic: _salatoulFatihiArabic,
@@ -188,22 +192,37 @@ const lazim = Wird(
       repetitions: 100,
       note:
           'Salatoul Fatihi — propre à la Tariqa Tijaniyya, ne doit pas être '
-          'remplacée par une autre salat pendant le Lazim. Clôture après la '
-          '100ᵉ récitation (Sourate As-Saffat, 37:180-182) : '
-          '$_saffatClosingArabic ($_saffatClosingTranslit)',
+          'remplacée par une autre salat pendant le Lazim.',
+      closingFormulas: [
+        WirdClosingFormula(
+          intro: 'Clôture après la 100ᵉ récitation (Sourate As-Saffat, 37:180-182) :',
+          arabic: _saffatClosingArabic,
+          transliteration: _saffatClosingTranslit,
+        ),
+      ],
     ),
     WirdPillar(
       arabic: 'لَا إِلَهَ إِلَّا اللَّهُ',
       transliteration: 'La ilaha illAllah',
       translation: "Il n'y a de divinité qu'Allah.",
       repetitions: 100,
-      note:
-          "Après la 100ᵉ récitation, ajouter une fois : "
-          "مُحَمَّدٌ رَسُولُ اللَّهِ عَلَيْهِ سَلَامُ اللَّهِ "
-          "(Muhammadun Rasoulullah, 'alayhi Salamoullah). Puis (Sourate "
-          "Al-Ahzab, 33:56) : $_ahzabClosingArabic ($_ahzabClosingTranslit) "
-          "Puis, en clôture finale (Sourate As-Saffat, 37:180-182) : "
-          "$_saffatClosingArabic ($_saffatClosingTranslit)",
+      closingFormulas: [
+        WirdClosingFormula(
+          intro: 'Après la 100ᵉ récitation, ajouter une fois :',
+          arabic: 'مُحَمَّدٌ رَسُولُ اللَّهِ عَلَيْهِ سَلَامُ اللَّهِ',
+          transliteration: "Muhammadun Rasoulullah, 'alayhi Salamoullah.",
+        ),
+        WirdClosingFormula(
+          intro: 'Puis (Sourate Al-Ahzab, 33:56) :',
+          arabic: _ahzabClosingArabic,
+          transliteration: _ahzabClosingTranslit,
+        ),
+        WirdClosingFormula(
+          intro: 'Puis, en clôture finale (Sourate As-Saffat, 37:180-182) :',
+          arabic: _saffatClosingArabic,
+          transliteration: _saffatClosingTranslit,
+        ),
+      ],
     ),
   ],
 );
@@ -289,27 +308,43 @@ const wazifa = Wird(
       repetitions: 50,
       note:
           'Salatoul Fatihi — propre à la Tariqa Tijaniyya, ne doit pas être '
-          'remplacée par une autre salat pendant le Lazim ou la Wazifa. '
-          'Clôture après la 50ᵉ récitation (Sourate As-Saffat, 37:180-182) : '
-          '$_saffatClosingArabic ($_saffatClosingTranslit)',
+          'remplacée par une autre salat pendant le Lazim ou la Wazifa.',
+      closingFormulas: [
+        WirdClosingFormula(
+          intro: 'Clôture après la 50ᵉ récitation (Sourate As-Saffat, 37:180-182) :',
+          arabic: _saffatClosingArabic,
+          transliteration: _saffatClosingTranslit,
+        ),
+      ],
     ),
     WirdPillar(
       arabic: 'لَا إِلَهَ إِلَّا اللَّهُ',
       transliteration: 'La ilaha illAllah',
       translation: "Il n'y a de divinité qu'Allah.",
       repetitions: 100,
-      note: "Après la 100ᵉ récitation, ajouter : مُحَمَّدٌ رَسُولُ اللَّهِ عَلَيْهِ سَلَامُ اللَّهِ.",
+      closingFormulas: [
+        WirdClosingFormula(
+          intro: 'Après la 100ᵉ récitation, ajouter :',
+          arabic: 'مُحَمَّدٌ رَسُولُ اللَّهِ عَلَيْهِ سَلَامُ اللَّهِ',
+          // Pas de translittération fournie pour cette formule précise
+          // dans le document source (contrairement à la même formule dans
+          // le Lazim) — voir la note sur WirdClosingFormula.transliteration.
+        ),
+      ],
     ),
     WirdPillar(
       arabic: 'جَوْهَرَةُ الْكَمَالِ',
       transliteration: 'Jawharatoul Kamal',
       translation: '« La Perle de la Perfection » — prière spéciale sur le Prophète ﷺ.',
       repetitions: 12,
-      note:
-          "Si les conditions ne sont pas réunies, remplacer par 20 "
-          "récitations supplémentaires de Salatoul Fatihi. Clôture après "
-          "la 12ᵉ récitation (Sourate Al-Ahzab, 33:56) : "
-          "$_ahzabClosingArabic ($_ahzabClosingTranslit)",
+      note: "Si les conditions ne sont pas réunies, remplacer par 20 récitations supplémentaires de Salatoul Fatihi.",
+      closingFormulas: [
+        WirdClosingFormula(
+          intro: 'Clôture après la 12ᵉ récitation (Sourate Al-Ahzab, 33:56) :',
+          arabic: _ahzabClosingArabic,
+          transliteration: _ahzabClosingTranslit,
+        ),
+      ],
       conditions: [
         "Être en état d'ablution à l'eau (le tayammoum ne suffit pas).",
         "Se trouver dans un lieu propre, suffisamment large pour six personnes.",
@@ -346,18 +381,26 @@ const hadratouJouma = Wird(
       transliteration: _salatoulFatihiTranslit,
       translation: _salatoulFatihiTranslation,
       repetitions: 3,
-      note:
-          'Clôture après la 3ᵉ récitation (Sourate Al-Ahzab, 33:56) : '
-          '$_ahzabClosingArabic ($_ahzabClosingTranslit)',
+      closingFormulas: [
+        WirdClosingFormula(
+          intro: 'Clôture après la 3ᵉ récitation (Sourate Al-Ahzab, 33:56) :',
+          arabic: _ahzabClosingArabic,
+          transliteration: _ahzabClosingTranslit,
+        ),
+      ],
     ),
     WirdPillar(
       arabic: 'لَا إِلَهَ إِلَّا اللَّهُ',
       transliteration: 'La ilaha illAllah',
       translation: "Il n'y a de divinité qu'Allah.",
       repetitions: 1600,
-      note: "Après la dernière récitation, ajouter une fois : "
-          "سَيِّدُنَا مُحَمَّدٌ رَسُولُ اللَّهِ عَلَيْهِ سَلَامُ اللَّهِ "
-          "(Seyidouna Muhammadoun Rasoulullah, 'alayhi Salamoullah).",
+      closingFormulas: [
+        WirdClosingFormula(
+          intro: 'Après la dernière récitation, ajouter une fois :',
+          arabic: 'سَيِّدُنَا مُحَمَّدٌ رَسُولُ اللَّهِ عَلَيْهِ سَلَامُ اللَّهِ',
+          transliteration: "Seyidouna Muhammadoun Rasoulullah, 'alayhi Salamoullah.",
+        ),
+      ],
     ),
     WirdPillar(
       arabic: 'اللَّهُ',
@@ -370,8 +413,14 @@ const hadratouJouma = Wird(
           "projet (l'app ne calcule pas les horaires de prière en V1). La "
           "forme complète prévoit ensuite une clôture non comptée comme "
           "pilier séparé : reprise de la Fatiha (ta'awwudh, basmala), puis "
-          "3 fois Salatoul Fatihi, conclue par (Sourate Al-Ahzab, 33:56) : "
-          "$_ahzabClosingArabic ($_ahzabClosingTranslit)",
+          "3 fois Salatoul Fatihi.",
+      closingFormulas: [
+        WirdClosingFormula(
+          intro: 'Conclue par (Sourate Al-Ahzab, 33:56) :',
+          arabic: _ahzabClosingArabic,
+          transliteration: _ahzabClosingTranslit,
+        ),
+      ],
     ),
   ],
 );

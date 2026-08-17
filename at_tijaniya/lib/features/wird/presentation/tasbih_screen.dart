@@ -100,6 +100,30 @@ class _TasbihBody extends StatelessWidget {
               style: const TextStyle(fontSize: 12, color: AppColors.bronze),
             ),
           ],
+          if (pillar.closingFormulas != null)
+            for (final formula in pillar.closingFormulas!) ...[
+              const SizedBox(height: 10),
+              Text(
+                formula.intro,
+                textAlign: TextAlign.center,
+                style: const TextStyle(fontSize: 12, color: AppColors.bronze),
+              ),
+              const SizedBox(height: 4),
+              Text(
+                formula.arabic,
+                textAlign: TextAlign.center,
+                textDirection: TextDirection.rtl,
+                style: AppTheme.sacredText(fontSize: 18, color: AppColors.gold),
+              ),
+              if (formula.transliteration != null) ...[
+                const SizedBox(height: 2),
+                Text(
+                  formula.transliteration!,
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(fontStyle: FontStyle.italic, fontSize: 12, color: AppColors.bronze),
+                ),
+              ],
+            ],
           const SizedBox(height: 20),
           SegmentedButton<TasbihMode>(
             segments: const [
