@@ -482,6 +482,199 @@ abstract class AppLocalizations {
   /// **'Salam,'**
   String get homeGreetingPrefix;
 
+  /// No description provided for @homeDateLine.
+  ///
+  /// In fr, this message translates to:
+  /// **'{weekday} {day} {month} {year} · {hijriDay} {hijriMonth} {hijriYear}'**
+  String homeDateLine(String weekday, int day, String month, int year,
+      int hijriDay, String hijriMonth, int hijriYear);
+
+  /// No description provided for @homeDateWeekdayMonday.
+  ///
+  /// In fr, this message translates to:
+  /// **'Lundi'**
+  String get homeDateWeekdayMonday;
+
+  /// No description provided for @homeDateWeekdayTuesday.
+  ///
+  /// In fr, this message translates to:
+  /// **'Mardi'**
+  String get homeDateWeekdayTuesday;
+
+  /// No description provided for @homeDateWeekdayWednesday.
+  ///
+  /// In fr, this message translates to:
+  /// **'Mercredi'**
+  String get homeDateWeekdayWednesday;
+
+  /// No description provided for @homeDateWeekdayThursday.
+  ///
+  /// In fr, this message translates to:
+  /// **'Jeudi'**
+  String get homeDateWeekdayThursday;
+
+  /// No description provided for @homeDateWeekdayFriday.
+  ///
+  /// In fr, this message translates to:
+  /// **'Vendredi'**
+  String get homeDateWeekdayFriday;
+
+  /// No description provided for @homeDateWeekdaySaturday.
+  ///
+  /// In fr, this message translates to:
+  /// **'Samedi'**
+  String get homeDateWeekdaySaturday;
+
+  /// No description provided for @homeDateWeekdaySunday.
+  ///
+  /// In fr, this message translates to:
+  /// **'Dimanche'**
+  String get homeDateWeekdaySunday;
+
+  /// No description provided for @homeDateMonthJanuary.
+  ///
+  /// In fr, this message translates to:
+  /// **'janvier'**
+  String get homeDateMonthJanuary;
+
+  /// No description provided for @homeDateMonthFebruary.
+  ///
+  /// In fr, this message translates to:
+  /// **'février'**
+  String get homeDateMonthFebruary;
+
+  /// No description provided for @homeDateMonthMarch.
+  ///
+  /// In fr, this message translates to:
+  /// **'mars'**
+  String get homeDateMonthMarch;
+
+  /// No description provided for @homeDateMonthApril.
+  ///
+  /// In fr, this message translates to:
+  /// **'avril'**
+  String get homeDateMonthApril;
+
+  /// No description provided for @homeDateMonthMay.
+  ///
+  /// In fr, this message translates to:
+  /// **'mai'**
+  String get homeDateMonthMay;
+
+  /// No description provided for @homeDateMonthJune.
+  ///
+  /// In fr, this message translates to:
+  /// **'juin'**
+  String get homeDateMonthJune;
+
+  /// No description provided for @homeDateMonthJuly.
+  ///
+  /// In fr, this message translates to:
+  /// **'juillet'**
+  String get homeDateMonthJuly;
+
+  /// No description provided for @homeDateMonthAugust.
+  ///
+  /// In fr, this message translates to:
+  /// **'août'**
+  String get homeDateMonthAugust;
+
+  /// No description provided for @homeDateMonthSeptember.
+  ///
+  /// In fr, this message translates to:
+  /// **'septembre'**
+  String get homeDateMonthSeptember;
+
+  /// No description provided for @homeDateMonthOctober.
+  ///
+  /// In fr, this message translates to:
+  /// **'octobre'**
+  String get homeDateMonthOctober;
+
+  /// No description provided for @homeDateMonthNovember.
+  ///
+  /// In fr, this message translates to:
+  /// **'novembre'**
+  String get homeDateMonthNovember;
+
+  /// No description provided for @homeDateMonthDecember.
+  ///
+  /// In fr, this message translates to:
+  /// **'décembre'**
+  String get homeDateMonthDecember;
+
+  /// No description provided for @homeDateHijriMonth1.
+  ///
+  /// In fr, this message translates to:
+  /// **'Mouharram'**
+  String get homeDateHijriMonth1;
+
+  /// No description provided for @homeDateHijriMonth2.
+  ///
+  /// In fr, this message translates to:
+  /// **'Safar'**
+  String get homeDateHijriMonth2;
+
+  /// No description provided for @homeDateHijriMonth3.
+  ///
+  /// In fr, this message translates to:
+  /// **'Rabi al-Awwal'**
+  String get homeDateHijriMonth3;
+
+  /// No description provided for @homeDateHijriMonth4.
+  ///
+  /// In fr, this message translates to:
+  /// **'Rabi ath-Thani'**
+  String get homeDateHijriMonth4;
+
+  /// No description provided for @homeDateHijriMonth5.
+  ///
+  /// In fr, this message translates to:
+  /// **'Joumada al-Oula'**
+  String get homeDateHijriMonth5;
+
+  /// No description provided for @homeDateHijriMonth6.
+  ///
+  /// In fr, this message translates to:
+  /// **'Joumada ath-Thania'**
+  String get homeDateHijriMonth6;
+
+  /// No description provided for @homeDateHijriMonth7.
+  ///
+  /// In fr, this message translates to:
+  /// **'Rajab'**
+  String get homeDateHijriMonth7;
+
+  /// No description provided for @homeDateHijriMonth8.
+  ///
+  /// In fr, this message translates to:
+  /// **'Chaabane'**
+  String get homeDateHijriMonth8;
+
+  /// No description provided for @homeDateHijriMonth9.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ramadan'**
+  String get homeDateHijriMonth9;
+
+  /// No description provided for @homeDateHijriMonth10.
+  ///
+  /// In fr, this message translates to:
+  /// **'Chawwal'**
+  String get homeDateHijriMonth10;
+
+  /// No description provided for @homeDateHijriMonth11.
+  ///
+  /// In fr, this message translates to:
+  /// **'Dhoul Qi\'da'**
+  String get homeDateHijriMonth11;
+
+  /// No description provided for @homeDateHijriMonth12.
+  ///
+  /// In fr, this message translates to:
+  /// **'Dhoul Hijja'**
+  String get homeDateHijriMonth12;
+
   /// No description provided for @homeLoadError.
   ///
   /// In fr, this message translates to:

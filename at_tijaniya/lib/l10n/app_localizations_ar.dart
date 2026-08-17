@@ -213,6 +213,105 @@ class AppLocalizationsAr extends AppLocalizations {
   String get homeGreetingPrefix => 'السلام عليكم';
 
   @override
+  String homeDateLine(String weekday, int day, String month, int year,
+      int hijriDay, String hijriMonth, int hijriYear) {
+    return '$weekday $day $month $year · $hijriDay $hijriMonth $hijriYear';
+  }
+
+  @override
+  String get homeDateWeekdayMonday => 'الاثنين';
+
+  @override
+  String get homeDateWeekdayTuesday => 'الثلاثاء';
+
+  @override
+  String get homeDateWeekdayWednesday => 'الأربعاء';
+
+  @override
+  String get homeDateWeekdayThursday => 'الخميس';
+
+  @override
+  String get homeDateWeekdayFriday => 'الجمعة';
+
+  @override
+  String get homeDateWeekdaySaturday => 'السبت';
+
+  @override
+  String get homeDateWeekdaySunday => 'الأحد';
+
+  @override
+  String get homeDateMonthJanuary => 'يناير';
+
+  @override
+  String get homeDateMonthFebruary => 'فبراير';
+
+  @override
+  String get homeDateMonthMarch => 'مارس';
+
+  @override
+  String get homeDateMonthApril => 'أبريل';
+
+  @override
+  String get homeDateMonthMay => 'مايو';
+
+  @override
+  String get homeDateMonthJune => 'يونيو';
+
+  @override
+  String get homeDateMonthJuly => 'يوليو';
+
+  @override
+  String get homeDateMonthAugust => 'أغسطس';
+
+  @override
+  String get homeDateMonthSeptember => 'سبتمبر';
+
+  @override
+  String get homeDateMonthOctober => 'أكتوبر';
+
+  @override
+  String get homeDateMonthNovember => 'نوفمبر';
+
+  @override
+  String get homeDateMonthDecember => 'ديسمبر';
+
+  @override
+  String get homeDateHijriMonth1 => 'محرم';
+
+  @override
+  String get homeDateHijriMonth2 => 'صفر';
+
+  @override
+  String get homeDateHijriMonth3 => 'ربيع الأول';
+
+  @override
+  String get homeDateHijriMonth4 => 'ربيع الآخر';
+
+  @override
+  String get homeDateHijriMonth5 => 'جمادى الأولى';
+
+  @override
+  String get homeDateHijriMonth6 => 'جمادى الآخرة';
+
+  @override
+  String get homeDateHijriMonth7 => 'رجب';
+
+  @override
+  String get homeDateHijriMonth8 => 'شعبان';
+
+  @override
+  String get homeDateHijriMonth9 => 'رمضان';
+
+  @override
+  String get homeDateHijriMonth10 => 'شوال';
+
+  @override
+  String get homeDateHijriMonth11 => 'ذو القعدة';
+
+  @override
+  String get homeDateHijriMonth12 => 'ذو الحجة';
+
+  @override
   String get homeLoadError => 'تعذّر تحميل لوحتك.';
 
   @override

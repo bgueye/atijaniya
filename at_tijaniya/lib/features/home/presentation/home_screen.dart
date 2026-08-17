@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+import '../../../core/date/hijri_date.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../core/theme/rosace_painter.dart';
@@ -55,6 +56,7 @@ class HomeScreen extends ConsumerWidget {
       children: [
         _Hero(
           greeting: greeting,
+          dateLine: _formatTodayDate(l10n, DateTime.now()),
           statusPill: dashboardAsync.maybeWhen(
             data: (data) => _StatusPill(status: data.todayStatus, l10n: l10n),
             orElse: () => null,
@@ -84,10 +86,68 @@ class HomeScreen extends ConsumerWidget {
   }
 }
 
+/// "Vendredi 21 août 2026 · 7 Rabi al-Awwal 1448" — date grégorienne
+/// (spellée, pas le format numérique de `formatKhadaraDateTime`, propre à
+/// l'en-tête de l'accueil) accompagnée de son équivalent hégirien
+/// approximatif (`HijriDate`, calendrier tabulaire — voir sa documentation
+/// pour la réserve sur sa précision, jamais une source pour une date
+/// religieuse officielle).
+String _formatTodayDate(AppLocalizations l10n, DateTime now) {
+  String weekdayLabel(int weekday) => switch (weekday) {
+        DateTime.monday => l10n.homeDateWeekdayMonday,
+        DateTime.tuesday => l10n.homeDateWeekdayTuesday,
+        DateTime.wednesday => l10n.homeDateWeekdayWednesday,
+        DateTime.thursday => l10n.homeDateWeekdayThursday,
+        DateTime.friday => l10n.homeDateWeekdayFriday,
+        DateTime.saturday => l10n.homeDateWeekdaySaturday,
+        _ => l10n.homeDateWeekdaySunday,
+      };
+  String monthLabel(int month) => switch (month) {
+        1 => l10n.homeDateMonthJanuary,
+        2 => l10n.homeDateMonthFebruary,
+        3 => l10n.homeDateMonthMarch,
+        4 => l10n.homeDateMonthApril,
+        5 => l10n.homeDateMonthMay,
+        6 => l10n.homeDateMonthJune,
+        7 => l10n.homeDateMonthJuly,
+        8 => l10n.homeDateMonthAugust,
+        9 => l10n.homeDateMonthSeptember,
+        10 => l10n.homeDateMonthOctober,
+        11 => l10n.homeDateMonthNovember,
+        _ => l10n.homeDateMonthDecember,
+      };
+  String hijriMonthLabel(int month) => switch (month) {
+        1 => l10n.homeDateHijriMonth1,
+        2 => l10n.homeDateHijriMonth2,
+        3 => l10n.homeDateHijriMonth3,
+        4 => l10n.homeDateHijriMonth4,
+        5 => l10n.homeDateHijriMonth5,
+        6 => l10n.homeDateHijriMonth6,
+        7 => l10n.homeDateHijriMonth7,
+        8 => l10n.homeDateHijriMonth8,
+        9 => l10n.homeDateHijriMonth9,
+        10 => l10n.homeDateHijriMonth10,
+        11 => l10n.homeDateHijriMonth11,
+        _ => l10n.homeDateHijriMonth12,
+      };
+
+  final hijri = HijriDate.fromGregorian(now);
+  return l10n.homeDateLine(
+    weekdayLabel(now.weekday),
+    now.day,
+    monthLabel(now.month),
+    now.year,
+    hijri.day,
+    hijriMonthLabel(hijri.month),
+    hijri.year,
+  );
+}
+
 class _Hero extends StatelessWidget {
-  const _Hero({required this.greeting, required this.statusPill});
+  const _Hero({required this.greeting, required this.dateLine, required this.statusPill});
 
   final String greeting;
+  final String dateLine;
   final Widget? statusPill;
 
   @override
@@ -128,6 +188,11 @@ class _Hero extends StatelessWidget {
                       fontWeight: FontWeight.w600,
                       color: AppColors.offWhite,
                     ),
+                  ),
+                  const SizedBox(height: 6),
+                  Text(
+                    dateLine,
+                    style: TextStyle(fontSize: 12, color: AppColors.offWhite.withValues(alpha: 0.55)),
                   ),
                   const SizedBox(height: 16),
                   if (statusPill != null) statusPill!,

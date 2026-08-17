@@ -217,6 +217,105 @@ class AppLocalizationsFr extends AppLocalizations {
   String get homeGreetingPrefix => 'Salam,';
 
   @override
+  String homeDateLine(String weekday, int day, String month, int year,
+      int hijriDay, String hijriMonth, int hijriYear) {
+    return '$weekday $day $month $year · $hijriDay $hijriMonth $hijriYear';
+  }
+
+  @override
+  String get homeDateWeekdayMonday => 'Lundi';
+
+  @override
+  String get homeDateWeekdayTuesday => 'Mardi';
+
+  @override
+  String get homeDateWeekdayWednesday => 'Mercredi';
+
+  @override
+  String get homeDateWeekdayThursday => 'Jeudi';
+
+  @override
+  String get homeDateWeekdayFriday => 'Vendredi';
+
+  @override
+  String get homeDateWeekdaySaturday => 'Samedi';
+
+  @override
+  String get homeDateWeekdaySunday => 'Dimanche';
+
+  @override
+  String get homeDateMonthJanuary => 'janvier';
+
+  @override
+  String get homeDateMonthFebruary => 'février';
+
+  @override
+  String get homeDateMonthMarch => 'mars';
+
+  @override
+  String get homeDateMonthApril => 'avril';
+
+  @override
+  String get homeDateMonthMay => 'mai';
+
+  @override
+  String get homeDateMonthJune => 'juin';
+
+  @override
+  String get homeDateMonthJuly => 'juillet';
+
+  @override
+  String get homeDateMonthAugust => 'août';
+
+  @override
+  String get homeDateMonthSeptember => 'septembre';
+
+  @override
+  String get homeDateMonthOctober => 'octobre';
+
+  @override
+  String get homeDateMonthNovember => 'novembre';
+
+  @override
+  String get homeDateMonthDecember => 'décembre';
+
+  @override
+  String get homeDateHijriMonth1 => 'Mouharram';
+
+  @override
+  String get homeDateHijriMonth2 => 'Safar';
+
+  @override
+  String get homeDateHijriMonth3 => 'Rabi al-Awwal';
+
+  @override
+  String get homeDateHijriMonth4 => 'Rabi ath-Thani';
+
+  @override
+  String get homeDateHijriMonth5 => 'Joumada al-Oula';
+
+  @override
+  String get homeDateHijriMonth6 => 'Joumada ath-Thania';
+
+  @override
+  String get homeDateHijriMonth7 => 'Rajab';
+
+  @override
+  String get homeDateHijriMonth8 => 'Chaabane';
+
+  @override
+  String get homeDateHijriMonth9 => 'Ramadan';
+
+  @override
+  String get homeDateHijriMonth10 => 'Chawwal';
+
+  @override
+  String get homeDateHijriMonth11 => 'Dhoul Qi\'da';
+
+  @override
+  String get homeDateHijriMonth12 => 'Dhoul Hijja';
+
+  @override
   String get homeLoadError => 'Impossible de charger votre tableau de bord.';
 
   @override
