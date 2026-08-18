@@ -127,8 +127,10 @@ spirituelle (saisie + "Retrouver mes condisciples"), Faire un don
 prestataire choisi). Détail du CRUD admin (RLS, gestion des suppressions
 bloquées par clé étrangère) dans `docs/09-journal-implementation-frontend.md`
 — **CRUD zawiyas/figures (15/08), citations/œuvres (16/08) et "Figure de la
-semaine" (17/08) toujours pas validés manuellement sur émulateur/appareil**,
-contrairement à Ziyaras et à la suppression de compte/publication.
+semaine" (17/08) validés manuellement sur téléphone Android le 2026-08-18**
+(cycle complet créer/modifier/supprimer sur zawiya, figure, citation et
+œuvre ; épingler/retirer sur Figure de la semaine, carte d'accueil vérifiée),
+même statut que Ziyaras et la suppression de compte/publication.
 
 **P2** : Statut Mouqaddam vérifié (demande/parrainage/silsila d'ijaza,
 animation de révélation + carte de partage), Direct et rediffusions Khadara

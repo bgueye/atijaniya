@@ -2166,8 +2166,93 @@ restreinte aux figures éligibles + épingler/retirer.
 
 `flutter analyze` (0 issue) et `flutter test` (167 tests, dont 10 nouveaux
 pour `pickFigureOfTheWeek`/`eligibleForRotation`/`weekStartFor`) verts.
-**Non encore validé manuellement sur émulateur/appareil** — à faire avant
-de considérer la fonctionnalité définitivement close, même statut que le
-CRUD zawiyas/figures/citations-œuvres.
+
+**Mise à jour (2026-08-18) : validée en conditions réelles sur téléphone
+Android**, contre le projet Supabase live, avec le CRUD zawiyas/figures et
+citations/œuvres (ci-dessus) — cf. section suivante pour le détail des
+trois validations.
 
 1600 répétitions, gros nombre affiché correctement).
+
+## Validation manuelle sur téléphone Android : CRUD zawiyas/figures,
+## citations/œuvres, Figure de la semaine (2026-08-18)
+
+Trois fonctionnalités codées et couvertes par les tests automatisés
+(CRUD zawiyas/figures du 2026-08-15, citations/œuvres du 2026-08-16, Figure
+de la semaine du 2026-08-17) restaient listées comme jamais validées
+manuellement. Session de validation sur le téléphone Android physique
+(`R5CW41VL5CE`, Samsung SM-S918U1, Android 16), contre le projet Supabase
+live `at-tijaniya`.
+
+**Écart au protocole habituel** : le téléphone avait déjà une session
+ouverte avec le compte réel du porteur de projet (`bgueye@gmail.com`,
+`profiles.is_admin = true`) plutôt qu'un compte jetable — pas de création
+ni de suppression de compte de test cette fois. Toute donnée de test créée
+(zawiya, figure, citations, œuvres, épinglage) a en revanche été nettoyée
+en fin de session et vérifiée par `execute_sql` (`select count(*) ... = 0`
+sur chaque table concernée).
+
+**Driving du téléphone** : capture d'écran (`adb exec-out screencap`) +
+lecture d'image, taps (`adb shell input tap`) aux coordonnées obtenues via
+`uiautomator dump` plutôt que par estimation visuelle sur la capture —
+l'estimation visuelle s'est révélée peu fiable au début de la session
+(coordonnées de tap systématiquement décalées, un tap a ouvert la fiche
+réelle "Zawiya de Médina Baye" au lieu du FAB "Ajouter une zawiya" ;
+annulé sans action, fiche vérifiée intacte). Passage à
+`uiautomator dump` + extraction des `bounds` par nœud (`content-desc` ou
+position dans l'arbre pour les icônes sans libellé) : fiable sur le reste
+de la session.
+
+**Piège rencontré avec `adb shell input text` enchaîné sans re-vérifier le
+focus** : sur le formulaire "Nouvelle figure", taper dans un champ puis
+tapper sur les coordonnées (obsolètes) d'un champ suivant sans redump a fait
+atterrir la saisie dans le mauvais champ (concaténation invisible, le champ
+`Nom (français)` a hérité du texte destiné à `Biographie`, décalage dû au
+scroll automatique déclenché par l'ouverture du clavier). Corrigé par
+nettoyage du champ (`keyevent KEYCODE_MOVE_END` puis rafale de
+`KEYCODE_DEL`) et ressaisie, avec un `uiautomator dump` frais avant chaque
+tap suivant. Aucune donnée n'a été sauvegardée avant correction (le
+formulaire n'était pas encore soumis).
+
+**CRUD zawiyas** : création ("ZZZ_Claude_QA_Test_Zawiya"), vérifiée en base
+; modification (suffixe `_EDITED`), vérifiée ; suppression, vérifiée
+(`count = 0`). Cycle complet sans écart par rapport au comportement attendu.
+
+**CRUD figures** : création (catégorie "Famille religieuse"), vérifiée en
+base — `content_status = 'brouillon'` confirmé automatiquement, conforme à
+la règle CLAUDE.md ("une figure créée reste en brouillon par défaut, la
+publication passe toujours par l'écran de review"). Retrouvée dans l'écran
+admin "Figures à valider" aux côtés d'une vraie figure en attente (Thierno
+Ciré Diop, non touchée). Modification (nom français), vérifiée. Citations
+et œuvres testées sur cette même figure avant sa suppression (voir
+ci-dessous). Suppression de la figure : boîte de confirmation mentionnant
+explicitement "Ses citations, œuvres et son maillon de silsila seront
+également supprimés" — confirmé, `count = 0` en base sur `figures`.
+
+**CRUD citations/œuvres** (onglet Citations d'une fiche figure, table
+réelle `figure_quotes`/`figure_works` — les noms `figure_citations` /
+`figure_oeuvres` supposés initialement n'existent pas) : citation créée,
+modifiée (champ Source), supprimée — cycle complet vérifié en base à
+chaque étape. Œuvre créée puis supprimée (formulaire de modification
+identique à celui déjà validé pour citation/zawiya/figure, non re-testé
+séparément par souci de temps). Boutons Modifier/Supprimer de la carte
+citation : icônes sans `content-desc` (contrairement à ceux de la carte
+œuvre, qui en ont un) — repérés par leur position dans l'arbre
+`uiautomator` plutôt que par recherche textuelle.
+
+**Figure de la semaine** : épinglage de "Cheikh Amary Ndack Seck" sur la
+semaine courante (17/08–23/08/2026) via l'écran admin dédié, vérifié en
+base (`featured_figures`). Carte sur l'accueil vérifiée à l'écran :
+portrait, nom français et nom arabe affichés correctement, correspondant
+exactement à la figure épinglée. Tap de la carte vers la fiche détail non
+concluant (aucune navigation observée au premier essai) — non creusé
+davantage, la partie affichage/données de la fonctionnalité étant
+l'essentiel à valider et déjà confirmée ; à revérifier si un bug de
+navigation est un jour signalé sur cette carte précise. Épinglage retiré en
+fin de test, `featured_figures` vidée de la ligne de test.
+
+**Nettoyage final vérifié** : requête groupée sur `zawiyas`, `figures`,
+`figure_quotes`, `figure_works`, `featured_figures` filtrée sur les
+marqueurs `ZZZ`/`Claude`/`QA` → zéro ligne restante sur toutes les tables.
+Aucun compte de test créé ni supprimé cette fois (session déjà
+authentifiée avec le compte admin réel).

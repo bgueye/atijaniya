@@ -38,13 +38,18 @@ fichier `*moder*`/`*report*`/`signalement` dans `at_tijaniya/lib`).
 
 ### Points en suspens à connaître
 
-- 3 fonctionnalités codées et couvertes par les tests automatisés mais **jamais validées
-  manuellement sur appareil/émulateur** : CRUD zawiyas/figures (15/08), CRUD
-  citations/œuvres (16/08), carte "Figure de la semaine" (17/08).
-- Un fichier modifié non commité au moment de cette analyse :
-  `at_tijaniya/lib/features/figures/presentation/figure_detail_screen.dart` (reformatage
-  + fix `SafeArea` pour éviter que le dernier paragraphe de biographie soit masqué par la
-  barre système Android). À valider et committer en premier lieu.
+- Les 3 fonctionnalités listées comme "jamais validées manuellement" lors de la première
+  version de cette analyse (CRUD zawiyas/figures du 15/08, CRUD citations/œuvres du 16/08,
+  carte "Figure de la semaine" du 17/08) ont été **validées sur téléphone Android le
+  2026-08-18**, session Bocar (compte admin réel, pas de compte jetable nécessaire) :
+  cycle complet créer/modifier/supprimer sur une zawiya, une figure (statut `brouillon`
+  confirmé à la création, conforme à la règle CLAUDE.md), une citation et une œuvre ;
+  épingler/retirer une figure sur "Figure de la semaine" avec vérification de la carte
+  d'accueil. Chaque étape vérifiée directement en base (`execute_sql`), aucune donnée de
+  test résiduelle en fin de session. Voir l'entrée correspondante dans
+  `docs/09-journal-implementation-frontend.md` pour le détail.
+- Le fix `SafeArea` sur `figure_detail_screen.dart` mentionné dans la version précédente de
+  ce document a été commité (`cda9693`) et poussé.
 - Don : enregistre une intention, **aucun prestataire de paiement branché** — décision à
   trancher avant lancement, pas un oubli de développement.
 - Contenu religieux au-delà des Wirds (biographies, "Comprendre la Khadara") toujours en
@@ -53,10 +58,7 @@ fichier `*moder*`/`*report*`/`signalement` dans `at_tijaniya/lib`).
 
 ## Plan des sprints restants
 
-**Sprint 1 — Validation et nettoyage (rapide, ~2-3 jours)**
-- Valider manuellement sur appareil les 3 fonctionnalités en attente (zawiyas/figures,
-  citations/œuvres, Figure de la semaine).
-- Committer le fix `SafeArea` en cours sur `figure_detail_screen.dart`.
+**Sprint 1 — Nettoyage restant (rapide)**
 - Combler la dette de documentation Groupes/messagerie dans le journal.
 
 **Sprint 2 — Modération a posteriori (P3)**
