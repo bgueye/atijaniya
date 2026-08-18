@@ -68,10 +68,13 @@ class _FigureDetailScreenState extends ConsumerState<FigureDetailScreen> {
         title: Text(l10n.figureDeleteConfirmTitle),
         content: Text(l10n.figureDeleteConfirmBody),
         actions: [
-          TextButton(onPressed: () => Navigator.of(context).pop(false), child: Text(l10n.profileCancel)),
+          TextButton(
+              onPressed: () => Navigator.of(context).pop(false),
+              child: Text(l10n.profileCancel)),
           TextButton(
             onPressed: () => Navigator.of(context).pop(true),
-            child: Text(l10n.figureDeleteConfirmAction, style: const TextStyle(color: Colors.redAccent)),
+            child: Text(l10n.figureDeleteConfirmAction,
+                style: const TextStyle(color: Colors.redAccent)),
           ),
         ],
       ),
@@ -86,8 +89,9 @@ class _FigureDetailScreenState extends ConsumerState<FigureDetailScreen> {
       if (mounted) Navigator.of(context).pop();
     } catch (error) {
       final kind = classifyFigureDeleteError(error);
-      final message =
-          kind == FigureDeleteErrorKind.blockedBySilsila ? l10n.figureDeleteBlockedBySilsila : l10n.figureDeleteError;
+      final message = kind == FigureDeleteErrorKind.blockedBySilsila
+          ? l10n.figureDeleteBlockedBySilsila
+          : l10n.figureDeleteError;
       if (mounted) {
         ScaffoldMessenger.of(context)
           ..hideCurrentSnackBar()
@@ -101,7 +105,8 @@ class _FigureDetailScreenState extends ConsumerState<FigureDetailScreen> {
   /// Recharge la figure (citations/œuvres à jour) après une action admin sur
   /// l'onglet Citations — voir `FiguresRepository.fetchFigureById`.
   Future<void> _refreshFigureContent() async {
-    final updated = await ref.read(figuresRepositoryProvider).fetchFigureById(_figure.id);
+    final updated =
+        await ref.read(figuresRepositoryProvider).fetchFigureById(_figure.id);
     if (mounted) setState(() => _figure = updated);
   }
 
@@ -145,50 +150,65 @@ class _FigureDetailScreenState extends ConsumerState<FigureDetailScreen> {
     return DefaultTabController(
       length: 4,
       child: Scaffold(
-        body: Column(
-          children: [
-            _FigureHero(
-              figure: figure,
-              isAdmin: isAdmin,
-              changingPortrait: _changingPortrait,
-              onChangePortrait: _changePortrait,
-              deleting: _deleting,
-              onEdit: _editFigure,
-              onDelete: _confirmDelete,
-              editTooltip: l10n.figureEditTooltip,
-              deleteTooltip: l10n.figureDeleteTooltip,
-            ),
-            DecoratedBox(
-              decoration: BoxDecoration(
-                color: AppColors.offWhite,
-                border: Border(bottom: BorderSide(color: AppColors.bronze.withValues(alpha: 0.2))),
+        // `SafeArea(top: false, ...)` : le haut est déjà géré par `_FigureHero`
+        // (SafeArea interne, bottom: false) — sans ce SafeArea englobant, le
+        // contenu des onglets (ex. dernier paragraphe de "Biographie") peut se
+        // retrouver masqué sous la barre système Android (3 boutons/geste),
+        // même principe que les écrans de formulaire de l'app.
+        body: SafeArea(
+          top: false,
+          child: Column(
+            children: [
+              _FigureHero(
+                figure: figure,
+                isAdmin: isAdmin,
+                changingPortrait: _changingPortrait,
+                onChangePortrait: _changePortrait,
+                deleting: _deleting,
+                onEdit: _editFigure,
+                onDelete: _confirmDelete,
+                editTooltip: l10n.figureEditTooltip,
+                deleteTooltip: l10n.figureDeleteTooltip,
               ),
-              child: TabBar(
-                labelColor: AppColors.emerald,
-                unselectedLabelColor: AppColors.bronze,
-                indicatorColor: AppColors.gold,
-                indicatorWeight: 2,
-                labelStyle: const TextStyle(fontWeight: FontWeight.w700, fontSize: 14),
-                unselectedLabelStyle: const TextStyle(fontWeight: FontWeight.w500, fontSize: 14),
-                tabs: [
-                  Tab(text: l10n.figureBiographySectionTitle),
-                  Tab(text: l10n.figureTabSilsila),
-                  Tab(text: l10n.figureCitationsSectionTitle),
-                  Tab(text: l10n.figureZiyaraSectionTitle),
-                ],
+              DecoratedBox(
+                decoration: BoxDecoration(
+                  color: AppColors.offWhite,
+                  border: Border(
+                      bottom: BorderSide(
+                          color: AppColors.bronze.withValues(alpha: 0.2))),
+                ),
+                child: TabBar(
+                  labelColor: AppColors.emerald,
+                  unselectedLabelColor: AppColors.bronze,
+                  indicatorColor: AppColors.gold,
+                  indicatorWeight: 2,
+                  labelStyle: const TextStyle(
+                      fontWeight: FontWeight.w700, fontSize: 14),
+                  unselectedLabelStyle: const TextStyle(
+                      fontWeight: FontWeight.w500, fontSize: 14),
+                  tabs: [
+                    Tab(text: l10n.figureBiographySectionTitle),
+                    Tab(text: l10n.figureTabSilsila),
+                    Tab(text: l10n.figureCitationsSectionTitle),
+                    Tab(text: l10n.figureZiyaraSectionTitle),
+                  ],
+                ),
               ),
-            ),
-            Expanded(
-              child: TabBarView(
-                children: [
-                  _BiographyTab(figure: figure),
-                  _SilsilaTab(figure: figure, isAdmin: isAdmin),
-                  _CitationsTab(figure: figure, isAdmin: isAdmin, onContentChanged: _refreshFigureContent),
-                  _ZiyarasTab(figure: figure, isAdmin: isAdmin),
-                ],
+              Expanded(
+                child: TabBarView(
+                  children: [
+                    _BiographyTab(figure: figure),
+                    _SilsilaTab(figure: figure, isAdmin: isAdmin),
+                    _CitationsTab(
+                        figure: figure,
+                        isAdmin: isAdmin,
+                        onContentChanged: _refreshFigureContent),
+                    _ZiyarasTab(figure: figure, isAdmin: isAdmin),
+                  ],
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
@@ -260,7 +280,10 @@ class _FigureHero extends StatelessWidget {
               top: 4,
               child: Opacity(
                 opacity: 0.12,
-                child: SizedBox(width: 110, height: 110, child: CustomPaint(painter: RosacePainter())),
+                child: SizedBox(
+                    width: 110,
+                    height: 110,
+                    child: CustomPaint(painter: RosacePainter())),
               ),
             ),
             Padding(
@@ -293,7 +316,8 @@ class _FigureHero extends StatelessWidget {
                                   : null,
                             ),
                             child: figure.portraitUrl == null
-                                ? const Icon(Icons.person_outline, color: AppColors.parchment, size: 32)
+                                ? const Icon(Icons.person_outline,
+                                    color: AppColors.parchment, size: 32)
                                 : null,
                           ),
                           if (changingPortrait)
@@ -303,7 +327,8 @@ class _FigureHero extends StatelessWidget {
                                 child: SizedBox(
                                   width: 20,
                                   height: 20,
-                                  child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
+                                  child: CircularProgressIndicator(
+                                      strokeWidth: 2, color: Colors.white),
                                 ),
                               ),
                             )
@@ -313,8 +338,11 @@ class _FigureHero extends StatelessWidget {
                               bottom: -2,
                               child: Container(
                                 padding: const EdgeInsets.all(4),
-                                decoration: const BoxDecoration(color: AppColors.gold, shape: BoxShape.circle),
-                                child: const Icon(Icons.edit, size: 14, color: AppColors.zaytoune),
+                                decoration: const BoxDecoration(
+                                    color: AppColors.gold,
+                                    shape: BoxShape.circle),
+                                child: const Icon(Icons.edit,
+                                    size: 14, color: AppColors.zaytoune),
                               ),
                             ),
                         ],
@@ -326,13 +354,17 @@ class _FigureHero extends StatelessWidget {
                     figure.nameArabic,
                     textDirection: TextDirection.rtl,
                     textAlign: TextAlign.center,
-                    style: AppTheme.sacredText(fontSize: 22, color: AppColors.goldSoft),
+                    style: AppTheme.sacredText(
+                        fontSize: 22, color: AppColors.goldSoft),
                   ),
                   const SizedBox(height: 6),
                   Text(
                     figure.nameFrench.toUpperCase(),
                     textAlign: TextAlign.center,
-                    style: const TextStyle(color: _subtitleColor, fontSize: 12, letterSpacing: 1.4),
+                    style: const TextStyle(
+                        color: _subtitleColor,
+                        fontSize: 12,
+                        letterSpacing: 1.4),
                   ),
                 ],
               ),
@@ -349,7 +381,8 @@ class _FigureHero extends StatelessWidget {
                 child: Row(
                   children: [
                     IconButton(
-                      icon: const Icon(Icons.edit_outlined, color: AppColors.parchment),
+                      icon: const Icon(Icons.edit_outlined,
+                          color: AppColors.parchment),
                       tooltip: editTooltip,
                       onPressed: deleting ? null : onEdit,
                     ),
@@ -358,9 +391,11 @@ class _FigureHero extends StatelessWidget {
                           ? const SizedBox(
                               width: 18,
                               height: 18,
-                              child: CircularProgressIndicator(strokeWidth: 2, color: AppColors.parchment),
+                              child: CircularProgressIndicator(
+                                  strokeWidth: 2, color: AppColors.parchment),
                             )
-                          : const Icon(Icons.delete_outline, color: AppColors.parchment),
+                          : const Icon(Icons.delete_outline,
+                              color: AppColors.parchment),
                       tooltip: deleteTooltip,
                       onPressed: deleting ? null : onDelete,
                     ),
@@ -387,9 +422,12 @@ class _PendingTab extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Icon(Icons.hourglass_empty, color: AppColors.bronze, size: 32),
+            const Icon(Icons.hourglass_empty,
+                color: AppColors.bronze, size: 32),
             const SizedBox(height: 12),
-            Text(message, textAlign: TextAlign.center, style: const TextStyle(color: AppColors.bronze, fontSize: 15)),
+            Text(message,
+                textAlign: TextAlign.center,
+                style: const TextStyle(color: AppColors.bronze, fontSize: 15)),
           ],
         ),
       ),
@@ -411,7 +449,10 @@ class _BiographyTab extends StatelessWidget {
     }
     return ListView(
       padding: const EdgeInsets.all(20),
-      children: [for (final paragraph in biography) _BiographyParagraph(paragraph: paragraph)],
+      children: [
+        for (final paragraph in biography)
+          _BiographyParagraph(paragraph: paragraph)
+      ],
     );
   }
 }
@@ -446,7 +487,8 @@ class _SilsilaTabState extends ConsumerState<_SilsilaTab> {
   Future<void> _editOwnLink(FigureSilsilaLink? existingLink) async {
     final saved = await Navigator.of(context).push<bool>(
       MaterialPageRoute(
-        builder: (_) => FigureSilsilaFormScreen(figure: widget.figure, existingLink: existingLink),
+        builder: (_) => FigureSilsilaFormScreen(
+            figure: widget.figure, existingLink: existingLink),
       ),
     );
     if (saved == true) _invalidateSilsila();
@@ -460,10 +502,13 @@ class _SilsilaTabState extends ConsumerState<_SilsilaTab> {
         title: Text(l10n.figureSilsilaRemoveConfirmTitle),
         content: Text(l10n.figureSilsilaRemoveConfirmBody),
         actions: [
-          TextButton(onPressed: () => Navigator.of(context).pop(false), child: Text(l10n.profileCancel)),
+          TextButton(
+              onPressed: () => Navigator.of(context).pop(false),
+              child: Text(l10n.profileCancel)),
           TextButton(
             onPressed: () => Navigator.of(context).pop(true),
-            child: Text(l10n.figureSilsilaRemoveConfirmAction, style: const TextStyle(color: Colors.redAccent)),
+            child: Text(l10n.figureSilsilaRemoveConfirmAction,
+                style: const TextStyle(color: Colors.redAccent)),
           ),
         ],
       ),
@@ -472,13 +517,16 @@ class _SilsilaTabState extends ConsumerState<_SilsilaTab> {
 
     setState(() => _busy = true);
     try {
-      await ref.read(figuresRepositoryProvider).removeSilsilaLink(widget.figure.id);
+      await ref
+          .read(figuresRepositoryProvider)
+          .removeSilsilaLink(widget.figure.id);
       _invalidateSilsila();
     } catch (_) {
       if (mounted) {
         ScaffoldMessenger.of(context)
           ..hideCurrentSnackBar()
-          ..showSnackBar(SnackBar(content: Text(l10n.figureSilsilaRemoveError)));
+          ..showSnackBar(
+              SnackBar(content: Text(l10n.figureSilsilaRemoveError)));
       }
     } finally {
       if (mounted) setState(() => _busy = false);
@@ -488,11 +536,13 @@ class _SilsilaTabState extends ConsumerState<_SilsilaTab> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-    final chainAsync = ref.watch(historicalSilsilaChainProvider(widget.figure.id));
+    final chainAsync =
+        ref.watch(historicalSilsilaChainProvider(widget.figure.id));
 
     FigureSilsilaLink? ownLink;
     if (widget.isAdmin) {
-      for (final link in ref.watch(silsilaLinksProvider).valueOrNull ?? const <FigureSilsilaLink>[]) {
+      for (final link in ref.watch(silsilaLinksProvider).valueOrNull ??
+          const <FigureSilsilaLink>[]) {
         if (link.figureId == widget.figure.id) {
           ownLink = link;
           break;
@@ -501,7 +551,8 @@ class _SilsilaTabState extends ConsumerState<_SilsilaTab> {
     }
 
     return chainAsync.when(
-      loading: () => const Center(child: CircularProgressIndicator(color: AppColors.emerald)),
+      loading: () => const Center(
+          child: CircularProgressIndicator(color: AppColors.emerald)),
       error: (error, stackTrace) => Center(
         child: Padding(
           padding: const EdgeInsets.all(24),
@@ -517,7 +568,8 @@ class _SilsilaTabState extends ConsumerState<_SilsilaTab> {
               ),
               const SizedBox(height: 12),
               OutlinedButton(
-                onPressed: () => ref.invalidate(historicalSilsilaChainProvider(widget.figure.id)),
+                onPressed: () => ref.invalidate(
+                    historicalSilsilaChainProvider(widget.figure.id)),
                 child: Text(l10n.figuresRetry),
               ),
             ],
@@ -525,7 +577,9 @@ class _SilsilaTabState extends ConsumerState<_SilsilaTab> {
         ),
       ),
       data: (chain) {
-        if (chain.isEmpty && !widget.isAdmin) return _PendingTab(message: l10n.figureSilsilaPending);
+        if (chain.isEmpty && !widget.isAdmin) {
+          return _PendingTab(message: l10n.figureSilsilaPending);
+        }
         return ListView(
           padding: const EdgeInsets.all(20),
           children: [
@@ -536,14 +590,21 @@ class _SilsilaTabState extends ConsumerState<_SilsilaTab> {
                 children: [
                   OutlinedButton.icon(
                     onPressed: _busy ? null : () => _editOwnLink(ownLink),
-                    icon: Icon(ownLink == null ? Icons.add : Icons.edit_outlined, size: 18),
-                    label: Text(ownLink == null ? l10n.figureSilsilaAddButton : l10n.figureSilsilaEditButton),
+                    icon: Icon(
+                        ownLink == null ? Icons.add : Icons.edit_outlined,
+                        size: 18),
+                    label: Text(ownLink == null
+                        ? l10n.figureSilsilaAddButton
+                        : l10n.figureSilsilaEditButton),
                   ),
                   if (ownLink != null)
                     OutlinedButton.icon(
                       onPressed: _busy ? null : _removeOwnLink,
                       icon: _busy
-                          ? const SizedBox(width: 14, height: 14, child: CircularProgressIndicator(strokeWidth: 2))
+                          ? const SizedBox(
+                              width: 14,
+                              height: 14,
+                              child: CircularProgressIndicator(strokeWidth: 2))
                           : const Icon(Icons.link_off, size: 18),
                       label: Text(l10n.figureSilsilaRemoveButton),
                     ),
@@ -552,7 +613,8 @@ class _SilsilaTabState extends ConsumerState<_SilsilaTab> {
               const SizedBox(height: 12),
             ],
             if (chain.isEmpty)
-              Text(l10n.figureSilsilaPending, style: const TextStyle(color: AppColors.bronze))
+              Text(l10n.figureSilsilaPending,
+                  style: const TextStyle(color: AppColors.bronze))
             else
               for (var i = 0; i < chain.length; i++) ...[
                 _SilsilaNode(
@@ -576,7 +638,9 @@ class _SilsilaConnector extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Center(child: SizedBox(width: 1.5, height: 16, child: ColoredBox(color: AppColors.gold)));
+    return const Center(
+        child: SizedBox(
+            width: 1.5, height: 16, child: ColoredBox(color: AppColors.gold)));
   }
 }
 
@@ -586,7 +650,8 @@ class _SilsilaConnector extends StatelessWidget {
 /// `add_historical_silsila_chain_data_and_function`), bordure dorée pour la
 /// figure actuellement consultée.
 class _SilsilaNode extends StatelessWidget {
-  const _SilsilaNode({required this.link, required this.isSelf, required this.founderLabel});
+  const _SilsilaNode(
+      {required this.link, required this.isSelf, required this.founderLabel});
 
   final HistoricalSilsilaLink link;
   final bool isSelf;
@@ -610,17 +675,25 @@ class _SilsilaNode extends StatelessWidget {
             link.nameAr,
             textDirection: TextDirection.rtl,
             textAlign: TextAlign.center,
-            style: AppTheme.sacredText(fontSize: isRoot ? 18 : 15, color: isRoot ? AppColors.goldSoft : AppColors.zaytoune),
+            style: AppTheme.sacredText(
+                fontSize: isRoot ? 18 : 15,
+                color: isRoot ? AppColors.goldSoft : AppColors.zaytoune),
           ),
           const SizedBox(height: 2),
           Text(
             link.nameFr,
             textAlign: TextAlign.center,
-            style: TextStyle(fontSize: 12, color: isRoot ? AppColors.parchment : AppColors.bronze),
+            style: TextStyle(
+                fontSize: 12,
+                color: isRoot ? AppColors.parchment : AppColors.bronze),
           ),
           if (isRoot) ...[
             const SizedBox(height: 2),
-            Text(founderLabel, style: const TextStyle(fontSize: 10, color: AppColors.gold, fontWeight: FontWeight.w600)),
+            Text(founderLabel,
+                style: const TextStyle(
+                    fontSize: 10,
+                    color: AppColors.gold,
+                    fontWeight: FontWeight.w600)),
           ],
         ],
       ),
@@ -639,7 +712,10 @@ class _SilsilaNode extends StatelessWidget {
 /// version précédente) pour porter [_busy], qui désactive les actions
 /// pendant un appel réseau en cours et évite un double envoi.
 class _CitationsTab extends ConsumerStatefulWidget {
-  const _CitationsTab({required this.figure, required this.isAdmin, required this.onContentChanged});
+  const _CitationsTab(
+      {required this.figure,
+      required this.isAdmin,
+      required this.onContentChanged});
 
   final Figure figure;
   final bool isAdmin;
@@ -657,14 +733,17 @@ class _CitationsTabState extends ConsumerState<_CitationsTab> {
 
   Future<void> _addCitation() async {
     final saved = await Navigator.of(context).push<bool>(
-      MaterialPageRoute(builder: (_) => FigureCitationFormScreen(figureId: widget.figure.id)),
+      MaterialPageRoute(
+          builder: (_) => FigureCitationFormScreen(figureId: widget.figure.id)),
     );
     if (saved == true) widget.onContentChanged();
   }
 
   Future<void> _editCitation(FigureCitation citation) async {
     final saved = await Navigator.of(context).push<bool>(
-      MaterialPageRoute(builder: (_) => FigureCitationFormScreen(figureId: widget.figure.id, citation: citation)),
+      MaterialPageRoute(
+          builder: (_) => FigureCitationFormScreen(
+              figureId: widget.figure.id, citation: citation)),
     );
     if (saved == true) widget.onContentChanged();
   }
@@ -677,10 +756,13 @@ class _CitationsTabState extends ConsumerState<_CitationsTab> {
         title: Text(l10n.figureCitationDeleteConfirmTitle),
         content: Text(l10n.figureCitationDeleteConfirmBody),
         actions: [
-          TextButton(onPressed: () => Navigator.of(context).pop(false), child: Text(l10n.profileCancel)),
+          TextButton(
+              onPressed: () => Navigator.of(context).pop(false),
+              child: Text(l10n.profileCancel)),
           TextButton(
             onPressed: () => Navigator.of(context).pop(true),
-            child: Text(l10n.figureCitationDeleteConfirmAction, style: const TextStyle(color: Colors.redAccent)),
+            child: Text(l10n.figureCitationDeleteConfirmAction,
+                style: const TextStyle(color: Colors.redAccent)),
           ),
         ],
       ),
@@ -695,7 +777,8 @@ class _CitationsTabState extends ConsumerState<_CitationsTab> {
       if (mounted) {
         ScaffoldMessenger.of(context)
           ..hideCurrentSnackBar()
-          ..showSnackBar(SnackBar(content: Text(l10n.figureCitationDeleteError)));
+          ..showSnackBar(
+              SnackBar(content: Text(l10n.figureCitationDeleteError)));
       }
     } finally {
       if (mounted) setState(() => _busy = false);
@@ -705,7 +788,9 @@ class _CitationsTabState extends ConsumerState<_CitationsTab> {
   Future<void> _addWork() async {
     final saved = await Navigator.of(context).push<bool>(
       MaterialPageRoute(
-        builder: (_) => FigureWorkFormScreen(figureId: widget.figure.id, nextOrderIndex: widget.figure.works?.length ?? 0),
+        builder: (_) => FigureWorkFormScreen(
+            figureId: widget.figure.id,
+            nextOrderIndex: widget.figure.works?.length ?? 0),
       ),
     );
     if (saved == true) widget.onContentChanged();
@@ -713,7 +798,9 @@ class _CitationsTabState extends ConsumerState<_CitationsTab> {
 
   Future<void> _editWork(FigureWork work) async {
     final saved = await Navigator.of(context).push<bool>(
-      MaterialPageRoute(builder: (_) => FigureWorkFormScreen(figureId: widget.figure.id, work: work)),
+      MaterialPageRoute(
+          builder: (_) =>
+              FigureWorkFormScreen(figureId: widget.figure.id, work: work)),
     );
     if (saved == true) widget.onContentChanged();
   }
@@ -726,10 +813,13 @@ class _CitationsTabState extends ConsumerState<_CitationsTab> {
         title: Text(l10n.figureWorkDeleteConfirmTitle),
         content: Text(l10n.figureWorkDeleteConfirmBody),
         actions: [
-          TextButton(onPressed: () => Navigator.of(context).pop(false), child: Text(l10n.profileCancel)),
+          TextButton(
+              onPressed: () => Navigator.of(context).pop(false),
+              child: Text(l10n.profileCancel)),
           TextButton(
             onPressed: () => Navigator.of(context).pop(true),
-            child: Text(l10n.figureWorkDeleteConfirmAction, style: const TextStyle(color: Colors.redAccent)),
+            child: Text(l10n.figureWorkDeleteConfirmAction,
+                style: const TextStyle(color: Colors.redAccent)),
           ),
         ],
       ),
@@ -785,7 +875,9 @@ class _CitationsTabState extends ConsumerState<_CitationsTab> {
           ),
           const SizedBox(height: 12),
         ],
-        if (!hasCitations && !hasWorks) Text(l10n.figureCitationsEmpty, style: const TextStyle(color: AppColors.bronze)),
+        if (!hasCitations && !hasWorks)
+          Text(l10n.figureCitationsEmpty,
+              style: const TextStyle(color: AppColors.bronze)),
         if (hasCitations)
           for (final citation in citations)
             _CitationCard(
@@ -820,12 +912,19 @@ class _SectionTitle extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Text(title, style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 16, color: AppColors.ink));
+    return Text(title,
+        style: const TextStyle(
+            fontWeight: FontWeight.w600, fontSize: 16, color: AppColors.ink));
   }
 }
 
 class _WorkCard extends StatelessWidget {
-  const _WorkCard({required this.work, this.isAdmin = false, this.busy = false, this.onEdit, this.onDelete});
+  const _WorkCard(
+      {required this.work,
+      this.isAdmin = false,
+      this.busy = false,
+      this.onEdit,
+      this.onDelete});
 
   final FigureWork work;
   final bool isAdmin;
@@ -859,12 +958,16 @@ class _WorkCard extends StatelessWidget {
                   ),
                 ),
               ),
-              if (isAdmin) _AdminItemActions(busy: busy, onEdit: onEdit, onDelete: onDelete),
+              if (isAdmin)
+                _AdminItemActions(
+                    busy: busy, onEdit: onEdit, onDelete: onDelete),
             ],
           ),
           if (work.description != null) ...[
             const SizedBox(height: 6),
-            Text(work.description!, style: const TextStyle(color: AppColors.ink, fontSize: 15, height: 1.4)),
+            Text(work.description!,
+                style: const TextStyle(
+                    color: AppColors.ink, fontSize: 15, height: 1.4)),
           ],
         ],
       ),
@@ -889,15 +992,20 @@ class _AdminItemActions extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       children: [
         IconButton(
-          icon: const Icon(Icons.edit_outlined, size: 18, color: AppColors.bronze),
+          icon: const Icon(Icons.edit_outlined,
+              size: 18, color: AppColors.bronze),
           padding: EdgeInsets.zero,
           constraints: const BoxConstraints(minWidth: 32, minHeight: 32),
           onPressed: busy ? null : onEdit,
         ),
         IconButton(
           icon: busy
-              ? const SizedBox(width: 14, height: 14, child: CircularProgressIndicator(strokeWidth: 2))
-              : const Icon(Icons.delete_outline, size: 18, color: AppColors.bronze),
+              ? const SizedBox(
+                  width: 14,
+                  height: 14,
+                  child: CircularProgressIndicator(strokeWidth: 2))
+              : const Icon(Icons.delete_outline,
+                  size: 18, color: AppColors.bronze),
           padding: EdgeInsets.zero,
           constraints: const BoxConstraints(minWidth: 32, minHeight: 32),
           onPressed: busy ? null : onDelete,
@@ -926,7 +1034,9 @@ class _ZiyarasTabState extends ConsumerState<_ZiyarasTab> {
   bool _busy = false;
 
   Future<void> _openLinkPicker() async {
-    final linked = ref.read(linkedEventsForFigureProvider(widget.figure.id)).valueOrNull ?? const [];
+    final linked =
+        ref.read(linkedEventsForFigureProvider(widget.figure.id)).valueOrNull ??
+            const [];
     final linkedIds = linked.map((e) => e.id).toSet();
     final l10n = AppLocalizations.of(context)!;
 
@@ -934,14 +1044,17 @@ class _ZiyarasTabState extends ConsumerState<_ZiyarasTab> {
       context: context,
       isScrollControlled: true,
       backgroundColor: AppColors.offWhite,
-      shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
+      shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
       builder: (context) => _EventLinkPickerSheet(excludedEventIds: linkedIds),
     );
     if (picked == null || !mounted) return;
 
     setState(() => _busy = true);
     try {
-      await ref.read(figuresRepositoryProvider).linkEvent(figureId: widget.figure.id, eventId: picked.id);
+      await ref
+          .read(figuresRepositoryProvider)
+          .linkEvent(figureId: widget.figure.id, eventId: picked.id);
       ref.invalidate(linkedEventsForFigureProvider(widget.figure.id));
     } catch (_) {
       if (mounted) {
@@ -962,10 +1075,13 @@ class _ZiyarasTabState extends ConsumerState<_ZiyarasTab> {
         title: Text(l10n.figureZiyarasUnlinkConfirmTitle),
         content: Text(l10n.figureZiyarasUnlinkConfirmBody),
         actions: [
-          TextButton(onPressed: () => Navigator.of(context).pop(false), child: Text(l10n.profileCancel)),
+          TextButton(
+              onPressed: () => Navigator.of(context).pop(false),
+              child: Text(l10n.profileCancel)),
           TextButton(
             onPressed: () => Navigator.of(context).pop(true),
-            child: Text(l10n.figureZiyarasUnlinkConfirmAction, style: const TextStyle(color: Colors.redAccent)),
+            child: Text(l10n.figureZiyarasUnlinkConfirmAction,
+                style: const TextStyle(color: Colors.redAccent)),
           ),
         ],
       ),
@@ -974,13 +1090,16 @@ class _ZiyarasTabState extends ConsumerState<_ZiyarasTab> {
 
     setState(() => _busy = true);
     try {
-      await ref.read(figuresRepositoryProvider).unlinkEvent(figureId: widget.figure.id, eventId: event.id);
+      await ref
+          .read(figuresRepositoryProvider)
+          .unlinkEvent(figureId: widget.figure.id, eventId: event.id);
       ref.invalidate(linkedEventsForFigureProvider(widget.figure.id));
     } catch (_) {
       if (mounted) {
         ScaffoldMessenger.of(context)
           ..hideCurrentSnackBar()
-          ..showSnackBar(SnackBar(content: Text(l10n.figureZiyarasUnlinkError)));
+          ..showSnackBar(
+              SnackBar(content: Text(l10n.figureZiyarasUnlinkError)));
       }
     } finally {
       if (mounted) setState(() => _busy = false);
@@ -990,7 +1109,8 @@ class _ZiyarasTabState extends ConsumerState<_ZiyarasTab> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-    final eventsAsync = ref.watch(linkedEventsForFigureProvider(widget.figure.id));
+    final eventsAsync =
+        ref.watch(linkedEventsForFigureProvider(widget.figure.id));
 
     return ListView(
       padding: const EdgeInsets.all(20),
@@ -1004,13 +1124,16 @@ class _ZiyarasTabState extends ConsumerState<_ZiyarasTab> {
           const SizedBox(height: 12),
         ],
         eventsAsync.when(
-          loading: () => const Center(child: Padding(
+          loading: () => const Center(
+              child: Padding(
             padding: EdgeInsets.symmetric(vertical: 16),
             child: CircularProgressIndicator(color: AppColors.emerald),
           )),
-          error: (error, stackTrace) => Text(l10n.khadaraLoadError, style: const TextStyle(color: AppColors.bronze)),
+          error: (error, stackTrace) => Text(l10n.khadaraLoadError,
+              style: const TextStyle(color: AppColors.bronze)),
           data: (events) => events.isEmpty
-              ? Text(l10n.figureZiyarasPending, style: const TextStyle(color: AppColors.bronze))
+              ? Text(l10n.figureZiyarasPending,
+                  style: const TextStyle(color: AppColors.bronze))
               : Column(
                   children: [
                     for (final event in events)
@@ -1029,7 +1152,11 @@ class _ZiyarasTabState extends ConsumerState<_ZiyarasTab> {
 }
 
 class _ZiyaraEventCard extends StatelessWidget {
-  const _ZiyaraEventCard({required this.event, required this.isAdmin, required this.busy, required this.onUnlink});
+  const _ZiyaraEventCard(
+      {required this.event,
+      required this.isAdmin,
+      required this.busy,
+      required this.onUnlink});
 
   final KhadaraEvent event;
   final bool isAdmin;
@@ -1041,7 +1168,8 @@ class _ZiyaraEventCard extends StatelessWidget {
     return Card(
       margin: const EdgeInsets.only(bottom: 12),
       child: ListTile(
-        leading: Icon(khadaraEventTypeIcon(event.type), color: AppColors.emerald),
+        leading:
+            Icon(khadaraEventTypeIcon(event.type), color: AppColors.emerald),
         title: Text(event.title),
         subtitle: Text(formatKhadaraDateTime(event.startsAt)),
         // Un seul bouton Délier ici, pas `_AdminItemActions` (Modifier +
@@ -1050,8 +1178,12 @@ class _ZiyaraEventCard extends StatelessWidget {
         trailing: isAdmin
             ? IconButton(
                 icon: busy
-                    ? const SizedBox(width: 14, height: 14, child: CircularProgressIndicator(strokeWidth: 2))
-                    : const Icon(Icons.link_off, size: 20, color: AppColors.bronze),
+                    ? const SizedBox(
+                        width: 14,
+                        height: 14,
+                        child: CircularProgressIndicator(strokeWidth: 2))
+                    : const Icon(Icons.link_off,
+                        size: 20, color: AppColors.bronze),
                 onPressed: busy ? null : onUnlink,
               )
             : const Icon(Icons.chevron_right, color: AppColors.bronze),
@@ -1085,23 +1217,29 @@ class _EventLinkPickerSheet extends ConsumerWidget {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Text(l10n.figureZiyarasLinkPickerTitle, style: Theme.of(context).textTheme.titleLarge),
+            Text(l10n.figureZiyarasLinkPickerTitle,
+                style: Theme.of(context).textTheme.titleLarge),
             const SizedBox(height: 12),
             ConstrainedBox(
-              constraints: BoxConstraints(maxHeight: MediaQuery.of(context).size.height * 0.5),
+              constraints: BoxConstraints(
+                  maxHeight: MediaQuery.of(context).size.height * 0.5),
               child: eventsAsync.when(
-                loading: () => const Center(child: Padding(
+                loading: () => const Center(
+                    child: Padding(
                   padding: EdgeInsets.symmetric(vertical: 24),
                   child: CircularProgressIndicator(color: AppColors.emerald),
                 )),
-                error: (error, stackTrace) =>
-                    Text(l10n.khadaraLoadError, style: const TextStyle(color: AppColors.bronze)),
+                error: (error, stackTrace) => Text(l10n.khadaraLoadError,
+                    style: const TextStyle(color: AppColors.bronze)),
                 data: (events) {
-                  final selectable = events.where((e) => !excludedEventIds.contains(e.id)).toList();
+                  final selectable = events
+                      .where((e) => !excludedEventIds.contains(e.id))
+                      .toList();
                   if (selectable.isEmpty) {
                     return Padding(
                       padding: const EdgeInsets.symmetric(vertical: 16),
-                      child: Text(l10n.figureZiyarasLinkPickerEmpty, style: const TextStyle(color: AppColors.bronze)),
+                      child: Text(l10n.figureZiyarasLinkPickerEmpty,
+                          style: const TextStyle(color: AppColors.bronze)),
                     );
                   }
                   return ListView(
@@ -1109,7 +1247,8 @@ class _EventLinkPickerSheet extends ConsumerWidget {
                     children: [
                       for (final event in selectable)
                         ListTile(
-                          leading: Icon(khadaraEventTypeIcon(event.type), color: AppColors.emerald),
+                          leading: Icon(khadaraEventTypeIcon(event.type),
+                              color: AppColors.emerald),
                           title: Text(event.title),
                           subtitle: Text(formatKhadaraDateTime(event.startsAt)),
                           onTap: () => Navigator.of(context).pop(event),
@@ -1150,11 +1289,15 @@ class _BiographyParagraph extends StatelessWidget {
           if (paragraph.transliteration != null) ...[
             Text(
               paragraph.transliteration!,
-              style: const TextStyle(fontStyle: FontStyle.italic, fontSize: 15, color: AppColors.bronze),
+              style: const TextStyle(
+                  fontStyle: FontStyle.italic,
+                  fontSize: 15,
+                  color: AppColors.bronze),
             ),
             const SizedBox(height: 4),
           ],
-          Text(paragraph.translation, style: const TextStyle(color: AppColors.ink, fontSize: 16)),
+          Text(paragraph.translation,
+              style: const TextStyle(color: AppColors.ink, fontSize: 16)),
         ],
       ),
     );
@@ -1162,7 +1305,12 @@ class _BiographyParagraph extends StatelessWidget {
 }
 
 class _CitationCard extends StatelessWidget {
-  const _CitationCard({required this.citation, this.isAdmin = false, this.busy = false, this.onEdit, this.onDelete});
+  const _CitationCard(
+      {required this.citation,
+      this.isAdmin = false,
+      this.busy = false,
+      this.onEdit,
+      this.onDelete});
 
   final FigureCitation citation;
   final bool isAdmin;
@@ -1185,7 +1333,8 @@ class _CitationCard extends StatelessWidget {
           if (isAdmin)
             Align(
               alignment: AlignmentDirectional.centerEnd,
-              child: _AdminItemActions(busy: busy, onEdit: onEdit, onDelete: onDelete),
+              child: _AdminItemActions(
+                  busy: busy, onEdit: onEdit, onDelete: onDelete),
             ),
           if (citation.arabic != null) ...[
             Text(
@@ -1199,15 +1348,22 @@ class _CitationCard extends StatelessWidget {
           if (citation.transliteration != null) ...[
             Text(
               citation.transliteration!,
-              style: const TextStyle(fontStyle: FontStyle.italic, fontSize: 15, color: AppColors.bronze),
+              style: const TextStyle(
+                  fontStyle: FontStyle.italic,
+                  fontSize: 15,
+                  color: AppColors.bronze),
             ),
             const SizedBox(height: 4),
           ],
-          Text(citation.translation, style: const TextStyle(color: AppColors.ink, fontSize: 16)),
+          Text(citation.translation,
+              style: const TextStyle(color: AppColors.ink, fontSize: 16)),
           const SizedBox(height: 8),
           Text(
             '— ${citation.source}',
-            style: const TextStyle(color: AppColors.bronze, fontSize: 12, fontStyle: FontStyle.italic),
+            style: const TextStyle(
+                color: AppColors.bronze,
+                fontSize: 12,
+                fontStyle: FontStyle.italic),
           ),
         ],
       ),
