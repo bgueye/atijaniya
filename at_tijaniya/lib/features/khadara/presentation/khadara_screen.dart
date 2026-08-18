@@ -89,6 +89,7 @@ class _EventsTab extends ConsumerWidget {
     return Scaffold(
       floatingActionButton: canCreate
           ? FloatingActionButton.extended(
+              heroTag: 'khadara_add_event',
               onPressed: () => Navigator.of(context).push(
                 MaterialPageRoute(builder: (_) => const EventFormScreen()),
               ),
@@ -149,6 +150,7 @@ class _ZawiyasTab extends ConsumerWidget {
     return Scaffold(
       floatingActionButton: canManage
           ? FloatingActionButton.extended(
+              heroTag: 'khadara_add_zawiya',
               onPressed: () => Navigator.of(context).push(
                 MaterialPageRoute(builder: (_) => const ZawiyaFormScreen()),
               ),

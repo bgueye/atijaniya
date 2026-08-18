@@ -86,6 +86,7 @@ class _FeedTab extends ConsumerWidget {
 
     return Scaffold(
       floatingActionButton: FloatingActionButton.extended(
+        heroTag: 'communaute_create_post',
         onPressed: () => _openCreateSheet(context, ref),
         icon: const Icon(Icons.add),
         label: Text(l10n.communityCreatePostButton),
@@ -328,6 +329,7 @@ class _GroupsTab extends ConsumerWidget {
 
     return Scaffold(
       floatingActionButton: FloatingActionButton.extended(
+        heroTag: 'communaute_create_group',
         onPressed: () => _openCreateSheet(context, ref),
         icon: const Icon(Icons.add),
         label: Text(l10n.communityGroupsCreateButton),

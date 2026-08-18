@@ -699,5 +699,37 @@
   "donationSubmitError": "Impossible d'enregistrer votre don pour le moment.",
   "donationRecordedTitle": "Merci pour votre soutien",
   "donationRecordedBody": "Le paiement en ligne n'est pas encore disponible dans l'application. Votre intention de don a bien été enregistrée.",
-  "donationRecordedBackButton": "Retour"
+  "donationRecordedBackButton": "Retour",
+
+  "moderationReportAction": "Signaler",
+  "moderationReportDialogTitle": "Signaler ce contenu",
+  "moderationReportDialogBody": "Un administrateur examinera votre signalement.",
+  "moderationReportReasonLabel": "Raison (optionnel)",
+  "moderationReportSubmit": "Signaler",
+  "moderationReportSuccess": "Signalement envoyé, merci.",
+  "moderationReportAlreadyReported": "Vous avez déjà signalé ce contenu.",
+  "moderationReportError": "Impossible d'envoyer le signalement.",
+
+  "profileModerationReports": "Signalements",
+  "moderationScreenTitle": "Signalements",
+  "moderationEmptyState": "Aucun signalement en attente.",
+  "moderationLoadError": "Impossible de charger les signalements.",
+  "moderationRetry": "Réessayer",
+  "moderationTypeLiveStream": "Direct Khadara",
+  "moderationTypeLineageRequest": "Mise en relation",
+  "moderationReasonPrefix": "Raison signalée : {reason}",
+  "@moderationReasonPrefix": {
+    "placeholders": {
+      "reason": {"type": "String"}
+    }
+  },
+  "moderationHideStreamAction": "Masquer",
+  "moderationBlockRequestAction": "Bloquer",
+  "moderationDismissAction": "Rejeter le signalement",
+  "moderationConfirmHideStreamTitle": "Masquer ce direct ?",
+  "moderationConfirmHideStreamBody": "Le direct sera terminé et retiré de l'application pour tous les disciples. Cette action est définitive.",
+  "moderationConfirmBlockRequestTitle": "Bloquer cette mise en relation ?",
+  "moderationConfirmBlockRequestBody": "La demande sera marquée refusée pour les deux disciples. Cette action est définitive.",
+  "moderationResolveSuccess": "Signalement traité.",
+  "moderationResolveError": "Impossible de traiter ce signalement."
 }

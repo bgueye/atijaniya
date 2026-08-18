@@ -32,9 +32,18 @@ sont livrés :
   dette de documentation existe (jamais eu d'entrée narrative dédiée dans le journal),
   pas une lacune fonctionnelle.
 
-**P3 (consolidation avant lancement) : rien d'entamé.** Aucun écran de modération, pas de
-mode contraste renforcé, pas de fiches store. Confirmé par recherche de code (aucun
-fichier `*moder*`/`*report*`/`signalement` dans `at_tijaniya/lib`).
+**P3 (consolidation avant lancement) : Sprint 2 (modération a posteriori) livré et
+validé** — signalement d'un direct Khadara ou d'une demande de mise en relation par
+lignée spirituelle, écran admin de traitement (`lib/features/moderation/`), voir le
+détail dans `docs/09-journal-implementation-frontend.md` § "Sprint 2 — Modération a
+posteriori". `flutter analyze` propre, suite de tests au vert, **et validé en conditions
+réelles sur téléphone Android le 2026-08-18** (cycle complet signaler → file admin →
+masquer, avec plusieurs comptes réels) — un bug de collision Hero (`FloatingActionButton`
+sans `heroTag`, sans lien avec le code de modération) trouvé et corrigé au passage. Le
+chemin "rejeter un signalement" et le signalement d'une mise en relation par lignée n'ont
+pas été exercés manuellement (code structurellement identique au chemin déjà validé,
+risque jugé faible). Reste : pas de mode contraste renforcé, pas de fiches store
+(Sprints 3+ ci-dessous, toujours non entamés).
 
 ### Points en suspens à connaître
 
@@ -61,10 +70,16 @@ fichier `*moder*`/`*report*`/`signalement` dans `at_tijaniya/lib`).
 **Sprint 1 — Nettoyage restant (rapide)**
 - Combler la dette de documentation Groupes/messagerie dans le journal.
 
-**Sprint 2 — Modération a posteriori (P3)**
-- Signalement d'un direct Khadara et d'une mise en relation par lignée spirituelle.
+**Sprint 2 — Modération a posteriori (P3) — livré et validé (2026-08-18)**
+- Signalement d'un direct Khadara et d'une mise en relation par lignée spirituelle. Fait.
 - Écran/action admin pour masquer un contenu signalé (cohérent avec les policies RLS
-  existantes, pas de nouveau rôle à créer).
+  existantes, pas de nouveau rôle créé). Fait.
+- Validation manuelle sur téléphone Android faite (cycle signaler → file admin → masquer,
+  plusieurs comptes réels, vérifié en base). Bug de collision Hero trouvé et corrigé au
+  passage (sans lien avec le sprint).
+- Reste, à faible risque : rejeter un signalement sans toucher au contenu, et signaler une
+  mise en relation par lignée (code identique au chemin déjà validé, pas exercé
+  manuellement faute de temps).
 
 **Sprint 3 — Accessibilité et RTL (P3)**
 - Mode contraste renforcé (à définir dans `design/design_tokens.yaml`).

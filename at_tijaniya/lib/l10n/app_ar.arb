@@ -698,5 +698,37 @@
   "donationSubmitError": "تعذّر تسجيل التبرع في الوقت الحالي.",
   "donationRecordedTitle": "شكرًا لدعمكم",
   "donationRecordedBody": "الدفع عبر التطبيق غير متاح بعد. تم تسجيل نيتكم في التبرع بنجاح.",
-  "donationRecordedBackButton": "رجوع"
+  "donationRecordedBackButton": "رجوع",
+
+  "moderationReportAction": "إبلاغ",
+  "moderationReportDialogTitle": "الإبلاغ عن هذا المحتوى",
+  "moderationReportDialogBody": "سيقوم أحد المشرفين بمراجعة بلاغكم.",
+  "moderationReportReasonLabel": "السبب (اختياري)",
+  "moderationReportSubmit": "إبلاغ",
+  "moderationReportSuccess": "تم إرسال البلاغ، شكرًا لكم.",
+  "moderationReportAlreadyReported": "لقد سبق أن أبلغتم عن هذا المحتوى.",
+  "moderationReportError": "تعذّر إرسال البلاغ.",
+
+  "profileModerationReports": "البلاغات",
+  "moderationScreenTitle": "البلاغات",
+  "moderationEmptyState": "لا توجد بلاغات في الانتظار.",
+  "moderationLoadError": "تعذّر تحميل البلاغات.",
+  "moderationRetry": "إعادة المحاولة",
+  "moderationTypeLiveStream": "بث مباشر للخضرة",
+  "moderationTypeLineageRequest": "طلب تواصل",
+  "moderationReasonPrefix": "السبب المبلّغ عنه: {reason}",
+  "@moderationReasonPrefix": {
+    "placeholders": {
+      "reason": {"type": "String"}
+    }
+  },
+  "moderationHideStreamAction": "إخفاء",
+  "moderationBlockRequestAction": "حظر",
+  "moderationDismissAction": "رفض البلاغ",
+  "moderationConfirmHideStreamTitle": "إخفاء هذا البث المباشر؟",
+  "moderationConfirmHideStreamBody": "سيتم إنهاء البث المباشر وإزالته من التطبيق لجميع المريدين. هذا الإجراء نهائي.",
+  "moderationConfirmBlockRequestTitle": "حظر طلب التواصل هذا؟",
+  "moderationConfirmBlockRequestBody": "سيتم تصنيف الطلب كمرفوض لدى كلا المريدَين. هذا الإجراء نهائي.",
+  "moderationResolveSuccess": "تمت معالجة البلاغ.",
+  "moderationResolveError": "تعذّرت معالجة هذا البلاغ."
 }

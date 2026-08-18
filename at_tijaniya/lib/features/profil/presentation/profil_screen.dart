@@ -5,6 +5,7 @@ import '../../../core/supabase/supabase_config.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../lineage/presentation/lineage_screen.dart';
+import '../../moderation/presentation/moderation_reports_screen.dart';
 import '../../mouqaddam/presentation/become_mouqaddam_screen.dart';
 import '../../mouqaddam/presentation/ijaza_chain_screen.dart';
 import '../../mouqaddam/presentation/mouqaddam_providers.dart';
@@ -124,6 +125,16 @@ class _ProfileBody extends ConsumerWidget {
               },
             ),
           ),
+          if (ref.watch(isAdminProvider))
+            Card(
+              child: ListTile(
+                leading: const Icon(Icons.flag_outlined, color: AppColors.gold),
+                title: Text(l10n.profileModerationReports),
+                onTap: () => Navigator.of(context).push(
+                  MaterialPageRoute(builder: (_) => const ModerationReportsScreen()),
+                ),
+              ),
+            ),
           if (ref.watch(isVerifiedMouqaddamProvider)) ...[
             Card(
               child: ListTile(

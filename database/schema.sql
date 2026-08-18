@@ -116,6 +116,11 @@ create table public.lineage_connection_requests (
   status text not null default 'pending' check (status in ('pending','accepted','declined')),
   created_at timestamptz not null default now(),
   decided_at timestamptz,
+  -- Trace d'audit d'une action de modération admin (Sprint 2, P3, section 10)
+  -- distincte d'un refus légitime par le destinataire : réutilise
+  -- status='declined', déjà affiché "Refusée" côté UI, blocked_at ne sert
+  -- qu'à l'admin.
+  blocked_at timestamptz,
   check (requester_id <> recipient_id),
   unique (requester_id, recipient_id)
 );
@@ -497,7 +502,12 @@ create table public.live_streams (
   started_at timestamptz,
   ended_at timestamptz,
   viewer_count_cache int not null default 0,
-  created_at timestamptz not null default now()
+  created_at timestamptz not null default now(),
+  -- Masquage par un admin suite à un signalement (Sprint 2, P3, section 10) :
+  -- filtré au niveau RLS SELECT (section 11), donc tous les points de
+  -- lecture existants (fetchAllLiveStreams, fetchLatestStreamForEvent/Group,
+  -- fetchStream) sont couverts sans modification côté repository.
+  hidden_at timestamptz
 );
 
 create table public.stream_replays (
@@ -904,6 +914,31 @@ create table public.sensitive_data_access_log (
   accessed_at timestamptz not null default now()
 );
 
+-- Signalement a posteriori (Sprint 2, P3) : direct Khadara ou demande de mise
+-- en relation par lignée spirituelle (docs/01-perimetre-fonctionnel.md §6,
+-- "modération a posteriori suffit en V1" — pas de rôle modérateur, pas de
+-- modération automatisée). Table générique réutilisable pour d'éventuelles
+-- extensions futures plutôt que deux tables dédiées. Pas de policy de
+-- lecture pour le déclarant : il n'a pas besoin de suivre le statut de son
+-- signalement en V1. Le contenu retiré n'est jamais supprimé : marqué
+-- hidden_at (live_streams) / blocked_at (lineage_connection_requests),
+-- filtré au niveau RLS (section 11) — même principe que le reste du projet
+-- où la RLS reste la source de vérité.
+create table public.content_reports (
+  id uuid primary key default gen_random_uuid(),
+  reporter_id uuid not null references auth.users(id) on delete cascade,
+  content_type text not null check (content_type in ('live_stream','lineage_connection_request')),
+  content_id uuid not null,
+  reason text,
+  status text not null default 'pending' check (status in ('pending','resolved','dismissed')),
+  created_at timestamptz not null default now(),
+  resolved_at timestamptz,
+  resolved_by uuid references auth.users(id)
+);
+
+create unique index content_reports_one_per_reporter
+  on public.content_reports (reporter_id, content_type, content_id);
+
 -- ============================================================================
 -- 11. ROW-LEVEL SECURITY — politiques complètes (déployées et vérifiées)
 -- ============================================================================
@@ -959,6 +994,7 @@ alter table public.conversations enable row level security;
 alter table public.conversation_participants enable row level security;
 alter table public.admin_actions_log enable row level security; -- pas de policy : service_role uniquement
 alter table public.sensitive_data_access_log enable row level security; -- idem
+alter table public.content_reports enable row level security;
 
 -- --- Lignée spirituelle & silsila (données personnelles sensibles) ---
 create policy lineage_owner_only on public.lineage_declarations
@@ -1011,6 +1047,14 @@ create policy lineage_requests_create on public.lineage_connection_requests
   for insert with check ((select auth.uid()) = requester_id);
 create policy lineage_requests_recipient_decides on public.lineage_connection_requests
   for update using ((select auth.uid()) = recipient_id);
+-- Additives (OR'd avec les deux policies ci-dessus) : avant le Sprint 2
+-- (P3), l'admin n'avait aucun accès à cette table, ni en lecture ni en
+-- écriture — nécessaire pour bâtir la file de modération et bloquer une
+-- demande signalée.
+create policy lineage_requests_admin_read on public.lineage_connection_requests for select
+  using (public.is_admin((select auth.uid())));
+create policy lineage_requests_admin_update on public.lineage_connection_requests for update
+  using (public.is_admin((select auth.uid())));
 
 -- --- Profils, appareils, pratique personnelle ---
 create policy profiles_read_all on public.profiles for select using (true);
@@ -1073,12 +1117,19 @@ create policy events_owner_or_admin_delete on public.events for delete
 -- group_posts_members_read/write, group_memberships étant lui-même
 -- publiquement lisible (group_memberships_read_all), pas besoin de
 -- SECURITY DEFINER ici contrairement au cas mouqaddam/privacy_settings.
+-- hidden_at (Sprint 2, P3) filtré ici plutôt que côté client : un direct
+-- masqué par un admin devient invisible à tout le monde sauf l'admin lui-même,
+-- y compris à son propre auteur (accès qu'il perd volontairement, cohérent
+-- avec une modération a posteriori — pas de fil de contestation en V1).
 create policy streams_read_public_or_group_member on public.live_streams for select
   using (
-    group_id is null
-    or exists (
-      select 1 from public.group_memberships gm
-      where gm.group_id = live_streams.group_id and gm.user_id = (select auth.uid())
+    (hidden_at is null or public.is_admin((select auth.uid())))
+    and (
+      group_id is null
+      or exists (
+        select 1 from public.group_memberships gm
+        where gm.group_id = live_streams.group_id and gm.user_id = (select auth.uid())
+      )
     )
   );
 create policy streams_authenticated_create on public.live_streams for insert
@@ -1094,6 +1145,17 @@ create policy streams_authenticated_create on public.live_streams for insert
   );
 create policy streams_owner_or_admin_update on public.live_streams for update
   using ((select auth.uid()) = started_by or public.is_admin((select auth.uid())));
+
+-- --- Modération a posteriori (Sprint 2, P3) ---
+-- Pas de policy de lecture pour le déclarant (content_reports_authenticated_create
+-- couvre l'insertion, jamais la lecture) : "modération a posteriori suffit"
+-- (docs/01-perimetre-fonctionnel.md §6), pas de fil de suivi côté utilisateur en V1.
+create policy content_reports_authenticated_create on public.content_reports for insert
+  with check ((select auth.uid()) is not null and reporter_id = (select auth.uid()));
+create policy content_reports_admin_read on public.content_reports for select
+  using (public.is_admin((select auth.uid())));
+create policy content_reports_admin_update on public.content_reports for update
+  using (public.is_admin((select auth.uid())));
 
 -- stream_replays/live_chat_messages n'ont pas de group_id propre : passent
 -- par une jointure sur live_streams.group_id, même principe que ci-dessus.

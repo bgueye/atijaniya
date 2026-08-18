@@ -2080,4 +2080,86 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get donationRecordedBackButton => 'Retour';
+
+  @override
+  String get moderationReportAction => 'Signaler';
+
+  @override
+  String get moderationReportDialogTitle => 'Signaler ce contenu';
+
+  @override
+  String get moderationReportDialogBody =>
+      'Un administrateur examinera votre signalement.';
+
+  @override
+  String get moderationReportReasonLabel => 'Raison (optionnel)';
+
+  @override
+  String get moderationReportSubmit => 'Signaler';
+
+  @override
+  String get moderationReportSuccess => 'Signalement envoyé, merci.';
+
+  @override
+  String get moderationReportAlreadyReported =>
+      'Vous avez déjà signalé ce contenu.';
+
+  @override
+  String get moderationReportError => 'Impossible d\'envoyer le signalement.';
+
+  @override
+  String get profileModerationReports => 'Signalements';
+
+  @override
+  String get moderationScreenTitle => 'Signalements';
+
+  @override
+  String get moderationEmptyState => 'Aucun signalement en attente.';
+
+  @override
+  String get moderationLoadError => 'Impossible de charger les signalements.';
+
+  @override
+  String get moderationRetry => 'Réessayer';
+
+  @override
+  String get moderationTypeLiveStream => 'Direct Khadara';
+
+  @override
+  String get moderationTypeLineageRequest => 'Mise en relation';
+
+  @override
+  String moderationReasonPrefix(String reason) {
+    return 'Raison signalée : $reason';
+  }
+
+  @override
+  String get moderationHideStreamAction => 'Masquer';
+
+  @override
+  String get moderationBlockRequestAction => 'Bloquer';
+
+  @override
+  String get moderationDismissAction => 'Rejeter le signalement';
+
+  @override
+  String get moderationConfirmHideStreamTitle => 'Masquer ce direct ?';
+
+  @override
+  String get moderationConfirmHideStreamBody =>
+      'Le direct sera terminé et retiré de l\'application pour tous les disciples. Cette action est définitive.';
+
+  @override
+  String get moderationConfirmBlockRequestTitle =>
+      'Bloquer cette mise en relation ?';
+
+  @override
+  String get moderationConfirmBlockRequestBody =>
+      'La demande sera marquée refusée pour les deux disciples. Cette action est définitive.';
+
+  @override
+  String get moderationResolveSuccess => 'Signalement traité.';
+
+  @override
+  String get moderationResolveError => 'Impossible de traiter ce signalement.';
 }

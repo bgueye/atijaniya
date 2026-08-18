@@ -8,8 +8,9 @@ communautaire permettant à un disciple de retrouver d'autres disciples de son m
 V1 gratuite (financée par les dons), bilingue français/arabe (RTL) dès le lancement.
 
 Documentation complète : voir `docs/`. Ne pas dupliquer ce contenu ici — le lire à la demande.
-État d'avancement détaillé et plan des sprints restants (P2 complet, P3 non entamé,
-liste des validations manuelles en attente) : `docs/10-etat-avancement-et-sprints-restants.md`
+État d'avancement détaillé et plan des sprints restants (P2 complet, P3 : Sprint 2
+"modération a posteriori" livré, reste non entamé ; liste des validations manuelles en
+attente) : `docs/10-etat-avancement-et-sprints-restants.md`
 — à consulter avant de repartir sur un nouveau sprint, et à mettre à jour plutôt que
 dupliquer si l'analyse est refaite.
 

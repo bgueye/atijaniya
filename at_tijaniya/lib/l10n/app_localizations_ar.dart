@@ -2010,4 +2010,84 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get donationRecordedBackButton => 'رجوع';
+
+  @override
+  String get moderationReportAction => 'إبلاغ';
+
+  @override
+  String get moderationReportDialogTitle => 'الإبلاغ عن هذا المحتوى';
+
+  @override
+  String get moderationReportDialogBody => 'سيقوم أحد المشرفين بمراجعة بلاغكم.';
+
+  @override
+  String get moderationReportReasonLabel => 'السبب (اختياري)';
+
+  @override
+  String get moderationReportSubmit => 'إبلاغ';
+
+  @override
+  String get moderationReportSuccess => 'تم إرسال البلاغ، شكرًا لكم.';
+
+  @override
+  String get moderationReportAlreadyReported =>
+      'لقد سبق أن أبلغتم عن هذا المحتوى.';
+
+  @override
+  String get moderationReportError => 'تعذّر إرسال البلاغ.';
+
+  @override
+  String get profileModerationReports => 'البلاغات';
+
+  @override
+  String get moderationScreenTitle => 'البلاغات';
+
+  @override
+  String get moderationEmptyState => 'لا توجد بلاغات في الانتظار.';
+
+  @override
+  String get moderationLoadError => 'تعذّر تحميل البلاغات.';
+
+  @override
+  String get moderationRetry => 'إعادة المحاولة';
+
+  @override
+  String get moderationTypeLiveStream => 'بث مباشر للخضرة';
+
+  @override
+  String get moderationTypeLineageRequest => 'طلب تواصل';
+
+  @override
+  String moderationReasonPrefix(String reason) {
+    return 'السبب المبلّغ عنه: $reason';
+  }
+
+  @override
+  String get moderationHideStreamAction => 'إخفاء';
+
+  @override
+  String get moderationBlockRequestAction => 'حظر';
+
+  @override
+  String get moderationDismissAction => 'رفض البلاغ';
+
+  @override
+  String get moderationConfirmHideStreamTitle => 'إخفاء هذا البث المباشر؟';
+
+  @override
+  String get moderationConfirmHideStreamBody =>
+      'سيتم إنهاء البث المباشر وإزالته من التطبيق لجميع المريدين. هذا الإجراء نهائي.';
+
+  @override
+  String get moderationConfirmBlockRequestTitle => 'حظر طلب التواصل هذا؟';
+
+  @override
+  String get moderationConfirmBlockRequestBody =>
+      'سيتم تصنيف الطلب كمرفوض لدى كلا المريدَين. هذا الإجراء نهائي.';
+
+  @override
+  String get moderationResolveSuccess => 'تمت معالجة البلاغ.';
+
+  @override
+  String get moderationResolveError => 'تعذّرت معالجة هذا البلاغ.';
 }

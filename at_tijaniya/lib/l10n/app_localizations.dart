@@ -3908,6 +3908,156 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'Retour'**
   String get donationRecordedBackButton;
+
+  /// No description provided for @moderationReportAction.
+  ///
+  /// In fr, this message translates to:
+  /// **'Signaler'**
+  String get moderationReportAction;
+
+  /// No description provided for @moderationReportDialogTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Signaler ce contenu'**
+  String get moderationReportDialogTitle;
+
+  /// No description provided for @moderationReportDialogBody.
+  ///
+  /// In fr, this message translates to:
+  /// **'Un administrateur examinera votre signalement.'**
+  String get moderationReportDialogBody;
+
+  /// No description provided for @moderationReportReasonLabel.
+  ///
+  /// In fr, this message translates to:
+  /// **'Raison (optionnel)'**
+  String get moderationReportReasonLabel;
+
+  /// No description provided for @moderationReportSubmit.
+  ///
+  /// In fr, this message translates to:
+  /// **'Signaler'**
+  String get moderationReportSubmit;
+
+  /// No description provided for @moderationReportSuccess.
+  ///
+  /// In fr, this message translates to:
+  /// **'Signalement envoyé, merci.'**
+  String get moderationReportSuccess;
+
+  /// No description provided for @moderationReportAlreadyReported.
+  ///
+  /// In fr, this message translates to:
+  /// **'Vous avez déjà signalé ce contenu.'**
+  String get moderationReportAlreadyReported;
+
+  /// No description provided for @moderationReportError.
+  ///
+  /// In fr, this message translates to:
+  /// **'Impossible d\'envoyer le signalement.'**
+  String get moderationReportError;
+
+  /// No description provided for @profileModerationReports.
+  ///
+  /// In fr, this message translates to:
+  /// **'Signalements'**
+  String get profileModerationReports;
+
+  /// No description provided for @moderationScreenTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Signalements'**
+  String get moderationScreenTitle;
+
+  /// No description provided for @moderationEmptyState.
+  ///
+  /// In fr, this message translates to:
+  /// **'Aucun signalement en attente.'**
+  String get moderationEmptyState;
+
+  /// No description provided for @moderationLoadError.
+  ///
+  /// In fr, this message translates to:
+  /// **'Impossible de charger les signalements.'**
+  String get moderationLoadError;
+
+  /// No description provided for @moderationRetry.
+  ///
+  /// In fr, this message translates to:
+  /// **'Réessayer'**
+  String get moderationRetry;
+
+  /// No description provided for @moderationTypeLiveStream.
+  ///
+  /// In fr, this message translates to:
+  /// **'Direct Khadara'**
+  String get moderationTypeLiveStream;
+
+  /// No description provided for @moderationTypeLineageRequest.
+  ///
+  /// In fr, this message translates to:
+  /// **'Mise en relation'**
+  String get moderationTypeLineageRequest;
+
+  /// No description provided for @moderationReasonPrefix.
+  ///
+  /// In fr, this message translates to:
+  /// **'Raison signalée : {reason}'**
+  String moderationReasonPrefix(String reason);
+
+  /// No description provided for @moderationHideStreamAction.
+  ///
+  /// In fr, this message translates to:
+  /// **'Masquer'**
+  String get moderationHideStreamAction;
+
+  /// No description provided for @moderationBlockRequestAction.
+  ///
+  /// In fr, this message translates to:
+  /// **'Bloquer'**
+  String get moderationBlockRequestAction;
+
+  /// No description provided for @moderationDismissAction.
+  ///
+  /// In fr, this message translates to:
+  /// **'Rejeter le signalement'**
+  String get moderationDismissAction;
+
+  /// No description provided for @moderationConfirmHideStreamTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Masquer ce direct ?'**
+  String get moderationConfirmHideStreamTitle;
+
+  /// No description provided for @moderationConfirmHideStreamBody.
+  ///
+  /// In fr, this message translates to:
+  /// **'Le direct sera terminé et retiré de l\'application pour tous les disciples. Cette action est définitive.'**
+  String get moderationConfirmHideStreamBody;
+
+  /// No description provided for @moderationConfirmBlockRequestTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Bloquer cette mise en relation ?'**
+  String get moderationConfirmBlockRequestTitle;
+
+  /// No description provided for @moderationConfirmBlockRequestBody.
+  ///
+  /// In fr, this message translates to:
+  /// **'La demande sera marquée refusée pour les deux disciples. Cette action est définitive.'**
+  String get moderationConfirmBlockRequestBody;
+
+  /// No description provided for @moderationResolveSuccess.
+  ///
+  /// In fr, this message translates to:
+  /// **'Signalement traité.'**
+  String get moderationResolveSuccess;
+
+  /// No description provided for @moderationResolveError.
+  ///
+  /// In fr, this message translates to:
+  /// **'Impossible de traiter ce signalement.'**
+  String get moderationResolveError;
 }
 
 class _AppLocalizationsDelegate

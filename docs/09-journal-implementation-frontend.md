@@ -2256,3 +2256,115 @@ fin de test, `featured_figures` vidée de la ligne de test.
 marqueurs `ZZZ`/`Claude`/`QA` → zéro ligne restante sur toutes les tables.
 Aucun compte de test créé ni supprimé cette fois (session déjà
 authentifiée avec le compte admin réel).
+
+## Sprint 2 — Modération a posteriori (P3)
+
+Signalement d'un direct Khadara ou d'une demande de mise en relation par
+lignée spirituelle, et écran admin pour traiter ces signalements
+(`lib/features/moderation/`) — premier chantier P3, conforme à
+`docs/01-perimetre-fonctionnel.md` § 6 ("modération a posteriori suffit en
+V1", pas de rôle modérateur ni de modération automatisée). Nouvelle table
+générique `content_reports` (`reporter_id`, `content_type` — `live_stream`
+ou `lineage_connection_request` —, `content_id`, `reason` libre optionnel,
+`status` `pending`/`resolved`/`dismissed`), plutôt que deux tables dédiées :
+un seul écran de traitement, une seule policy de lecture admin. Contrainte
+unique `content_reports_one_per_reporter` (`reporter_id`, `content_type`,
+`content_id`) empêchant un même disciple de signaler deux fois le même
+contenu — classifiée côté client (`classifyReportError`, code Postgres
+`23505` → message dédié "vous avez déjà signalé ce contenu", même pattern
+que `classifyFigureDeleteError`).
+
+Traiter un signalement ne supprime jamais le contenu visé : `hidden_at`
+(nouvelle colonne sur `live_streams`) ou `blocked_at` + `status='declined'`
+(nouvelle colonne + réutilisation d'un statut déjà affiché "Refusée" côté
+UI sur `lineage_connection_requests`), tous deux filtrés au niveau RLS
+(`streams_read_public_or_group_member` mise à jour : un direct masqué
+devient invisible à tout le monde y compris son propre auteur — pas de fil
+de contestation en V1, cohérent avec une modération strictement a
+posteriori). Conséquence pratique : aucun autre repository existant n'a eu
+besoin d'être modifié pour respecter le masquage, la RLS suffit.
+
+Deux nouvelles policies admin sur `lineage_connection_requests`
+(`lineage_requests_admin_read`/`_update`, additives — OR'd avec les
+policies propriétaire/destinataire existantes) : avant ce sprint, un admin
+n'avait strictement aucun accès à cette table, ni en lecture ni en
+écriture — nécessaire pour construire la file de modération et bloquer une
+demande signalée.
+
+Côté app : `ContentReport`/`ReportableContentType`/`ReportStatus`/
+`ReportWithPreview` (`domain/moderation_models.dart`, testés dans
+`test/moderation_models_test.dart` — parsing aller-retour DB↔enum,
+classification d'erreur), `ModerationRepository` (`data/`) —
+`fetchPendingReports()` résout les aperçus de contenu en deux lots (un par
+type) plutôt qu'une requête par ligne, pas de FK embeddable générique côté
+PostgREST vu que `content_id` peut pointer vers deux tables différentes,
+même limite que `posts.author_user_id` ailleurs dans l'app.
+`showReportContentDialog` (`presentation/report_content_dialog.dart`) :
+dialogue réutilisable avec raison libre optionnelle (pas de liste de motifs
+prédéfinis, le volume attendu en V1 ne justifie pas cette complexité),
+appelé depuis une icône drapeau sur `LiveStreamScreen` (visible si
+connecté et non-auteur du direct) et `LineageMatchesScreen` (sur chaque
+demande reçue, et sur chaque correspondance ayant déjà une demande
+envoyée). `ModerationReportsScreen` (`presentation/`) : file des
+signalements `pending`, une carte par signalement (type, aperçu, raison le
+cas échéant), deux actions "Rejeter le signalement" / "Masquer"·"Bloquer"
+avec confirmation explicite avant toute action irréversible — accessible
+uniquement depuis "Mon profil" quand `isAdminProvider` vaut `true`, même
+garde-fou que les autres écrans admin de l'app (la RLS
+`content_reports_admin_read`/`_update` refuse de toute façon tout autre
+compte si ce chemin était atteint par erreur).
+
+`flutter analyze` propre et suite de tests complète au vert
+(`test/moderation_models_test.dart` inclus) après implémentation.
+
+**Validé en conditions réelles le 2026-08-18** sur téléphone Android
+(`R5CW41VL5CE`) avec des comptes réels — Bocar (`bgueye@gmail.com`, admin),
+Daba Ndiaye (`dabandiaye08@gmail.com`) et un compte de test QA dédié
+(`claude.tijaniya.qa.moderation@gmail.com`) : Bocar démarre un direct
+Khadara réel (rattaché à un évènement, "Gamou (Mawlid) Famille Omarienne"),
+Daba Ndiaye et le compte QA le rejoignent et le signalent chacun (icône
+drapeau sur `LiveStreamScreen`, raison libre saisie) ; les signalements
+apparaissent bien dans la file admin (`ModerationReportsScreen`, aperçu
+"Direct Khadara — Gamou (Mawlid) Famille Omarienne" résolu via la jointure
+`events(title)`) ; traité avec "Masquer" (confirmation "Le direct sera
+terminé et retiré de l'application pour tous les disciples" affichée) —
+vérifié en base (`execute_sql`) : `live_streams.hidden_at` et `status =
+'ended'` mis à jour, `content_reports.status = 'resolved'` avec
+`resolved_by` = Bocar sur les cinq signalements cumulés de la session (deux
+directs de test différents, plusieurs déclarants). File repassée à "Aucun
+signalement en attente." après traitement — confirme que `pendingReportsProvider`
+se rafraîchit correctement après une action admin.
+
+**Bug trouvé et corrigé pendant cette validation** (sans lien avec le code
+de modération lui-même) : l'app crashait par intermittence pendant la
+session de test ("There are multiple heroes that share the same tag within
+a subtree... `<default FloatingActionButton tag>`", parfois manifesté comme
+une seconde assertion framework `'_dependents.isEmpty': is not true` sur un
+appareil resté longtemps ouvert après un premier crash). Cause : les 5
+`FloatingActionButton`/`FloatingActionButton.extended` de l'app
+(`khadara_screen.dart` × 2 — onglets Évènements/Zawiyas —,
+`communaute_screen.dart` × 2 — onglets Fil/Groupes —,
+`wird_detail_screen.dart` × 1) n'avaient aucun `heroTag` explicite ; dès que
+deux d'entre eux se retrouvaient simultanément dans l'arbre de widgets
+(onglets d'un même `TabBarView` gardés montés, ou onglet Khadara resté
+inactif dans l'`IndexedStack` du shell pendant une transition Hero
+ailleurs), le contrôleur Hero de Flutter les traitait comme deux héros
+partageant le même tag par défaut et l'assertion faisait planter l'écran en
+rouge. Corrigé en donnant à chacun un `heroTag` explicite et unique
+(`'khadara_add_event'`, `'khadara_add_zawiya'`, `'communaute_create_post'`,
+`'communaute_create_group'`, `'wird_detail_tasbih'`). Pas un bug du sprint 2
+(il pouvait déjà se produire ailleurs dans l'app), mais découvert à cette
+occasion faute d'avoir été exercé par une session de navigation aussi
+intensive auparavant — `flutter analyze` et la suite de tests restent au
+vert après correctif.
+
+**Non exercé pendant cette session** (fonctionnalité déjà couverte par la
+relecture de code, mais pas par un test manuel dédié) : le rejet d'un
+signalement sans action ("Rejeter le signalement", `takeAction: false`) et
+le signalement d'une demande de mise en relation par lignée spirituelle
+(`ReportableContentType.lineageConnectionRequest`) — une connexion de test
+entre le compte QA et Bocar existe toujours à l'état `accepted` en base
+(`lineage_connection_requests`, id `1b5703b3-…`) pour un futur passage sur
+ce chemin précis si besoin ; le code des deux chemins est structurellement
+identique à celui déjà validé (même `resolveReport()`, seule la branche
+`switch`/le booléen change), risque résiduel jugé faible.

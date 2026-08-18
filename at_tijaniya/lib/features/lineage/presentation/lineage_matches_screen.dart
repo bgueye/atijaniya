@@ -3,6 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/theme/app_colors.dart';
 import '../../../l10n/app_localizations.dart';
+import '../../moderation/domain/moderation_models.dart';
+import '../../moderation/presentation/report_content_dialog.dart';
 import '../../profil/presentation/profile_providers.dart';
 import '../../settings/presentation/privacy_settings_providers.dart';
 import '../../settings/presentation/privacy_settings_screen.dart';
@@ -184,6 +186,16 @@ class _ReceivedRequestCard extends ConsumerWidget {
                 Expanded(
                   child: Text(request.otherUserName ?? '—', style: const TextStyle(fontWeight: FontWeight.w500, fontSize: 16)),
                 ),
+                IconButton(
+                  icon: const Icon(Icons.flag_outlined, size: 20, color: AppColors.bronze),
+                  tooltip: l10n.moderationReportAction,
+                  onPressed: () => showReportContentDialog(
+                    context,
+                    ref,
+                    contentType: ReportableContentType.lineageConnectionRequest,
+                    contentId: request.id,
+                  ),
+                ),
               ],
             ),
             const SizedBox(height: 12),
@@ -256,12 +268,29 @@ class _MatchCard extends ConsumerWidget {
         ),
         title: Text(match.displayName, style: const TextStyle(fontWeight: FontWeight.w500)),
         subtitle: match.transmissionYear != null ? Text('${match.transmissionYear}') : null,
-        trailing: statusLabel != null
-            ? Text(statusLabel, style: const TextStyle(color: AppColors.bronze, fontSize: 13))
-            : OutlinedButton(
+        trailing: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            if (existingRequest != null)
+              IconButton(
+                icon: const Icon(Icons.flag_outlined, size: 20, color: AppColors.bronze),
+                tooltip: l10n.moderationReportAction,
+                onPressed: () => showReportContentDialog(
+                  context,
+                  ref,
+                  contentType: ReportableContentType.lineageConnectionRequest,
+                  contentId: existingRequest!.id,
+                ),
+              ),
+            if (statusLabel != null)
+              Text(statusLabel, style: const TextStyle(color: AppColors.bronze, fontSize: 13))
+            else
+              OutlinedButton(
                 onPressed: () => _sendRequest(context, ref, l10n),
                 child: Text(l10n.lineageMatchesConnectButton),
               ),
+          ],
+        ),
       ),
     );
   }

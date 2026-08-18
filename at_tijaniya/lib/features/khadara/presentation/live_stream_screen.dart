@@ -6,6 +6,8 @@ import 'package:url_launcher/url_launcher.dart';
 
 import '../../../core/theme/app_colors.dart';
 import '../../../l10n/app_localizations.dart';
+import '../../moderation/domain/moderation_models.dart';
+import '../../moderation/presentation/report_content_dialog.dart';
 import '../../profil/presentation/profile_providers.dart';
 import '../domain/khadara_models.dart';
 import 'live_stream_providers.dart';
@@ -179,6 +181,17 @@ class _LiveStreamScreenState extends ConsumerState<LiveStreamScreen> {
       appBar: AppBar(
         title: Text(widget.stream.displayTitle(l10n.khadaraLiveTab)),
         actions: [
+          if (myUserId != null && !isOwner)
+            IconButton(
+              icon: const Icon(Icons.flag_outlined),
+              tooltip: l10n.moderationReportAction,
+              onPressed: () => showReportContentDialog(
+                context,
+                ref,
+                contentType: ReportableContentType.liveStream,
+                contentId: widget.stream.id,
+              ),
+            ),
           if (isOwner && !isEnded)
             TextButton(
               onPressed: _confirmEnd,

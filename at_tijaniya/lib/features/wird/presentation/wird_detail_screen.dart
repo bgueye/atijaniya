@@ -102,6 +102,7 @@ class _WirdDetailScreenState extends ConsumerState<WirdDetailScreen> {
         ],
       ),
       floatingActionButton: FloatingActionButton.extended(
+        heroTag: 'wird_detail_tasbih',
         backgroundColor: AppColors.gold,
         foregroundColor: AppColors.ink,
         icon: const Icon(Icons.touch_app),
