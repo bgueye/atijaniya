@@ -241,8 +241,12 @@ class _CreatePostSheetState extends ConsumerState<_CreatePostSheet> {
     // `SafeArea` : évite que le bouton Publier se retrouve masqué sous la
     // barre de navigation Android (3 boutons) — `viewInsets.bottom` seul ne
     // couvre que le clavier, jamais la zone système.
+    // `SingleChildScrollView` : une fois une image ajoutée, le contenu peut
+    // dépasser la hauteur du bottom sheet (contraint à l'écran) ; sans lui,
+    // le `Column` déborde silencieusement et les boutons "Changer l'image"
+    // / "Publier" se retrouvent hors champ, masqués sous la nav-bar Android.
     return SafeArea(
-      child: Padding(
+      child: SingleChildScrollView(
         padding: EdgeInsets.fromLTRB(
             20, 20, 20, MediaQuery.of(context).viewInsets.bottom + 20),
         child: Form(
