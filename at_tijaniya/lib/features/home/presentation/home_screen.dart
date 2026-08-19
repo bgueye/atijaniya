@@ -596,10 +596,13 @@ class _KhadaraTeaserCard extends StatelessWidget {
   }
 }
 
-/// Carte "Figure de la semaine" — portrait + nom + citation/date de ziara
-/// quand elles existent (`FeaturedFigure`, `featured_figure.dart`).
-/// `featuredFigureProvider` ne renvoie jamais de figure sans portrait (voir
-/// `eligibleForRotation`), donc l'image est toujours présente ici.
+/// Carte "Figure de la semaine" — portrait plein cadre, nom + citation/date
+/// de ziara superposés en bas sur un dégradé émeraude translucide (jamais
+/// zaytoune ici : réservé aux écrans de pratique, voir `CLAUDE.md`), pour
+/// que la photo reste lisible sous le texte plutôt que d'être masquée par
+/// un bandeau opaque. `featuredFigureProvider` ne renvoie jamais de figure
+/// sans portrait (voir `eligibleForRotation`), donc l'image est toujours
+/// présente ici.
 class _FeaturedFigureCard extends StatelessWidget {
   const _FeaturedFigureCard({required this.featured});
 
@@ -617,68 +620,90 @@ class _FeaturedFigureCard extends StatelessWidget {
         onTap: () => Navigator.of(context).push(
           MaterialPageRoute(builder: (_) => FigureDetailScreen(figure: figure)),
         ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            // 4:3 plutôt que 16:9 : les portraits en base sont au format
-            // portrait, sujet proche du haut de la photo (même remarque que
-            // `figure_detail_screen.dart`) — un cadre trop large avec
-            // `topCenter` ne laissait dépasser que le sommet du turban,
-            // visage coupé (constaté en test manuel sur appareil, 2026-08-17).
-            AspectRatio(
-              aspectRatio: 4 / 3,
-              child: Image.network(figure.portraitUrl!, fit: BoxFit.cover, alignment: Alignment.topCenter),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(14),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
+        // 3:4 (portrait) plutôt que 4:3 : carte plus grande, format proche
+        // des portraits en base (sujet proche du haut de la photo, comme
+        // `figure_detail_screen.dart`) et assez de hauteur pour que le
+        // dégradé + le texte n'empiètent que sur le tiers bas de l'image.
+        child: AspectRatio(
+          aspectRatio: 3 / 4,
+          child: Stack(
+            fit: StackFit.expand,
+            children: [
+              Image.network(figure.portraitUrl!, fit: BoxFit.cover, alignment: Alignment.topCenter),
+              DecoratedBox(
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    stops: const [0.0, 0.5, 1.0],
+                    colors: [
+                      Colors.transparent,
+                      AppColors.emerald.withValues(alpha: 0.25),
+                      AppColors.emerald.withValues(alpha: 0.88),
+                    ],
+                  ),
+                ),
+              ),
+              Positioned(
+                left: 0,
+                right: 0,
+                bottom: 0,
+                child: Padding(
+                  padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+                  child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
                     children: [
-                      Expanded(
-                        child: Text(
-                          figure.nameFrench,
-                          style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 15),
+                      Text(
+                        figure.nameFrench,
+                        style: const TextStyle(
+                          fontFamily: AppFonts.titlesFr,
+                          fontWeight: FontWeight.w700,
+                          fontSize: 26,
+                          height: 1.05,
+                          color: AppColors.offWhite,
                         ),
                       ),
-                      const SizedBox(width: 8),
+                      const SizedBox(height: 2),
                       Text(
                         figure.nameArabic,
                         textDirection: TextDirection.rtl,
-                        style: AppTheme.sacredText(fontSize: 17, color: AppColors.emerald),
+                        style: AppTheme.sacredText(fontSize: 19, color: AppColors.goldSoft),
                       ),
-                    ],
-                  ),
-                  if (citation != null) ...[
-                    const SizedBox(height: 8),
-                    Text(
-                      '« ${citation.translation} »',
-                      style: const TextStyle(fontStyle: FontStyle.italic, color: AppColors.bronze, fontSize: 12.5),
-                    ),
-                  ],
-                  if (nextZiyara != null) ...[
-                    const SizedBox(height: 8),
-                    Row(
-                      children: [
-                        const Icon(Icons.event_outlined, size: 14, color: AppColors.emerald),
-                        const SizedBox(width: 4),
-                        Expanded(
-                          child: Text(
-                            '${nextZiyara.title} · ${formatKhadaraDateTime(nextZiyara.startsAt)}',
-                            style: const TextStyle(color: AppColors.emerald, fontSize: 11.5),
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
+                      if (citation != null) ...[
+                        const SizedBox(height: 8),
+                        Text(
+                          '« ${citation.translation} »',
+                          style: TextStyle(
+                            fontStyle: FontStyle.italic,
+                            color: AppColors.offWhite.withValues(alpha: 0.9),
+                            fontSize: 12.5,
                           ),
                         ),
                       ],
-                    ),
-                  ],
-                ],
+                      if (nextZiyara != null) ...[
+                        const SizedBox(height: 8),
+                        Row(
+                          children: [
+                            const Icon(Icons.event_outlined, size: 14, color: AppColors.goldSoft),
+                            const SizedBox(width: 4),
+                            Expanded(
+                              child: Text(
+                                '${nextZiyara.title} · ${formatKhadaraDateTime(nextZiyara.startsAt)}',
+                                style: const TextStyle(color: AppColors.goldSoft, fontSize: 11.5),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ],
+                  ),
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
