@@ -288,12 +288,17 @@ class _DashboardBody extends StatelessWidget {
     final hasNextMoment = data.resumableSession != null || data.nextReminder != null;
     final nextEvent = eventsAsync.maybeWhen(data: (list) => list.isNotEmpty ? list.first : null, orElse: () => null);
     final featuredFigure = featuredFigureAsync.maybeWhen(data: (value) => value, orElse: () => null);
+    // Hadratou-l-Jouma (hebdomadaire) n'a de sens que le vendredi — hors de
+    // ce jour, la ligne "non fait aujourd'hui" serait trompeuse puisqu'il
+    // n'y a rien à faire.
+    final isFriday = DateTime.now().weekday == DateTime.friday;
+    final todayStatuses = data.statuses.where((s) => s.wird.frequency == WirdFrequency.daily || isFriday).toList();
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         _SectionLabel(l10n.homeSectionToday),
-        _WirdChecklistCard(statuses: data.statuses, l10n: l10n),
+        _WirdChecklistCard(statuses: todayStatuses, l10n: l10n),
         if (hasNextMoment) ...[
           const SizedBox(height: 20),
           _SectionLabel(l10n.homeSectionNextMoment),
@@ -484,9 +489,12 @@ class _QuickAccessRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isFriday = DateTime.now().weekday == DateTime.friday;
+    final quickAccessWirds = validatedWirds.where((wird) => wird.frequency == WirdFrequency.daily || isFriday);
+
     return Row(
       children: [
-        for (final wird in validatedWirds) ...[
+        for (final wird in quickAccessWirds) ...[
           Expanded(
             child: _QuickAccessItem(
               icon: Icons.nights_stay_outlined,
