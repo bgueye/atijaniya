@@ -2162,4 +2162,34 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get moderationResolveError => 'Impossible de traiter ce signalement.';
+
+  @override
+  String get notificationsTooltip => 'Notifications';
+
+  @override
+  String get notificationsScreenTitle => 'Notifications';
+
+  @override
+  String get notificationsEmpty => 'Aucune notification pour l\'instant.';
+
+  @override
+  String get notificationsLoadError =>
+      'Impossible de charger les notifications.';
+
+  @override
+  String get notificationStreamLiveTitle => 'Un direct vient de commencer';
+
+  @override
+  String get notificationStreamLiveBody => 'Touchez pour rejoindre le direct.';
+
+  @override
+  String get notificationContentReportTitle => 'Nouveau signalement';
+
+  @override
+  String get notificationContentReportBody =>
+      'Un contenu a été signalé, à examiner.';
+
+  @override
+  String get notificationStreamUnavailable =>
+      'Ce direct n\'est plus disponible.';
 }

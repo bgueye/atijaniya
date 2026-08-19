@@ -731,5 +731,15 @@
   "moderationConfirmBlockRequestTitle": "Bloquer cette mise en relation ?",
   "moderationConfirmBlockRequestBody": "La demande sera marquée refusée pour les deux disciples. Cette action est définitive.",
   "moderationResolveSuccess": "Signalement traité.",
-  "moderationResolveError": "Impossible de traiter ce signalement."
+  "moderationResolveError": "Impossible de traiter ce signalement.",
+
+  "notificationsTooltip": "Notifications",
+  "notificationsScreenTitle": "Notifications",
+  "notificationsEmpty": "Aucune notification pour l'instant.",
+  "notificationsLoadError": "Impossible de charger les notifications.",
+  "notificationStreamLiveTitle": "Un direct vient de commencer",
+  "notificationStreamLiveBody": "Touchez pour rejoindre le direct.",
+  "notificationContentReportTitle": "Nouveau signalement",
+  "notificationContentReportBody": "Un contenu a été signalé, à examiner.",
+  "notificationStreamUnavailable": "Ce direct n'est plus disponible."
 }

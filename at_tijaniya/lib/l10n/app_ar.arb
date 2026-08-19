@@ -730,5 +730,15 @@
   "moderationConfirmBlockRequestTitle": "حظر طلب التواصل هذا؟",
   "moderationConfirmBlockRequestBody": "سيتم تصنيف الطلب كمرفوض لدى كلا المريدَين. هذا الإجراء نهائي.",
   "moderationResolveSuccess": "تمت معالجة البلاغ.",
-  "moderationResolveError": "تعذّرت معالجة هذا البلاغ."
+  "moderationResolveError": "تعذّرت معالجة هذا البلاغ.",
+
+  "notificationsTooltip": "الإشعارات",
+  "notificationsScreenTitle": "الإشعارات",
+  "notificationsEmpty": "لا توجد إشعارات حاليًا.",
+  "notificationsLoadError": "تعذّر تحميل الإشعارات.",
+  "notificationStreamLiveTitle": "بث مباشر بدأ للتو",
+  "notificationStreamLiveBody": "اضغط للانضمام إلى البث المباشر.",
+  "notificationContentReportTitle": "بلاغ جديد",
+  "notificationContentReportBody": "تم الإبلاغ عن محتوى، يحتاج إلى المراجعة.",
+  "notificationStreamUnavailable": "هذا البث المباشر لم يعد متاحًا."
 }

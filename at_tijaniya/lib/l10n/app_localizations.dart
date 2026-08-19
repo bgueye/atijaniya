@@ -4058,6 +4058,60 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'Impossible de traiter ce signalement.'**
   String get moderationResolveError;
+
+  /// No description provided for @notificationsTooltip.
+  ///
+  /// In fr, this message translates to:
+  /// **'Notifications'**
+  String get notificationsTooltip;
+
+  /// No description provided for @notificationsScreenTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Notifications'**
+  String get notificationsScreenTitle;
+
+  /// No description provided for @notificationsEmpty.
+  ///
+  /// In fr, this message translates to:
+  /// **'Aucune notification pour l\'instant.'**
+  String get notificationsEmpty;
+
+  /// No description provided for @notificationsLoadError.
+  ///
+  /// In fr, this message translates to:
+  /// **'Impossible de charger les notifications.'**
+  String get notificationsLoadError;
+
+  /// No description provided for @notificationStreamLiveTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Un direct vient de commencer'**
+  String get notificationStreamLiveTitle;
+
+  /// No description provided for @notificationStreamLiveBody.
+  ///
+  /// In fr, this message translates to:
+  /// **'Touchez pour rejoindre le direct.'**
+  String get notificationStreamLiveBody;
+
+  /// No description provided for @notificationContentReportTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Nouveau signalement'**
+  String get notificationContentReportTitle;
+
+  /// No description provided for @notificationContentReportBody.
+  ///
+  /// In fr, this message translates to:
+  /// **'Un contenu a été signalé, à examiner.'**
+  String get notificationContentReportBody;
+
+  /// No description provided for @notificationStreamUnavailable.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ce direct n\'est plus disponible.'**
+  String get notificationStreamUnavailable;
 }
 
 class _AppLocalizationsDelegate

@@ -510,6 +510,48 @@ create table public.live_streams (
   hidden_at timestamptz
 );
 
+-- Notifie les utilisateurs concernés quand un direct démarre (in-app,
+-- table notifications section 9) : membres du groupe si le direct est
+-- scopé à un groupe (cohérent avec streams_read_public_or_group_member),
+-- sinon tous les profils (pas de notion d'abonnement dans l'app en V1).
+-- SECURITY DEFINER pour contourner notifications_owner_only le temps du
+-- fan-out — même pattern que handle_new_user() : EXECUTE révoqué à tous
+-- les rôles clients juste après, cette fonction ne doit être invocable
+-- que par son trigger.
+create or replace function public.notify_stream_live()
+returns trigger as $$
+begin
+  if new.status <> 'live' then
+    return new;
+  end if;
+
+  if new.group_id is not null then
+    insert into public.notifications (user_id, type, payload)
+    select gm.user_id, 'stream_live',
+      jsonb_build_object('stream_id', new.id, 'event_id', new.event_id, 'group_id', new.group_id)
+    from public.group_memberships gm
+    where gm.group_id = new.group_id
+      and gm.user_id <> new.started_by;
+  else
+    insert into public.notifications (user_id, type, payload)
+    select p.user_id, 'stream_live',
+      jsonb_build_object('stream_id', new.id, 'event_id', new.event_id, 'group_id', new.group_id)
+    from public.profiles p
+    where p.user_id <> new.started_by;
+  end if;
+
+  return new;
+end;
+$$ language plpgsql security definer set search_path = public;
+
+create trigger trg_notify_stream_live
+  after insert on public.live_streams
+  for each row execute function public.notify_stream_live();
+
+revoke execute on function public.notify_stream_live() from public;
+revoke execute on function public.notify_stream_live() from anon;
+revoke execute on function public.notify_stream_live() from authenticated;
+
 create table public.stream_replays (
   id uuid primary key default gen_random_uuid(),
   stream_id uuid not null references public.live_streams(id) on delete cascade,
@@ -884,11 +926,18 @@ create table public.donations (
 create table public.notifications (
   id uuid primary key default gen_random_uuid(),
   user_id uuid not null references auth.users(id) on delete cascade,
-  type text not null, -- ex: 'sponsorship_request','lineage_match','stream_live','message'
+  type text not null, -- ex: 'sponsorship_request','lineage_match','stream_live','content_report','message'
   payload jsonb not null default '{}'::jsonb,
   read_at timestamptz,
   created_at timestamptz not null default now()
 );
+
+-- La clochette de notifications in-app (lib/features/notifications/) écoute
+-- cette table via Supabase Realtime : sans inscription à la publication
+-- supabase_realtime, aucun évènement n'est poussé au client (seule la
+-- requête initiale fonctionnerait). Seule table du projet à en avoir besoin
+-- (le chat en direct utilise un polling léger à la place).
+alter publication supabase_realtime add table public.notifications;
 
 -- ============================================================================
 -- 10. ADMINISTRATION & AUDIT
@@ -938,6 +987,32 @@ create table public.content_reports (
 
 create unique index content_reports_one_per_reporter
   on public.content_reports (reporter_id, content_type, content_id);
+
+-- Notifie tous les admins (in-app) à chaque nouveau signalement — exclut le
+-- déclarant si jamais il est lui-même admin. Même pattern SECURITY DEFINER
+-- que notify_stream_live() : EXECUTE révoqué à tous les rôles clients juste
+-- après.
+create or replace function public.notify_content_report()
+returns trigger as $$
+begin
+  insert into public.notifications (user_id, type, payload)
+  select p.user_id, 'content_report',
+    jsonb_build_object('report_id', new.id, 'content_type', new.content_type, 'content_id', new.content_id)
+  from public.profiles p
+  where p.is_admin = true
+    and p.user_id <> new.reporter_id;
+
+  return new;
+end;
+$$ language plpgsql security definer set search_path = public;
+
+create trigger trg_notify_content_report
+  after insert on public.content_reports
+  for each row execute function public.notify_content_report();
+
+revoke execute on function public.notify_content_report() from public;
+revoke execute on function public.notify_content_report() from anon;
+revoke execute on function public.notify_content_report() from authenticated;
 
 -- ============================================================================
 -- 11. ROW-LEVEL SECURITY — politiques complètes (déployées et vérifiées)

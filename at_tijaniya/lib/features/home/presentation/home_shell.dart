@@ -1,12 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/nav_icons.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../communaute/presentation/communaute_screen.dart';
 import '../../figures/presentation/figures_screen.dart';
 import '../../khadara/presentation/khadara_screen.dart';
+import '../../notifications/presentation/notifications_providers.dart';
+import '../../notifications/presentation/notifications_screen.dart';
 import '../../profil/presentation/profil_screen.dart';
+import '../../profil/presentation/profile_providers.dart';
 import '../../wird/presentation/wird_list_screen.dart';
 import 'home_dashboard_provider.dart';
 import 'home_screen.dart';
@@ -36,10 +40,26 @@ class _HomeShellState extends ConsumerState<HomeShell> {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
 
+    final isSignedIn = ref.watch(currentUserIdProvider) != null;
+    final unreadCount = ref.watch(unreadNotificationsCountProvider);
+
     return Scaffold(
       appBar: AppBar(
         title: Text(_titleFor(_index, l10n)),
         actions: [
+          if (isSignedIn)
+            IconButton(
+              icon: Badge(
+                label: Text('$unreadCount'),
+                isLabelVisible: unreadCount > 0,
+                backgroundColor: AppColors.gold,
+                child: const Icon(Icons.notifications_outlined),
+              ),
+              tooltip: l10n.notificationsTooltip,
+              onPressed: () => Navigator.of(context).push(
+                MaterialPageRoute(builder: (_) => const NotificationsScreen()),
+              ),
+            ),
           IconButton(
             icon: const Icon(Icons.account_circle_outlined),
             onPressed: () => Navigator.of(context).push(

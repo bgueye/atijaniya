@@ -2090,4 +2090,32 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get moderationResolveError => 'تعذّرت معالجة هذا البلاغ.';
+
+  @override
+  String get notificationsTooltip => 'الإشعارات';
+
+  @override
+  String get notificationsScreenTitle => 'الإشعارات';
+
+  @override
+  String get notificationsEmpty => 'لا توجد إشعارات حاليًا.';
+
+  @override
+  String get notificationsLoadError => 'تعذّر تحميل الإشعارات.';
+
+  @override
+  String get notificationStreamLiveTitle => 'بث مباشر بدأ للتو';
+
+  @override
+  String get notificationStreamLiveBody => 'اضغط للانضمام إلى البث المباشر.';
+
+  @override
+  String get notificationContentReportTitle => 'بلاغ جديد';
+
+  @override
+  String get notificationContentReportBody =>
+      'تم الإبلاغ عن محتوى، يحتاج إلى المراجعة.';
+
+  @override
+  String get notificationStreamUnavailable => 'هذا البث المباشر لم يعد متاحًا.';
 }
