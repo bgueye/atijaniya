@@ -2368,3 +2368,69 @@ entre le compte QA et Bocar existe toujours à l'état `accepted` en base
 ce chemin précis si besoin ; le code des deux chemins est structurellement
 identique à celui déjà validé (même `resolveReport()`, seule la branche
 `switch`/le booléen change), risque résiduel jugé faible.
+
+## CRUD groupes/messages de groupe et directs passés (2026-08-20)
+
+Point d'entrée de la note "écart de documentation" du 2026-08-14 sur
+`lib/features/communaute/` (groupes/messagerie jamais eu leur propre entrée
+narrative) — cette section ne couvre que l'incrément du jour (CRUD +
+gestion d'erreurs), pas une reconstitution rétroactive complète de la
+construction initiale des groupes/messagerie privée, qui reste à faire.
+
+Deux migrations additives (`add_groups_owner_column_and_update_delete_policies`,
+`add_group_posts_author_update_delete_policies`) : colonne
+`groups.created_by_user_id` (nulle pour tout groupe créé avant cette
+migration — reste alors modifiable par un admin seulement, voir
+`Group.canBeManagedBy`) et policies RLS update/delete sur `groups`
+(créateur ou admin) et `group_posts` (auteur seul, sans exception admin,
+même restriction que `posts`). Côté app : édition/suppression d'un groupe
+(icônes crayon/poubelle dans l'app bar de `GroupDetailScreen`, visibles
+seulement si `canBeManagedBy`) et d'un message de discussion (icônes sur
+chaque message, visibles seulement pour son auteur). Erreurs de suppression
+classifiées côté domaine (`group_errors.dart`, `classifyGroupDeleteError`,
+même pattern que `khadara_errors.dart`) : un direct encore rattaché
+(`live_streams.group_id`, volontairement sans `on delete cascade`) bloque
+la suppression du groupe avec un message dédié plutôt que l'erreur
+Postgres brute.
+
+**Deux bugs trouvés et corrigés pendant la validation manuelle sur
+téléphone (`R5CW41VL5CE`), sans lien avec la logique CRUD elle-même :**
+
+1. `_EditGroupSheet`/`_CreateGroupSheet` (`Padding` seul, pas de
+   `SingleChildScrollView`) débordaient ("BOTTOM OVERFLOWED BY N PIXELS")
+   dès que le clavier s'affichait avec une description un peu longue — le
+   correctif déjà appliqué à `_CreatePostSheet`/`_EditPostSheet`
+   (`post_detail_screen.dart`) n'avait pas été repris ici. Corrigé en
+   ajoutant le `SingleChildScrollView` manquant aux deux.
+2. Le message d'erreur "un direct est encore rattaché" à la suppression
+   d'un groupe était exact (deux directs `ended` existaient bien en base
+   pour le groupe de test "Tivaouane") mais invisible : `_GroupLiveStreamSection`
+   ne montre plus rien une fois un direct `ended`, à part le bouton
+   "Démarrer un direct" — aucun moyen de voir ni résoudre ce qui bloquait.
+   Corrigé par un nouvel écran `GroupPastLiveStreamsScreen`
+   (`presentation/group_past_streams_screen.dart`, accessible via un lien
+   sous le bouton direct) listant les directs terminés du groupe avec
+   suppression réservée au créateur du groupe ou à un admin — nouvelle
+   migration `add_live_streams_group_manager_delete_policy` (aucune policy
+   de suppression n'existait sur `live_streams` avant, RLS refusait tout
+   par défaut). La suppression cascade sur `stream_replays`/
+   `live_chat_messages` (`on delete cascade` déjà en place) : la boîte de
+   confirmation en avertit explicitement.
+
+Choix additionnel (retour du porteur de projet en cours de session, pas
+une préférence esthétique personnelle non sourcée) : les snackbars
+d'erreur rendaient fond noir/texte blanc par défaut (`inverseSurface`/
+`onInverseSurface` de Material 3, mappés sur `AppColors.ink`/`parchment`
+dans `app_theme.dart` — cohérent avec la charte mais jugé trop dur pour un
+message d'erreur). Nouveau helper partagé `showErrorSnackBar`
+(`core/widgets/app_snackbar.dart`), stylé avec
+`colorScheme.error`/`onError` (déjà défini dans `app_theme.dart`), appliqué
+aux 4 messages d'erreur du module groupes. Non répercuté sur les 12 autres
+écrans utilisant le même pattern `ScaffoldMessenger`/`SnackBar` brut
+(hors scope de cette session) — le helper est prêt à être repris pour eux.
+
+**Validé en conditions réelles le 2026-08-20** sur téléphone Android
+(`R5CW41VL5CE`) : overflow du formulaire d'édition confirmé disparu après
+correctif ; les deux directs terminés du groupe "Tivaouane" supprimés
+depuis le nouvel écran, puis le groupe lui-même supprimé avec succès.
+`flutter analyze` propre après chaque étape.

@@ -866,7 +866,14 @@ create table public.groups (
   description text,
   zawiya_id uuid references public.zawiyas(id),
   region_text text,
-  created_at timestamptz not null default now()
+  created_at timestamptz not null default now(),
+  -- Ajoutée après coup (migration
+  -- add_groups_owner_column_and_update_delete_policies, 2026-08-20) : à
+  -- l'origine aucun disciple n'était retenu comme "propriétaire" d'un
+  -- groupe (n'importe quel compte connecté pouvait en créer un). Nulle pour
+  -- tout groupe créé avant cette migration, ces groupes-là ne restent
+  -- modifiables que par un admin — voir groups_creator_or_admin_update/_delete.
+  created_by_user_id uuid references auth.users(id)
 );
 
 create table public.group_memberships (
@@ -1220,6 +1227,22 @@ create policy streams_authenticated_create on public.live_streams for insert
   );
 create policy streams_owner_or_admin_update on public.live_streams for update
   using ((select auth.uid()) = started_by or public.is_admin((select auth.uid())));
+-- Ajoutée après coup (migration add_live_streams_group_manager_delete_policy,
+-- 2026-08-20) : aucune policy de suppression n'existait sur live_streams
+-- jusque-là (RLS refuse par défaut), alors qu'un direct de groupe terminé
+-- bloque indéfiniment groups_creator_or_admin_delete (FK sans cascade, voir
+-- group_errors.dart). Réservée au créateur du groupe rattaché ou à un admin
+-- (pas au simple started_by du direct, qui peut être un membre quelconque) —
+-- écran dédié `GroupPastLiveStreamsScreen`. Ne couvre pas les directs
+-- d'évènement (event_id) : aucun besoin identifié pour l'instant.
+create policy live_streams_group_manager_or_admin_delete on public.live_streams for delete
+  using (
+    public.is_admin((select auth.uid()))
+    or (group_id is not null and exists (
+      select 1 from public.groups g
+      where g.id = live_streams.group_id and g.created_by_user_id = (select auth.uid())
+    ))
+  );
 
 -- --- Modération a posteriori (Sprint 2, P3) ---
 -- Pas de policy de lecture pour le déclarant (content_reports_authenticated_create
@@ -1386,6 +1409,10 @@ create policy posts_read_valid_or_admin on public.posts for select
   using (content_status = 'valide' or public.is_admin((select auth.uid())));
 create policy posts_author_create on public.posts for insert with check ((select auth.uid()) = author_user_id);
 create policy posts_author_delete on public.posts for delete using ((select auth.uid()) = author_user_id);
+-- Ajoutée après coup (migration add_posts_author_update_policy, 2026-08-20)
+-- pour permettre à l'auteur de modifier sa propre publication depuis le fil
+-- "Communauté" — jusque-là seule la suppression était possible côté RLS.
+create policy posts_author_update on public.posts for update using ((select auth.uid()) = author_user_id);
 
 create policy post_likes_read_all on public.post_likes for select using (true);
 create policy post_likes_owner_only on public.post_likes for insert with check ((select auth.uid()) = user_id);
@@ -1397,6 +1424,15 @@ create policy post_comments_author_delete on public.post_comments for delete usi
 
 create policy groups_read_all on public.groups for select using (true);
 create policy groups_authenticated_create on public.groups for insert with check ((select auth.uid()) is not null);
+-- Ajoutées après coup (migration
+-- add_groups_owner_column_and_update_delete_policies, 2026-08-20) pour le
+-- CRUD groupes côté app — jusque-là ni modification ni suppression n'étaient
+-- possibles. `created_by_user_id` étant nul pour les groupes créés avant
+-- cette migration, seul un admin peut alors les gérer.
+create policy groups_creator_or_admin_update on public.groups for update
+  using ((select auth.uid()) = created_by_user_id or public.is_admin((select auth.uid())));
+create policy groups_creator_or_admin_delete on public.groups for delete
+  using ((select auth.uid()) = created_by_user_id or public.is_admin((select auth.uid())));
 
 create policy group_memberships_read_all on public.group_memberships for select using (true);
 create policy group_memberships_self_join on public.group_memberships for insert with check ((select auth.uid()) = user_id);
@@ -1407,6 +1443,14 @@ create policy group_posts_members_read on public.group_posts for select
 create policy group_posts_members_write on public.group_posts for insert
   with check ((select auth.uid()) = author_user_id and exists (
     select 1 from public.group_memberships gm where gm.group_id = group_posts.group_id and gm.user_id = (select auth.uid())));
+-- Ajoutées après coup (migration
+-- add_group_posts_author_update_delete_policies, 2026-08-20) pour le CRUD
+-- des messages de discussion côté app — même restriction propriétaire-only,
+-- sans exception admin, que posts_author_update/_delete.
+create policy group_posts_author_update on public.group_posts for update
+  using ((select auth.uid()) = author_user_id);
+create policy group_posts_author_delete on public.group_posts for delete
+  using ((select auth.uid()) = author_user_id);
 
 create policy conversations_participants_read on public.conversations for select
   using (exists (select 1 from public.conversation_participants cp where cp.conversation_id = conversations.id and cp.user_id = (select auth.uid())));

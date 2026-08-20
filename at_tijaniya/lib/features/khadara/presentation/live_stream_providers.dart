@@ -14,6 +14,11 @@ final latestStreamForGroupProvider = FutureProvider.family<LiveStream?, String>(
   return ref.watch(liveStreamRepositoryProvider).fetchLatestStreamForGroup(groupId);
 });
 
+/// Voir `LiveStreamRepository.fetchPastStreamsForGroup`.
+final pastStreamsForGroupProvider = FutureProvider.family<List<LiveStream>, String>((ref, groupId) {
+  return ref.watch(liveStreamRepositoryProvider).fetchPastStreamsForGroup(groupId);
+});
+
 final allLiveStreamsProvider = FutureProvider<List<LiveStream>>((ref) {
   return ref.watch(liveStreamRepositoryProvider).fetchAllLiveStreams();
 });

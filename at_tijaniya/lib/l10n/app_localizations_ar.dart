@@ -1438,6 +1438,101 @@ class AppLocalizationsAr extends AppLocalizations {
   String get communityGroupsLoadPostsError => 'تعذّر تحميل النقاشات.';
 
   @override
+  String get communityGroupsEditTooltip => 'تعديل';
+
+  @override
+  String get communityGroupsEditTitle => 'تعديل المجموعة';
+
+  @override
+  String get communityGroupsEditSubmit => 'حفظ';
+
+  @override
+  String get communityGroupsEditError => 'تعذّر تعديل هذه المجموعة.';
+
+  @override
+  String get communityGroupsDeleteTooltip => 'حذف';
+
+  @override
+  String get communityGroupsDeleteConfirmTitle => 'حذف هذه المجموعة؟';
+
+  @override
+  String get communityGroupsDeleteConfirmBody =>
+      'هذا الإجراء نهائي: ستُفقد النقاشات والأعضاء.';
+
+  @override
+  String get communityGroupsDeleteConfirmAction => 'حذف';
+
+  @override
+  String get communityGroupsDeleteError => 'تعذّر حذف هذه المجموعة.';
+
+  @override
+  String get communityGroupsDeleteBlockedByLiveStream =>
+      'تعذّر حذف هذه المجموعة: لا يزال بث مباشر مرتبطًا بها. راجع «البثوث المباشرة السابقة» لحذفه أولاً.';
+
+  @override
+  String get communityGroupsPastStreamsLink => 'البثوث المباشرة السابقة';
+
+  @override
+  String get communityGroupsPastStreamsTitle => 'البثوث المباشرة السابقة';
+
+  @override
+  String get communityGroupsPastStreamsEmpty =>
+      'لا يوجد بث مباشر سابق لهذه المجموعة.';
+
+  @override
+  String get communityGroupsPastStreamsLoadError =>
+      'تعذّر تحميل البثوث المباشرة السابقة.';
+
+  @override
+  String get communityGroupsDeleteStreamTooltip => 'حذف';
+
+  @override
+  String get communityGroupsDeleteStreamConfirmTitle => 'حذف هذا البث المباشر؟';
+
+  @override
+  String get communityGroupsDeleteStreamConfirmBody =>
+      'هذا الإجراء نهائي: ستُحذف أيضًا إعادة البث والرسائل المرتبطة به.';
+
+  @override
+  String get communityGroupsDeleteStreamConfirmAction => 'حذف';
+
+  @override
+  String get communityGroupsDeleteStreamError => 'تعذّر حذف هذا البث المباشر.';
+
+  @override
+  String get communityGroupsEditPostTooltip => 'تعديل';
+
+  @override
+  String get communityGroupsEditPostTitle => 'تعديل الرسالة';
+
+  @override
+  String get communityGroupsEditPostContentLabel => 'رسالتك';
+
+  @override
+  String get communityGroupsEditPostContentRequired => 'الرسالة إلزامية.';
+
+  @override
+  String get communityGroupsEditPostSubmit => 'حفظ';
+
+  @override
+  String get communityGroupsEditPostError => 'تعذّر تعديل هذه الرسالة.';
+
+  @override
+  String get communityGroupsDeletePostTooltip => 'حذف';
+
+  @override
+  String get communityGroupsDeletePostConfirmTitle => 'حذف هذه الرسالة؟';
+
+  @override
+  String get communityGroupsDeletePostConfirmBody => 'هذا الإجراء نهائي.';
+
+  @override
+  String get communityGroupsDeletePostConfirmAction => 'حذف';
+
+  @override
+  String get communityGroupsDeletePostError => 'تعذّر حذف هذه الرسالة.';
+
+  @override
   String get communityMessagesTooltip => 'الرسائل';
 
   @override
@@ -1473,6 +1568,39 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get communityDeletePostError => 'تعذّر حذف هذا المنشور.';
+
+  @override
+  String get communityEditPostTooltip => 'تعديل';
+
+  @override
+  String get communityEditPostTitle => 'تعديل المنشور';
+
+  @override
+  String get communityEditPostContentLabel => 'رسالتك';
+
+  @override
+  String get communityEditPostContentRequired => 'الرسالة إلزامية.';
+
+  @override
+  String get communityEditPostSubmit => 'حفظ';
+
+  @override
+  String get communityEditPostError => 'تعذّر تعديل هذا المنشور.';
+
+  @override
+  String get communityDeleteCommentTooltip => 'حذف التعليق';
+
+  @override
+  String get communityDeleteCommentConfirmTitle => 'حذف هذا التعليق؟';
+
+  @override
+  String get communityDeleteCommentConfirmBody => 'هذا الإجراء نهائي.';
+
+  @override
+  String get communityDeleteCommentConfirmAction => 'حذف';
+
+  @override
+  String get communityDeleteCommentError => 'تعذّر حذف هذا التعليق.';
 
   @override
   String get profileTitle => 'ملفي الشخصي';

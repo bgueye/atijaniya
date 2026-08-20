@@ -15,6 +15,7 @@ class Group {
     required this.createdAt,
     required this.memberCount,
     required this.isMember,
+    this.createdByUserId,
   });
 
   final String id;
@@ -33,12 +34,27 @@ class Group {
   /// en mode invité) — voir `GroupsRepository.fetchGroups()`.
   final bool isMember;
 
+  /// `null` pour tout groupe créé avant la migration
+  /// `add_groups_owner_column_and_update_delete_policies` (2026-08-20) — la
+  /// colonne n'existait pas avant, ces groupes-là ne restent modifiables que
+  /// par un admin (voir `groups_creator_or_admin_update`/`_delete`).
+  final String? createdByUserId;
+
   /// Lieu affiché : zawiya en priorité, sinon la région en texte libre,
   /// sinon rien.
   String? get locationLabel => zawiyaName ?? regionText;
 
+  /// `true` si l'utilisateur courant peut modifier/supprimer ce groupe —
+  /// reflet côté UI de la RLS `groups_creator_or_admin_update`/`_delete`.
+  bool canBeManagedBy(String? userId, {required bool isAdmin}) =>
+      isAdmin || (userId != null && userId == createdByUserId);
+
   /// Utilisé pour la mise à jour optimiste de `memberCount`/`isMember`
   /// après rejoindre/quitter un groupe — voir `group_detail_screen.dart`.
+  /// La modification du nom/description/zawiya/région passe par un
+  /// remplacement complet de l'objet (voir `_EditGroupSheet`), pas par
+  /// `copyWith` : un `??` ne saurait pas distinguer "champ inchangé" de
+  /// "champ volontairement vidé" (ex. retirer la description).
   Group copyWith({int? memberCount, bool? isMember}) {
     return Group(
       id: id,
@@ -50,6 +66,7 @@ class Group {
       createdAt: createdAt,
       memberCount: memberCount ?? this.memberCount,
       isMember: isMember ?? this.isMember,
+      createdByUserId: createdByUserId,
     );
   }
 
@@ -69,6 +86,7 @@ class Group {
       createdAt: DateTime.parse(row['created_at'] as String).toLocal(),
       memberCount: memberCount,
       isMember: isMember,
+      createdByUserId: row['created_by_user_id'] as String?,
     );
   }
 }

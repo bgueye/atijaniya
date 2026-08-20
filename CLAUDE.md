@@ -150,9 +150,16 @@ plus haut).
 utilisés en production (le direct rattaché à un groupe s'appuie dessus),
 mais leur construction n'a, à la relecture, jamais eu sa propre entrée
 narrative dans le journal — écart de documentation constaté en réorganisant
-ce fichier le 2026-08-14, pas une lacune fonctionnelle connue. À
-approfondir/documenter dans `docs/09-journal-implementation-frontend.md` au
-prochain incrément qui touche ces écrans.
+ce fichier le 2026-08-14, pas une lacune fonctionnelle connue ; la
+construction initiale reste à documenter rétroactivement dans
+`docs/09-journal-implementation-frontend.md`. **CRUD créer/modifier/
+supprimer groupe et messages de discussion depuis le 2026-08-20**
+(créateur du groupe ou admin pour le groupe, auteur seul pour un message,
+sans exception admin) ainsi qu'un écran "Directs passés" par groupe
+(directs terminés, invisibles ailleurs dans l'app une fois `ended` — leur
+absence bloquait silencieusement la suppression d'un groupe tant qu'un
+direct y restait rattaché) — validé manuellement sur téléphone Android le
+2026-08-20, détail dans le journal.
 
 ## Commandes utiles
 - `flutter pub get`

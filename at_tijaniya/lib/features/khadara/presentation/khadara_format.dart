@@ -33,3 +33,29 @@ String khadaraEventTypeLabel(KhadaraEventType type, AppLocalizations l10n) {
       return l10n.khadaraEventTypeOther;
   }
 }
+
+IconData liveStreamSourceIcon(LiveStreamSourceType type) {
+  switch (type) {
+    case LiveStreamSourceType.youtube:
+      return Icons.smart_display_outlined;
+    case LiveStreamSourceType.facebook:
+      return Icons.facebook_outlined;
+    case LiveStreamSourceType.native:
+      return Icons.videocam_outlined;
+    case LiveStreamSourceType.other:
+      return Icons.link;
+  }
+}
+
+String liveStreamSourceLabel(LiveStreamSourceType type, AppLocalizations l10n) {
+  switch (type) {
+    case LiveStreamSourceType.youtube:
+      return l10n.khadaraSourceYoutube;
+    case LiveStreamSourceType.facebook:
+      return l10n.khadaraSourceFacebook;
+    case LiveStreamSourceType.native:
+      return l10n.khadaraSourceNative;
+    case LiveStreamSourceType.other:
+      return l10n.khadaraSourceOther;
+  }
+}

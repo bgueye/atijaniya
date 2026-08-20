@@ -51,6 +51,32 @@ class LiveStreamRepository {
     return row == null ? null : LiveStream.fromRow(row);
   }
 
+  /// Tous les directs terminés d'un groupe (pas seulement le plus récent) —
+  /// `GroupPastLiveStreamsScreen` (communaute) : un direct de groupe
+  /// disparaît de `_GroupLiveStreamSection` dès qu'il passe `ended` (celle-ci
+  /// ne montre plus que "Démarrer un direct"), pourtant `group_id` n'a
+  /// volontairement pas de `on delete cascade` (voir `group_errors.dart`) —
+  /// sans cet écran, un tel direct bloquait `deleteGroup` sans que personne
+  /// ne puisse voir pourquoi ni le résoudre.
+  Future<List<LiveStream>> fetchPastStreamsForGroup(String groupId) async {
+    final rows = await SupabaseConfig.client
+        .from('live_streams')
+        .select(_selectWithContext)
+        .eq('group_id', groupId)
+        .eq('status', 'ended')
+        .order('ended_at', ascending: false);
+    return rows.map((row) => LiveStream.fromRow(row)).toList();
+  }
+
+  /// Réservé par RLS (`live_streams_group_manager_or_admin_delete`,
+  /// migration du même nom) au créateur du groupe rattaché ou à un admin.
+  /// `stream_replays`/`live_chat_messages` ont un `on delete cascade` sur
+  /// `stream_id` : supprimer un direct supprime aussi sa rediffusion et son
+  /// chat — voir l'avertissement dans `GroupPastLiveStreamsScreen`.
+  Future<void> deleteLiveStream(String streamId) async {
+    await SupabaseConfig.client.from('live_streams').delete().eq('id', streamId);
+  }
+
   Future<LiveStream> fetchStream(String streamId) async {
     final row = await SupabaseConfig.client.from('live_streams').select(_selectWithContext).eq('id', streamId).single();
     return LiveStream.fromRow(row);

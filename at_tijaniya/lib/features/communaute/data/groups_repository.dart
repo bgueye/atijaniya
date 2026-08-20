@@ -37,13 +37,19 @@ class GroupsRepository {
     }).toList();
   }
 
-  /// Insère le groupe puis inscrit automatiquement son créateur — le schéma
-  /// n'a pas de colonne "auteur" sur `groups` (n'importe quel disciple
-  /// connecté peut en créer un, même policy ouverte que pour les
-  /// publications), donc pas d'inscription automatique possible côté
-  /// serveur (pas de trigger dédié) : sans cette étape, le créateur se
-  /// retrouverait devant son propre groupe fraîchement créé sans pouvoir en
-  /// voir les discussions.
+  /// Insère le groupe puis inscrit automatiquement son créateur — la
+  /// policy `groups_authenticated_create` reste ouverte à tout disciple
+  /// connecté (n'importe qui peut créer un groupe), donc pas d'inscription
+  /// automatique possible côté serveur (pas de trigger dédié) : sans cette
+  /// étape, le créateur se retrouverait devant son propre groupe
+  /// fraîchement créé sans pouvoir en voir les discussions.
+  ///
+  /// [created_by_user_id] (migration
+  /// `add_groups_owner_column_and_update_delete_policies`, 2026-08-20) sert
+  /// uniquement à déterminer qui peut modifier/supprimer ce groupe ensuite
+  /// (`groups_creator_or_admin_update`/`_delete`) — les groupes créés avant
+  /// cette migration ont cette colonne à `null` et ne restent modifiables
+  /// que par un admin.
   Future<void> createGroup({
     required String name,
     String? description,
@@ -58,6 +64,7 @@ class GroupsRepository {
           'description': description,
           'zawiya_id': zawiyaId,
           'region_text': regionText,
+          'created_by_user_id': userId,
         })
         .select('id')
         .single();
@@ -65,6 +72,37 @@ class GroupsRepository {
       'group_id': inserted['id'] as String,
       'user_id': userId,
     });
+  }
+
+  /// Réservé au créateur du groupe ou à un admin par la RLS
+  /// `groups_creator_or_admin_update`. Ne renvoie pas le groupe complet
+  /// (contrairement à `KhadaraRepository.updateZawiya`) : `memberCount` et
+  /// `isMember` ne sont pas des colonnes de `groups`, l'appelant reconstruit
+  /// l'objet localement (voir `_EditGroupSheet`).
+  Future<void> updateGroup(
+    String id, {
+    required String name,
+    String? description,
+    String? zawiyaId,
+    String? regionText,
+  }) async {
+    await SupabaseConfig.client.from('groups').update({
+      'name': name,
+      'description': description,
+      'zawiya_id': zawiyaId,
+      'region_text': regionText,
+    }).eq('id', id);
+  }
+
+  /// Réservé au créateur du groupe ou à un admin par la RLS
+  /// `groups_creator_or_admin_delete`. Peut lever une `PostgrestException`
+  /// (code `23503`) si un direct est encore rattaché à ce groupe
+  /// (`live_streams.group_id`, sans `on delete cascade`) — volontairement
+  /// non catchée ici, voir `classifyGroupDeleteError` (`group_errors.dart`)
+  /// côté appelant. `group_memberships`/`group_posts` ne peuvent jamais
+  /// bloquer (cascade).
+  Future<void> deleteGroup(String id) async {
+    await SupabaseConfig.client.from('groups').delete().eq('id', id);
   }
 
   Future<void> joinGroup(String groupId) async {
@@ -100,6 +138,19 @@ class GroupsRepository {
       'author_user_id': userId,
       'content_text': contentText,
     });
+  }
+
+  /// Réservé à l'auteur du message par la RLS `group_posts_author_update`
+  /// (migration `add_group_posts_author_update_delete_policies`,
+  /// 2026-08-20) — aucune exception admin, même restriction propriétaire-only
+  /// que `CommunityRepository.updatePost`.
+  Future<void> updateGroupPost(String id, String contentText) async {
+    await SupabaseConfig.client.from('group_posts').update({'content_text': contentText}).eq('id', id);
+  }
+
+  /// Réservé à l'auteur du message par la RLS `group_posts_author_delete`.
+  Future<void> deleteGroupPost(String id) async {
+    await SupabaseConfig.client.from('group_posts').delete().eq('id', id);
   }
 
   Future<Map<String, int>> _fetchMemberCounts(List<String> groupIds) async {

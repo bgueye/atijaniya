@@ -1478,6 +1478,106 @@ class AppLocalizationsFr extends AppLocalizations {
       'Impossible de charger les discussions.';
 
   @override
+  String get communityGroupsEditTooltip => 'Modifier';
+
+  @override
+  String get communityGroupsEditTitle => 'Modifier le groupe';
+
+  @override
+  String get communityGroupsEditSubmit => 'Enregistrer';
+
+  @override
+  String get communityGroupsEditError => 'Impossible de modifier ce groupe.';
+
+  @override
+  String get communityGroupsDeleteTooltip => 'Supprimer';
+
+  @override
+  String get communityGroupsDeleteConfirmTitle => 'Supprimer ce groupe ?';
+
+  @override
+  String get communityGroupsDeleteConfirmBody =>
+      'Cette action est définitive : les discussions et les membres seront perdus.';
+
+  @override
+  String get communityGroupsDeleteConfirmAction => 'Supprimer';
+
+  @override
+  String get communityGroupsDeleteError => 'Impossible de supprimer ce groupe.';
+
+  @override
+  String get communityGroupsDeleteBlockedByLiveStream =>
+      'Impossible de supprimer ce groupe : un direct y est encore rattaché. Consultez « Directs passés » pour le supprimer d\'abord.';
+
+  @override
+  String get communityGroupsPastStreamsLink => 'Directs passés';
+
+  @override
+  String get communityGroupsPastStreamsTitle => 'Directs passés';
+
+  @override
+  String get communityGroupsPastStreamsEmpty =>
+      'Aucun direct passé pour ce groupe.';
+
+  @override
+  String get communityGroupsPastStreamsLoadError =>
+      'Impossible de charger les directs passés.';
+
+  @override
+  String get communityGroupsDeleteStreamTooltip => 'Supprimer';
+
+  @override
+  String get communityGroupsDeleteStreamConfirmTitle => 'Supprimer ce direct ?';
+
+  @override
+  String get communityGroupsDeleteStreamConfirmBody =>
+      'Cette action est définitive : la rediffusion et les messages associés seront aussi supprimés.';
+
+  @override
+  String get communityGroupsDeleteStreamConfirmAction => 'Supprimer';
+
+  @override
+  String get communityGroupsDeleteStreamError =>
+      'Impossible de supprimer ce direct.';
+
+  @override
+  String get communityGroupsEditPostTooltip => 'Modifier';
+
+  @override
+  String get communityGroupsEditPostTitle => 'Modifier le message';
+
+  @override
+  String get communityGroupsEditPostContentLabel => 'Votre message';
+
+  @override
+  String get communityGroupsEditPostContentRequired =>
+      'Le message est obligatoire.';
+
+  @override
+  String get communityGroupsEditPostSubmit => 'Enregistrer';
+
+  @override
+  String get communityGroupsEditPostError =>
+      'Impossible de modifier ce message.';
+
+  @override
+  String get communityGroupsDeletePostTooltip => 'Supprimer';
+
+  @override
+  String get communityGroupsDeletePostConfirmTitle => 'Supprimer ce message ?';
+
+  @override
+  String get communityGroupsDeletePostConfirmBody =>
+      'Cette action est définitive.';
+
+  @override
+  String get communityGroupsDeletePostConfirmAction => 'Supprimer';
+
+  @override
+  String get communityGroupsDeletePostError =>
+      'Impossible de supprimer ce message.';
+
+  @override
   String get communityMessagesTooltip => 'Messages';
 
   @override
@@ -1516,6 +1616,42 @@ class AppLocalizationsFr extends AppLocalizations {
   @override
   String get communityDeletePostError =>
       'Impossible de supprimer cette publication.';
+
+  @override
+  String get communityEditPostTooltip => 'Modifier';
+
+  @override
+  String get communityEditPostTitle => 'Modifier la publication';
+
+  @override
+  String get communityEditPostContentLabel => 'Votre message';
+
+  @override
+  String get communityEditPostContentRequired => 'Le message est obligatoire.';
+
+  @override
+  String get communityEditPostSubmit => 'Enregistrer';
+
+  @override
+  String get communityEditPostError =>
+      'Impossible de modifier cette publication.';
+
+  @override
+  String get communityDeleteCommentTooltip => 'Supprimer le commentaire';
+
+  @override
+  String get communityDeleteCommentConfirmTitle => 'Supprimer ce commentaire ?';
+
+  @override
+  String get communityDeleteCommentConfirmBody =>
+      'Cette action est définitive.';
+
+  @override
+  String get communityDeleteCommentConfirmAction => 'Supprimer';
+
+  @override
+  String get communityDeleteCommentError =>
+      'Impossible de supprimer ce commentaire.';
 
   @override
   String get profileTitle => 'Mon profil';

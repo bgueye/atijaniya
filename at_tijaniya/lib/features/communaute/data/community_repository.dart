@@ -129,6 +129,19 @@ class CommunityRepository {
     await SupabaseConfig.client.from('posts').delete().eq('id', id);
   }
 
+  /// Réservé à l'auteur par la RLS `posts_author_update` (migration
+  /// `add_posts_author_update_policy`, 2026-08-20) — même restriction
+  /// propriétaire-only que `deletePost`, aucune exception admin.
+  /// [mediaUrl] : `null` retire l'image existante, une valeur non nulle la
+  /// remplace ; pas de flux de review à réinitialiser (`posts.content_status`
+  /// reste `valide`, voir la note dans `createPost`).
+  Future<void> updatePost(String id, String contentText, {String? mediaUrl}) async {
+    await SupabaseConfig.client.from('posts').update({
+      'content_text': contentText,
+      'media_url': mediaUrl,
+    }).eq('id', id);
+  }
+
   Future<void> addComment(String postId, String contentText) async {
     final userId = SupabaseConfig.client.auth.currentUser!.id;
     await SupabaseConfig.client.from('post_comments').insert({
@@ -136,5 +149,12 @@ class CommunityRepository {
       'user_id': userId,
       'content_text': contentText,
     });
+  }
+
+  /// Réservé à l'auteur du commentaire par la RLS `post_comments_author_delete`
+  /// (`auth.uid() = user_id`), déjà présente en base mais jamais exposée
+  /// côté app avant l'audit CRUD du 2026-08-20.
+  Future<void> deleteComment(String id) async {
+    await SupabaseConfig.client.from('post_comments').delete().eq('id', id);
   }
 }

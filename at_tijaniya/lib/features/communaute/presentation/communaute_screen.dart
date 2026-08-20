@@ -515,9 +515,11 @@ class _CreateGroupSheetState extends ConsumerState<_CreateGroupSheet> {
 
     // `SafeArea` : évite que le bouton Créer se retrouve masqué sous la
     // barre de navigation Android (3 boutons) — `viewInsets.bottom` seul ne
-    // couvre que le clavier, jamais la zone système.
+    // couvre que le clavier, jamais la zone système. `SingleChildScrollView`
+    // (même choix que _CreatePostSheet) : évite un overflow du formulaire
+    // une fois le clavier affiché avec une description longue.
     return SafeArea(
-      child: Padding(
+      child: SingleChildScrollView(
         padding: EdgeInsets.fromLTRB(
             20, 20, 20, MediaQuery.of(context).viewInsets.bottom + 20),
         child: Form(

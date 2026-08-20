@@ -2805,6 +2805,186 @@ abstract class AppLocalizations {
   /// **'Impossible de charger les discussions.'**
   String get communityGroupsLoadPostsError;
 
+  /// No description provided for @communityGroupsEditTooltip.
+  ///
+  /// In fr, this message translates to:
+  /// **'Modifier'**
+  String get communityGroupsEditTooltip;
+
+  /// No description provided for @communityGroupsEditTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Modifier le groupe'**
+  String get communityGroupsEditTitle;
+
+  /// No description provided for @communityGroupsEditSubmit.
+  ///
+  /// In fr, this message translates to:
+  /// **'Enregistrer'**
+  String get communityGroupsEditSubmit;
+
+  /// No description provided for @communityGroupsEditError.
+  ///
+  /// In fr, this message translates to:
+  /// **'Impossible de modifier ce groupe.'**
+  String get communityGroupsEditError;
+
+  /// No description provided for @communityGroupsDeleteTooltip.
+  ///
+  /// In fr, this message translates to:
+  /// **'Supprimer'**
+  String get communityGroupsDeleteTooltip;
+
+  /// No description provided for @communityGroupsDeleteConfirmTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Supprimer ce groupe ?'**
+  String get communityGroupsDeleteConfirmTitle;
+
+  /// No description provided for @communityGroupsDeleteConfirmBody.
+  ///
+  /// In fr, this message translates to:
+  /// **'Cette action est définitive : les discussions et les membres seront perdus.'**
+  String get communityGroupsDeleteConfirmBody;
+
+  /// No description provided for @communityGroupsDeleteConfirmAction.
+  ///
+  /// In fr, this message translates to:
+  /// **'Supprimer'**
+  String get communityGroupsDeleteConfirmAction;
+
+  /// No description provided for @communityGroupsDeleteError.
+  ///
+  /// In fr, this message translates to:
+  /// **'Impossible de supprimer ce groupe.'**
+  String get communityGroupsDeleteError;
+
+  /// No description provided for @communityGroupsDeleteBlockedByLiveStream.
+  ///
+  /// In fr, this message translates to:
+  /// **'Impossible de supprimer ce groupe : un direct y est encore rattaché. Consultez « Directs passés » pour le supprimer d\'abord.'**
+  String get communityGroupsDeleteBlockedByLiveStream;
+
+  /// No description provided for @communityGroupsPastStreamsLink.
+  ///
+  /// In fr, this message translates to:
+  /// **'Directs passés'**
+  String get communityGroupsPastStreamsLink;
+
+  /// No description provided for @communityGroupsPastStreamsTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Directs passés'**
+  String get communityGroupsPastStreamsTitle;
+
+  /// No description provided for @communityGroupsPastStreamsEmpty.
+  ///
+  /// In fr, this message translates to:
+  /// **'Aucun direct passé pour ce groupe.'**
+  String get communityGroupsPastStreamsEmpty;
+
+  /// No description provided for @communityGroupsPastStreamsLoadError.
+  ///
+  /// In fr, this message translates to:
+  /// **'Impossible de charger les directs passés.'**
+  String get communityGroupsPastStreamsLoadError;
+
+  /// No description provided for @communityGroupsDeleteStreamTooltip.
+  ///
+  /// In fr, this message translates to:
+  /// **'Supprimer'**
+  String get communityGroupsDeleteStreamTooltip;
+
+  /// No description provided for @communityGroupsDeleteStreamConfirmTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Supprimer ce direct ?'**
+  String get communityGroupsDeleteStreamConfirmTitle;
+
+  /// No description provided for @communityGroupsDeleteStreamConfirmBody.
+  ///
+  /// In fr, this message translates to:
+  /// **'Cette action est définitive : la rediffusion et les messages associés seront aussi supprimés.'**
+  String get communityGroupsDeleteStreamConfirmBody;
+
+  /// No description provided for @communityGroupsDeleteStreamConfirmAction.
+  ///
+  /// In fr, this message translates to:
+  /// **'Supprimer'**
+  String get communityGroupsDeleteStreamConfirmAction;
+
+  /// No description provided for @communityGroupsDeleteStreamError.
+  ///
+  /// In fr, this message translates to:
+  /// **'Impossible de supprimer ce direct.'**
+  String get communityGroupsDeleteStreamError;
+
+  /// No description provided for @communityGroupsEditPostTooltip.
+  ///
+  /// In fr, this message translates to:
+  /// **'Modifier'**
+  String get communityGroupsEditPostTooltip;
+
+  /// No description provided for @communityGroupsEditPostTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Modifier le message'**
+  String get communityGroupsEditPostTitle;
+
+  /// No description provided for @communityGroupsEditPostContentLabel.
+  ///
+  /// In fr, this message translates to:
+  /// **'Votre message'**
+  String get communityGroupsEditPostContentLabel;
+
+  /// No description provided for @communityGroupsEditPostContentRequired.
+  ///
+  /// In fr, this message translates to:
+  /// **'Le message est obligatoire.'**
+  String get communityGroupsEditPostContentRequired;
+
+  /// No description provided for @communityGroupsEditPostSubmit.
+  ///
+  /// In fr, this message translates to:
+  /// **'Enregistrer'**
+  String get communityGroupsEditPostSubmit;
+
+  /// No description provided for @communityGroupsEditPostError.
+  ///
+  /// In fr, this message translates to:
+  /// **'Impossible de modifier ce message.'**
+  String get communityGroupsEditPostError;
+
+  /// No description provided for @communityGroupsDeletePostTooltip.
+  ///
+  /// In fr, this message translates to:
+  /// **'Supprimer'**
+  String get communityGroupsDeletePostTooltip;
+
+  /// No description provided for @communityGroupsDeletePostConfirmTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Supprimer ce message ?'**
+  String get communityGroupsDeletePostConfirmTitle;
+
+  /// No description provided for @communityGroupsDeletePostConfirmBody.
+  ///
+  /// In fr, this message translates to:
+  /// **'Cette action est définitive.'**
+  String get communityGroupsDeletePostConfirmBody;
+
+  /// No description provided for @communityGroupsDeletePostConfirmAction.
+  ///
+  /// In fr, this message translates to:
+  /// **'Supprimer'**
+  String get communityGroupsDeletePostConfirmAction;
+
+  /// No description provided for @communityGroupsDeletePostError.
+  ///
+  /// In fr, this message translates to:
+  /// **'Impossible de supprimer ce message.'**
+  String get communityGroupsDeletePostError;
+
   /// No description provided for @communityMessagesTooltip.
   ///
   /// In fr, this message translates to:
@@ -2876,6 +3056,72 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'Impossible de supprimer cette publication.'**
   String get communityDeletePostError;
+
+  /// No description provided for @communityEditPostTooltip.
+  ///
+  /// In fr, this message translates to:
+  /// **'Modifier'**
+  String get communityEditPostTooltip;
+
+  /// No description provided for @communityEditPostTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Modifier la publication'**
+  String get communityEditPostTitle;
+
+  /// No description provided for @communityEditPostContentLabel.
+  ///
+  /// In fr, this message translates to:
+  /// **'Votre message'**
+  String get communityEditPostContentLabel;
+
+  /// No description provided for @communityEditPostContentRequired.
+  ///
+  /// In fr, this message translates to:
+  /// **'Le message est obligatoire.'**
+  String get communityEditPostContentRequired;
+
+  /// No description provided for @communityEditPostSubmit.
+  ///
+  /// In fr, this message translates to:
+  /// **'Enregistrer'**
+  String get communityEditPostSubmit;
+
+  /// No description provided for @communityEditPostError.
+  ///
+  /// In fr, this message translates to:
+  /// **'Impossible de modifier cette publication.'**
+  String get communityEditPostError;
+
+  /// No description provided for @communityDeleteCommentTooltip.
+  ///
+  /// In fr, this message translates to:
+  /// **'Supprimer le commentaire'**
+  String get communityDeleteCommentTooltip;
+
+  /// No description provided for @communityDeleteCommentConfirmTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Supprimer ce commentaire ?'**
+  String get communityDeleteCommentConfirmTitle;
+
+  /// No description provided for @communityDeleteCommentConfirmBody.
+  ///
+  /// In fr, this message translates to:
+  /// **'Cette action est définitive.'**
+  String get communityDeleteCommentConfirmBody;
+
+  /// No description provided for @communityDeleteCommentConfirmAction.
+  ///
+  /// In fr, this message translates to:
+  /// **'Supprimer'**
+  String get communityDeleteCommentConfirmAction;
+
+  /// No description provided for @communityDeleteCommentError.
+  ///
+  /// In fr, this message translates to:
+  /// **'Impossible de supprimer ce commentaire.'**
+  String get communityDeleteCommentError;
 
   /// No description provided for @profileTitle.
   ///
