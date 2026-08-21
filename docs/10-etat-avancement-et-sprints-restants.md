@@ -1,10 +1,11 @@
-# État d'avancement et sprints restants (analyse du 2026-08-18)
+# État d'avancement et sprints restants (analyse du 2026-08-21)
 
 Ce document fige un état des lieux complet de l'app à cette date, croisé entre le résumé
 haut niveau de `CLAUDE.md`, l'historique git (`git log`) et le détail du journal
 (`docs/09-journal-implementation-frontend.md`). À mettre à jour ou remplacer par une
 version plus récente plutôt que de laisser plusieurs analyses concurrentes vieillir en
-parallèle.
+parallèle. Remplace la version du 2026-08-18 : voir "Depuis la dernière analyse" ci-dessous
+pour ce qui a changé entre les deux.
 
 ## État actuel
 
@@ -27,48 +28,91 @@ sont livrés :
   zawiya (seule exception actée à la règle "le statut mouqaddam n'accorde aucune
   permission technique", voir `CLAUDE.md`).
 - Silsila historique de la tarikha (module Figures) — CRUD ajouté le 17/08 (`fa99405`),
-  **validé sur téléphone Android** le jour même.
-- Groupes de discussion et messagerie privée — fonctionnels en production ; seule une
-  dette de documentation existe (jamais eu d'entrée narrative dédiée dans le journal),
-  pas une lacune fonctionnelle.
+  validé sur téléphone Android le jour même ; étendu depuis (voir "Depuis la dernière
+  analyse" ci-dessous) avec zawiyas rattachées et chaîne de khalifas.
+- Groupes de discussion et messagerie privée — fonctionnels en production, désormais avec
+  CRUD complet (créer/modifier/supprimer groupe et messages, voir ci-dessous) ; une dette
+  de documentation subsiste (la construction initiale n'a toujours pas d'entrée narrative
+  rétroactive dans le journal — l'incrément du 20/08 documente seulement le CRUD ajouté ce
+  jour-là, pas l'existant).
 
 **P3 (consolidation avant lancement) : Sprint 2 (modération a posteriori) livré et
 validé** — signalement d'un direct Khadara ou d'une demande de mise en relation par
 lignée spirituelle, écran admin de traitement (`lib/features/moderation/`), voir le
 détail dans `docs/09-journal-implementation-frontend.md` § "Sprint 2 — Modération a
-posteriori". `flutter analyze` propre, suite de tests au vert, **et validé en conditions
-réelles sur téléphone Android le 2026-08-18** (cycle complet signaler → file admin →
+posteriori". `flutter analyze` propre, suite de tests au vert, et validé en conditions
+réelles sur téléphone Android le 2026-08-18 (cycle complet signaler → file admin →
 masquer, avec plusieurs comptes réels) — un bug de collision Hero (`FloatingActionButton`
 sans `heroTag`, sans lien avec le code de modération) trouvé et corrigé au passage. Le
 chemin "rejeter un signalement" et le signalement d'une mise en relation par lignée n'ont
-pas été exercés manuellement (code structurellement identique au chemin déjà validé,
-risque jugé faible). Reste : pas de mode contraste renforcé, pas de fiches store
+toujours pas été exercés manuellement (code structurellement identique au chemin déjà
+validé, risque jugé faible). Reste : pas de mode contraste renforcé, pas de fiches store
 (Sprints 3+ ci-dessous, toujours non entamés).
+
+## Depuis la dernière analyse (2026-08-18 → 2026-08-21)
+
+Quatre livraisons, aucune ne correspond à un sprint du plan ci-dessous — toutes des
+demandes ponctuelles du porteur de projet sur des modules déjà en production (extension
+ou correctif), pas une avancée de sprint planifié :
+
+- **CRUD groupes/messages/directs passés (2026-08-20)** — édition/suppression d'un groupe
+  (créateur ou admin) et d'un message de discussion (auteur seul), nouvel écran "Directs
+  passés" par groupe. Deux bugs trouvés et corrigés en testant (overflow du formulaire au
+  clavier, direct terminé bloquant silencieusement la suppression du groupe). Validé sur
+  téléphone le 20/08.
+- **Onglet "Zawiya" sur la fiche figure, remplace "Ziyaras" (2026-08-21)** — zawiyas
+  fondées/dirigées par une figure et chaîne de succession des khalifas (chaque khalife
+  étant lui-même une fiche `Figure`, chaîne unique par figure fondatrice), en plus des
+  évènements liés déjà existants. Deux nouvelles tables
+  (`figure_zawiyas`/`figure_zawiya_khalifas`). Validé sur téléphone le 21/08.
+- **Refonte des cartes de l'écran Figures (2026-08-21)** — le `ListTile` d'origine
+  débordait avec des noms longs (titre + résumé + nom arabe en `trailing` sans largeur
+  contrainte). Maquette proposée en Artifact et validée avant implémentation ; résumé
+  retiré de la carte liste (reste sur la fiche détail), chaque nom sur sa propre ligne
+  avec ellipsis, nom FR remis en Cormorant Garamond (corrige un écart au design system).
+  Validé sur téléphone le 21/08.
+- **Correction de coquilles par l'admin sur les conditions de la tariqa (2026-08-21)** —
+  `tariqa_conditions` n'avait aucune policy d'écriture cliente (corpus fixé aux 23
+  chouroutes officielles, `order_index between 1 and 23` unique). Scope tranché avec le
+  porteur de projet avant d'implémenter : correction de texte seule (update), pas de
+  create/delete — casserait la contrainte d'unicité et le principe du corpus figé.
+  Migration `add_tariqa_conditions_admin_update_policy` appliquée en prod après
+  confirmation explicite (modification RLS sur l'infra partagée). Validé sur téléphone le
+  21/08.
+
+Détail complet des quatre dans `docs/09-journal-implementation-frontend.md` (entrées
+datées du 20 et du 21/08).
 
 ### Points en suspens à connaître
 
 - Les 3 fonctionnalités listées comme "jamais validées manuellement" lors de la première
   version de cette analyse (CRUD zawiyas/figures du 15/08, CRUD citations/œuvres du 16/08,
-  carte "Figure de la semaine" du 17/08) ont été **validées sur téléphone Android le
-  2026-08-18**, session Bocar (compte admin réel, pas de compte jetable nécessaire) :
+  carte "Figure de la semaine" du 17/08) ont été validées sur téléphone Android le
+  2026-08-18, session Bocar (compte admin réel, pas de compte jetable nécessaire) :
   cycle complet créer/modifier/supprimer sur une zawiya, une figure (statut `brouillon`
   confirmé à la création, conforme à la règle CLAUDE.md), une citation et une œuvre ;
   épingler/retirer une figure sur "Figure de la semaine" avec vérification de la carte
   d'accueil. Chaque étape vérifiée directement en base (`execute_sql`), aucune donnée de
   test résiduelle en fin de session. Voir l'entrée correspondante dans
   `docs/09-journal-implementation-frontend.md` pour le détail.
-- Le fix `SafeArea` sur `figure_detail_screen.dart` mentionné dans la version précédente de
-  ce document a été commité (`cda9693`) et poussé.
-- Don : enregistre une intention, **aucun prestataire de paiement branché** — décision à
+- Le fix `SafeArea` sur `figure_detail_screen.dart` mentionné dans une version précédente
+  de ce document a été commité (`cda9693`) et poussé.
+- Don : enregistre une intention, aucun prestataire de paiement branché — décision à
   trancher avant lancement, pas un oubli de développement.
 - Contenu religieux au-delà des Wirds (biographies, "Comprendre la Khadara") toujours en
   attente de validation par le porteur de projet — bloquant côté contenu, pas côté code
-  (voir règle impérative "Contenu religieux" de `CLAUDE.md`).
+  (voir règle impérative "Contenu religieux" de `CLAUDE.md`). La chaîne de succession des
+  khalifas (nouvel écran du 21/08) est dans le même cas : aucune chaîne réelle saisie,
+  l'écran attend le contenu du porteur de projet.
+- `tariqa_conditions` reste volontairement un corpus fixe de 23 lignes : l'admin peut
+  désormais corriger le texte d'une condition existante, mais il n'existe toujours aucun
+  moyen (ni prévu) d'en ajouter ou d'en retirer depuis l'app.
 
 ## Plan des sprints restants
 
 **Sprint 1 — Nettoyage restant (rapide)**
-- Combler la dette de documentation Groupes/messagerie dans le journal.
+- Combler la dette de documentation Groupes/messagerie dans le journal — toujours ouvert :
+  le CRUD du 20/08 a documenté l'incrément du jour, pas la construction initiale.
 
 **Sprint 2 — Modération a posteriori (P3) — livré et validé (2026-08-18)**
 - Signalement d'un direct Khadara et d'une mise en relation par lignée spirituelle. Fait.
@@ -84,8 +128,8 @@ risque jugé faible). Reste : pas de mode contraste renforcé, pas de fiches sto
 **Sprint 3 — Accessibilité et RTL (P3)**
 - Mode contraste renforcé (à définir dans `design/design_tokens.yaml`).
 - Passage RTL exhaustif sur tous les écrans, en particulier ceux ajoutés récemment
-  (mouqaddam, silsila historique, figure de la semaine) qui n'ont pas eu de revue RTL
-  dédiée.
+  (mouqaddam, silsila historique, figure de la semaine, zawiya/khalifas) qui n'ont pas eu
+  de revue RTL dédiée.
 
 **Sprint 4 — Performance (P3)**
 - Audit ciblé : cache/téléchargement audio des wirds sous charge, rebuilds Riverpod,
@@ -94,8 +138,9 @@ risque jugé faible). Reste : pas de mode contraste renforcé, pas de fiches sto
 **Sprint 5 — Décisions bloquantes avant lancement (hors dev pur)**
 - Choisir un prestataire de paiement pour les dons (ou confirmer que la V1 reste
   "intention de don" sans paiement réel).
-- Trancher/valider le contenu religieux restant (biographies, "Comprendre la Khadara") —
-  dépendance sur le porteur de projet, pas sur le code.
+- Trancher/valider le contenu religieux restant (biographies, "Comprendre la Khadara",
+  chaîne de succession des khalifas) — dépendance sur le porteur de projet, pas sur le
+  code.
 
 **Sprint 6 — Préparation stores (P3 → Phase 5)**
 - Fiches Google Play / App Store (FR + AR) à partir de `assets/branding/`.

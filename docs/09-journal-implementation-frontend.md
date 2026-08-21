@@ -2494,3 +2494,92 @@ validation, aucune ne reste en base. `flutter analyze` propre et suite de
 tests complète au vert (`test/figure_detail_screen_test.dart` mis à jour :
 onglet renommé, nouveaux providers surchargés à vide pour éviter un appel
 réseau non lié à ce que le test vérifie).
+
+## Refonte des cartes de l'écran Figures (2026-08-21)
+
+Signalement du porteur de projet : le contenu de `_FigureTile`
+(`figures_screen.dart`) débordait parfois. Cause identifiée : un `ListTile`
+empilait titre FR, résumé sur 2 lignes en `subtitle`, et le nom arabe en
+`trailing` sans largeur contrainte — dès qu'un nom était un peu long
+(surtout côté arabe), il débordait du cadre ou écrasait le résumé.
+
+Proposition faite via une maquette publiée en Artifact (comparatif
+avant/après avec des noms réalistes, dont un volontairement long pour
+exposer le bug) avant toute implémentation — validée telle quelle par le
+porteur de projet. Décisions actées dans la maquette : le résumé est retiré
+de la carte liste (reste affiché sur `FigureDetailScreen`, aucune perte de
+contenu) ; chaque nom tient sur sa propre ligne avec ellipsis plutôt que de
+se partager l'espace horizontal, ce qui rend le débordement structurellement
+impossible quelle que soit la longueur des noms.
+
+`_FigureTile` reconstruit : portrait 56×56 en coin arrondi (remplace le
+cercle 40px), liseré doré ; nom FR en `GoogleFonts.cormorantGaramond` —
+corrige au passage un écart au design system (`design/design_tokens.yaml`
+réserve explicitement Cormorant Garamond aux "noms de figures", jamais
+utilisé jusqu'ici sur cet écran, qui retombait sur la police UI par
+défaut) ; nom AR en `AppTheme.sacredText`, aligné à droite sous le nom FR ;
+chevron `bronze` en fin de ligne comme indice de tap, absent jusqu'ici.
+
+**Bug trouvé pendant la validation manuelle sur téléphone** (`R5CW41VL5CE`) :
+le nom arabe ne s'alignait pas à droite malgré `textAlign: TextAlign.right`.
+Cause : la `Column` du bloc de texte utilisait `crossAxisAlignment.start`,
+qui laisse chaque `Text` se dimensionner à sa propre largeur (shrink-wrap) —
+sans largeur excédentaire dans la boîte du `Text`, `textAlign` n'a aucun
+effet visible. Corrigé en passant la `Column` en
+`crossAxisAlignment.stretch` (les deux `Text` occupent alors toute la
+largeur disponible ; le nom FR reste à gauche via son `textAlign` par
+défaut, le nom AR s'aligne enfin à droite).
+
+**Validé en conditions réelles le 2026-08-21** sur téléphone Android
+(`R5CW41VL5CE`) : cartes affichées sans débordement avec des figures
+réelles, alignement du nom arabe confirmé correct après le correctif
+`crossAxisAlignment.stretch`. `flutter analyze` propre.
+
+## Correction de coquilles par l'admin sur les conditions de la tariqa (2026-08-21)
+
+Demande du porteur de projet : permettre à l'admin de corriger des coquilles
+dans les 23 conditions (chouroutes) de la Tariqa. `tariqa_conditions`
+(section 6.1, `database/schema.sql`) porte une contrainte `check
+(order_index between 1 and 23) unique` : la table est conçue pour contenir
+exactement les 23 chouroutes officielles, pas moins, pas plus, et le
+commentaire de la table précisait explicitement qu'aucune policy d'écriture
+cliente n'était exposée (contenu figé une fois validé, pas de flux de
+review admin comme pour `figures`). Point de scope tranché avec le porteur
+de projet avant implémentation : correction de texte seule (update), pas de
+CRUD complet — créer/supprimer des lignes casserait la contrainte
+d'unicité 1–23 et le principe du corpus fixe ; ouvrir cette porte
+nécessiterait une décision distincte et une migration de schéma plus lourde.
+
+Migration `add_tariqa_conditions_admin_update_policy` appliquée sur le
+projet Supabase live (`elrxlhhmkjfcbmiloilp`) après confirmation explicite
+du porteur de projet (modification RLS sur l'infra partagée) : policy
+`tariqa_conditions_admin_update` (`for update using (is_admin(...))`),
+toujours aucune policy insert/delete. `TariqaCondition` (`tariqa_condition_
+models.dart`) étendu d'un champ `id` (nécessaire pour cibler la ligne à
+corriger, absent jusqu'ici car le modèle ne servait qu'à l'affichage) et
+d'une fonction `categoryToDb`, inverse exacte de `_categoryFromDb`, pour
+reconstruire la valeur `snake_case` attendue par la contrainte `check` de
+la colonne `category` au moment d'envoyer la mise à jour.
+`TariqaConditionsRepository.updateCondition` n'envoie jamais
+`content_status`/`order_index`/`id` dans le payload — une correction de
+coquille ne dépublie ni ne réordonne jamais une condition, même principe
+que `FiguresRepository.updateFigure`.
+
+Nouvel écran `TariqaConditionFormScreen` (pas de mode création,
+contrairement à `FigureFormScreen` : uniquement l'édition d'une condition
+déjà en base). Affordance admin sur `TariqaConditionsScreen` :
+`isAdminProvider` watché, icône crayon affichée et carte tappable
+uniquement pour un compte admin (évite de proposer une action que la RLS
+bloquerait de toute façon pour tout le monde).
+
+`test/tariqa_condition_models_test.dart` mis à jour (le champ `id`,
+absent des payloads de test existants, aurait fait échouer `fromRow` sur un
+cast `null as String`) et complété par un groupe de tests sur
+`categoryToDb` (mapping direct des 5 catégories officielles + round-trip
+avec `_categoryFromDb` via `fromRow`). Suite complète (184 tests) au vert.
+
+**Validé en conditions réelles le 2026-08-21** sur téléphone Android
+(`R5CW41VL5CE`, compte admin) : icône de correction visible sur les
+conditions existantes, modification du texte FR/AR/catégorie/source
+enregistrée et reflétée immédiatement sur la liste au retour. `flutter
+analyze` propre.
