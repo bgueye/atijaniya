@@ -45,7 +45,7 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
             height: 160,
             child: SvgPicture.asset(
               'assets/branding/logo-fond-sombre.svg',
-              placeholderBuilder: (context) => const Icon(
+              placeholderBuilder: (context) => Icon(
                 Icons.circle_outlined,
                 color: AppColors.gold,
                 size: 96,

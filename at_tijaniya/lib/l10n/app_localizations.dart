@@ -4263,6 +4263,24 @@ abstract class AppLocalizations {
   /// **'At-Tijaniya reste gratuite grâce à vous.'**
   String get settingsDonationTileSubtitle;
 
+  /// No description provided for @settingsAccessibilitySection.
+  ///
+  /// In fr, this message translates to:
+  /// **'Accessibilité'**
+  String get settingsAccessibilitySection;
+
+  /// No description provided for @settingsHighContrastTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Contraste renforcé'**
+  String get settingsHighContrastTitle;
+
+  /// No description provided for @settingsHighContrastSubtitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Texte et bordures plus marqués, plus faciles à lire.'**
+  String get settingsHighContrastSubtitle;
+
   /// No description provided for @settingsAboutSection.
   ///
   /// In fr, this message translates to:

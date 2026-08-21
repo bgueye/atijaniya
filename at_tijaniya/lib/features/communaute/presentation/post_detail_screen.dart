@@ -228,7 +228,7 @@ class _PostDetailScreenState extends ConsumerState<PostDetailScreen> {
               children: [
                 Text(
                   formatCommunityDateTime(post.createdAt),
-                  style: const TextStyle(color: AppColors.bronze, fontSize: 12),
+                  style: TextStyle(color: AppColors.bronze, fontSize: 12),
                 ),
                 const SizedBox(height: 12),
                 Text(
@@ -258,7 +258,7 @@ class _PostDetailScreenState extends ConsumerState<PostDetailScreen> {
                             size: 20,
                           ),
                           const SizedBox(width: 6),
-                          Text('$_likeCount', style: const TextStyle(color: AppColors.bronze)),
+                          Text('$_likeCount', style: TextStyle(color: AppColors.bronze)),
                         ],
                       ),
                     ),
@@ -279,16 +279,16 @@ class _PostDetailScreenState extends ConsumerState<PostDetailScreen> {
                 ),
                 const SizedBox(height: 12),
                 comments.when(
-                  loading: () => const Center(
+                  loading: () => Center(
                     child: Padding(
-                      padding: EdgeInsets.symmetric(vertical: 16),
+                      padding: const EdgeInsets.symmetric(vertical: 16),
                       child: CircularProgressIndicator(color: AppColors.emerald),
                     ),
                   ),
                   error: (error, stackTrace) =>
-                      Text(l10n.communityLoadError, style: const TextStyle(color: AppColors.bronze)),
+                      Text(l10n.communityLoadError, style: TextStyle(color: AppColors.bronze)),
                   data: (list) => list.isEmpty
-                      ? Text(l10n.communityNoComments, style: const TextStyle(color: AppColors.bronze))
+                      ? Text(l10n.communityNoComments, style: TextStyle(color: AppColors.bronze))
                       : Column(
                           children: [
                             for (final comment in list)
@@ -321,7 +321,7 @@ class _PostDetailScreenState extends ConsumerState<PostDetailScreen> {
                     ),
                   ),
                   IconButton(
-                    icon: const Icon(Icons.send, color: AppColors.emerald),
+                    icon: Icon(Icons.send, color: AppColors.emerald),
                     onPressed: _submitComment,
                   ),
                 ],
@@ -364,7 +364,7 @@ class _CommentTile extends StatelessWidget {
               const SizedBox(width: 8),
               Text(
                 formatCommunityDateTime(comment.createdAt),
-                style: const TextStyle(color: AppColors.bronze, fontSize: 11),
+                style: TextStyle(color: AppColors.bronze, fontSize: 11),
               ),
               if (isAuthor) ...[
                 const Spacer(),
@@ -372,7 +372,7 @@ class _CommentTile extends StatelessWidget {
                   onTap: onDelete,
                   child: Tooltip(
                     message: l10n.communityDeleteCommentTooltip,
-                    child: const Icon(Icons.delete_outline, size: 16, color: AppColors.bronze),
+                    child: Icon(Icons.delete_outline, size: 16, color: AppColors.bronze),
                   ),
                 ),
               ],
@@ -440,9 +440,9 @@ class _MessageAuthorButton extends ConsumerWidget {
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          const Icon(Icons.mail_outline, size: 14, color: AppColors.emerald),
+          Icon(Icons.mail_outline, size: 14, color: AppColors.emerald),
           const SizedBox(width: 4),
-          Text(l10n.communitySendMessageButton, style: const TextStyle(color: AppColors.emerald, fontSize: 12)),
+          Text(l10n.communitySendMessageButton, style: TextStyle(color: AppColors.emerald, fontSize: 12)),
         ],
       ),
     );
@@ -609,7 +609,7 @@ class _EditPostSheetState extends ConsumerState<_EditPostSheet> {
                   ),
                   if (_pickedImageBytes != null || showExistingImage) ...[
                     const SizedBox(width: 8),
-                    IconButton(icon: const Icon(Icons.close, color: AppColors.bronze), onPressed: _clearImage),
+                    IconButton(icon: Icon(Icons.close, color: AppColors.bronze), onPressed: _clearImage),
                   ],
                 ],
               ),

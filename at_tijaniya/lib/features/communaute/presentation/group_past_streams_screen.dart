@@ -64,9 +64,9 @@ class GroupPastLiveStreamsScreen extends ConsumerWidget {
     return Scaffold(
       appBar: AppBar(title: Text(l10n.communityGroupsPastStreamsTitle)),
       body: streamsAsync.when(
-        loading: () => const Center(child: CircularProgressIndicator(color: AppColors.emerald)),
+        loading: () => Center(child: CircularProgressIndicator(color: AppColors.emerald)),
         error: (error, stackTrace) => Center(
-          child: Text(l10n.communityGroupsPastStreamsLoadError, style: const TextStyle(color: AppColors.bronze)),
+          child: Text(l10n.communityGroupsPastStreamsLoadError, style: TextStyle(color: AppColors.bronze)),
         ),
         data: (streams) => streams.isEmpty
             ? Center(
@@ -75,7 +75,7 @@ class GroupPastLiveStreamsScreen extends ConsumerWidget {
                   child: Text(
                     l10n.communityGroupsPastStreamsEmpty,
                     textAlign: TextAlign.center,
-                    style: const TextStyle(color: AppColors.bronze),
+                    style: TextStyle(color: AppColors.bronze),
                   ),
                 ),
               )

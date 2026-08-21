@@ -39,16 +39,16 @@ class IjazaChainScreen extends ConsumerWidget {
     return Scaffold(
       appBar: AppBar(title: Text(l10n.mouqaddamChainTitle)),
       body: chainAsync.when(
-        loading: () => const Center(child: CircularProgressIndicator(color: AppColors.emerald)),
+        loading: () => Center(child: CircularProgressIndicator(color: AppColors.emerald)),
         error: (error, stackTrace) => Center(
           child: Padding(
             padding: const EdgeInsets.all(24),
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                const Icon(Icons.wifi_off, color: AppColors.bronze, size: 32),
+                Icon(Icons.wifi_off, color: AppColors.bronze, size: 32),
                 const SizedBox(height: 12),
-                Text(l10n.mouqaddamChainLoadError, textAlign: TextAlign.center, style: const TextStyle(color: AppColors.bronze)),
+                Text(l10n.mouqaddamChainLoadError, textAlign: TextAlign.center, style: TextStyle(color: AppColors.bronze)),
                 const SizedBox(height: 12),
                 OutlinedButton(onPressed: () => ref.invalidate(myIjazaChainProvider), child: Text(l10n.mouqaddamRetry)),
               ],
@@ -64,7 +64,7 @@ class IjazaChainScreen extends ConsumerWidget {
                 Center(
                   child: Padding(
                     padding: const EdgeInsets.symmetric(vertical: 24),
-                    child: Text(l10n.mouqaddamChainEmpty, textAlign: TextAlign.center, style: const TextStyle(color: AppColors.bronze)),
+                    child: Text(l10n.mouqaddamChainEmpty, textAlign: TextAlign.center, style: TextStyle(color: AppColors.bronze)),
                   ),
                 )
               else
@@ -263,7 +263,7 @@ class _RevealThread extends StatelessWidget {
         curve: Curves.easeOut,
         width: 2,
         height: grown ? 26 : 0,
-        decoration: const BoxDecoration(
+        decoration: BoxDecoration(
           gradient: LinearGradient(begin: Alignment.topCenter, end: Alignment.bottomCenter, colors: [AppColors.gold, Colors.transparent]),
         ),
       ),
@@ -426,7 +426,7 @@ class _NodeCard extends StatelessWidget {
           ],
           if (isSelf) ...[
             const SizedBox(height: 4),
-            Text(l10n.mouqaddamChainYouLabel, style: const TextStyle(fontSize: 10, color: AppColors.gold, fontWeight: FontWeight.w600)),
+            Text(l10n.mouqaddamChainYouLabel, style: TextStyle(fontSize: 10, color: AppColors.gold, fontWeight: FontWeight.w600)),
           ],
         ],
       ),
@@ -500,7 +500,7 @@ class _CompleteChainSectionState extends ConsumerState<_CompleteChainSection> {
       return Card(
         child: Padding(
           padding: const EdgeInsets.all(16),
-          child: Text(l10n.mouqaddamChainCompleteDone, style: const TextStyle(color: AppColors.bronze, fontSize: 13)),
+          child: Text(l10n.mouqaddamChainCompleteDone, style: TextStyle(color: AppColors.bronze, fontSize: 13)),
         ),
       );
     }
@@ -514,7 +514,7 @@ class _CompleteChainSectionState extends ConsumerState<_CompleteChainSection> {
             children: [
               Text(l10n.mouqaddamChainCompleteTitle, style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 15)),
               const SizedBox(height: 8),
-              Text(l10n.mouqaddamChainCompleteBody, style: const TextStyle(color: AppColors.bronze, fontSize: 13)),
+              Text(l10n.mouqaddamChainCompleteBody, style: TextStyle(color: AppColors.bronze, fontSize: 13)),
               const SizedBox(height: 16),
               TextFormField(
                 controller: _nameController,

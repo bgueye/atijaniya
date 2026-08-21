@@ -67,7 +67,7 @@ class _LanguageButton extends StatelessWidget {
       child: OutlinedButton(
         onPressed: onTap,
         style: OutlinedButton.styleFrom(
-          side: const BorderSide(color: AppColors.gold),
+          side: BorderSide(color: AppColors.gold),
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         ),
         child: Text(label, style: const TextStyle(fontSize: 18, color: AppColors.ink)),

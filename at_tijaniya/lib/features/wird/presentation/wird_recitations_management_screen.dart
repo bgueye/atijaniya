@@ -37,7 +37,7 @@ class WirdRecitationsManagementScreen extends ConsumerWidget {
     return Scaffold(
       appBar: AppBar(title: Text(l10n.wirdRecitationsManageTitle)),
       body: stepsAsync.when(
-        loading: () => const Center(
+        loading: () => Center(
             child: CircularProgressIndicator(color: AppColors.emerald)),
         error: (error, stackTrace) => Center(
           child: Padding(
@@ -45,11 +45,11 @@ class WirdRecitationsManagementScreen extends ConsumerWidget {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                const Icon(Icons.wifi_off, color: AppColors.bronze, size: 32),
+                Icon(Icons.wifi_off, color: AppColors.bronze, size: 32),
                 const SizedBox(height: 12),
                 Text(l10n.wirdRecitationsManageLoadError,
                     textAlign: TextAlign.center,
-                    style: const TextStyle(color: AppColors.bronze)),
+                    style: TextStyle(color: AppColors.bronze)),
                 const SizedBox(height: 12),
                 OutlinedButton(
                   onPressed: () =>
@@ -117,7 +117,7 @@ class _PillarCard extends ConsumerWidget {
                 padding: const EdgeInsets.symmetric(vertical: 8),
                 child: Text(l10n.wirdRecitationsManageEmpty,
                     style:
-                        const TextStyle(color: AppColors.bronze, fontSize: 13)),
+                        TextStyle(color: AppColors.bronze, fontSize: 13)),
               )
             else
               for (final entry in step.recitations)
@@ -126,10 +126,10 @@ class _PillarCard extends ConsumerWidget {
               alignment: Alignment.centerLeft,
               child: TextButton.icon(
                 onPressed: () => _openUploadSheet(context, ref),
-                icon: const Icon(Icons.upload_file,
+                icon: Icon(Icons.upload_file,
                     size: 18, color: AppColors.emerald),
                 label: Text(l10n.wirdRecitationsManageAddButton,
-                    style: const TextStyle(color: AppColors.emerald)),
+                    style: TextStyle(color: AppColors.emerald)),
               ),
             ),
           ],
@@ -229,7 +229,7 @@ class _RecitationEntryTileState extends ConsumerState<_RecitationEntryTile> {
           TextButton(
             onPressed: () => Navigator.of(context).pop(true),
             child: Text(l10n.wirdRecitationsReviewDelete,
-                style: const TextStyle(color: AppColors.bronze)),
+                style: TextStyle(color: AppColors.bronze)),
           ),
         ],
       ),
@@ -266,11 +266,11 @@ class _RecitationEntryTileState extends ConsumerState<_RecitationEntryTile> {
         ListTile(
           contentPadding: EdgeInsets.zero,
           leading: _isLoadingPreview
-              ? const SizedBox(
+              ? SizedBox(
                   width: 24,
                   height: 24,
                   child: Padding(
-                      padding: EdgeInsets.all(4),
+                      padding: const EdgeInsets.all(4),
                       child: CircularProgressIndicator(
                           strokeWidth: 2, color: AppColors.emerald)),
                 )
@@ -302,13 +302,13 @@ class _RecitationEntryTileState extends ConsumerState<_RecitationEntryTile> {
             children: [
               if (isDraft)
                 IconButton(
-                  icon: const Icon(Icons.check_circle_outline,
+                  icon: Icon(Icons.check_circle_outline,
                       color: AppColors.emerald),
                   tooltip: widget.l10n.wirdRecitationsManageValidate,
                   onPressed: _validate,
                 ),
               IconButton(
-                icon: const Icon(Icons.delete_outline, color: AppColors.bronze),
+                icon: Icon(Icons.delete_outline, color: AppColors.bronze),
                 tooltip: widget.l10n.wirdRecitationsReviewDelete,
                 onPressed: _confirmAndDelete,
               ),
@@ -319,7 +319,7 @@ class _RecitationEntryTileState extends ConsumerState<_RecitationEntryTile> {
           Padding(
             padding: const EdgeInsets.only(left: 16, bottom: 8),
             child: Text(_previewError!,
-                style: const TextStyle(color: AppColors.bronze, fontSize: 12)),
+                style: TextStyle(color: AppColors.bronze, fontSize: 12)),
           ),
       ],
     );
@@ -439,18 +439,18 @@ class _UploadRecitationSheetState
                 padding: const EdgeInsets.only(top: 4),
                 child: Text(
                   l10n.wirdRecitationsManageUploadFileChosen(_pickedFileName!),
-                  style: const TextStyle(fontSize: 12, color: AppColors.bronze),
+                  style: TextStyle(fontSize: 12, color: AppColors.bronze),
                 ),
               ),
             const SizedBox(height: 8),
             Text(l10n.wirdRecitationsManageUploadHint,
-                style: const TextStyle(fontSize: 12, color: AppColors.bronze)),
+                style: TextStyle(fontSize: 12, color: AppColors.bronze)),
             if (_errorMessage != null)
               Padding(
                 padding: const EdgeInsets.only(top: 8),
                 child: Text(_errorMessage!,
                     style:
-                        const TextStyle(color: AppColors.bronze, fontSize: 12)),
+                        TextStyle(color: AppColors.bronze, fontSize: 12)),
               ),
             const SizedBox(height: 16),
             FilledButton(

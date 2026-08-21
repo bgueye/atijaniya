@@ -5,7 +5,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'core/supabase/supabase_config.dart';
+import 'core/theme/app_colors.dart';
 import 'core/theme/app_theme.dart';
+import 'core/theme/contrast_controller.dart';
 import 'core/theme/locale_controller.dart';
 import 'features/auth/presentation/auth_screen.dart';
 import 'features/home/presentation/home_shell.dart';
@@ -44,6 +46,13 @@ class _AtTijaniyaAppState extends ConsumerState<AtTijaniyaApp> {
   Widget build(BuildContext context) {
     final locale = ref.watch(localeControllerProvider);
 
+    // Doit être synchronisé AVANT tout widget descendant construit sa
+    // propre UI (`AppColors.bronze`/`emerald`/`gold` sont lues en dehors de
+    // tout `BuildContext`, voir app_colors.dart) — pas un `ref.listen`, un
+    // set direct dans `build()` pour garantir l'ordre.
+    final highContrast = ref.watch(contrastControllerProvider);
+    AppColors.setHighContrast(highContrast);
+
     // `_step` n'est calculé qu'une fois, juste après le choix de la langue
     // (voir `_afterLanguageChosen`) : sans ce listener, une déconnexion
     // depuis `ProfilScreen` laissait le disciple bloqué sur `HomeShell` (qui
@@ -61,6 +70,19 @@ class _AtTijaniyaAppState extends ConsumerState<AtTijaniyaApp> {
     });
 
     return MaterialApp(
+      // Bascule le contraste = clé différente = Flutter démonte et remonte
+      // tout l'arbre sous MaterialApp (Navigator et route poussées inclus),
+      // au lieu d'une simple mise à jour de configuration. Nécessaire ici
+      // (voir la note ci-dessus) : la quasi-totalité de l'app lit
+      // `AppColors.bronze`/`emerald`/`gold` directement plutôt que via
+      // `Theme.of(context)`, donc rien ne se propagerait par le mécanisme
+      // habituel des `InheritedWidget` sur les écrans déjà poussés — seul
+      // un remontage complet garantit que chaque `build()` relit la valeur
+      // à jour. Contrepartie assumée : bascule rare et volontaire depuis
+      // Paramètres, remise à zéro de la pile de navigation acceptable (la
+      // session/l'auth ne sont pas perdues, elles vivent hors du widget
+      // tree — voir `SupabaseConfig`/`authStateChangesProvider`).
+      key: ValueKey(highContrast),
       navigatorKey: _navigatorKey,
       title: 'At-Tijaniya',
       debugShowCheckedModeBanner: false,

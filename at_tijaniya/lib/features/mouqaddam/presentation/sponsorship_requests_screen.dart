@@ -26,16 +26,16 @@ class SponsorshipRequestsScreen extends ConsumerWidget {
     return Scaffold(
       appBar: AppBar(title: Text(l10n.mouqaddamRequestsTitle)),
       body: requestsAsync.when(
-        loading: () => const Center(child: CircularProgressIndicator(color: AppColors.emerald)),
+        loading: () => Center(child: CircularProgressIndicator(color: AppColors.emerald)),
         error: (error, stackTrace) => Center(
           child: Padding(
             padding: const EdgeInsets.all(24),
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                const Icon(Icons.wifi_off, color: AppColors.bronze, size: 32),
+                Icon(Icons.wifi_off, color: AppColors.bronze, size: 32),
                 const SizedBox(height: 12),
-                Text(l10n.mouqaddamRequestsLoadError, textAlign: TextAlign.center, style: const TextStyle(color: AppColors.bronze)),
+                Text(l10n.mouqaddamRequestsLoadError, textAlign: TextAlign.center, style: TextStyle(color: AppColors.bronze)),
                 const SizedBox(height: 12),
                 OutlinedButton(
                   onPressed: () => ref.invalidate(receivedSponsorshipRequestsProvider),
@@ -50,7 +50,7 @@ class SponsorshipRequestsScreen extends ConsumerWidget {
             return Center(
               child: Padding(
                 padding: const EdgeInsets.all(24),
-                child: Text(l10n.mouqaddamRequestsEmpty, textAlign: TextAlign.center, style: const TextStyle(color: AppColors.bronze)),
+                child: Text(l10n.mouqaddamRequestsEmpty, textAlign: TextAlign.center, style: TextStyle(color: AppColors.bronze)),
               ),
             );
           }
@@ -118,7 +118,7 @@ class _RequestCard extends ConsumerWidget {
           children: [
             Row(
               children: [
-                const CircleAvatar(
+                CircleAvatar(
                   backgroundColor: AppColors.emeraldSoft,
                   child: Icon(Icons.person_outline, color: AppColors.emerald),
                 ),
@@ -132,7 +132,7 @@ class _RequestCard extends ConsumerWidget {
               const SizedBox(height: 8),
               Text(
                 '${l10n.mouqaddamRequestsYearLabel} : ${request.ijazaYear}',
-                style: const TextStyle(color: AppColors.bronze, fontSize: 13),
+                style: TextStyle(color: AppColors.bronze, fontSize: 13),
               ),
             ],
             const SizedBox(height: 12),

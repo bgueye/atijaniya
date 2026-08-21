@@ -14,9 +14,13 @@ import 'app_colors.dart';
 /// dupliqué ni redessiné différemment ailleurs (règle du design system —
 /// jamais en pattern répété).
 class RosacePainter extends CustomPainter {
-  const RosacePainter({this.color = AppColors.gold, this.strokeWidth = 1.4});
+  const RosacePainter({Color? color, this.strokeWidth = 1.4}) : _color = color;
 
-  final Color color;
+  // `AppColors.gold` n'est plus une constante de compilation (mode contraste
+  // renforcé, voir app_colors.dart) : la valeur par défaut d'un paramètre
+  // doit l'être, donc résolue ici plutôt qu'en valeur par défaut directe.
+  final Color? _color;
+  Color get color => _color ?? AppColors.gold;
   final double strokeWidth;
 
   static const _starPoints = [

@@ -29,19 +29,19 @@ class PrivacySettingsScreen extends ConsumerWidget {
     return Scaffold(
       appBar: AppBar(title: Text(l10n.privacyTitle)),
       body: settingsAsync.when(
-        loading: () => const Center(child: CircularProgressIndicator(color: AppColors.emerald)),
+        loading: () => Center(child: CircularProgressIndicator(color: AppColors.emerald)),
         error: (error, stackTrace) => Center(
           child: Padding(
             padding: const EdgeInsets.all(24),
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                const Icon(Icons.wifi_off, color: AppColors.bronze, size: 32),
+                Icon(Icons.wifi_off, color: AppColors.bronze, size: 32),
                 const SizedBox(height: 12),
                 Text(
                   l10n.privacyLoadError,
                   textAlign: TextAlign.center,
-                  style: const TextStyle(color: AppColors.bronze),
+                  style: TextStyle(color: AppColors.bronze),
                 ),
                 const SizedBox(height: 12),
                 OutlinedButton(
@@ -157,7 +157,7 @@ class _PrivacySwitch extends StatelessWidget {
       child: SwitchListTile(
         activeThumbColor: AppColors.emerald,
         title: Text(label, style: const TextStyle(fontWeight: FontWeight.w600, color: AppColors.ink)),
-        subtitle: Text(description, style: const TextStyle(color: AppColors.bronze, fontSize: 14)),
+        subtitle: Text(description, style: TextStyle(color: AppColors.bronze, fontSize: 14)),
         value: value,
         onChanged: onChanged,
       ),

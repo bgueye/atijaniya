@@ -66,4 +66,32 @@ logo:
 
 accessibility:
   contrast_zaytoune_on_parchment: "> 7:1 (vérifié)"
-  high_contrast_mode: "prévu pour utilisateurs âgés — à implémenter"
+  high_contrast_mode:
+    status: "implémenté (Sprint 3, 2026-08-21) — réglage opt-in dans Paramètres, persisté"
+    rationale: >
+      Audit WCAG (formule de contraste officielle, sur les couleurs sRGB
+      exactes ci-dessus) : bronze sur parchemin ne passe PAS le seuil AA
+      texte normal (3,72:1 mesuré, seuil 4,5:1) — ni sur off_white (4,09:1).
+      Gold utilisé comme texte est pire (2,15:1 sur parchemin). Emerald
+      passe l'AA (5,57:1) mais pas l'AAA (7:1). Ink et les fonds
+      (parchment/off_white/gold_soft/emerald_soft) ne sont pas concernés,
+      déjà largement conformes (ink sur parchment ≈13,4:1).
+    scope: >
+      Seules bronze/emerald/gold deviennent dynamiques (accentuées en mode
+      renforcé) ; ink et les fonds restent inchangés — objectif "renforcer"
+      le texte/les bordures existants, pas remplacer la charte par un
+      noir/blanc pur qui durcirait la lecture pour le public visé
+      (utilisateurs âgés sur fond parchemin).
+    values:
+      bronze_high_contrast:
+        hex: "#4A3F2E"
+        contrast_on_parchment: "9,22:1 (AAA)"
+        contrast_on_off_white: "10,12:1 (AAA)"
+      emerald_high_contrast:
+        hex: "#0F4A32"
+        contrast_on_parchment: "9,19:1 (AAA)"
+        note: "Distinct de zaytoune (#0F3D2E, déjà un autre rôle sémantique) pour ne pas dupliquer un token existant sous un autre nom."
+      gold_high_contrast:
+        hex: "#8A6A1E"
+        contrast_on_parchment: "4,52:1 (AA)"
+        note: "Reste perceptiblement doré (AAA ferait virer au brun et perdrait l'identité de la couleur) ; gold reste un accent, rarement du texte de lecture longue."

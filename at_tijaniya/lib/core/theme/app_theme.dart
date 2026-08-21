@@ -79,8 +79,13 @@ class AppTheme {
         surfaceContainerHigh: isLight ? AppColors.goldSoft : AppColors.emerald.withValues(alpha: 0.20),
         surfaceContainerHighest: isLight ? AppColors.goldSoft : AppColors.emerald.withValues(alpha: 0.28),
         onSurfaceVariant: AppColors.bronze,
-        outline: AppColors.bronze.withValues(alpha: 0.4),
-        outlineVariant: AppColors.bronze.withValues(alpha: 0.2),
+        // Un bronze plus foncé seul ne suffit pas si le trait reste
+        // translucide à 20-40% (il se redilue visuellement dans la
+        // surface, voir design_tokens.yaml § high_contrast_mode) : l'alpha
+        // monte aussi en mode renforcé pour que les bordures restent
+        // perceptibles, pas seulement le texte.
+        outline: AppColors.bronze.withValues(alpha: AppColors.highContrastEnabled ? 0.75 : 0.4),
+        outlineVariant: AppColors.bronze.withValues(alpha: AppColors.highContrastEnabled ? 0.55 : 0.2),
         shadow: Colors.black,
         scrim: Colors.black,
         inverseSurface: isLight ? AppColors.ink : AppColors.parchment,
@@ -120,7 +125,13 @@ class AppTheme {
         elevation: 0,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(16),
-          side: BorderSide(color: AppColors.bronze.withValues(alpha: 0.2)),
+          // Même raison que `outline`/`outlineVariant` ci-dessus : alpha
+          // renforcé en plus de la couleur, sinon le contour de carte reste
+          // trop faible pour aider à percevoir les limites de la carte.
+          side: BorderSide(
+            color: AppColors.bronze.withValues(alpha: AppColors.highContrastEnabled ? 0.75 : 0.2),
+            width: AppColors.highContrastEnabled ? 1.5 : 1.0,
+          ),
         ),
       ),
       bottomNavigationBarTheme: BottomNavigationBarThemeData(

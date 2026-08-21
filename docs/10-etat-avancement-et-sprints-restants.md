@@ -35,8 +35,8 @@ sont livrés :
   documentation résolue le 21/08 (Sprint 1, voir ci-dessous) : la construction initiale a
   désormais son entrée rétroactive dans le journal.
 
-**P3 (consolidation avant lancement) : Sprint 2 (modération a posteriori) livré et
-validé** — signalement d'un direct Khadara ou d'une demande de mise en relation par
+**P3 (consolidation avant lancement) : Sprints 2 (modération a posteriori) et 3
+(accessibilité/RTL) livrés et validés.** Sprint 2 — signalement d'un direct Khadara ou d'une demande de mise en relation par
 lignée spirituelle, écran admin de traitement (`lib/features/moderation/`), voir le
 détail dans `docs/09-journal-implementation-frontend.md` § "Sprint 2 — Modération a
 posteriori". `flutter analyze` propre, suite de tests au vert, et validé en conditions
@@ -45,8 +45,10 @@ masquer, avec plusieurs comptes réels) — un bug de collision Hero (`FloatingA
 sans `heroTag`, sans lien avec le code de modération) trouvé et corrigé au passage. Le
 chemin "rejeter un signalement" et le signalement d'une mise en relation par lignée n'ont
 toujours pas été exercés manuellement (code structurellement identique au chemin déjà
-validé, risque jugé faible). Reste : pas de mode contraste renforcé, pas de fiches store
-(Sprints 3+ ci-dessous, toujours non entamés).
+validé, risque jugé faible). Sprint 3 — revue RTL (3 chevrons corrigés) et mode contraste
+renforcé (réglage persisté dans Paramètres, voir "Plan des sprints restants" ci-dessous
+pour le détail) : validé sur téléphone le 2026-08-21. Reste : pas de fiches store, pas
+d'audit performance (Sprints 4+ ci-dessous, toujours non entamés).
 
 ## Depuis la dernière analyse (2026-08-18 → 2026-08-21)
 
@@ -127,11 +129,24 @@ datées du 20 et du 21/08).
   mise en relation par lignée (code identique au chemin déjà validé, pas exercé
   manuellement faute de temps).
 
-**Sprint 3 — Accessibilité et RTL (P3)**
-- Mode contraste renforcé (à définir dans `design/design_tokens.yaml`).
-- Passage RTL exhaustif sur tous les écrans, en particulier ceux ajoutés récemment
-  (mouqaddam, silsila historique, figure de la semaine, zawiya/khalifas) qui n'ont pas eu
-  de revue RTL dédiée.
+**Sprint 3 — Accessibilité et RTL (P3) — livré et validé (2026-08-21)**
+- Revue RTL des écrans récents (mouqaddam, silsila historique, figure de la semaine,
+  zawiya/khalifas). Fait : 3 chevrons directionnels ne s'inversaient jamais en arabe
+  (`Icons.chevron_right`/`chevron_left` n'ont pas `matchTextDirection`), corrigés avec
+  `Transform.flip`. Le reste était déjà correct (module mouqaddam et silsila d'ijaza déjà
+  revus lors de leur construction).
+- Mode contraste renforcé. Fait, avec un détour non prévu : audit WCAG préalable a montré
+  que `bronze` échoue le seuil AA (3,72:1, seuil 4,5:1) — pas qu'un futur confort optionnel,
+  un vrai déficit d'accessibilité touchant tout le monde. Implémenter un vrai bouton bascule
+  a ensuite révélé que l'app référence les couleurs par constantes statiques plutôt que via
+  `Theme.of(context)` (267 usages de `bronze` sur 45 fichiers) : rendre 3 couleurs
+  dynamiques a cassé ~360 expressions `const`, corrigées par un balayage mécanique en 4
+  lots parallèles. Réglage dans **Paramètres → Accessibilité → Contraste renforcé**,
+  persisté. Bug trouvé en testant : section "À propos" de Paramètres masquée par la
+  barre de navigation Android (`SafeArea` manquant, même défaut déjà vu sur
+  `FigureFormScreen`) — corrigé. Détail complet dans
+  `docs/09-journal-implementation-frontend.md` § "Sprint 3 — Revue RTL et mode contraste
+  renforcé".
 
 **Sprint 4 — Performance (P3)**
 - Audit ciblé : cache/téléchargement audio des wirds sous charge, rebuilds Riverpod,

@@ -39,7 +39,7 @@ class TasbihScreen extends ConsumerWidget {
         ),
         body: SafeArea(
           child: state.loadingSession
-              ? const Center(child: CircularProgressIndicator(color: AppColors.gold))
+              ? Center(child: CircularProgressIndicator(color: AppColors.gold))
               : state.wirdCompleted
                   ? _WirdCompletedView(wird: wird)
                   : _TasbihBody(wird: wird, state: state, controller: controller),
@@ -77,7 +77,7 @@ class _TasbihBody extends StatelessWidget {
         children: [
           Text(
             'Pilier ${state.session.pillarIndex + 1} / ${wird.pillars.length}',
-            style: const TextStyle(color: AppColors.bronze, fontWeight: FontWeight.w600),
+            style: TextStyle(color: AppColors.bronze, fontWeight: FontWeight.w600),
           ),
           const SizedBox(height: 12),
           Text(
@@ -97,7 +97,7 @@ class _TasbihBody extends StatelessWidget {
             Text(
               pillar.note!,
               textAlign: TextAlign.center,
-              style: const TextStyle(fontSize: 12, color: AppColors.bronze),
+              style: TextStyle(fontSize: 12, color: AppColors.bronze),
             ),
           ],
           if (pillar.closingFormulas != null)
@@ -106,7 +106,7 @@ class _TasbihBody extends StatelessWidget {
               Text(
                 formula.intro,
                 textAlign: TextAlign.center,
-                style: const TextStyle(fontSize: 12, color: AppColors.bronze),
+                style: TextStyle(fontSize: 12, color: AppColors.bronze),
               ),
               const SizedBox(height: 4),
               Text(
@@ -120,7 +120,7 @@ class _TasbihBody extends StatelessWidget {
                 Text(
                   formula.transliteration!,
                   textAlign: TextAlign.center,
-                  style: const TextStyle(fontStyle: FontStyle.italic, fontSize: 12, color: AppColors.bronze),
+                  style: TextStyle(fontStyle: FontStyle.italic, fontSize: 12, color: AppColors.bronze),
                 ),
               ],
             ],
@@ -219,12 +219,12 @@ class _ManualCounter extends StatelessWidget {
                 '$count',
                 style: const TextStyle(color: AppColors.parchment, fontSize: 56, fontWeight: FontWeight.bold),
               ),
-              Text('/ $target', style: const TextStyle(color: AppColors.bronze, fontSize: 18)),
+              Text('/ $target', style: TextStyle(color: AppColors.bronze, fontSize: 18)),
               const SizedBox(height: 8),
               if (complete)
-                const Icon(Icons.check_circle, color: AppColors.gold, size: 26)
+                Icon(Icons.check_circle, color: AppColors.gold, size: 26)
               else
-                const Text(
+                Text(
                   'Toucher pour compter',
                   style: TextStyle(color: AppColors.bronze, fontSize: 12),
                 ),
@@ -268,7 +268,7 @@ class _VoiceCounter extends StatelessWidget {
                 '$count',
                 style: const TextStyle(color: AppColors.parchment, fontSize: 48, fontWeight: FontWeight.bold),
               ),
-              Text('/ $target', style: const TextStyle(color: AppColors.bronze, fontSize: 16)),
+              Text('/ $target', style: TextStyle(color: AppColors.bronze, fontSize: 16)),
             ],
           ),
         ),
@@ -279,14 +279,14 @@ class _VoiceCounter extends StatelessWidget {
             child: Text(
               state.voiceError ?? 'Reconnaissance vocale indisponible sur cet appareil.',
               textAlign: TextAlign.center,
-              style: const TextStyle(color: AppColors.gold, fontSize: 13),
+              style: TextStyle(color: AppColors.gold, fontSize: 13),
             ),
           )
         else
           Text(
             state.isListening ? "À l'écoute — récitez, une pause de silence = +1" : 'Micro en pause',
             textAlign: TextAlign.center,
-            style: const TextStyle(color: AppColors.bronze, fontSize: 13),
+            style: TextStyle(color: AppColors.bronze, fontSize: 13),
           ),
         const SizedBox(height: 12),
         if (state.voiceSupported && !complete)
@@ -313,14 +313,14 @@ class _WirdCompletedView extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Icon(Icons.check_circle, color: AppColors.gold, size: 72),
+            Icon(Icons.check_circle, color: AppColors.gold, size: 72),
             const SizedBox(height: 16),
             Text(
               '${wird.nameFrench} terminé',
               style: const TextStyle(color: AppColors.parchment, fontSize: 20, fontWeight: FontWeight.w600),
             ),
             const SizedBox(height: 8),
-            const Text(
+            Text(
               'Tous les piliers ont été récités.',
               textAlign: TextAlign.center,
               style: TextStyle(color: AppColors.bronze),

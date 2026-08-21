@@ -108,9 +108,9 @@ class _FigureKhalifaFormScreenState extends ConsumerState<FigureKhalifaFormScree
       appBar: AppBar(title: Text(isEdit ? l10n.figureKhalifaFormEditTitle : l10n.figureKhalifaFormCreateTitle)),
       body: SafeArea(
         child: figuresAsync.when(
-          loading: () => const Center(child: CircularProgressIndicator(color: AppColors.emerald)),
+          loading: () => Center(child: CircularProgressIndicator(color: AppColors.emerald)),
           error: (error, stackTrace) => Center(
-            child: Text(l10n.figuresLoadError, style: const TextStyle(color: AppColors.bronze)),
+            child: Text(l10n.figuresLoadError, style: TextStyle(color: AppColors.bronze)),
           ),
           data: (figures) {
             final chain = chainAsync.valueOrNull ?? const <FigureKhalifaLink>[];

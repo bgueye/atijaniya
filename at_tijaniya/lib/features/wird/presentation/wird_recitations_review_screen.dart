@@ -47,7 +47,7 @@ class WirdRecitationsReviewScreen extends ConsumerWidget {
         ],
       ),
       body: draftsAsync.when(
-        loading: () => const Center(
+        loading: () => Center(
             child: CircularProgressIndicator(color: AppColors.emerald)),
         error: (error, stackTrace) => Center(
           child: Padding(
@@ -55,12 +55,12 @@ class WirdRecitationsReviewScreen extends ConsumerWidget {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                const Icon(Icons.wifi_off, color: AppColors.bronze, size: 32),
+                Icon(Icons.wifi_off, color: AppColors.bronze, size: 32),
                 const SizedBox(height: 12),
                 Text(
                   l10n.wirdRecitationsReviewLoadError,
                   textAlign: TextAlign.center,
-                  style: const TextStyle(color: AppColors.bronze),
+                  style: TextStyle(color: AppColors.bronze),
                 ),
                 const SizedBox(height: 12),
                 OutlinedButton(
@@ -79,7 +79,7 @@ class WirdRecitationsReviewScreen extends ConsumerWidget {
                 child: Text(
                   l10n.wirdRecitationsReviewEmpty,
                   textAlign: TextAlign.center,
-                  style: const TextStyle(color: AppColors.bronze),
+                  style: TextStyle(color: AppColors.bronze),
                 ),
               ),
             );
@@ -167,7 +167,7 @@ class _DraftCardState extends ConsumerState<_DraftCard> {
           TextButton(
             onPressed: () => Navigator.of(context).pop(true),
             child: Text(l10n.wirdRecitationsReviewConfirmAction,
-                style: const TextStyle(color: AppColors.emerald)),
+                style: TextStyle(color: AppColors.emerald)),
           ),
         ],
       ),
@@ -200,7 +200,7 @@ class _DraftCardState extends ConsumerState<_DraftCard> {
           TextButton(
             onPressed: () => Navigator.of(context).pop(true),
             child: Text(l10n.wirdRecitationsReviewDelete,
-                style: const TextStyle(color: AppColors.bronze)),
+                style: TextStyle(color: AppColors.bronze)),
           ),
         ],
       ),
@@ -239,11 +239,11 @@ class _DraftCardState extends ConsumerState<_DraftCard> {
             ListTile(
               contentPadding: EdgeInsets.zero,
               leading: _isLoadingPreview
-                  ? const SizedBox(
+                  ? SizedBox(
                       width: 24,
                       height: 24,
                       child: Padding(
-                        padding: EdgeInsets.all(4),
+                        padding: const EdgeInsets.all(4),
                         child: CircularProgressIndicator(
                             strokeWidth: 2, color: AppColors.emerald),
                       ),
@@ -272,17 +272,17 @@ class _DraftCardState extends ConsumerState<_DraftCard> {
                 padding: const EdgeInsets.only(bottom: 8),
                 child: Text(_previewError!,
                     style:
-                        const TextStyle(color: AppColors.bronze, fontSize: 12)),
+                        TextStyle(color: AppColors.bronze, fontSize: 12)),
               ),
             Row(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
                 TextButton.icon(
                   onPressed: () => _confirmAndDelete(context),
-                  icon: const Icon(Icons.delete_outline,
+                  icon: Icon(Icons.delete_outline,
                       size: 18, color: AppColors.bronze),
                   label: Text(widget.l10n.wirdRecitationsReviewDelete,
-                      style: const TextStyle(color: AppColors.bronze)),
+                      style: TextStyle(color: AppColors.bronze)),
                 ),
                 const SizedBox(width: 8),
                 OutlinedButton.icon(

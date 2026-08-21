@@ -231,7 +231,7 @@ class _GroupDetailScreenState extends ConsumerState<GroupDetailScreen> {
                       ),
                     ),
                     IconButton(
-                      icon: const Icon(Icons.send, color: AppColors.emerald),
+                      icon: Icon(Icons.send, color: AppColors.emerald),
                       onPressed: _sendMessage,
                     ),
                   ],
@@ -277,14 +277,14 @@ class _GroupHeader extends StatelessWidget {
           Row(
             children: [
               if (group.locationLabel != null) ...[
-                const Icon(Icons.place_outlined, size: 16, color: AppColors.bronze),
+                Icon(Icons.place_outlined, size: 16, color: AppColors.bronze),
                 const SizedBox(width: 4),
-                Text(group.locationLabel!, style: const TextStyle(color: AppColors.bronze, fontSize: 13)),
+                Text(group.locationLabel!, style: TextStyle(color: AppColors.bronze, fontSize: 13)),
                 const SizedBox(width: 16),
               ],
-              const Icon(Icons.people_alt_outlined, size: 16, color: AppColors.bronze),
+              Icon(Icons.people_alt_outlined, size: 16, color: AppColors.bronze),
               const SizedBox(width: 4),
-              Text('${group.memberCount}', style: const TextStyle(color: AppColors.bronze, fontSize: 13)),
+              Text('${group.memberCount}', style: TextStyle(color: AppColors.bronze, fontSize: 13)),
             ],
           ),
           const SizedBox(height: 16),
@@ -378,7 +378,7 @@ class _NotMemberState extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Icon(Icons.lock_outline, color: AppColors.bronze, size: 32),
+            Icon(Icons.lock_outline, color: AppColors.bronze, size: 32),
             const SizedBox(height: 12),
             Text(
               l10n.communityGroupsNotMemberTitle,
@@ -389,7 +389,7 @@ class _NotMemberState extends StatelessWidget {
             Text(
               l10n.communityGroupsNotMemberBody,
               textAlign: TextAlign.center,
-              style: const TextStyle(color: AppColors.bronze),
+              style: TextStyle(color: AppColors.bronze),
             ),
           ],
         ),
@@ -408,9 +408,9 @@ class _GroupPosts extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final posts = ref.watch(groupPostsProvider(groupId));
     return posts.when(
-      loading: () => const Center(child: CircularProgressIndicator(color: AppColors.emerald)),
+      loading: () => Center(child: CircularProgressIndicator(color: AppColors.emerald)),
       error: (error, stackTrace) => Center(
-        child: Text(l10n.communityGroupsLoadPostsError, style: const TextStyle(color: AppColors.bronze)),
+        child: Text(l10n.communityGroupsLoadPostsError, style: TextStyle(color: AppColors.bronze)),
       ),
       data: (list) => list.isEmpty
           ? Center(
@@ -419,7 +419,7 @@ class _GroupPosts extends ConsumerWidget {
                 child: Text(
                   l10n.communityGroupsPostsEmpty,
                   textAlign: TextAlign.center,
-                  style: const TextStyle(color: AppColors.bronze),
+                  style: TextStyle(color: AppColors.bronze),
                 ),
               ),
             )
@@ -539,7 +539,7 @@ class _GroupPostTileState extends ConsumerState<_GroupPostTile> {
               const SizedBox(width: 8),
               Text(
                 formatCommunityDateTime(widget.post.createdAt),
-                style: const TextStyle(color: AppColors.bronze, fontSize: 11),
+                style: TextStyle(color: AppColors.bronze, fontSize: 11),
               ),
               if (isAuthor) ...[
                 const Spacer(),
@@ -547,7 +547,7 @@ class _GroupPostTileState extends ConsumerState<_GroupPostTile> {
                   onTap: _busy ? null : _edit,
                   child: Tooltip(
                     message: l10n.communityGroupsEditPostTooltip,
-                    child: const Icon(Icons.edit_outlined, size: 16, color: AppColors.bronze),
+                    child: Icon(Icons.edit_outlined, size: 16, color: AppColors.bronze),
                   ),
                 ),
                 const SizedBox(width: 12),
@@ -555,7 +555,7 @@ class _GroupPostTileState extends ConsumerState<_GroupPostTile> {
                   onTap: _busy ? null : _delete,
                   child: Tooltip(
                     message: l10n.communityGroupsDeletePostTooltip,
-                    child: const Icon(Icons.delete_outline, size: 16, color: AppColors.bronze),
+                    child: Icon(Icons.delete_outline, size: 16, color: AppColors.bronze),
                   ),
                 ),
               ],
@@ -690,7 +690,7 @@ class _EditGroupSheetState extends ConsumerState<_EditGroupSheet> {
               ),
               const SizedBox(height: 16),
               zawiyas.when(
-                loading: () => const LinearProgressIndicator(color: AppColors.emerald),
+                loading: () => LinearProgressIndicator(color: AppColors.emerald),
                 error: (error, stackTrace) => const SizedBox.shrink(),
                 data: (list) => DropdownButtonFormField<String?>(
                   initialValue: _zawiyaId,

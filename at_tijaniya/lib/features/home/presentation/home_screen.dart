@@ -65,8 +65,8 @@ class HomeScreen extends ConsumerWidget {
         Padding(
           padding: const EdgeInsets.fromLTRB(16, 20, 16, 24),
           child: dashboardAsync.when(
-            loading: () => const Padding(
-              padding: EdgeInsets.symmetric(vertical: 48),
+            loading: () => Padding(
+              padding: const EdgeInsets.symmetric(vertical: 48),
               child: Center(child: CircularProgressIndicator(color: AppColors.emerald)),
             ),
             error: (error, stackTrace) => _DashboardErrorState(
@@ -163,7 +163,7 @@ class _Hero extends StatelessWidget {
             // Motif signature du design system, une seule occurrence par
             // écran (design_tokens.yaml § iconography) — jamais utilisé sur
             // l'accueil jusqu'ici.
-            const Positioned(
+            Positioned(
               top: -28,
               right: -28,
               child: Opacity(
@@ -233,7 +233,7 @@ class _StatusPill extends StatelessWidget {
             width: 8,
             height: 8,
             margin: const EdgeInsets.only(right: 10),
-            decoration: const BoxDecoration(color: AppColors.gold, shape: BoxShape.circle),
+            decoration: BoxDecoration(color: AppColors.gold, shape: BoxShape.circle),
           ),
           Expanded(
             child: Text(text, style: const TextStyle(color: AppColors.offWhite, fontSize: 13.5, height: 1.35)),
@@ -258,9 +258,9 @@ class _DashboardErrorState extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Icon(Icons.wifi_off, color: AppColors.bronze, size: 32),
+            Icon(Icons.wifi_off, color: AppColors.bronze, size: 32),
             const SizedBox(height: 12),
-            Text(l10n.homeLoadError, textAlign: TextAlign.center, style: const TextStyle(color: AppColors.bronze)),
+            Text(l10n.homeLoadError, textAlign: TextAlign.center, style: TextStyle(color: AppColors.bronze)),
             const SizedBox(height: 12),
             OutlinedButton(onPressed: onRetry, child: Text(l10n.homeRetry)),
           ],
@@ -335,7 +335,7 @@ class _SectionLabel extends StatelessWidget {
       padding: const EdgeInsets.fromLTRB(2, 0, 2, 8),
       child: Text(
         text,
-        style: const TextStyle(
+        style: TextStyle(
           fontSize: 11,
           letterSpacing: 0.8,
           color: AppColors.bronze,
@@ -401,14 +401,14 @@ class _WirdRow extends StatelessWidget {
         color: status.doneToday ? AppColors.emerald : AppColors.bronze,
       ),
       title: Text(status.wird.nameFrench, style: const TextStyle(fontWeight: FontWeight.w500)),
-      subtitle: subtitle != null ? Text(subtitle, style: const TextStyle(color: AppColors.bronze, fontSize: 12)) : null,
+      subtitle: subtitle != null ? Text(subtitle, style: TextStyle(color: AppColors.bronze, fontSize: 12)) : null,
       trailing: streakLabel != null
           ? Container(
               padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 4),
               decoration: BoxDecoration(color: AppColors.goldSoft, borderRadius: BorderRadius.circular(999)),
-              child: Text(streakLabel, style: const TextStyle(color: AppColors.gold, fontSize: 10.5, fontWeight: FontWeight.w500)),
+              child: Text(streakLabel, style: TextStyle(color: AppColors.gold, fontSize: 10.5, fontWeight: FontWeight.w500)),
             )
-          : const Icon(Icons.chevron_right, color: AppColors.bronze),
+          : Icon(Icons.chevron_right, color: AppColors.bronze),
     );
   }
 }
@@ -432,16 +432,16 @@ class _ResumeTasbihCard extends StatelessWidget {
           width: 38,
           height: 38,
           decoration: BoxDecoration(color: AppColors.goldSoft, borderRadius: BorderRadius.circular(11)),
-          child: const Icon(Icons.replay_circle_filled_outlined, color: AppColors.gold, size: 20),
+          child: Icon(Icons.replay_circle_filled_outlined, color: AppColors.gold, size: 20),
         ),
         title: Text(l10n.homeResumeTasbihTitle, style: const TextStyle(fontWeight: FontWeight.w500)),
-        subtitle: Text(subtitle, style: const TextStyle(color: AppColors.bronze, fontSize: 12)),
+        subtitle: Text(subtitle, style: TextStyle(color: AppColors.bronze, fontSize: 12)),
         trailing: OutlinedButton(
           style: OutlinedButton.styleFrom(
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
             minimumSize: Size.zero,
             tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-            side: const BorderSide(color: AppColors.emerald),
+            side: BorderSide(color: AppColors.emerald),
             foregroundColor: AppColors.emerald,
           ),
           onPressed: () => Navigator.of(context).push(
@@ -470,12 +470,12 @@ class _NextReminderCard extends StatelessWidget {
           width: 38,
           height: 38,
           decoration: BoxDecoration(color: AppColors.emeraldSoft, borderRadius: BorderRadius.circular(11)),
-          child: const Icon(Icons.notifications_active_outlined, color: AppColors.emerald, size: 19),
+          child: Icon(Icons.notifications_active_outlined, color: AppColors.emerald, size: 19),
         ),
         title: Text(next.slot.label, style: const TextStyle(fontWeight: FontWeight.w500)),
         subtitle: Text(
           l10n.homeNextReminderSubtitle(next.wird.nameFrench, time),
-          style: const TextStyle(color: AppColors.bronze, fontSize: 12),
+          style: TextStyle(color: AppColors.bronze, fontSize: 12),
         ),
       ),
     );
@@ -589,8 +589,8 @@ class _KhadaraTeaserCard extends StatelessWidget {
               : const _KhadaraThumbFallback(),
         ),
         title: Text(event.title, style: const TextStyle(fontWeight: FontWeight.w500, fontSize: 13.5), maxLines: 1, overflow: TextOverflow.ellipsis),
-        subtitle: Text(formatKhadaraDateTime(event.startsAt), style: const TextStyle(color: AppColors.bronze, fontSize: 11.5)),
-        trailing: const Icon(Icons.chevron_right, color: AppColors.bronze),
+        subtitle: Text(formatKhadaraDateTime(event.startsAt), style: TextStyle(color: AppColors.bronze, fontSize: 11.5)),
+        trailing: Icon(Icons.chevron_right, color: AppColors.bronze),
       ),
     );
   }
@@ -718,7 +718,7 @@ class _KhadaraThumbFallback extends StatelessWidget {
     return Container(
       width: 44,
       height: 44,
-      decoration: const BoxDecoration(
+      decoration: BoxDecoration(
         gradient: LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,

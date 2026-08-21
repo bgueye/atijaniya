@@ -53,7 +53,7 @@ class CommunauteScreen extends StatelessWidget {
                 ),
               ),
               IconButton(
-                icon: const Icon(Icons.mail_outline, color: AppColors.bronze),
+                icon: Icon(Icons.mail_outline, color: AppColors.bronze),
                 tooltip: l10n.communityMessagesTooltip,
                 onPressed: () => Navigator.of(context).push(
                   MaterialPageRoute(
@@ -92,7 +92,7 @@ class _FeedTab extends ConsumerWidget {
         label: Text(l10n.communityCreatePostButton),
       ),
       body: feed.when(
-        loading: () => const Center(
+        loading: () => Center(
             child: CircularProgressIndicator(color: AppColors.emerald)),
         error: (error, stackTrace) => Center(
           child: Padding(
@@ -100,11 +100,11 @@ class _FeedTab extends ConsumerWidget {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                const Icon(Icons.wifi_off, color: AppColors.bronze, size: 32),
+                Icon(Icons.wifi_off, color: AppColors.bronze, size: 32),
                 const SizedBox(height: 12),
                 Text(l10n.communityLoadError,
                     textAlign: TextAlign.center,
-                    style: const TextStyle(color: AppColors.bronze)),
+                    style: TextStyle(color: AppColors.bronze)),
                 const SizedBox(height: 12),
                 OutlinedButton(
                   onPressed: () => ref.invalidate(communityFeedProvider),
@@ -120,7 +120,7 @@ class _FeedTab extends ConsumerWidget {
                   padding: const EdgeInsets.all(24),
                   child: Text(l10n.communityFeedEmpty,
                       textAlign: TextAlign.center,
-                      style: const TextStyle(color: AppColors.bronze)),
+                      style: TextStyle(color: AppColors.bronze)),
                 ),
               )
             : ListView.builder(
@@ -261,7 +261,7 @@ class _CreatePostSheetState extends ConsumerState<_CreatePostSheet> {
                 const SizedBox(height: 4),
                 Text(
                   '${l10n.communityCreatePostZawiyaNote} (${widget.zawiyaName})',
-                  style: const TextStyle(color: AppColors.bronze, fontSize: 12),
+                  style: TextStyle(color: AppColors.bronze, fontSize: 12),
                 ),
               ],
               const SizedBox(height: 16),
@@ -297,7 +297,7 @@ class _CreatePostSheetState extends ConsumerState<_CreatePostSheet> {
                   if (_pickedImageBytes != null) ...[
                     const SizedBox(width: 8),
                     IconButton(
-                      icon: const Icon(Icons.close, color: AppColors.bronze),
+                      icon: Icon(Icons.close, color: AppColors.bronze),
                       onPressed: _clearImage,
                     ),
                   ],
@@ -339,7 +339,7 @@ class _GroupsTab extends ConsumerWidget {
         label: Text(l10n.communityGroupsCreateButton),
       ),
       body: groups.when(
-        loading: () => const Center(
+        loading: () => Center(
             child: CircularProgressIndicator(color: AppColors.emerald)),
         error: (error, stackTrace) => Center(
           child: Padding(
@@ -347,11 +347,11 @@ class _GroupsTab extends ConsumerWidget {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                const Icon(Icons.wifi_off, color: AppColors.bronze, size: 32),
+                Icon(Icons.wifi_off, color: AppColors.bronze, size: 32),
                 const SizedBox(height: 12),
                 Text(l10n.communityGroupsLoadError,
                     textAlign: TextAlign.center,
-                    style: const TextStyle(color: AppColors.bronze)),
+                    style: TextStyle(color: AppColors.bronze)),
                 const SizedBox(height: 12),
                 OutlinedButton(
                   onPressed: () => ref.invalidate(groupsProvider),
@@ -367,7 +367,7 @@ class _GroupsTab extends ConsumerWidget {
                   padding: const EdgeInsets.all(24),
                   child: Text(l10n.communityGroupsEmpty,
                       textAlign: TextAlign.center,
-                      style: const TextStyle(color: AppColors.bronze)),
+                      style: TextStyle(color: AppColors.bronze)),
                 ),
               )
             : ListView.builder(
@@ -435,24 +435,24 @@ class _GroupCard extends StatelessWidget {
               Row(
                 children: [
                   if (group.locationLabel != null) ...[
-                    const Icon(Icons.place_outlined,
+                    Icon(Icons.place_outlined,
                         size: 16, color: AppColors.bronze),
                     const SizedBox(width: 4),
                     Expanded(
                       child: Text(
                         group.locationLabel!,
                         overflow: TextOverflow.ellipsis,
-                        style: const TextStyle(
+                        style: TextStyle(
                             color: AppColors.bronze, fontSize: 13),
                       ),
                     ),
                   ] else
                     const Spacer(),
-                  const Icon(Icons.people_alt_outlined,
+                  Icon(Icons.people_alt_outlined,
                       size: 16, color: AppColors.bronze),
                   const SizedBox(width: 4),
                   Text('${group.memberCount}',
-                      style: const TextStyle(
+                      style: TextStyle(
                           color: AppColors.bronze, fontSize: 13)),
                 ],
               ),
@@ -549,7 +549,7 @@ class _CreateGroupSheetState extends ConsumerState<_CreateGroupSheet> {
               const SizedBox(height: 16),
               zawiyas.when(
                 loading: () =>
-                    const LinearProgressIndicator(color: AppColors.emerald),
+                    LinearProgressIndicator(color: AppColors.emerald),
                 error: (error, stackTrace) => const SizedBox.shrink(),
                 data: (list) => DropdownButtonFormField<String?>(
                   initialValue: _zawiyaId,
@@ -670,7 +670,7 @@ class _PostCardState extends ConsumerState<_PostCard> {
                     ),
                   ),
                   Text(formatCommunityDateTime(post.createdAt),
-                      style: const TextStyle(
+                      style: TextStyle(
                           color: AppColors.bronze, fontSize: 11)),
                 ],
               ),
@@ -719,18 +719,18 @@ class _PostCardState extends ConsumerState<_PostCard> {
                           ),
                           const SizedBox(width: 4),
                           Text('$_likeCount',
-                              style: const TextStyle(
+                              style: TextStyle(
                                   color: AppColors.bronze, fontSize: 13)),
                         ],
                       ),
                     ),
                   ),
                   const SizedBox(width: 16),
-                  const Icon(Icons.mode_comment_outlined,
+                  Icon(Icons.mode_comment_outlined,
                       color: AppColors.bronze, size: 18),
                   const SizedBox(width: 4),
                   Text('${post.commentCount}',
-                      style: const TextStyle(
+                      style: TextStyle(
                           color: AppColors.bronze, fontSize: 13)),
                 ],
               ),

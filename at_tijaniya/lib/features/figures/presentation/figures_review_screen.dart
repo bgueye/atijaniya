@@ -27,16 +27,16 @@ class FiguresReviewScreen extends ConsumerWidget {
     return Scaffold(
       appBar: AppBar(title: Text(l10n.figuresReviewTitle)),
       body: draftsAsync.when(
-        loading: () => const Center(child: CircularProgressIndicator(color: AppColors.emerald)),
+        loading: () => Center(child: CircularProgressIndicator(color: AppColors.emerald)),
         error: (error, stackTrace) => Center(
           child: Padding(
             padding: const EdgeInsets.all(24),
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                const Icon(Icons.wifi_off, color: AppColors.bronze, size: 32),
+                Icon(Icons.wifi_off, color: AppColors.bronze, size: 32),
                 const SizedBox(height: 12),
-                Text(l10n.figuresLoadError, textAlign: TextAlign.center, style: const TextStyle(color: AppColors.bronze)),
+                Text(l10n.figuresLoadError, textAlign: TextAlign.center, style: TextStyle(color: AppColors.bronze)),
                 const SizedBox(height: 12),
                 OutlinedButton(
                   onPressed: () => ref.invalidate(draftFiguresProvider),
@@ -51,7 +51,7 @@ class FiguresReviewScreen extends ConsumerWidget {
             return Center(
               child: Padding(
                 padding: const EdgeInsets.all(24),
-                child: Text(l10n.figuresReviewEmpty, textAlign: TextAlign.center, style: const TextStyle(color: AppColors.bronze)),
+                child: Text(l10n.figuresReviewEmpty, textAlign: TextAlign.center, style: TextStyle(color: AppColors.bronze)),
               ),
             );
           }
@@ -83,7 +83,7 @@ class _DraftCard extends ConsumerWidget {
           TextButton(onPressed: () => Navigator.of(context).pop(false), child: Text(l10n.figuresReviewCancel)),
           TextButton(
             onPressed: () => Navigator.of(context).pop(true),
-            child: Text(l10n.figuresReviewConfirmAction, style: const TextStyle(color: AppColors.emerald)),
+            child: Text(l10n.figuresReviewConfirmAction, style: TextStyle(color: AppColors.emerald)),
           ),
         ],
       ),
@@ -114,7 +114,7 @@ class _DraftCard extends ConsumerWidget {
               subtitle: figure.summary != null
                   ? Text(figure.summary!, maxLines: 2, overflow: TextOverflow.ellipsis)
                   : null,
-              trailing: const Icon(Icons.chevron_right, color: AppColors.bronze),
+              trailing: Icon(Icons.chevron_right, color: AppColors.bronze),
               onTap: () => Navigator.of(context).push(
                 MaterialPageRoute(builder: (_) => FigureDetailScreen(figure: figure)),
               ),

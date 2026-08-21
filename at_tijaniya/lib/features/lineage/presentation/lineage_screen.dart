@@ -169,7 +169,7 @@ class _LineageScreenState extends ConsumerState<LineageScreen> {
       // la barre de navigation Android (3 boutons).
       body: SafeArea(
         child: lineageAsync.when(
-          loading: () => const Center(
+          loading: () => Center(
               child: CircularProgressIndicator(color: AppColors.emerald)),
           error: (error, stackTrace) => Center(
             child: Padding(
@@ -177,12 +177,12 @@ class _LineageScreenState extends ConsumerState<LineageScreen> {
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  const Icon(Icons.wifi_off, color: AppColors.bronze, size: 32),
+                  Icon(Icons.wifi_off, color: AppColors.bronze, size: 32),
                   const SizedBox(height: 12),
                   Text(
                     l10n.lineageLoadError,
                     textAlign: TextAlign.center,
-                    style: const TextStyle(color: AppColors.bronze),
+                    style: TextStyle(color: AppColors.bronze),
                   ),
                   const SizedBox(height: 12),
                   OutlinedButton(
@@ -219,7 +219,7 @@ class _LineageScreenState extends ConsumerState<LineageScreen> {
                         padding: const EdgeInsets.all(16),
                         child: Row(
                           children: [
-                            const Icon(Icons.lock_outline,
+                            Icon(Icons.lock_outline,
                                 color: AppColors.bronze),
                             const SizedBox(width: 12),
                             Expanded(
@@ -299,7 +299,7 @@ class _LineageScreenState extends ConsumerState<LineageScreen> {
                     if (_infoMessage != null) ...[
                       const SizedBox(height: 16),
                       Text(_infoMessage!,
-                          style: const TextStyle(color: AppColors.emerald)),
+                          style: TextStyle(color: AppColors.emerald)),
                     ],
                     const SizedBox(height: 24),
                     ElevatedButton(

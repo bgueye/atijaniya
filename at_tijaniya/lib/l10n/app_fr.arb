@@ -758,6 +758,9 @@
   "settingsPrivacyTileSubtitle": "Visibilité de votre lignée, de votre statut mouqaddam, qui peut vous contacter",
   "settingsDonationSection": "Faire un don",
   "settingsDonationTileSubtitle": "At-Tijaniya reste gratuite grâce à vous.",
+  "settingsAccessibilitySection": "Accessibilité",
+  "settingsHighContrastTitle": "Contraste renforcé",
+  "settingsHighContrastSubtitle": "Texte et bordures plus marqués, plus faciles à lire.",
   "settingsAboutSection": "À propos",
   "aboutVersionLabel": "Version",
 

@@ -71,16 +71,16 @@ class FiguresScreen extends ConsumerWidget {
           ),
         Expanded(
           child: figuresAsync.when(
-            loading: () => const Center(child: CircularProgressIndicator(color: AppColors.emerald)),
+            loading: () => Center(child: CircularProgressIndicator(color: AppColors.emerald)),
             error: (error, stackTrace) => Center(
               child: Padding(
                 padding: const EdgeInsets.all(24),
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    const Icon(Icons.wifi_off, color: AppColors.bronze, size: 32),
+                    Icon(Icons.wifi_off, color: AppColors.bronze, size: 32),
                     const SizedBox(height: 12),
-                    Text(l10n.figuresLoadError, textAlign: TextAlign.center, style: const TextStyle(color: AppColors.bronze)),
+                    Text(l10n.figuresLoadError, textAlign: TextAlign.center, style: TextStyle(color: AppColors.bronze)),
                     const SizedBox(height: 12),
                     OutlinedButton(
                       onPressed: () => ref.invalidate(figuresProvider),
@@ -134,11 +134,11 @@ class _EmptyState extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Icon(Icons.auto_stories_outlined, color: AppColors.bronze, size: 40),
+            Icon(Icons.auto_stories_outlined, color: AppColors.bronze, size: 40),
             const SizedBox(height: 16),
             Text(title, style: Theme.of(context).textTheme.headlineSmall, textAlign: TextAlign.center),
             const SizedBox(height: 8),
-            Text(body, textAlign: TextAlign.center, style: const TextStyle(color: AppColors.bronze)),
+            Text(body, textAlign: TextAlign.center, style: TextStyle(color: AppColors.bronze)),
           ],
         ),
       ),
@@ -204,7 +204,7 @@ class _FigureTile extends StatelessWidget {
                       : null,
                 ),
                 child: figure.portraitUrl == null
-                    ? const Icon(Icons.person_outline, color: AppColors.emerald)
+                    ? Icon(Icons.person_outline, color: AppColors.emerald)
                     : null,
               ),
               const SizedBox(width: 14),

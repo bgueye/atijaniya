@@ -103,9 +103,9 @@ class _FigureSilsilaFormScreenState extends ConsumerState<FigureSilsilaFormScree
       appBar: AppBar(title: Text(isEdit ? l10n.figureSilsilaFormEditTitle : l10n.figureSilsilaFormCreateTitle)),
       body: SafeArea(
         child: figuresAsync.when(
-          loading: () => const Center(child: CircularProgressIndicator(color: AppColors.emerald)),
+          loading: () => Center(child: CircularProgressIndicator(color: AppColors.emerald)),
           error: (error, stackTrace) => Center(
-            child: Text(l10n.figuresLoadError, style: const TextStyle(color: AppColors.bronze)),
+            child: Text(l10n.figuresLoadError, style: TextStyle(color: AppColors.bronze)),
           ),
           data: (figures) {
             final allLinks = linksAsync.valueOrNull ?? const <FigureSilsilaLink>[];
@@ -118,7 +118,7 @@ class _FigureSilsilaFormScreenState extends ConsumerState<FigureSilsilaFormScree
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    Text(l10n.figureSilsilaFormIntro, style: const TextStyle(color: AppColors.bronze, fontSize: 13)),
+                    Text(l10n.figureSilsilaFormIntro, style: TextStyle(color: AppColors.bronze, fontSize: 13)),
                     const SizedBox(height: 20),
                     DropdownButtonFormField<String?>(
                       initialValue: _parentFigureId,

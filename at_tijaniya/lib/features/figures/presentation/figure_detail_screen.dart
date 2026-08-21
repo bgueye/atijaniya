@@ -261,7 +261,7 @@ class _FigureHero extends StatelessWidget {
       // et se réduit à la largeur de son contenu (les noms) au lieu de
       // couvrir toute la largeur de l'écran comme un bandeau.
       width: double.infinity,
-      decoration: const BoxDecoration(
+      decoration: BoxDecoration(
         gradient: LinearGradient(
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
@@ -339,7 +339,7 @@ class _FigureHero extends StatelessWidget {
                               bottom: -2,
                               child: Container(
                                 padding: const EdgeInsets.all(4),
-                                decoration: const BoxDecoration(
+                                decoration: BoxDecoration(
                                     color: AppColors.gold,
                                     shape: BoxShape.circle),
                                 child: const Icon(Icons.edit,
@@ -423,12 +423,12 @@ class _PendingTab extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Icon(Icons.hourglass_empty,
+            Icon(Icons.hourglass_empty,
                 color: AppColors.bronze, size: 32),
             const SizedBox(height: 12),
             Text(message,
                 textAlign: TextAlign.center,
-                style: const TextStyle(color: AppColors.bronze, fontSize: 15)),
+                style: TextStyle(color: AppColors.bronze, fontSize: 15)),
           ],
         ),
       ),
@@ -552,7 +552,7 @@ class _SilsilaTabState extends ConsumerState<_SilsilaTab> {
     }
 
     return chainAsync.when(
-      loading: () => const Center(
+      loading: () => Center(
           child: CircularProgressIndicator(color: AppColors.emerald)),
       error: (error, stackTrace) => Center(
         child: Padding(
@@ -560,12 +560,12 @@ class _SilsilaTabState extends ConsumerState<_SilsilaTab> {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              const Icon(Icons.wifi_off, color: AppColors.bronze, size: 32),
+              Icon(Icons.wifi_off, color: AppColors.bronze, size: 32),
               const SizedBox(height: 12),
               Text(
                 l10n.figureSilsilaLoadError,
                 textAlign: TextAlign.center,
-                style: const TextStyle(color: AppColors.bronze),
+                style: TextStyle(color: AppColors.bronze),
               ),
               const SizedBox(height: 12),
               OutlinedButton(
@@ -615,7 +615,7 @@ class _SilsilaTabState extends ConsumerState<_SilsilaTab> {
             ],
             if (chain.isEmpty)
               Text(l10n.figureSilsilaPending,
-                  style: const TextStyle(color: AppColors.bronze))
+                  style: TextStyle(color: AppColors.bronze))
             else
               for (var i = 0; i < chain.length; i++) ...[
                 _SilsilaNode(
@@ -639,7 +639,7 @@ class _SilsilaConnector extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Center(
+    return Center(
         child: SizedBox(
             width: 1.5, height: 16, child: ColoredBox(color: AppColors.gold)));
   }
@@ -691,7 +691,7 @@ class _SilsilaNode extends StatelessWidget {
           if (isRoot) ...[
             const SizedBox(height: 2),
             Text(founderLabel,
-                style: const TextStyle(
+                style: TextStyle(
                     fontSize: 10,
                     color: AppColors.gold,
                     fontWeight: FontWeight.w600)),
@@ -878,7 +878,7 @@ class _CitationsTabState extends ConsumerState<_CitationsTab> {
         ],
         if (!hasCitations && !hasWorks)
           Text(l10n.figureCitationsEmpty,
-              style: const TextStyle(color: AppColors.bronze)),
+              style: TextStyle(color: AppColors.bronze)),
         if (hasCitations)
           for (final citation in citations)
             _CitationCard(
@@ -993,7 +993,7 @@ class _AdminItemActions extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       children: [
         IconButton(
-          icon: const Icon(Icons.edit_outlined,
+          icon: Icon(Icons.edit_outlined,
               size: 18, color: AppColors.bronze),
           padding: EdgeInsets.zero,
           constraints: const BoxConstraints(minWidth: 32, minHeight: 32),
@@ -1005,7 +1005,7 @@ class _AdminItemActions extends StatelessWidget {
                   width: 14,
                   height: 14,
                   child: CircularProgressIndicator(strokeWidth: 2))
-              : const Icon(Icons.delete_outline,
+              : Icon(Icons.delete_outline,
                   size: 18, color: AppColors.bronze),
           padding: EdgeInsets.zero,
           constraints: const BoxConstraints(minWidth: 32, minHeight: 32),
@@ -1212,14 +1212,14 @@ class _ZawiyaTabState extends ConsumerState<_ZawiyaTab> {
           const SizedBox(height: 12),
         ],
         zawiyasAsync.when(
-          loading: () => const Center(
+          loading: () => Center(
               child: Padding(
-            padding: EdgeInsets.symmetric(vertical: 16),
+            padding: const EdgeInsets.symmetric(vertical: 16),
             child: CircularProgressIndicator(color: AppColors.emerald),
           )),
-          error: (error, stackTrace) => Text(l10n.khadaraLoadError, style: const TextStyle(color: AppColors.bronze)),
+          error: (error, stackTrace) => Text(l10n.khadaraLoadError, style: TextStyle(color: AppColors.bronze)),
           data: (zawiyas) => zawiyas.isEmpty
-              ? Text(l10n.figureZawiyasPending, style: const TextStyle(color: AppColors.bronze))
+              ? Text(l10n.figureZawiyasPending, style: TextStyle(color: AppColors.bronze))
               : Column(
                   children: [
                     for (final zawiya in zawiyas)
@@ -1246,14 +1246,14 @@ class _ZawiyaTabState extends ConsumerState<_ZawiyaTab> {
           const SizedBox(height: 12),
         ],
         eventsAsync.when(
-          loading: () => const Center(
+          loading: () => Center(
               child: Padding(
-            padding: EdgeInsets.symmetric(vertical: 16),
+            padding: const EdgeInsets.symmetric(vertical: 16),
             child: CircularProgressIndicator(color: AppColors.emerald),
           )),
-          error: (error, stackTrace) => Text(l10n.khadaraLoadError, style: const TextStyle(color: AppColors.bronze)),
+          error: (error, stackTrace) => Text(l10n.khadaraLoadError, style: TextStyle(color: AppColors.bronze)),
           data: (events) => events.isEmpty
-              ? Text(l10n.figureZiyarasPending, style: const TextStyle(color: AppColors.bronze))
+              ? Text(l10n.figureZiyarasPending, style: TextStyle(color: AppColors.bronze))
               : Column(
                   children: [
                     for (final event in events)
@@ -1280,15 +1280,15 @@ class _ZawiyaTabState extends ConsumerState<_ZawiyaTab> {
           const SizedBox(height: 12),
         ],
         khalifaChainAsync.when(
-          loading: () => const Center(
+          loading: () => Center(
               child: Padding(
-            padding: EdgeInsets.symmetric(vertical: 16),
+            padding: const EdgeInsets.symmetric(vertical: 16),
             child: CircularProgressIndicator(color: AppColors.emerald),
           )),
           error: (error, stackTrace) => Column(
             children: [
               Text(l10n.figureKhalifaChainLoadError,
-                  textAlign: TextAlign.center, style: const TextStyle(color: AppColors.bronze)),
+                  textAlign: TextAlign.center, style: TextStyle(color: AppColors.bronze)),
               const SizedBox(height: 12),
               OutlinedButton(
                 onPressed: () => ref.invalidate(khalifaChainProvider(widget.figure.id)),
@@ -1297,7 +1297,7 @@ class _ZawiyaTabState extends ConsumerState<_ZawiyaTab> {
             ],
           ),
           data: (chain) => chain.isEmpty && !widget.isAdmin
-              ? Text(l10n.figureKhalifaChainPending, style: const TextStyle(color: AppColors.bronze))
+              ? Text(l10n.figureKhalifaChainPending, style: TextStyle(color: AppColors.bronze))
               : Column(
                   children: [
                     _FounderNode(figure: widget.figure, founderLabel: l10n.figureKhalifaFounderLabel),
@@ -1349,11 +1349,20 @@ class _ZiyaraEventCard extends StatelessWidget {
                         width: 14,
                         height: 14,
                         child: CircularProgressIndicator(strokeWidth: 2))
-                    : const Icon(Icons.link_off,
+                    : Icon(Icons.link_off,
                         size: 20, color: AppColors.bronze),
                 onPressed: busy ? null : onUnlink,
               )
-            : const Icon(Icons.chevron_right, color: AppColors.bronze),
+            // Transform.flip : `Icons.chevron_right` n'a pas
+            // `matchTextDirection` activé (contrairement à `IconData` qui
+            // porterait ce champ) — sans ça ce chevron "aller voir le
+            // détail" pointerait toujours physiquement à droite, y compris
+            // en arabe où il devrait pointer vers le sens de lecture
+            // (gauche).
+            : Transform.flip(
+                flipX: Directionality.of(context) == TextDirection.rtl,
+                child: Icon(Icons.chevron_right, color: AppColors.bronze),
+              ),
         onTap: () => Navigator.of(context).push(
           MaterialPageRoute(builder: (_) => EventDetailScreen(event: event)),
         ),
@@ -1391,13 +1400,13 @@ class _EventLinkPickerSheet extends ConsumerWidget {
               constraints: BoxConstraints(
                   maxHeight: MediaQuery.of(context).size.height * 0.5),
               child: eventsAsync.when(
-                loading: () => const Center(
+                loading: () => Center(
                     child: Padding(
-                  padding: EdgeInsets.symmetric(vertical: 24),
+                  padding: const EdgeInsets.symmetric(vertical: 24),
                   child: CircularProgressIndicator(color: AppColors.emerald),
                 )),
                 error: (error, stackTrace) => Text(l10n.khadaraLoadError,
-                    style: const TextStyle(color: AppColors.bronze)),
+                    style: TextStyle(color: AppColors.bronze)),
                 data: (events) {
                   final selectable = events
                       .where((e) => !excludedEventIds.contains(e.id))
@@ -1406,7 +1415,7 @@ class _EventLinkPickerSheet extends ConsumerWidget {
                     return Padding(
                       padding: const EdgeInsets.symmetric(vertical: 16),
                       child: Text(l10n.figureZiyarasLinkPickerEmpty,
-                          style: const TextStyle(color: AppColors.bronze)),
+                          style: TextStyle(color: AppColors.bronze)),
                     );
                   }
                   return ListView(
@@ -1445,7 +1454,7 @@ class _LinkedZawiyaCard extends StatelessWidget {
     return Card(
       margin: const EdgeInsets.only(bottom: 12),
       child: ListTile(
-        leading: const Icon(Icons.mosque_outlined, color: AppColors.emerald),
+        leading: Icon(Icons.mosque_outlined, color: AppColors.emerald),
         title: Text(zawiya.name),
         subtitle: zawiya.addressText != null ? Text(zawiya.addressText!) : null,
         // Un seul bouton Délier ici, comme `_ZiyaraEventCard` : un lien
@@ -1454,10 +1463,14 @@ class _LinkedZawiyaCard extends StatelessWidget {
             ? IconButton(
                 icon: busy
                     ? const SizedBox(width: 14, height: 14, child: CircularProgressIndicator(strokeWidth: 2))
-                    : const Icon(Icons.link_off, size: 20, color: AppColors.bronze),
+                    : Icon(Icons.link_off, size: 20, color: AppColors.bronze),
                 onPressed: busy ? null : onUnlink,
               )
-            : const Icon(Icons.chevron_right, color: AppColors.bronze),
+            // Transform.flip : voir la même note dans `_ZiyaraEventCard`.
+            : Transform.flip(
+                flipX: Directionality.of(context) == TextDirection.rtl,
+                child: Icon(Icons.chevron_right, color: AppColors.bronze),
+              ),
         onTap: () => Navigator.of(context).push(
           MaterialPageRoute(builder: (_) => ZawiyaDetailScreen(zawiya: zawiya)),
         ),
@@ -1491,18 +1504,18 @@ class _ZawiyaLinkPickerSheet extends ConsumerWidget {
             ConstrainedBox(
               constraints: BoxConstraints(maxHeight: MediaQuery.of(context).size.height * 0.5),
               child: zawiyasAsync.when(
-                loading: () => const Center(
+                loading: () => Center(
                     child: Padding(
-                  padding: EdgeInsets.symmetric(vertical: 24),
+                  padding: const EdgeInsets.symmetric(vertical: 24),
                   child: CircularProgressIndicator(color: AppColors.emerald),
                 )),
-                error: (error, stackTrace) => Text(l10n.khadaraLoadError, style: const TextStyle(color: AppColors.bronze)),
+                error: (error, stackTrace) => Text(l10n.khadaraLoadError, style: TextStyle(color: AppColors.bronze)),
                 data: (zawiyas) {
                   final selectable = zawiyas.where((z) => !excludedZawiyaIds.contains(z.id)).toList();
                   if (selectable.isEmpty) {
                     return Padding(
                       padding: const EdgeInsets.symmetric(vertical: 16),
-                      child: Text(l10n.figureZawiyasPickerEmpty, style: const TextStyle(color: AppColors.bronze)),
+                      child: Text(l10n.figureZawiyasPickerEmpty, style: TextStyle(color: AppColors.bronze)),
                     );
                   }
                   return ListView(
@@ -1510,7 +1523,7 @@ class _ZawiyaLinkPickerSheet extends ConsumerWidget {
                     children: [
                       for (final zawiya in selectable)
                         ListTile(
-                          leading: const Icon(Icons.mosque_outlined, color: AppColors.emerald),
+                          leading: Icon(Icons.mosque_outlined, color: AppColors.emerald),
                           title: Text(zawiya.name),
                           onTap: () => Navigator.of(context).pop(zawiya),
                         ),
@@ -1554,7 +1567,7 @@ class _FounderNode extends StatelessWidget {
           const SizedBox(height: 2),
           Text(figure.nameFrench, textAlign: TextAlign.center, style: const TextStyle(fontSize: 12, color: AppColors.parchment)),
           const SizedBox(height: 2),
-          Text(founderLabel, style: const TextStyle(fontSize: 10, color: AppColors.gold, fontWeight: FontWeight.w600)),
+          Text(founderLabel, style: TextStyle(fontSize: 10, color: AppColors.gold, fontWeight: FontWeight.w600)),
         ],
       ),
     );
@@ -1610,10 +1623,10 @@ class _KhalifaNode extends ConsumerWidget {
               style: AppTheme.sacredText(fontSize: 15, color: AppColors.zaytoune),
             ),
             const SizedBox(height: 2),
-            Text(link.khalifaNameFr, textAlign: TextAlign.center, style: const TextStyle(fontSize: 12, color: AppColors.bronze)),
+            Text(link.khalifaNameFr, textAlign: TextAlign.center, style: TextStyle(fontSize: 12, color: AppColors.bronze)),
             if (link.periodText != null) ...[
               const SizedBox(height: 2),
-              Text(link.periodText!, style: const TextStyle(fontSize: 11, color: AppColors.bronze)),
+              Text(link.periodText!, style: TextStyle(fontSize: 11, color: AppColors.bronze)),
             ],
             if (isAdmin) ...[
               const SizedBox(height: 4),
@@ -1659,7 +1672,7 @@ class _BiographyParagraph extends StatelessWidget {
           if (paragraph.transliteration != null) ...[
             Text(
               paragraph.transliteration!,
-              style: const TextStyle(
+              style: TextStyle(
                   fontStyle: FontStyle.italic,
                   fontSize: 15,
                   color: AppColors.bronze),
@@ -1718,7 +1731,7 @@ class _CitationCard extends StatelessWidget {
           if (citation.transliteration != null) ...[
             Text(
               citation.transliteration!,
-              style: const TextStyle(
+              style: TextStyle(
                   fontStyle: FontStyle.italic,
                   fontSize: 15,
                   color: AppColors.bronze),
@@ -1730,7 +1743,7 @@ class _CitationCard extends StatelessWidget {
           const SizedBox(height: 8),
           Text(
             '— ${citation.source}',
-            style: const TextStyle(
+            style: TextStyle(
                 color: AppColors.bronze,
                 fontSize: 12,
                 fontStyle: FontStyle.italic),

@@ -58,12 +58,12 @@ class _EmptyState extends StatelessWidget {
               width: 72,
               height: 72,
               decoration: const BoxDecoration(color: AppColors.goldSoft, shape: BoxShape.circle),
-              child: const Icon(Icons.menu_book_outlined, color: AppColors.bronze, size: 32),
+              child: Icon(Icons.menu_book_outlined, color: AppColors.bronze, size: 32),
             ),
             const SizedBox(height: 20),
             Text(title, style: Theme.of(context).textTheme.headlineSmall, textAlign: TextAlign.center),
             const SizedBox(height: 8),
-            Text(body, textAlign: TextAlign.center, style: const TextStyle(color: AppColors.bronze)),
+            Text(body, textAlign: TextAlign.center, style: TextStyle(color: AppColors.bronze)),
             const SizedBox(height: 24),
             // Renvoie vers le calendrier/l'annuaire déjà fonctionnels de l'onglet
             // Khadara (cet écran est poussé par-dessus), plutôt que de laisser un

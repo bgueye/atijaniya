@@ -27,7 +27,7 @@ class WirdHistoryScreen extends ConsumerWidget {
       backgroundColor: AppColors.parchment,
       appBar: AppBar(title: Text('Historique — ${wird.nameFrench}')),
       body: state.loading || state.stats == null
-          ? const Center(child: CircularProgressIndicator(color: AppColors.emerald))
+          ? Center(child: CircularProgressIndicator(color: AppColors.emerald))
           : _HistoryBody(stats: state.stats!, weekly: weekly),
     );
   }
@@ -129,7 +129,7 @@ class _StatText extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       children: [
         Text(value, style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: AppColors.ink)),
-        Text(label, style: const TextStyle(fontSize: 12, color: AppColors.bronze)),
+        Text(label, style: TextStyle(fontSize: 12, color: AppColors.bronze)),
       ],
     );
   }
@@ -170,7 +170,7 @@ class _RegularityRow extends StatelessWidget {
                   const SizedBox(height: 4),
                   Text(
                     weekly ? '${period.date.day}/${period.date.month}' : _dayLabels[period.date.weekday - 1],
-                    style: const TextStyle(fontSize: 10, color: AppColors.bronze),
+                    style: TextStyle(fontSize: 10, color: AppColors.bronze),
                   ),
                 ],
               ),

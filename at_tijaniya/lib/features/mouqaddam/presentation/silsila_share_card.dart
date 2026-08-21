@@ -151,7 +151,7 @@ class SilsilaShareCard extends StatelessWidget {
             // que la carte elle-même), le motif dominait visuellement toute
             // la carte une fois exporté en PNG haute résolution au lieu de
             // rester un discret coin de filigrane.
-            const Positioned(
+            Positioned(
               top: -20,
               right: -40,
               child: Opacity(

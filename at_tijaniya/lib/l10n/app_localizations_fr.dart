@@ -2274,6 +2274,16 @@ class AppLocalizationsFr extends AppLocalizations {
       'At-Tijaniya reste gratuite grâce à vous.';
 
   @override
+  String get settingsAccessibilitySection => 'Accessibilité';
+
+  @override
+  String get settingsHighContrastTitle => 'Contraste renforcé';
+
+  @override
+  String get settingsHighContrastSubtitle =>
+      'Texte et bordures plus marqués, plus faciles à lire.';
+
+  @override
   String get settingsAboutSection => 'À propos';
 
   @override

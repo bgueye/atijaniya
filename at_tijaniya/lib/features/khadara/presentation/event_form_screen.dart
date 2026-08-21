@@ -272,7 +272,7 @@ class _EventFormScreenState extends ConsumerState<EventFormScreen> {
             if (hasPickedImage || hasExistingImage) ...[
               const SizedBox(width: 8),
               IconButton(
-                icon: const Icon(Icons.close, color: AppColors.bronze),
+                icon: Icon(Icons.close, color: AppColors.bronze),
                 onPressed: _clearImage,
               ),
             ],
@@ -321,7 +321,7 @@ class _EventFormScreenState extends ConsumerState<EventFormScreen> {
                 const SizedBox(height: 16),
                 Text(l10n.eventFormImageLabel,
                     style:
-                        const TextStyle(color: AppColors.bronze, fontSize: 13)),
+                        TextStyle(color: AppColors.bronze, fontSize: 13)),
                 const SizedBox(height: 6),
                 _buildImagePicker(l10n),
                 const SizedBox(height: 16),
@@ -341,7 +341,7 @@ class _EventFormScreenState extends ConsumerState<EventFormScreen> {
                 const SizedBox(height: 16),
                 Text(l10n.eventFormStartsAtLabel,
                     style:
-                        const TextStyle(color: AppColors.bronze, fontSize: 13)),
+                        TextStyle(color: AppColors.bronze, fontSize: 13)),
                 const SizedBox(height: 6),
                 OutlinedButton.icon(
                   onPressed: _pickStartsAt,
@@ -353,7 +353,7 @@ class _EventFormScreenState extends ConsumerState<EventFormScreen> {
                 const SizedBox(height: 16),
                 Text(l10n.eventFormEndsAtLabel,
                     style:
-                        const TextStyle(color: AppColors.bronze, fontSize: 13)),
+                        TextStyle(color: AppColors.bronze, fontSize: 13)),
                 const SizedBox(height: 6),
                 Row(
                   children: [
@@ -368,7 +368,7 @@ class _EventFormScreenState extends ConsumerState<EventFormScreen> {
                     ),
                     if (_endsAt != null)
                       IconButton(
-                        icon: const Icon(Icons.close, color: AppColors.bronze),
+                        icon: Icon(Icons.close, color: AppColors.bronze),
                         onPressed: () => setState(() => _endsAt = null),
                       ),
                   ],
@@ -376,11 +376,11 @@ class _EventFormScreenState extends ConsumerState<EventFormScreen> {
                 const SizedBox(height: 16),
                 if (isAdmin)
                   ref.watch(zawiyasProvider).when(
-                        loading: () => const LinearProgressIndicator(
+                        loading: () => LinearProgressIndicator(
                             color: AppColors.emerald),
                         error: (error, stackTrace) => Text(
                             l10n.khadaraLoadError,
-                            style: const TextStyle(color: AppColors.bronze)),
+                            style: TextStyle(color: AppColors.bronze)),
                         data: (list) => DropdownButtonFormField<String?>(
                           initialValue: _zawiyaId,
                           decoration: InputDecoration(

@@ -57,12 +57,12 @@ class _SignInRequired extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Icon(Icons.account_circle_outlined, color: AppColors.bronze, size: 40),
+            Icon(Icons.account_circle_outlined, color: AppColors.bronze, size: 40),
             const SizedBox(height: 12),
             Text(
               l10n.profileSignInRequired,
               textAlign: TextAlign.center,
-              style: const TextStyle(color: AppColors.bronze),
+              style: TextStyle(color: AppColors.bronze),
             ),
           ],
         ),
@@ -80,19 +80,19 @@ class _ProfileBody extends ConsumerWidget {
     final profileAsync = ref.watch(myProfileProvider);
 
     return profileAsync.when(
-      loading: () => const Center(child: CircularProgressIndicator(color: AppColors.emerald)),
+      loading: () => Center(child: CircularProgressIndicator(color: AppColors.emerald)),
       error: (error, stackTrace) => Center(
         child: Padding(
           padding: const EdgeInsets.all(24),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              const Icon(Icons.wifi_off, color: AppColors.bronze, size: 32),
+              Icon(Icons.wifi_off, color: AppColors.bronze, size: 32),
               const SizedBox(height: 12),
               Text(
                 l10n.profileLoadError,
                 textAlign: TextAlign.center,
-                style: const TextStyle(color: AppColors.bronze),
+                style: TextStyle(color: AppColors.bronze),
               ),
               const SizedBox(height: 12),
               OutlinedButton(
@@ -110,9 +110,9 @@ class _ProfileBody extends ConsumerWidget {
           const SizedBox(height: 16),
           Card(
             child: ListTile(
-              leading: const Icon(Icons.auto_awesome_outlined, color: AppColors.gold),
+              leading: Icon(Icons.auto_awesome_outlined, color: AppColors.gold),
               title: Text(l10n.profileMyLineage),
-              trailing: const Icon(Icons.lock_outline, size: 18, color: AppColors.bronze),
+              trailing: Icon(Icons.lock_outline, size: 18, color: AppColors.bronze),
               onTap: () async {
                 final saved = await Navigator.of(context).push<bool>(
                   MaterialPageRoute(builder: (_) => const LineageScreen()),
@@ -128,7 +128,7 @@ class _ProfileBody extends ConsumerWidget {
           if (ref.watch(isAdminProvider))
             Card(
               child: ListTile(
-                leading: const Icon(Icons.flag_outlined, color: AppColors.gold),
+                leading: Icon(Icons.flag_outlined, color: AppColors.gold),
                 title: Text(l10n.profileModerationReports),
                 onTap: () => Navigator.of(context).push(
                   MaterialPageRoute(builder: (_) => const ModerationReportsScreen()),
@@ -138,7 +138,7 @@ class _ProfileBody extends ConsumerWidget {
           if (ref.watch(isVerifiedMouqaddamProvider)) ...[
             Card(
               child: ListTile(
-                leading: const Icon(Icons.how_to_reg_outlined, color: AppColors.gold),
+                leading: Icon(Icons.how_to_reg_outlined, color: AppColors.gold),
                 title: Text(l10n.profileSponsorshipRequests),
                 onTap: () => Navigator.of(context).push(
                   MaterialPageRoute(builder: (_) => const SponsorshipRequestsScreen()),
@@ -147,7 +147,7 @@ class _ProfileBody extends ConsumerWidget {
             ),
             Card(
               child: ListTile(
-                leading: const Icon(Icons.account_tree_outlined, color: AppColors.gold),
+                leading: Icon(Icons.account_tree_outlined, color: AppColors.gold),
                 title: Text(l10n.profileMyIjazaChain),
                 onTap: () => Navigator.of(context).push(
                   MaterialPageRoute(builder: (_) => const IjazaChainScreen()),
@@ -157,7 +157,7 @@ class _ProfileBody extends ConsumerWidget {
           ] else
             Card(
               child: ListTile(
-                leading: const Icon(Icons.workspace_premium_outlined, color: AppColors.gold),
+                leading: Icon(Icons.workspace_premium_outlined, color: AppColors.gold),
                 title: Text(l10n.profileBecomeMouqaddam),
                 onTap: () => Navigator.of(context).push(
                   MaterialPageRoute(builder: (_) => const BecomeMouqaddamScreen()),
@@ -329,7 +329,7 @@ class _ProfileHeader extends StatelessWidget {
                   backgroundColor: AppColors.emeraldSoft,
                   backgroundImage: profile.avatarUrl != null ? NetworkImage(profile.avatarUrl!) : null,
                   child: profile.avatarUrl == null
-                      ? const Icon(Icons.person_outline, color: AppColors.emerald, size: 28)
+                      ? Icon(Icons.person_outline, color: AppColors.emerald, size: 28)
                       : null,
                 ),
                 const SizedBox(width: 16),
@@ -340,7 +340,7 @@ class _ProfileHeader extends StatelessWidget {
                       Text(profile.displayName, style: Theme.of(context).textTheme.titleMedium),
                       Text(
                         profile.zawiyaName ?? l10n.profileZawiyaNoneLabel,
-                        style: const TextStyle(color: AppColors.bronze, fontSize: 13),
+                        style: TextStyle(color: AppColors.bronze, fontSize: 13),
                       ),
                     ],
                   ),

@@ -2640,3 +2640,135 @@ avec `_categoryFromDb` via `fromRow`). Suite complète (184 tests) au vert.
 conditions existantes, modification du texte FR/AR/catégorie/source
 enregistrée et reflétée immédiatement sur la liste au retour. `flutter
 analyze` propre.
+
+## Sprint 3 — Revue RTL et mode contraste renforcé (2026-08-21)
+
+### Revue RTL des écrans récents
+
+Audit ciblé des écrans jamais passés en revue RTL depuis leur construction
+(`docs/10-etat-avancement-et-sprints-restants.md`) : module mouqaddam
+(recherche de parrain, demandes, silsila d'ijaza, carte de partage),
+onglets Silsila/Zawiya de la fiche figure, formulaire khalife, carte
+"Figure de la semaine". La plupart était déjà correcte (le module
+mouqaddam et la silsila d'ijaza avaient eu leur propre passage arabe lors
+de leur construction, voir plus haut dans ce journal) — trois chevrons
+directionnels ne s'inversaient jamais, seul défaut réel trouvé :
+`Icons.chevron_right`/`chevron_left` n'ont pas `matchTextDirection` activé
+et Flutter ne les retourne donc jamais automatiquement selon la
+`Directionality` ambiante, contrairement à une intuition répandue.
+Corrigé avec `Transform.flip(flipX: Directionality.of(context) ==
+TextDirection.rtl, ...)` sur `_ZiyaraEventCard`/`_LinkedZawiyaCard`
+(`figure_detail_screen.dart`, chevron "voir le détail") et sur le
+sélecteur de semaine de `FeaturedFigureAdminScreen` (les deux flèches
+précédent/suivant). Un point volontairement non touché : le filigrane de
+`silsila_share_card.dart` reste ancré à droite en dur (`right:` physique)
+— traité comme un choix de branding assumé (position du logo sur la carte
+partagée), pas un bug RTL. `flutter analyze` propre, 184 tests au vert.
+Non validé sur téléphone en arabe au moment du correctif (audit fait au
+niveau code) — revalidé indirectement par la suite en testant le mode
+contraste renforcé ci-dessous, aucune régression visuelle constatée sur
+ces trois écrans.
+
+### Mode contraste renforcé
+
+Second volet de `design/design_tokens.yaml` §
+`accessibility.high_contrast_mode` ("prévu pour utilisateurs âgés — à
+implémenter"). Avant de construire quoi que ce soit, audit WCAG sur les
+couleurs exactes de la charte (formule de contraste officielle, calculée à
+la main sur les valeurs sRGB) : `bronze` (texte secondaire/légendes/
+bordures, utilisé partout dans l'app) échoue le seuil AA texte normal —
+3,72:1 sur parchemin, 4,09:1 sur off_white, contre un seuil de 4,5:1. Gold
+utilisé comme texte est pire (2,15:1). Emerald passe l'AA (5,57:1) mais pas
+l'AAA. Ink et les fonds (parchment/off_white/gold_soft/emerald_soft)
+n'étaient pas concernés, déjà largement conformes. Ce diagnostic — un vrai
+déficit d'accessibilité touchant tout le monde, pas seulement un futur
+mode optionnel — a été présenté au porteur de projet avant d'implémenter,
+avec le choix entre corriger `bronze` pour tout le monde (rapide, sans
+refactor) ou construire le vrai bouton bascule ; le porteur de projet a
+choisi le bouton bascule complet en connaissance du coût réel découvert
+(voir plus bas).
+
+**Découverte d'architecture qui a changé la portée du chantier** : l'app
+référence les couleurs via des constantes statiques (`AppColors.bronze`,
+`.emerald`, `.gold`) directement dans le code des écrans, pas via
+`Theme.of(context)` — 267 usages de `bronze`, 143 d'`emerald`, 61 de
+`gold`, sur 45 fichiers, dont la majorité à l'intérieur de `const
+TextStyle(...)`/`const Icon(...)`/etc. (un seul usage de
+`Theme.of(context).colorScheme` dans tout le projet). Un bouton "contraste
+renforcé" qui change réellement quelque chose à l'écran demandait donc de
+rendre ces trois couleurs dynamiques à l'exécution — ce qui casse
+automatiquement tout `const` qui les référence, Dart exigeant qu'une
+valeur `const` soit connue à la compilation.
+
+Valeurs choisies (documentées avec leur ratio de contraste dans
+`design_tokens.yaml`) : `bronze_high_contrast` `#4A3F2E` (9,22:1 sur
+parchemin, AAA), `emerald_high_contrast` `#0F4A32` (9,19:1, AAA — distinct
+de `zaytoune` `#0F3D2E` malgré la proximité, pour ne pas dupliquer un
+token existant sous un autre nom/rôle sémantique), `gold_high_contrast`
+`#8A6A1E` (4,52:1, AA seulement — assumé : une version AAA vire au brun et
+perd l'identité "doré", et gold reste un accent, rarement du texte de
+lecture longue). Seules bronze/emerald/gold deviennent dynamiques ; ink et
+les fonds restent inchangés — objectif "renforcer" l'existant, pas
+remplacer la charte par un noir/blanc pur qui durcirait la lecture sur
+fond parchemin pour le public visé.
+
+Mécanisme (`AppColors.setHighContrast`/`highContrastEnabled`,
+`ContrastController` — `core/theme/contrast_controller.dart`, persisté via
+`shared_preferences`, même pattern que les autres réglages locaux, mais
+persisté dès le départ contrairement à `LocaleController` qui diffère
+volontairement sa persistance : un réglage d'accessibilité pour
+utilisateurs âgés n'a de valeur que s'il tient d'un lancement à l'autre) :
+`bronze`/`emerald`/`gold` passent de `static const Color` à des accesseurs
+qui lisent un flag statique, basculé depuis `app.dart` (`ref.watch` du
+contrôleur, `AppColors.setHighContrast(...)` appelé en tout début de
+`build()`, avant tout descendant). `AppTheme.standard`/`.immersive`
+(`_base()`) n'ont eu besoin d'aucune modification : ce sont déjà des
+`get` recalculés à chaque accès, qui référencent ces trois couleurs pour
+`primary`/`secondary`/`tertiary`/`onSurfaceVariant`/`outline` — ils
+héritent donc automatiquement du contraste renforcé, y compris sur les 3
+écrans immersifs (Tasbih, Free Wird, Wird detail) qui appliquent
+`AppTheme.immersive` localement sans jamais avoir eu besoin d'être
+touchés. `outline`/`outlineVariant` et la bordure de `cardTheme` reçoivent
+en plus un alpha renforcé (`AppColors.highContrastEnabled ? 0.75 : 0.4`,
+etc.) : une bordure translucide à 20% reste faible même avec une couleur
+de base plus foncée dessous, ce n'est pas qu'une question de teinte.
+`MaterialApp` est démonté/remonté entièrement à la bascule (`key:
+ValueKey(highContrast)`), seul moyen fiable de garantir que chaque
+`build()` déjà monté relise la valeur à jour vu que la quasi-totalité de
+l'app ne passe pas par le mécanisme habituel de propagation de
+`Theme`/`InheritedWidget` — contrepartie assumée : bascule rare et
+volontaire depuis Paramètres, réinitialisation de la pile de navigation
+acceptable (aucune perte de session, l'auth vit hors de l'arbre de
+widgets). Réglage exposé dans **Paramètres → Accessibilité → Contraste
+renforcé** (`SwitchListTile`, nouvelle section dans `settings_screen.dart`).
+
+**Balayage mécanique** : rendre ces trois couleurs dynamiques a cassé
+environ 360 expressions `const` à travers 45 fichiers. Corrigé en
+délégant le balayage à 4 sessions travaillant en parallèle sur des lots de
+fichiers disjoints par zone fonctionnelle (wird/splash/settings,
+khadara/divers, figures/communauté, mouqaddam/lignée/onboarding/profil),
+chacune itérant sur les erreurs exactes (`Invalid constant value`,
+file:line:col) rapportées par `flutter analyze` jusqu'à zéro erreur sur
+son lot — aucune valeur de couleur ni logique changée, uniquement des
+retraits de `const` (et, dans `rosace_painter.dart`, un paramètre par
+défaut `color = AppColors.gold` devenu invalide, transformé en `Color?`
+nullable résolu dans un getter plutôt qu'en valeur par défaut). Vérifié
+ensuite par une passe complète (`flutter analyze` : 0 issue après un
+dernier nettoyage de 8 suggestions `prefer_const_constructors` mineures ;
+`flutter test` : 184 tests au vert).
+
+**Bug trouvé en testant sur téléphone** (`R5CW41VL5CE`) : la section "À
+propos" en bas de `SettingsScreen` se retrouvait masquée sous la barre de
+navigation Android (3 boutons) — le `ListView` du haut n'avait jamais eu
+de `SafeArea` (même défaut déjà rencontré et corrigé sur
+`FigureFormScreen`/`EventFormScreen`), resté invisible jusqu'ici faute
+d'assez de contenu pour atteindre le bas de l'écran ; la nouvelle section
+Accessibilité a suffi à allonger la liste et à l'exposer. Corrigé en
+enveloppant le corps de `SettingsScreen` dans un `SafeArea`.
+
+**Validé en conditions réelles le 2026-08-21** sur téléphone Android
+(`R5CW41VL5CE`) : bascule du réglage depuis Paramètres, texte bronze et
+bordures de carte nettement plus marqués sur plusieurs écrans (Wirds,
+Figures, Khadara, Conditions de la tariqa), retour à l'état normal
+confirmé en redésactivant, section "À propos" de nouveau visible après le
+correctif `SafeArea`.

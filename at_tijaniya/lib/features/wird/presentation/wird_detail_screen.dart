@@ -257,7 +257,7 @@ class _PillarCard extends StatelessWidget {
           const SizedBox(height: 10),
           Text(
             pillar.transliteration,
-            style: const TextStyle(
+            style: TextStyle(
               fontStyle: FontStyle.italic,
               color: AppColors.bronze,
               fontSize: 15,
@@ -272,7 +272,7 @@ class _PillarCard extends StatelessWidget {
             const SizedBox(height: 10),
             Text(
               pillar.note!,
-              style: const TextStyle(fontSize: 12, color: AppColors.bronze),
+              style: TextStyle(fontSize: 12, color: AppColors.bronze),
             ),
           ],
           if (pillar.closingFormulas != null)
@@ -311,7 +311,7 @@ class _PillarCard extends StatelessWidget {
               data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
               child: ExpansionTile(
                 tilePadding: EdgeInsets.zero,
-                title: const Text(
+                title: Text(
                   'Texte intégral',
                   style: TextStyle(fontSize: 13, color: AppColors.emerald, fontWeight: FontWeight.w500),
                 ),
@@ -342,7 +342,7 @@ class _ClosingFormulaBlock extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        Text(formula.intro, style: const TextStyle(fontSize: 12, color: AppColors.bronze)),
+        Text(formula.intro, style: TextStyle(fontSize: 12, color: AppColors.bronze)),
         const SizedBox(height: 4),
         Text(
           formula.arabic,
@@ -354,7 +354,7 @@ class _ClosingFormulaBlock extends StatelessWidget {
           const SizedBox(height: 2),
           Text(
             formula.transliteration!,
-            style: const TextStyle(fontStyle: FontStyle.italic, fontSize: 12, color: AppColors.bronze),
+            style: TextStyle(fontStyle: FontStyle.italic, fontSize: 12, color: AppColors.bronze),
           ),
         ],
       ],
@@ -382,8 +382,8 @@ class _AudioPillarButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (availability == PillarAudioAvailability.noRecitation) {
-      return const Padding(
-        padding: EdgeInsets.only(top: 2),
+      return Padding(
+        padding: const EdgeInsets.only(top: 2),
         child: Icon(Icons.music_off, color: AppColors.bronze, size: 22),
       );
     }
@@ -391,8 +391,8 @@ class _AudioPillarButton extends StatelessWidget {
       return InkWell(
         borderRadius: BorderRadius.circular(20),
         onTap: onPressed,
-        child: const Padding(
-          padding: EdgeInsets.only(top: 2),
+        child: Padding(
+          padding: const EdgeInsets.only(top: 2),
           child: Icon(Icons.error_outline, color: AppColors.bronze, size: 22),
         ),
       );
@@ -403,13 +403,13 @@ class _AudioPillarButton extends StatelessWidget {
       child: Padding(
         padding: const EdgeInsets.only(top: 2),
         child: isBuffering
-            ? const SizedBox(
+            ? SizedBox(
                 width: 22,
                 height: 22,
                 child: CircularProgressIndicator(strokeWidth: 2, color: AppColors.emerald),
               )
             : availability == PillarAudioAvailability.notDownloaded
-                ? const Icon(Icons.download_for_offline_outlined, color: AppColors.emerald, size: 26)
+                ? Icon(Icons.download_for_offline_outlined, color: AppColors.emerald, size: 26)
                 : Icon(
                     isPlaying ? Icons.pause_circle_filled : Icons.play_circle_fill,
                     color: AppColors.emerald,
@@ -462,7 +462,7 @@ class _AudioPlayerBar extends StatelessWidget {
       top: false,
       child: Container(
         padding: const EdgeInsets.fromLTRB(12, 6, 12, 6),
-        decoration: const BoxDecoration(
+        decoration: BoxDecoration(
           color: AppColors.zaytoune,
           border: Border(top: BorderSide(color: AppColors.bronze, width: 0.4)),
         ),
@@ -503,7 +503,7 @@ class _AudioPlayerBar extends StatelessWidget {
                 if (activeIndex != null)
                   Text(
                     '${_formatDuration(position)} / ${_formatDuration(duration)}',
-                    style: const TextStyle(color: AppColors.bronze, fontSize: 11),
+                    style: TextStyle(color: AppColors.bronze, fontSize: 11),
                   ),
               ],
             ),
@@ -557,7 +557,7 @@ class _ParagraphBlock extends StatelessWidget {
           const SizedBox(height: 6),
           Text(
             paragraph.transliteration,
-            style: const TextStyle(fontStyle: FontStyle.italic, fontSize: 15, color: AppColors.bronze),
+            style: TextStyle(fontStyle: FontStyle.italic, fontSize: 15, color: AppColors.bronze),
           ),
           const SizedBox(height: 4),
           Text(paragraph.translation, style: const TextStyle(fontSize: 16, color: AppColors.ink)),
@@ -582,7 +582,7 @@ class _RepetitionBadge extends StatelessWidget {
       ),
       child: Text(
         '×$count',
-        style: const TextStyle(color: AppColors.emerald, fontWeight: FontWeight.w600, fontSize: 13),
+        style: TextStyle(color: AppColors.emerald, fontWeight: FontWeight.w600, fontSize: 13),
       ),
     );
   }

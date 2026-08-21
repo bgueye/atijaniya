@@ -31,16 +31,16 @@ class TariqaConditionsScreen extends ConsumerWidget {
     return Scaffold(
       appBar: AppBar(title: Text(l10n.tariqaConditionsTitle)),
       body: conditionsAsync.when(
-        loading: () => const Center(child: CircularProgressIndicator(color: AppColors.emerald)),
+        loading: () => Center(child: CircularProgressIndicator(color: AppColors.emerald)),
         error: (error, stackTrace) => Center(
           child: Padding(
             padding: const EdgeInsets.all(24),
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                const Icon(Icons.wifi_off, color: AppColors.bronze, size: 32),
+                Icon(Icons.wifi_off, color: AppColors.bronze, size: 32),
                 const SizedBox(height: 12),
-                Text(l10n.tariqaConditionsLoadError, textAlign: TextAlign.center, style: const TextStyle(color: AppColors.bronze)),
+                Text(l10n.tariqaConditionsLoadError, textAlign: TextAlign.center, style: TextStyle(color: AppColors.bronze)),
                 const SizedBox(height: 12),
                 OutlinedButton(
                   onPressed: () => ref.invalidate(tariqaConditionsProvider),
@@ -103,11 +103,11 @@ class _EmptyState extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Icon(Icons.rule_outlined, color: AppColors.bronze, size: 40),
+            Icon(Icons.rule_outlined, color: AppColors.bronze, size: 40),
             const SizedBox(height: 16),
             Text(title, style: Theme.of(context).textTheme.headlineSmall, textAlign: TextAlign.center),
             const SizedBox(height: 8),
-            Text(body, textAlign: TextAlign.center, style: const TextStyle(color: AppColors.bronze)),
+            Text(body, textAlign: TextAlign.center, style: TextStyle(color: AppColors.bronze)),
           ],
         ),
       ),
@@ -178,7 +178,7 @@ class _ConditionTile extends StatelessWidget {
                 decoration: const BoxDecoration(color: AppColors.goldSoft, shape: BoxShape.circle),
                 child: Text(
                   '${condition.orderIndex}',
-                  style: const TextStyle(color: AppColors.bronze, fontWeight: FontWeight.w600, fontSize: 13),
+                  style: TextStyle(color: AppColors.bronze, fontWeight: FontWeight.w600, fontSize: 13),
                 ),
               ),
               const SizedBox(width: 12),
@@ -197,7 +197,7 @@ class _ConditionTile extends StatelessWidget {
             const SizedBox(height: 8),
             Text(
               condition.sourceNote!,
-              style: const TextStyle(color: AppColors.bronze, fontSize: 12, fontStyle: FontStyle.italic),
+              style: TextStyle(color: AppColors.bronze, fontSize: 12, fontStyle: FontStyle.italic),
             ),
           ],
         ],

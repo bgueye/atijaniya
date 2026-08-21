@@ -217,7 +217,7 @@ class _LiveStreamScreenState extends ConsumerState<LiveStreamScreen> {
                       if (isEnded)
                         Padding(
                           padding: const EdgeInsets.only(bottom: 8),
-                          child: Text(l10n.khadaraLiveEnded, style: const TextStyle(color: AppColors.bronze)),
+                          child: Text(l10n.khadaraLiveEnded, style: TextStyle(color: AppColors.bronze)),
                         ),
                       FilledButton.icon(
                         onPressed: _openExternal,
@@ -230,13 +230,13 @@ class _LiveStreamScreenState extends ConsumerState<LiveStreamScreen> {
           const Divider(height: 1),
           Expanded(
             child: messages.when(
-              loading: () => const Center(child: CircularProgressIndicator(color: AppColors.emerald)),
+              loading: () => Center(child: CircularProgressIndicator(color: AppColors.emerald)),
               error: (error, stackTrace) => Center(
-                child: Text(l10n.khadaraLoadError, style: const TextStyle(color: AppColors.bronze)),
+                child: Text(l10n.khadaraLoadError, style: TextStyle(color: AppColors.bronze)),
               ),
               data: (list) => list.isEmpty
                   ? Center(
-                      child: Text(l10n.khadaraChatEmpty, style: const TextStyle(color: AppColors.bronze)),
+                      child: Text(l10n.khadaraChatEmpty, style: TextStyle(color: AppColors.bronze)),
                     )
                   : ListView.builder(
                       padding: const EdgeInsets.all(16),
@@ -250,7 +250,7 @@ class _LiveStreamScreenState extends ConsumerState<LiveStreamScreen> {
             child: myUserId == null
                 ? Padding(
                     padding: const EdgeInsets.all(16),
-                    child: Text(l10n.khadaraChatSignInToWrite, style: const TextStyle(color: AppColors.bronze)),
+                    child: Text(l10n.khadaraChatSignInToWrite, style: TextStyle(color: AppColors.bronze)),
                   )
                 : Padding(
                     padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
@@ -262,7 +262,7 @@ class _LiveStreamScreenState extends ConsumerState<LiveStreamScreen> {
                             decoration: InputDecoration(hintText: l10n.khadaraChatHint),
                           ),
                         ),
-                        IconButton(icon: const Icon(Icons.send, color: AppColors.emerald), onPressed: _send),
+                        IconButton(icon: Icon(Icons.send, color: AppColors.emerald), onPressed: _send),
                       ],
                     ),
                   ),
@@ -285,7 +285,7 @@ class _NativeUnavailableBanner extends StatelessWidget {
       decoration: BoxDecoration(color: AppColors.emeraldSoft, borderRadius: BorderRadius.circular(12)),
       child: Row(
         children: [
-          const Icon(Icons.info_outline, color: AppColors.emerald),
+          Icon(Icons.info_outline, color: AppColors.emerald),
           const SizedBox(width: 10),
           Expanded(child: Text(l10n.khadaraNativeNotAvailable, style: const TextStyle(color: AppColors.ink, fontSize: 13))),
         ],
@@ -319,7 +319,7 @@ class _ChatBubble extends StatelessWidget {
             if (!isMine && message.senderName != null)
               Padding(
                 padding: const EdgeInsets.only(bottom: 2),
-                child: Text(message.senderName!, style: const TextStyle(color: AppColors.emerald, fontSize: 11, fontWeight: FontWeight.w600)),
+                child: Text(message.senderName!, style: TextStyle(color: AppColors.emerald, fontSize: 11, fontWeight: FontWeight.w600)),
               ),
             Text(message.message, style: const TextStyle(color: AppColors.ink, fontSize: 15)),
           ],

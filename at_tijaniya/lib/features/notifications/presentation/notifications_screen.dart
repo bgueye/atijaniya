@@ -27,15 +27,15 @@ class NotificationsScreen extends ConsumerWidget {
     return Scaffold(
       appBar: AppBar(title: Text(l10n.notificationsScreenTitle)),
       body: notificationsAsync.when(
-        loading: () => const Center(child: CircularProgressIndicator(color: AppColors.emerald)),
+        loading: () => Center(child: CircularProgressIndicator(color: AppColors.emerald)),
         error: (error, stackTrace) => Center(
-          child: Text(l10n.notificationsLoadError, style: const TextStyle(color: AppColors.bronze)),
+          child: Text(l10n.notificationsLoadError, style: TextStyle(color: AppColors.bronze)),
         ),
         data: (notifications) => notifications.isEmpty
             ? Center(
                 child: Padding(
                   padding: const EdgeInsets.all(24),
-                  child: Text(l10n.notificationsEmpty, textAlign: TextAlign.center, style: const TextStyle(color: AppColors.bronze)),
+                  child: Text(l10n.notificationsEmpty, textAlign: TextAlign.center, style: TextStyle(color: AppColors.bronze)),
                 ),
               )
             : ListView.separated(
@@ -104,11 +104,11 @@ class _NotificationTile extends ConsumerWidget {
         title: Text(title, style: TextStyle(fontWeight: unread ? FontWeight.w600 : FontWeight.w400)),
         subtitle: Text(
           '$body\n${formatKhadaraDateTime(notification.createdAt)}',
-          style: const TextStyle(color: AppColors.bronze, fontSize: 12),
+          style: TextStyle(color: AppColors.bronze, fontSize: 12),
         ),
         isThreeLine: true,
         trailing: unread
-            ? Container(width: 8, height: 8, decoration: const BoxDecoration(color: AppColors.gold, shape: BoxShape.circle))
+            ? Container(width: 8, height: 8, decoration: BoxDecoration(color: AppColors.gold, shape: BoxShape.circle))
             : null,
       ),
     );

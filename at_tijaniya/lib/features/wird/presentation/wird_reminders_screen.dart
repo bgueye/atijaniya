@@ -38,7 +38,7 @@ class WirdRemindersScreen extends ConsumerWidget {
         title: Text('Rappels — ${wird.nameFrench}'),
       ),
       body: state.loading
-          ? const Center(child: CircularProgressIndicator(color: AppColors.emerald))
+          ? Center(child: CircularProgressIndicator(color: AppColors.emerald))
           : ListView(
               padding: const EdgeInsets.all(20),
               children: [
@@ -70,12 +70,12 @@ class _ScopeNote extends StatelessWidget {
         color: AppColors.emeraldSoft,
         borderRadius: BorderRadius.circular(12),
       ),
-      child: const Row(
+      child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Icon(Icons.info_outline, color: AppColors.emerald, size: 18),
-          SizedBox(width: 8),
-          Expanded(
+          const SizedBox(width: 8),
+          const Expanded(
             child: Text(
               "Choisissez vous-même l'heure de chaque rappel, dans la fenêtre "
               "habituelle de ce wird — l'app ne calcule pas encore les horaires "
@@ -119,7 +119,7 @@ class _ReminderTile extends StatelessWidget {
             title: Text(slot.label, style: const TextStyle(fontWeight: FontWeight.w600, color: AppColors.ink)),
             subtitle: Text(
               slot.frequency == ReminderFrequency.weeklyFriday ? 'Chaque vendredi' : 'Chaque jour',
-              style: const TextStyle(color: AppColors.bronze, fontSize: 12),
+              style: TextStyle(color: AppColors.bronze, fontSize: 12),
             ),
             value: setting.enabled,
             onChanged: onToggle,
@@ -134,10 +134,10 @@ class _ReminderTile extends StatelessWidget {
                     final picked = await showTimePicker(context: context, initialTime: time);
                     if (picked != null) onPickTime(picked);
                   },
-                  icon: const Icon(Icons.schedule, color: AppColors.emerald, size: 18),
+                  icon: Icon(Icons.schedule, color: AppColors.emerald, size: 18),
                   label: Text(
                     time.format(context),
-                    style: const TextStyle(color: AppColors.emerald, fontWeight: FontWeight.w600),
+                    style: TextStyle(color: AppColors.emerald, fontWeight: FontWeight.w600),
                   ),
                 ),
               ),

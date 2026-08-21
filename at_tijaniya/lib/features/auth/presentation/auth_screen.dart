@@ -254,14 +254,14 @@ class _AuthScreenState extends State<AuthScreen> {
               onPressed: loading ? null : _resetPassword,
               style: TextButton.styleFrom(padding: EdgeInsets.zero, minimumSize: const Size(0, 32)),
               child: _loadingAction == _AuthAction.resetPassword
-                  ? const SizedBox(
+                  ? SizedBox(
                       height: 14,
                       width: 14,
                       child: CircularProgressIndicator(strokeWidth: 2, color: AppColors.emerald),
                     )
                   : Text(
                       l10n.authForgotPassword,
-                      style: const TextStyle(
+                      style: TextStyle(
                         color: AppColors.emerald,
                         fontSize: 12,
                         decoration: TextDecoration.underline,
@@ -337,7 +337,7 @@ class _AuthScreenState extends State<AuthScreen> {
           const SizedBox(height: 6),
           Text(
             l10n.authPasswordMinCharsHint,
-            style: const TextStyle(color: AppColors.bronze, fontSize: 11),
+            style: TextStyle(color: AppColors.bronze, fontSize: 11),
           ),
           const SizedBox(height: 12),
           if (_errorMessage != null) _MessageBanner(text: _errorMessage!, isError: true),
@@ -353,12 +353,12 @@ class _AuthScreenState extends State<AuthScreen> {
             TextSpan(
               children: [
                 TextSpan(text: l10n.authLegalPrefix),
-                TextSpan(text: l10n.authLegalTerms, style: const TextStyle(color: AppColors.emerald)),
+                TextSpan(text: l10n.authLegalTerms, style: TextStyle(color: AppColors.emerald)),
                 TextSpan(text: l10n.authLegalMiddle),
-                TextSpan(text: l10n.authLegalPrivacy, style: const TextStyle(color: AppColors.emerald)),
+                TextSpan(text: l10n.authLegalPrivacy, style: TextStyle(color: AppColors.emerald)),
                 TextSpan(text: l10n.authLegalSuffix),
               ],
-              style: const TextStyle(color: AppColors.bronze, fontSize: 11, height: 1.5),
+              style: TextStyle(color: AppColors.bronze, fontSize: 11, height: 1.5),
             ),
             textAlign: TextAlign.center,
           ),
@@ -374,7 +374,7 @@ class _AuthScreenState extends State<AuthScreen> {
       fillColor: AppColors.offWhite,
       border: OutlineInputBorder(
         borderRadius: BorderRadius.circular(8),
-        borderSide: const BorderSide(color: AppColors.bronze),
+        borderSide: BorderSide(color: AppColors.bronze),
       ),
     );
   }
@@ -410,7 +410,7 @@ class _PanelTitle extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 4),
-        Text(subtitle, style: const TextStyle(color: AppColors.bronze, fontSize: 12, height: 1.4)),
+        Text(subtitle, style: TextStyle(color: AppColors.bronze, fontSize: 12, height: 1.4)),
       ],
     );
   }

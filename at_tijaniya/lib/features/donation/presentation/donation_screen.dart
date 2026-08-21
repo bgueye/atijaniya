@@ -99,7 +99,7 @@ class _DonationScreenState extends ConsumerState<DonationScreen> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             Text(l10n.donationSubtitle,
-                style: const TextStyle(color: AppColors.bronze, fontSize: 15)),
+                style: TextStyle(color: AppColors.bronze, fontSize: 15)),
             const SizedBox(height: 24),
             Row(
               children: [
@@ -235,7 +235,7 @@ class _DonationRecordedState extends StatelessWidget {
               decoration: const BoxDecoration(
                   color: AppColors.goldSoft, shape: BoxShape.circle),
               child:
-                  const Icon(Icons.favorite, color: AppColors.gold, size: 32),
+                  Icon(Icons.favorite, color: AppColors.gold, size: 32),
             ),
             const SizedBox(height: 20),
             Text(l10n.donationRecordedTitle,
@@ -244,7 +244,7 @@ class _DonationRecordedState extends StatelessWidget {
             const SizedBox(height: 8),
             Text(l10n.donationRecordedBody,
                 textAlign: TextAlign.center,
-                style: const TextStyle(color: AppColors.bronze)),
+                style: TextStyle(color: AppColors.bronze)),
             const SizedBox(height: 24),
             OutlinedButton(
               onPressed: () => Navigator.of(context).pop(),

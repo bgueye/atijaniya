@@ -62,9 +62,9 @@ class _RecitationsReviewCard extends StatelessWidget {
     return Card(
       child: ListTile(
         contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-        leading: const Icon(Icons.fact_check_outlined, color: AppColors.emerald),
+        leading: Icon(Icons.fact_check_outlined, color: AppColors.emerald),
         title: Text(l10n.wirdRecitationsReviewButton, style: const TextStyle(fontWeight: FontWeight.w500)),
-        trailing: const Icon(Icons.chevron_right, color: AppColors.bronze),
+        trailing: Icon(Icons.chevron_right, color: AppColors.bronze),
         onTap: () => Navigator.of(context).push(
           MaterialPageRoute(builder: (_) => const WirdRecitationsReviewScreen()),
         ),
@@ -90,10 +90,10 @@ class _RecitationsManageCard extends StatelessWidget {
     return Card(
       child: ListTile(
         contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-        leading: const Icon(Icons.library_music_outlined, color: AppColors.emerald),
+        leading: Icon(Icons.library_music_outlined, color: AppColors.emerald),
         title: Text(l10n.wirdRecitationsManageTitle, style: const TextStyle(fontWeight: FontWeight.w500)),
-        subtitle: Text(l10n.wirdRecitationsManageCardSubtitle, style: const TextStyle(color: AppColors.bronze)),
-        trailing: const Icon(Icons.chevron_right, color: AppColors.bronze),
+        subtitle: Text(l10n.wirdRecitationsManageCardSubtitle, style: TextStyle(color: AppColors.bronze)),
+        trailing: Icon(Icons.chevron_right, color: AppColors.bronze),
         onTap: () => Navigator.of(context).push(
           MaterialPageRoute(builder: (_) => const WirdRecitationsManagementScreen()),
         ),
@@ -115,9 +115,9 @@ class _WirdCard extends StatelessWidget {
         title: Text(wird.nameFrench, style: const TextStyle(fontWeight: FontWeight.w500)),
         subtitle: Text(
           wird.frequency == WirdFrequency.daily ? 'Quotidien' : 'Hebdomadaire — vendredi',
-          style: const TextStyle(color: AppColors.bronze),
+          style: TextStyle(color: AppColors.bronze),
         ),
-        trailing: const Icon(Icons.chevron_right, color: AppColors.bronze),
+        trailing: Icon(Icons.chevron_right, color: AppColors.bronze),
         onTap: () => Navigator.of(context).push(
           MaterialPageRoute(builder: (_) => WirdDetailScreen(wird: wird)),
         ),
@@ -136,10 +136,10 @@ class _FreeWirdCard extends StatelessWidget {
     return Card(
       child: ListTile(
         contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-        leading: const Icon(Icons.tune, color: AppColors.emerald),
+        leading: Icon(Icons.tune, color: AppColors.emerald),
         title: Text(l10n.wirdFreeTitle, style: const TextStyle(fontWeight: FontWeight.w500)),
-        subtitle: Text(l10n.wirdFreeSubtitle, style: const TextStyle(color: AppColors.bronze)),
-        trailing: const Icon(Icons.chevron_right, color: AppColors.bronze),
+        subtitle: Text(l10n.wirdFreeSubtitle, style: TextStyle(color: AppColors.bronze)),
+        trailing: Icon(Icons.chevron_right, color: AppColors.bronze),
         onTap: () => Navigator.of(context).push(
           MaterialPageRoute(builder: (_) => const FreeWirdScreen()),
         ),
@@ -158,10 +158,10 @@ class _TariqaConditionsCard extends StatelessWidget {
     return Card(
       child: ListTile(
         contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-        leading: const Icon(Icons.rule_outlined, color: AppColors.emerald),
+        leading: Icon(Icons.rule_outlined, color: AppColors.emerald),
         title: Text(l10n.tariqaConditionsCardTitle, style: const TextStyle(fontWeight: FontWeight.w500)),
-        subtitle: Text(l10n.tariqaConditionsCardSubtitle, style: const TextStyle(color: AppColors.bronze)),
-        trailing: const Icon(Icons.chevron_right, color: AppColors.bronze),
+        subtitle: Text(l10n.tariqaConditionsCardSubtitle, style: TextStyle(color: AppColors.bronze)),
+        trailing: Icon(Icons.chevron_right, color: AppColors.bronze),
         onTap: () => Navigator.of(context).push(
           MaterialPageRoute(builder: (_) => const TariqaConditionsScreen()),
         ),

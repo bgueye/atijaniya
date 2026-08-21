@@ -24,16 +24,16 @@ class ModerationReportsScreen extends ConsumerWidget {
     return Scaffold(
       appBar: AppBar(title: Text(l10n.moderationScreenTitle)),
       body: reportsAsync.when(
-        loading: () => const Center(child: CircularProgressIndicator(color: AppColors.emerald)),
+        loading: () => Center(child: CircularProgressIndicator(color: AppColors.emerald)),
         error: (error, stackTrace) => Center(
           child: Padding(
             padding: const EdgeInsets.all(24),
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                const Icon(Icons.wifi_off, color: AppColors.bronze, size: 32),
+                Icon(Icons.wifi_off, color: AppColors.bronze, size: 32),
                 const SizedBox(height: 12),
-                Text(l10n.moderationLoadError, textAlign: TextAlign.center, style: const TextStyle(color: AppColors.bronze)),
+                Text(l10n.moderationLoadError, textAlign: TextAlign.center, style: TextStyle(color: AppColors.bronze)),
                 const SizedBox(height: 12),
                 OutlinedButton(
                   onPressed: () => ref.invalidate(pendingReportsProvider),
@@ -48,7 +48,7 @@ class ModerationReportsScreen extends ConsumerWidget {
             return Center(
               child: Padding(
                 padding: const EdgeInsets.all(24),
-                child: Text(l10n.moderationEmptyState, textAlign: TextAlign.center, style: const TextStyle(color: AppColors.bronze)),
+                child: Text(l10n.moderationEmptyState, textAlign: TextAlign.center, style: TextStyle(color: AppColors.bronze)),
               ),
             );
           }
@@ -153,14 +153,14 @@ class _ReportCardState extends ConsumerState<_ReportCard> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(_typeLabel(), style: const TextStyle(fontWeight: FontWeight.w600, color: AppColors.emerald)),
+            Text(_typeLabel(), style: TextStyle(fontWeight: FontWeight.w600, color: AppColors.emerald)),
             const SizedBox(height: 4),
             Text(widget.item.preview ?? '—', style: const TextStyle(fontWeight: FontWeight.w500)),
             if (report.reason != null && report.reason!.trim().isNotEmpty) ...[
               const SizedBox(height: 6),
               Text(
                 l10n.moderationReasonPrefix(report.reason!),
-                style: const TextStyle(color: AppColors.bronze, fontStyle: FontStyle.italic),
+                style: TextStyle(color: AppColors.bronze, fontStyle: FontStyle.italic),
               ),
             ],
             const SizedBox(height: 12),

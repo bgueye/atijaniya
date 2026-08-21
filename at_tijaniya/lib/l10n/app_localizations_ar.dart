@@ -2197,6 +2197,16 @@ class AppLocalizationsAr extends AppLocalizations {
       'تطبيق التجانية يبقى مجانيًا بفضلكم.';
 
   @override
+  String get settingsAccessibilitySection => 'إمكانية الوصول';
+
+  @override
+  String get settingsHighContrastTitle => 'تباين معزز';
+
+  @override
+  String get settingsHighContrastSubtitle =>
+      'نص وحدود أكثر وضوحًا، أسهل للقراءة.';
+
+  @override
   String get settingsAboutSection => 'حول التطبيق';
 
   @override

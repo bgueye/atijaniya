@@ -100,7 +100,7 @@ class _StartLiveStreamScreenState extends ConsumerState<StartLiveStreamScreen> {
               const SizedBox(height: 8),
               Text(l10n.khadaraStartLiveBody,
                   style:
-                      const TextStyle(color: AppColors.bronze, fontSize: 13)),
+                      TextStyle(color: AppColors.bronze, fontSize: 13)),
               const SizedBox(height: 20),
               _SourceTile(
                 label: l10n.khadaraSourceYoutube,
@@ -186,7 +186,7 @@ class _SourceTile extends StatelessWidget {
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(12),
           side: selected
-              ? const BorderSide(color: AppColors.emerald, width: 2)
+              ? BorderSide(color: AppColors.emerald, width: 2)
               : BorderSide.none,
         ),
         child: ListTile(
@@ -197,7 +197,7 @@ class _SourceTile extends StatelessWidget {
               ? Text(subtitle!, style: const TextStyle(fontSize: 12))
               : null,
           trailing: selected
-              ? const Icon(Icons.check_circle, color: AppColors.emerald)
+              ? Icon(Icons.check_circle, color: AppColors.emerald)
               : null,
           onTap: onTap,
         ),

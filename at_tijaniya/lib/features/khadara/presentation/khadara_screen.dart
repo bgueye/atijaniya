@@ -54,7 +54,7 @@ class KhadaraScreen extends StatelessWidget {
                 ),
               ),
               IconButton(
-                icon: const Icon(Icons.help_outline, color: AppColors.bronze),
+                icon: Icon(Icons.help_outline, color: AppColors.bronze),
                 tooltip: l10n.khadaraUnderstandingTooltip,
                 onPressed: () => Navigator.of(context).push(
                   MaterialPageRoute(builder: (_) => const KhadaraUnderstandingScreen()),
@@ -127,7 +127,7 @@ class _EventsTab extends ConsumerWidget {
                   ? '${formatKhadaraDateTime(event.startsAt)} · ${event.zawiyaName}'
                   : formatKhadaraDateTime(event.startsAt),
             ),
-            trailing: const Icon(Icons.chevron_right, color: AppColors.bronze),
+            trailing: Icon(Icons.chevron_right, color: AppColors.bronze),
             onTap: () => Navigator.of(context).push(
               MaterialPageRoute(builder: (_) => EventDetailScreen(event: event)),
             ),
@@ -165,12 +165,12 @@ class _ZawiyasTab extends ConsumerWidget {
         padding: const EdgeInsets.fromLTRB(16, 16, 16, 88),
         itemBuilder: (context, zawiya) => Card(
           child: ListTile(
-            leading: const Icon(Icons.mosque_outlined, color: AppColors.emerald),
+            leading: Icon(Icons.mosque_outlined, color: AppColors.emerald),
             title: Text(zawiya.name),
             subtitle: zawiya.addressText != null
                 ? Text(zawiya.addressText!, maxLines: 1, overflow: TextOverflow.ellipsis)
                 : null,
-            trailing: const Icon(Icons.chevron_right, color: AppColors.bronze),
+            trailing: Icon(Icons.chevron_right, color: AppColors.bronze),
             onTap: () => Navigator.of(context).push(
               MaterialPageRoute(builder: (_) => ZawiyaDetailScreen(zawiya: zawiya)),
             ),
@@ -203,7 +203,7 @@ class _LiveTab extends ConsumerWidget {
         Text(l10n.khadaraLiveNowSection, style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 15, color: AppColors.ink)),
         const SizedBox(height: 8),
         liveStreams.when(
-          loading: () => const Center(child: CircularProgressIndicator(color: AppColors.emerald)),
+          loading: () => Center(child: CircularProgressIndicator(color: AppColors.emerald)),
           error: (error, stackTrace) => OutlinedButton(
             onPressed: () => ref.invalidate(allLiveStreamsProvider),
             child: Text(l10n.khadaraRetry),
@@ -211,17 +211,17 @@ class _LiveTab extends ConsumerWidget {
           data: (streams) => streams.isEmpty
               ? Padding(
                   padding: const EdgeInsets.symmetric(vertical: 8),
-                  child: Text(l10n.khadaraNoLiveNow, style: const TextStyle(color: AppColors.bronze)),
+                  child: Text(l10n.khadaraNoLiveNow, style: TextStyle(color: AppColors.bronze)),
                 )
               : Column(
                   children: streams
                       .map(
                         (stream) => Card(
                           child: ListTile(
-                            leading: const Icon(Icons.podcasts, color: AppColors.emerald),
+                            leading: Icon(Icons.podcasts, color: AppColors.emerald),
                             title: Text(stream.displayTitle(l10n.khadaraLiveTab)),
                             subtitle: Text(l10n.khadaraLiveBadge),
-                            trailing: const Icon(Icons.chevron_right, color: AppColors.bronze),
+                            trailing: Icon(Icons.chevron_right, color: AppColors.bronze),
                             onTap: () => Navigator.of(context).push(
                               MaterialPageRoute(builder: (_) => LiveStreamScreen(stream: stream)),
                             ),
@@ -235,7 +235,7 @@ class _LiveTab extends ConsumerWidget {
         Text(l10n.khadaraReplaysSection, style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 15, color: AppColors.ink)),
         const SizedBox(height: 8),
         replays.when(
-          loading: () => const Center(child: CircularProgressIndicator(color: AppColors.emerald)),
+          loading: () => Center(child: CircularProgressIndicator(color: AppColors.emerald)),
           error: (error, stackTrace) => OutlinedButton(
             onPressed: () => ref.invalidate(streamReplaysProvider),
             child: Text(l10n.khadaraRetry),
@@ -243,16 +243,16 @@ class _LiveTab extends ConsumerWidget {
           data: (list) => list.isEmpty
               ? Padding(
                   padding: const EdgeInsets.symmetric(vertical: 8),
-                  child: Text(l10n.khadaraNoReplays, style: const TextStyle(color: AppColors.bronze)),
+                  child: Text(l10n.khadaraNoReplays, style: TextStyle(color: AppColors.bronze)),
                 )
               : Column(
                   children: list
                       .map(
                         (replay) => Card(
                           child: ListTile(
-                            leading: const Icon(Icons.play_circle_outline, color: AppColors.emerald),
+                            leading: Icon(Icons.play_circle_outline, color: AppColors.emerald),
                             title: Text(replay.displayTitle(l10n.khadaraLiveTab)),
-                            trailing: const Icon(Icons.open_in_new, color: AppColors.bronze),
+                            trailing: Icon(Icons.open_in_new, color: AppColors.bronze),
                             onTap: () async {
                               final uri = Uri.tryParse(replay.videoUrl);
                               final launched = uri != null && await launchUrl(uri, mode: LaunchMode.externalApplication);
@@ -297,16 +297,16 @@ class _AsyncSection<T> extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     return value.when(
-      loading: () => const Center(child: CircularProgressIndicator(color: AppColors.emerald)),
+      loading: () => Center(child: CircularProgressIndicator(color: AppColors.emerald)),
       error: (error, stackTrace) => Center(
         child: Padding(
           padding: const EdgeInsets.all(24),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              const Icon(Icons.wifi_off, color: AppColors.bronze, size: 32),
+              Icon(Icons.wifi_off, color: AppColors.bronze, size: 32),
               const SizedBox(height: 12),
-              Text(l10n.khadaraLoadError, textAlign: TextAlign.center, style: const TextStyle(color: AppColors.bronze)),
+              Text(l10n.khadaraLoadError, textAlign: TextAlign.center, style: TextStyle(color: AppColors.bronze)),
               const SizedBox(height: 12),
               OutlinedButton(onPressed: onRetry, child: Text(l10n.khadaraRetry)),
             ],
@@ -317,7 +317,7 @@ class _AsyncSection<T> extends StatelessWidget {
           ? Center(
               child: Padding(
                 padding: const EdgeInsets.all(24),
-                child: Text(emptyMessage, textAlign: TextAlign.center, style: const TextStyle(color: AppColors.bronze)),
+                child: Text(emptyMessage, textAlign: TextAlign.center, style: TextStyle(color: AppColors.bronze)),
               ),
             )
           : ListView.builder(

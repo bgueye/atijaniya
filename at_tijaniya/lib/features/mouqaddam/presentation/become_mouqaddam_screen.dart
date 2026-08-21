@@ -28,7 +28,7 @@ class BecomeMouqaddamScreen extends ConsumerWidget {
       // masqué sous la barre de navigation Android (3 boutons).
       body: SafeArea(
         child: requestAsync.when(
-          loading: () => const Center(
+          loading: () => Center(
               child: CircularProgressIndicator(color: AppColors.emerald)),
           error: (error, stackTrace) => Center(
             child: Padding(
@@ -36,11 +36,11 @@ class BecomeMouqaddamScreen extends ConsumerWidget {
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  const Icon(Icons.wifi_off, color: AppColors.bronze, size: 32),
+                  Icon(Icons.wifi_off, color: AppColors.bronze, size: 32),
                   const SizedBox(height: 12),
                   Text(l10n.mouqaddamLoadError,
                       textAlign: TextAlign.center,
-                      style: const TextStyle(color: AppColors.bronze)),
+                      style: TextStyle(color: AppColors.bronze)),
                   const SizedBox(height: 12),
                   OutlinedButton(
                     onPressed: () =>
@@ -118,7 +118,7 @@ class _PendingRequestView extends ConsumerWidget {
                 children: [
                   Row(
                     children: [
-                      const Icon(Icons.hourglass_top_outlined,
+                      Icon(Icons.hourglass_top_outlined,
                           color: AppColors.gold),
                       const SizedBox(width: 12),
                       Text(l10n.mouqaddamPendingTitle,
@@ -127,14 +127,14 @@ class _PendingRequestView extends ConsumerWidget {
                   ),
                   const SizedBox(height: 16),
                   Text(l10n.mouqaddamPendingSponsorLabel,
-                      style: const TextStyle(
+                      style: TextStyle(
                           color: AppColors.bronze, fontSize: 13)),
                   Text(request.sponsorName ?? '—',
                       style: const TextStyle(fontSize: 16)),
                   if (request.ijazaYear != null) ...[
                     const SizedBox(height: 12),
                     Text(l10n.mouqaddamYearFieldLabel,
-                        style: const TextStyle(
+                        style: TextStyle(
                             color: AppColors.bronze, fontSize: 13)),
                     Text('${request.ijazaYear}',
                         style: const TextStyle(fontSize: 16)),
@@ -228,7 +228,7 @@ class _RequestFormState extends ConsumerState<_RequestForm> {
                 padding: const EdgeInsets.all(16),
                 child: Row(
                   children: [
-                    const Icon(Icons.info_outline, color: AppColors.bronze),
+                    Icon(Icons.info_outline, color: AppColors.bronze),
                     const SizedBox(width: 12),
                     Expanded(
                         child: Text(l10n.mouqaddamIntro,
@@ -246,7 +246,7 @@ class _RequestFormState extends ConsumerState<_RequestForm> {
             ],
             const SizedBox(height: 24),
             Text(l10n.mouqaddamSelectedSponsorLabel,
-                style: const TextStyle(color: AppColors.bronze, fontSize: 13)),
+                style: TextStyle(color: AppColors.bronze, fontSize: 13)),
             const SizedBox(height: 4),
             Text(
               _selectedSponsor?.displayName ?? l10n.mouqaddamNoSponsorChosen,

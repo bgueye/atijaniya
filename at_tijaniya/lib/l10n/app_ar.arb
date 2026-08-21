@@ -757,6 +757,9 @@
   "settingsPrivacyTileSubtitle": "ظهور سلسلتك الروحية وحالتك كمقدَّم، ومن يمكنه التواصل معك",
   "settingsDonationSection": "التبرع",
   "settingsDonationTileSubtitle": "تطبيق التجانية يبقى مجانيًا بفضلكم.",
+  "settingsAccessibilitySection": "إمكانية الوصول",
+  "settingsHighContrastTitle": "تباين معزز",
+  "settingsHighContrastSubtitle": "نص وحدود أكثر وضوحًا، أسهل للقراءة.",
   "settingsAboutSection": "حول التطبيق",
   "aboutVersionLabel": "الإصدار",
 

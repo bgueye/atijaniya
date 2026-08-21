@@ -81,7 +81,7 @@ class _SearchSponsorScreenState extends ConsumerState<SearchSponsorScreen> {
 
   Widget _buildBody(AppLocalizations l10n) {
     if (_loading) {
-      return const Center(child: CircularProgressIndicator(color: AppColors.emerald));
+      return Center(child: CircularProgressIndicator(color: AppColors.emerald));
     }
     if (_hasError) {
       return Center(
@@ -90,9 +90,9 @@ class _SearchSponsorScreenState extends ConsumerState<SearchSponsorScreen> {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              const Icon(Icons.wifi_off, color: AppColors.bronze, size: 32),
+              Icon(Icons.wifi_off, color: AppColors.bronze, size: 32),
               const SizedBox(height: 12),
-              Text(l10n.mouqaddamSearchLoadError, textAlign: TextAlign.center, style: const TextStyle(color: AppColors.bronze)),
+              Text(l10n.mouqaddamSearchLoadError, textAlign: TextAlign.center, style: TextStyle(color: AppColors.bronze)),
               const SizedBox(height: 12),
               OutlinedButton(onPressed: _search, child: Text(l10n.mouqaddamRetry)),
             ],
@@ -107,7 +107,7 @@ class _SearchSponsorScreenState extends ConsumerState<SearchSponsorScreen> {
       return Center(
         child: Padding(
           padding: const EdgeInsets.all(24),
-          child: Text(message, textAlign: TextAlign.center, style: const TextStyle(color: AppColors.bronze)),
+          child: Text(message, textAlign: TextAlign.center, style: TextStyle(color: AppColors.bronze)),
         ),
       );
     }
@@ -118,7 +118,7 @@ class _SearchSponsorScreenState extends ConsumerState<SearchSponsorScreen> {
       itemBuilder: (context, i) {
         final sponsor = results[i];
         return ListTile(
-          leading: const CircleAvatar(
+          leading: CircleAvatar(
             backgroundColor: AppColors.emeraldSoft,
             child: Icon(Icons.person_outline, color: AppColors.emerald),
           ),

@@ -110,7 +110,7 @@ class _EditProfileFormState extends ConsumerState<_EditProfileForm> {
               const SizedBox(height: 16),
               zawiyas.when(
                 loading: () =>
-                    const LinearProgressIndicator(color: AppColors.emerald),
+                    LinearProgressIndicator(color: AppColors.emerald),
                 error: (error, stackTrace) => const SizedBox.shrink(),
                 data: (list) => DropdownButtonFormField<String?>(
                   initialValue: _zawiyaId,

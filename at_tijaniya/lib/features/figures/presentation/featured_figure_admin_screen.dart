@@ -95,9 +95,9 @@ class _FeaturedFigureAdminScreenState extends ConsumerState<FeaturedFigureAdminS
       appBar: AppBar(title: Text(l10n.featuredFigureAdminTitle)),
       body: SafeArea(
         child: figuresAsync.when(
-          loading: () => const Center(child: CircularProgressIndicator(color: AppColors.emerald)),
+          loading: () => Center(child: CircularProgressIndicator(color: AppColors.emerald)),
           error: (error, stackTrace) => Center(
-            child: Text(l10n.figuresLoadError, style: const TextStyle(color: AppColors.bronze)),
+            child: Text(l10n.figuresLoadError, style: TextStyle(color: AppColors.bronze)),
           ),
           data: (figures) {
             final eligible = eligibleForRotation(figures);
@@ -115,21 +115,37 @@ class _FeaturedFigureAdminScreenState extends ConsumerState<FeaturedFigureAdminS
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  Text(l10n.featuredFigureAdminIntro, style: const TextStyle(color: AppColors.bronze, fontSize: 13)),
+                  Text(l10n.featuredFigureAdminIntro, style: TextStyle(color: AppColors.bronze, fontSize: 13)),
                   const SizedBox(height: 20),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      IconButton(onPressed: () => _changeWeek(-1), icon: const Icon(Icons.chevron_left)),
-                      Text(_weekLabel(), style: const TextStyle(fontWeight: FontWeight.w600)),
-                      IconButton(onPressed: () => _changeWeek(1), icon: const Icon(Icons.chevron_right)),
-                    ],
-                  ),
+                  Builder(builder: (context) {
+                    // Transform.flip sur les deux glyphes : Row inverse déjà
+                    // l'ordre physique des boutons selon la locale (le
+                    // premier enfant reste "précédent" côté début de
+                    // lecture), mais `Icon` ne retourne pas le glyphe lui-même
+                    // — sans ça chaque chevron resterait figé et pointerait
+                    // dans le mauvais sens une fois sa position inversée en
+                    // arabe.
+                    final isRtl = Directionality.of(context) == TextDirection.rtl;
+                    return Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        IconButton(
+                          onPressed: () => _changeWeek(-1),
+                          icon: Transform.flip(flipX: isRtl, child: const Icon(Icons.chevron_left)),
+                        ),
+                        Text(_weekLabel(), style: const TextStyle(fontWeight: FontWeight.w600)),
+                        IconButton(
+                          onPressed: () => _changeWeek(1),
+                          icon: Transform.flip(flipX: isRtl, child: const Icon(Icons.chevron_right)),
+                        ),
+                      ],
+                    );
+                  }),
                   const SizedBox(height: 16),
                   if (pinnedFigure != null)
                     Card(
                       child: ListTile(
-                        leading: const Icon(Icons.push_pin, color: AppColors.gold),
+                        leading: Icon(Icons.push_pin, color: AppColors.gold),
                         title: Text(pinnedFigure.nameFrench),
                         subtitle: Text(l10n.featuredFigureAdminPinnedLabel),
                         trailing: TextButton(
@@ -139,10 +155,10 @@ class _FeaturedFigureAdminScreenState extends ConsumerState<FeaturedFigureAdminS
                       ),
                     )
                   else
-                    Text(l10n.featuredFigureAdminNoPin, style: const TextStyle(color: AppColors.bronze, fontSize: 13)),
+                    Text(l10n.featuredFigureAdminNoPin, style: TextStyle(color: AppColors.bronze, fontSize: 13)),
                   const SizedBox(height: 20),
                   if (eligible.isEmpty)
-                    Text(l10n.featuredFigureAdminNoEligible, style: const TextStyle(color: AppColors.bronze))
+                    Text(l10n.featuredFigureAdminNoEligible, style: TextStyle(color: AppColors.bronze))
                   else ...[
                     DropdownButtonFormField<String>(
                       initialValue: _selectedFigureId,

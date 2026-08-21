@@ -52,9 +52,9 @@ class _ConversationScreenState extends ConsumerState<ConversationScreen> {
         children: [
           Expanded(
             child: messages.when(
-              loading: () => const Center(child: CircularProgressIndicator(color: AppColors.emerald)),
+              loading: () => Center(child: CircularProgressIndicator(color: AppColors.emerald)),
               error: (error, stackTrace) => Center(
-                child: Text(l10n.communityConversationsLoadError, style: const TextStyle(color: AppColors.bronze)),
+                child: Text(l10n.communityConversationsLoadError, style: TextStyle(color: AppColors.bronze)),
               ),
               data: (list) => list.isEmpty
                   ? Center(
@@ -63,7 +63,7 @@ class _ConversationScreenState extends ConsumerState<ConversationScreen> {
                         child: Text(
                           l10n.communityConversationsNoMessages,
                           textAlign: TextAlign.center,
-                          style: const TextStyle(color: AppColors.bronze),
+                          style: TextStyle(color: AppColors.bronze),
                         ),
                       ),
                     )
@@ -87,7 +87,7 @@ class _ConversationScreenState extends ConsumerState<ConversationScreen> {
                     ),
                   ),
                   IconButton(
-                    icon: const Icon(Icons.send, color: AppColors.emerald),
+                    icon: Icon(Icons.send, color: AppColors.emerald),
                     onPressed: _send,
                   ),
                 ],
@@ -126,7 +126,7 @@ class _MessageBubble extends StatelessWidget {
             const SizedBox(height: 4),
             Text(
               formatCommunityDateTime(message.sentAt),
-              style: const TextStyle(color: AppColors.bronze, fontSize: 10),
+              style: TextStyle(color: AppColors.bronze, fontSize: 10),
             ),
           ],
         ),

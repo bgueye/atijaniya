@@ -85,7 +85,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                   maintainState: true,
                   child: TextButton(
                     onPressed: _finish,
-                    child: Text(l10n.onboardingSkip, style: const TextStyle(color: AppColors.bronze)),
+                    child: Text(l10n.onboardingSkip, style: TextStyle(color: AppColors.bronze)),
                   ),
                 ),
               ),
@@ -148,7 +148,7 @@ class _OnboardingSlide extends StatelessWidget {
           Text(
             body,
             textAlign: TextAlign.center,
-            style: const TextStyle(color: AppColors.bronze, fontSize: 16, height: 1.4),
+            style: TextStyle(color: AppColors.bronze, fontSize: 16, height: 1.4),
           ),
         ],
       ),

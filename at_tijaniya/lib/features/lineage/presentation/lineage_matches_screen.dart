@@ -38,7 +38,7 @@ class LineageMatchesScreen extends ConsumerWidget {
     return Scaffold(
       appBar: AppBar(title: Text(l10n.lineageMatchesTitle)),
       body: lineageAsync.when(
-        loading: () => const Center(child: CircularProgressIndicator(color: AppColors.emerald)),
+        loading: () => Center(child: CircularProgressIndicator(color: AppColors.emerald)),
         error: (error, stackTrace) => _ErrorState(
           message: l10n.lineageMatchesLoadError,
           onRetry: () => ref.invalidate(myLineageProvider),
@@ -54,7 +54,7 @@ class LineageMatchesScreen extends ConsumerWidget {
             );
           }
           return privacyAsync.when(
-            loading: () => const Center(child: CircularProgressIndicator(color: AppColors.emerald)),
+            loading: () => Center(child: CircularProgressIndicator(color: AppColors.emerald)),
             error: (error, stackTrace) => _ErrorState(
               message: l10n.lineageMatchesLoadError,
               onRetry: () => ref.invalidate(myPrivacySettingsProvider),
@@ -91,7 +91,7 @@ class _MatchesBody extends ConsumerWidget {
     final currentUserId = ref.watch(currentUserIdProvider);
 
     if (matchesAsync.isLoading || requestsAsync.isLoading) {
-      return const Center(child: CircularProgressIndicator(color: AppColors.emerald));
+      return Center(child: CircularProgressIndicator(color: AppColors.emerald));
     }
     if (matchesAsync.hasError || requestsAsync.hasError) {
       return _ErrorState(
@@ -178,7 +178,7 @@ class _ReceivedRequestCard extends ConsumerWidget {
           children: [
             Row(
               children: [
-                const CircleAvatar(
+                CircleAvatar(
                   backgroundColor: AppColors.emeraldSoft,
                   child: Icon(Icons.person_outline, color: AppColors.emerald),
                 ),
@@ -187,7 +187,7 @@ class _ReceivedRequestCard extends ConsumerWidget {
                   child: Text(request.otherUserName ?? '—', style: const TextStyle(fontWeight: FontWeight.w500, fontSize: 16)),
                 ),
                 IconButton(
-                  icon: const Icon(Icons.flag_outlined, size: 20, color: AppColors.bronze),
+                  icon: Icon(Icons.flag_outlined, size: 20, color: AppColors.bronze),
                   tooltip: l10n.moderationReportAction,
                   onPressed: () => showReportContentDialog(
                     context,
@@ -264,7 +264,7 @@ class _MatchCard extends ConsumerWidget {
         leading: CircleAvatar(
           backgroundColor: AppColors.emeraldSoft,
           backgroundImage: match.avatarUrl != null ? NetworkImage(match.avatarUrl!) : null,
-          child: match.avatarUrl == null ? const Icon(Icons.person_outline, color: AppColors.emerald) : null,
+          child: match.avatarUrl == null ? Icon(Icons.person_outline, color: AppColors.emerald) : null,
         ),
         title: Text(match.displayName, style: const TextStyle(fontWeight: FontWeight.w500)),
         subtitle: match.transmissionYear != null ? Text('${match.transmissionYear}') : null,
@@ -273,7 +273,7 @@ class _MatchCard extends ConsumerWidget {
           children: [
             if (existingRequest != null)
               IconButton(
-                icon: const Icon(Icons.flag_outlined, size: 20, color: AppColors.bronze),
+                icon: Icon(Icons.flag_outlined, size: 20, color: AppColors.bronze),
                 tooltip: l10n.moderationReportAction,
                 onPressed: () => showReportContentDialog(
                   context,
@@ -283,7 +283,7 @@ class _MatchCard extends ConsumerWidget {
                 ),
               ),
             if (statusLabel != null)
-              Text(statusLabel, style: const TextStyle(color: AppColors.bronze, fontSize: 13))
+              Text(statusLabel, style: TextStyle(color: AppColors.bronze, fontSize: 13))
             else
               OutlinedButton(
                 onPressed: () => _sendRequest(context, ref, l10n),
@@ -322,7 +322,7 @@ class _EmptyState extends StatelessWidget {
             const SizedBox(height: 20),
             Text(title, style: Theme.of(context).textTheme.headlineSmall, textAlign: TextAlign.center),
             const SizedBox(height: 8),
-            Text(body, textAlign: TextAlign.center, style: const TextStyle(color: AppColors.bronze)),
+            Text(body, textAlign: TextAlign.center, style: TextStyle(color: AppColors.bronze)),
             if (ctaLabel != null) ...[
               const SizedBox(height: 24),
               OutlinedButton(onPressed: onTap, child: Text(ctaLabel!)),
@@ -348,9 +348,9 @@ class _ErrorState extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Icon(Icons.wifi_off, color: AppColors.bronze, size: 32),
+            Icon(Icons.wifi_off, color: AppColors.bronze, size: 32),
             const SizedBox(height: 12),
-            Text(message, textAlign: TextAlign.center, style: const TextStyle(color: AppColors.bronze)),
+            Text(message, textAlign: TextAlign.center, style: TextStyle(color: AppColors.bronze)),
             const SizedBox(height: 12),
             OutlinedButton(onPressed: onRetry, child: Text(AppLocalizations.of(context)!.lineageMatchesRetry)),
           ],

@@ -48,7 +48,7 @@ class FreeWirdScreen extends ConsumerWidget {
         ),
         body: SafeArea(
           child: state.loading
-              ? const Center(child: CircularProgressIndicator(color: AppColors.gold))
+              ? Center(child: CircularProgressIndicator(color: AppColors.gold))
               : state.completed
                   ? _CompletedView(l10n: l10n, controller: controller)
                   : state.session == null
@@ -113,9 +113,9 @@ class _SetupFormState extends State<_SetupForm> {
             style: const TextStyle(color: AppColors.parchment),
             decoration: InputDecoration(
               labelText: l10n.wirdFreeLabelFieldLabel,
-              labelStyle: const TextStyle(color: AppColors.bronze),
-              enabledBorder: const UnderlineInputBorder(borderSide: BorderSide(color: AppColors.bronze)),
-              focusedBorder: const UnderlineInputBorder(borderSide: BorderSide(color: AppColors.gold)),
+              labelStyle: TextStyle(color: AppColors.bronze),
+              enabledBorder: UnderlineInputBorder(borderSide: BorderSide(color: AppColors.bronze)),
+              focusedBorder: UnderlineInputBorder(borderSide: BorderSide(color: AppColors.gold)),
             ),
           ),
           const SizedBox(height: 24),
@@ -142,9 +142,9 @@ class _SetupFormState extends State<_SetupForm> {
             onChanged: (_) => setState(() => _error = null),
             decoration: InputDecoration(
               hintText: '100',
-              hintStyle: const TextStyle(color: AppColors.bronze),
-              enabledBorder: const UnderlineInputBorder(borderSide: BorderSide(color: AppColors.bronze)),
-              focusedBorder: const UnderlineInputBorder(borderSide: BorderSide(color: AppColors.gold)),
+              hintStyle: TextStyle(color: AppColors.bronze),
+              enabledBorder: UnderlineInputBorder(borderSide: BorderSide(color: AppColors.bronze)),
+              focusedBorder: UnderlineInputBorder(borderSide: BorderSide(color: AppColors.gold)),
               errorText: _error,
             ),
           ),
@@ -309,12 +309,12 @@ class _ManualCounter extends StatelessWidget {
                 '$count',
                 style: const TextStyle(color: AppColors.parchment, fontSize: 56, fontWeight: FontWeight.bold),
               ),
-              Text('/ $target', style: const TextStyle(color: AppColors.bronze, fontSize: 18)),
+              Text('/ $target', style: TextStyle(color: AppColors.bronze, fontSize: 18)),
               const SizedBox(height: 8),
               if (complete)
-                const Icon(Icons.check_circle, color: AppColors.gold, size: 26)
+                Icon(Icons.check_circle, color: AppColors.gold, size: 26)
               else
-                Text(l10n.wirdFreeTapToCount, style: const TextStyle(color: AppColors.bronze, fontSize: 12)),
+                Text(l10n.wirdFreeTapToCount, style: TextStyle(color: AppColors.bronze, fontSize: 12)),
             ],
           ),
         ),
@@ -357,7 +357,7 @@ class _VoiceCounter extends StatelessWidget {
                 '$count',
                 style: const TextStyle(color: AppColors.parchment, fontSize: 48, fontWeight: FontWeight.bold),
               ),
-              Text('/ $target', style: const TextStyle(color: AppColors.bronze, fontSize: 16)),
+              Text('/ $target', style: TextStyle(color: AppColors.bronze, fontSize: 16)),
             ],
           ),
         ),
@@ -368,14 +368,14 @@ class _VoiceCounter extends StatelessWidget {
             child: Text(
               state.voiceError ?? l10n.wirdFreeVoiceUnavailable,
               textAlign: TextAlign.center,
-              style: const TextStyle(color: AppColors.gold, fontSize: 13),
+              style: TextStyle(color: AppColors.gold, fontSize: 13),
             ),
           )
         else
           Text(
             state.isListening ? l10n.wirdFreeListeningActive : l10n.wirdFreeListeningPaused,
             textAlign: TextAlign.center,
-            style: const TextStyle(color: AppColors.bronze, fontSize: 13),
+            style: TextStyle(color: AppColors.bronze, fontSize: 13),
           ),
         const SizedBox(height: 12),
         if (state.voiceSupported && !complete)
@@ -403,7 +403,7 @@ class _CompletedView extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Icon(Icons.check_circle, color: AppColors.gold, size: 72),
+            Icon(Icons.check_circle, color: AppColors.gold, size: 72),
             const SizedBox(height: 16),
             Text(
               l10n.wirdFreeCompletedTitle,
@@ -413,7 +413,7 @@ class _CompletedView extends StatelessWidget {
             Text(
               l10n.wirdFreeCompletedBody,
               textAlign: TextAlign.center,
-              style: const TextStyle(color: AppColors.bronze),
+              style: TextStyle(color: AppColors.bronze),
             ),
             const SizedBox(height: 24),
             ElevatedButton(
