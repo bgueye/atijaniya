@@ -153,12 +153,12 @@ plus haut).
 **Groupes et messagerie privée** (`lib/features/communaute/` :
 `groups_repository.dart`, `messages_repository.dart`, `group_detail_screen.dart`,
 `conversation_screen.dart`/`conversations_screen.dart`) : fonctionnels et
-utilisés en production (le direct rattaché à un groupe s'appuie dessus),
-mais leur construction n'a, à la relecture, jamais eu sa propre entrée
-narrative dans le journal — écart de documentation constaté en réorganisant
-ce fichier le 2026-08-14, pas une lacune fonctionnelle connue ; la
-construction initiale reste à documenter rétroactivement dans
-`docs/09-journal-implementation-frontend.md`. **CRUD créer/modifier/
+utilisés en production (le direct rattaché à un groupe s'appuie dessus).
+Écart de documentation constaté en réorganisant ce fichier le 2026-08-14
+(construction jamais dotée de sa propre entrée narrative dans le journal,
+pas une lacune fonctionnelle) : reconstitué rétroactivement le 2026-08-21
+dans `docs/09-journal-implementation-frontend.md` à partir des deux commits
+d'origine du 2026-08-07. **CRUD créer/modifier/
 supprimer groupe et messages de discussion depuis le 2026-08-20**
 (créateur du groupe ou admin pour le groupe, auteur seul pour un message,
 sans exception admin) ainsi qu'un écran "Directs passés" par groupe

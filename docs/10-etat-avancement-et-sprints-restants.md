@@ -31,10 +31,9 @@ sont livrés :
   validé sur téléphone Android le jour même ; étendu depuis (voir "Depuis la dernière
   analyse" ci-dessous) avec zawiyas rattachées et chaîne de khalifas.
 - Groupes de discussion et messagerie privée — fonctionnels en production, désormais avec
-  CRUD complet (créer/modifier/supprimer groupe et messages, voir ci-dessous) ; une dette
-  de documentation subsiste (la construction initiale n'a toujours pas d'entrée narrative
-  rétroactive dans le journal — l'incrément du 20/08 documente seulement le CRUD ajouté ce
-  jour-là, pas l'existant).
+  CRUD complet (créer/modifier/supprimer groupe et messages, voir ci-dessous). Dette de
+  documentation résolue le 21/08 (Sprint 1, voir ci-dessous) : la construction initiale a
+  désormais son entrée rétroactive dans le journal.
 
 **P3 (consolidation avant lancement) : Sprint 2 (modération a posteriori) livré et
 validé** — signalement d'un direct Khadara ou d'une demande de mise en relation par
@@ -110,9 +109,12 @@ datées du 20 et du 21/08).
 
 ## Plan des sprints restants
 
-**Sprint 1 — Nettoyage restant (rapide)**
-- Combler la dette de documentation Groupes/messagerie dans le journal — toujours ouvert :
-  le CRUD du 20/08 a documenté l'incrément du jour, pas la construction initiale.
+**Sprint 1 — Nettoyage restant (rapide) — livré (2026-08-21)**
+- Combler la dette de documentation Groupes/messagerie dans le journal. Fait : entrée
+  rétroactive ajoutée dans `docs/09-journal-implementation-frontend.md` ("Groupes de
+  discussion et messagerie privée — construction initiale (2026-08-07)"), reconstituée à
+  partir des deux commits d'origine (`7917310`, `68242b1`) plutôt que d'une relecture de
+  code a posteriori.
 
 **Sprint 2 — Modération a posteriori (P3) — livré et validé (2026-08-18)**
 - Signalement d'un direct Khadara et d'une mise en relation par lignée spirituelle. Fait.

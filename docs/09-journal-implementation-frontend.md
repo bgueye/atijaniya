@@ -1072,6 +1072,60 @@ arabe (RTL) : 3ᵉ onglet "البث المباشر" bien positionné et traduit,
 après coup (cascade sur `live_chat_messages` confirmée par `execute_sql`,
 `live_streams` revenu à 0 ligne).
 
+## Groupes de discussion et messagerie privée — construction initiale (2026-08-07)
+
+Note de traçabilité (documenté rétroactivement le 2026-08-21, Sprint 1 de
+`docs/10-etat-avancement-et-sprints-restants.md`) : ce module n'avait jamais
+eu sa propre entrée narrative dans le journal — écart constaté en
+réorganisant `CLAUDE.md` le 2026-08-14, alors que les deux fonctionnalités
+sont en production depuis le 2026-08-07 (voir aussi le CRUD groupes/messages
+du 2026-08-20 plus loin, qui referme cette dette pour l'incrément du jour
+sans couvrir la construction d'origine). Reconstitué à partir des messages
+des deux commits d'origine (`7917310`, `68242b1`), pas d'une relecture de
+code a posteriori — le niveau de détail reflète ce qui était su au moment de
+la construction, pas une redécouverte.
+
+**Groupes (`7917310`)** — L'écran Communauté n'affichait jusque-là que le
+fil d'actualité. Ajout des Groupes (`docs/03-architecture-ecrans.md` : "Liste
+par zawiya/région + fil de discussion"), sur les tables Supabase
+`groups`/`group_memberships`/`group_posts` — déjà provisionnées en base avec
+RLS mais jusqu'ici inutilisées côté app. `communaute_screen.dart` passe à une
+structure à onglets Fil/Groupes (même patron que `KhadaraScreen`). Nouveau
+module `group_models.dart`/`groups_repository.dart`/`groups_providers.dart`/
+`group_detail_screen.dart`. N'importe quel disciple connecté peut créer un
+groupe (auto-inscrit à la création) et rejoindre/quitter les groupes
+existants ; les discussions d'un groupe sont réservées à ses membres par RLS
+(`group_posts_members_read`) — un non-membre voit un état explicite
+"rejoignez pour voir", jamais une liste vide trompeuse. Validé en conditions
+réelles sur émulateur Android contre le projet Supabase live (création,
+auto-inscription, envoi de message, sortie du groupe, RTL arabe) puis
+données de test nettoyées en base.
+
+**Messagerie privée (`68242b1`)** — Migration RLS
+(`conversations`/`conversation_participants`/`messages`) : écriture
+restreinte aux disciples qui partagent au moins un groupe, faute d'annuaire
+public de disciples — l'existence même de Groupes (livré le jour même,
+ci-dessus) est ce qui rend cette restriction viable plutôt que bloquante.
+Une policy auto-référencée a d'abord provoqué une récursion infinie Postgres
+(jamais exercée avant faute de code client interrogeant ces tables) —
+corrigée avec une fonction `SECURITY DEFINER`, même patron que `is_admin()`.
+L'id d'une nouvelle conversation est généré côté client (nouvelle dépendance
+`uuid`) pour ne jamais avoir à relire la ligne via `RETURNING` avant d'y être
+participant. Nouveau module `communaute/{message_models,messages_repository,
+messages_providers,conversations_screen,conversation_screen}`. Bouton
+"Envoyer un message" sur `post_detail_screen.dart` (post + commentaires),
+affiché seulement si un groupe est réellement partagé avec l'auteur.
+
+**Bug hérité trouvé en testant** : `postgrest-dart` trie par défaut en
+descendant (pas ascendant) — plusieurs écrans déjà livrés en étaient
+affectés sans que ça se voie (peu de données de test) : commentaires,
+discussions de groupe, liste des zawiyas et évènements Khadara. Corrigé
+partout avec `ascending` explicite.
+
+Validé en conditions réelles (deux comptes réels, conversation créée,
+messages dans les deux sens, ordre chronologique revérifié sur Khadara) puis
+données de test nettoyées en base.
+
 Direct rattaché à un groupe (extension de ce qui précède, suite à une
 question exploratoire du porteur de projet sur les onglets Fil/Groupes de
 Communauté). Fil d'actualité écarté (les publications sont asynchrones,
@@ -2374,8 +2428,11 @@ identique à celui déjà validé (même `resolveReport()`, seule la branche
 Point d'entrée de la note "écart de documentation" du 2026-08-14 sur
 `lib/features/communaute/` (groupes/messagerie jamais eu leur propre entrée
 narrative) — cette section ne couvre que l'incrément du jour (CRUD +
-gestion d'erreurs), pas une reconstitution rétroactive complète de la
-construction initiale des groupes/messagerie privée, qui reste à faire.
+gestion d'erreurs). La reconstitution rétroactive de la construction
+initiale des groupes/messagerie privée (2026-08-07) a été faite séparément
+le 2026-08-21 (Sprint 1 de `docs/10-etat-avancement-et-sprints-restants.md`)
+— voir plus haut "Groupes de discussion et messagerie privée — construction
+initiale (2026-08-07)".
 
 Deux migrations additives (`add_groups_owner_column_and_update_delete_policies`,
 `add_group_posts_author_update_delete_policies`) : colonne
