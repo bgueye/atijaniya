@@ -4,7 +4,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../l10n/app_localizations.dart';
+import '../../profil/presentation/profile_providers.dart';
 import '../domain/tariqa_condition_models.dart';
+import 'tariqa_condition_form_screen.dart';
 import 'tariqa_conditions_providers.dart';
 
 /// Conditions de la Tariqa (chouroutes) — les 23 conditions régissant
@@ -24,6 +26,7 @@ class TariqaConditionsScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context)!;
     final conditionsAsync = ref.watch(tariqaConditionsProvider);
+    final isAdmin = ref.watch(isAdminProvider);
 
     return Scaffold(
       appBar: AppBar(title: Text(l10n.tariqaConditionsTitle)),
@@ -58,7 +61,8 @@ class TariqaConditionsScreen extends ConsumerWidget {
               for (final category in TariqaConditionCategory.values) ...[
                 if (conditions.any((c) => c.category == category)) ...[
                   _SectionHeader(title: _categoryLabel(l10n, category)),
-                  for (final condition in conditions.where((c) => c.category == category)) _ConditionTile(condition: condition),
+                  for (final condition in conditions.where((c) => c.category == category))
+                    _ConditionTile(condition: condition, isAdmin: isAdmin),
                   const SizedBox(height: 16),
                 ],
               ],
@@ -129,9 +133,15 @@ class _SectionHeader extends StatelessWidget {
 }
 
 class _ConditionTile extends StatelessWidget {
-  const _ConditionTile({required this.condition});
+  const _ConditionTile({required this.condition, required this.isAdmin});
 
   final TariqaCondition condition;
+
+  /// Affiche l'affordance de correction (icône crayon, tap sur la carte) —
+  /// jamais pour un compte non-admin : la RLS `tariqa_conditions_admin_update`
+  /// bloquerait de toute façon l'écriture, mais on évite de proposer une
+  /// action vouée à échouer.
+  final bool isAdmin;
 
   @override
   Widget build(BuildContext context) {
@@ -153,44 +163,58 @@ class _ConditionTile extends StatelessWidget {
     final topText = showArabicFirst ? arabicText! : frenchText;
     final bottomText = showArabicFirst ? frenchText : arabicText;
 
+    final content = Padding(
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Container(
+                width: 28,
+                height: 28,
+                alignment: Alignment.center,
+                decoration: const BoxDecoration(color: AppColors.goldSoft, shape: BoxShape.circle),
+                child: Text(
+                  '${condition.orderIndex}',
+                  style: const TextStyle(color: AppColors.bronze, fontWeight: FontWeight.w600, fontSize: 13),
+                ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(child: topText),
+              if (isAdmin) ...[
+                const SizedBox(width: 8),
+                Icon(Icons.edit_outlined, size: 18, color: AppColors.bronze.withValues(alpha: 0.6)),
+              ],
+            ],
+          ),
+          if (bottomText != null) ...[
+            const SizedBox(height: 12),
+            bottomText,
+          ],
+          if (condition.sourceNote != null) ...[
+            const SizedBox(height: 8),
+            Text(
+              condition.sourceNote!,
+              style: const TextStyle(color: AppColors.bronze, fontSize: 12, fontStyle: FontStyle.italic),
+            ),
+          ],
+        ],
+      ),
+    );
+
     return Card(
       margin: const EdgeInsets.only(bottom: 8),
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Container(
-                  width: 28,
-                  height: 28,
-                  alignment: Alignment.center,
-                  decoration: const BoxDecoration(color: AppColors.goldSoft, shape: BoxShape.circle),
-                  child: Text(
-                    '${condition.orderIndex}',
-                    style: const TextStyle(color: AppColors.bronze, fontWeight: FontWeight.w600, fontSize: 13),
-                  ),
-                ),
-                const SizedBox(width: 12),
-                Expanded(child: topText),
-              ],
-            ),
-            if (bottomText != null) ...[
-              const SizedBox(height: 12),
-              bottomText,
-            ],
-            if (condition.sourceNote != null) ...[
-              const SizedBox(height: 8),
-              Text(
-                condition.sourceNote!,
-                style: const TextStyle(color: AppColors.bronze, fontSize: 12, fontStyle: FontStyle.italic),
+      child: isAdmin
+          ? InkWell(
+              borderRadius: BorderRadius.circular(16),
+              onTap: () => Navigator.of(context).push(
+                MaterialPageRoute(builder: (_) => TariqaConditionFormScreen(condition: condition)),
               ),
-            ],
-          ],
-        ),
-      ),
+              child: content,
+            )
+          : content,
     );
   }
 }

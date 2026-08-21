@@ -837,8 +837,12 @@ create table public.featured_figures (
 -- reconnues. Contenu validé directement en base par le porteur de projet
 -- (même précédent que la silsila historique, section 6) : les 23 lignes
 -- sont insérées avec content_status='valide' dès la migration d'origine,
--- pas de flux de review admin comme pour `figures` (pas de policy
--- d'écriture cliente exposée ci-dessous, contenu figé une fois validé).
+-- pas de flux de review admin comme pour `figures`. Depuis la migration
+-- add_tariqa_conditions_admin_update_policy (2026-08-21), l'admin peut
+-- corriger le texte d'une condition existante (coquilles, traduction) —
+-- voir `tariqa_conditions_admin_update` plus bas ; toujours aucune policy
+-- insert/delete : le corpus reste figé aux 23 chouroutes officielles
+-- (contrainte `order_index between 1 and 23` unique ci-dessous).
 create table public.tariqa_conditions (
   id uuid primary key default gen_random_uuid(),
   order_index int not null unique check (order_index between 1 and 23),
@@ -1448,11 +1452,16 @@ create policy featured_figures_admin_write on public.featured_figures for insert
 create policy featured_figures_admin_update on public.featured_figures for update using (public.is_admin((select auth.uid())));
 create policy featured_figures_admin_delete on public.featured_figures for delete using (public.is_admin((select auth.uid())));
 
--- Pas de policy d'écriture cliente exposée : contenu validé une fois pour
--- toutes en base par le porteur de projet (voir commentaire de la table,
--- section 6.1), pas de flux de review admin comme pour figures.
+-- Contenu figé une fois validé (voir commentaire de la table, section
+-- 6.1) : pas de flux de review admin comme pour figures, seule une
+-- correction de coquille est possible via la policy update ci-dessous.
 create policy tariqa_conditions_public_read on public.tariqa_conditions for select
   using (content_status = 'valide');
+-- Ajoutée après coup (migration add_tariqa_conditions_admin_update_policy,
+-- 2026-08-21) — pas d'insert/delete : le nombre de conditions doit rester
+-- exactement 23 (order_index between 1 and 23, unique).
+create policy tariqa_conditions_admin_update on public.tariqa_conditions for update
+  using (public.is_admin((select auth.uid())));
 
 -- --- Dons ---
 create policy donations_owner_or_admin_read on public.donations for select

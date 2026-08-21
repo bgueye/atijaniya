@@ -33,8 +33,26 @@ String _camelCase(String snakeCase) {
   return parts.first + parts.skip(1).map((p) => p[0].toUpperCase() + p.substring(1)).join();
 }
 
+/// Inverse de [_categoryFromDb] — utilisé par `TariqaConditionsRepository.
+/// updateCondition` pour reconstruire la valeur `snake_case` attendue par la
+/// contrainte `check` de `tariqa_conditions.category` (`database/schema.sql`).
+String categoryToDb(TariqaConditionCategory category) {
+  final name = category.name;
+  final buffer = StringBuffer();
+  for (var i = 0; i < name.length; i++) {
+    final char = name[i];
+    if (char.toUpperCase() == char && char.toLowerCase() != char) {
+      buffer.write('_${char.toLowerCase()}');
+    } else {
+      buffer.write(char);
+    }
+  }
+  return buffer.toString();
+}
+
 class TariqaCondition {
   const TariqaCondition({
+    required this.id,
     required this.orderIndex,
     required this.category,
     required this.textFr,
@@ -42,6 +60,7 @@ class TariqaCondition {
     this.sourceNote,
   });
 
+  final String id;
   final int orderIndex;
   final TariqaConditionCategory category;
   final String textFr;
@@ -50,6 +69,7 @@ class TariqaCondition {
 
   factory TariqaCondition.fromRow(Map<String, dynamic> row) {
     return TariqaCondition(
+      id: row['id'] as String,
       orderIndex: row['order_index'] as int,
       category: _categoryFromDb(row['category'] as String),
       textFr: row['text_fr'] as String,

@@ -10,6 +10,7 @@ void main() {
   group('TariqaCondition.fromRow', () {
     test('parse une ligne complète', () {
       final condition = TariqaCondition.fromRow({
+        'id': 'condition-1',
         'order_index': 1,
         'category': 'validite_talqin',
         'text_fr': 'Texte français.',
@@ -17,6 +18,7 @@ void main() {
         'source_note': 'Source X',
       });
 
+      expect(condition.id, 'condition-1');
       expect(condition.orderIndex, 1);
       expect(condition.category, TariqaConditionCategory.validiteTalqin);
       expect(condition.textFr, 'Texte français.');
@@ -35,6 +37,7 @@ void main() {
 
       for (final entry in expected.entries) {
         final condition = TariqaCondition.fromRow({
+          'id': 'condition-x',
           'order_index': 1,
           'category': entry.key,
           'text_fr': 'Texte.',
@@ -45,6 +48,7 @@ void main() {
 
     test('texte arabe et source restent nuls quand absents', () {
       final condition = TariqaCondition.fromRow({
+        'id': 'condition-23',
         'order_index': 23,
         'category': 'conditions_complementaires',
         'text_fr': 'Texte.',
@@ -54,6 +58,35 @@ void main() {
 
       expect(condition.textAr, isNull);
       expect(condition.sourceNote, isNull);
+    });
+  });
+
+  group('categoryToDb', () {
+    test('est l\'inverse exact de _categoryFromDb pour les 5 catégories officielles', () {
+      const expected = {
+        TariqaConditionCategory.validiteTalqin: 'validite_talqin',
+        TariqaConditionCategory.compagnonnage: 'compagnonnage',
+        TariqaConditionCategory.conditionsGenerales: 'conditions_generales',
+        TariqaConditionCategory.validiteRecitation: 'validite_recitation',
+        TariqaConditionCategory.conditionsComplementaires: 'conditions_complementaires',
+      };
+
+      for (final entry in expected.entries) {
+        expect(categoryToDb(entry.key), entry.value, reason: 'category "${entry.key}"');
+      }
+    });
+
+    test('round-trip avec _categoryFromDb via fromRow/updateCondition', () {
+      for (final category in TariqaConditionCategory.values) {
+        final dbValue = categoryToDb(category);
+        final condition = TariqaCondition.fromRow({
+          'id': 'condition-roundtrip',
+          'order_index': 1,
+          'category': dbValue,
+          'text_fr': 'Texte.',
+        });
+        expect(condition.category, category, reason: 'round-trip "$dbValue"');
+      }
     });
   });
 }

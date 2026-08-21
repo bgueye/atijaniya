@@ -23,4 +23,33 @@ class TariqaConditionsRepository {
         .order('order_index', ascending: true);
     return rows.map((row) => TariqaCondition.fromRow(row)).toList();
   }
+
+  /// Corrige le texte d'une condition existante — réservé admin par la RLS
+  /// `tariqa_conditions_admin_update` (migration
+  /// add_tariqa_conditions_admin_update_policy, `database/schema.sql`).
+  /// `content_status`/`order_index`/`id` jamais dans le payload : une
+  /// correction de coquille ne dépublie ni ne réordonne jamais une
+  /// condition, même principe que `FiguresRepository.updateFigure`. Pas de
+  /// `createCondition`/`deleteCondition` : le corpus reste figé aux 23
+  /// chouroutes officielles (voir le commentaire de la table).
+  Future<TariqaCondition> updateCondition(
+    String id, {
+    required TariqaConditionCategory category,
+    required String textFr,
+    String? textAr,
+    String? sourceNote,
+  }) async {
+    final row = await SupabaseConfig.client
+        .from('tariqa_conditions')
+        .update({
+          'category': categoryToDb(category),
+          'text_fr': textFr,
+          'text_ar': textAr,
+          'source_note': sourceNote,
+        })
+        .eq('id', id)
+        .select()
+        .single();
+    return TariqaCondition.fromRow(row);
+  }
 }

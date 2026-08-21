@@ -642,6 +642,32 @@ class AppLocalizationsFr extends AppLocalizations {
       'Conditions complémentaires';
 
   @override
+  String get tariqaConditionEditTitle => 'Modifier la condition';
+
+  @override
+  String get tariqaConditionFormCategoryLabel => 'Catégorie';
+
+  @override
+  String get tariqaConditionFormTextFrLabel => 'Texte (français)';
+
+  @override
+  String get tariqaConditionFormTextFrRequired =>
+      'Le texte en français est requis.';
+
+  @override
+  String get tariqaConditionFormTextArLabel => 'Texte (arabe)';
+
+  @override
+  String get tariqaConditionFormSourceNoteLabel => 'Source';
+
+  @override
+  String get tariqaConditionFormSave => 'Enregistrer';
+
+  @override
+  String get tariqaConditionFormSaveError =>
+      'Impossible d\'enregistrer la modification.';
+
+  @override
   String get khadaraEventsTab => 'Évènements';
 
   @override

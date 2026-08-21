@@ -1245,6 +1245,54 @@ abstract class AppLocalizations {
   /// **'Conditions complémentaires'**
   String get tariqaConditionsCategoryConditionsComplementaires;
 
+  /// No description provided for @tariqaConditionEditTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Modifier la condition'**
+  String get tariqaConditionEditTitle;
+
+  /// No description provided for @tariqaConditionFormCategoryLabel.
+  ///
+  /// In fr, this message translates to:
+  /// **'Catégorie'**
+  String get tariqaConditionFormCategoryLabel;
+
+  /// No description provided for @tariqaConditionFormTextFrLabel.
+  ///
+  /// In fr, this message translates to:
+  /// **'Texte (français)'**
+  String get tariqaConditionFormTextFrLabel;
+
+  /// No description provided for @tariqaConditionFormTextFrRequired.
+  ///
+  /// In fr, this message translates to:
+  /// **'Le texte en français est requis.'**
+  String get tariqaConditionFormTextFrRequired;
+
+  /// No description provided for @tariqaConditionFormTextArLabel.
+  ///
+  /// In fr, this message translates to:
+  /// **'Texte (arabe)'**
+  String get tariqaConditionFormTextArLabel;
+
+  /// No description provided for @tariqaConditionFormSourceNoteLabel.
+  ///
+  /// In fr, this message translates to:
+  /// **'Source'**
+  String get tariqaConditionFormSourceNoteLabel;
+
+  /// No description provided for @tariqaConditionFormSave.
+  ///
+  /// In fr, this message translates to:
+  /// **'Enregistrer'**
+  String get tariqaConditionFormSave;
+
+  /// No description provided for @tariqaConditionFormSaveError.
+  ///
+  /// In fr, this message translates to:
+  /// **'Impossible d\'enregistrer la modification.'**
+  String get tariqaConditionFormSaveError;
+
   /// No description provided for @khadaraEventsTab.
   ///
   /// In fr, this message translates to:

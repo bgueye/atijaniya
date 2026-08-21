@@ -626,6 +626,30 @@ class AppLocalizationsAr extends AppLocalizations {
       'الشروط المكملة';
 
   @override
+  String get tariqaConditionEditTitle => 'تعديل الشرط';
+
+  @override
+  String get tariqaConditionFormCategoryLabel => 'الفئة';
+
+  @override
+  String get tariqaConditionFormTextFrLabel => 'النص (بالفرنسية)';
+
+  @override
+  String get tariqaConditionFormTextFrRequired => 'النص بالفرنسية مطلوب.';
+
+  @override
+  String get tariqaConditionFormTextArLabel => 'النص (بالعربية)';
+
+  @override
+  String get tariqaConditionFormSourceNoteLabel => 'المصدر';
+
+  @override
+  String get tariqaConditionFormSave => 'حفظ';
+
+  @override
+  String get tariqaConditionFormSaveError => 'تعذّر حفظ التعديل.';
+
+  @override
   String get khadaraEventsTab => 'المناسبات';
 
   @override
