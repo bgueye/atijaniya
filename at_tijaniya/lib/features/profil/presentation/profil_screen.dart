@@ -327,7 +327,16 @@ class _ProfileHeader extends StatelessWidget {
                 CircleAvatar(
                   radius: 28,
                   backgroundColor: AppColors.emeraldSoft,
-                  backgroundImage: profile.avatarUrl != null ? NetworkImage(profile.avatarUrl!) : null,
+                  // `ResizeImage` — même raison que les portraits de figure
+                  // (`figures_screen.dart`) : `CircleAvatar.backgroundImage`
+                  // n'a pas de cacheWidth/cacheHeight, décode diamètre 56.
+                  backgroundImage: profile.avatarUrl != null
+                      ? ResizeImage(
+                          NetworkImage(profile.avatarUrl!),
+                          width: (56 * MediaQuery.of(context).devicePixelRatio).round(),
+                          height: (56 * MediaQuery.of(context).devicePixelRatio).round(),
+                        )
+                      : null,
                   child: profile.avatarUrl == null
                       ? Icon(Icons.person_outline, color: AppColors.emerald, size: 28)
                       : null,

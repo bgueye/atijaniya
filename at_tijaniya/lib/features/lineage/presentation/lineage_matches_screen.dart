@@ -263,7 +263,15 @@ class _MatchCard extends ConsumerWidget {
         contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
         leading: CircleAvatar(
           backgroundColor: AppColors.emeraldSoft,
-          backgroundImage: match.avatarUrl != null ? NetworkImage(match.avatarUrl!) : null,
+          // `ResizeImage` — même raison que profil_screen.dart, diamètre
+          // par défaut de CircleAvatar (40 = 2 × radius 20 implicite).
+          backgroundImage: match.avatarUrl != null
+              ? ResizeImage(
+                  NetworkImage(match.avatarUrl!),
+                  width: (40 * MediaQuery.of(context).devicePixelRatio).round(),
+                  height: (40 * MediaQuery.of(context).devicePixelRatio).round(),
+                )
+              : null,
           child: match.avatarUrl == null ? Icon(Icons.person_outline, color: AppColors.emerald) : null,
         ),
         title: Text(match.displayName, style: const TextStyle(fontWeight: FontWeight.w500)),

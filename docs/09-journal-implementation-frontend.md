@@ -2772,3 +2772,78 @@ bordures de carte nettement plus marqués sur plusieurs écrans (Wirds,
 Figures, Khadara, Conditions de la tariqa), retour à l'état normal
 confirmé en redésactivant, section "À propos" de nouveau visible après le
 correctif `SafeArea`.
+
+## Sprint 4 — Performance (2026-08-21)
+
+Audit ciblé en trois volets indépendants (`docs/10-etat-avancement-et-sprints-restants.md`) :
+cache/téléchargement audio des wirds sous charge, rebuilds Riverpod, chargement des
+images. Contrairement au balayage `const` du Sprint 3 (mécanique, une seule bonne
+réponse), ce sprint demandait du jugement — chaque piste devait distinguer un vrai bug
+d'un faux positif d'optimisation, donc chaque volet a eu pour consigne explicite de
+corriger ce qui est sûr et contenu, et de remonter plutôt que d'implémenter tout ce qui
+demanderait une nouvelle dépendance ou une réécriture d'architecture. Aucun des trois
+n'a eu besoin de remonter quoi que ce soit — aucune nouvelle dépendance ajoutée.
+
+**Cache/téléchargement audio** (`wird_pillar_audio_controller.dart`) : vraie condition
+de course trouvée dans `ensureDownloaded()` — deux appels concurrents pour le même
+pilier (double-tap sur play, ou `playNext`/`playPrevious` déclenchés vite l'un après
+l'autre) passaient tous les deux le test `availability == downloaded` avant que le
+premier appel ne bascule l'état en `downloading` (son premier point d'`await` n'est pas
+encore franchi) — les deux téléchargements écrivaient alors vers le même fichier
+temporaire (`WirdRecitationDownloadStore.save`), une corruption possible sur disque, pas
+seulement de la bande passante gaspillée. Corrigé avec une garde
+`Map<int, Future<String?>> _inFlightDownloads` : les appels concurrents pour le même
+pilier partagent désormais le même `Future` au lieu de se marcher dessus. Le reste du
+mécanisme (éviction de l'ancienne version après confirmation de la nouvelle sur disque,
+écriture atomique via fichier `.part` puis renommage, mise à jour silencieuse qui ne
+tourne qu'une fois par session) était déjà correct, vérifié mais non modifié.
+
+**Rebuilds Riverpod** : deux corrections réelles, pas de balayage réflexe de tout
+`ref.watch`. D'abord, 10 providers `.family` sans `.autoDispose` à travers 6 fichiers
+(`live_stream_providers.dart`, `figures_providers.dart`, `messages_providers.dart`,
+`groups_providers.dart`, `community_providers.dart`) — tous indexés par l'identifiant
+d'une entité consultée depuis un écran poussé puis dépilé (figure, évènement, groupe,
+conversation, publication, semaine) : sur une session de navigation prolongée, chaque
+identifiant distinct laissait une instance de provider en cache indéfiniment, fuite
+mémoire réelle et non bornée plutôt qu'un simple manque de rigueur. `.autoDispose`
+ajouté partout. Ensuite, `LiveStreamScreen` regardait `chatMessagesProvider` en tête de
+`build()` alors qu'un minuteur de 4s (`initState`, absence de Supabase Realtime pour le
+chat) invalide ce provider en continu tant que l'écran reste ouvert — chaque tick
+reconstruisait tout l'écran (AppBar, bannière, barre de saisie) pour rien. Extrait dans
+un nouveau widget `_ChatMessagesList` qui porte seul ce `ref.watch` : seule la liste des
+messages se reconstruit désormais à chaque tick. Un cas volontairement laissé tel quel :
+`chatMessagesProvider` lui-même porte déjà un commentaire explicite justifiant l'absence
+de `.autoDispose` — la justification lue ne semble pas tenir (le provider a toujours au
+moins un observateur tant que l'écran est monté, `.autoDispose` n'aurait donc pas d'effet
+prématuré), mais faute du contexte complet derrière cette décision documentée, non modifié.
+
+**Chargement des images** : l'app n'a aucune dépendance de cache image (`cached_network_image`
+ou équivalent) — uniquement `Image.network`/`NetworkImage` bruts sur 10 emplacements
+(portraits de figures, vignettes, couvertures d'évènements/publications, avatars). Deux
+bugs réels trouvés, distincts de "il n'y a pas de cache" (Flutter cache déjà en mémoire
+via `ImageCache`, à la bonne clé) :
+1. Décodage à la résolution native de l'image même pour un affichage en vignette 40-72px
+   (`cacheWidth`/`cacheHeight` absents) — coût mémoire/temps de décodage proportionnel à
+   la taille de la photo source, pas à la taille affichée. Corrigé sur les 10
+   emplacements, chacun dimensionné à sa taille d'affichage réelle × `devicePixelRatio`
+   (`ResizeImage` en enveloppe pour les usages `DecorationImage`/`CircleAvatar.backgroundImage`,
+   qui n'exposent pas `cacheWidth`/`cacheHeight` directement).
+2. Cache obsolète après remplacement d'image : `ImageUploadService.uploadImage()`
+   téléverse en `upsert: true` vers un chemin stable par entité
+   (`figure-portraits/{id}/portrait.jpg`, `event-images/{id}/cover.jpg`) — remplacer un
+   portrait ou une couverture renvoie exactement la même URL qu'avant, donc l'`ImageCache`
+   de Flutter (clé = URL) continuait de servir l'ancienne image jusqu'au redémarrage de
+   l'app, sans aucune éviction nulle part. Corrigé une seule fois, côté service plutôt que
+   par écran (chaque variante `ResizeImage` a sa propre clé dérivée de l'URL, les évincer
+   une par une n'aurait pas été fiable) : `?v=<timestamp d'upload>` ajouté à l'URL publique
+   renvoyée par `uploadImage()`. Un `errorBuilder` manquant ajouté sur
+   `post_detail_screen.dart` (incohérence avec un usage jumeau du même fichier qui en avait
+   déjà un) ; celui de la carte "Figure de la semaine" (`home_screen.dart`) volontairement
+   laissé de côté — un vrai placeholder là demanderait de composer avec le dégradé/texte en
+   surimpression de la carte, décision de design plutôt que correctif mécanique.
+
+`flutter analyze` propre (hors le lint pré-existant `settings_screen.dart:39`, sans
+rapport), 184 tests au vert. **Validé en conditions réelles le 2026-08-21** sur téléphone
+Android (`R5CW41VL5CE`) : lecture audio d'un pilier de wird (y compris taps répétés sur
+play/suivant), portraits et vignettes affichés nets sur Figures/Khadara/accueil,
+remplacement d'un portrait de figure reflété immédiatement sans image obsolète en cache.

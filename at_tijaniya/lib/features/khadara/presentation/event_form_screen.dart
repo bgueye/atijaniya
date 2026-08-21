@@ -245,6 +245,8 @@ class _EventFormScreenState extends ConsumerState<EventFormScreen> {
         _existingImageUrl!,
         width: double.infinity,
         fit: BoxFit.fitWidth,
+        // Voir la même note dans event_detail_screen.dart.
+        cacheWidth: (MediaQuery.of(context).size.width * MediaQuery.of(context).devicePixelRatio).round(),
         errorBuilder: (context, error, stackTrace) => const SizedBox.shrink(),
       );
     } else {

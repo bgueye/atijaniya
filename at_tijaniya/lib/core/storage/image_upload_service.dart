@@ -63,6 +63,17 @@ class ImageUploadService {
   /// Téléverse [bytes] vers `[bucket]/[path]` (upsert — remplace un fichier
   /// existant au même chemin) et renvoie l'URL publique. [path] doit
   /// suivre la convention documentée pour le bucket ciblé.
+  ///
+  /// [path] est stable par entité chez tous les appelants actuels (ex.
+  /// `figure-portraits/{figureId}/portrait.jpg`,
+  /// `event-images/{eventId}/cover.jpg`) : remplacer une image avec la même
+  /// extension renvoie exactement la même URL qu'avant. Sans le paramètre
+  /// `v` ajouté ci-dessous, le cache image en mémoire de Flutter
+  /// (`ImageCache`, dont la clé inclut l'URL) continuerait de servir
+  /// indéfiniment l'ancienne image à tout widget qui se (re)construit avec
+  /// cette URL, quelle que soit la taille de décodage demandée
+  /// (`cacheWidth`/`cacheHeight` génèrent chacun leur propre entrée dérivée
+  /// de l'URL, donc les évincer une par une n'aurait pas été fiable).
   Future<String> uploadImage({
     required String bucket,
     required String path,
@@ -74,6 +85,7 @@ class ImageUploadService {
           bytes,
           fileOptions: FileOptions(contentType: contentType, upsert: true),
         );
-    return SupabaseConfig.client.storage.from(bucket).getPublicUrl(path);
+    final publicUrl = SupabaseConfig.client.storage.from(bucket).getPublicUrl(path);
+    return '$publicUrl?v=${DateTime.now().millisecondsSinceEpoch}';
   }
 }

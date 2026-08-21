@@ -241,6 +241,8 @@ class _PostDetailScreenState extends ConsumerState<PostDetailScreen> {
                     borderRadius: BorderRadius.circular(14),
                     child: Image.network(
                       _mediaUrl!,
+                      // Voir la même note dans event_detail_screen.dart.
+                      cacheWidth: (MediaQuery.of(context).size.width * MediaQuery.of(context).devicePixelRatio).round(),
                       errorBuilder: (context, error, stackTrace) => const SizedBox.shrink(),
                     ),
                   ),
@@ -590,7 +592,17 @@ class _EditPostSheetState extends ConsumerState<_EditPostSheet> {
               ] else if (showExistingImage) ...[
                 ClipRRect(
                   borderRadius: BorderRadius.circular(12),
-                  child: Image.network(widget.initialMediaUrl!, width: double.infinity, fit: BoxFit.fitWidth),
+                  child: Image.network(
+                    widget.initialMediaUrl!,
+                    width: double.infinity,
+                    fit: BoxFit.fitWidth,
+                    // Voir la même note dans event_detail_screen.dart.
+                    cacheWidth: (MediaQuery.of(context).size.width * MediaQuery.of(context).devicePixelRatio).round(),
+                    // Contrairement aux autres aperçus de ce fichier, celui-ci
+                    // n'avait pas de repli en cas d'échec réseau — alignement
+                    // sur le même pattern que ligne ~244 et communaute_screen.dart.
+                    errorBuilder: (context, error, stackTrace) => const SizedBox.shrink(),
+                  ),
                 ),
                 const SizedBox(height: 8),
               ],

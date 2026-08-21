@@ -111,6 +111,13 @@ class _EventsTab extends ConsumerWidget {
                       event.imageUrl!,
                       width: 40,
                       height: 40,
+                      // Décode à la taille d'affichage réelle plutôt qu'à la
+                      // résolution native de la photo (souvent bien plus
+                      // grande pour une simple miniature de liste) —
+                      // multiplié par le devicePixelRatio pour rester net
+                      // sur un écran haute densité.
+                      cacheWidth: (40 * MediaQuery.of(context).devicePixelRatio).round(),
+                      cacheHeight: (40 * MediaQuery.of(context).devicePixelRatio).round(),
                       fit: BoxFit.cover,
                       // alignment: topCenter — le sujet d'une photo d'évènement est
                       // rarement centré verticalement ; un centrage strict coupe

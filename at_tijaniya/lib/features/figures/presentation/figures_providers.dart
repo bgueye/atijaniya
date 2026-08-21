@@ -20,7 +20,10 @@ final draftFiguresProvider = FutureProvider<List<Figure>>((ref) {
 
 /// Silsila historique d'une figure donnée (onglet "Silsila",
 /// `figure_detail_screen.dart`) — `family` car paramétré par `figureId`.
-final historicalSilsilaChainProvider = FutureProvider.family<List<HistoricalSilsilaLink>, String>((ref, figureId) {
+/// `.autoDispose` (Sprint 4, audit perf) : consultée depuis un écran de
+/// détail poussé/dépilé, sans raison de garder une entrée en cache par
+/// figure visitée pour le reste de la session.
+final historicalSilsilaChainProvider = FutureProvider.autoDispose.family<List<HistoricalSilsilaLink>, String>((ref, figureId) {
   return ref.watch(figuresRepositoryProvider).fetchHistoricalSilsilaChain(figureId);
 });
 
@@ -34,22 +37,24 @@ final silsilaLinksProvider = FutureProvider<List<FigureSilsilaLink>>((ref) {
 
 /// Évènements Khadara liés à une figure donnée (onglet "Ziyaras",
 /// `figure_detail_screen.dart`) — `family` car paramétré par `figureId`.
-final linkedEventsForFigureProvider = FutureProvider.family<List<KhadaraEvent>, String>((ref, figureId) {
+/// `.autoDispose` : voir `historicalSilsilaChainProvider` ci-dessus, même
+/// raison.
+final linkedEventsForFigureProvider = FutureProvider.autoDispose.family<List<KhadaraEvent>, String>((ref, figureId) {
   return ref.watch(figuresRepositoryProvider).fetchLinkedEvents(figureId);
 });
 
 /// Zawiyas rattachées à une figure donnée (sous-section "Zawiyas
 /// rattachées" de l'onglet "Zawiya", `figure_detail_screen.dart`) —
-/// `family` car paramétré par `figureId`.
-final linkedZawiyasForFigureProvider = FutureProvider.family<List<Zawiya>, String>((ref, figureId) {
+/// `family` car paramétré par `figureId`. `.autoDispose` : même raison.
+final linkedZawiyasForFigureProvider = FutureProvider.autoDispose.family<List<Zawiya>, String>((ref, figureId) {
   return ref.watch(figuresRepositoryProvider).fetchLinkedZawiyas(figureId);
 });
 
 /// Chaîne de succession des khalifas d'une figure fondatrice donnée
 /// (sous-section "Chaîne de khalifas" de l'onglet "Zawiya",
 /// `figure_detail_screen.dart`) — `family` car paramétré par
-/// `founderFigureId`.
-final khalifaChainProvider = FutureProvider.family<List<FigureKhalifaLink>, String>((ref, founderFigureId) {
+/// `founderFigureId`. `.autoDispose` : même raison.
+final khalifaChainProvider = FutureProvider.autoDispose.family<List<FigureKhalifaLink>, String>((ref, founderFigureId) {
   return ref.watch(figuresRepositoryProvider).fetchKhalifaChain(founderFigureId);
 });
 
@@ -58,8 +63,10 @@ final khalifaChainProvider = FutureProvider.family<List<FigureKhalifaLink>, Stri
 /// l'écran admin puisse consulter/préparer une semaine autre que la
 /// courante (ex. la semaine d'un Gamou à venir) sans perturber
 /// `featuredFigureProvider`, qui ne regarde toujours que la semaine
-/// courante.
-final featuredFigureOverrideProvider = FutureProvider.family<String?, DateTime>((ref, weekStart) {
+/// courante. `.autoDispose` (Sprint 4, audit perf) : l'écran admin permet
+/// de naviguer semaine par semaine, sans ça chaque semaine consultée reste
+/// en cache indéfiniment.
+final featuredFigureOverrideProvider = FutureProvider.autoDispose.family<String?, DateTime>((ref, weekStart) {
   return ref.watch(figuresRepositoryProvider).fetchFeaturedFigureOverride(weekStart);
 });
 

@@ -308,9 +308,15 @@ class _FigureHero extends StatelessWidget {
                               // le sujet d'un portrait est presque toujours dans le
                               // haut de la photo, un centrage strict coupe souvent le
                               // visage sur une photo au format portrait.
+                              // `ResizeImage` — voir la même note dans
+                              // figures_screen.dart (cadre de 72px ici).
                               image: figure.portraitUrl != null
                                   ? DecorationImage(
-                                      image: NetworkImage(figure.portraitUrl!),
+                                      image: ResizeImage(
+                                        NetworkImage(figure.portraitUrl!),
+                                        width: (72 * MediaQuery.of(context).devicePixelRatio).round(),
+                                        height: (72 * MediaQuery.of(context).devicePixelRatio).round(),
+                                      ),
                                       fit: BoxFit.cover,
                                       alignment: Alignment.topCenter,
                                     )

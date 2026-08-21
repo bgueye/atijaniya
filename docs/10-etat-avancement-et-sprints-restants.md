@@ -35,8 +35,8 @@ sont livrés :
   documentation résolue le 21/08 (Sprint 1, voir ci-dessous) : la construction initiale a
   désormais son entrée rétroactive dans le journal.
 
-**P3 (consolidation avant lancement) : Sprints 2 (modération a posteriori) et 3
-(accessibilité/RTL) livrés et validés.** Sprint 2 — signalement d'un direct Khadara ou d'une demande de mise en relation par
+**P3 (consolidation avant lancement) : Sprints 2 (modération a posteriori), 3
+(accessibilité/RTL) et 4 (performance) livrés et validés.** Sprint 2 — signalement d'un direct Khadara ou d'une demande de mise en relation par
 lignée spirituelle, écran admin de traitement (`lib/features/moderation/`), voir le
 détail dans `docs/09-journal-implementation-frontend.md` § "Sprint 2 — Modération a
 posteriori". `flutter analyze` propre, suite de tests au vert, et validé en conditions
@@ -46,9 +46,12 @@ sans `heroTag`, sans lien avec le code de modération) trouvé et corrigé au pa
 chemin "rejeter un signalement" et le signalement d'une mise en relation par lignée n'ont
 toujours pas été exercés manuellement (code structurellement identique au chemin déjà
 validé, risque jugé faible). Sprint 3 — revue RTL (3 chevrons corrigés) et mode contraste
-renforcé (réglage persisté dans Paramètres, voir "Plan des sprints restants" ci-dessous
-pour le détail) : validé sur téléphone le 2026-08-21. Reste : pas de fiches store, pas
-d'audit performance (Sprints 4+ ci-dessous, toujours non entamés).
+renforcé (réglage persisté dans Paramètres) : validé sur téléphone le 2026-08-21. Sprint 4
+— cache audio (course corrigée), rebuilds Riverpod (`.autoDispose` + chat isolé),
+chargement d'images (décodage redimensionné + cache obsolète corrigé) : validé sur
+téléphone le 2026-08-21, voir "Plan des sprints restants" ci-dessous pour le détail de
+chacun. Reste : les décisions produit et la préparation stores (Sprints 5-6 ci-dessous,
+toujours non entamés).
 
 ## Depuis la dernière analyse (2026-08-18 → 2026-08-21)
 
@@ -148,9 +151,25 @@ datées du 20 et du 21/08).
   `docs/09-journal-implementation-frontend.md` § "Sprint 3 — Revue RTL et mode contraste
   renforcé".
 
-**Sprint 4 — Performance (P3)**
-- Audit ciblé : cache/téléchargement audio des wirds sous charge, rebuilds Riverpod,
-  chargement des images (portraits, couvertures d'évènements/publications).
+**Sprint 4 — Performance (P3) — livré et validé (2026-08-21)**
+- Cache/téléchargement audio des wirds. Fait : vraie condition de course corrigée dans
+  `ensureDownloaded()` (deux appels concurrents pour le même pilier écrivaient vers le
+  même fichier temporaire — corruption possible, pas juste de la bande passante
+  gaspillée). Le reste (éviction, écriture atomique, mise à jour silencieuse) était déjà
+  correct.
+- Rebuilds Riverpod. Fait : 10 providers `.family` sans `.autoDispose` (fuite mémoire
+  réelle sur navigation prolongée) corrigés sur 6 fichiers ; le chat du direct Khadara
+  (polling 4s) isolé dans son propre widget pour ne plus reconstruire tout
+  `LiveStreamScreen` à chaque tick.
+- Chargement des images. Fait : `cacheWidth`/`cacheHeight` ajoutés sur les 10
+  emplacements `Image.network`/`NetworkImage` (décodage à la taille d'affichage réelle
+  plutôt qu'à la résolution native) ; bug de cache obsolète corrigé après remplacement
+  d'un portrait/couverture (chemin de stockage stable par entité → `ImageCache` de
+  Flutter continuait de servir l'ancienne image jusqu'au redémarrage — corrigé par un
+  paramètre `?v=<timestamp>` sur l'URL renvoyée par `ImageUploadService.uploadImage()`).
+- Aucune nouvelle dépendance ajoutée pour les trois volets. `flutter analyze` propre,
+  184 tests au vert, validé sur téléphone Android le 2026-08-21. Détail complet dans
+  `docs/09-journal-implementation-frontend.md` § "Sprint 4 — Performance".
 
 **Sprint 5 — Décisions bloquantes avant lancement (hors dev pur)**
 - Choisir un prestataire de paiement pour les dons (ou confirmer que la V1 reste

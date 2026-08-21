@@ -18,6 +18,10 @@ final canCreatePostProvider = Provider<bool>((ref) {
   return ref.watch(myProfileProvider).maybeWhen(data: (profile) => profile.zawiyaId != null, orElse: () => false);
 });
 
-final postCommentsProvider = FutureProvider.family<List<CommunityComment>, String>((ref, postId) {
+/// `.autoDispose` (Sprint 4, audit perf) : consultée depuis
+/// `PostDetailScreen`, poussé/dépilé par publication — sans ça, chaque
+/// publication ouverte au fil d'une session laisse ses commentaires en
+/// cache indéfiniment.
+final postCommentsProvider = FutureProvider.autoDispose.family<List<CommunityComment>, String>((ref, postId) {
   return ref.watch(communityRepositoryProvider).fetchComments(postId);
 });

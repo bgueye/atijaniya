@@ -5,17 +5,23 @@ import '../domain/khadara_models.dart';
 
 final liveStreamRepositoryProvider = Provider<LiveStreamRepository>((ref) => const LiveStreamRepository());
 
-final latestStreamForEventProvider = FutureProvider.family<LiveStream?, String>((ref, eventId) {
+// `.autoDispose` sur les 3 providers ci-dessous (Sprint 4, audit perf) :
+// paramétrés par un `eventId`/`groupId` consulté depuis un écran de détail
+// poussé/dépilé (EventDetailScreen/GroupDetailScreen) — sans ça, chaque
+// évènement/groupe visité au fil d'une session laisse une entrée en cache
+// jamais libérée, pour une donnée qui n'a aucune raison de survivre à la
+// fermeture de l'écran.
+final latestStreamForEventProvider = FutureProvider.autoDispose.family<LiveStream?, String>((ref, eventId) {
   return ref.watch(liveStreamRepositoryProvider).fetchLatestStreamForEvent(eventId);
 });
 
 /// Symétrique côté groupe — voir `LiveStreamRepository.fetchLatestStreamForGroup`.
-final latestStreamForGroupProvider = FutureProvider.family<LiveStream?, String>((ref, groupId) {
+final latestStreamForGroupProvider = FutureProvider.autoDispose.family<LiveStream?, String>((ref, groupId) {
   return ref.watch(liveStreamRepositoryProvider).fetchLatestStreamForGroup(groupId);
 });
 
 /// Voir `LiveStreamRepository.fetchPastStreamsForGroup`.
-final pastStreamsForGroupProvider = FutureProvider.family<List<LiveStream>, String>((ref, groupId) {
+final pastStreamsForGroupProvider = FutureProvider.autoDispose.family<List<LiveStream>, String>((ref, groupId) {
   return ref.watch(liveStreamRepositoryProvider).fetchPastStreamsForGroup(groupId);
 });
 

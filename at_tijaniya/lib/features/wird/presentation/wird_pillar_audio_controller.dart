@@ -38,6 +38,17 @@ class WirdPillarAudioController extends StateNotifier<Map<int, PillarAudioState>
   final WirdRecitationVersionStore _versionStore = const WirdRecitationVersionStore();
   final WirdRecitationAssetManifest _assetManifest = const WirdRecitationAssetManifest();
 
+  /// Garde contre les téléchargements concurrents du même pilier (double-tap
+  /// sur play, ou `playNext`/`playPrevious` déclenchés vite l'un après
+  /// l'autre) : sans elle, deux appels à [ensureDownloaded] pour le même
+  /// [index] passent tous les deux le test `availability == downloaded`
+  /// (le premier appel ne bascule l'état en `downloading` qu'après son
+  /// premier point d'`await`) et lancent chacun un téléchargement — les deux
+  /// écrivent alors vers le même fichier temporaire
+  /// (`WirdRecitationDownloadStore.save`), une vraie corruption possible,
+  /// pas seulement de la bande passante gaspillée.
+  final Map<int, Future<String?>> _inFlightDownloads = {};
+
   Future<void> _loadRecitations() async {
     try {
       final recitations = await _repository.fetchRecitationsForWird(wird.id);
@@ -107,7 +118,17 @@ class WirdPillarAudioController extends StateNotifier<Map<int, PillarAudioState>
   /// renvoie son chemin local. `null` si ce pilier n'a pas de récitation
   /// validée, ou si le téléchargement a échoué (voir `errorMessage` sur
   /// l'état correspondant).
-  Future<String?> ensureDownloaded(int index) async {
+  Future<String?> ensureDownloaded(int index) {
+    final inFlight = _inFlightDownloads[index];
+    if (inFlight != null) return inFlight;
+
+    final future = _downloadPillar(index);
+    _inFlightDownloads[index] = future;
+    future.whenComplete(() => _inFlightDownloads.remove(index));
+    return future;
+  }
+
+  Future<String?> _downloadPillar(int index) async {
     final current = state[index];
     if (current == null || current.recitation == null) return null;
     if (current.availability == PillarAudioAvailability.downloaded && current.localPath != null) {

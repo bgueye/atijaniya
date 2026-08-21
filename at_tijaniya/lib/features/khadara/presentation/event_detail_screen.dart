@@ -123,6 +123,11 @@ class _EventDetailScreenState extends ConsumerState<EventDetailScreen> {
                 borderRadius: BorderRadius.circular(14),
                 child: Image.network(
                   _event.imageUrl!,
+                  // cacheWidth seul (pas cacheHeight) préserve le ratio —
+                  // plafonne le décodage à la largeur d'écran réelle plutôt
+                  // que la résolution native de la photo, potentiellement
+                  // bien plus grande pour un simple bandeau de couverture.
+                  cacheWidth: (MediaQuery.of(context).size.width * MediaQuery.of(context).devicePixelRatio).round(),
                   // Pas de hauteur fixe : la largeur remplit l'écran et la
                   // hauteur s'ajuste au ratio réel de la photo, plutôt que de
                   // recadrer/deviner une hauteur qui coupe une partie de

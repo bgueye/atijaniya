@@ -175,7 +175,6 @@ class _LiveStreamScreenState extends ConsumerState<LiveStreamScreen> {
     final isOwner = myUserId != null && myUserId == widget.stream.startedBy;
     final isAdmin = ref.watch(isAdminProvider);
     final isEnded = widget.stream.status == LiveStreamStatus.ended;
-    final messages = ref.watch(chatMessagesProvider(widget.stream.id));
 
     return Scaffold(
       appBar: AppBar(
@@ -229,21 +228,7 @@ class _LiveStreamScreenState extends ConsumerState<LiveStreamScreen> {
           ),
           const Divider(height: 1),
           Expanded(
-            child: messages.when(
-              loading: () => Center(child: CircularProgressIndicator(color: AppColors.emerald)),
-              error: (error, stackTrace) => Center(
-                child: Text(l10n.khadaraLoadError, style: TextStyle(color: AppColors.bronze)),
-              ),
-              data: (list) => list.isEmpty
-                  ? Center(
-                      child: Text(l10n.khadaraChatEmpty, style: TextStyle(color: AppColors.bronze)),
-                    )
-                  : ListView.builder(
-                      padding: const EdgeInsets.all(16),
-                      itemCount: list.length,
-                      itemBuilder: (context, i) => _ChatBubble(message: list[i], isMine: list[i].userId == myUserId),
-                    ),
-            ),
+            child: _ChatMessagesList(streamId: widget.stream.id, myUserId: myUserId),
           ),
           SafeArea(
             top: false,
@@ -269,6 +254,40 @@ class _LiveStreamScreenState extends ConsumerState<LiveStreamScreen> {
           ),
         ],
       ),
+    );
+  }
+}
+
+/// Extrait de `LiveStreamScreen.build()` (Sprint 4, audit perf) : le
+/// polling de 4s (`initState`) invalide `chatMessagesProvider` en continu
+/// tant que l'écran est ouvert — le regarder au niveau de tout l'écran
+/// reconstruisait l'AppBar, la bannière et la barre de saisie à chaque
+/// tick pour rien. Confiné ici, seule cette liste se reconstruit.
+class _ChatMessagesList extends ConsumerWidget {
+  const _ChatMessagesList({required this.streamId, required this.myUserId});
+
+  final String streamId;
+  final String? myUserId;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
+    final messages = ref.watch(chatMessagesProvider(streamId));
+
+    return messages.when(
+      loading: () => Center(child: CircularProgressIndicator(color: AppColors.emerald)),
+      error: (error, stackTrace) => Center(
+        child: Text(l10n.khadaraLoadError, style: TextStyle(color: AppColors.bronze)),
+      ),
+      data: (list) => list.isEmpty
+          ? Center(
+              child: Text(l10n.khadaraChatEmpty, style: TextStyle(color: AppColors.bronze)),
+            )
+          : ListView.builder(
+              padding: const EdgeInsets.all(16),
+              itemCount: list.length,
+              itemBuilder: (context, i) => _ChatBubble(message: list[i], isMine: list[i].userId == myUserId),
+            ),
     );
   }
 }

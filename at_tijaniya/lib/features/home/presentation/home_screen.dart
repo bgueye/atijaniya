@@ -583,6 +583,9 @@ class _KhadaraTeaserCard extends StatelessWidget {
                   event.imageUrl!,
                   width: 44,
                   height: 44,
+                  // Voir la même note dans khadara_screen.dart.
+                  cacheWidth: (44 * MediaQuery.of(context).devicePixelRatio).round(),
+                  cacheHeight: (44 * MediaQuery.of(context).devicePixelRatio).round(),
                   fit: BoxFit.cover,
                   errorBuilder: (context, error, stackTrace) => const _KhadaraThumbFallback(),
                 )
@@ -629,7 +632,13 @@ class _FeaturedFigureCard extends StatelessWidget {
           child: Stack(
             fit: StackFit.expand,
             children: [
-              Image.network(figure.portraitUrl!, fit: BoxFit.cover, alignment: Alignment.topCenter),
+              Image.network(
+                figure.portraitUrl!,
+                fit: BoxFit.cover,
+                alignment: Alignment.topCenter,
+                // Voir la même note dans event_detail_screen.dart.
+                cacheWidth: (MediaQuery.of(context).size.width * MediaQuery.of(context).devicePixelRatio).round(),
+              ),
               DecoratedBox(
                 decoration: BoxDecoration(
                   gradient: LinearGradient(

@@ -195,9 +195,17 @@ class _FigureTile extends StatelessWidget {
                   color: AppColors.emeraldSoft,
                   border: Border.all(color: AppColors.gold.withValues(alpha: 0.45)),
                   // alignment: topCenter — voir figure_detail_screen.dart, même raison.
+                  // `ResizeImage` : `DecorationImage` n'a pas de
+                  // cacheWidth/cacheHeight comme `Image` — sans lui, une
+                  // photo de portrait en pleine résolution serait décodée
+                  // en mémoire pour un cadre de 56px.
                   image: figure.portraitUrl != null
                       ? DecorationImage(
-                          image: NetworkImage(figure.portraitUrl!),
+                          image: ResizeImage(
+                            NetworkImage(figure.portraitUrl!),
+                            width: (56 * MediaQuery.of(context).devicePixelRatio).round(),
+                            height: (56 * MediaQuery.of(context).devicePixelRatio).round(),
+                          ),
                           fit: BoxFit.cover,
                           alignment: Alignment.topCenter,
                         )

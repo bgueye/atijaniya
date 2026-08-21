@@ -691,6 +691,8 @@ class _PostCardState extends ConsumerState<_PostCard> {
                     // couverture Khadara (event_detail_screen.dart) : une
                     // hauteur fixe coupe la photo selon son orientation.
                     width: double.infinity,
+                    // cacheWidth : voir la même note dans event_detail_screen.dart.
+                    cacheWidth: (MediaQuery.of(context).size.width * MediaQuery.of(context).devicePixelRatio).round(),
                     fit: BoxFit.fitWidth,
                     errorBuilder: (context, error, stackTrace) =>
                         const SizedBox.shrink(),
