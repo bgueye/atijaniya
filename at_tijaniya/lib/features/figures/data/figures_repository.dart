@@ -13,7 +13,7 @@
 library;
 
 import '../../../core/supabase/supabase_config.dart';
-import '../../khadara/domain/khadara_models.dart' show KhadaraEvent;
+import '../../khadara/domain/khadara_models.dart' show KhadaraEvent, Zawiya;
 import '../../lineage/domain/lineage_models.dart' show Foyer, foyerToDbValue;
 import '../domain/figure_models.dart';
 
@@ -283,6 +283,96 @@ class FiguresRepository {
   /// confirmation côté écran plutôt que de bloquer ici.
   Future<void> removeSilsilaLink(String figureId) async {
     await SupabaseConfig.client.from('historical_silsila_links').delete().eq('figure_id', figureId);
+  }
+
+  /// Zawiyas fondées/dirigées par cette figure (`figure_zawiyas`) — sert la
+  /// sous-section "Zawiyas rattachées" de l'onglet "Zawiya" de
+  /// `FigureDetailScreen`. RLS `figure_zawiyas_read_all` : lisible en mode
+  /// invité, même logique que `fetchLinkedEvents`.
+  Future<List<Zawiya>> fetchLinkedZawiyas(String figureId) async {
+    final rows = await SupabaseConfig.client
+        .from('figure_zawiyas')
+        .select('zawiyas(*)')
+        .eq('figure_id', figureId);
+    return rows.map((row) => Zawiya.fromRow(row['zawiyas'] as Map<String, dynamic>)).toList();
+  }
+
+  /// Réservé par RLS (`figure_zawiyas_admin_write`) à un compte admin.
+  Future<void> linkZawiya({required String figureId, required String zawiyaId}) async {
+    await SupabaseConfig.client.from('figure_zawiyas').insert({'figure_id': figureId, 'zawiya_id': zawiyaId});
+  }
+
+  /// RLS `figure_zawiyas_admin_delete` — table de jonction pure (clé
+  /// composite), rien d'autre à supprimer en cascade derrière ce lien.
+  Future<void> unlinkZawiya({required String figureId, required String zawiyaId}) async {
+    await SupabaseConfig.client.from('figure_zawiyas').delete().match({'figure_id': figureId, 'zawiya_id': zawiyaId});
+  }
+
+  /// Chaîne de succession des khalifas de la figure fondatrice [founderFigureId]
+  /// (`figure_zawiya_khalifas`), triée par rang. `figure_zawiya_khalifas` a
+  /// deux FK vers `figures` (`founder_figure_id`/`khalifa_figure_id`) : un
+  /// embed PostgREST direct serait ambigu, d'où la résolution en deux
+  /// requêtes puis jointure côté client — même contournement que
+  /// `_fetchMemberCounts` (`communaute/data/groups_repository.dart`) et
+  /// `_fetchDisplayNames` (`khadara/data/live_stream_repository.dart`). Le
+  /// filtre `figuresById[...] != null` protège en plus côté client contre un
+  /// khalife en brouillon qui échapperait à la RLS (défense en profondeur,
+  /// même logique que le double filtre sur `content_status` ailleurs dans ce
+  /// repository).
+  Future<List<FigureKhalifaLink>> fetchKhalifaChain(String founderFigureId) async {
+    final linkRows = await SupabaseConfig.client
+        .from('figure_zawiya_khalifas')
+        .select()
+        .eq('founder_figure_id', founderFigureId)
+        .order('order_index');
+    if (linkRows.isEmpty) return [];
+
+    final khalifaIds = linkRows.map((row) => row['khalifa_figure_id'] as String).toSet().toList();
+    final figureRows = await SupabaseConfig.client
+        .from('figures')
+        .select('id, name_ar, name_fr, category, portrait_url')
+        .inFilter('id', khalifaIds);
+    final figuresById = {for (final row in figureRows) row['id'] as String: row};
+
+    return [
+      for (final row in linkRows)
+        if (figuresById[row['khalifa_figure_id']] != null)
+          FigureKhalifaLink.fromRow(row, figuresById[row['khalifa_figure_id']]!),
+    ];
+  }
+
+  /// Ajoute [khalifaFigureId] à la chaîne de succession de [founderFigureId] —
+  /// RLS `figure_zawiya_khalifas_admin_write`. Peut lever une
+  /// `PostgrestException` (violation `unique(founder_figure_id, order_index)`
+  /// ou `unique(founder_figure_id, khalifa_figure_id)`) si le rang ou le
+  /// khalife sont déjà utilisés dans cette chaîne — non catchée ici,
+  /// `FigureKhalifaFormScreen` affiche alors l'erreur générique de
+  /// sauvegarde.
+  Future<void> addKhalifaLink({
+    required String founderFigureId,
+    required String khalifaFigureId,
+    required int orderIndex,
+    String? periodText,
+  }) async {
+    await SupabaseConfig.client.from('figure_zawiya_khalifas').insert({
+      'founder_figure_id': founderFigureId,
+      'khalifa_figure_id': khalifaFigureId,
+      'order_index': orderIndex,
+      'period_text': periodText,
+    });
+  }
+
+  /// RLS `figure_zawiya_khalifas_admin_update`.
+  Future<void> updateKhalifaLink(String id, {required int orderIndex, String? periodText}) async {
+    await SupabaseConfig.client
+        .from('figure_zawiya_khalifas')
+        .update({'order_index': orderIndex, 'period_text': periodText})
+        .eq('id', id);
+  }
+
+  /// RLS `figure_zawiya_khalifas_admin_delete`.
+  Future<void> removeKhalifaLink(String id) async {
+    await SupabaseConfig.client.from('figure_zawiya_khalifas').delete().eq('id', id);
   }
 
   /// Figure épinglée par un admin pour la semaine de [weekStart]

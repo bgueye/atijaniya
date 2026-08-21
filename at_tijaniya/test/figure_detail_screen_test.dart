@@ -1,7 +1,8 @@
 // Vérifie que FigureDetailScreen rend correctement une biographie, des
-// citations et un évènement Ziyara lié quand ils sont présents, et affiche
-// une note explicite quand la biographie est absente — avec une figure
-// factice, locale au test (pas de contenu religieux réel dans ce fichier).
+// citations et un évènement lié (sous-section "Évènements liés" de l'onglet
+// "Zawiya", ex-onglet "Ziyaras") quand ils sont présents, et affiche une
+// note explicite quand la biographie est absente — avec une figure factice,
+// locale au test (pas de contenu religieux réel dans ce fichier).
 
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -18,10 +19,12 @@ import 'package:at_tijaniya/l10n/app_localizations.dart';
 // isAdminProvider surchargé à `false` : sa valeur par défaut dépend de
 // currentUserIdProvider -> authStateChangesProvider, qui appelle
 // SupabaseConfig.client (donc Supabase.instance) — non initialisé dans ce
-// test. Même raison pour linkedEventsForFigureProvider, qui appellerait
-// FiguresRepository.fetchLinkedEvents (réseau) sans la surcharge — ni l'un
-// ni l'autre n'a de rapport avec ce que ce fichier vérifie (rendu de la
-// biographie/citations/ziyara).
+// test. Même raison pour linkedEventsForFigureProvider/
+// linkedZawiyasForFigureProvider/khalifaChainProvider, tous les trois
+// interrogés sans condition par `_ZawiyaTab` (pas seulement pour un admin)
+// et qui appelleraient sinon FiguresRepository (réseau) sans surcharge —
+// aucun des quatre n'a de rapport avec ce que ce fichier vérifie (rendu de
+// la biographie/citations/évènement lié).
 Widget _wrap(Widget child, {List<Override> overrides = const []}) {
   return ProviderScope(
     overrides: [isAdminProvider.overrideWithValue(false), ...overrides],
@@ -63,7 +66,11 @@ void main() {
 
     await tester.pumpWidget(_wrap(
       const FigureDetailScreen(figure: figure),
-      overrides: [linkedEventsForFigureProvider('test-figure').overrideWith((ref) async => [linkedEvent])],
+      overrides: [
+        linkedEventsForFigureProvider('test-figure').overrideWith((ref) async => [linkedEvent]),
+        linkedZawiyasForFigureProvider('test-figure').overrideWith((ref) async => []),
+        khalifaChainProvider('test-figure').overrideWith((ref) async => []),
+      ],
     ));
     await tester.pumpAndSettle();
 
@@ -78,8 +85,8 @@ void main() {
     expect(find.text('Citation de test.'), findsOneWidget);
     expect(find.text('— Source de test'), findsOneWidget);
 
-    // Onglet "Ziyaras".
-    await tester.tap(find.text('Ziyaras'));
+    // Onglet "Zawiya" (ex-"Ziyaras") — sous-section "Évènements liés".
+    await tester.tap(find.text('Zawiya'));
     await tester.pumpAndSettle();
     expect(find.text('Évènement de test lié'), findsOneWidget);
   });

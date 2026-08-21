@@ -117,7 +117,13 @@ parmi les figures valides dotées d'un portrait (`eligibleForRotation`),
 avec épinglage admin optionnel par semaine (table `featured_figures`,
 écran dédié depuis `FiguresScreen`) qui prime toujours sur la rotation ;
 citation et date de ziara affichées seulement si elles existent, jamais
-inventées), Khadara
+inventées) ; **onglet "Ziyaras" renommé "Zawiya" et étendu le 2026-08-21**
+(zawiyas fondées/dirigées par la figure — nouvelle table `figure_zawiyas`,
+lier/délier admin — et chaîne de succession des khalifas — nouvelle table
+`figure_zawiya_khalifas`, chaque khalife étant lui-même une Figure, chaîne
+unique par figure fondatrice, pas par zawiya —, en plus des évènements liés
+déjà existants, conservés tels quels ; aucune chaîne de succession réelle
+saisie, l'écran attend le contenu du porteur de projet), Khadara
 (calendrier évènements/zawiyas, **CRUD zawiyas créer/modifier/supprimer
 réservé à l'admin depuis le 2026-08-15** ; "Comprendre la Khadara" en
 attente de contenu validé), Fil d'actualité communautaire (publication

@@ -2434,3 +2434,63 @@ aux 4 messages d'erreur du module groupes. Non répercuté sur les 12 autres
 correctif ; les deux directs terminés du groupe "Tivaouane" supprimés
 depuis le nouvel écran, puis le groupe lui-même supprimé avec succès.
 `flutter analyze` propre après chaque étape.
+
+## Onglet "Zawiya" sur la fiche figure, remplace "Ziyaras" (2026-08-21)
+
+Demande du porteur de projet : chaque figure religieuse peut être rattachée
+à une ou plusieurs zawiyas, l'écran doit aussi montrer la chaîne de
+succession des khalifas qui lui ont succédé à la tête de cette zawiya, du
+premier khalife au khalife actuel. Aucun des deux besoins n'existait en
+base (confirmé par exploration complète de `database/schema.sql` et du
+module `lib/features/figures/`) — l'onglet "Ziyaras" ne montrait que les
+évènements Khadara liés (`figure_events`). Décisions du porteur de projet
+prises en amont de l'implémentation (voir plan) : chaque khalife est
+lui-même une fiche `Figure` complète (pas une entrée légère), et la chaîne
+est unique par figure fondatrice — pas une chaîne distincte par zawiya
+rattachée, même si une figure a plusieurs zawiyas.
+
+Deux nouvelles tables (migration `add_figure_zawiyas_and_khalifa_chain`) :
+`figure_zawiyas` (jonction figure↔zawiya, même forme que `figure_events`,
+lecture publique/écriture admin) et `figure_zawiya_khalifas` — modélisée à
+plat plutôt qu'en arbre récursif comme `historical_silsila_links`, chaque
+khalife pointant directement sur la figure fondatrice consultée
+(`founder_figure_id`) avec un rang (`order_index`) et une période en texte
+libre (`period_text`, même choix que `year_text` sur `get_ijaza_chain` pour
+une précision historique incertaine) : pas de récursivité nécessaire
+puisqu'il n'y a jamais qu'un seul niveau de rattachement. Lecture gatée sur
+le `content_status` du khalife référencé (même pattern que
+`silsila_links_read_valid_or_admin`), écriture strictement admin, aucune
+exception mouqaddam — cohérent avec le CRUD zawiyas/figures déjà en place.
+`FigureDeleteErrorKind` étendu (`figure_errors.dart`) d'un
+`blockedByKhalifaChain`, distingué de `blockedBySilsila` en inspectant le
+nom de table dans `error.message` (deux FK différentes peuvent désormais
+bloquer la suppression d'une figure).
+
+Côté app : `FigureKhalifaLink` (`figure_models.dart`), résolu en deux
+requêtes côté repository plutôt qu'un embed PostgREST (la table a deux FK
+vers `figures` — `founder_figure_id`/`khalifa_figure_id` —, un embed direct
+serait ambigu), même contournement déjà utilisé pour
+`_fetchMemberCounts`/`_fetchDisplayNames` ailleurs dans l'app. Nouvel écran
+`FigureKhalifaFormScreen` (`figure_khalifa_form_screen.dart`, calqué sur
+`FigureSilsilaFormScreen` mais ajoute un maillon à la chaîne plutôt qu'un
+upsert unique par figure — changer QUI est le khalife d'un maillon existant
+n'est volontairement pas permis, retirer puis rajouter à la place). Onglet
+"Zawiya" (`_ZawiyaTab`, remplace `_ZiyarasTab`) : trois sous-sections
+empilées dans un seul `ListView` (zawiyas rattachées, évènements liés —
+logique héritée de l'ex-onglet inchangée —, chaîne de khalifas), pas de
+sous-`TabBar` imbriquée. La chaîne affiche un nœud "fondateur" (la figure
+consultée elle-même, même style que la racine de `_SilsilaTab`) suivi des
+khalifes reliés par le connecteur déjà existant (`_SilsilaConnector`,
+générique, réutilisé tel quel), chaque nœud tappable vers la fiche du
+khalife.
+
+**Validé en conditions réelles le 2026-08-21** sur téléphone Android
+(`R5CW41VL5CE`, compte admin) sur une figure réelle ("Alpha Mayoro Wélé") :
+zawiya liée puis déliée, chaîne de deux khalifas ajoutée (rang suggéré
+automatiquement à partir du rang maximal existant, khalifes déjà utilisés
+exclus du sélecteur), navigation vers la fiche d'un khalife confirmée,
+retrait des deux maillons — toutes les données de test nettoyées après
+validation, aucune ne reste en base. `flutter analyze` propre et suite de
+tests complète au vert (`test/figure_detail_screen_test.dart` mis à jour :
+onglet renommé, nouveaux providers surchargés à vide pour éviter un appel
+réseau non lié à ce que le test vérifie).

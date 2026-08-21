@@ -1,6 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../khadara/domain/khadara_models.dart' show KhadaraEvent;
+import '../../khadara/domain/khadara_models.dart' show KhadaraEvent, Zawiya;
 import '../data/figures_repository.dart';
 import '../domain/featured_figure.dart';
 import '../domain/figure_models.dart';
@@ -36,6 +36,21 @@ final silsilaLinksProvider = FutureProvider<List<FigureSilsilaLink>>((ref) {
 /// `figure_detail_screen.dart`) — `family` car paramétré par `figureId`.
 final linkedEventsForFigureProvider = FutureProvider.family<List<KhadaraEvent>, String>((ref, figureId) {
   return ref.watch(figuresRepositoryProvider).fetchLinkedEvents(figureId);
+});
+
+/// Zawiyas rattachées à une figure donnée (sous-section "Zawiyas
+/// rattachées" de l'onglet "Zawiya", `figure_detail_screen.dart`) —
+/// `family` car paramétré par `figureId`.
+final linkedZawiyasForFigureProvider = FutureProvider.family<List<Zawiya>, String>((ref, figureId) {
+  return ref.watch(figuresRepositoryProvider).fetchLinkedZawiyas(figureId);
+});
+
+/// Chaîne de succession des khalifas d'une figure fondatrice donnée
+/// (sous-section "Chaîne de khalifas" de l'onglet "Zawiya",
+/// `figure_detail_screen.dart`) — `family` car paramétré par
+/// `founderFigureId`.
+final khalifaChainProvider = FutureProvider.family<List<FigureKhalifaLink>, String>((ref, founderFigureId) {
+  return ref.watch(figuresRepositoryProvider).fetchKhalifaChain(founderFigureId);
 });
 
 /// Épinglage admin ("Figure de la semaine") pour une semaine donnée —

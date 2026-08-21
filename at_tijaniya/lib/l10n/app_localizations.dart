@@ -2013,11 +2013,11 @@ abstract class AppLocalizations {
   /// **'Citations'**
   String get figureCitationsSectionTitle;
 
-  /// No description provided for @figureZiyaraSectionTitle.
+  /// No description provided for @figureZawiyaSectionTitle.
   ///
   /// In fr, this message translates to:
-  /// **'Ziyaras'**
-  String get figureZiyaraSectionTitle;
+  /// **'Zawiya'**
+  String get figureZawiyaSectionTitle;
 
   /// No description provided for @figureBiographyPending.
   ///
@@ -2217,6 +2217,210 @@ abstract class AppLocalizations {
   /// **'Impossible de délier cet évènement.'**
   String get figureZiyarasUnlinkError;
 
+  /// No description provided for @figureZawiyasSectionTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Zawiyas rattachées'**
+  String get figureZawiyasSectionTitle;
+
+  /// No description provided for @figureZawiyasPending.
+  ///
+  /// In fr, this message translates to:
+  /// **'Aucune zawiya rattachée n\'est encore renseignée.'**
+  String get figureZawiyasPending;
+
+  /// No description provided for @figureZawiyasAddButton.
+  ///
+  /// In fr, this message translates to:
+  /// **'Lier une zawiya'**
+  String get figureZawiyasAddButton;
+
+  /// No description provided for @figureZawiyasLinkError.
+  ///
+  /// In fr, this message translates to:
+  /// **'Impossible de lier cette zawiya.'**
+  String get figureZawiyasLinkError;
+
+  /// No description provided for @figureZawiyasPickerTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Choisir une zawiya'**
+  String get figureZawiyasPickerTitle;
+
+  /// No description provided for @figureZawiyasPickerEmpty.
+  ///
+  /// In fr, this message translates to:
+  /// **'Aucune zawiya disponible à lier.'**
+  String get figureZawiyasPickerEmpty;
+
+  /// No description provided for @figureZawiyasUnlinkConfirmTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Délier cette zawiya ?'**
+  String get figureZawiyasUnlinkConfirmTitle;
+
+  /// No description provided for @figureZawiyasUnlinkConfirmBody.
+  ///
+  /// In fr, this message translates to:
+  /// **'La zawiya ne sera plus associée à cette figure.'**
+  String get figureZawiyasUnlinkConfirmBody;
+
+  /// No description provided for @figureZawiyasUnlinkConfirmAction.
+  ///
+  /// In fr, this message translates to:
+  /// **'Délier'**
+  String get figureZawiyasUnlinkConfirmAction;
+
+  /// No description provided for @figureZawiyasUnlinkError.
+  ///
+  /// In fr, this message translates to:
+  /// **'Impossible de délier cette zawiya.'**
+  String get figureZawiyasUnlinkError;
+
+  /// No description provided for @figureZawiyaEventsSectionTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Évènements liés'**
+  String get figureZawiyaEventsSectionTitle;
+
+  /// No description provided for @figureKhalifaChainSectionTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Chaîne de khalifas'**
+  String get figureKhalifaChainSectionTitle;
+
+  /// No description provided for @figureKhalifaFounderLabel.
+  ///
+  /// In fr, this message translates to:
+  /// **'Fondateur'**
+  String get figureKhalifaFounderLabel;
+
+  /// No description provided for @figureKhalifaChainPending.
+  ///
+  /// In fr, this message translates to:
+  /// **'La chaîne de succession de cette zawiya n\'est pas encore renseignée.'**
+  String get figureKhalifaChainPending;
+
+  /// No description provided for @figureKhalifaChainLoadError.
+  ///
+  /// In fr, this message translates to:
+  /// **'Impossible de charger la chaîne de khalifas.'**
+  String get figureKhalifaChainLoadError;
+
+  /// No description provided for @figureKhalifaAddButton.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ajouter un khalife'**
+  String get figureKhalifaAddButton;
+
+  /// No description provided for @figureKhalifaEditButton.
+  ///
+  /// In fr, this message translates to:
+  /// **'Modifier'**
+  String get figureKhalifaEditButton;
+
+  /// No description provided for @figureKhalifaRemoveButton.
+  ///
+  /// In fr, this message translates to:
+  /// **'Retirer'**
+  String get figureKhalifaRemoveButton;
+
+  /// No description provided for @figureKhalifaRemoveConfirmTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Retirer ce khalife de la chaîne ?'**
+  String get figureKhalifaRemoveConfirmTitle;
+
+  /// No description provided for @figureKhalifaRemoveConfirmBody.
+  ///
+  /// In fr, this message translates to:
+  /// **'Cette action est définitive.'**
+  String get figureKhalifaRemoveConfirmBody;
+
+  /// No description provided for @figureKhalifaRemoveConfirmAction.
+  ///
+  /// In fr, this message translates to:
+  /// **'Retirer'**
+  String get figureKhalifaRemoveConfirmAction;
+
+  /// No description provided for @figureKhalifaRemoveError.
+  ///
+  /// In fr, this message translates to:
+  /// **'Impossible de retirer ce khalife.'**
+  String get figureKhalifaRemoveError;
+
+  /// No description provided for @figureKhalifaFormCreateTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ajouter un khalife'**
+  String get figureKhalifaFormCreateTitle;
+
+  /// No description provided for @figureKhalifaFormEditTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Modifier ce khalife'**
+  String get figureKhalifaFormEditTitle;
+
+  /// No description provided for @figureKhalifaFormFigureLabel.
+  ///
+  /// In fr, this message translates to:
+  /// **'Figure du khalife'**
+  String get figureKhalifaFormFigureLabel;
+
+  /// No description provided for @figureKhalifaFormFigureNone.
+  ///
+  /// In fr, this message translates to:
+  /// **'Choisir une figure'**
+  String get figureKhalifaFormFigureNone;
+
+  /// No description provided for @figureKhalifaFormOrderLabel.
+  ///
+  /// In fr, this message translates to:
+  /// **'Rang dans la chaîne'**
+  String get figureKhalifaFormOrderLabel;
+
+  /// No description provided for @figureKhalifaFormOrderHint.
+  ///
+  /// In fr, this message translates to:
+  /// **'1 pour le premier khalife après le fondateur, puis en augmentant à chaque succession.'**
+  String get figureKhalifaFormOrderHint;
+
+  /// No description provided for @figureKhalifaFormOrderRequired.
+  ///
+  /// In fr, this message translates to:
+  /// **'Le rang est requis.'**
+  String get figureKhalifaFormOrderRequired;
+
+  /// No description provided for @figureKhalifaFormOrderInvalid.
+  ///
+  /// In fr, this message translates to:
+  /// **'Le rang doit être un nombre entier.'**
+  String get figureKhalifaFormOrderInvalid;
+
+  /// No description provided for @figureKhalifaFormPeriodLabel.
+  ///
+  /// In fr, this message translates to:
+  /// **'Période (optionnel)'**
+  String get figureKhalifaFormPeriodLabel;
+
+  /// No description provided for @figureKhalifaFormPeriodHint.
+  ///
+  /// In fr, this message translates to:
+  /// **'Texte libre, ex. 1902-1922 ou vers 1950.'**
+  String get figureKhalifaFormPeriodHint;
+
+  /// No description provided for @figureKhalifaFormSave.
+  ///
+  /// In fr, this message translates to:
+  /// **'Enregistrer'**
+  String get figureKhalifaFormSave;
+
+  /// No description provided for @figureKhalifaFormSaveError.
+  ///
+  /// In fr, this message translates to:
+  /// **'Impossible d\'enregistrer ce khalife.'**
+  String get figureKhalifaFormSaveError;
+
   /// No description provided for @figuresCreateButton.
   ///
   /// In fr, this message translates to:
@@ -2258,6 +2462,12 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'Impossible de supprimer cette figure : elle est encore référencée dans la silsila d\'une autre figure.'**
   String get figureDeleteBlockedBySilsila;
+
+  /// No description provided for @figureDeleteBlockedByKhalifaChain.
+  ///
+  /// In fr, this message translates to:
+  /// **'Impossible de supprimer cette figure : elle est encore référencée comme khalife dans une chaîne de succession.'**
+  String get figureDeleteBlockedByKhalifaChain;
 
   /// No description provided for @figureDeleteError.
   ///

@@ -1048,7 +1048,7 @@ class AppLocalizationsFr extends AppLocalizations {
   String get figureCitationsSectionTitle => 'Citations';
 
   @override
-  String get figureZiyaraSectionTitle => 'Ziyaras';
+  String get figureZawiyaSectionTitle => 'Zawiya';
 
   @override
   String get figureBiographyPending => 'Biographie en attente de validation.';
@@ -1163,6 +1163,117 @@ class AppLocalizationsFr extends AppLocalizations {
   String get figureZiyarasUnlinkError => 'Impossible de délier cet évènement.';
 
   @override
+  String get figureZawiyasSectionTitle => 'Zawiyas rattachées';
+
+  @override
+  String get figureZawiyasPending =>
+      'Aucune zawiya rattachée n\'est encore renseignée.';
+
+  @override
+  String get figureZawiyasAddButton => 'Lier une zawiya';
+
+  @override
+  String get figureZawiyasLinkError => 'Impossible de lier cette zawiya.';
+
+  @override
+  String get figureZawiyasPickerTitle => 'Choisir une zawiya';
+
+  @override
+  String get figureZawiyasPickerEmpty => 'Aucune zawiya disponible à lier.';
+
+  @override
+  String get figureZawiyasUnlinkConfirmTitle => 'Délier cette zawiya ?';
+
+  @override
+  String get figureZawiyasUnlinkConfirmBody =>
+      'La zawiya ne sera plus associée à cette figure.';
+
+  @override
+  String get figureZawiyasUnlinkConfirmAction => 'Délier';
+
+  @override
+  String get figureZawiyasUnlinkError => 'Impossible de délier cette zawiya.';
+
+  @override
+  String get figureZawiyaEventsSectionTitle => 'Évènements liés';
+
+  @override
+  String get figureKhalifaChainSectionTitle => 'Chaîne de khalifas';
+
+  @override
+  String get figureKhalifaFounderLabel => 'Fondateur';
+
+  @override
+  String get figureKhalifaChainPending =>
+      'La chaîne de succession de cette zawiya n\'est pas encore renseignée.';
+
+  @override
+  String get figureKhalifaChainLoadError =>
+      'Impossible de charger la chaîne de khalifas.';
+
+  @override
+  String get figureKhalifaAddButton => 'Ajouter un khalife';
+
+  @override
+  String get figureKhalifaEditButton => 'Modifier';
+
+  @override
+  String get figureKhalifaRemoveButton => 'Retirer';
+
+  @override
+  String get figureKhalifaRemoveConfirmTitle =>
+      'Retirer ce khalife de la chaîne ?';
+
+  @override
+  String get figureKhalifaRemoveConfirmBody => 'Cette action est définitive.';
+
+  @override
+  String get figureKhalifaRemoveConfirmAction => 'Retirer';
+
+  @override
+  String get figureKhalifaRemoveError => 'Impossible de retirer ce khalife.';
+
+  @override
+  String get figureKhalifaFormCreateTitle => 'Ajouter un khalife';
+
+  @override
+  String get figureKhalifaFormEditTitle => 'Modifier ce khalife';
+
+  @override
+  String get figureKhalifaFormFigureLabel => 'Figure du khalife';
+
+  @override
+  String get figureKhalifaFormFigureNone => 'Choisir une figure';
+
+  @override
+  String get figureKhalifaFormOrderLabel => 'Rang dans la chaîne';
+
+  @override
+  String get figureKhalifaFormOrderHint =>
+      '1 pour le premier khalife après le fondateur, puis en augmentant à chaque succession.';
+
+  @override
+  String get figureKhalifaFormOrderRequired => 'Le rang est requis.';
+
+  @override
+  String get figureKhalifaFormOrderInvalid =>
+      'Le rang doit être un nombre entier.';
+
+  @override
+  String get figureKhalifaFormPeriodLabel => 'Période (optionnel)';
+
+  @override
+  String get figureKhalifaFormPeriodHint =>
+      'Texte libre, ex. 1902-1922 ou vers 1950.';
+
+  @override
+  String get figureKhalifaFormSave => 'Enregistrer';
+
+  @override
+  String get figureKhalifaFormSaveError =>
+      'Impossible d\'enregistrer ce khalife.';
+
+  @override
   String get figuresCreateButton => 'Créer une figure';
 
   @override
@@ -1184,6 +1295,10 @@ class AppLocalizationsFr extends AppLocalizations {
   @override
   String get figureDeleteBlockedBySilsila =>
       'Impossible de supprimer cette figure : elle est encore référencée dans la silsila d\'une autre figure.';
+
+  @override
+  String get figureDeleteBlockedByKhalifaChain =>
+      'Impossible de supprimer cette figure : elle est encore référencée comme khalife dans une chaîne de succession.';
 
   @override
   String get figureDeleteError => 'Impossible de supprimer cette figure.';

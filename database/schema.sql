@@ -770,13 +770,47 @@ create table public.figure_works (
 );
 
 -- Relie une figure aux évènements Khadara qui la célèbrent/commémorent
--- (ex. Gamou de Tivaouane <-> El Hadj Malick Sy) — sert d'onglet "Ziyaras"
--- sur FigureDetailScreen (voir figures_repository.dart), à la place d'un
--- champ ziyaraNote libre jamais alimenté.
+-- (ex. Gamou de Tivaouane <-> El Hadj Malick Sy) — alimente la sous-section
+-- "Évènements liés" de l'onglet "Zawiya" sur FigureDetailScreen (voir
+-- figures_repository.dart ; onglet nommé "Ziyaras" jusqu'au 2026-08-21), à
+-- la place d'un champ ziyaraNote libre jamais alimenté.
 create table public.figure_events (
   figure_id uuid not null references public.figures(id) on delete cascade,
   event_id uuid not null references public.events(id) on delete cascade,
   primary key (figure_id, event_id)
+);
+
+-- Zawiyas fondées/dirigées par une figure (migration
+-- add_figure_zawiyas_and_khalifa_chain, 2026-08-21) — même forme que
+-- figure_events (jonction simple, lecture publique, écriture admin). Une
+-- figure peut être rattachée à plusieurs zawiyas et vice-versa. Alimente la
+-- sous-section "Zawiyas rattachées" de l'onglet "Zawiya" sur
+-- FigureDetailScreen.
+create table public.figure_zawiyas (
+  figure_id uuid not null references public.figures(id) on delete cascade,
+  zawiya_id uuid not null references public.zawiyas(id) on delete cascade,
+  primary key (figure_id, zawiya_id)
+);
+
+-- Chaîne de succession des khalifas d'une figure fondatrice (migration
+-- add_figure_zawiyas_and_khalifa_chain, 2026-08-21) — modèle à plat
+-- (contrairement à historical_silsila_links) : pas de récursivité
+-- nécessaire, chaque khalife pointe directement vers la figure fondatrice
+-- consultée, order_index fixe son rang. Chaque khalife est lui-même une
+-- Figure (décision porteur de projet, 2026-08-20) : mêmes règles de
+-- content_status/RLS que la silsila historique. Alimente la sous-section
+-- "Chaîne de khalifas" de l'onglet "Zawiya" sur FigureDetailScreen.
+create table public.figure_zawiya_khalifas (
+  id uuid primary key default gen_random_uuid(),
+  founder_figure_id uuid not null references public.figures(id) on delete cascade,
+  khalifa_figure_id uuid not null references public.figures(id),
+  order_index int not null,
+  -- Texte libre ("1902-1922", "vers 1950"...) plutôt que des dates
+  -- structurées : même choix que year_text sur get_ijaza_chain, la
+  -- précision des sources historiques ne justifie pas des colonnes date.
+  period_text text,
+  unique (founder_figure_id, khalifa_figure_id),
+  unique (founder_figure_id, order_index)
 );
 
 -- Épinglage admin de la "Figure de la semaine" affichée sur l'accueil
@@ -1385,6 +1419,28 @@ create policy figure_events_admin_write on public.figure_events for insert with 
 -- rien d'autre à modifier sur une ligne existante (délier puis relier).
 create policy figure_events_admin_delete on public.figure_events for delete using (public.is_admin((select auth.uid())));
 
+-- Ajoutées avec figure_zawiyas/figure_zawiya_khalifas (migration
+-- add_figure_zawiyas_and_khalifa_chain, 2026-08-21).
+create policy figure_zawiyas_read_all on public.figure_zawiyas for select using (true);
+create policy figure_zawiyas_admin_write on public.figure_zawiyas for insert with check (public.is_admin((select auth.uid())));
+create policy figure_zawiyas_admin_delete on public.figure_zawiyas for delete using (public.is_admin((select auth.uid())));
+
+-- Lecture gatée sur le content_status du khalife référencé (même pattern
+-- que silsila_links_read_valid_or_admin) : un khalife encore en brouillon
+-- reste invisible à un non-admin, sans avoir besoin de SECURITY DEFINER —
+-- ici, contrairement à la silsila, aucun maillon intermédiaire à traverser
+-- pour ne pas casser la chaîne (chaque khalife pointe directement sur la
+-- figure fondatrice), donc un khalife en brouillon peut simplement être
+-- absent de la chaîne publique jusqu'à validation, sans rien casser.
+create policy figure_zawiya_khalifas_read_valid_or_admin on public.figure_zawiya_khalifas for select
+  using (
+    public.is_admin((select auth.uid()))
+    or exists (select 1 from public.figures f where f.id = khalifa_figure_id and f.content_status = 'valide')
+  );
+create policy figure_zawiya_khalifas_admin_write on public.figure_zawiya_khalifas for insert with check (public.is_admin((select auth.uid())));
+create policy figure_zawiya_khalifas_admin_update on public.figure_zawiya_khalifas for update using (public.is_admin((select auth.uid())));
+create policy figure_zawiya_khalifas_admin_delete on public.figure_zawiya_khalifas for delete using (public.is_admin((select auth.uid())));
+
 -- Lisible par tous (y compris invité) comme figure_events, pour que la
 -- carte "Figure de la semaine" fonctionne sans session.
 create policy featured_figures_read_all on public.featured_figures for select using (true);
@@ -1682,6 +1738,8 @@ create index idx_events_created_by on public.events (created_by);
 create index idx_events_zawiya_id on public.events (zawiya_id);
 create index idx_featured_figures_figure_id on public.featured_figures (figure_id);
 create index idx_figure_events_event_id on public.figure_events (event_id);
+create index idx_figure_zawiya_khalifas_founder on public.figure_zawiya_khalifas (founder_figure_id);
+create index idx_figure_zawiya_khalifas_khalifa on public.figure_zawiya_khalifas (khalifa_figure_id);
 create index idx_figure_quotes_figure_id on public.figure_quotes (figure_id);
 create index idx_figure_works_figure_id on public.figure_works (figure_id);
 create index idx_group_memberships_user_id on public.group_memberships (user_id);

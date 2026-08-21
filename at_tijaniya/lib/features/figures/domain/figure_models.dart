@@ -247,6 +247,59 @@ class FigureSilsilaLink {
   }
 }
 
+/// Un maillon de la chaîne de succession des khalifas d'une figure
+/// fondatrice (`figure_zawiya_khalifas`) — modèle à plat, distinct de
+/// [HistoricalSilsilaLink]/[FigureSilsilaLink] : pas de récursivité, chaque
+/// khalife pointe directement sur la figure fondatrice consultée (voir
+/// `database/schema.sql`, migration `add_figure_zawiyas_and_khalifa_chain`).
+/// Le khalife est résolu en deux requêtes côté repository (deux FK de
+/// `figure_zawiya_khalifas` vers `figures` : un embed PostgREST direct
+/// serait ambigu) — voir `FiguresRepository.fetchKhalifaChain`.
+class FigureKhalifaLink {
+  const FigureKhalifaLink({
+    required this.id,
+    required this.founderFigureId,
+    required this.khalifaFigureId,
+    required this.khalifaNameAr,
+    required this.khalifaNameFr,
+    required this.khalifaCategory,
+    this.khalifaPortraitUrl,
+    required this.orderIndex,
+    this.periodText,
+  });
+
+  final String id;
+  final String founderFigureId;
+  final String khalifaFigureId;
+  final String khalifaNameAr;
+  final String khalifaNameFr;
+  final FigureCategory khalifaCategory;
+  final String? khalifaPortraitUrl;
+  final int orderIndex;
+
+  /// Texte libre ("1902-1922", "vers 1950"...) — voir le commentaire sur
+  /// `figure_zawiya_khalifas.period_text` dans `database/schema.sql` pour la
+  /// justification du texte libre plutôt que des dates structurées.
+  final String? periodText;
+
+  /// [linkRow] = une ligne de `figure_zawiya_khalifas` ; [figureRow] = la
+  /// ligne `figures` correspondante (`khalifa_figure_id`), résolue à part —
+  /// voir `FiguresRepository.fetchKhalifaChain`.
+  factory FigureKhalifaLink.fromRow(Map<String, dynamic> linkRow, Map<String, dynamic> figureRow) {
+    return FigureKhalifaLink(
+      id: linkRow['id'] as String,
+      founderFigureId: linkRow['founder_figure_id'] as String,
+      khalifaFigureId: linkRow['khalifa_figure_id'] as String,
+      khalifaNameAr: figureRow['name_ar'] as String,
+      khalifaNameFr: figureRow['name_fr'] as String,
+      khalifaCategory: _categoryFromDb(figureRow['category'] as String),
+      khalifaPortraitUrl: figureRow['portrait_url'] as String?,
+      orderIndex: linkRow['order_index'] as int,
+      periodText: linkRow['period_text'] as String?,
+    );
+  }
+}
+
 List<String> _biographySections(String bioText) {
   return bioText
       .split('\n\n')

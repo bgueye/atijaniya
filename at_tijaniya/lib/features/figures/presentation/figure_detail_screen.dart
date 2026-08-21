@@ -6,16 +6,19 @@ import '../../../core/storage/image_upload_service.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../core/theme/rosace_painter.dart';
+import '../../../core/widgets/app_snackbar.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../khadara/domain/khadara_models.dart';
 import '../../khadara/presentation/event_detail_screen.dart';
 import '../../khadara/presentation/khadara_format.dart';
 import '../../khadara/presentation/khadara_providers.dart';
+import '../../khadara/presentation/zawiya_detail_screen.dart';
 import '../../profil/presentation/profile_providers.dart';
 import '../domain/figure_errors.dart';
 import '../domain/figure_models.dart';
 import 'figure_citation_form_screen.dart';
 import 'figure_form_screen.dart';
+import 'figure_khalifa_form_screen.dart';
 import 'figure_silsila_form_screen.dart';
 import 'figure_work_form_screen.dart';
 import 'figures_providers.dart';
@@ -89,14 +92,12 @@ class _FigureDetailScreenState extends ConsumerState<FigureDetailScreen> {
       if (mounted) Navigator.of(context).pop();
     } catch (error) {
       final kind = classifyFigureDeleteError(error);
-      final message = kind == FigureDeleteErrorKind.blockedBySilsila
-          ? l10n.figureDeleteBlockedBySilsila
-          : l10n.figureDeleteError;
-      if (mounted) {
-        ScaffoldMessenger.of(context)
-          ..hideCurrentSnackBar()
-          ..showSnackBar(SnackBar(content: Text(message)));
-      }
+      final message = switch (kind) {
+        FigureDeleteErrorKind.blockedBySilsila => l10n.figureDeleteBlockedBySilsila,
+        FigureDeleteErrorKind.blockedByKhalifaChain => l10n.figureDeleteBlockedByKhalifaChain,
+        FigureDeleteErrorKind.generic => l10n.figureDeleteError,
+      };
+      if (mounted) showErrorSnackBar(context, message);
     } finally {
       if (mounted) setState(() => _deleting = false);
     }
@@ -190,7 +191,7 @@ class _FigureDetailScreenState extends ConsumerState<FigureDetailScreen> {
                     Tab(text: l10n.figureBiographySectionTitle),
                     Tab(text: l10n.figureTabSilsila),
                     Tab(text: l10n.figureCitationsSectionTitle),
-                    Tab(text: l10n.figureZiyaraSectionTitle),
+                    Tab(text: l10n.figureZawiyaSectionTitle),
                   ],
                 ),
               ),
@@ -203,7 +204,7 @@ class _FigureDetailScreenState extends ConsumerState<FigureDetailScreen> {
                         figure: figure,
                         isAdmin: isAdmin,
                         onContentChanged: _refreshFigureContent),
-                    _ZiyarasTab(figure: figure, isAdmin: isAdmin),
+                    _ZawiyaTab(figure: figure, isAdmin: isAdmin),
                   ],
                 ),
               ),
@@ -1015,28 +1016,92 @@ class _AdminItemActions extends StatelessWidget {
   }
 }
 
-/// Onglet Ziyaras — évènements Khadara qui célèbrent/commémorent cette
-/// figure (`figure_events`), avec lier/délier réservé à un admin. Remplace
-/// l'ancien texte libre `Figure.ziyaraNote`, qui n'a jamais été relié à une
-/// colonne réelle (toujours `null`) — voir le commentaire de ce champ dans
-/// `figure_models.dart`.
-class _ZiyarasTab extends ConsumerStatefulWidget {
-  const _ZiyarasTab({required this.figure, required this.isAdmin});
+/// Onglet Zawiya (renommé depuis "Ziyaras" le 2026-08-21) — trois
+/// sous-sections empilées dans un seul `ListView` (pas de sous-`TabBar`
+/// imbriquée) : zawiyas rattachées à la figure (`figure_zawiyas`),
+/// évènements liés qui la célèbrent/commémorent (`figure_events`, contenu
+/// hérité de l'ex-onglet Ziyaras, inchangé — remplace l'ancien texte libre
+/// `Figure.ziyaraNote`, qui n'a jamais été relié à une colonne réelle), et
+/// chaîne de succession des khalifas (`figure_zawiya_khalifas`) — voir
+/// `database/schema.sql`, migration `add_figure_zawiyas_and_khalifa_chain`.
+/// Chaque section a son propre lier/délier réservé à un admin.
+class _ZawiyaTab extends ConsumerStatefulWidget {
+  const _ZawiyaTab({required this.figure, required this.isAdmin});
 
   final Figure figure;
   final bool isAdmin;
 
   @override
-  ConsumerState<_ZiyarasTab> createState() => _ZiyarasTabState();
+  ConsumerState<_ZawiyaTab> createState() => _ZawiyaTabState();
 }
 
-class _ZiyarasTabState extends ConsumerState<_ZiyarasTab> {
-  bool _busy = false;
+class _ZawiyaTabState extends ConsumerState<_ZawiyaTab> {
+  bool _zawiyaLinkBusy = false;
+  bool _eventLinkBusy = false;
 
-  Future<void> _openLinkPicker() async {
-    final linked =
-        ref.read(linkedEventsForFigureProvider(widget.figure.id)).valueOrNull ??
-            const [];
+  static const _sectionTitleStyle =
+      TextStyle(fontWeight: FontWeight.w700, fontSize: 15, color: AppColors.ink);
+
+  // --- Zawiyas rattachées (figure_zawiyas) ---
+
+  Future<void> _openZawiyaLinkPicker() async {
+    final linked = ref.read(linkedZawiyasForFigureProvider(widget.figure.id)).valueOrNull ?? const [];
+    final linkedIds = linked.map((z) => z.id).toSet();
+    final l10n = AppLocalizations.of(context)!;
+
+    final picked = await showModalBottomSheet<Zawiya>(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: AppColors.offWhite,
+      shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
+      builder: (context) => _ZawiyaLinkPickerSheet(excludedZawiyaIds: linkedIds),
+    );
+    if (picked == null || !mounted) return;
+
+    setState(() => _zawiyaLinkBusy = true);
+    try {
+      await ref.read(figuresRepositoryProvider).linkZawiya(figureId: widget.figure.id, zawiyaId: picked.id);
+      ref.invalidate(linkedZawiyasForFigureProvider(widget.figure.id));
+    } catch (_) {
+      if (mounted) showErrorSnackBar(context, l10n.figureZawiyasLinkError);
+    } finally {
+      if (mounted) setState(() => _zawiyaLinkBusy = false);
+    }
+  }
+
+  Future<void> _unlinkZawiya(Zawiya zawiya) async {
+    final l10n = AppLocalizations.of(context)!;
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(l10n.figureZawiyasUnlinkConfirmTitle),
+        content: Text(l10n.figureZawiyasUnlinkConfirmBody),
+        actions: [
+          TextButton(onPressed: () => Navigator.of(context).pop(false), child: Text(l10n.profileCancel)),
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(true),
+            child: Text(l10n.figureZawiyasUnlinkConfirmAction, style: const TextStyle(color: Colors.redAccent)),
+          ),
+        ],
+      ),
+    );
+    if (confirmed != true || !mounted) return;
+
+    setState(() => _zawiyaLinkBusy = true);
+    try {
+      await ref.read(figuresRepositoryProvider).unlinkZawiya(figureId: widget.figure.id, zawiyaId: zawiya.id);
+      ref.invalidate(linkedZawiyasForFigureProvider(widget.figure.id));
+    } catch (_) {
+      if (mounted) showErrorSnackBar(context, l10n.figureZawiyasUnlinkError);
+    } finally {
+      if (mounted) setState(() => _zawiyaLinkBusy = false);
+    }
+  }
+
+  // --- Évènements liés (figure_events) — logique héritée de l'ex-_ZiyarasTab ---
+
+  Future<void> _openEventLinkPicker() async {
+    final linked = ref.read(linkedEventsForFigureProvider(widget.figure.id)).valueOrNull ?? const [];
     final linkedIds = linked.map((e) => e.id).toSet();
     final l10n = AppLocalizations.of(context)!;
 
@@ -1044,30 +1109,23 @@ class _ZiyarasTabState extends ConsumerState<_ZiyarasTab> {
       context: context,
       isScrollControlled: true,
       backgroundColor: AppColors.offWhite,
-      shape: const RoundedRectangleBorder(
-          borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
+      shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
       builder: (context) => _EventLinkPickerSheet(excludedEventIds: linkedIds),
     );
     if (picked == null || !mounted) return;
 
-    setState(() => _busy = true);
+    setState(() => _eventLinkBusy = true);
     try {
-      await ref
-          .read(figuresRepositoryProvider)
-          .linkEvent(figureId: widget.figure.id, eventId: picked.id);
+      await ref.read(figuresRepositoryProvider).linkEvent(figureId: widget.figure.id, eventId: picked.id);
       ref.invalidate(linkedEventsForFigureProvider(widget.figure.id));
     } catch (_) {
-      if (mounted) {
-        ScaffoldMessenger.of(context)
-          ..hideCurrentSnackBar()
-          ..showSnackBar(SnackBar(content: Text(l10n.figureZiyarasLinkError)));
-      }
+      if (mounted) showErrorSnackBar(context, l10n.figureZiyarasLinkError);
     } finally {
-      if (mounted) setState(() => _busy = false);
+      if (mounted) setState(() => _eventLinkBusy = false);
     }
   }
 
-  Future<void> _unlink(KhadaraEvent event) async {
+  Future<void> _unlinkEvent(KhadaraEvent event) async {
     final l10n = AppLocalizations.of(context)!;
     final confirmed = await showDialog<bool>(
       context: context,
@@ -1075,49 +1133,113 @@ class _ZiyarasTabState extends ConsumerState<_ZiyarasTab> {
         title: Text(l10n.figureZiyarasUnlinkConfirmTitle),
         content: Text(l10n.figureZiyarasUnlinkConfirmBody),
         actions: [
-          TextButton(
-              onPressed: () => Navigator.of(context).pop(false),
-              child: Text(l10n.profileCancel)),
+          TextButton(onPressed: () => Navigator.of(context).pop(false), child: Text(l10n.profileCancel)),
           TextButton(
             onPressed: () => Navigator.of(context).pop(true),
-            child: Text(l10n.figureZiyarasUnlinkConfirmAction,
-                style: const TextStyle(color: Colors.redAccent)),
+            child: Text(l10n.figureZiyarasUnlinkConfirmAction, style: const TextStyle(color: Colors.redAccent)),
           ),
         ],
       ),
     );
     if (confirmed != true || !mounted) return;
 
-    setState(() => _busy = true);
+    setState(() => _eventLinkBusy = true);
     try {
-      await ref
-          .read(figuresRepositoryProvider)
-          .unlinkEvent(figureId: widget.figure.id, eventId: event.id);
+      await ref.read(figuresRepositoryProvider).unlinkEvent(figureId: widget.figure.id, eventId: event.id);
       ref.invalidate(linkedEventsForFigureProvider(widget.figure.id));
     } catch (_) {
-      if (mounted) {
-        ScaffoldMessenger.of(context)
-          ..hideCurrentSnackBar()
-          ..showSnackBar(
-              SnackBar(content: Text(l10n.figureZiyarasUnlinkError)));
-      }
+      if (mounted) showErrorSnackBar(context, l10n.figureZiyarasUnlinkError);
     } finally {
-      if (mounted) setState(() => _busy = false);
+      if (mounted) setState(() => _eventLinkBusy = false);
+    }
+  }
+
+  // --- Chaîne de khalifas (figure_zawiya_khalifas) ---
+
+  Future<void> _addOrEditKhalifa(FigureKhalifaLink? existingLink) async {
+    final saved = await Navigator.of(context).push<bool>(
+      MaterialPageRoute(
+        builder: (_) => FigureKhalifaFormScreen(founderFigure: widget.figure, existingLink: existingLink),
+      ),
+    );
+    if (saved == true) ref.invalidate(khalifaChainProvider(widget.figure.id));
+  }
+
+  Future<void> _removeKhalifa(FigureKhalifaLink link) async {
+    final l10n = AppLocalizations.of(context)!;
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(l10n.figureKhalifaRemoveConfirmTitle),
+        content: Text(l10n.figureKhalifaRemoveConfirmBody),
+        actions: [
+          TextButton(onPressed: () => Navigator.of(context).pop(false), child: Text(l10n.profileCancel)),
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(true),
+            child: Text(l10n.figureKhalifaRemoveConfirmAction, style: const TextStyle(color: Colors.redAccent)),
+          ),
+        ],
+      ),
+    );
+    if (confirmed != true || !mounted) return;
+
+    try {
+      await ref.read(figuresRepositoryProvider).removeKhalifaLink(link.id);
+      ref.invalidate(khalifaChainProvider(widget.figure.id));
+    } catch (_) {
+      if (mounted) showErrorSnackBar(context, l10n.figureKhalifaRemoveError);
     }
   }
 
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-    final eventsAsync =
-        ref.watch(linkedEventsForFigureProvider(widget.figure.id));
+    final zawiyasAsync = ref.watch(linkedZawiyasForFigureProvider(widget.figure.id));
+    final eventsAsync = ref.watch(linkedEventsForFigureProvider(widget.figure.id));
+    final khalifaChainAsync = ref.watch(khalifaChainProvider(widget.figure.id));
 
     return ListView(
       padding: const EdgeInsets.all(20),
       children: [
+        Text(l10n.figureZawiyasSectionTitle, style: _sectionTitleStyle),
+        const SizedBox(height: 12),
         if (widget.isAdmin) ...[
           OutlinedButton.icon(
-            onPressed: _busy ? null : _openLinkPicker,
+            onPressed: _zawiyaLinkBusy ? null : _openZawiyaLinkPicker,
+            icon: const Icon(Icons.add, size: 18),
+            label: Text(l10n.figureZawiyasAddButton),
+          ),
+          const SizedBox(height: 12),
+        ],
+        zawiyasAsync.when(
+          loading: () => const Center(
+              child: Padding(
+            padding: EdgeInsets.symmetric(vertical: 16),
+            child: CircularProgressIndicator(color: AppColors.emerald),
+          )),
+          error: (error, stackTrace) => Text(l10n.khadaraLoadError, style: const TextStyle(color: AppColors.bronze)),
+          data: (zawiyas) => zawiyas.isEmpty
+              ? Text(l10n.figureZawiyasPending, style: const TextStyle(color: AppColors.bronze))
+              : Column(
+                  children: [
+                    for (final zawiya in zawiyas)
+                      _LinkedZawiyaCard(
+                        zawiya: zawiya,
+                        isAdmin: widget.isAdmin,
+                        busy: _zawiyaLinkBusy,
+                        onUnlink: () => _unlinkZawiya(zawiya),
+                      ),
+                  ],
+                ),
+        ),
+
+        const Divider(height: 40),
+
+        Text(l10n.figureZawiyaEventsSectionTitle, style: _sectionTitleStyle),
+        const SizedBox(height: 12),
+        if (widget.isAdmin) ...[
+          OutlinedButton.icon(
+            onPressed: _eventLinkBusy ? null : _openEventLinkPicker,
             icon: const Icon(Icons.add, size: 18),
             label: Text(l10n.figureZiyarasAddButton),
           ),
@@ -1129,20 +1251,65 @@ class _ZiyarasTabState extends ConsumerState<_ZiyarasTab> {
             padding: EdgeInsets.symmetric(vertical: 16),
             child: CircularProgressIndicator(color: AppColors.emerald),
           )),
-          error: (error, stackTrace) => Text(l10n.khadaraLoadError,
-              style: const TextStyle(color: AppColors.bronze)),
+          error: (error, stackTrace) => Text(l10n.khadaraLoadError, style: const TextStyle(color: AppColors.bronze)),
           data: (events) => events.isEmpty
-              ? Text(l10n.figureZiyarasPending,
-                  style: const TextStyle(color: AppColors.bronze))
+              ? Text(l10n.figureZiyarasPending, style: const TextStyle(color: AppColors.bronze))
               : Column(
                   children: [
                     for (final event in events)
                       _ZiyaraEventCard(
                         event: event,
                         isAdmin: widget.isAdmin,
-                        busy: _busy,
-                        onUnlink: () => _unlink(event),
+                        busy: _eventLinkBusy,
+                        onUnlink: () => _unlinkEvent(event),
                       ),
+                  ],
+                ),
+        ),
+
+        const Divider(height: 40),
+
+        Text(l10n.figureKhalifaChainSectionTitle, style: _sectionTitleStyle),
+        const SizedBox(height: 12),
+        if (widget.isAdmin) ...[
+          OutlinedButton.icon(
+            onPressed: () => _addOrEditKhalifa(null),
+            icon: const Icon(Icons.add, size: 18),
+            label: Text(l10n.figureKhalifaAddButton),
+          ),
+          const SizedBox(height: 12),
+        ],
+        khalifaChainAsync.when(
+          loading: () => const Center(
+              child: Padding(
+            padding: EdgeInsets.symmetric(vertical: 16),
+            child: CircularProgressIndicator(color: AppColors.emerald),
+          )),
+          error: (error, stackTrace) => Column(
+            children: [
+              Text(l10n.figureKhalifaChainLoadError,
+                  textAlign: TextAlign.center, style: const TextStyle(color: AppColors.bronze)),
+              const SizedBox(height: 12),
+              OutlinedButton(
+                onPressed: () => ref.invalidate(khalifaChainProvider(widget.figure.id)),
+                child: Text(l10n.figuresRetry),
+              ),
+            ],
+          ),
+          data: (chain) => chain.isEmpty && !widget.isAdmin
+              ? Text(l10n.figureKhalifaChainPending, style: const TextStyle(color: AppColors.bronze))
+              : Column(
+                  children: [
+                    _FounderNode(figure: widget.figure, founderLabel: l10n.figureKhalifaFounderLabel),
+                    for (final link in chain) ...[
+                      const _SilsilaConnector(),
+                      _KhalifaNode(
+                        link: link,
+                        isAdmin: widget.isAdmin,
+                        onEdit: () => _addOrEditKhalifa(link),
+                        onRemove: () => _removeKhalifa(link),
+                      ),
+                    ],
                   ],
                 ),
         ),
@@ -1258,6 +1425,209 @@ class _EventLinkPickerSheet extends ConsumerWidget {
                 },
               ),
             ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _LinkedZawiyaCard extends StatelessWidget {
+  const _LinkedZawiyaCard({required this.zawiya, required this.isAdmin, required this.busy, required this.onUnlink});
+
+  final Zawiya zawiya;
+  final bool isAdmin;
+  final bool busy;
+  final VoidCallback onUnlink;
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      margin: const EdgeInsets.only(bottom: 12),
+      child: ListTile(
+        leading: const Icon(Icons.mosque_outlined, color: AppColors.emerald),
+        title: Text(zawiya.name),
+        subtitle: zawiya.addressText != null ? Text(zawiya.addressText!) : null,
+        // Un seul bouton Délier ici, comme `_ZiyaraEventCard` : un lien
+        // figure↔zawiya n'a rien à modifier.
+        trailing: isAdmin
+            ? IconButton(
+                icon: busy
+                    ? const SizedBox(width: 14, height: 14, child: CircularProgressIndicator(strokeWidth: 2))
+                    : const Icon(Icons.link_off, size: 20, color: AppColors.bronze),
+                onPressed: busy ? null : onUnlink,
+              )
+            : const Icon(Icons.chevron_right, color: AppColors.bronze),
+        onTap: () => Navigator.of(context).push(
+          MaterialPageRoute(builder: (_) => ZawiyaDetailScreen(zawiya: zawiya)),
+        ),
+      ),
+    );
+  }
+}
+
+/// Feuille de sélection d'une zawiya à lier — liste `zawiyasProvider`
+/// (annuaire complet des zawiyas), moins celles déjà liées
+/// ([excludedZawiyaIds]). Même pattern que `_EventLinkPickerSheet`.
+class _ZawiyaLinkPickerSheet extends ConsumerWidget {
+  const _ZawiyaLinkPickerSheet({required this.excludedZawiyaIds});
+
+  final Set<String> excludedZawiyaIds;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
+    final zawiyasAsync = ref.watch(zawiyasProvider);
+
+    return SafeArea(
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(20, 20, 20, 20),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Text(l10n.figureZawiyasPickerTitle, style: Theme.of(context).textTheme.titleLarge),
+            const SizedBox(height: 12),
+            ConstrainedBox(
+              constraints: BoxConstraints(maxHeight: MediaQuery.of(context).size.height * 0.5),
+              child: zawiyasAsync.when(
+                loading: () => const Center(
+                    child: Padding(
+                  padding: EdgeInsets.symmetric(vertical: 24),
+                  child: CircularProgressIndicator(color: AppColors.emerald),
+                )),
+                error: (error, stackTrace) => Text(l10n.khadaraLoadError, style: const TextStyle(color: AppColors.bronze)),
+                data: (zawiyas) {
+                  final selectable = zawiyas.where((z) => !excludedZawiyaIds.contains(z.id)).toList();
+                  if (selectable.isEmpty) {
+                    return Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 16),
+                      child: Text(l10n.figureZawiyasPickerEmpty, style: const TextStyle(color: AppColors.bronze)),
+                    );
+                  }
+                  return ListView(
+                    shrinkWrap: true,
+                    children: [
+                      for (final zawiya in selectable)
+                        ListTile(
+                          leading: const Icon(Icons.mosque_outlined, color: AppColors.emerald),
+                          title: Text(zawiya.name),
+                          onTap: () => Navigator.of(context).pop(zawiya),
+                        ),
+                    ],
+                  );
+                },
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+/// Nœud représentant la figure fondatrice consultée, toujours en tête de la
+/// chaîne de khalifas affichée — même style visuel que `_SilsilaNode` pour
+/// la racine (fond zaytoune), mais construit depuis `Figure` (nom AR/FR)
+/// plutôt que `HistoricalSilsilaLink`.
+class _FounderNode extends StatelessWidget {
+  const _FounderNode({required this.figure, required this.founderLabel});
+
+  final Figure figure;
+  final String founderLabel;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      decoration: BoxDecoration(color: AppColors.zaytoune, borderRadius: BorderRadius.circular(12)),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(
+            figure.nameArabic,
+            textDirection: TextDirection.rtl,
+            textAlign: TextAlign.center,
+            style: AppTheme.sacredText(fontSize: 18, color: AppColors.goldSoft),
+          ),
+          const SizedBox(height: 2),
+          Text(figure.nameFrench, textAlign: TextAlign.center, style: const TextStyle(fontSize: 12, color: AppColors.parchment)),
+          const SizedBox(height: 2),
+          Text(founderLabel, style: const TextStyle(fontSize: 10, color: AppColors.gold, fontWeight: FontWeight.w600)),
+        ],
+      ),
+    );
+  }
+}
+
+/// Un maillon de la chaîne de khalifas — même style visuel que `_SilsilaNode`
+/// (non-racine), avec la période de règne si renseignée et, pour un admin,
+/// les actions Modifier/Retirer. Tap → fiche du khalife : `FigureKhalifaLink`
+/// ne porte pas de `Figure` complète (voir `FiguresRepository.fetchKhalifaChain`),
+/// donc on la cherche d'abord dans `figuresProvider` déjà chargé, sinon on la
+/// recharge via `fetchFigureById` (cas d'un khalife encore en brouillon, pas
+/// dans la liste publique, visible seulement par un admin).
+class _KhalifaNode extends ConsumerWidget {
+  const _KhalifaNode({required this.link, required this.isAdmin, required this.onEdit, required this.onRemove});
+
+  final FigureKhalifaLink link;
+  final bool isAdmin;
+  final VoidCallback onEdit;
+  final VoidCallback onRemove;
+
+  Future<void> _openKhalifaDetail(BuildContext context, WidgetRef ref) async {
+    Figure? figure;
+    for (final candidate in ref.read(figuresProvider).valueOrNull ?? const <Figure>[]) {
+      if (candidate.id == link.khalifaFigureId) {
+        figure = candidate;
+        break;
+      }
+    }
+    figure ??= await ref.read(figuresRepositoryProvider).fetchFigureById(link.khalifaFigureId);
+    if (context.mounted) {
+      Navigator.of(context).push(MaterialPageRoute(builder: (_) => FigureDetailScreen(figure: figure!)));
+    }
+  }
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
+    return InkWell(
+      borderRadius: BorderRadius.circular(12),
+      onTap: () => _openKhalifaDetail(context, ref),
+      child: Container(
+        width: double.infinity,
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        decoration: BoxDecoration(color: AppColors.offWhite, borderRadius: BorderRadius.circular(12)),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              link.khalifaNameAr,
+              textDirection: TextDirection.rtl,
+              textAlign: TextAlign.center,
+              style: AppTheme.sacredText(fontSize: 15, color: AppColors.zaytoune),
+            ),
+            const SizedBox(height: 2),
+            Text(link.khalifaNameFr, textAlign: TextAlign.center, style: const TextStyle(fontSize: 12, color: AppColors.bronze)),
+            if (link.periodText != null) ...[
+              const SizedBox(height: 2),
+              Text(link.periodText!, style: const TextStyle(fontSize: 11, color: AppColors.bronze)),
+            ],
+            if (isAdmin) ...[
+              const SizedBox(height: 4),
+              Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  TextButton(onPressed: onEdit, child: Text(l10n.figureKhalifaEditButton)),
+                  TextButton(
+                    onPressed: onRemove,
+                    child: Text(l10n.figureKhalifaRemoveButton, style: const TextStyle(color: Colors.redAccent)),
+                  ),
+                ],
+              ),
+            ],
           ],
         ),
       ),
