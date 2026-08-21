@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_theme.dart';
@@ -162,6 +163,13 @@ class _SectionHeader extends StatelessWidget {
   }
 }
 
+/// Carte figure — portrait + nom FR + nom AR uniquement (le résumé reste sur
+/// `FigureDetailScreen`). Chaque nom tient sur sa propre ligne avec ellipsis :
+/// contrairement à l'ancien `ListTile` (titre + sous-titre + nom arabe en
+/// `trailing` sans largeur contrainte), un nom long ne peut plus déborder ni
+/// écraser le reste de la carte. Nom FR en Cormorant Garamond — police dédiée
+/// "noms de figures" du design system (design/design_tokens.yaml), jamais
+/// utilisée jusqu'ici sur cet écran.
 class _FigureTile extends StatelessWidget {
   const _FigureTile({required this.figure});
 
@@ -170,38 +178,72 @@ class _FigureTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
-      child: ListTile(
-        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-        leading: Container(
-          width: 40,
-          height: 40,
-          decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            color: AppColors.emeraldSoft,
-            // alignment: topCenter — voir figure_detail_screen.dart, même raison.
-            image: figure.portraitUrl != null
-                ? DecorationImage(
-                    image: NetworkImage(figure.portraitUrl!),
-                    fit: BoxFit.cover,
-                    alignment: Alignment.topCenter,
-                  )
-                : null,
-          ),
-          child: figure.portraitUrl == null
-              ? const Icon(Icons.person_outline, color: AppColors.emerald)
-              : null,
-        ),
-        title: Text(figure.nameFrench, style: const TextStyle(fontWeight: FontWeight.w500)),
-        subtitle: figure.summary != null
-            ? Text(figure.summary!, maxLines: 2, overflow: TextOverflow.ellipsis)
-            : null,
-        trailing: Text(
-          figure.nameArabic,
-          textDirection: TextDirection.rtl,
-          style: AppTheme.sacredText(fontSize: 18, color: AppColors.emerald),
-        ),
+      child: InkWell(
+        borderRadius: BorderRadius.circular(16),
         onTap: () => Navigator.of(context).push(
           MaterialPageRoute(builder: (_) => FigureDetailScreen(figure: figure)),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.all(12),
+          child: Row(
+            children: [
+              Container(
+                width: 56,
+                height: 56,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(12),
+                  color: AppColors.emeraldSoft,
+                  border: Border.all(color: AppColors.gold.withValues(alpha: 0.45)),
+                  // alignment: topCenter — voir figure_detail_screen.dart, même raison.
+                  image: figure.portraitUrl != null
+                      ? DecorationImage(
+                          image: NetworkImage(figure.portraitUrl!),
+                          fit: BoxFit.cover,
+                          alignment: Alignment.topCenter,
+                        )
+                      : null,
+                ),
+                child: figure.portraitUrl == null
+                    ? const Icon(Icons.person_outline, color: AppColors.emerald)
+                    : null,
+              ),
+              const SizedBox(width: 14),
+              Expanded(
+                child: Column(
+                  // stretch (pas start) : sans ça chaque Text se dimensionne à
+                  // sa propre largeur (shrink-wrap) et `textAlign: right` sur
+                  // le nom arabe ci-dessous n'a alors aucun effet visible —
+                  // il n'y a jamais de largeur excédentaire à droite pour
+                  // aligner le texte dedans.
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      figure.nameFrench,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: GoogleFonts.cormorantGaramond(
+                        fontWeight: FontWeight.w600,
+                        fontSize: 18,
+                        color: AppColors.ink,
+                      ),
+                    ),
+                    const SizedBox(height: 3),
+                    Text(
+                      figure.nameArabic,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      textAlign: TextAlign.right,
+                      textDirection: TextDirection.rtl,
+                      style: AppTheme.sacredText(fontSize: 16, color: AppColors.emerald),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(width: 8),
+              Icon(Icons.chevron_right, size: 16, color: AppColors.bronze.withValues(alpha: 0.6)),
+            ],
+          ),
         ),
       ),
     );
