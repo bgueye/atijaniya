@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../../../core/theme/app_colors.dart';
 import '../../../l10n/app_localizations.dart';
@@ -9,14 +10,13 @@ import 'donation_providers.dart';
 
 /// Faire un don — don ponctuel, priorité P1 (docs/03-architecture-ecrans.md).
 ///
-/// IMPORTANT (voir `donation_repository.dart`) : aucun prestataire de
-/// paiement n'est encore choisi pour le projet (Orange Money/Wave/Stripe...
-/// « à trancher séparément », `docs/06-architecture-backend.md`). Cet écran
-/// ne fait donc jamais transiter de paiement réel : il enregistre
-/// uniquement l'intention de don (`donations`, `status = 'pending'`) puis
-/// affiche un état honnête indiquant que le paiement en ligne n'est pas
-/// encore disponible — même logique que l'audio des Wirds ou « Comprendre
-/// la Khadara », pas de fonctionnalité simulée.
+/// IMPORTANT (voir `donation_repository.dart`) : prestataire PayDunya, en
+/// mode sandbox tant que le porteur de projet n'a pas configuré les
+/// secrets PayDunya côté Supabase (voir
+/// `supabase/functions/create-donation-checkout`) — jusque-là, l'appel
+/// Edge Function échoue avec un message explicite plutôt que de simuler un
+/// paiement, même logique que l'audio des Wirds ou « Comprendre la
+/// Khadara » : pas de fonctionnalité simulée en silence.
 class DonationScreen extends ConsumerStatefulWidget {
   const DonationScreen({super.key});
 
@@ -28,6 +28,11 @@ class _DonationScreenState extends ConsumerState<DonationScreen> {
   final _customAmountController = TextEditingController();
   int? _selectedPreset;
   bool _submitting = false;
+  // Distinct de `_submitted` : la facture PayDunya a bien été créée, mais
+  // l'ouverture du navigateur elle-même peut échouer (aucune app capable de
+  // gérer un lien https, très rare mais déjà le cas géré ailleurs dans
+  // l'app — voir `LiveStreamScreen._openExternal`) sans que ça remette en
+  // cause le don déjà enregistré.
   bool _submitted = false;
   String? _errorMessage;
 
@@ -68,10 +73,15 @@ class _DonationScreenState extends ConsumerState<DonationScreen> {
       _errorMessage = null;
     });
     try {
-      await ref
+      final checkout = await ref
           .read(donationRepositoryProvider)
-          .recordDonationIntent(amount: amount);
+          .startCheckout(amount: amount);
       if (mounted) setState(() => _submitted = true);
+      final uri = Uri.tryParse(checkout.checkoutUrl);
+      final launched = uri != null && await launchUrl(uri, mode: LaunchMode.externalApplication);
+      if (!launched && mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(l10n.donationOpenCheckoutError)));
+      }
     } catch (_) {
       if (mounted) setState(() => _errorMessage = l10n.donationSubmitError);
     } finally {

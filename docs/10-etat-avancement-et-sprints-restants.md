@@ -172,8 +172,21 @@ datées du 20 et du 21/08).
   `docs/09-journal-implementation-frontend.md` § "Sprint 4 — Performance".
 
 **Sprint 5 — Décisions bloquantes avant lancement (hors dev pur)**
-- Choisir un prestataire de paiement pour les dons (ou confirmer que la V1 reste
-  "intention de don" sans paiement réel).
+- Choisir un prestataire de paiement pour les dons. **Fait le 2026-08-22 : PayDunya**
+  (agrégateur Orange Money/Wave/Free Money/cartes pour l'Afrique de l'Ouest, cohérent avec
+  `donations.currency` par défaut `XOF` et le public prioritaire de l'app). Intégration
+  câblée (`supabase/functions/create-donation-checkout`/`paydunya-webhook`, contrat API
+  vérifié à partir du SDK officiel PayDunya plutôt que deviné) et **validée en conditions
+  réelles le 2026-08-22 avec un compte PayDunya sandbox** : cycle complet
+  création de facture → paiement simulé sur la page PayDunya → webhook de confirmation →
+  `donations.status` passé à `completed`, vérifié en base. Un point non confirmé : l'IPN
+  automatique de PayDunya (les logs Supabase ne montrent que des appels manuels/de test,
+  pas d'appel entrant identifiable comme venant de PayDunya) — à surveiller une fois en
+  production plutôt qu'un blocage, le webhook lui-même est prouvé correct. **Reste
+  hors-code, à faire par le porteur de projet avant tout encaissement réel** : ouvrir un
+  compte PayDunya validé (au-delà du sandbox) et repasser les secrets en mode live
+  (`PAYDUNYA_MODE=live` + les clés live correspondantes). Détail dans
+  `docs/09-journal-implementation-frontend.md` § "Sprint 5 — Intégration PayDunya (sandbox)".
 - Trancher/valider le contenu religieux restant (biographies, "Comprendre la Khadara",
   chaîne de succession des khalifas) — dépendance sur le porteur de projet, pas sur le
   code.

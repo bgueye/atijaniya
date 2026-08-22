@@ -2359,11 +2359,15 @@ class AppLocalizationsFr extends AppLocalizations {
       'Impossible d\'enregistrer votre don pour le moment.';
 
   @override
+  String get donationOpenCheckoutError =>
+      'Impossible d\'ouvrir la page de paiement — réessayez.';
+
+  @override
   String get donationRecordedTitle => 'Merci pour votre soutien';
 
   @override
   String get donationRecordedBody =>
-      'Le paiement en ligne n\'est pas encore disponible dans l\'application. Votre intention de don a bien été enregistrée.';
+      'La page de paiement s\'est ouverte dans votre navigateur. Complétez-y le règlement (Orange Money, Wave, carte…) pour finaliser votre don.';
 
   @override
   String get donationRecordedBackButton => 'Retour';

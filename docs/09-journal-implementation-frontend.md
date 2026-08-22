@@ -2847,3 +2847,90 @@ rapport), 184 tests au vert. **Validé en conditions réelles le 2026-08-21** su
 Android (`R5CW41VL5CE`) : lecture audio d'un pilier de wird (y compris taps répétés sur
 play/suivant), portraits et vignettes affichés nets sur Figures/Khadara/accueil,
 remplacement d'un portrait de figure reflété immédiatement sans image obsolète en cache.
+
+## Sprint 5 — Intégration PayDunya (sandbox) (2026-08-22)
+
+Choix du prestataire de paiement des dons, demandé par le porteur de projet
+("Sprint 5" de `docs/10-etat-avancement-et-sprints-restants.md`, jusque-là
+listé comme décision bloquante hors-code). Sélection guidée par des faits du
+projet plutôt que par une préférence technique : `donations.currency` vaut
+`XOF` par défaut depuis l'origine du schéma, et les zawiyas déjà présentes
+dans l'app (Tivaouane, Kaolack, Medina Baye) sont toutes sénégalaises —
+`docs/06-architecture-backend.md` listait déjà Orange Money/Wave/Stripe comme
+pistes "selon les pays ciblés en priorité". **PayDunya** retenu : agrégateur
+sénégalais couvrant Orange Money/Wave/Free Money/Expresso/cartes en une
+seule API, avec un KYC pensé pour un porteur de projet individuel plutôt
+qu'une société enregistrée à l'étranger — contrairement à Stripe/PayPal, qui
+n'ouvrent pas de compte marchand au Sénégal/Mali et n'auraient couvert
+qu'un don par carte de la diaspora. CinetPay (couverture UEMOA comparable)
+gardé en alternative si le KYC PayDunya posait problème — pas eu besoin d'y
+recourir.
+
+Contrat de l'API PayDunya vérifié à partir du code source du SDK officiel
+Node.js (`paydunyadev/paydunya-node-master`, `lib/checkout-invoice.js` et
+`lib/index.js` récupérés via l'API GitHub) plutôt que deviné ou basé sur une
+documentation partiellement inaccessible (le site `developers.paydunya.com`
+renvoie 403 aux requêtes automatisées) : en-têtes `PAYDUNYA-MASTER-KEY`/
+`PAYDUNYA-PRIVATE-KEY`/`PAYDUNYA-TOKEN`, endpoints
+`https://app.paydunya.com/api/v1` (live) et
+`https://app.paydunya.com/sandbox-api/v1` (test), `checkout-invoice/create`
+puis `checkout-invoice/confirm/{token}`. Format de l'IPN (notification de
+paiement) confirmé par recherche complémentaire : PayDunya ajoute
+`?token=<invoice_token>` à l'URL de callback.
+
+Deux nouvelles Edge Functions (`supabase/functions/`) :
+- `create-donation-checkout` — enregistre l'intention de don
+  (`donations`, `status='pending'`, `user_id` nul pour un don anonyme, même
+  RLS `donations_owner_create` qu'avant) puis crée la facture PayDunya
+  correspondante et renvoie son URL de paiement. `verify_jwt: true` (la clé
+  anon seule, sans session disciple, reste un JWT valide côté Supabase —
+  un don anonyme n'a donc pas besoin d'un traitement particulier au niveau
+  plateforme, seulement dans le code de la fonction).
+- `paydunya-webhook` — IPN appelée par les serveurs PayDunya, jamais par
+  l'app : `verify_jwt: false` au déploiement, action bloquée une première
+  fois par le classificateur de permissions du mode auto (désactiver la
+  vérification JWT est jugé sensible à raison) puis autorisée après
+  explication à l'utilisateur — cas explicitement documenté par l'outil de
+  déploiement comme exception légitime pour une fonction webhook. Ne fait
+  jamais confiance au corps POSTé : le `token` de la query string sert
+  uniquement à savoir quelle facture re-vérifier, le statut effectif est
+  ensuite reconfirmé serveur à serveur via l'API PayDunya avant d'écrire en
+  base — un tiers qui devinerait/rejouerait un token ne peut donc jamais
+  forger un paiement. Aucune policy RLS `update` n'existe sur `donations` :
+  seules ces deux fonctions (clé service_role) peuvent faire passer un don
+  de `pending` à `completed`, jamais le client lui-même.
+
+Côté app : `DonationRepository.startCheckout` (remplace l'ancien
+`recordDonationIntent`, qui se contentait d'insérer la ligne sans jamais
+déclencher de paiement) appelle `create-donation-checkout` puis ouvre
+l'URL de paiement renvoyée via `url_launcher` (`LaunchMode.
+externalApplication`, même pattern que `LiveStreamScreen._openExternal`).
+Pas de `return_url`/`cancel_url` vers l'app dans la facture PayDunya :
+aucune infrastructure de deep link n'existe côté client à ce jour
+(`pubspec.yaml` note explicitement le Navigator standard en attendant
+go_router) — le disciple revient manuellement dans l'app après paiement,
+limite déjà assumée ailleurs pour les liens de direct/rediffusion Khadara.
+
+**Validé en conditions réelles le 2026-08-22** avec un compte PayDunya
+sandbox réel (pas seulement une relecture de code) :
+1. Deux erreurs de configuration rencontrées et corrigées en cours de
+   route, ni l'une ni l'autre côté code — `"Invalid Masterkey Specified"`
+   (valeur mal copiée) puis `"TEST Private Key and Token combination is
+   invalid"` (Private Key et Token venant de rafraîchissements différents
+   de la page des clés PayDunya, donc désynchronisés) : PayDunya valide le
+   triplet de clés ensemble, pas chaque valeur isolément.
+2. Cycle complet une fois les clés correctement configurées : appel réel
+   depuis le téléphone (confirmé dans les logs Supabase, un appel du
+   client Dart a échoué avec l'ancienne erreur de clé avant correction,
+   preuve que l'écran déclenchait déjà le bon appel) ; création de facture
+   via `curl` (`checkoutUrl` renvoyée, ligne `donations` créée
+   `payment_provider_ref`/`payment_method` corrects) ; paiement simulé sur
+   la page PayDunya sandbox par le porteur de projet ; webhook déclenché
+   manuellement (le déclenchement automatique par PayDunya n'a pas pu être
+   confirmé dans la fenêtre de logs consultée — aucun appel entrant
+   identifiable comme venant de PayDunya, seulement des appels de test ;
+   traité comme un point à surveiller en production, pas un blocage, le
+   mécanisme de confirmation lui-même étant prouvé correct) ; `checkout-
+   invoice/confirm` reconfirme `completed` ; `donations.status` repassé de
+   `pending` à `completed`, vérifié en base. Donnée de test supprimée après
+   validation. `flutter analyze` propre, 184 tests au vert.

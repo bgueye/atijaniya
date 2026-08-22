@@ -4413,6 +4413,12 @@ abstract class AppLocalizations {
   /// **'Impossible d\'enregistrer votre don pour le moment.'**
   String get donationSubmitError;
 
+  /// No description provided for @donationOpenCheckoutError.
+  ///
+  /// In fr, this message translates to:
+  /// **'Impossible d\'ouvrir la page de paiement — réessayez.'**
+  String get donationOpenCheckoutError;
+
   /// No description provided for @donationRecordedTitle.
   ///
   /// In fr, this message translates to:
@@ -4422,7 +4428,7 @@ abstract class AppLocalizations {
   /// No description provided for @donationRecordedBody.
   ///
   /// In fr, this message translates to:
-  /// **'Le paiement en ligne n\'est pas encore disponible dans l\'application. Votre intention de don a bien été enregistrée.'**
+  /// **'La page de paiement s\'est ouverte dans votre navigateur. Complétez-y le règlement (Orange Money, Wave, carte…) pour finaliser votre don.'**
   String get donationRecordedBody;
 
   /// No description provided for @donationRecordedBackButton.

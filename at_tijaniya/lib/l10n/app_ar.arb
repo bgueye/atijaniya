@@ -784,8 +784,9 @@
   "donationAmountInvalid": "يرجى اختيار أو إدخال مبلغ صحيح.",
   "donationSubmitButton": "تقديم تبرع",
   "donationSubmitError": "تعذّر تسجيل التبرع في الوقت الحالي.",
+  "donationOpenCheckoutError": "تعذّر فتح صفحة الدفع — أعد المحاولة.",
   "donationRecordedTitle": "شكرًا لدعمكم",
-  "donationRecordedBody": "الدفع عبر التطبيق غير متاح بعد. تم تسجيل نيتكم في التبرع بنجاح.",
+  "donationRecordedBody": "فُتحت صفحة الدفع في متصفحكم. أكملوا الدفع هناك (أورانج موني، Wave، بطاقة…) لإتمام تبرعكم.",
   "donationRecordedBackButton": "رجوع",
 
   "moderationReportAction": "إبلاغ",

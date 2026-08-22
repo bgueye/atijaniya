@@ -1,30 +1,36 @@
-/// Accès aux données de don (Supabase — table `donations`).
+/// Accès aux données de don (Supabase — table `donations` + Edge Functions
+/// `create-donation-checkout`/`paydunya-webhook`).
 ///
-/// Aucun prestataire de paiement n'est encore choisi (CLAUDE.md /
-/// `docs/06-architecture-backend.md` § « hors périmètre » : Orange Money,
-/// Wave, Stripe... « à trancher séparément » — encore listé dans
-/// `docs/04-roadmap-developpement.md` comme « à valider avant la Phase 2 »).
-/// Cette méthode se limite donc à enregistrer l'intention de don
-/// (`status = 'pending'`, valeur par défaut en base) ; aucun encaissement
-/// réel n'a lieu et `payment_method`/`payment_provider_ref` restent `null`
-/// tant qu'aucun prestataire n'est intégré.
+/// Prestataire : PayDunya (agrégateur Orange Money/Wave/Free Money/cartes
+/// pour l'Afrique de l'Ouest — voir `docs/06-architecture-backend.md`,
+/// choisi pour le public visé plutôt qu'un processeur comme Stripe/PayPal
+/// qui n'ouvrent pas de compte marchand au Sénégal/Mali). En mode sandbox
+/// tant que le porteur de projet n'a pas configuré les secrets
+/// `PAYDUNYA_MASTER_KEY`/`PAYDUNYA_PRIVATE_KEY`/`PAYDUNYA_TOKEN` côté
+/// Supabase — aucune clé PayDunya ne transite jamais côté client, d'où le
+/// passage par une Edge Function plutôt qu'un appel direct à l'API PayDunya
+/// depuis l'app (voir `supabase/functions/create-donation-checkout`).
 ///
-/// `user_id` est nul pour un don anonyme (disciple non connecté) — la
-/// policy RLS `donations_owner_create` l'autorise explicitement
+/// `user_id` reste `null` pour un don anonyme (disciple non connecté) —
+/// géré côté Edge Function, même RLS `donations_owner_create` qu'avant
 /// (`auth.uid() = user_id or user_id is null`).
 library;
 
 import '../../../core/supabase/supabase_config.dart';
+import '../domain/donation_checkout.dart';
 
 class DonationRepository {
   const DonationRepository();
 
-  Future<void> recordDonationIntent({required double amount, String currency = 'XOF'}) async {
-    final userId = SupabaseConfig.client.auth.currentUser?.id;
-    await SupabaseConfig.client.from('donations').insert({
-      'user_id': userId,
-      'amount': amount,
-      'currency': currency,
-    });
+  Future<DonationCheckout> startCheckout({required double amount}) async {
+    final response = await SupabaseConfig.client.functions.invoke(
+      'create-donation-checkout',
+      body: {'amount': amount},
+    );
+    final data = response.data as Map<String, dynamic>;
+    return DonationCheckout(
+      donationId: data['donationId'] as String,
+      checkoutUrl: data['checkoutUrl'] as String,
+    );
   }
 }

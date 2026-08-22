@@ -785,8 +785,9 @@
   "donationAmountInvalid": "Merci de choisir ou saisir un montant valide.",
   "donationSubmitButton": "Faire un don",
   "donationSubmitError": "Impossible d'enregistrer votre don pour le moment.",
+  "donationOpenCheckoutError": "Impossible d'ouvrir la page de paiement — réessayez.",
   "donationRecordedTitle": "Merci pour votre soutien",
-  "donationRecordedBody": "Le paiement en ligne n'est pas encore disponible dans l'application. Votre intention de don a bien été enregistrée.",
+  "donationRecordedBody": "La page de paiement s'est ouverte dans votre navigateur. Complétez-y le règlement (Orange Money, Wave, carte…) pour finaliser votre don.",
   "donationRecordedBackButton": "Retour",
 
   "moderationReportAction": "Signaler",

@@ -2275,11 +2275,15 @@ class AppLocalizationsAr extends AppLocalizations {
   String get donationSubmitError => 'تعذّر تسجيل التبرع في الوقت الحالي.';
 
   @override
+  String get donationOpenCheckoutError =>
+      'تعذّر فتح صفحة الدفع — أعد المحاولة.';
+
+  @override
   String get donationRecordedTitle => 'شكرًا لدعمكم';
 
   @override
   String get donationRecordedBody =>
-      'الدفع عبر التطبيق غير متاح بعد. تم تسجيل نيتكم في التبرع بنجاح.';
+      'فُتحت صفحة الدفع في متصفحكم. أكملوا الدفع هناك (أورانج موني، Wave، بطاقة…) لإتمام تبرعكم.';
 
   @override
   String get donationRecordedBackButton => 'رجوع';

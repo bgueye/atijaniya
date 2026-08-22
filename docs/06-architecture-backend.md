@@ -31,10 +31,22 @@ Postgres standard (pas de verrou propriétaire sur le schéma).
 **Hors périmètre de ce document, à trancher séparément :**
 - Prestataire de diffusion vidéo en direct pour le "Direct natif" (ex. Mux,
   Agora, LiveKit) — dépend du budget et de la latence visée.
-- Prestataire de paiement pour les dons (Orange Money, Wave, Stripe... selon
-  les pays ciblés en priorité).
 - Région d'hébergement des données (latence pour l'Afrique de l'Ouest et la
   diaspora vs contraintes de résidence des données).
+
+**Prestataire de paiement pour les dons : PayDunya** (choisi le 2026-08-22,
+Sprint 5 — voir `docs/10-etat-avancement-et-sprints-restants.md`). Agrégateur
+sénégalais (Orange Money, Wave, Free Money, Expresso, cartes Visa/Mastercard
+en une seule API) cohérent avec le public prioritaire de l'app (`donations.
+currency` par défaut `XOF`, zawiyas de Tivaouane/Kaolack/Medina Baye) — Stripe/
+PayPal n'ouvrent pas de compte marchand au Sénégal/Mali et n'auraient couvert
+qu'un don par carte de la diaspora, en option secondaire non retenue pour la
+V1. Intégration câblée en mode sandbox (`supabase/functions/
+create-donation-checkout`/`paydunya-webhook`) : aucun encaissement réel tant
+que le porteur de projet n'a pas ouvert un compte PayDunya et configuré les
+secrets `PAYDUNYA_MASTER_KEY`/`PAYDUNYA_PRIVATE_KEY`/`PAYDUNYA_TOKEN` côté
+Supabase. Alternative de repli si le KYC PayDunya pose problème : CinetPay
+(couverture UEMOA comparable).
 
 ## Domaines du schéma
 

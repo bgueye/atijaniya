@@ -952,6 +952,13 @@ create table public.messages (
 -- ============================================================================
 -- 8. DONS
 -- ============================================================================
+-- Prestataire PayDunya (Sprint 5, 2026-08-22, voir
+-- docs/10-etat-avancement-et-sprints-restants.md) : `payment_method`/
+-- `payment_provider_ref`/`status` sont écrits exclusivement par les Edge
+-- Functions `create-donation-checkout`/`paydunya-webhook`
+-- (`supabase/functions/`) via la clé service_role — aucune policy RLS
+-- update n'existe sur cette table, un client ne peut donc jamais marquer
+-- lui-même son propre don `completed` sans avoir réellement payé.
 
 create table public.donations (
   id uuid primary key default gen_random_uuid(),

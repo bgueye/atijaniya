@@ -130,8 +130,14 @@ attente de contenu validé), Fil d'actualité communautaire (publication
 réservée aux comptes rattachés à une zawiya, like/commentaire fonctionnels,
 **suppression de sa propre publication depuis le 2026-08-16**), Ma lignée
 spirituelle (saisie + "Retrouver mes condisciples"), Faire un don
-(enregistre une intention de don, **aucun paiement réel** — aucun
-prestataire choisi). Détail du CRUD admin (RLS, gestion des suppressions
+(**prestataire PayDunya intégré et validé en sandbox le 2026-08-22** —
+enregistre l'intention de don puis ouvre la facture PayDunya dans le
+navigateur, `supabase/functions/create-donation-checkout`/
+`paydunya-webhook` ; cycle complet création → paiement simulé → webhook de
+confirmation testé avec un compte PayDunya sandbox réel, voir le journal ;
+**aucun encaissement réel tant que le porteur de projet n'a pas basculé
+vers un compte PayDunya validé (`PAYDUNYA_MODE=live`)**).
+Détail du CRUD admin (RLS, gestion des suppressions
 bloquées par clé étrangère) dans `docs/09-journal-implementation-frontend.md`
 — **CRUD zawiyas/figures (15/08), citations/œuvres (16/08) et "Figure de la
 semaine" (17/08) validés manuellement sur téléphone Android le 2026-08-18**
