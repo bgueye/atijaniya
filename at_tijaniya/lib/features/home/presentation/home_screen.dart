@@ -7,6 +7,7 @@ import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../core/theme/rosace_painter.dart';
 import '../../../l10n/app_localizations.dart';
+import '../../donation/presentation/donation_screen.dart';
 import '../../figures/domain/featured_figure.dart';
 import '../../figures/presentation/figure_detail_screen.dart';
 import '../../figures/presentation/figures_providers.dart';
@@ -178,11 +179,12 @@ class _Hero extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.fromLTRB(24, 16, 24, 26),
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.center,
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Text(
                     greeting,
+                    textAlign: TextAlign.center,
                     style: GoogleFonts.cormorantGaramond(
                       fontSize: 30,
                       fontWeight: FontWeight.w600,
@@ -192,6 +194,7 @@ class _Hero extends StatelessWidget {
                   const SizedBox(height: 6),
                   Text(
                     dateLine,
+                    textAlign: TextAlign.center,
                     style: TextStyle(fontSize: 12, color: AppColors.offWhite.withValues(alpha: 0.55)),
                   ),
                   const SizedBox(height: 16),
@@ -319,6 +322,9 @@ class _DashboardBody extends StatelessWidget {
           _SectionLabel(l10n.homeSectionFeaturedFigure),
           _FeaturedFigureCard(featured: featuredFigure),
         ],
+        const SizedBox(height: 20),
+        _SectionLabel(l10n.homeSectionDonation),
+        _DonationCard(l10n: l10n),
       ],
     );
   }
@@ -558,6 +564,39 @@ class _QuickAccessItem extends StatelessWidget {
             ),
           ],
         ),
+      ),
+    );
+  }
+}
+
+/// Accès à `DonationScreen` — volontairement toujours affiché sur l'accueil,
+/// invité compris (aucune session requise, voir `donation_repository.dart` :
+/// `user_id` reste `null` pour un don anonyme, même RLS que pour un don
+/// identifié). Avant cette carte, le seul chemin passait par Profil →
+/// Paramètres, injoignable pour un disciple non connecté puisque Profil
+/// affiche un mur "connectez-vous" avant même Paramètres.
+class _DonationCard extends StatelessWidget {
+  const _DonationCard({required this.l10n});
+
+  final AppLocalizations l10n;
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      child: ListTile(
+        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+        onTap: () => Navigator.of(context).push(
+          MaterialPageRoute(builder: (_) => const DonationScreen()),
+        ),
+        leading: Container(
+          width: 38,
+          height: 38,
+          decoration: BoxDecoration(color: AppColors.goldSoft, borderRadius: BorderRadius.circular(11)),
+          child: Icon(Icons.favorite_outline, color: AppColors.gold, size: 19),
+        ),
+        title: Text(l10n.donationTitle, style: const TextStyle(fontWeight: FontWeight.w500)),
+        subtitle: Text(l10n.settingsDonationTileSubtitle, style: TextStyle(color: AppColors.bronze, fontSize: 12)),
+        trailing: Icon(Icons.chevron_right, color: AppColors.bronze),
       ),
     );
   }

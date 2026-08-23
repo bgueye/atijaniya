@@ -795,6 +795,12 @@ abstract class AppLocalizations {
   /// **'Figure de la semaine'**
   String get homeSectionFeaturedFigure;
 
+  /// No description provided for @homeSectionDonation.
+  ///
+  /// In fr, this message translates to:
+  /// **'Soutenir At-Tijaniya'**
+  String get homeSectionDonation;
+
   /// No description provided for @wirdListTitle.
   ///
   /// In fr, this message translates to:

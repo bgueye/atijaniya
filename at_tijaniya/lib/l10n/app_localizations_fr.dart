@@ -387,6 +387,9 @@ class AppLocalizationsFr extends AppLocalizations {
   String get homeSectionFeaturedFigure => 'Figure de la semaine';
 
   @override
+  String get homeSectionDonation => 'Soutenir At-Tijaniya';
+
+  @override
   String get wirdListTitle => 'Mes Wirds';
 
   @override

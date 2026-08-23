@@ -4,6 +4,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_theme.dart';
+import '../../donation/data/donation_nudge_store.dart';
+import '../../donation/presentation/donation_screen.dart';
 import '../domain/tasbih_session.dart';
 import '../domain/wird_models.dart';
 import 'tasbih_beads_ring.dart';
@@ -73,7 +75,16 @@ class _TasbihBody extends StatelessWidget {
     // s'afficher à sa taille prévue.
     return SingleChildScrollView(
       padding: const EdgeInsets.all(20),
-      child: Column(
+      // `SizedBox(width: double.infinity)` plutôt qu'un Column nu : sans lui,
+      // le Column se contracte à la largeur de son enfant le plus large (ici
+      // la rangée "Corriger -1 / Réinitialiser", visible seulement pendant
+      // le comptage) au lieu d'occuper toute la largeur du SingleChildScrollView
+      // — quand cette rangée disparaît à la complétion du pilier, tout le
+      // bloc, centré sur sa propre largeur réduite, se retrouve visuellement
+      // plaqué à gauche de l'écran.
+      child: SizedBox(
+        width: double.infinity,
+        child: Column(
         children: [
           Text(
             'Pilier ${state.session.pillarIndex + 1} / ${wird.pillars.length}',
@@ -176,6 +187,7 @@ class _TasbihBody extends StatelessWidget {
               ),
             ),
         ],
+        ),
       ),
     );
   }
@@ -329,6 +341,59 @@ class _WirdCompletedView extends StatelessWidget {
             ElevatedButton(
               onPressed: () => Navigator.of(context).pop(),
               child: const Text('Retour au guide'),
+            ),
+            const _DonationNudge(),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+/// Rappel discret vers `DonationScreen`, uniquement sur l'écran "Wird terminé"
+/// — le moment de gratitude le plus naturel de l'app — et au maximum une fois
+/// par semaine (`DonationNudgeStore`). Toujours en dessous du bouton "Retour
+/// au guide" : un ajout secondaire, jamais la priorité visuelle de cet écran.
+class _DonationNudge extends StatefulWidget {
+  const _DonationNudge();
+
+  @override
+  State<_DonationNudge> createState() => _DonationNudgeState();
+}
+
+class _DonationNudgeState extends State<_DonationNudge> {
+  static const _store = DonationNudgeStore();
+  bool _visible = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _evaluate();
+  }
+
+  Future<void> _evaluate() async {
+    if (await _store.shouldShow()) {
+      await _store.markShown();
+      if (mounted) setState(() => _visible = true);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (!_visible) return const SizedBox.shrink();
+    return Padding(
+      padding: const EdgeInsets.only(top: 20),
+      child: InkWell(
+        borderRadius: BorderRadius.circular(8),
+        onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const DonationScreen())),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(Icons.favorite_outline, size: 14, color: AppColors.gold),
+            const SizedBox(width: 6),
+            Text(
+              'At-Tijaniya reste gratuite grâce à vous — faire un don',
+              style: TextStyle(color: AppColors.bronze, fontSize: 12, decoration: TextDecoration.underline, decorationColor: AppColors.bronze),
             ),
           ],
         ),

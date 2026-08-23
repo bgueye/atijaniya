@@ -25,7 +25,9 @@ class WirdHistoryScreen extends ConsumerWidget {
 
     return Scaffold(
       backgroundColor: AppColors.parchment,
-      appBar: AppBar(title: Text('Historique — ${wird.nameFrench}')),
+      appBar: AppBar(
+        title: Text('Historique — ${wird.nameFrench}', maxLines: 1, overflow: TextOverflow.ellipsis),
+      ),
       body: state.loading || state.stats == null
           ? Center(child: CircularProgressIndicator(color: AppColors.emerald))
           : _HistoryBody(stats: state.stats!, weekly: weekly),
@@ -107,9 +109,11 @@ class _StatCard extends StatelessWidget {
         children: [
           Icon(icon, color: AppColors.emerald, size: 26),
           const SizedBox(width: 10),
-          wide
-              ? Expanded(child: _StatText(value: value, label: label))
-              : _StatText(value: value, label: label),
+          // `Flexible` même hors du cas `wide` : sans lui, `_StatText` (et notamment son libellé, ex.
+          // "8 dernières semaines" pour un wird hebdomadaire) reçoit une largeur non bornée dans ce
+          // `Row` et déborde à droite au lieu de passer à la ligne — overflow observé uniquement sur
+          // Hadratou-l-Jouma, seul wird dont le libellé est assez long pour dépasser la carte compacte.
+          Flexible(child: _StatText(value: value, label: label)),
         ],
       ),
     );

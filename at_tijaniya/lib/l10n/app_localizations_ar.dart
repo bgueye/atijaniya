@@ -382,6 +382,9 @@ class AppLocalizationsAr extends AppLocalizations {
   String get homeSectionFeaturedFigure => 'شخصية الأسبوع';
 
   @override
+  String get homeSectionDonation => 'دعم تطبيق التجانية';
+
+  @override
   String get wirdListTitle => 'أورادي';
 
   @override
