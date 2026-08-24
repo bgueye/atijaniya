@@ -40,6 +40,19 @@
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
+            <!-- Deep link de retour d'authentification (confirmation d'inscription,
+                 réinitialisation de mot de passe) — voir SupabaseConfig.authCallbackUrl
+                 et app.dart. supabase_flutter écoute ce lien automatiquement dès qu'il
+                 est reçu par l'OS (package app_links, déjà inclus par supabase_flutter) :
+                 aucun code natif supplémentaire n'est nécessaire au-delà de ce filtre. -->
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="android.intent.category.BROWSABLE"/>
+                <data
+                    android:scheme="com.attijaniya.at_tijaniya"
+                    android:host="login-callback"/>
+            </intent-filter>
         </activity>
         <!-- Don't delete the meta-data below.
              This is used by the Flutter tool to generate GeneratedPluginRegistrant.java -->

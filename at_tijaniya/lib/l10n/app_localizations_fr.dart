@@ -196,6 +196,26 @@ class AppLocalizationsFr extends AppLocalizations {
   String get authLegalSuffix => '.';
 
   @override
+  String get resetPasswordTitle => 'Nouveau mot de passe';
+
+  @override
+  String get resetPasswordSubtitle =>
+      'Choisissez un nouveau mot de passe pour votre compte At-Tijaniya.';
+
+  @override
+  String get resetPasswordConfirmLabel => 'Confirmer le mot de passe';
+
+  @override
+  String get resetPasswordMismatch => 'Les mots de passe ne correspondent pas.';
+
+  @override
+  String get resetPasswordSubmit => 'Enregistrer le mot de passe';
+
+  @override
+  String get resetPasswordError =>
+      'Impossible d\'enregistrer le nouveau mot de passe. Réessayez.';
+
+  @override
   String get navHome => 'Accueil';
 
   @override

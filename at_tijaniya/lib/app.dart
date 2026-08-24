@@ -10,6 +10,7 @@ import 'core/theme/app_theme.dart';
 import 'core/theme/contrast_controller.dart';
 import 'core/theme/locale_controller.dart';
 import 'features/auth/presentation/auth_screen.dart';
+import 'features/auth/presentation/reset_password_screen.dart';
 import 'features/home/presentation/home_shell.dart';
 import 'features/onboarding/data/onboarding_store.dart';
 import 'features/onboarding/presentation/language_selection_screen.dart';
@@ -30,7 +31,7 @@ class AtTijaniyaApp extends ConsumerStatefulWidget {
   ConsumerState<AtTijaniyaApp> createState() => _AtTijaniyaAppState();
 }
 
-enum _Step { splash, language, onboarding, auth, home }
+enum _Step { splash, language, onboarding, auth, resetPassword, home }
 
 class _AtTijaniyaAppState extends ConsumerState<AtTijaniyaApp> {
   _Step _step = _Step.splash;
@@ -66,6 +67,25 @@ class _AtTijaniyaAppState extends ConsumerState<AtTijaniyaApp> {
       if (event == AuthChangeEvent.signedOut && _step == _Step.home && mounted) {
         _navigatorKey.currentState?.popUntil((route) => route.isFirst);
         setState(() => _step = _Step.auth);
+      } else if (event == AuthChangeEvent.passwordRecovery && mounted) {
+        // Lien de réinitialisation de mot de passe ouvert depuis l'e-mail
+        // (deep link, voir SupabaseConfig.authCallbackUrl) : la session
+        // "recovery" qui vient d'être établie n'autorise qu'un `updateUser`,
+        // jamais un accès direct au reste de l'app tant que le mot de passe
+        // n'a pas été changé.
+        _navigatorKey.currentState?.popUntil((route) => route.isFirst);
+        setState(() => _step = _Step.resetPassword);
+      } else if (event == AuthChangeEvent.signedIn &&
+          _step != _Step.home &&
+          _step != _Step.resetPassword &&
+          mounted) {
+        // Lien de confirmation d'inscription ouvert depuis l'e-mail (même
+        // mécanisme) : la session est établie de façon asynchrone après le
+        // démarrage de l'app, potentiellement après le calcul initial de
+        // `_step` dans `_afterLanguageChosen` — sans ce cas, le disciple
+        // resterait bloqué sur l'écran de connexion malgré une session
+        // désormais valide.
+        setState(() => _step = _Step.home);
       }
     });
 
@@ -117,6 +137,8 @@ class _AtTijaniyaAppState extends ConsumerState<AtTijaniyaApp> {
           onAuthenticated: () => setState(() => _step = _Step.home),
           onContinueAsGuest: () => setState(() => _step = _Step.home),
         );
+      case _Step.resetPassword:
+        return ResetPasswordScreen(onDone: () => setState(() => _step = _Step.home));
       case _Step.home:
         return const HomeShell();
     }

@@ -63,6 +63,13 @@
   "authLegalPrivacy": "سياسة الخصوصية",
   "authLegalSuffix": ".",
 
+  "resetPasswordTitle": "كلمة مرور جديدة",
+  "resetPasswordSubtitle": "اختر كلمة مرور جديدة لحسابك في التجانية.",
+  "resetPasswordConfirmLabel": "تأكيد كلمة المرور",
+  "resetPasswordMismatch": "كلمتا المرور غير متطابقتين.",
+  "resetPasswordSubmit": "حفظ كلمة المرور",
+  "resetPasswordError": "تعذّر حفظ كلمة المرور الجديدة. حاول مرة أخرى.",
+
   "navHome": "الرئيسية",
   "navWird": "الورد",
   "navKhadara": "الحضرة",

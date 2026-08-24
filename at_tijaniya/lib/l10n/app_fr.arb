@@ -63,6 +63,13 @@
   "authLegalPrivacy": "Politique de confidentialité",
   "authLegalSuffix": ".",
 
+  "resetPasswordTitle": "Nouveau mot de passe",
+  "resetPasswordSubtitle": "Choisissez un nouveau mot de passe pour votre compte At-Tijaniya.",
+  "resetPasswordConfirmLabel": "Confirmer le mot de passe",
+  "resetPasswordMismatch": "Les mots de passe ne correspondent pas.",
+  "resetPasswordSubmit": "Enregistrer le mot de passe",
+  "resetPasswordError": "Impossible d'enregistrer le nouveau mot de passe. Réessayez.",
+
   "navHome": "Accueil",
   "navWird": "Wird",
   "navKhadara": "Khadara",

@@ -28,6 +28,15 @@ class SupabaseConfig {
 
   static const String anonKey = String.fromEnvironment('SUPABASE_ANON_KEY');
 
+  // Lien de retour vers l'app pour les e-mails d'authentification (confirmation
+  // d'inscription, réinitialisation de mot de passe) — voir AndroidManifest.xml
+  // (intent-filter) et Info.plist (CFBundleURLTypes) pour le câblage natif du
+  // même schème, et app.dart pour la réaction à l'événement
+  // AuthChangeEvent.passwordRecovery qui en résulte. Doit aussi être ajouté à
+  // la liste blanche "Additional Redirect URLs" du projet Supabase, sans quoi
+  // Supabase l'ignore silencieusement et retombe sur le Site URL.
+  static const String authCallbackUrl = 'com.attijaniya.at_tijaniya://login-callback';
+
   static Future<void> init() async {
     if (anonKey.isEmpty) {
       // Volontairement bruyant : évite de démarrer silencieusement contre un

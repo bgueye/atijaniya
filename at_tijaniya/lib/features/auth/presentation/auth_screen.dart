@@ -12,10 +12,13 @@ import '../domain/auth_error_message.dart';
 /// compte possible pour le module Wirds seul (cf.
 /// docs/03-architecture-ecrans.md). Priorité P0.
 ///
-/// Le lien de confirmation envoyé par e-mail à l'inscription (et le lien de
-/// réinitialisation du mot de passe) pointe vers la page par défaut de
-/// Supabase, pas vers l'app (pas de deep link configuré côté client) :
-/// limite connue, hors périmètre de cet écran.
+/// Le lien de confirmation envoyé par e-mail à l'inscription et le lien de
+/// réinitialisation du mot de passe pointent vers `SupabaseConfig.authCallbackUrl`
+/// (deep link natif, voir AndroidManifest.xml/Info.plist) plutôt que vers le
+/// Site URL par défaut de Supabase — supabase_flutter intercepte ce lien tout
+/// seul et émet `AuthChangeEvent.passwordRecovery`/`signedIn`, écoutés dans
+/// `app.dart` pour rediriger respectivement vers `ResetPasswordScreen` ou
+/// directement vers `HomeShell`.
 ///
 /// Volontairement **sans boutons de connexion sociale** (Google/Apple/
 /// Facebook), malgré la maquette `docs/atijaniya_login_signup_toggle.html` :
@@ -117,6 +120,7 @@ class _AuthScreenState extends State<AuthScreen> {
         // (`raw_user_meta_data->>'display_name'`) pour préremplir
         // `profiles.display_name` — voir database/schema.sql.
         data: {'display_name': _fullNameController.text.trim()},
+        emailRedirectTo: SupabaseConfig.authCallbackUrl,
       );
       if (!mounted) return;
       if (response.session != null) {
@@ -152,7 +156,10 @@ class _AuthScreenState extends State<AuthScreen> {
       _infoMessage = null;
     });
     try {
-      await SupabaseConfig.client.auth.resetPasswordForEmail(email);
+      await SupabaseConfig.client.auth.resetPasswordForEmail(
+        email,
+        redirectTo: SupabaseConfig.authCallbackUrl,
+      );
       if (mounted) setState(() => _infoMessage = l10n.authResetPasswordSent);
     } catch (error) {
       if (mounted) setState(() => _errorMessage = _messageFor(classifyAuthError(error), l10n));

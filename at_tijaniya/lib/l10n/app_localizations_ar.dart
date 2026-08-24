@@ -192,6 +192,26 @@ class AppLocalizationsAr extends AppLocalizations {
   String get authLegalSuffix => '.';
 
   @override
+  String get resetPasswordTitle => 'كلمة مرور جديدة';
+
+  @override
+  String get resetPasswordSubtitle =>
+      'اختر كلمة مرور جديدة لحسابك في التجانية.';
+
+  @override
+  String get resetPasswordConfirmLabel => 'تأكيد كلمة المرور';
+
+  @override
+  String get resetPasswordMismatch => 'كلمتا المرور غير متطابقتين.';
+
+  @override
+  String get resetPasswordSubmit => 'حفظ كلمة المرور';
+
+  @override
+  String get resetPasswordError =>
+      'تعذّر حفظ كلمة المرور الجديدة. حاول مرة أخرى.';
+
+  @override
   String get navHome => 'الرئيسية';
 
   @override

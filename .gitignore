@@ -5,3 +5,9 @@
 # conversion en AAC pour assets/audio/wirds/ — pas nécessaires à l'app,
 # évite d'alourdir l'historique git.
 audio-sources/
+
+# Sauvegardes locales de la config Auth Supabase avant application d'un
+# nouveau patch (apply_auth_email_config.mjs) — peuvent contenir des champs
+# sensibles renvoyés par la Management API (ex. jwt_secret, identifiants
+# SMTP) : ne jamais committer.
+supabase/.backups/

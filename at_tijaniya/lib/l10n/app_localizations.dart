@@ -440,6 +440,42 @@ abstract class AppLocalizations {
   /// **'.'**
   String get authLegalSuffix;
 
+  /// No description provided for @resetPasswordTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Nouveau mot de passe'**
+  String get resetPasswordTitle;
+
+  /// No description provided for @resetPasswordSubtitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Choisissez un nouveau mot de passe pour votre compte At-Tijaniya.'**
+  String get resetPasswordSubtitle;
+
+  /// No description provided for @resetPasswordConfirmLabel.
+  ///
+  /// In fr, this message translates to:
+  /// **'Confirmer le mot de passe'**
+  String get resetPasswordConfirmLabel;
+
+  /// No description provided for @resetPasswordMismatch.
+  ///
+  /// In fr, this message translates to:
+  /// **'Les mots de passe ne correspondent pas.'**
+  String get resetPasswordMismatch;
+
+  /// No description provided for @resetPasswordSubmit.
+  ///
+  /// In fr, this message translates to:
+  /// **'Enregistrer le mot de passe'**
+  String get resetPasswordSubmit;
+
+  /// No description provided for @resetPasswordError.
+  ///
+  /// In fr, this message translates to:
+  /// **'Impossible d\'enregistrer le nouveau mot de passe. Réessayez.'**
+  String get resetPasswordError;
+
   /// No description provided for @navHome.
   ///
   /// In fr, this message translates to:
