@@ -2,15 +2,11 @@
 
 Dernière mise à jour : 24 août 2026.
 
-**Brouillon en attente de relecture par le porteur de projet** — en particulier
-l'adresse de contact (§10), à confirmer avant publication/soumission aux stores. Voir
-aussi `docs/10-etat-avancement-et-sprints-restants.md` (Sprint 6).
-
 ## 1. Qui sommes-nous
 
 At-Tijaniya est une application indépendante destinée aux disciples de la Tijaniyya,
-portée par [Nom du porteur de projet à confirmer], à titre individuel — pas une société,
-pas une association constituée à ce jour. Contact : voir §10.
+portée par Boubacar Gueye, à titre individuel — pas une société, pas une association
+constituée à ce jour. Contact : voir §10.
 
 ## 2. Données que nous collectons
 
@@ -113,5 +109,4 @@ version en vigueur.
 
 ## 10. Contact
 
-Pour toute question sur vos données ou cette politique : **[adresse e-mail de contact à
-confirmer]**.
+Pour toute question sur vos données ou cette politique : **bgueye@gmail.com**.
