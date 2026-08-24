@@ -87,6 +87,38 @@ ou correctif), pas une avancée de sprint planifié :
 Détail complet des quatre dans `docs/09-journal-implementation-frontend.md` (entrées
 datées du 20 et du 21/08).
 
+## Depuis la dernière analyse (2026-08-21 → 2026-08-24)
+
+Trois livraisons ponctuelles supplémentaires, hors plan de sprints (mêmes conventions que
+la section précédente — commitées sous les libellés "Sprint 6"/"Sprint 7" par erreur,
+numérotation à ignorer, ça n'a rien à voir avec le Sprint 6 "Préparation stores" du plan
+ci-dessous) :
+
+- **Corrections d'affichage Wird (2026-08-23)** — décalage à gauche du Tasbih à la
+  complétion d'un pilier (`SingleChildScrollView` non contraint en largeur, révélé
+  seulement quand la rangée "Corriger -1/Réinitialiser" disparaissait) et débordement de
+  15px sur la carte "8 dernières semaines" de l'Historique Hadratou-l-Jouma (`Row` non
+  borné). Les deux corrigés et validés sur téléphone Android.
+- **Visibilité de "Faire un don" (2026-08-23)** — analyse : le seul chemin (Profil →
+  Paramètres) était injoignable pour un disciple non connecté, alors que le backend
+  accepte explicitement les dons anonymes (`donations.user_id` peut être `null`). Ajouté :
+  carte sur l'Accueil (invités compris), entrée dans la liste du Profil, et un rappel
+  discret sur l'écran "Wird terminé" (une fois par semaine maximum,
+  `DonationNudgeStore`). Validé sur téléphone.
+- **E-mails d'authentification en français + deep link (2026-08-24)** — les e-mails de
+  confirmation d'inscription et de réinitialisation de mot de passe étaient en anglais et
+  leur lien renvoyait vers `localhost` (Site URL resté au placeholder de création de
+  projet). Deep link natif ajouté (`com.attijaniya.at_tijaniya://login-callback`, Android +
+  iOS), intercepté automatiquement par `supabase_flutter` ; nouvel écran
+  `ResetPasswordScreen`. Templates (FR) et `site_url`/`uri_allow_list` poussés sur le
+  projet live via `supabase/apply_auth_email_config.mjs` (Management API, PATCH ciblé sur
+  ces seuls champs, jamais `supabase config push` — trop risqué sur un projet live dont je
+  ne peux pas lire tous les réglages actuels au préalable). A nécessité de configurer un
+  SMTP personnalisé (Gmail) : Supabase bloque la personnalisation des templates sur le plan
+  gratuit avec l'expéditeur par défaut. Rendu final vérifié par e-mail réel (compte de
+  test `bgueye+test@gmail.com`, toujours présent en base, non confirmé — inoffensif,
+  à nettoyer à l'occasion via Profil → Supprimer mon compte si souhaité).
+
 ### Points en suspens à connaître
 
 - Les 3 fonctionnalités listées comme "jamais validées manuellement" lors de la première
