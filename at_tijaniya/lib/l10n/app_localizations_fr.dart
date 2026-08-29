@@ -2072,7 +2072,7 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get mouqaddamIntro =>
-      'Le statut de mouqaddam vérifié n\'est jamais auto-proclamé : votre parrain doit confirmer qu\'il vous a transmis l\'ijaza.';
+      'Le statut de parrainage confirmé n\'est jamais auto-proclamé : votre parrain doit confirmer qu\'il vous a transmis l\'ijaza.';
 
   @override
   String get mouqaddamLoadError => 'Impossible de charger votre demande.';
@@ -2177,7 +2177,7 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get mouqaddamRequestsAcceptConfirmBody =>
-      'Le statut de mouqaddam vérifié sera confirmé pour ce disciple.';
+      'Le parrainage sera confirmé pour ce disciple.';
 
   @override
   String get mouqaddamRequestsRejectConfirmTitle => 'Refuser cette demande ?';
@@ -2311,6 +2311,55 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get aboutVersionLabel => 'Version';
+
+  @override
+  String get aboutScreenTitle => 'À propos d\'At-Tijaniya';
+
+  @override
+  String get aboutIntro =>
+      'At-Tijaniya (التجانية) est un outil communautaire indépendant, conçu par et pour les disciples de la Tijaniyya : pratique quotidienne des wirds, suivi des khadara, découverte des figures et des foyers de la tarîqa, et mise en lien entre disciples.';
+
+  @override
+  String get aboutIndependenceSectionTitle =>
+      'Une application indépendante, pas une autorité religieuse';
+
+  @override
+  String get aboutIndependenceBody1 =>
+      'At-Tijaniya n\'est affiliée à aucun Khalifat général, foyer ou zawiya en particulier. Elle ne représente ni ne parle au nom d\'aucune autorité de la Tijaniyya.';
+
+  @override
+  String get aboutIndependenceBody2 =>
+      'Le contenu religieux présenté dans l\'application (wirds, biographies, enseignements) est compilé à partir de sources reconnues, puis relu par des moqaddamines référents avant publication. Cette relecture est un travail de vérification éditoriale — elle ne constitue pas une déclaration d\'autorité doctrinale, et ne se substitue à aucun enseignement reçu directement d\'un moqaddam.';
+
+  @override
+  String get aboutSponsorshipSectionTitle =>
+      'Le statut « Parrainage confirmé »';
+
+  @override
+  String get aboutSponsorshipBody1 =>
+      'Le badge affiché sur certains profils atteste qu\'un parrainage a été confirmé entre deux utilisateurs de l\'application, selon un mécanisme propre à At-Tijaniya.';
+
+  @override
+  String get aboutSponsorshipBodyBold =>
+      'Ce n\'est pas une reconnaissance ou une habilitation religieuse officielle.';
+
+  @override
+  String get aboutSponsorshipBody2 =>
+      'Il ne remplace, ne confirme, ni ne contredit la légitimité qu\'un moqaddam tient de sa propre chaîne de transmission (silsila) dans la réalité.';
+
+  @override
+  String get aboutNeutralitySectionTitle => 'Neutralité entre foyers';
+
+  @override
+  String get aboutNeutralityBody =>
+      'At-Tijaniya présente à égalité les différents foyers de la tarîqa (Tivaouane, Kaolack, Médina Baye, et d\'autres) sans privilégier ni représenter davantage l\'un par rapport aux autres.';
+
+  @override
+  String get aboutContactSectionTitle => 'Contact';
+
+  @override
+  String get aboutContactBody =>
+      'Pour toute question ou tout signalement d\'une erreur de contenu, contactez bgueye@gmail.com.';
 
   @override
   String get privacyTitle => 'Confidentialité';

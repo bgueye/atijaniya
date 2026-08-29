@@ -2934,3 +2934,41 @@ sandbox réel (pas seulement une relecture de code) :
    invoice/confirm` reconfirme `completed` ; `donations.status` repassé de
    `pending` à `completed`, vérifié en base. Donnée de test supprimée après
    validation. `flutter analyze` propre, 184 tests au vert.
+
+## Écran "À propos" (2026-08-29)
+
+Nouvel écran `AboutScreen` (`lib/features/settings/presentation/
+about_screen.dart`), accessible en permanence depuis Paramètres généraux →
+tuile "À propos" (désormais navigable, `chevron_right` ajouté). Contenu
+FR/AR intégralement piloté par `docs/11-a-propos.md` (texte fait foi mot
+pour mot, validé par le porteur de projet le 2026-08-29 — voir l'entête du
+doc) : positionnement indépendant/non affilié à un Khalifat ou foyer,
+statut éditorial du contenu religieux (relu par des moqaddamines
+référents, pas une déclaration d'autorité doctrinale), badge "Parrainage
+confirmé" (paragraphe repris mot pour mot de l'info-bulle, CLAUDE.md
+section "Libellé UI du badge"), neutralité entre foyers, contact
+(`bgueye@gmail.com`, fourni par le porteur de projet).
+
+Corrigé en même temps, révélé par la nouvelle règle CLAUDE.md sur le
+libellé du badge : deux chaînes déjà en production employaient encore
+"mouqaddam vérifié" en direction du disciple — `mouqaddamIntro` (écran
+"Devenir Mouqaddam") et `mouqaddamRequestsAcceptConfirmBody` (confirmation
+d'acceptation sur "Demandes de parrainage"), FR et AR. Reformulées en
+"parrainage confirmé" (FR) / "الكفالة المؤكدة" (AR) — pas de changement de
+schéma, `mouqaddam_status.status = 'verified'` reste le nom technique.
+
+Piège rencontré : première version de l'écran utilisait `ListView(children:
+[...])` pour un contenu pourtant fixe et modeste (pas une liste). Un
+`ListView` ne construit dans l'arbre de widgets que les enfants dans son
+cache extent — les deux dernières sections ("Parrainage confirmé" au-delà
+du premier paragraphe, "Neutralité", "Contact") étaient absentes de l'arbre
+tant qu'on ne scrollait pas, silencieusement (`find.text` ne les trouvait
+pas non plus dans les tests). Remplacé par `SingleChildScrollView` +
+`Column`, qui construit tout d'un coup — le bon choix par défaut pour du
+contenu statique de taille connue, `ListView` restant réservé aux listes
+potentiellement longues/dynamiques.
+
+Nouveau test `test/about_screen_test.dart` : vérifie la présence des
+quatre sections, l'absence du mot "vérifié" dans le paragraphe badge, et
+l'affichage du contact. `flutter analyze` propre (1 info préexistant sans
+rapport, `settings_screen.dart:40`), 187 tests au vert.

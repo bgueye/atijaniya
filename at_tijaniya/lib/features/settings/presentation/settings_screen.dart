@@ -7,6 +7,7 @@ import '../../../core/theme/contrast_controller.dart';
 import '../../../core/theme/locale_controller.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../donation/presentation/donation_screen.dart';
+import 'about_screen.dart';
 import 'privacy_settings_screen.dart';
 
 /// Paramètres généraux — langue, notifications, confidentialité, à propos.
@@ -112,6 +113,10 @@ class SettingsScreen extends ConsumerWidget {
                 leading: const Icon(Icons.info_outline),
                 title: Text(l10n.appName),
                 subtitle: const _AboutVersionSubtitle(),
+                trailing: const Icon(Icons.chevron_right),
+                onTap: () => Navigator.of(context).push(
+                  MaterialPageRoute(builder: (_) => const AboutScreen()),
+                ),
               ),
             ),
           ],

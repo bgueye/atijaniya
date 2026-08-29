@@ -67,6 +67,22 @@ disciple, avec un réglage opt-in distinct pour "disponible comme parrain". Ce s
 aucune permission technique (modération, contenu, administration de zawiya) — voir
 `docs/01-perimetre-fonctionnel.md` § 5.4.2 et § 6.
 
+### Libellé UI du badge — ne pas confondre technique et affichage
+En base, le statut reste techniquement `mouqaddam_status.status = 'verified'` (aucun
+changement de schéma). **Mais ce mot ne doit jamais apparaître tel quel dans l'interface.**
+"Vérifié" laisse entendre une reconnaissance ou une habilitation religieuse officielle que
+l'app n'a ni la légitimité ni l'intention de délivrer — voir la posture de positionnement
+d'At-Tijaniya comme outil communautaire indépendant, non affilié à un Khalifat, un foyer ou
+une zawiya (texte complet : `docs/11-a-propos.md`).
+- **Libellé du badge (court, affiché sur le profil/les cartes)** : *"Parrainage confirmé"*
+  — jamais *"Mouqaddam vérifié"*.
+- **Explication au tap / info-bulle (obligatoire, pas optionnelle)** : *"Ce statut atteste
+  qu'un parrainage a été confirmé au sein de la communauté At-Tijaniya. Ce n'est pas une
+  reconnaissance ou une habilitation religieuse officielle."*
+- Même principe sur les écrans "Devenir Mouqaddam", "Demandes de parrainage" et "Ma silsila
+  d'ijaza" : le mot "parrainage confirmé/accepté" est préféré à "vérifié" partout où le texte
+  s'adresse au disciple, y compris dans les notifications push.
+
 **Unique exception actée, scopée et datée** (2026-08-13) : la gestion des évènements Khadara
 (créer/modifier/supprimer, voir paragraphe "Gestion des évènements Khadara" plus bas) — décision
 explicite du porteur de projet, à ne pas généraliser par analogie à d'autres fonctionnalités sans

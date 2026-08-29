@@ -3900,7 +3900,7 @@ abstract class AppLocalizations {
   /// No description provided for @mouqaddamIntro.
   ///
   /// In fr, this message translates to:
-  /// **'Le statut de mouqaddam vérifié n\'est jamais auto-proclamé : votre parrain doit confirmer qu\'il vous a transmis l\'ijaza.'**
+  /// **'Le statut de parrainage confirmé n\'est jamais auto-proclamé : votre parrain doit confirmer qu\'il vous a transmis l\'ijaza.'**
   String get mouqaddamIntro;
 
   /// No description provided for @mouqaddamLoadError.
@@ -4092,7 +4092,7 @@ abstract class AppLocalizations {
   /// No description provided for @mouqaddamRequestsAcceptConfirmBody.
   ///
   /// In fr, this message translates to:
-  /// **'Le statut de mouqaddam vérifié sera confirmé pour ce disciple.'**
+  /// **'Le parrainage sera confirmé pour ce disciple.'**
   String get mouqaddamRequestsAcceptConfirmBody;
 
   /// No description provided for @mouqaddamRequestsRejectConfirmTitle.
@@ -4334,6 +4334,84 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'Version'**
   String get aboutVersionLabel;
+
+  /// No description provided for @aboutScreenTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'À propos d\'At-Tijaniya'**
+  String get aboutScreenTitle;
+
+  /// No description provided for @aboutIntro.
+  ///
+  /// In fr, this message translates to:
+  /// **'At-Tijaniya (التجانية) est un outil communautaire indépendant, conçu par et pour les disciples de la Tijaniyya : pratique quotidienne des wirds, suivi des khadara, découverte des figures et des foyers de la tarîqa, et mise en lien entre disciples.'**
+  String get aboutIntro;
+
+  /// No description provided for @aboutIndependenceSectionTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Une application indépendante, pas une autorité religieuse'**
+  String get aboutIndependenceSectionTitle;
+
+  /// No description provided for @aboutIndependenceBody1.
+  ///
+  /// In fr, this message translates to:
+  /// **'At-Tijaniya n\'est affiliée à aucun Khalifat général, foyer ou zawiya en particulier. Elle ne représente ni ne parle au nom d\'aucune autorité de la Tijaniyya.'**
+  String get aboutIndependenceBody1;
+
+  /// No description provided for @aboutIndependenceBody2.
+  ///
+  /// In fr, this message translates to:
+  /// **'Le contenu religieux présenté dans l\'application (wirds, biographies, enseignements) est compilé à partir de sources reconnues, puis relu par des moqaddamines référents avant publication. Cette relecture est un travail de vérification éditoriale — elle ne constitue pas une déclaration d\'autorité doctrinale, et ne se substitue à aucun enseignement reçu directement d\'un moqaddam.'**
+  String get aboutIndependenceBody2;
+
+  /// No description provided for @aboutSponsorshipSectionTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Le statut « Parrainage confirmé »'**
+  String get aboutSponsorshipSectionTitle;
+
+  /// No description provided for @aboutSponsorshipBody1.
+  ///
+  /// In fr, this message translates to:
+  /// **'Le badge affiché sur certains profils atteste qu\'un parrainage a été confirmé entre deux utilisateurs de l\'application, selon un mécanisme propre à At-Tijaniya.'**
+  String get aboutSponsorshipBody1;
+
+  /// No description provided for @aboutSponsorshipBodyBold.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ce n\'est pas une reconnaissance ou une habilitation religieuse officielle.'**
+  String get aboutSponsorshipBodyBold;
+
+  /// No description provided for @aboutSponsorshipBody2.
+  ///
+  /// In fr, this message translates to:
+  /// **'Il ne remplace, ne confirme, ni ne contredit la légitimité qu\'un moqaddam tient de sa propre chaîne de transmission (silsila) dans la réalité.'**
+  String get aboutSponsorshipBody2;
+
+  /// No description provided for @aboutNeutralitySectionTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Neutralité entre foyers'**
+  String get aboutNeutralitySectionTitle;
+
+  /// No description provided for @aboutNeutralityBody.
+  ///
+  /// In fr, this message translates to:
+  /// **'At-Tijaniya présente à égalité les différents foyers de la tarîqa (Tivaouane, Kaolack, Médina Baye, et d\'autres) sans privilégier ni représenter davantage l\'un par rapport aux autres.'**
+  String get aboutNeutralityBody;
+
+  /// No description provided for @aboutContactSectionTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Contact'**
+  String get aboutContactSectionTitle;
+
+  /// No description provided for @aboutContactBody.
+  ///
+  /// In fr, this message translates to:
+  /// **'Pour toute question ou tout signalement d\'une erreur de contenu, contactez bgueye@gmail.com.'**
+  String get aboutContactBody;
 
   /// No description provided for @privacyTitle.
   ///

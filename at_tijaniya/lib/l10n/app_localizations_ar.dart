@@ -2006,7 +2006,7 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get mouqaddamIntro =>
-      'صفة المقدَّم الموثّق لا تُعلَن من تلقاء نفسك أبداً: يجب أن يؤكد كفيلك أنه هو من نقل إليك الإجازة.';
+      'صفة الكفالة المؤكدة لا تُعلَن من تلقاء نفسك أبداً: يجب أن يؤكد كفيلك أنه هو من نقل إليك الإجازة.';
 
   @override
   String get mouqaddamLoadError => 'تعذّر تحميل طلبك.';
@@ -2104,7 +2104,7 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get mouqaddamRequestsAcceptConfirmBody =>
-      'سيتم تأكيد صفة المقدَّم الموثّق لهذا المريد.';
+      'سيتم تأكيد الكفالة لهذا المريد.';
 
   @override
   String get mouqaddamRequestsRejectConfirmTitle => 'رفض هذا الطلب؟';
@@ -2234,6 +2234,53 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get aboutVersionLabel => 'الإصدار';
+
+  @override
+  String get aboutScreenTitle => 'عن التجانية';
+
+  @override
+  String get aboutIntro =>
+      'التجانية At-Tijaniya أداة مجتمعية مستقلة، صُمِّمت من طرف مريدي الطريقة التجانية ولأجلهم: ممارسة الورد يومياً، متابعة الحضرات، التعرف على الأعلام وفروع الطريقة، والتواصل بين المريدين.';
+
+  @override
+  String get aboutIndependenceSectionTitle => 'تطبيق مستقل، وليس سلطة دينية';
+
+  @override
+  String get aboutIndependenceBody1 =>
+      'التجانية غير تابعة لأي خلافة عامة أو فرع أو زاوية بعينها. وهي لا تمثّل ولا تتحدث باسم أي سلطة من سلطات الطريقة التجانية.';
+
+  @override
+  String get aboutIndependenceBody2 =>
+      'المحتوى الديني المعروض في التطبيق (الأوراد، التراجم، التعاليم) يُجمع من مصادر معتمدة، ثم تُراجعه مجموعة من المقدَّمين المرجعيين قبل نشره. هذه المراجعة عمل تحرير وتحقّق، وليست إعلاناً لسلطة عقدية، ولا تُغني عن أي تعليم يُتلقّى مباشرة من مقدَّم.';
+
+  @override
+  String get aboutSponsorshipSectionTitle => 'صفة «الكفالة المؤكدة»';
+
+  @override
+  String get aboutSponsorshipBody1 =>
+      'الشارة الظاهرة على بعض الملفات الشخصية تشهد بأن كفالة قد تأكدت بين مستخدمَين للتطبيق، وفق آلية خاصة بالتجانية.';
+
+  @override
+  String get aboutSponsorshipBodyBold =>
+      'وهذا ليس اعترافاً أو تخويلاً دينياً رسمياً.';
+
+  @override
+  String get aboutSponsorshipBody2 =>
+      'ولا تُلغي ولا تؤكد ولا تناقض الشرعية التي يحملها المقدَّم من سلسلة نقله (السلسلة) الحقيقية.';
+
+  @override
+  String get aboutNeutralitySectionTitle => 'الحياد بين الفروع';
+
+  @override
+  String get aboutNeutralityBody =>
+      'تعرض التجانية مختلف فروع الطريقة (تيفاوان، كاولاك، مدينة باي، وغيرها) على قدم المساواة، دون تفضيل أي منها أو تمثيله أكثر من الآخر.';
+
+  @override
+  String get aboutContactSectionTitle => 'التواصل';
+
+  @override
+  String get aboutContactBody =>
+      'لأي سؤال أو إبلاغ عن خطأ في المحتوى، راسلونا على bgueye@gmail.com.';
 
   @override
   String get privacyTitle => 'الخصوصية';
