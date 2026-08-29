@@ -12,8 +12,10 @@ limites de chaque store ; recompter après toute modification.
   utilisateurs non modéré (modération a posteriori en place, voir
   `docs/09-journal-implementation-frontend.md` § Sprint 2).
 - **Gratuite**, financée par les dons — aucun achat intégré, aucune publicité.
-- **URL de la politique de confidentialité** : (lien de l'artifact publié à coller ici
-  une fois confirmé — voir message de conversation).
+- **URL de la politique de confidentialité** : https://claude.ai/code/artifact/f0eed457-0f53-4cb8-9e94-52604f6fe7ac
+  (Artifact publié le 2026-08-29, contenu identique à `docs/politique-de-confidentialite.md`
+  — **privé par défaut, à partager en public depuis le menu de partage de la page avant
+  toute soumission aux stores**, sans quoi le lien n'est accessible qu'au porteur de projet).
 
 ---
 
