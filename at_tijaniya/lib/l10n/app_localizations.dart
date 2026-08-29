@@ -1680,13 +1680,13 @@ abstract class AppLocalizations {
   /// No description provided for @khadaraUnderstandingTooltip.
   ///
   /// In fr, this message translates to:
-  /// **'Comprendre la Khadara'**
+  /// **'Comprendre la Zawiya'**
   String get khadaraUnderstandingTooltip;
 
   /// No description provided for @khadaraUnderstandingTitle.
   ///
   /// In fr, this message translates to:
-  /// **'Comprendre la Khadara'**
+  /// **'Comprendre la Zawiya'**
   String get khadaraUnderstandingTitle;
 
   /// No description provided for @khadaraUnderstandingEmptyTitle.
@@ -1706,6 +1706,12 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'En attendant, découvrir le calendrier et les zawiyas'**
   String get khadaraUnderstandingCta;
+
+  /// No description provided for @khadaraUnderstandingDraftBanner.
+  ///
+  /// In fr, this message translates to:
+  /// **'Brouillon non publié — visible uniquement par toi en tant qu\'admin, en attente de validation.'**
+  String get khadaraUnderstandingDraftBanner;
 
   /// No description provided for @khadaraLiveTab.
   ///

@@ -849,10 +849,10 @@ class AppLocalizationsAr extends AppLocalizations {
   String get zawiyaFormSaveError => 'تعذّر حفظ الزاوية.';
 
   @override
-  String get khadaraUnderstandingTooltip => 'فهم الحضرة';
+  String get khadaraUnderstandingTooltip => 'فهم الزاوية';
 
   @override
-  String get khadaraUnderstandingTitle => 'فهم الحضرة';
+  String get khadaraUnderstandingTitle => 'فهم الزاوية';
 
   @override
   String get khadaraUnderstandingEmptyTitle => 'المحتوى قيد الإعداد';
@@ -863,6 +863,10 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get khadaraUnderstandingCta => 'في الانتظار، اكتشف التقويم والزوايا';
+
+  @override
+  String get khadaraUnderstandingDraftBanner =>
+      'مسودة غير منشورة — مرئية لك فقط كمشرف، في انتظار التحقق منها.';
 
   @override
   String get khadaraLiveTab => 'البث المباشر';

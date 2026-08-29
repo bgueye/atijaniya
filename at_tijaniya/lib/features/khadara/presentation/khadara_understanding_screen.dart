@@ -1,40 +1,82 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/theme/app_colors.dart';
 import '../../../l10n/app_localizations.dart';
 import '../data/khadara_understanding_content.dart';
+import 'khadara_providers.dart';
 
-/// Comprendre la Khadara — contenu pédagogique pour les nouveaux disciples.
+/// Comprendre la Zawiya — contenu pédagogique pour les nouveaux disciples
+/// qui parcourent l'annuaire des zawiyas de l'onglet Khadara (pas le
+/// déroulement de la Hadaratou-l-Jouma, qui relève du module Wirds).
 /// Priorité P1 (docs/03-architecture-ecrans.md).
 ///
 /// IMPORTANT (CLAUDE.md — contenu religieux ; docs/01-perimetre-fonctionnel.md
-/// § 8) : le contenu affiché ici provient exclusivement de
-/// `lib/features/khadara/data/khadara_understanding_content.dart` (source
-/// unique). Cette liste est actuellement vide car aucun contenu n'est
-/// encore validé — voir la règle impérative en tête de ce fichier de
-/// contenu. L'écran affiche alors un état vide honnête plutôt que du
-/// contenu inventé.
-class KhadaraUnderstandingScreen extends StatelessWidget {
+/// § 8) : le contenu vient de `khadaraUnderstandingPageProvider` (table
+/// `guide_pages`, slug `comprendre-zawiya`). La RLS ne laisse remonter une
+/// ligne à un disciple que si `content_status = 'valide'` — pas de filtre à
+/// dupliquer ici. Un admin peut en revanche voir un brouillon non publié
+/// (mention explicite affichée) pour le relire avant validation.
+class KhadaraUnderstandingScreen extends ConsumerWidget {
   const KhadaraUnderstandingScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context)!;
+    final page = ref.watch(khadaraUnderstandingPageProvider);
 
     return Scaffold(
       appBar: AppBar(title: Text(l10n.khadaraUnderstandingTitle)),
-      body: validatedKhadaraUnderstanding.isEmpty
-          ? _EmptyState(
-              title: l10n.khadaraUnderstandingEmptyTitle,
-              body: l10n.khadaraUnderstandingEmptyBody,
-              ctaLabel: l10n.khadaraUnderstandingCta,
-            )
-          : ListView(
+      // `SafeArea` : même défaut déjà vu sur `FigureFormScreen`/`AboutScreen`
+      // — sans elle, le bas du contenu se retrouve masqué sous la barre de
+      // navigation Android (3 boutons).
+      body: SafeArea(
+        child: page.when(
+          loading: () => Center(child: CircularProgressIndicator(color: AppColors.emerald)),
+          error: (err, st) => Center(
+            child: Text(l10n.khadaraLoadError, style: TextStyle(color: AppColors.bronze)),
+          ),
+          data: (guidePage) {
+            if (guidePage == null) {
+              return _EmptyState(
+                title: l10n.khadaraUnderstandingEmptyTitle,
+                body: l10n.khadaraUnderstandingEmptyBody,
+                ctaLabel: l10n.khadaraUnderstandingCta,
+              );
+            }
+            final sections = parseGuidePageSections(guidePage.bodyMarkdown);
+            return ListView(
               padding: const EdgeInsets.all(16),
               children: [
-                for (final section in validatedKhadaraUnderstanding) _SectionTile(section: section),
+                if (guidePage.contentStatus != 'valide') _DraftBanner(label: l10n.khadaraUnderstandingDraftBanner),
+                for (final section in sections) _SectionTile(section: section),
               ],
-            ),
+            );
+          },
+        ),
+      ),
+    );
+  }
+}
+
+class _DraftBanner extends StatelessWidget {
+  const _DraftBanner({required this.label});
+
+  final String label;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 12),
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(color: AppColors.goldSoft, borderRadius: BorderRadius.circular(8)),
+      child: Row(
+        children: [
+          Icon(Icons.edit_note, color: AppColors.bronze, size: 20),
+          const SizedBox(width: 8),
+          Expanded(child: Text(label, style: TextStyle(color: AppColors.bronze))),
+        ],
+      ),
     );
   }
 }

@@ -869,10 +869,10 @@ class AppLocalizationsFr extends AppLocalizations {
   String get zawiyaFormSaveError => 'Impossible d\'enregistrer la zawiya.';
 
   @override
-  String get khadaraUnderstandingTooltip => 'Comprendre la Khadara';
+  String get khadaraUnderstandingTooltip => 'Comprendre la Zawiya';
 
   @override
-  String get khadaraUnderstandingTitle => 'Comprendre la Khadara';
+  String get khadaraUnderstandingTitle => 'Comprendre la Zawiya';
 
   @override
   String get khadaraUnderstandingEmptyTitle =>
@@ -885,6 +885,10 @@ class AppLocalizationsFr extends AppLocalizations {
   @override
   String get khadaraUnderstandingCta =>
       'En attendant, découvrir le calendrier et les zawiyas';
+
+  @override
+  String get khadaraUnderstandingDraftBanner =>
+      'Brouillon non publié — visible uniquement par toi en tant qu\'admin, en attente de validation.';
 
   @override
   String get khadaraLiveTab => 'Directs';

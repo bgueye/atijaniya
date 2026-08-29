@@ -2,10 +2,21 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../mouqaddam/presentation/mouqaddam_providers.dart';
 import '../../profil/presentation/profile_providers.dart';
+import '../data/guide_page_repository.dart';
 import '../data/khadara_repository.dart';
 import '../domain/khadara_models.dart';
 
 final khadaraRepositoryProvider = Provider<KhadaraRepository>((ref) => const KhadaraRepository());
+
+/// Page "Comprendre la Zawiya" (`guide_pages`, slug `comprendre-zawiya`) —
+/// explique ce qu'est une zawiya pour quelqu'un qui parcourt l'annuaire de
+/// l'onglet Khadara (pas le déroulement de la Hadaratou-l-Jouma, qui relève
+/// du module Wirds). Reste `null` pour un disciple tant que la page n'est
+/// pas `valide` côté RLS — `KhadaraUnderstandingScreen` retombe alors sur
+/// son état vide.
+final khadaraUnderstandingPageProvider = FutureProvider<GuidePage?>((ref) {
+  return const GuidePageRepository().fetchBySlug('comprendre-zawiya');
+});
 
 final upcomingEventsProvider = FutureProvider<List<KhadaraEvent>>((ref) {
   return ref.watch(khadaraRepositoryProvider).fetchUpcomingEvents();
