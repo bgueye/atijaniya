@@ -1704,6 +1704,40 @@ create policy post_media_owner_delete on storage.objects
   );
 
 -- ============================================================================
+-- 11.2quater STORAGE — photo de profil du disciple (bucket avatars)
+-- ============================================================================
+-- profiles.avatar_url existe depuis le schéma d'origine et est déjà affiché
+-- côté client (ProfilScreen._ProfileHeader), mais n'avait jamais de bucket
+-- pour l'alimenter avant celui-ci (2026-08-29). Même convention que
+-- post-media : avatars/{auth.uid()}/{nom_de_fichier} — chaque disciple ne
+-- peut écrire que dans son propre dossier, cohérent avec
+-- profiles_owner_update qui n'exige que (select auth.uid()) = user_id.
+
+insert into storage.buckets (id, name, public, file_size_limit, allowed_mime_types)
+values ('avatars', 'avatars', true, 5242880, array['image/jpeg','image/png','image/webp']);
+
+create policy avatars_public_read on storage.objects
+  for select using (bucket_id = 'avatars');
+
+create policy avatars_owner_insert on storage.objects
+  for insert with check (
+    bucket_id = 'avatars'
+    and (select auth.uid())::text = (storage.foldername(name))[1]
+  );
+
+create policy avatars_owner_update on storage.objects
+  for update using (
+    bucket_id = 'avatars'
+    and (select auth.uid())::text = (storage.foldername(name))[1]
+  );
+
+create policy avatars_owner_delete on storage.objects
+  for delete using (
+    bucket_id = 'avatars'
+    and (select auth.uid())::text = (storage.foldername(name))[1]
+  );
+
+-- ============================================================================
 -- 11.3 STORAGE — récitations audio des wirds (bucket wird-audio, privé)
 -- ============================================================================
 -- Bucket privé (contrairement à event-images) : la protection "brouillon

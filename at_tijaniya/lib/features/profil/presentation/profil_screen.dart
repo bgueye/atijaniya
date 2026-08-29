@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../core/storage/image_source_sheet.dart';
+import '../../../core/storage/image_upload_service.dart';
 import '../../../core/supabase/supabase_config.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../l10n/app_localizations.dart';
@@ -319,14 +321,65 @@ class _DeleteAccountDialogState extends ConsumerState<_DeleteAccountDialog> {
   }
 }
 
-class _ProfileHeader extends StatelessWidget {
+class _ProfileHeader extends ConsumerStatefulWidget {
   const _ProfileHeader({required this.profile, required this.l10n});
 
   final Profile profile;
   final AppLocalizations l10n;
 
   @override
+  ConsumerState<_ProfileHeader> createState() => _ProfileHeaderState();
+}
+
+class _ProfileHeaderState extends ConsumerState<_ProfileHeader> {
+  final _imageUploadService = ImageUploadService();
+  bool _changingAvatar = false;
+
+  /// Affichée immédiatement après un envoi réussi, en attendant que
+  /// `ref.invalidate(myProfileProvider)` (déclenché juste avant) fasse
+  /// revenir `widget.profile.avatarUrl` à jour depuis Supabase — évite
+  /// l'aller-retour visuel par le spinner de `profileAsync.when(loading: …)`
+  /// que ce `invalidate` provoquerait sinon le temps du round-trip réseau.
+  String? _avatarUrlOverride;
+
+  Future<void> _changeAvatar() async {
+    final l10n = widget.l10n;
+    final source = await showImageSourceSheet(context);
+    if (source == null || !mounted) return;
+    final file = await _imageUploadService.pickImage(source);
+    if (file == null || !mounted) return;
+
+    setState(() => _changingAvatar = true);
+    try {
+      final bytes = await file.readAsBytes();
+      final extension = imageExtensionFromPath(file.path);
+      final userId = SupabaseConfig.client.auth.currentUser!.id;
+      final url = await _imageUploadService.uploadImage(
+        bucket: 'avatars',
+        path: '$userId/avatar.$extension',
+        bytes: bytes,
+        contentType: imageContentTypeForExtension(extension),
+      );
+      await ref.read(profileRepositoryProvider).updateMyAvatar(url);
+      ref.invalidate(myProfileProvider);
+      if (mounted) setState(() => _avatarUrlOverride = url);
+    } catch (_) {
+      if (mounted) {
+        ScaffoldMessenger.of(context)
+          ..hideCurrentSnackBar()
+          ..showSnackBar(SnackBar(content: Text(l10n.imagePickerUploadError)));
+      }
+    } finally {
+      if (mounted) setState(() => _changingAvatar = false);
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final profile = widget.profile;
+    final l10n = widget.l10n;
+    final avatarUrl = _avatarUrlOverride ?? profile.avatarUrl;
+
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(16),
@@ -335,22 +388,54 @@ class _ProfileHeader extends StatelessWidget {
           children: [
             Row(
               children: [
-                CircleAvatar(
-                  radius: 28,
-                  backgroundColor: AppColors.emeraldSoft,
-                  // `ResizeImage` — même raison que les portraits de figure
-                  // (`figures_screen.dart`) : `CircleAvatar.backgroundImage`
-                  // n'a pas de cacheWidth/cacheHeight, décode diamètre 56.
-                  backgroundImage: profile.avatarUrl != null
-                      ? ResizeImage(
-                          NetworkImage(profile.avatarUrl!),
-                          width: (56 * MediaQuery.of(context).devicePixelRatio).round(),
-                          height: (56 * MediaQuery.of(context).devicePixelRatio).round(),
-                        )
-                      : null,
-                  child: profile.avatarUrl == null
-                      ? Icon(Icons.person_outline, color: AppColors.emerald, size: 28)
-                      : null,
+                Tooltip(
+                  message: avatarUrl == null ? l10n.imagePickerAdd : l10n.imagePickerChange,
+                  child: GestureDetector(
+                    onTap: _changingAvatar ? null : _changeAvatar,
+                    child: Stack(
+                      clipBehavior: Clip.none,
+                      children: [
+                        CircleAvatar(
+                          radius: 28,
+                          backgroundColor: AppColors.emeraldSoft,
+                          // `ResizeImage` — même raison que les portraits de figure
+                          // (`figures_screen.dart`) : `CircleAvatar.backgroundImage`
+                          // n'a pas de cacheWidth/cacheHeight, décode diamètre 56.
+                          backgroundImage: avatarUrl != null
+                              ? ResizeImage(
+                                  NetworkImage(avatarUrl),
+                                  width: (56 * MediaQuery.of(context).devicePixelRatio).round(),
+                                  height: (56 * MediaQuery.of(context).devicePixelRatio).round(),
+                                )
+                              : null,
+                          child: avatarUrl == null
+                              ? Icon(Icons.person_outline, color: AppColors.emerald, size: 28)
+                              : null,
+                        ),
+                        if (_changingAvatar)
+                          const Positioned.fill(
+                            child: CircleAvatar(
+                              backgroundColor: Colors.black45,
+                              child: SizedBox(
+                                width: 16,
+                                height: 16,
+                                child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
+                              ),
+                            ),
+                          )
+                        else
+                          PositionedDirectional(
+                            end: -2,
+                            bottom: -2,
+                            child: Container(
+                              padding: const EdgeInsets.all(3),
+                              decoration: BoxDecoration(color: AppColors.gold, shape: BoxShape.circle),
+                              child: const Icon(Icons.camera_alt, size: 12, color: AppColors.zaytoune),
+                            ),
+                          ),
+                      ],
+                    ),
+                  ),
                 ),
                 const SizedBox(width: 16),
                 Expanded(

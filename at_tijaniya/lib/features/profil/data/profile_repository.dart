@@ -38,6 +38,18 @@ class ProfileRepository {
     }).eq('user_id', userId);
   }
 
+  /// Photo de profil — appel séparé de [updateMyProfile] (même principe que
+  /// `FiguresRepository.updatePortrait`) : l'image est téléversée puis son
+  /// URL enregistrée seule, sans dépendre du reste du formulaire nom/bio/
+  /// zawiya. Bucket `avatars` (database/schema.sql § 11.2quater), chemin
+  /// `avatars/{auth.uid()}/...` déjà scopé par RLS côté Storage.
+  Future<void> updateMyAvatar(String avatarUrl) async {
+    final userId = SupabaseConfig.client.auth.currentUser!.id;
+    await SupabaseConfig.client
+        .from('profiles')
+        .update({'avatar_url': avatarUrl}).eq('user_id', userId);
+  }
+
   /// Suppression définitive du compte connecté — via l'Edge Function
   /// `delete-account` (`supabase/functions/delete-account/index.ts`),
   /// nécessaire car `auth.admin.deleteUser` exige la clé service_role,
