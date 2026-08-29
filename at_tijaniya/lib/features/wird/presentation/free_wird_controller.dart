@@ -53,7 +53,13 @@ class FreeWirdState {
   }
 }
 
-final freeWirdControllerProvider = StateNotifierProvider<FreeWirdController, FreeWirdState>(
+// `.autoDispose` : voir la même remarque sur `tasbihControllerProvider`
+// (tasbih_controller.dart) — sans lui, quitter l'écran pendant une écoute
+// vocale active laisse la boucle de relance vivre en arrière-plan et
+// monopoliser `SpeechRecognizer`, provoquant un `error_busy` permanent sur
+// n'importe quel autre wird ouvert ensuite. Sans risque pour la reprise :
+// `FreeWirdStore` persiste le compteur, `_load()` le recharge.
+final freeWirdControllerProvider = StateNotifierProvider.autoDispose<FreeWirdController, FreeWirdState>(
   (ref) => FreeWirdController(),
 );
 
@@ -69,6 +75,21 @@ class FreeWirdController extends StateNotifier<FreeWirdState> {
   /// que la cible n'est pas atteinte : relance l'écoute en continu, même
   /// principe que `TasbihController`.
   bool _voiceLoopActive = false;
+
+  /// Voir `TasbihController` (tasbih_controller.dart) pour le détail des deux
+  /// mécanismes ci-dessous, identiques ici : `speech_to_text` émet deux
+  /// statuts de fin de session par session terminée ; sans compteur d'erreurs
+  /// ni verrou anti-relance-double, une vraie panne (`error_busy`) produit
+  /// une boucle serrée de relances concurrentes sur le même moteur natif.
+  int _consecutiveVoiceErrors = 0;
+  static const _maxConsecutiveVoiceErrors = 3;
+  bool _restartScheduled = false;
+
+  /// Le Wird libre n'a pas de texte arabe connu (label libre saisi par le
+  /// disciple, voir `free_wird_session.dart`) pour adapter ce délai comme le
+  /// fait `TasbihController._utteranceSilence` — valeur fixe raisonnable
+  /// pour un dhikr court répété.
+  static const _utteranceSilence = Duration(seconds: 3);
 
   bool get isTargetReached {
     final session = state.session;
@@ -143,9 +164,10 @@ class FreeWirdController extends StateNotifier<FreeWirdState> {
 
   Future<void> startListening() async {
     if (isTargetReached || _voiceLoopActive) return;
+    _consecutiveVoiceErrors = 0;
     final ready = await _voice.initialize(
       onStatus: _onVoiceStatus,
-      onError: (error) => state = state.copyWith(voiceError: error, isListening: false),
+      onError: _onVoiceError,
     );
     if (!ready) {
       state = state.copyWith(
@@ -156,7 +178,10 @@ class FreeWirdController extends StateNotifier<FreeWirdState> {
     }
     _voiceLoopActive = true;
     state = state.copyWith(clearVoiceError: true);
-    await _voice.listenOnce(onUtteranceDetected: increment);
+    await _voice.startListening(
+      onUtteranceDetected: _onUtteranceDetected,
+      utteranceSilence: _utteranceSilence,
+    );
   }
 
   void stopListening() => _stopVoiceLoop();
@@ -168,18 +193,53 @@ class FreeWirdController extends StateNotifier<FreeWirdState> {
     state = state.copyWith(isListening: false);
   }
 
+  void _onUtteranceDetected() {
+    // `mounted` : callback asynchrone pouvant arriver après que le
+    // contrôleur a été détruit (`.autoDispose`) — voir la même remarque sur
+    // `TasbihController` (tasbih_controller.dart).
+    if (!mounted) return;
+    _consecutiveVoiceErrors = 0;
+    increment();
+  }
+
+  void _onVoiceError(String error) {
+    if (!mounted) return;
+    _consecutiveVoiceErrors++;
+    if (_consecutiveVoiceErrors >= _maxConsecutiveVoiceErrors) {
+      _stopVoiceLoop();
+      state = state.copyWith(
+        voiceError:
+            "La reconnaissance vocale rencontre un problème répété sur cet appareil ($error) — utilisez le mode tape manuel.",
+      );
+    } else {
+      state = state.copyWith(voiceError: error, isListening: false);
+    }
+  }
+
   void _onVoiceStatus(String status) {
     if (!mounted) return;
     state = state.copyWith(isListening: status == 'listening');
     final sessionEnded = status == 'notListening' || status == 'done';
-    if (sessionEnded && _voiceLoopActive && !isTargetReached) {
-      _voice.listenOnce(onUtteranceDetected: increment);
+    if (sessionEnded && _voiceLoopActive && !isTargetReached && !_restartScheduled) {
+      _restartScheduled = true;
+      _restartListening();
     }
+  }
+
+  Future<void> _restartListening() async {
+    await Future.delayed(const Duration(milliseconds: 600));
+    _restartScheduled = false;
+    if (!mounted || !_voiceLoopActive || isTargetReached) return;
+    await _voice.startListening(
+      onUtteranceDetected: _onUtteranceDetected,
+      utteranceSilence: _utteranceSilence,
+    );
   }
 
   @override
   void dispose() {
     _voiceLoopActive = false;
+    _restartScheduled = false;
     _voice.cancel();
     super.dispose();
   }
