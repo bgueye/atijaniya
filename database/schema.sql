@@ -1168,20 +1168,24 @@ create policy manual_chain_links_owner_write on public.mouqaddam_manual_chain_li
 create policy privacy_settings_owner_only on public.privacy_settings for all
   using ((select auth.uid()) = user_id) with check ((select auth.uid()) = user_id);
 
-create policy lineage_requests_participants_only on public.lineage_connection_requests
-  for select using ((select auth.uid()) = requester_id or (select auth.uid()) = recipient_id);
+-- SELECT et UPDATE fusionnées en une seule policy chacune (plutôt que
+-- participant/admin séparées, OR'd implicitement par Postgres) : l'advisor
+-- Supabase signalait `multiple_permissive_policies` (coût de performance
+-- mineur, chaque policy permissive étant évaluée séparément) — comportement
+-- final identique, l'admin ayant toujours accès en plus des participants.
+create policy lineage_requests_participants_or_admin_read on public.lineage_connection_requests
+  for select using (
+    (select auth.uid()) = requester_id
+    or (select auth.uid()) = recipient_id
+    or public.is_admin((select auth.uid()))
+  );
 create policy lineage_requests_create on public.lineage_connection_requests
   for insert with check ((select auth.uid()) = requester_id);
-create policy lineage_requests_recipient_decides on public.lineage_connection_requests
-  for update using ((select auth.uid()) = recipient_id);
--- Additives (OR'd avec les deux policies ci-dessus) : avant le Sprint 2
--- (P3), l'admin n'avait aucun accès à cette table, ni en lecture ni en
--- écriture — nécessaire pour bâtir la file de modération et bloquer une
--- demande signalée.
-create policy lineage_requests_admin_read on public.lineage_connection_requests for select
-  using (public.is_admin((select auth.uid())));
-create policy lineage_requests_admin_update on public.lineage_connection_requests for update
-  using (public.is_admin((select auth.uid())));
+create policy lineage_requests_recipient_or_admin_update on public.lineage_connection_requests
+  for update using (
+    (select auth.uid()) = recipient_id
+    or public.is_admin((select auth.uid()))
+  );
 
 -- --- Profils, appareils, pratique personnelle ---
 create policy profiles_read_all on public.profiles for select using (true);
