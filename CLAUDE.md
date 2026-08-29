@@ -145,8 +145,9 @@ chaîne de khalifas, contenu à compiler par le porteur de projet, constaté
 en vérifiant l'état réel en base le 2026-08-29 (voir
 `docs/10-etat-avancement-et-sprints-restants.md`)), Khadara
 (calendrier évènements/zawiyas, **CRUD zawiyas créer/modifier/supprimer
-réservé à l'admin depuis le 2026-08-15** ; "Comprendre la Khadara" en
-attente de contenu validé), Fil d'actualité communautaire (publication
+réservé à l'admin depuis le 2026-08-15** ; "Comprendre la Khadara" remplacé
+par "Comprendre la Zawiya" — voir plus haut, déjà rédigé et validé, pas un
+contenu distinct restant), Fil d'actualité communautaire (publication
 réservée aux comptes rattachés à une zawiya, like/commentaire fonctionnels,
 **suppression de sa propre publication depuis le 2026-08-16**), Ma lignée
 spirituelle (saisie + "Retrouver mes condisciples"), Faire un don

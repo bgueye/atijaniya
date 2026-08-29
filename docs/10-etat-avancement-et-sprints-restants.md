@@ -227,8 +227,11 @@ s'est révélé largement périmé, corrigé dans la foulée (voir aussi `CLAUDE
 **Périmètre réel restant** (bien plus étroit que "biographies des figures et des familles" :
 1. Compléter la bio de Thierno Ciré Diop.
 2. Compiler la chaîne de khalifas de Médina Baye (et des 6 autres zawiyas si pertinent).
-3. "Comprendre la Khadara" (`guide_pages`), jamais rédigé — inchangé par rapport aux
-   analyses précédentes.
+
+Correction apportée par le porteur de projet le 2026-08-29 : "Comprendre la Khadara" n'est
+**pas** un chantier distinct encore à écrire — remplacé par "Comprendre la Zawiya", déjà
+rédigé et validé (voir plus haut). Les mentions de "Comprendre la Khadara" encore "à écrire"
+plus bas dans ce document (sections datées d'avant cette correction) sont donc caduques.
 
 ## Audit de vérification code/backend (2026-08-29)
 
@@ -386,7 +389,8 @@ plus propre que ce que certains documents affirment**, avec un écart de documen
 - Trancher/valider le contenu religieux restant (biographies, chaîne de succession des
   khalifas) — dépendance sur le porteur de projet, pas sur le code. **"Comprendre la
   Zawiya" débloqué et validé le 2026-08-29** (voir "Depuis la dernière analyse (2026-08-24
-  → 2026-08-29)" ci-dessus) ; "Comprendre la Khadara" (Hadaratou-l-Jouma) reste à écrire.
+  → 2026-08-29)" ci-dessus) — **remplace "Comprendre la Khadara"** (confirmé par le porteur
+  de projet le 2026-08-29), qui n'est donc plus un chantier de contenu distinct à écrire.
 
 **Sprint 6 — Préparation stores (P3 → Phase 5) — brouillons livrés (2026-08-24)**
 - Fiches Google Play / App Store (FR + AR) à partir de `assets/branding/`. Fait en
