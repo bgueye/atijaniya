@@ -1,11 +1,18 @@
-# État d'avancement et sprints restants (analyse du 2026-08-21)
+# État d'avancement et sprints restants (analyse du 2026-08-29)
 
 Ce document fige un état des lieux complet de l'app à cette date, croisé entre le résumé
 haut niveau de `CLAUDE.md`, l'historique git (`git log`) et le détail du journal
 (`docs/09-journal-implementation-frontend.md`). À mettre à jour ou remplacer par une
 version plus récente plutôt que de laisser plusieurs analyses concurrentes vieillir en
-parallèle. Remplace la version du 2026-08-18 : voir "Depuis la dernière analyse" ci-dessous
+parallèle. Remplace la version du 2026-08-21 : voir "Depuis la dernière analyse" ci-dessous
 pour ce qui a changé entre les deux.
+
+**Nouveauté par rapport aux versions précédentes** : cette analyse ne se contente pas de
+croiser les docs et l'historique git, elle **vérifie l'état réel du code et du backend live**
+(`flutter analyze`, suite de tests, cohérence i18n FR/AR, respect du design system,
+recherche de contenu religieux codé en dur, advisors de sécurité Supabase) — voir "Audit de
+vérification code/backend (2026-08-29)" ci-dessous pour le détail et les écarts trouvés par
+rapport à la documentation existante.
 
 ## État actuel
 
@@ -50,8 +57,12 @@ renforcé (réglage persisté dans Paramètres) : validé sur téléphone le 202
 — cache audio (course corrigée), rebuilds Riverpod (`.autoDispose` + chat isolé),
 chargement d'images (décodage redimensionné + cache obsolète corrigé) : validé sur
 téléphone le 2026-08-21, voir "Plan des sprints restants" ci-dessous pour le détail de
-chacun. Reste : les décisions produit et la préparation stores (Sprints 5-6 ci-dessous,
-toujours non entamés).
+chacun. **Sprint 5 (décisions bloquantes) : paiement tranché (PayDunya, sandbox validé le
+2026-08-22), contenu religieux partiellement débloqué depuis (voir ci-dessous) — reste la
+bascule PayDunya en mode live et le solde du contenu religieux (biographies, chaîne des
+khalifas). Sprint 6 (préparation stores) : brouillons livrés le 2026-08-24** (politique de
+confidentialité, fiches stores FR+AR, captures d'écran) — reste à finaliser avant soumission
+effective, voir "Depuis la dernière analyse (2026-08-24 → 2026-08-29)" ci-dessous.
 
 ## Depuis la dernière analyse (2026-08-18 → 2026-08-21)
 
@@ -144,6 +155,118 @@ ci-dessous) :
   désormais corriger le texte d'une condition existante, mais il n'existe toujours aucun
   moyen (ni prévu) d'en ajouter ou d'en retirer depuis l'app.
 
+## Depuis la dernière analyse (2026-08-24 → 2026-08-29)
+
+Cinq livraisons ponctuelles supplémentaires, hors plan de sprints (même numérotation
+approximative que les sections précédentes, à ignorer) :
+
+- **Sprint 6, brouillons de préparation stores (2026-08-24)** — politique de
+  confidentialité, fiches Google Play/App Store (FR + AR) et captures d'écran, à partir de
+  `assets/branding/` (`ab8e355`). Contact de la politique de confidentialité confirmé
+  (`ad6e546`) et captures Figures reprises avec un compte non admin plutôt qu'un compte de
+  test admin, pour ne pas montrer les contrôles CRUD dans les visuels publics (`925b1d0`).
+  **Brouillons livrés, pas encore la version finale soumise aux stores** — reste dans le
+  périmètre du Sprint 6 ci-dessous.
+- **Écran "À propos" + correction du libellé du badge mouqaddam (2026-08-29,
+  `a96f1e4`)** — ajoute l'écran décrivant la posture d'At-Tijaniya comme outil communautaire
+  indépendant (texte source : `docs/11-a-propos.md`) et corrige au passage une occurrence du
+  libellé badge qui ne respectait pas encore la règle "Parrainage confirmé" de `CLAUDE.md`.
+- **Renforcement du signal de fin de pilier du Tasbih (2026-08-29, `7f7dba8`)** — le clic
+  système + vibration brève d'origine étaient jugés trop discrets. Remplacés par un bip
+  synthétisé (`assets/audio/sfx/pillar_complete.wav`, `just_audio`) et une vibration de
+  450ms (plugin `vibration`, repli sur `HapticFeedback` si l'appareil n'a pas de vibreur
+  contrôlable), partagés par le Tasbih et le Wird libre.
+- **Photo de profil (2026-08-29, `dcb7bd0`)** — nouveau bucket Storage `avatars` (lecture
+  publique, écriture scopée à `avatars/{auth.uid()}/...` par RLS, même principe que
+  `post-media`) ; le champ `profiles.avatar_url` existait déjà mais n'avait jamais de bucket
+  pour l'alimenter. Avatar cliquable sur "Mon profil" (Galerie/Appareil photo), testé de
+  bout en bout sur téléphone et vérifié en base sur le projet live.
+- **"Comprendre la Zawiya" branché sur du contenu réel (2026-08-29, `18c78e8`,
+  `a7e59a0`, `e9c4333`)** — remplace la liste statique vide de
+  `khadara_understanding_content.dart` par une lecture réelle de `guide_pages` (slug
+  `comprendre-zawiya`), sous la même RLS que le reste du module (brouillon visible à
+  l'admin avec bannière, invisible au disciple tant que non validé). Contenu validé par
+  Bocar le jour même et documenté dans `docs/01-perimetre-fonctionnel.md` § 8. Corrige au
+  passage un `SafeArea` manquant qui masquait la fin du contenu sous la barre de navigation
+  Android. Dans la foulée, la ligne "Comprendre la Khadara" (Hadaratou-l-Jouma) — un
+  brouillon orphelin en base, jamais branché à un écran — a été retirée du tableau
+  `docs/01` § 8 pour que le tableau reste une source fidèle de l'état réel ; ce contenu
+  reste donc à écrire/valider, mais n'est plus faussement listé comme "en attente sur un
+  écran existant".
+
+### Changement non commité en fin d'analyse
+
+`at_tijaniya/lib/features/wird/presentation/tasbih_controller.dart` contient au 2026-08-29
+un correctif terminé mais pas encore committé : compteur d'erreurs consécutives de
+reconnaissance vocale, anti-boucle serrée sur l'erreur Android `error_busy`, délai de 600ms
+avant relance. Cohérent avec le reste du contrôleur ; à valider sur téléphone puis committer
+séparément du reste (voir "Recommandations" du bilan ci-dessous).
+
+## Audit de vérification code/backend (2026-08-29)
+
+Contrairement aux analyses précédentes (croisement docs + `git log`), cette session a
+vérifié l'état réel du code et du projet Supabase live (réf. `elrxlhhmkjfcbmiloilp`) plutôt
+que de se fier uniquement à la documentation déclarative. Résultat global : **le code est
+plus propre que ce que certains documents affirment**, avec un écart de documentation notable
+à corriger (voir dernier point).
+
+- **`flutter analyze`** : quasi propre, un seul lint de style
+  (`curly_braces_in_flow_control_structures`, `settings_screen.dart:40`).
+- **Tests** : 188 tests passent, aucun échec (`flutter test` depuis `at_tijaniya/`). Bonne
+  couverture modèles/repositories ; pas de tests end-to-end de flux complexes, cohérent avec
+  la stratégie assumée de validation manuelle sur device pour ces cas-là.
+- **i18n** : `lib/l10n/app_fr.arb` et `app_ar.arb` parfaitement synchronisés, 778 clés de
+  chaque côté, zéro clé manquante ou orpheline.
+- **TODOs dans le code** : seulement 3 occurrences, toutes relatives à la même limitation
+  déjà actée (pas d'auth téléphone/OTP en V1) — pas de dette cachée.
+- **Design system** : usage de la police Amiri confiné au texte religieux/arabe, aucune
+  violation trouvée sur des libellés d'interface générique. Quelques couleurs `Color(0x...)`
+  codées en dur hors de `design/design_tokens.yaml`, mais limitées à 3 écrans décoratifs
+  ponctuels déjà identifiés comme tels dans le code (`figure_detail_screen.dart`,
+  `silsila_share_card.dart`, `ijaza_chain_screen.dart`) — dette mineure, pas un dérapage
+  silencieux.
+- **Contenu religieux** : aucun texte de wird ou de biographie trouvé codé en dur en dehors
+  de `guide_pages`/Supabase — cohérent avec la règle impérative de `CLAUDE.md`.
+- **Badge mouqaddam** : vérifié dans `ijaza_chain_screen.dart` et `silsila_share_card.dart`,
+  aucune occurrence du mot "vérifié" côté libellé utilisateur (voir aussi la correction du
+  2026-08-29 ci-dessus pour l'occurrence trouvée et corrigée dans un autre écran).
+- **Base de données** : RLS activée sur les 40 tables, 131 policies, `is_admin()`,
+  `normalize_moqaddam_name()` (trigger) et `get_ijaza_chain()` cohérents avec les règles
+  impératives de `CLAUDE.md`.
+- **Advisors de sécurité Supabase (vérifiés en direct sur le projet live)** : **8 alertes
+  WARN actuellement actives**, alors que `docs/06-architecture-backend.md` affirme "0
+  erreur — trois notices attendues" — **ce document est obsolète sur ce point et doit être
+  mis à jour** pour ne pas induire en erreur une prochaine session. Détail des 8 WARN :
+  - 7 fonctions `SECURITY DEFINER` exécutables par `anon`/`authenticated`
+    (`get_ijaza_chain`, `get_historical_silsila_chain`, `is_conversation_participant`,
+    `is_verified_mouqaddam`, `mouqaddam_status_visible_to`, `respond_to_sponsorship`,
+    `search_available_sponsors`, `search_lineage_matches`). Celle vérifiée en détail
+    (`get_ijaza_chain`, commentaire schéma lignes ~305-317) est un faux positif documenté :
+    la fonction revérifie elle-même la visibilité en interne. Les 6 autres suivent
+    vraisemblablement le même pattern mais n'ont pas été relues ligne par ligne — à faire
+    pour une garantie totale si souhaité, pas jugé urgent.
+  - **"Leaked Password Protection" toujours désactivée** dans Supabase Auth — action réelle
+    non faite, simple réglage dashboard (Authentication > Policies), déjà identifiée dans
+    `docs/06` § "Ce qui reste à valider" mais jamais cochée depuis.
+  - `multiple_permissive_policies` sur `lineage_connection_requests` (SELECT et UPDATE,
+    deux policies qui se chevauchent) — coût de performance mineur, pas une faille, sans
+    urgence tant que le trafic reste nul.
+- **Compte de test résiduel** `bgueye+test@gmail.com`, non confirmé, toujours en base —
+  inoffensif mais à nettoyer avant lancement public (déjà noté le 2026-08-24 ci-dessus).
+
+### Recommandations issues de cet audit, par priorité
+
+1. Committer le correctif Tasbih en cours (après validation téléphone) et mettre à jour
+   `docs/06-architecture-backend.md` avec l'état réel des advisors (8 WARN, pas "0 erreur").
+2. Activer "Leaked Password Protection" dans le dashboard Supabase Auth (2 minutes, aucune
+   dépendance code).
+3. Trancher avec le porteur de projet le contenu religieux restant (biographies des figures
+   et des familles religieuses, chaîne de succession des khalifas) — seul vrai bloquant
+   fonctionnel avant une V1 complète, le code est prêt à le recevoir.
+4. Finaliser le Sprint 6 (stores) à partir des brouillons du 2026-08-24.
+5. Optionnel, faible urgence : corriger le lint `curly_braces_in_flow_control_structures` et
+   fusionner les policies dupliquées sur `lineage_connection_requests`.
+
 ## Plan des sprints restants
 
 **Sprint 1 — Nettoyage restant (rapide) — livré (2026-08-21)**
@@ -219,11 +342,17 @@ ci-dessous) :
   compte PayDunya validé (au-delà du sandbox) et repasser les secrets en mode live
   (`PAYDUNYA_MODE=live` + les clés live correspondantes). Détail dans
   `docs/09-journal-implementation-frontend.md` § "Sprint 5 — Intégration PayDunya (sandbox)".
-- Trancher/valider le contenu religieux restant (biographies, "Comprendre la Khadara",
-  chaîne de succession des khalifas) — dépendance sur le porteur de projet, pas sur le
-  code.
+- Trancher/valider le contenu religieux restant (biographies, chaîne de succession des
+  khalifas) — dépendance sur le porteur de projet, pas sur le code. **"Comprendre la
+  Zawiya" débloqué et validé le 2026-08-29** (voir "Depuis la dernière analyse (2026-08-24
+  → 2026-08-29)" ci-dessus) ; "Comprendre la Khadara" (Hadaratou-l-Jouma) reste à écrire.
 
-**Sprint 6 — Préparation stores (P3 → Phase 5)**
-- Fiches Google Play / App Store (FR + AR) à partir de `assets/branding/`.
+**Sprint 6 — Préparation stores (P3 → Phase 5) — brouillons livrés (2026-08-24)**
+- Fiches Google Play / App Store (FR + AR) à partir de `assets/branding/`. Fait en
+  brouillon (`ab8e355`).
 - Captures d'écran, politique de confidentialité (indispensable vu la sensibilité lignée
-  spirituelle / mouqaddam).
+  spirituelle / mouqaddam). Fait en brouillon, captures reprises avec un compte non admin
+  pour ne pas exposer les contrôles CRUD dans les visuels publics (`925b1d0`), contact de
+  la politique de confidentialité confirmé (`ad6e546`).
+- **Reste** : finaliser et soumettre effectivement les fiches aux stores — les brouillons
+  ne sont pas encore la version publiée.

@@ -4,9 +4,13 @@
 > déployé** sur un projet Supabase réel (organisation *bgueye*, projet
 > `at-tijaniya`, réf. `elrxlhhmkjfcbmiloilp`, région eu-west-3 / Paris),
 > avec RLS complète sur toutes les tables, le contenu des trois wirds
-> inséré, le premier mouqaddam fondateur désigné, et les advisors de
-> sécurité et de performance Supabase propres (0 erreur — trois notices
-> attendues, voir plus bas).
+> inséré, le premier mouqaddam fondateur désigné. **État des advisors
+> vérifié le 2026-08-29 (voir `docs/10-etat-avancement-et-sprints-restants.md`
+> § "Audit de vérification code/backend") : 0 erreur, mais 8 alertes WARN
+> actives** (fonctions `SECURITY DEFINER` accessibles au client, protection
+> mot de passe compromis toujours désactivée, policies dupliquées sur une
+> table) — détail plus bas, ce n'est plus "trois notices sans action
+> requise" comme l'affirmait une version antérieure de ce document.
 
 ## Choix d'architecture : Supabase (Postgres managé)
 
@@ -118,6 +122,31 @@ signalent encore les deux tables d'audit comme "RLS activée sans politique"
 (c'est le comportement voulu) et plusieurs index comme "jamais utilisés"
 (normal : la base est vide, aucun trafic n'est encore passé dessus).
 
+**Alertes WARN actives (vérifiées en direct le 2026-08-29, à distinguer des
+notices ci-dessus)** :
+- **7 fonctions `SECURITY DEFINER` exécutables par `anon`/`authenticated`** :
+  `get_ijaza_chain`, `get_historical_silsila_chain`,
+  `is_conversation_participant`, `is_verified_mouqaddam`,
+  `mouqaddam_status_visible_to`, `respond_to_sponsorship`,
+  `search_available_sponsors`, `search_lineage_matches`. C'est un pattern
+  volontaire (contourner RLS pour recomposer une vue agrégée — silsila,
+  recherche de correspondances — puis revérifier la visibilité à l'intérieur
+  de la fonction) plutôt qu'une fuite : `get_ijaza_chain` a été relue en
+  détail (commentaire schéma § 305-317) et revérifie bien elle-même la
+  visibilité avant de renvoyer une ligne. Les 6 autres suivent
+  vraisemblablement le même principe mais n'ont pas toutes été relues ligne
+  par ligne — à faire si une garantie totale est souhaitée, pas jugé urgent
+  vu le pattern commun.
+- **"Leaked Password Protection" toujours désactivée** dans Authentication >
+  Policies — seule action de cette liste qui n'est pas un faux positif, voir
+  "Ce qui reste à valider" plus bas.
+- **`multiple_permissive_policies` sur `lineage_connection_requests`**
+  (SELECT et UPDATE) : deux policies qui se chevauchent
+  (`admin_read`/`participants_only`, `admin_update`/`recipient_decides`) —
+  coût de performance mineur (Postgres évalue les deux à chaque requête),
+  pas une faille. Sans urgence tant que le trafic reste nul ; à fusionner en
+  un `OR` unique à l'occasion.
+
 ## Stockage de fichiers (Storage)
 
 Buckets recommandés :
@@ -179,6 +208,8 @@ besoin (ex. un par foyer).
   validée sur le cas racine (le fondateur), pas encore sur une chaîne à
   plusieurs maillons.
 - Activer "Leaked Password Protection" dans Authentication > Policies du
-  dashboard Supabase (réglage Auth, hors du périmètre SQL de ce schéma).
+  dashboard Supabase (réglage Auth, hors du périmètre SQL de ce schéma) —
+  toujours désactivée au 2026-08-29, voir l'alerte WARN correspondante
+  plus haut.
 - Biographies des figures et contenu Khadara/zawiyas : tables prêtes,
   aucun contenu inséré pour l'instant.
