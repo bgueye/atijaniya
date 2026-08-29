@@ -76,6 +76,11 @@ dependencies:
   # (`lib/features/wird/data/wird_audio_picker_service.dart`) —
   # image_picker ne convient pas à ce cas.
   file_picker: ^10.3.4
+  # Retour de complétion d'un pilier de Tasbih (`wird_counter_feedback.dart`) :
+  # `HapticFeedback` de Flutter n'expose que des impulsions préréglées assez
+  # brèves — ce plugin donne accès à `Vibrator.vibrate(duration)` côté
+  # Android pour une vibration nettement plus longue et perceptible.
+  vibration: ^3.2.0
 
 dev_dependencies:
   flutter_test:
@@ -90,3 +95,4 @@ flutter:
     - assets/branding/
     - assets/audio/manifest.json
     - assets/audio/wirds/
+    - assets/audio/sfx/
