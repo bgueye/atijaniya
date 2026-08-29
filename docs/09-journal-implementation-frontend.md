@@ -2972,3 +2972,59 @@ Nouveau test `test/about_screen_test.dart` : vérifie la présence des
 quatre sections, l'absence du mot "vérifié" dans le paragraphe badge, et
 l'affichage du contact. `flutter analyze` propre (1 info préexistant sans
 rapport, `settings_screen.dart:40`), 187 tests au vert.
+
+## Tasbih vocal — comptage qui n'avançait jamais ou se coupait en pleine
+## récitation (2026-08-29)
+
+Signalé par le porteur de projet en testant le mode "reconnaissance
+vocale" du Tasbih sur téléphone Android (`tasbih_voice_service.dart`,
+`tasbih_controller.dart`, `free_wird_controller.dart`) : le compteur
+n'avançait pas du tout, puis, une fois un premier correctif appliqué,
+comptait en pleine récitation d'une longue formule (Salatoul Fatihi) avant
+que le disciple ait fini de parler. Trois causes distinctes, trouvées
+successivement en instrumentant temporairement le service avec des logs
+(retirés une fois le diagnostic posé) et en lisant le code source du
+plugin `speech_to_text` (7.4.0, `pub cache`) :
+
+1. **Locale arabe en dur (`localeId: 'ar'`)** — ne correspond à aucune
+   locale réellement installée sur certains appareils Android (qui
+   n'acceptent que des codes précis type `ar-SA`) ; le moteur tournait
+   alors sans jamais reconnaître un mot, uniquement des `error_no_match`
+   en boucle. Résolue désormais dynamiquement au premier `initialize()`
+   via `_speech.locales()`.
+2. **`result.finalResult` peu fiable** — le texte arabe était
+   correctement reconnu (logs à l'appui) mais ce flag natif restait à
+   `false` en permanence en mode dictation avec `partialResults: false`
+   sur cet appareil, donc l'incrément (conditionné sur `finalResult`)
+   ne se déclenchait jamais. Le comptage ne dépend plus de ce flag, mais
+   de la segmentation par silence décrite ci-dessous.
+3. **Le moteur natif met fin à chaque session après ~8-12s, même en
+   pleine parole continue** — pas un vrai silence, constaté sur des
+   dizaines de résultats partiels qui grossissent sans interruption
+   jusqu'à la coupure. Le paramètre natif `pauseFor`
+   (`EXTRA_SPEECH_INPUT_COMPLETE_SILENCE_LENGTH_MILLIS`) n'a aucun effet
+   sur cette coupure : l'augmenter à 8s n'empêchait pas les coupures en
+   pleine formule. Écoute désormais continue (`partialResults: true`,
+   `listenFor: 10 min`), avec la segmentation par énoncé faite **côté
+   Dart** (`Timer` réarmé à chaque nouveau mot reçu) plutôt que via ce
+   paramètre natif ; ce `Timer` est conservé **à travers** les
+   redémarrages forcés du moteur (pas réinitialisé à chaque nouvelle
+   session), sinon chaque coupure forcée en pleine récitation effaçait la
+   progression d'un énoncé pourtant toujours en cours et le disciple
+   n'était plus jamais compté au bout de quelques secondes.
+
+Le silence toléré avant de considérer un énoncé terminé est désormais
+adapté à la longueur du texte arabe du pilier (`TasbihController.
+_utteranceSilence`) : 3s pour un dhikr court répété (ex. "Allah", 600
+répétitions), jusqu'à 8s pour une formule longue (Salatoul Fatihi, ~230
+caractères) — une pause courte coupait sinon une même récitation en 3-4
+segments, comptés à tort pour 3-4 répétitions. Le Wird libre n'a pas de
+texte arabe connu (label libre saisi par le disciple) : valeur fixe 3s.
+
+`flutter analyze` propre (même unique info préexistant sans rapport que
+plus haut) et 188 tests au vert (`free_wird_screen_test.dart`,
+`free_wird_session_test.dart`, `home_dashboard_test.dart` — aucun test
+existant ne couvre directement la reconnaissance vocale, qui dépend du
+moteur natif de l'appareil). **Validé en conditions réelles sur téléphone
+Android** (Lazim, Wazifa, Salatoul Fatihi en longue formule) après
+plusieurs allers-retours de test en direct avec le porteur de projet.
