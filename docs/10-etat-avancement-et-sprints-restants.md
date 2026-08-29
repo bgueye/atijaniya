@@ -245,9 +245,13 @@ plus propre que ce que certains documents affirment**, avec un écart de documen
     la fonction revérifie elle-même la visibilité en interne. Les 6 autres suivent
     vraisemblablement le même pattern mais n'ont pas été relues ligne par ligne — à faire
     pour une garantie totale si souhaité, pas jugé urgent.
-  - **"Leaked Password Protection" toujours désactivée** dans Supabase Auth — action réelle
-    non faite, simple réglage dashboard (Authentication > Policies), déjà identifiée dans
-    `docs/06` § "Ce qui reste à valider" mais jamais cochée depuis.
+  - **"Leaked Password Protection" toujours désactivée** dans Supabase Auth — tentative du
+    porteur de projet le 2026-08-29 depuis le dashboard (Authentication > Providers/
+    Policies) : Supabase refuse l'activation avec le message "Configuring leaked password
+    protection via HaveIBeenPwned.org is available on Pro Plans and up." **Ce n'est donc
+    pas un oubli de réglage mais un plafond du plan gratuit** — nécessite un passage au
+    plan Pro (coût récurrent, décision du porteur de projet) pour être débloqué. Pas
+    d'action code possible.
   - `multiple_permissive_policies` sur `lineage_connection_requests` (SELECT et UPDATE,
     deux policies qui se chevauchent) — coût de performance mineur, pas une faille, sans
     urgence tant que le trafic reste nul.
@@ -256,16 +260,21 @@ plus propre que ce que certains documents affirment**, avec un écart de documen
 
 ### Recommandations issues de cet audit, par priorité
 
-1. Committer le correctif Tasbih en cours (après validation téléphone) et mettre à jour
-   `docs/06-architecture-backend.md` avec l'état réel des advisors (8 WARN, pas "0 erreur").
-2. Activer "Leaked Password Protection" dans le dashboard Supabase Auth (2 minutes, aucune
-   dépendance code).
+1. ~~Committer le correctif Tasbih en cours et mettre à jour `docs/06-architecture-backend.md`
+   avec l'état réel des advisors~~ — **fait (2026-08-29)** : correctif validé sur téléphone
+   (voir `docs/09` § "Tasbih vocal") et commité (`51d65f6`, `828d612`).
+2. ~~Activer "Leaked Password Protection"~~ — **tenté le 2026-08-29, bloqué par le plan
+   gratuit Supabase** (message d'erreur : fonctionnalité réservée au plan Pro et plus). Pas
+   une action restante côté dev ; décision d'upgrade de plan à trancher par le porteur de
+   projet.
 3. Trancher avec le porteur de projet le contenu religieux restant (biographies des figures
    et des familles religieuses, chaîne de succession des khalifas) — seul vrai bloquant
    fonctionnel avant une V1 complète, le code est prêt à le recevoir.
 4. Finaliser le Sprint 6 (stores) à partir des brouillons du 2026-08-24.
-5. Optionnel, faible urgence : corriger le lint `curly_braces_in_flow_control_structures` et
-   fusionner les policies dupliquées sur `lineage_connection_requests`.
+5. ~~Optionnel, faible urgence : corriger le lint `curly_braces_in_flow_control_structures` et
+   fusionner les policies dupliquées sur `lineage_connection_requests`~~ — **fait
+   (2026-08-29)**, commité (`9860973`), migration appliquée sur le projet live et advisor
+   vérifié disparu.
 
 ## Plan des sprints restants
 
