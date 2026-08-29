@@ -164,6 +164,8 @@ autres pour sa pratique personnelle, avec cette fonctionnalité en plus sur son 
 | Biographies figures fondatrices | À valider | Compilation à mener |
 | Biographies familles religieuses | À valider | Sensible — nécessite compilation par foyer |
 | Audio récitations modèles | À produire | Sur la base du texte déjà validé |
+| Page pédagogique "Comprendre la Zawiya" (`guide_pages`, slug `comprendre-zawiya`) | **Validé** (2026-08-29) | Validé par le porteur de projet (Bocar) ; compilation à partir de sources externes (Wikipédia, Techno-Science, Enass, The Culture Mapper, zawiya.defarsci.fr, revues.imist.ma) |
+| Page pédagogique "Comprendre la Khadara" (`guide_pages`, slug `comprendre-khadara`, sur la Hadaratou-l-Jouma) | À valider | Brouillon en base, non branché à un écran — décrit le rituel de la Hadra, distinct de "Comprendre la Zawiya" (annuaire de l'onglet Khadara) |
 
 > **Règle impérative : aucun contenu religieux ne doit être publié sans validation
 > préalable par un moqaddam ou érudit reconnu.**
