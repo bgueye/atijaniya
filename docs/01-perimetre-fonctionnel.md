@@ -161,8 +161,8 @@ autres pour sa pratique personnelle, avec cette fonctionnalité en plus sur son 
 | Contenu | Statut | Détail |
 |---|---|---|
 | Module Wirds | **Validé** | Moqaddam référent, Hadratou-l-Jouma = 1600 répétitions |
-| Biographies figures fondatrices | À valider | Compilation à mener |
-| Biographies familles religieuses | À valider | Sensible — nécessite compilation par foyer |
+| Biographie du fondateur (Cheikh Ahmed Tijani) | **Validé** | Déjà en base (`content_status = 'valide'`) |
+| Biographies familles religieuses | **Majoritairement validé** (vérifié en base le 2026-08-29) | 16 des 17 figures `family_lineage` validées ; reste **Thierno Ciré Diop** (texte encore à l'état de stub, ~60 caractères) et la **chaîne de khalifas des foyers hors Tivaouane** (Médina Baye et les 6 autres zawiyas n'ont aucune figure/chaîne liée) — à compiler par le porteur de projet, en cours |
 | Audio récitations modèles | À produire | Sur la base du texte déjà validé |
 | Page pédagogique "Comprendre la Zawiya" (`guide_pages`, slug `comprendre-zawiya`) | **Validé** (2026-08-29) | Validé par le porteur de projet (Bocar) ; compilation à partir de sources externes (Wikipédia, Techno-Science, Enass, The Culture Mapper, zawiya.defarsci.fr, revues.imist.ma) |
 

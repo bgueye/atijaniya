@@ -138,8 +138,12 @@ inventées) ; **onglet "Ziyaras" renommé "Zawiya" et étendu le 2026-08-21**
 lier/délier admin — et chaîne de succession des khalifas — nouvelle table
 `figure_zawiya_khalifas`, chaque khalife étant lui-même une Figure, chaîne
 unique par figure fondatrice, pas par zawiya —, en plus des évènements liés
-déjà existants, conservés tels quels ; aucune chaîne de succession réelle
-saisie, l'écran attend le contenu du porteur de projet), Khadara
+déjà existants, conservés tels quels ; **chaîne de la Zawiya de Tivaouane
+saisie et validée** (El Hadj Malick Sy, 7 khalifas de 1922 à aujourd'hui) —
+les 7 autres zawiyas, dont Médina Baye, n'ont encore aucune figure liée ni
+chaîne de khalifas, contenu à compiler par le porteur de projet, constaté
+en vérifiant l'état réel en base le 2026-08-29 (voir
+`docs/10-etat-avancement-et-sprints-restants.md`)), Khadara
 (calendrier évènements/zawiyas, **CRUD zawiyas créer/modifier/supprimer
 réservé à l'admin depuis le 2026-08-15** ; "Comprendre la Khadara" en
 attente de contenu validé), Fil d'actualité communautaire (publication

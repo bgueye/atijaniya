@@ -202,6 +202,34 @@ reconnaissance vocale, anti-boucle serrée sur l'erreur Android `error_busy`, d�
 avant relance. Cohérent avec le reste du contrôleur ; à valider sur téléphone puis committer
 séparément du reste (voir "Recommandations" du bilan ci-dessous).
 
+## Contenu religieux : l'essentiel est déjà validé (2026-08-29)
+
+En reprenant le chantier "contenu religieux restant" avec le porteur de projet, vérification
+de l'état réel en base (`public.figures`, `public.figure_zawiyas`,
+`public.figure_zawiya_khalifas`) plutôt que de se fier au tableau de `docs/01` § 8 — qui
+s'est révélé largement périmé, corrigé dans la foulée (voir aussi `CLAUDE.md`) :
+
+- **16 des 18 figures sont déjà `content_status = 'valide'` avec une biographie complète**,
+  y compris le fondateur (Cheikh Ahmed Tijani, bio de 3324 caractères). Seule **Thierno Ciré
+  Diop** (famille de Tivaouane) reste en brouillon, avec un texte de ~60 caractères — un
+  stub, pas une vraie bio.
+- **La chaîne de succession des khalifas de la Zawiya de Tivaouane est intégralement saisie**
+  (El Hadj Malick Sy → 7 khalifas, 1922 à aujourd'hui, avec dates) — contrairement à ce que
+  `CLAUDE.md` affirmait encore ("aucune chaîne réelle saisie").
+- **Aucune des 7 autres zawiyas n'a de figure liée ni de chaîne de khalifas** — y compris
+  Médina Baye, dont les deux figures fondatrices (El Hadj Abdoulaye Niasse, El Hadj Ibrahima
+  Niasse/Baye Niasse) ont pourtant déjà une biographie validée en base.
+- Le porteur de projet a confirmé le 2026-08-29 ne pas encore avoir la chaîne de succession
+  de Médina Baye (ni des autres zawiyas) compilée — reste à faire de son côté, pas un
+  contenu que le modèle peut inventer (voir la règle impérative "Contenu religieux" de
+  `CLAUDE.md`).
+
+**Périmètre réel restant** (bien plus étroit que "biographies des figures et des familles" :
+1. Compléter la bio de Thierno Ciré Diop.
+2. Compiler la chaîne de khalifas de Médina Baye (et des 6 autres zawiyas si pertinent).
+3. "Comprendre la Khadara" (`guide_pages`), jamais rédigé — inchangé par rapport aux
+   analyses précédentes.
+
 ## Audit de vérification code/backend (2026-08-29)
 
 Contrairement aux analyses précédentes (croisement docs + `git log`), cette session a
@@ -267,9 +295,13 @@ plus propre que ce que certains documents affirment**, avec un écart de documen
    gratuit Supabase** (message d'erreur : fonctionnalité réservée au plan Pro et plus). Pas
    une action restante côté dev ; décision d'upgrade de plan à trancher par le porteur de
    projet.
-3. Trancher avec le porteur de projet le contenu religieux restant (biographies des figures
-   et des familles religieuses, chaîne de succession des khalifas) — seul vrai bloquant
-   fonctionnel avant une V1 complète, le code est prêt à le recevoir.
+3. Trancher avec le porteur de projet le contenu religieux restant — **périmètre corrigé le
+   2026-08-29 après vérification en base** (voir "Contenu religieux : l'essentiel est déjà
+   validé" ci-dessous) : ne reste que la bio de Thierno Ciré Diop (stub) et la chaîne de
+   khalifas des foyers hors Tivaouane (Médina Baye en particulier) — pas "biographies des
+   figures et des familles" en général, très largement déjà fait. Seul vrai bloquant
+   fonctionnel avant une V1 complète, le code est prêt à le recevoir ; le porteur de projet
+   a confirmé le 2026-08-29 ne pas encore avoir cette chaîne de khalifas compilée.
 4. Finaliser le Sprint 6 (stores) à partir des brouillons du 2026-08-24.
 5. ~~Optionnel, faible urgence : corriger le lint `curly_braces_in_flow_control_structures` et
    fusionner les policies dupliquées sur `lineage_connection_requests`~~ — **fait
