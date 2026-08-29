@@ -138,13 +138,13 @@ Figures, Communauté et lignée spirituelle — en français et en arabe.
 
 ## Ce qui manque encore pour soumettre
 
-- Confirmer l'adresse de contact de la politique de confidentialité et son URL finale
-  (actuellement un artifact Claude — envisager un hébergement pérenne type GitHub Pages,
-  voir la conversation).
+- ~~Confirmer l'adresse de contact de la politique de confidentialité et son URL
+  finale~~ — **fait (2026-08-29)** : URL permanente ci-dessus (Artifact), à rendre
+  publique depuis le menu de partage avant soumission effective.
 - Comptes développeur Google Play (25 $ à vie) et Apple Developer Program (99 $/an) — pas
   encore mentionnés dans ce projet, à ouvrir par le porteur de projet.
-- Captures d'écran (voir dossier généré séparément pour Android/Google Play — les
-  captures App Store nécessitent un simulateur iOS, indisponible dans cet environnement
-  Windows).
+- ~~Captures d'écran Google Play (FR + AR)~~ — **fait (2026-08-29)** : 7 captures FR + 7
+  captures AR RTL dans `store-assets/screenshots/`. Les captures App Store nécessitent
+  un simulateur iOS, toujours indisponible dans cet environnement Windows.
 - Icône d'app haute résolution (1024×1024 pour les deux stores) — `assets/branding/`
   contient la rosace mais pas encore d'icône finalisée aux formats requis.
