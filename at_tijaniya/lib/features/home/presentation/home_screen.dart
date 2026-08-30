@@ -396,6 +396,12 @@ class _WirdRow extends StatelessWidget {
   Widget build(BuildContext context) {
     final subtitle = _subtitle(DateTime.now());
     final streakLabel = status.doneToday ? _streakLabel() : null;
+    // Même règle que la liste des wirds (`wird_list_screen.dart`) : le nom
+    // arabe validé sert de titre en locale `ar`, plutôt que la
+    // translittération `nameFrench` — trouvé non traduit ici à l'audit
+    // design pré-publication Play Store alors que le reste de cette carte
+    // "Aujourd'hui" l'était déjà.
+    final isArabic = Localizations.localeOf(context).languageCode == 'ar';
 
     return ListTile(
       contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
@@ -406,7 +412,12 @@ class _WirdRow extends StatelessWidget {
         status.doneToday ? Icons.check_circle : Icons.radio_button_unchecked,
         color: status.doneToday ? AppColors.emerald : AppColors.bronze,
       ),
-      title: Text(status.wird.nameFrench, style: const TextStyle(fontWeight: FontWeight.w500)),
+      title: Text(
+        isArabic ? status.wird.nameArabic : status.wird.nameFrench,
+        style: isArabic
+            ? AppTheme.sacredText(fontSize: 18, color: AppColors.ink)
+            : const TextStyle(fontWeight: FontWeight.w500),
+      ),
       subtitle: subtitle != null ? Text(subtitle, style: TextStyle(color: AppColors.bronze, fontSize: 12)) : null,
       trailing: streakLabel != null
           ? Container(
@@ -428,8 +439,10 @@ class _ResumeTasbihCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final pillar = resumable.wird.pillars[resumable.session.pillarIndex];
+    final isArabic = Localizations.localeOf(context).languageCode == 'ar';
+    final wirdName = isArabic ? resumable.wird.nameArabic : resumable.wird.nameFrench;
     final subtitle =
-        '${resumable.wird.nameFrench} · ${l10n.homeResumeTasbihSubtitle(pillar.transliteration, resumable.session.currentCount, pillar.repetitions)}';
+        '$wirdName · ${l10n.homeResumeTasbihSubtitle(pillar.transliteration, resumable.session.currentCount, pillar.repetitions)}';
 
     return Card(
       child: ListTile(
@@ -466,9 +479,25 @@ class _NextReminderCard extends StatelessWidget {
   final HomeNextReminder next;
   final AppLocalizations l10n;
 
+  /// Traduit le libellé du créneau par son `id` plutôt que d'afficher
+  /// `slot.label` (toujours en français, `wird_reminder_slots.dart`) —
+  /// même gap trouvé sur l'écran Wird > Rappels (`wird_reminders_screen.dart`),
+  /// non corrigé ici : hors du périmètre "page d'accueil" demandé.
+  String _slotLabel(AppLocalizations l10n) {
+    return switch (next.slot.id) {
+      'lazim_morning' => l10n.reminderSlotMorning,
+      'lazim_evening' => l10n.reminderSlotEvening,
+      'wazifa_daily' => l10n.reminderSlotDaily,
+      'hadratou_jouma_weekly' => l10n.reminderSlotFriday,
+      _ => next.slot.label,
+    };
+  }
+
   @override
   Widget build(BuildContext context) {
     final time = '${next.setting.hour.toString().padLeft(2, '0')}:${next.setting.minute.toString().padLeft(2, '0')}';
+    final isArabic = Localizations.localeOf(context).languageCode == 'ar';
+    final wirdName = isArabic ? next.wird.nameArabic : next.wird.nameFrench;
     return Card(
       child: ListTile(
         contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
@@ -478,9 +507,9 @@ class _NextReminderCard extends StatelessWidget {
           decoration: BoxDecoration(color: AppColors.emeraldSoft, borderRadius: BorderRadius.circular(11)),
           child: Icon(Icons.notifications_active_outlined, color: AppColors.emerald, size: 19),
         ),
-        title: Text(next.slot.label, style: const TextStyle(fontWeight: FontWeight.w500)),
+        title: Text(_slotLabel(l10n), style: const TextStyle(fontWeight: FontWeight.w500)),
         subtitle: Text(
-          l10n.homeNextReminderSubtitle(next.wird.nameFrench, time),
+          l10n.homeNextReminderSubtitle(wirdName, time),
           style: TextStyle(color: AppColors.bronze, fontSize: 12),
         ),
       ),
@@ -497,6 +526,7 @@ class _QuickAccessRow extends StatelessWidget {
   Widget build(BuildContext context) {
     final isFriday = DateTime.now().weekday == DateTime.friday;
     final quickAccessWirds = validatedWirds.where((wird) => wird.frequency == WirdFrequency.daily || isFriday);
+    final isArabic = Localizations.localeOf(context).languageCode == 'ar';
 
     return Row(
       children: [
@@ -504,7 +534,8 @@ class _QuickAccessRow extends StatelessWidget {
           Expanded(
             child: _QuickAccessItem(
               icon: Icons.nights_stay_outlined,
-              label: wird.nameFrench,
+              label: isArabic ? wird.nameArabic : wird.nameFrench,
+              arabic: isArabic,
               onTap: () => Navigator.of(context).push(
                 MaterialPageRoute(builder: (_) => WirdDetailScreen(wird: wird)),
               ),
@@ -527,11 +558,16 @@ class _QuickAccessRow extends StatelessWidget {
 }
 
 class _QuickAccessItem extends StatelessWidget {
-  const _QuickAccessItem({required this.icon, required this.label, required this.onTap});
+  const _QuickAccessItem({required this.icon, required this.label, required this.onTap, this.arabic = false});
 
   final IconData icon;
   final String label;
   final VoidCallback onTap;
+
+  /// `true` quand [label] est un nom de wird en arabe (`nameArabic`) plutôt
+  /// que le libellé générique "Tasbih libre" — bascule sur Amiri, jamais
+  /// pour un libellé d'interface générique (règle design, `CLAUDE.md`).
+  final bool arabic;
 
   @override
   Widget build(BuildContext context) {
@@ -560,7 +596,9 @@ class _QuickAccessItem extends StatelessWidget {
               textAlign: TextAlign.center,
               maxLines: 2,
               overflow: TextOverflow.ellipsis,
-              style: const TextStyle(fontSize: 10.5, color: AppColors.ink),
+              style: arabic
+                  ? GoogleFonts.amiri(fontSize: 12, color: AppColors.ink)
+                  : const TextStyle(fontSize: 10.5, color: AppColors.ink),
             ),
           ],
         ),
