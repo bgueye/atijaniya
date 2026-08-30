@@ -368,7 +368,14 @@ class _FigureHero extends StatelessWidget {
                   Text(
                     figure.nameFrench.toUpperCase(),
                     textAlign: TextAlign.center,
+                    // `AppFonts.titlesFr` (CormorantGaramond) — même police que
+                    // le titre d'une œuvre plus bas dans cet écran ; ce
+                    // sous-titre en tombait sur la police par défaut (Jost),
+                    // alors que `design_tokens.yaml` réserve CormorantGaramond
+                    // aux "noms de figures" (constaté à l'audit design
+                    // pré-publication Play Store).
                     style: const TextStyle(
+                        fontFamily: AppFonts.titlesFr,
                         color: _subtitleColor,
                         fontSize: 12,
                         letterSpacing: 1.4),
@@ -1571,7 +1578,14 @@ class _FounderNode extends StatelessWidget {
             style: AppTheme.sacredText(fontSize: 18, color: AppColors.goldSoft),
           ),
           const SizedBox(height: 2),
-          Text(figure.nameFrench, textAlign: TextAlign.center, style: const TextStyle(fontSize: 12, color: AppColors.parchment)),
+          // `AppFonts.titlesFr` : même correctif que le sous-titre de l'en-tête
+          // de cet écran (`_FigureHeader`) — même gap constaté à l'audit
+          // design pré-publication Play Store.
+          Text(
+            figure.nameFrench,
+            textAlign: TextAlign.center,
+            style: const TextStyle(fontFamily: AppFonts.titlesFr, fontSize: 12, color: AppColors.parchment),
+          ),
           const SizedBox(height: 2),
           Text(founderLabel, style: TextStyle(fontSize: 10, color: AppColors.gold, fontWeight: FontWeight.w600)),
         ],
