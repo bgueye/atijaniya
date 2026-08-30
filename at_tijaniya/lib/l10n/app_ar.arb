@@ -793,6 +793,7 @@
   "privacyMouqaddamVisibleDescription": "إظهار صفتك وسلسلة إجازتك.",
   "privacyAvailableAsSponsorLabel": "متاح كضامن",
   "privacyAvailableAsSponsorDescription": "أن يجدك المرشحون لصفة المقدَّم الباحثون عن ضامن.",
+  "privacyMouqaddamGatedDescription": "متاح بعد تأكيد الكفالة.",
   "privacyWhoCanContactLabel": "من يمكنه التواصل معك",
   "privacyWhoCanContactEveryone": "الجميع",
   "privacyWhoCanContactMatchesOnly": "المتطابقون فقط",

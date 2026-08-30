@@ -4461,6 +4461,12 @@ abstract class AppLocalizations {
   /// **'Être trouvable par des candidats mouqaddam cherchant un parrain.'**
   String get privacyAvailableAsSponsorDescription;
 
+  /// No description provided for @privacyMouqaddamGatedDescription.
+  ///
+  /// In fr, this message translates to:
+  /// **'Disponible une fois votre parrainage confirmé.'**
+  String get privacyMouqaddamGatedDescription;
+
   /// No description provided for @privacyWhoCanContactLabel.
   ///
   /// In fr, this message translates to:

@@ -2392,6 +2392,10 @@ class AppLocalizationsFr extends AppLocalizations {
       'Être trouvable par des candidats mouqaddam cherchant un parrain.';
 
   @override
+  String get privacyMouqaddamGatedDescription =>
+      'Disponible une fois votre parrainage confirmé.';
+
+  @override
   String get privacyWhoCanContactLabel => 'Qui peut vous contacter';
 
   @override

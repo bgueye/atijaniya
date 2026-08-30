@@ -794,6 +794,7 @@
   "privacyMouqaddamVisibleDescription": "Rendre visible votre statut et votre silsila d'ijaza.",
   "privacyAvailableAsSponsorLabel": "Disponible comme parrain",
   "privacyAvailableAsSponsorDescription": "Être trouvable par des candidats mouqaddam cherchant un parrain.",
+  "privacyMouqaddamGatedDescription": "Disponible une fois votre parrainage confirmé.",
   "privacyWhoCanContactLabel": "Qui peut vous contacter",
   "privacyWhoCanContactEveryone": "Tout le monde",
   "privacyWhoCanContactMatchesOnly": "Uniquement les correspondances",

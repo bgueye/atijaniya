@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/theme/app_colors.dart';
 import '../../../l10n/app_localizations.dart';
+import '../../mouqaddam/presentation/mouqaddam_providers.dart';
 import '../domain/privacy_settings_models.dart';
 import 'privacy_settings_providers.dart';
 
@@ -25,6 +26,7 @@ class PrivacySettingsScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context)!;
     final settingsAsync = ref.watch(myPrivacySettingsProvider);
+    final isVerifiedMouqaddam = ref.watch(isVerifiedMouqaddamProvider);
 
     return Scaffold(
       appBar: AppBar(title: Text(l10n.privacyTitle)),
@@ -52,16 +54,23 @@ class PrivacySettingsScreen extends ConsumerWidget {
             ),
           ),
         ),
-        data: (settings) => _PrivacyForm(settings: settings),
+        data: (settings) => _PrivacyForm(settings: settings, isVerifiedMouqaddam: isVerifiedMouqaddam),
       ),
     );
   }
 }
 
 class _PrivacyForm extends ConsumerStatefulWidget {
-  const _PrivacyForm({required this.settings});
+  const _PrivacyForm({required this.settings, required this.isVerifiedMouqaddam});
 
   final PrivacySettings settings;
+
+  /// Statut de parrainage confirmé du disciple connecté (§5.4.2, CLAUDE.md)
+  /// — conditionne l'activation des deux réglages ci-dessous, qui n'ont
+  /// aucun effet réel côté base tant qu'il n'est pas atteint
+  /// (`mouqaddam_status_visible_to()`/`search_available_sponsors()` filtrent
+  /// déjà sur `status = 'verified'`, `database/schema.sql`).
+  final bool isVerifiedMouqaddam;
 
   @override
   ConsumerState<_PrivacyForm> createState() => _PrivacyFormState();
@@ -107,16 +116,24 @@ class _PrivacyFormState extends ConsumerState<_PrivacyForm> {
         const SizedBox(height: 12),
         _PrivacySwitch(
           label: l10n.privacyMouqaddamVisibleLabel,
-          description: l10n.privacyMouqaddamVisibleDescription,
+          description: widget.isVerifiedMouqaddam
+              ? l10n.privacyMouqaddamVisibleDescription
+              : l10n.privacyMouqaddamGatedDescription,
           value: _settings.mouqaddamStatusVisible,
-          onChanged: (value) => _apply(_settings.copyWith(mouqaddamStatusVisible: value)),
+          onChanged: widget.isVerifiedMouqaddam
+              ? (value) => _apply(_settings.copyWith(mouqaddamStatusVisible: value))
+              : null,
         ),
         const SizedBox(height: 12),
         _PrivacySwitch(
           label: l10n.privacyAvailableAsSponsorLabel,
-          description: l10n.privacyAvailableAsSponsorDescription,
+          description: widget.isVerifiedMouqaddam
+              ? l10n.privacyAvailableAsSponsorDescription
+              : l10n.privacyMouqaddamGatedDescription,
           value: _settings.availableAsSponsor,
-          onChanged: (value) => _apply(_settings.copyWith(availableAsSponsor: value)),
+          onChanged: widget.isVerifiedMouqaddam
+              ? (value) => _apply(_settings.copyWith(availableAsSponsor: value))
+              : null,
         ),
         const SizedBox(height: 20),
         Text(l10n.privacyWhoCanContactLabel, style: const TextStyle(fontWeight: FontWeight.w600, color: AppColors.ink)),
@@ -149,7 +166,10 @@ class _PrivacySwitch extends StatelessWidget {
   final String label;
   final String description;
   final bool value;
-  final ValueChanged<bool> onChanged;
+
+  /// `null` désactive le switch (grisé) — cas "réglage sans effet tant que
+  /// le parrainage n'est pas confirmé", voir `_PrivacyForm`.
+  final ValueChanged<bool>? onChanged;
 
   @override
   Widget build(BuildContext context) {

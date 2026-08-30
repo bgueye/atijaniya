@@ -2310,6 +2310,9 @@ class AppLocalizationsAr extends AppLocalizations {
       'أن يجدك المرشحون لصفة المقدَّم الباحثون عن ضامن.';
 
   @override
+  String get privacyMouqaddamGatedDescription => 'متاح بعد تأكيد الكفالة.';
+
+  @override
   String get privacyWhoCanContactLabel => 'من يمكنه التواصل معك';
 
   @override
