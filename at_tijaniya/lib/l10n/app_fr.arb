@@ -156,6 +156,17 @@
   "@homeNextReminderSubtitle": {
     "placeholders": { "wird": { "type": "String" }, "time": { "type": "String" } }
   },
+  "reminderSlotMorning": "Rappel du matin",
+  "reminderSlotEvening": "Rappel du soir",
+  "reminderSlotDaily": "Rappel quotidien",
+  "reminderSlotFriday": "Rappel du vendredi",
+  "wirdRemindersTitle": "Rappels — {wird}",
+  "@wirdRemindersTitle": {
+    "placeholders": { "wird": { "type": "String" } }
+  },
+  "wirdRemindersScopeNote": "Choisissez vous-même l'heure de chaque rappel, dans la fenêtre habituelle de ce wird — l'app ne calcule pas encore les horaires de prière exacts de votre position.",
+  "reminderFrequencyWeekly": "Chaque vendredi",
+  "reminderFrequencyDaily": "Chaque jour",
   "homeSectionQuickAccess": "Accès rapide",
   "homeQuickTasbihLabel": "Tasbih libre",
   "homeSectionKhadara": "Khadara à venir",
@@ -166,6 +177,7 @@
   "wirdLazim": "Lazim",
   "wirdWazifa": "Wazifa",
   "wirdHadratouJouma": "Hadratou-l-Jouma",
+  "wirdFrequencyDaily": "Quotidien",
   "wirdFreeTitle": "Wird libre",
   "wirdFreeSubtitle": "Paramétrez votre propre compteur",
   "wirdFreeSetupTitle": "Nouveau compteur libre",

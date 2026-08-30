@@ -124,7 +124,11 @@ class _FeedTab extends ConsumerWidget {
                 ),
               )
             : ListView.builder(
-                padding: const EdgeInsets.fromLTRB(16, 16, 16, 88),
+                // 100 plutôt que la seule hauteur du FAB : celui-ci masquait
+                // encore le bas de la dernière carte (image d'une
+                // publication) avec une marge de 88 — constaté à l'audit
+                // design pré-publication Play Store.
+                padding: const EdgeInsets.fromLTRB(16, 16, 16, 100),
                 itemCount: posts.length,
                 itemBuilder: (context, i) => _PostCard(
                     post: posts[i],
@@ -371,7 +375,11 @@ class _GroupsTab extends ConsumerWidget {
                 ),
               )
             : ListView.builder(
-                padding: const EdgeInsets.fromLTRB(16, 16, 16, 88),
+                // 100 plutôt que la seule hauteur du FAB : celui-ci masquait
+                // encore le bas de la dernière carte (image d'une
+                // publication) avec une marge de 88 — constaté à l'audit
+                // design pré-publication Play Store.
+                padding: const EdgeInsets.fromLTRB(16, 16, 16, 100),
                 itemCount: list.length,
                 itemBuilder: (context, i) => _GroupCard(group: list[i]),
               ),

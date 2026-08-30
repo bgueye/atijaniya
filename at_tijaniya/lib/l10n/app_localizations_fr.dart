@@ -395,6 +395,33 @@ class AppLocalizationsFr extends AppLocalizations {
   }
 
   @override
+  String get reminderSlotMorning => 'Rappel du matin';
+
+  @override
+  String get reminderSlotEvening => 'Rappel du soir';
+
+  @override
+  String get reminderSlotDaily => 'Rappel quotidien';
+
+  @override
+  String get reminderSlotFriday => 'Rappel du vendredi';
+
+  @override
+  String wirdRemindersTitle(String wird) {
+    return 'Rappels — $wird';
+  }
+
+  @override
+  String get wirdRemindersScopeNote =>
+      'Choisissez vous-même l\'heure de chaque rappel, dans la fenêtre habituelle de ce wird — l\'app ne calcule pas encore les horaires de prière exacts de votre position.';
+
+  @override
+  String get reminderFrequencyWeekly => 'Chaque vendredi';
+
+  @override
+  String get reminderFrequencyDaily => 'Chaque jour';
+
+  @override
   String get homeSectionQuickAccess => 'Accès rapide';
 
   @override
@@ -420,6 +447,9 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get wirdHadratouJouma => 'Hadratou-l-Jouma';
+
+  @override
+  String get wirdFrequencyDaily => 'Quotidien';
 
   @override
   String get wirdFreeTitle => 'Wird libre';

@@ -228,7 +228,13 @@ class _FigureTile extends StatelessWidget {
                   children: [
                     Text(
                       figure.nameFrench,
-                      maxLines: 1,
+                      // 2 lignes plutôt qu'1 : un nom tronqué à 1 ligne
+                      // masquait parfois l'épithète qui différencie deux
+                      // figures proches (ex. deux "Cheikh Ahmed Tidiane Sy")
+                      // — constaté à l'audit design pré-publication Play
+                      // Store, alors que des cartes similaires (Khadara)
+                      // passaient déjà à la ligne sans souci.
+                      maxLines: 2,
                       overflow: TextOverflow.ellipsis,
                       style: GoogleFonts.cormorantGaramond(
                         fontWeight: FontWeight.w600,

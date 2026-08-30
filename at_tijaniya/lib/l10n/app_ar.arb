@@ -156,6 +156,17 @@
   "@homeNextReminderSubtitle": {
     "placeholders": { "wird": { "type": "String" }, "time": { "type": "String" } }
   },
+  "reminderSlotMorning": "تذكير الصباح",
+  "reminderSlotEvening": "تذكير المساء",
+  "reminderSlotDaily": "تذكير يومي",
+  "reminderSlotFriday": "تذكير الجمعة",
+  "wirdRemindersTitle": "التذكيرات — {wird}",
+  "@wirdRemindersTitle": {
+    "placeholders": { "wird": { "type": "String" } }
+  },
+  "wirdRemindersScopeNote": "اختر بنفسك وقت كل تذكير، ضمن النافذة المعتادة لهذا الورد — لا يحسب التطبيق بعد أوقات الصلاة الدقيقة لموقعك.",
+  "reminderFrequencyWeekly": "كل جمعة",
+  "reminderFrequencyDaily": "كل يوم",
   "homeSectionQuickAccess": "وصول سريع",
   "homeQuickTasbihLabel": "تسبيح حر",
   "homeSectionKhadara": "الخدرة القادمة",
@@ -166,6 +177,7 @@
   "wirdLazim": "اللازم",
   "wirdWazifa": "الوظيفة",
   "wirdHadratouJouma": "حضرة الجمعة",
+  "wirdFrequencyDaily": "يومي",
   "wirdFreeTitle": "ورد حر",
   "wirdFreeSubtitle": "اضبط عدادك الخاص",
   "wirdFreeSetupTitle": "عداد حر جديد",

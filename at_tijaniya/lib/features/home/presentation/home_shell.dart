@@ -62,6 +62,7 @@ class _HomeShellState extends ConsumerState<HomeShell> {
             ),
           IconButton(
             icon: const Icon(Icons.account_circle_outlined),
+            tooltip: l10n.profileTitle,
             onPressed: () => Navigator.of(context).push(
               MaterialPageRoute(builder: (_) => const ProfilScreen()),
             ),

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/theme/app_colors.dart';
+import '../../../core/theme/app_theme.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../profil/presentation/profile_providers.dart';
 import '../../tariqa_conditions/presentation/tariqa_conditions_screen.dart';
@@ -123,13 +124,25 @@ class _WirdCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    // Seul écran du module Wird où le nom arabe validé (`nameArabic`) sert
+    // de titre en locale `ar`, plutôt que la translittération `nameFrench`
+    // utilisée partout ailleurs (app bar du guide, Tasbih, Historique,
+    // Rappels) — c'est le premier écran vu par le disciple sur ce module,
+    // avant même d'ouvrir un wird.
+    final isArabic = Localizations.localeOf(context).languageCode == 'ar';
     return Card(
       child: ListTile(
         contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
         leading: Icon(_iconForWird(wird.id), color: AppColors.emerald),
-        title: Text(wird.nameFrench, style: const TextStyle(fontWeight: FontWeight.w500)),
+        title: Text(
+          isArabic ? wird.nameArabic : wird.nameFrench,
+          style: isArabic
+              ? AppTheme.sacredText(fontSize: 18, color: AppColors.ink)
+              : const TextStyle(fontWeight: FontWeight.w500),
+        ),
         subtitle: Text(
-          wird.frequency == WirdFrequency.daily ? 'Quotidien' : 'Hebdomadaire — vendredi',
+          wird.frequency == WirdFrequency.daily ? l10n.wirdFrequencyDaily : l10n.homeWirdSubtitleWeeklyInfo,
           style: TextStyle(color: AppColors.bronze),
         ),
         trailing: Icon(Icons.chevron_right, color: AppColors.bronze),

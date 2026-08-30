@@ -123,7 +123,12 @@ class _WirdDetailScreenState extends ConsumerState<WirdDetailScreen> {
       body: SafeArea(
         bottom: false,
         child: ListView(
-          padding: const EdgeInsets.all(20),
+          // Bottom généreux : le FAB "Tasbih" flotte en permanence au-dessus
+          // de ce ListView (Scaffold ne réserve de la place que pour la
+          // bottomNavigationBar, pas pour un FAB) et masquait la fin du
+          // dernier pilier sans cette marge — constaté sur les 3 wirds lors
+          // de l'audit design pré-publication Play Store.
+          padding: const EdgeInsets.fromLTRB(20, 20, 20, 96),
           children: [
             Text(
               wird.nameArabic,

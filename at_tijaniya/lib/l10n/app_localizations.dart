@@ -807,6 +807,54 @@ abstract class AppLocalizations {
   /// **'{wird} — aujourd\'hui à {time}'**
   String homeNextReminderSubtitle(String wird, String time);
 
+  /// No description provided for @reminderSlotMorning.
+  ///
+  /// In fr, this message translates to:
+  /// **'Rappel du matin'**
+  String get reminderSlotMorning;
+
+  /// No description provided for @reminderSlotEvening.
+  ///
+  /// In fr, this message translates to:
+  /// **'Rappel du soir'**
+  String get reminderSlotEvening;
+
+  /// No description provided for @reminderSlotDaily.
+  ///
+  /// In fr, this message translates to:
+  /// **'Rappel quotidien'**
+  String get reminderSlotDaily;
+
+  /// No description provided for @reminderSlotFriday.
+  ///
+  /// In fr, this message translates to:
+  /// **'Rappel du vendredi'**
+  String get reminderSlotFriday;
+
+  /// No description provided for @wirdRemindersTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Rappels — {wird}'**
+  String wirdRemindersTitle(String wird);
+
+  /// No description provided for @wirdRemindersScopeNote.
+  ///
+  /// In fr, this message translates to:
+  /// **'Choisissez vous-même l\'heure de chaque rappel, dans la fenêtre habituelle de ce wird — l\'app ne calcule pas encore les horaires de prière exacts de votre position.'**
+  String get wirdRemindersScopeNote;
+
+  /// No description provided for @reminderFrequencyWeekly.
+  ///
+  /// In fr, this message translates to:
+  /// **'Chaque vendredi'**
+  String get reminderFrequencyWeekly;
+
+  /// No description provided for @reminderFrequencyDaily.
+  ///
+  /// In fr, this message translates to:
+  /// **'Chaque jour'**
+  String get reminderFrequencyDaily;
+
   /// No description provided for @homeSectionQuickAccess.
   ///
   /// In fr, this message translates to:
@@ -860,6 +908,12 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'Hadratou-l-Jouma'**
   String get wirdHadratouJouma;
+
+  /// No description provided for @wirdFrequencyDaily.
+  ///
+  /// In fr, this message translates to:
+  /// **'Quotidien'**
+  String get wirdFrequencyDaily;
 
   /// No description provided for @wirdFreeTitle.
   ///

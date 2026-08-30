@@ -390,6 +390,33 @@ class AppLocalizationsAr extends AppLocalizations {
   }
 
   @override
+  String get reminderSlotMorning => 'تذكير الصباح';
+
+  @override
+  String get reminderSlotEvening => 'تذكير المساء';
+
+  @override
+  String get reminderSlotDaily => 'تذكير يومي';
+
+  @override
+  String get reminderSlotFriday => 'تذكير الجمعة';
+
+  @override
+  String wirdRemindersTitle(String wird) {
+    return 'التذكيرات — $wird';
+  }
+
+  @override
+  String get wirdRemindersScopeNote =>
+      'اختر بنفسك وقت كل تذكير، ضمن النافذة المعتادة لهذا الورد — لا يحسب التطبيق بعد أوقات الصلاة الدقيقة لموقعك.';
+
+  @override
+  String get reminderFrequencyWeekly => 'كل جمعة';
+
+  @override
+  String get reminderFrequencyDaily => 'كل يوم';
+
+  @override
   String get homeSectionQuickAccess => 'وصول سريع';
 
   @override
@@ -415,6 +442,9 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get wirdHadratouJouma => 'حضرة الجمعة';
+
+  @override
+  String get wirdFrequencyDaily => 'يومي';
 
   @override
   String get wirdFreeTitle => 'ورد حر';
