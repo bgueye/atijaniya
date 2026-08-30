@@ -7,6 +7,7 @@ import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../core/theme/rosace_painter.dart';
 import '../../../core/widgets/app_snackbar.dart';
+import '../../../core/widgets/empty_notice.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../khadara/domain/khadara_models.dart';
 import '../../khadara/presentation/event_detail_screen.dart';
@@ -1232,7 +1233,7 @@ class _ZawiyaTabState extends ConsumerState<_ZawiyaTab> {
           )),
           error: (error, stackTrace) => Text(l10n.khadaraLoadError, style: TextStyle(color: AppColors.bronze)),
           data: (zawiyas) => zawiyas.isEmpty
-              ? Text(l10n.figureZawiyasPending, style: TextStyle(color: AppColors.bronze))
+              ? EmptyNotice(text: l10n.figureZawiyasPending)
               : Column(
                   children: [
                     for (final zawiya in zawiyas)

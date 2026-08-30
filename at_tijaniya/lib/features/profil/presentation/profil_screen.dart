@@ -133,6 +133,7 @@ class _ProfileBody extends ConsumerWidget {
               child: ListTile(
                 leading: Icon(Icons.flag_outlined, color: AppColors.gold),
                 title: Text(l10n.profileModerationReports),
+                trailing: Icon(Icons.chevron_right, color: AppColors.bronze),
                 onTap: () => Navigator.of(context).push(
                   MaterialPageRoute(builder: (_) => const ModerationReportsScreen()),
                 ),
@@ -143,6 +144,7 @@ class _ProfileBody extends ConsumerWidget {
               child: ListTile(
                 leading: Icon(Icons.how_to_reg_outlined, color: AppColors.gold),
                 title: Text(l10n.profileSponsorshipRequests),
+                trailing: Icon(Icons.chevron_right, color: AppColors.bronze),
                 onTap: () => Navigator.of(context).push(
                   MaterialPageRoute(builder: (_) => const SponsorshipRequestsScreen()),
                 ),
@@ -152,6 +154,7 @@ class _ProfileBody extends ConsumerWidget {
               child: ListTile(
                 leading: Icon(Icons.account_tree_outlined, color: AppColors.gold),
                 title: Text(l10n.profileMyIjazaChain),
+                trailing: Icon(Icons.chevron_right, color: AppColors.bronze),
                 onTap: () => Navigator.of(context).push(
                   MaterialPageRoute(builder: (_) => const IjazaChainScreen()),
                 ),
@@ -162,6 +165,7 @@ class _ProfileBody extends ConsumerWidget {
               child: ListTile(
                 leading: Icon(Icons.workspace_premium_outlined, color: AppColors.gold),
                 title: Text(l10n.profileBecomeMouqaddam),
+                trailing: Icon(Icons.chevron_right, color: AppColors.bronze),
                 onTap: () => Navigator.of(context).push(
                   MaterialPageRoute(builder: (_) => const BecomeMouqaddamScreen()),
                 ),
@@ -172,6 +176,7 @@ class _ProfileBody extends ConsumerWidget {
               leading: Icon(Icons.favorite_outline, color: AppColors.gold),
               title: Text(l10n.donationTitle),
               subtitle: Text(l10n.settingsDonationTileSubtitle),
+              trailing: Icon(Icons.chevron_right, color: AppColors.bronze),
               onTap: () => Navigator.of(context).push(
                 MaterialPageRoute(builder: (_) => const DonationScreen()),
               ),
@@ -181,6 +186,7 @@ class _ProfileBody extends ConsumerWidget {
             child: ListTile(
               leading: const Icon(Icons.settings_outlined),
               title: Text(l10n.profileSettings),
+              trailing: Icon(Icons.chevron_right, color: AppColors.bronze),
               onTap: () => Navigator.of(context).push(
                 MaterialPageRoute(builder: (_) => const SettingsScreen()),
               ),

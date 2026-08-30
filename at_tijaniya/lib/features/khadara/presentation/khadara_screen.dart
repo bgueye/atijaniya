@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../../core/theme/app_colors.dart';
+import '../../../core/widgets/empty_notice.dart';
 import '../../../l10n/app_localizations.dart';
 import '../domain/khadara_models.dart';
 import 'event_detail_screen.dart';
@@ -174,8 +175,12 @@ class _ZawiyasTab extends ConsumerWidget {
           child: ListTile(
             leading: Icon(Icons.mosque_outlined, color: AppColors.emerald),
             title: Text(zawiya.name),
+            // 2 lignes plutôt qu'1 : une adresse assez longue se tronquait en
+            // plein milieu d'une parenthèse — constaté à l'audit design
+            // pré-publication Play Store, même correctif que les noms de
+            // figures (`figures_screen.dart`).
             subtitle: zawiya.addressText != null
-                ? Text(zawiya.addressText!, maxLines: 1, overflow: TextOverflow.ellipsis)
+                ? Text(zawiya.addressText!, maxLines: 2, overflow: TextOverflow.ellipsis)
                 : null,
             trailing: Icon(Icons.chevron_right, color: AppColors.bronze),
             onTap: () => Navigator.of(context).push(
@@ -216,10 +221,7 @@ class _LiveTab extends ConsumerWidget {
             child: Text(l10n.khadaraRetry),
           ),
           data: (streams) => streams.isEmpty
-              ? Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 8),
-                  child: Text(l10n.khadaraNoLiveNow, style: TextStyle(color: AppColors.bronze)),
-                )
+              ? EmptyNotice(text: l10n.khadaraNoLiveNow)
               : Column(
                   children: streams
                       .map(
@@ -248,10 +250,7 @@ class _LiveTab extends ConsumerWidget {
             child: Text(l10n.khadaraRetry),
           ),
           data: (list) => list.isEmpty
-              ? Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 8),
-                  child: Text(l10n.khadaraNoReplays, style: TextStyle(color: AppColors.bronze)),
-                )
+              ? EmptyNotice(text: l10n.khadaraNoReplays)
               : Column(
                   children: list
                       .map(
