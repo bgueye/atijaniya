@@ -147,40 +147,60 @@ class _RegularityRow extends StatelessWidget {
 
   static const _dayLabels = ['L', 'M', 'M', 'J', 'V', 'S', 'D'];
 
+  /// Sépare [periods] en (au plus) 2 lignes de taille égale (la 1ʳᵉ absorbe
+  /// l'éventuel reste impair) — un `Wrap` seul répartit selon ce qui tient
+  /// sur la largeur de l'écran (ex. 8 points puis 6 sur un wird quotidien à
+  /// 14 points), ce qui casse la lecture en semaines pour les libellés L→D.
+  /// Découpage fixe à la place : toujours 2 lignes équilibrées (7+7 pour un
+  /// quotidien, 4+4 pour Hadratou-l-Jouma), quelle que soit la largeur.
+  static List<List<WirdPeriodStatus>> _splitInTwoRows(List<WirdPeriodStatus> periods) {
+    if (periods.isEmpty) return const [];
+    final firstRowSize = (periods.length / 2).ceil();
+    final firstRow = periods.sublist(0, firstRowSize);
+    final secondRow = periods.sublist(firstRowSize);
+    return [firstRow, if (secondRow.isNotEmpty) secondRow];
+  }
+
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      scrollDirection: Axis.horizontal,
-      child: Row(
-        children: [
-          for (final period in periods)
-            Padding(
-              padding: const EdgeInsets.only(right: 10),
-              child: Column(
-                children: [
-                  Container(
-                    width: 34,
-                    height: 34,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: period.completed ? AppColors.emerald : AppColors.offWhite,
-                      border: Border.all(color: period.completed ? AppColors.emerald : AppColors.bronze, width: 1.5),
+    final rows = _splitInTwoRows(periods);
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        for (var i = 0; i < rows.length; i++) ...[
+          if (i > 0) const SizedBox(height: 12),
+          Wrap(
+            spacing: 10,
+            children: [
+              for (final period in rows[i])
+                Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Container(
+                      width: 34,
+                      height: 34,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: period.completed ? AppColors.emerald : AppColors.offWhite,
+                        border: Border.all(color: period.completed ? AppColors.emerald : AppColors.bronze, width: 1.5),
+                      ),
+                      alignment: Alignment.center,
+                      child: period.completed
+                          ? const Icon(Icons.check, color: AppColors.offWhite, size: 18)
+                          : null,
                     ),
-                    alignment: Alignment.center,
-                    child: period.completed
-                        ? const Icon(Icons.check, color: AppColors.offWhite, size: 18)
-                        : null,
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    weekly ? '${period.date.day}/${period.date.month}' : _dayLabels[period.date.weekday - 1],
-                    style: TextStyle(fontSize: 10, color: AppColors.bronze),
-                  ),
-                ],
-              ),
-            ),
+                    const SizedBox(height: 4),
+                    Text(
+                      weekly ? '${period.date.day}/${period.date.month}' : _dayLabels[period.date.weekday - 1],
+                      style: TextStyle(fontSize: 10, color: AppColors.bronze),
+                    ),
+                  ],
+                ),
+            ],
+          ),
         ],
-      ),
+      ],
     );
   }
 }
