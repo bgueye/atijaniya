@@ -6,6 +6,7 @@ import '../../../core/storage/image_upload_service.dart';
 import '../../../core/supabase/supabase_config.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../l10n/app_localizations.dart';
+import '../../donation/data/donation_feature_flag.dart';
 import '../../donation/presentation/donation_screen.dart';
 import '../../lineage/presentation/lineage_screen.dart';
 import '../../moderation/presentation/moderation_reports_screen.dart';
@@ -171,17 +172,18 @@ class _ProfileBody extends ConsumerWidget {
                 ),
               ),
             ),
-          Card(
-            child: ListTile(
-              leading: Icon(Icons.favorite_outline, color: AppColors.gold),
-              title: Text(l10n.donationTitle),
-              subtitle: Text(l10n.settingsDonationTileSubtitle),
-              trailing: Icon(Icons.chevron_right, color: AppColors.bronze),
-              onTap: () => Navigator.of(context).push(
-                MaterialPageRoute(builder: (_) => const DonationScreen()),
+          if (kDonationsEnabled)
+            Card(
+              child: ListTile(
+                leading: Icon(Icons.favorite_outline, color: AppColors.gold),
+                title: Text(l10n.donationTitle),
+                subtitle: Text(l10n.settingsDonationTileSubtitle),
+                trailing: Icon(Icons.chevron_right, color: AppColors.bronze),
+                onTap: () => Navigator.of(context).push(
+                  MaterialPageRoute(builder: (_) => const DonationScreen()),
+                ),
               ),
             ),
-          ),
           Card(
             child: ListTile(
               leading: const Icon(Icons.settings_outlined),

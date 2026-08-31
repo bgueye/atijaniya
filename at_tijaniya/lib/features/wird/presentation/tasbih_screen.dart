@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_theme.dart';
+import '../../donation/data/donation_feature_flag.dart';
 import '../../donation/data/donation_nudge_store.dart';
 import '../../donation/presentation/donation_screen.dart';
 import '../domain/tasbih_session.dart';
@@ -342,7 +343,7 @@ class _WirdCompletedView extends StatelessWidget {
               onPressed: () => Navigator.of(context).pop(),
               child: const Text('Retour au guide'),
             ),
-            const _DonationNudge(),
+            if (kDonationsEnabled) const _DonationNudge(),
           ],
         ),
       ),

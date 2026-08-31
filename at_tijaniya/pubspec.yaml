@@ -1,7 +1,7 @@
 name: at_tijaniya
 description: "At-Tijaniya — compagnon numérique du disciple tijani (wirds, khadara, figures, communauté)."
 publish_to: 'none'
-version: 0.1.0
+version: 1.0.0+1
 
 environment:
   sdk: '>=3.4.0 <4.0.0'

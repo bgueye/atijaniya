@@ -6,6 +6,7 @@ import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/contrast_controller.dart';
 import '../../../core/theme/locale_controller.dart';
 import '../../../l10n/app_localizations.dart';
+import '../../donation/data/donation_feature_flag.dart';
 import '../../donation/presentation/donation_screen.dart';
 import 'about_screen.dart';
 import 'privacy_settings_screen.dart';
@@ -78,19 +79,21 @@ class SettingsScreen extends ConsumerWidget {
                 ),
               ),
             ),
-            const SizedBox(height: 24),
-            _SectionLabel(l10n.settingsDonationSection),
-            Card(
-              child: ListTile(
-                leading: const Icon(Icons.favorite_outline),
-                title: Text(l10n.settingsDonationSection),
-                subtitle: Text(l10n.settingsDonationTileSubtitle),
-                trailing: const Icon(Icons.chevron_right),
-                onTap: () => Navigator.of(context).push(
-                  MaterialPageRoute(builder: (_) => const DonationScreen()),
+            if (kDonationsEnabled) ...[
+              const SizedBox(height: 24),
+              _SectionLabel(l10n.settingsDonationSection),
+              Card(
+                child: ListTile(
+                  leading: const Icon(Icons.favorite_outline),
+                  title: Text(l10n.settingsDonationSection),
+                  subtitle: Text(l10n.settingsDonationTileSubtitle),
+                  trailing: const Icon(Icons.chevron_right),
+                  onTap: () => Navigator.of(context).push(
+                    MaterialPageRoute(builder: (_) => const DonationScreen()),
+                  ),
                 ),
               ),
-            ),
+            ],
             const SizedBox(height: 24),
             _SectionLabel(l10n.settingsAccessibilitySection),
             Card(

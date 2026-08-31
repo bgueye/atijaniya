@@ -7,6 +7,7 @@ import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../core/theme/rosace_painter.dart';
 import '../../../l10n/app_localizations.dart';
+import '../../donation/data/donation_feature_flag.dart';
 import '../../donation/presentation/donation_screen.dart';
 import '../../figures/domain/featured_figure.dart';
 import '../../figures/presentation/figure_detail_screen.dart';
@@ -322,9 +323,11 @@ class _DashboardBody extends StatelessWidget {
           _SectionLabel(l10n.homeSectionFeaturedFigure),
           _FeaturedFigureCard(featured: featuredFigure),
         ],
-        const SizedBox(height: 20),
-        _SectionLabel(l10n.homeSectionDonation),
-        _DonationCard(l10n: l10n),
+        if (kDonationsEnabled) ...[
+          const SizedBox(height: 20),
+          _SectionLabel(l10n.homeSectionDonation),
+          _DonationCard(l10n: l10n),
+        ],
       ],
     );
   }
