@@ -1020,7 +1020,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get figuresSectionFounders => 'المؤسسون';
 
   @override
-  String get figuresSectionFamilies => 'العائلات الدينية';
+  String get figuresSectionFamilies => 'المرشدون الدينيون';
 
   @override
   String get figuresEmptyTitle => 'السير قيد الإعداد';

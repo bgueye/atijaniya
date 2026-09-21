@@ -2004,7 +2004,7 @@ abstract class AppLocalizations {
   /// No description provided for @figuresSectionFamilies.
   ///
   /// In fr, this message translates to:
-  /// **'Familles religieuses'**
+  /// **'Guides religieux'**
   String get figuresSectionFamilies;
 
   /// No description provided for @figuresEmptyTitle.

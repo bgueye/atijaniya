@@ -1044,7 +1044,7 @@ class AppLocalizationsFr extends AppLocalizations {
   String get figuresSectionFounders => 'Fondateurs';
 
   @override
-  String get figuresSectionFamilies => 'Familles religieuses';
+  String get figuresSectionFamilies => 'Guides religieux';
 
   @override
   String get figuresEmptyTitle => 'Biographies en cours de compilation';
