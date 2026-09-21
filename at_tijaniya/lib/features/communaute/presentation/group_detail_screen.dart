@@ -456,6 +456,11 @@ class _GroupPostTileState extends ConsumerState<_GroupPostTile> {
     final result = await showDialog<String>(
       context: context,
       builder: (context) => AlertDialog(
+        // `TextField` sur 4 lignes + `autofocus` (clavier ouvert
+        // immédiatement) : sans `scrollable: true`, déborde sous les
+        // boutons d'action en mode paysage (même bug que
+        // profil_screen.dart _DeleteAccountDialog).
+        scrollable: true,
         title: Text(l10n.communityGroupsEditPostTitle),
         content: TextField(
           controller: controller,

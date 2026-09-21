@@ -80,6 +80,10 @@ class _ReportDialogContentState extends State<_ReportDialogContent> {
   Widget build(BuildContext context) {
     final l10n = widget.l10n;
     return AlertDialog(
+      // Corps + TextField 3 lignes : sans `scrollable: true`, déborde sous
+      // les boutons d'action en mode paysage (même bug que
+      // profil_screen.dart _DeleteAccountDialog).
+      scrollable: true,
       title: Text(l10n.moderationReportDialogTitle),
       content: Column(
         mainAxisSize: MainAxisSize.min,

@@ -66,6 +66,10 @@ class _LiveStreamScreenState extends ConsumerState<LiveStreamScreen> {
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (dialogContext) => AlertDialog(
+        // Voir profil_screen.dart (_DeleteAccountDialog) : sans
+        // `scrollable: true`, ce contenu à deux champs déborde sous les
+        // boutons d'action en mode paysage ou clavier ouvert.
+        scrollable: true,
         title: Text(l10n.khadaraAddReplayTitle),
         content: Form(
           key: formKey,
