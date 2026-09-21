@@ -105,6 +105,9 @@ class AppTheme {
         backgroundColor: surface,
         foregroundColor: onSurface,
         elevation: 0,
+        // Titres centrés sur tous les écrans (Android suit par défaut
+        // l'alignement à gauche, contrairement à iOS) — demande explicite.
+        centerTitle: true,
         titleTextStyle: GoogleFonts.cormorantGaramond(
           color: onSurface,
           fontWeight: FontWeight.w600,
