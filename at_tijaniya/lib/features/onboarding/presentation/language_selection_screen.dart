@@ -14,40 +14,56 @@ class LanguageSelectionScreen extends ConsumerWidget {
     return Scaffold(
       backgroundColor: AppColors.parchment,
       body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(24),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              Image.asset(
-                'assets/branding/logo-fond-clair-1024.png',
-                width: 108,
-                height: 108,
-                errorBuilder: (context, error, stackTrace) => const SizedBox(height: 108),
-              ),
-              const SizedBox(height: 16),
-              const Text(
-                'At-Tijaniya',
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontSize: 28,
-                  fontWeight: FontWeight.w600,
-                  color: AppColors.ink,
+        // LayoutBuilder + ConstrainedBox(minHeight) plutôt qu'un simple
+        // Padding : garde le contenu centré verticalement quand il tient
+        // sur l'écran, mais le rend défilable au lieu de déborder quand la
+        // hauteur disponible est réduite (mode paysage — débordement de 34
+        // pixels constaté par le porteur de projet).
+        child: LayoutBuilder(
+          builder: (context, constraints) {
+            return SingleChildScrollView(
+              child: ConstrainedBox(
+                constraints: BoxConstraints(minHeight: constraints.maxHeight),
+                child: Padding(
+                  padding: const EdgeInsets.all(24),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      Image.asset(
+                        'assets/branding/logo-fond-clair-1024.png',
+                        width: 108,
+                        height: 108,
+                        errorBuilder: (context, error, stackTrace) => const SizedBox(height: 108),
+                      ),
+                      const SizedBox(height: 16),
+                      const Text(
+                        'At-Tijaniya',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          fontSize: 28,
+                          fontWeight: FontWeight.w600,
+                          color: AppColors.ink,
+                        ),
+                      ),
+                      const SizedBox(height: 48),
+                      _LanguageButton(
+                        label: 'Français',
+                        onTap: () =>
+                            ref.read(localeControllerProvider.notifier).setLocale(const Locale('fr')),
+                      ),
+                      const SizedBox(height: 16),
+                      _LanguageButton(
+                        label: 'العربية',
+                        onTap: () =>
+                            ref.read(localeControllerProvider.notifier).setLocale(const Locale('ar')),
+                      ),
+                    ],
+                  ),
                 ),
               ),
-              const SizedBox(height: 48),
-              _LanguageButton(
-                label: 'Français',
-                onTap: () => ref.read(localeControllerProvider.notifier).setLocale(const Locale('fr')),
-              ),
-              const SizedBox(height: 16),
-              _LanguageButton(
-                label: 'العربية',
-                onTap: () => ref.read(localeControllerProvider.notifier).setLocale(const Locale('ar')),
-              ),
-            ],
-          ),
+            );
+          },
         ),
       ),
     );

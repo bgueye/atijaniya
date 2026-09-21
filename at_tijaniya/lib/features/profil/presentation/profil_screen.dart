@@ -292,6 +292,13 @@ class _DeleteAccountDialogState extends ConsumerState<_DeleteAccountDialog> {
     final canSubmit = !_deleting && _confirmController.text.trim() == expectedWord;
 
     return AlertDialog(
+      // `scrollable: true` fait passer le contenu dans un
+      // SingleChildScrollView interne — sans lui, une hauteur d'écran
+      // réduite (mode paysage, ou clavier ouvert sur le TextField
+      // ci-dessous) fait déborder ce contenu sous les boutons d'action au
+      // lieu de simplement le rendre défilable (retour porteur de projet,
+      // "BOTTOM OVERFLOWED BY 10 PIXELS" en paysage).
+      scrollable: true,
       title: Text(l10n.profileDeleteAccountConfirmTitle),
       content: Column(
         mainAxisSize: MainAxisSize.min,
