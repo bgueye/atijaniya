@@ -7,6 +7,8 @@
 /// automatique de la session en cours au retour sur l'écran.
 library;
 
+import 'dart:async';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../data/tasbih_session_store.dart';
@@ -97,9 +99,25 @@ class TasbihController extends StateNotifier<TasbihState> {
   /// fois celle-ci exécutée (ou abandonnée).
   bool _restartScheduled = false;
 
+  /// Enchaînement automatique vers le pilier suivant une fois le compte
+  /// atteint (échange produit du 2026-09-21) — jamais programmé sur le
+  /// dernier pilier, voir [_scheduleAutoAdvance].
+  Timer? _autoAdvanceTimer;
+  static const _autoAdvanceDelay = Duration(seconds: 2);
+
   WirdPillar get currentPillar => wird.pillars[state.session.pillarIndex];
 
-  int get targetCount => currentPillar.repetitions;
+  /// `true` si ce pilier propose une récitation alternative (ex.
+  /// Jawharatoul Kamal / 20 Salatoul Fatihi si les conditions ne sont pas
+  /// réunies) — voir [WirdPillar.alternative].
+  bool get hasAlternative => currentPillar.alternative != null;
+
+  /// `true` si le disciple a choisi de réciter l'alternative à la place du
+  /// pilier normal.
+  bool get usingAlternative => hasAlternative && state.session.useAlternative;
+
+  int get targetCount =>
+      usingAlternative ? currentPillar.alternative!.repetitions : currentPillar.repetitions;
 
   /// Une formule longue (ex. Salatoul Fatihi, ~230 caractères) contient des
   /// pauses naturelles pour respirer qu'un silence trop court interprète à
@@ -109,10 +127,22 @@ class TasbihController extends StateNotifier<TasbihState> {
   /// `tasbih_voice_service.dart` pour pourquoi cette segmentation est faite
   /// côté Dart plutôt que via le paramètre natif `pauseFor`.
   Duration get _utteranceSilence {
-    final length = currentPillar.arabic.length;
+    final length =
+        usingAlternative ? currentPillar.alternative!.arabic.length : currentPillar.arabic.length;
     if (length > 120) return const Duration(seconds: 8);
     if (length > 50) return const Duration(seconds: 5);
     return const Duration(seconds: 3);
+  }
+
+  /// Bascule vers la récitation alternative de ce pilier, ou revient au
+  /// pilier normal — ignoré une fois le comptage commencé (changer de texte
+  /// en cours de récitation rendrait le compte affiché incohérent avec ce
+  /// qui a déjà été récité).
+  Future<void> setUseAlternative(bool value) async {
+    if (!hasAlternative || state.session.currentCount != 0) return;
+    final next = state.session.copyWith(useAlternative: value);
+    state = state.copyWith(session: next);
+    await _store.save(next);
   }
 
   bool get isPillarComplete => state.session.currentCount >= targetCount;
@@ -136,17 +166,38 @@ class TasbihController extends StateNotifier<TasbihState> {
     if (next.currentCount >= targetCount) {
       _stopVoiceLoop();
       playWirdCounterCompleteFeedback();
+      _scheduleAutoAdvance();
     }
+  }
+
+  /// N'enchaîne jamais tout seul sur le dernier pilier : `nextPillar()` y
+  /// enregistre la complétion du wird et bascule vers l'écran de fin, un
+  /// geste qui doit rester explicite plutôt que déclenché par un tap ou une
+  /// répétition vocale de trop.
+  void _scheduleAutoAdvance() {
+    if (isLastPillar) return;
+    _autoAdvanceTimer?.cancel();
+    _autoAdvanceTimer = Timer(_autoAdvanceDelay, () {
+      if (!mounted) return;
+      nextPillar();
+    });
+  }
+
+  void _cancelAutoAdvance() {
+    _autoAdvanceTimer?.cancel();
+    _autoAdvanceTimer = null;
   }
 
   void undo() {
     if (state.session.currentCount == 0) return;
+    _cancelAutoAdvance();
     final next = state.session.copyWith(currentCount: state.session.currentCount - 1);
     state = state.copyWith(session: next);
     _store.save(next);
   }
 
   Future<void> resetPillar() async {
+    _cancelAutoAdvance();
     _stopVoiceLoop();
     final next = state.session.copyWith(currentCount: 0);
     state = state.copyWith(session: next);
@@ -155,6 +206,7 @@ class TasbihController extends StateNotifier<TasbihState> {
 
   /// Passe au pilier suivant, ou termine le wird si c'était le dernier.
   Future<void> nextPillar() async {
+    _cancelAutoAdvance();
     _stopVoiceLoop();
     if (isLastPillar) {
       await _store.clear(wird.id);
@@ -165,6 +217,7 @@ class TasbihController extends StateNotifier<TasbihState> {
     final next = state.session.copyWith(
       pillarIndex: state.session.pillarIndex + 1,
       currentCount: 0,
+      useAlternative: false,
     );
     state = state.copyWith(session: next);
     await _store.save(next);
@@ -273,6 +326,7 @@ class TasbihController extends StateNotifier<TasbihState> {
   void dispose() {
     _voiceLoopActive = false;
     _restartScheduled = false;
+    _cancelAutoAdvance();
     _voice.cancel();
     super.dispose();
   }

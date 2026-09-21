@@ -3028,3 +3028,69 @@ existant ne couvre directement la reconnaissance vocale, qui dépend du
 moteur natif de l'appareil). **Validé en conditions réelles sur téléphone
 Android** (Lazim, Wazifa, Salatoul Fatihi en longue formule) après
 plusieurs allers-retours de test en direct avec le porteur de projet.
+
+## Enchaînement automatique des piliers du Tasbih (2026-09-21)
+
+`TasbihController` enchaîne désormais automatiquement vers le pilier
+suivant ~2s après avoir atteint la cible d'un pilier (`_scheduleAutoAdvance`,
+`Timer` annulé sur `undo`/`resetPillar`/tap manuel/`dispose`), pour fluidifier
+la récitation continue (surtout en mode vocal). Le dernier pilier reste une
+action manuelle : `nextPillar()` y enregistre la complétion du wird et bascule
+vers l'écran de fin, un geste volontaire à ne pas déclencher tout seul sur un
+tap ou une répétition vocale de trop. `tasbih_screen.dart` garde le bouton
+"Pilier suivant"/"Terminer le wird" affiché dans les deux cas (avance
+immédiate possible sans attendre le délai), avec un texte "Pilier suivant
+dans un instant…" sur les piliers intermédiaires. Validé en conditions
+réelles sur téléphone Android (Hadratou-l-Jouma, transition 3/6 → 4/6
+automatique, 6/6 toujours manuelle).
+
+## Révision du nombre de répétitions du tahlil de Hadratou-l-Jouma : 1600 → 1000 (2026-09-21)
+
+Le porteur de projet revient sur le chiffre du pilier "La ilaha illAllah"
+(pilier 5/6), fixé à 1600 et reconfirmé à deux reprises (voir plus haut et
+`docs/Hadratou-l-Jouma-Etapes-Detaillees.md`) : retenu définitivement à
+**1000** répétitions. Pilier "Nom Allah" (600) inchangé. Mis à jour dans
+`wirds_content.dart` (seule source de texte de wird dans l'app, y compris
+son `repetitionsNote` et ses commentaires d'historique de décision),
+`test/wirds_content_test.dart`, `docs/01-perimetre-fonctionnel.md`,
+`docs/06-architecture-backend.md`, `docs/decision-gestion-audio-wirds.md`
+et le seed SQL (`database/schema.sql` + `UPDATE` appliqué sur le projet
+Supabase live, `wird_steps.repetitions` n'étant lu par aucun code de l'app
+mais gardé cohérent avec le contenu affiché).
+
+## Alternative "20 Salatoul Fatihi" au pilier Jawharatoul Kamal (2026-09-21)
+
+Le pilier Jawharatoul Kamal de la Wazifa (index 5, ×12) documentait déjà en
+texte (`note`) que ses conditions strictes (ablution à l'eau, lieu propre
+pour six personnes, assis, vêtements propres) peuvent ne pas être réunies,
+auquel cas la pratique prévoit de le remplacer par 20 récitations
+supplémentaires de Salatoul Fatihi — jusqu'ici purement informatif, sans
+bascule possible dans le Tasbih. Le disciple peut désormais réellement
+choisir cette alternative :
+
+- `WirdPillar.alternative` (nouveau, `wird_models.dart`) : récitation
+  alternative optionnelle (`name`, `arabic`, `transliteration`,
+  `translation`, `repetitions`) — réutilise les constantes déjà validées de
+  Salatoul Fatihi (`wirds_content.dart`), aucun nouveau texte religieux
+  saisi.
+- `TasbihSession.useAlternative` (persisté, `false` par défaut y compris
+  pour une session déjà sauvegardée avant l'ajout du champ) — remis à
+  `false` à chaque changement de pilier (`nextPillar`).
+- `TasbihController.setUseAlternative` bascule la sélection, ignoré une
+  fois le comptage du pilier commencé (`currentCount != 0`) pour ne pas
+  changer le texte récité en cours de route ; `targetCount` et le silence
+  toléré en reconnaissance vocale (`_utteranceSilence`, basé sur la
+  longueur du texte arabe) suivent automatiquement la sélection.
+- `tasbih_screen.dart` : `SwitchListTile` ("Remplacer par 20 Salatoul
+  Fatihi") affiché sous le texte du pilier quand une alternative existe,
+  désactivé (pas masqué) une fois le comptage commencé ; le texte
+  arabe/translittéré affiché, la note explicative et les formules de
+  clôture (propres à Jawharatoul Kamal, Sourate Al-Ahzab après la 12ᵉ
+  récitation) basculent selon la sélection — aucune formule de clôture
+  inventée pour l'alternative, le document source n'en mentionne pas.
+
+`flutter analyze` propre et 189 tests au vert (nouveau test dans
+`wirds_content_test.dart` vérifiant la présence et le contenu de
+l'alternative). Pas de test automatisé sur le contrôleur/l'écran Tasbih
+(même limite que l'enchaînement automatique des piliers ci-dessus) —
+comportement à valider manuellement sur téléphone.

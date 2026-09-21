@@ -163,7 +163,7 @@ l'APK/IPA), en complément du mécanisme ci-dessus plutôt qu'à sa place :
 pilier audio doit-il être un **échantillon court** (quelques répétitions,
 guide de prononciation/rythme, quelques dizaines de secondes à 1-2
 minutes) ou une **récitation complète du nombre de répétitions exact**
-(ex. littéralement 1600 fois "La ilaha illAllah" pour Hadratou-l-Jouma,
+(ex. littéralement 1000 fois "La ilaha illAllah" pour Hadratou-l-Jouma,
 ce qui donnerait un fichier de plusieurs dizaines de minutes) ? Ce choix
 change radicalement la taille totale du corpus et donc la viabilité du
 bundling intégral.

@@ -17,6 +17,7 @@ class WirdPillar {
     this.closingFormulas,
     this.fullText,
     this.conditions,
+    this.alternative,
   });
 
   /// Texte arabe — à afficher avec la police Amiri (jamais Jost).
@@ -49,6 +50,34 @@ class WirdPillar {
   /// Conditions de validité spécifiques à ce seul pilier (ex. conditions
   /// strictes de Jawharatoul Kamal), affichées comme un avertissement.
   final List<String>? conditions;
+
+  /// Récitation alternative que le disciple peut choisir à la place de ce
+  /// pilier (ex. 20 Salatoul Fatihi à la place de Jawharatoul Kamal quand
+  /// [conditions] ne sont pas réunies) — voir [note] pour l'explication en
+  /// français de quand y recourir : ne pas dupliquer ce texte ici.
+  final WirdPillarAlternative? alternative;
+}
+
+/// Récitation alternative proposée pour un pilier dont les conditions ne
+/// sont pas toujours réunies — voir [WirdPillar.alternative].
+class WirdPillarAlternative {
+  const WirdPillarAlternative({
+    required this.name,
+    required this.arabic,
+    required this.transliteration,
+    required this.translation,
+    required this.repetitions,
+  });
+
+  /// Nom court de la formule (ex. "Salatoul Fatihi"), pour l'afficher dans
+  /// le bouton de bascule — [transliteration] contient le texte intégral de
+  /// la prière, trop long pour un libellé.
+  final String name;
+
+  final String arabic;
+  final String transliteration;
+  final String translation;
+  final int repetitions;
 }
 
 /// Une formule arabe complémentaire ajoutée après les répétitions d'un

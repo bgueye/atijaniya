@@ -19,6 +19,7 @@ class TasbihSession {
     required this.currentCount,
     required this.mode,
     required this.updatedAt,
+    this.useAlternative = false,
   });
 
   factory TasbihSession.initial(String wirdId) => TasbihSession(
@@ -41,10 +42,16 @@ class TasbihSession {
 
   final DateTime updatedAt;
 
+  /// `true` quand le disciple a choisi de réciter [WirdPillar.alternative]
+  /// à la place du pilier courant (ex. 20 Salatoul Fatihi plutôt que
+  /// Jawharatoul Kamal) — remis à `false` à chaque changement de pilier.
+  final bool useAlternative;
+
   TasbihSession copyWith({
     int? pillarIndex,
     int? currentCount,
     TasbihMode? mode,
+    bool? useAlternative,
   }) {
     return TasbihSession(
       wirdId: wirdId,
@@ -52,6 +59,7 @@ class TasbihSession {
       currentCount: currentCount ?? this.currentCount,
       mode: mode ?? this.mode,
       updatedAt: DateTime.now(),
+      useAlternative: useAlternative ?? this.useAlternative,
     );
   }
 
@@ -61,6 +69,7 @@ class TasbihSession {
         'currentCount': currentCount,
         'mode': mode.name,
         'updatedAt': updatedAt.toIso8601String(),
+        'useAlternative': useAlternative,
       };
 
   static TasbihSession? tryFromJson(Map<String, dynamic> json) {
@@ -71,6 +80,9 @@ class TasbihSession {
         currentCount: json['currentCount'] as int,
         mode: TasbihMode.values.byName(json['mode'] as String),
         updatedAt: DateTime.parse(json['updatedAt'] as String),
+        // Absent des sessions sauvegardées avant l'ajout de ce champ :
+        // retombe sur `false` plutôt que de faire échouer la reprise.
+        useAlternative: json['useAlternative'] as bool? ?? false,
       );
     } catch (_) {
       // Format inattendu (ancienne version du store, corruption locale...) :

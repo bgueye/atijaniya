@@ -11,7 +11,9 @@ Module central : pratique quotidienne des trois wirds.
 | Hadratou-l-Jouma | Cercle de récitation du vendredi | Hebdomadaire |
 
 > Le texte, la translittération et le nombre de répétitions ont été **validés par un
-> moqaddam référent du projet**. Hadratou-l-Jouma est fixé à **1600 répétitions**. Ce
+> moqaddam référent du projet**. Hadratou-l-Jouma est fixé à **1000 répétitions**
+> (révisé le 2026-09-21, après avoir été fixé à 1600 puis reconfirmé à deux reprises —
+> voir `docs/Hadratou-l-Jouma-Etapes-Detaillees.md`). Ce
 > corpus validé est la source de contenu unique pour le développement. Si l'app veut
 > représenter plusieurs foyers (Tivaouane, Kaolack, Médina Baye), faire confirmer les
 > variantes propres à chaque foyer reste recommandé mais n'est pas bloquant pour la V1.
@@ -160,7 +162,7 @@ autres pour sa pratique personnelle, avec cette fonctionnalité en plus sur son 
 
 | Contenu | Statut | Détail |
 |---|---|---|
-| Module Wirds | **Validé** | Moqaddam référent, Hadratou-l-Jouma = 1600 répétitions |
+| Module Wirds | **Validé** | Moqaddam référent, Hadratou-l-Jouma = 1000 répétitions (révisé le 2026-09-21) |
 | Biographie du fondateur (Cheikh Ahmed Tijani) | **Validé** | Déjà en base (`content_status = 'valide'`) |
 | Biographies familles religieuses | **Majoritairement validé** (vérifié en base le 2026-08-29) | 16 des 17 figures `family_lineage` validées ; reste **Thierno Ciré Diop** (texte encore à l'état de stub, ~60 caractères) et la **chaîne de khalifas des foyers hors Tivaouane** (Médina Baye et les 6 autres zawiyas n'ont aucune figure/chaîne liée) — à compiler par le porteur de projet, en cours |
 | Audio récitations modèles | À produire | Sur la base du texte déjà validé |

@@ -12,7 +12,7 @@ import '../../../core/theme/app_colors.dart';
 /// soit `target` : les perles représentent la progression proportionnelle
 /// vers `target`, pas une correspondance perle-par-répétition — seul
 /// moyen de rester lisible aussi bien pour un pilier à 12 répétitions que
-/// pour Hadratou-l-Jouma (1600). La perle 0, légèrement plus grande, joue
+/// pour Hadratou-l-Jouma (1000). La perle 0, légèrement plus grande, joue
 /// le rôle de la perle séparatrice ("imam") d'un vrai chapelet.
 class TasbihBeadsRing extends StatelessWidget {
   const TasbihBeadsRing({

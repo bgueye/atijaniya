@@ -25,10 +25,20 @@ void main() {
   });
 
   test(
-    'Hadratou-l-Jouma a 6 piliers : tahlil ×1600 puis Allah ×600',
+    'Jawharatoul Kamal propose 20 Salatoul Fatihi comme alternative (conditions non réunies)',
+    () {
+      final alternative = wazifa.pillars[5].alternative;
+      expect(alternative, isNotNull);
+      expect(alternative!.repetitions, 20);
+      expect(alternative.name, 'Salatoul Fatihi');
+    },
+  );
+
+  test(
+    'Hadratou-l-Jouma a 6 piliers : tahlil ×1000 puis Allah ×600',
     () {
       expect(hadratouJouma.pillars.length, 6);
-      expect(hadratouJouma.pillars[4].repetitions, 1600);
+      expect(hadratouJouma.pillars[4].repetitions, 1000);
       expect(hadratouJouma.pillars[5].repetitions, 600);
     },
   );

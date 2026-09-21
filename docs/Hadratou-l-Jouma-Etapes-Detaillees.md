@@ -11,11 +11,12 @@
 >
 > **Point de vigilance de la section 1 tranché** : malgré la divergence entre les trois
 > sources (1000/1200/1600 selon le document de compilation, 1200 selon tidjaniya.com),
-> le porteur de projet a explicitement reconfirmé, à deux reprises, la valeur **1600**
-> déjà retenue dans l'app pour le tahlîl — décision assumée, pas un oubli. La phase « Nom
-> Allâh », absente des deux sources écrites, est intégrée avec une **cible fixe de 600
-> répétitions** (et non une mécanique par durée jusqu'au Maghreb, l'app n'ayant et n'ayant
-> pas prévu de calcul d'horaire de prière en V1).
+> le porteur de projet avait explicitement reconfirmé, à deux reprises, la valeur 1600
+> pour le tahlîl. Le 2026-09-21, il est revenu sur ce chiffre pour retenir
+> définitivement **1000** répétitions — valeur désormais reflétée dans l'app. La phase
+> « Nom Allâh », absente des deux sources écrites, est intégrée avec une **cible fixe de
+> 600 répétitions** (et non une mécanique par durée jusqu'au Maghreb, l'app n'ayant et
+> n'ayant pas prévu de calcul d'horaire de prière en V1).
 
 La Hadra du vendredi — également appelée Haylala ou 'Asrou du vendredi — est un dhikr
 obligatoire, accompli une fois par semaine. Elle constitue le troisième pilier de la
@@ -33,8 +34,9 @@ d'al-Maghrib.
 
 La récitation répétée du tahlîl (haylalah) seule suffit à valider la Hadra du vendredi.
 
-> ⚠ **Point de vigilance à trancher par le moqaddam référent** : trois sources, trois
-> chiffres différents pour le tahlîl, et une divergence sur la phase « Nom Allâh » :
+> ⚠ **Point de vigilance (résolu le 2026-09-21, voir le résumé de validation en tête de
+> document)** : trois sources, trois chiffres différents pour le tahlîl, et une
+> divergence sur la phase « Nom Allâh » :
 > - Le document de compilation (`At-Tijaniya-Module-Wirds.docx`) propose **1000, 1200 ou
 >   1600 fois** selon l'usage du foyer, sans mentionner de phase distincte pour le Nom
 >   « Allâh ».
@@ -45,13 +47,15 @@ La récitation répétée du tahlîl (haylalah) seule suffit à valider la Hadra
 > - Le texte ci-dessus (fourni par le porteur de projet) décrit une pratique en deux
 >   temps, par **durée** plutôt que par compte exact (tahlîl répété, puis Nom « Allâh »
 >   répété jusqu'à l'approche du Maghreb) — sans préciser de nombre pour le tahlîl.
-> - Pour mémoire, la version déjà intégrée dans l'application (module Wirds, contenu
->   validé) retient **1600 répétitions** — voir `CLAUDE.md`.
+> - Pour mémoire, la version intégrée dans l'application (module Wirds, contenu validé)
+>   a d'abord retenu **1600 répétitions**, puis a été révisée le 2026-09-21 pour retenir
+>   **1000 répétitions** — voir `CLAUDE.md`.
 >
 > Aucune des trois sources ne confirme les deux autres sur le chiffre exact ; la phase
 > « Nom Allâh » n'apparaît que dans le texte du porteur de projet, absente des deux
-> sources écrites. Ces deux points sont à trancher explicitement par le moqaddam
-> référent avant toute intégration.
+> sources écrites. Ces deux points ont été tranchés par le porteur de projet (1000
+> répétitions, cible fixe de 600 pour le Nom Allâh) — voir le résumé de validation en
+> tête de document.
 
 ---
 

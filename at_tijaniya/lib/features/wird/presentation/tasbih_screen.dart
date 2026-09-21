@@ -62,6 +62,8 @@ class _TasbihBody extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final pillar = controller.currentPillar;
+    final usingAlternative = controller.usingAlternative;
+    final alternative = pillar.alternative;
     final target = controller.targetCount;
     final count = state.session.currentCount;
     final complete = controller.isPillarComplete;
@@ -93,18 +95,23 @@ class _TasbihBody extends StatelessWidget {
           ),
           const SizedBox(height: 12),
           Text(
-            pillar.transliteration,
+            usingAlternative ? alternative!.transliteration : pillar.transliteration,
             textAlign: TextAlign.center,
             style: const TextStyle(color: AppColors.parchment, fontSize: 16, fontStyle: FontStyle.italic),
           ),
           const SizedBox(height: 4),
           Text(
-            pillar.arabic,
+            usingAlternative ? alternative!.arabic : pillar.arabic,
             textAlign: TextAlign.center,
             textDirection: TextDirection.rtl,
             style: AppTheme.sacredText(fontSize: 26, color: AppColors.gold),
           ),
-          if (pillar.note != null) ...[
+          // Le pilier normal explique dans sa note quand recourir à
+          // l'alternative (ex. conditions de Jawharatoul Kamal non
+          // réunies) — cette explication n'a plus lieu d'être une fois
+          // l'alternative choisie, et les formules de clôture ci-dessous
+          // sont propres au pilier normal, pas à l'alternative.
+          if (!usingAlternative && pillar.note != null) ...[
             const SizedBox(height: 8),
             Text(
               pillar.note!,
@@ -112,7 +119,26 @@ class _TasbihBody extends StatelessWidget {
               style: TextStyle(fontSize: 12, color: AppColors.bronze),
             ),
           ],
-          if (pillar.closingFormulas != null)
+          if (alternative != null) ...[
+            const SizedBox(height: 12),
+            SwitchListTile(
+              contentPadding: EdgeInsets.zero,
+              dense: true,
+              activeThumbColor: AppColors.gold,
+              title: Text(
+                'Remplacer par ${alternative.repetitions} ${alternative.name}',
+                style: const TextStyle(color: AppColors.parchment, fontSize: 13),
+              ),
+              value: usingAlternative,
+              // Ignoré une fois le comptage commencé (voir
+              // `TasbihController.setUseAlternative`) : le bouton reste
+              // visible mais n'a plus d'effet, pour ne pas faire
+              // disparaître l'option sous les yeux du disciple en pleine
+              // récitation.
+              onChanged: count == 0 ? (value) => controller.setUseAlternative(value) : null,
+            ),
+          ],
+          if (!usingAlternative && pillar.closingFormulas != null)
             for (final formula in pillar.closingFormulas!) ...[
               const SizedBox(height: 10),
               Text(
@@ -178,13 +204,32 @@ class _TasbihBody extends StatelessWidget {
           else
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 8),
-              child: ElevatedButton.icon(
-                onPressed: () {
-                  HapticFeedback.mediumImpact();
-                  controller.nextPillar();
-                },
-                icon: Icon(controller.isLastPillar ? Icons.check_circle : Icons.arrow_forward),
-                label: Text(controller.isLastPillar ? 'Terminer le wird' : 'Pilier suivant'),
+              child: Column(
+                children: [
+                  // Piliers intermédiaires : le contrôleur enchaîne tout seul
+                  // après un court délai (`_scheduleAutoAdvance`) pour ne pas
+                  // casser le rythme de récitation ; ce bouton reste
+                  // disponible pour qui veut avancer sans attendre. Sur le
+                  // dernier pilier, pas d'enchaînement auto — terminer le
+                  // wird déclenche l'enregistrement de la complétion et doit
+                  // rester un geste volontaire.
+                  if (!controller.isLastPillar)
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: 8),
+                      child: Text(
+                        'Pilier suivant dans un instant…',
+                        style: TextStyle(color: AppColors.bronze, fontSize: 12),
+                      ),
+                    ),
+                  ElevatedButton.icon(
+                    onPressed: () {
+                      HapticFeedback.mediumImpact();
+                      controller.nextPillar();
+                    },
+                    icon: Icon(controller.isLastPillar ? Icons.check_circle : Icons.arrow_forward),
+                    label: Text(controller.isLastPillar ? 'Terminer le wird' : 'Pilier suivant'),
+                  ),
+                ],
               ),
             ),
         ],

@@ -179,7 +179,7 @@ classique des schémas Supabase construits à la main, corrigé ici.
 
 ## Contenu initial
 
-Les trois wirds validés (Lazim, Wazifa, Hadratou-l-Jouma à 1600
+Les trois wirds validés (Lazim, Wazifa, Hadratou-l-Jouma à 1000
 répétitions) sont chargés dans `wirds`/`wird_steps` (section 13 de
 `schema.sql`). Deux limites héritées du document source restent à combler
 avant diffusion publique dans l'app :

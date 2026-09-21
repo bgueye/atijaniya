@@ -1835,12 +1835,13 @@ create index idx_wird_completions_wird_id on public.wird_completions (wird_id);
 -- (intention d'ouverture, Fatiha, piliers additionnels de la Hadratou-l-Jouma)
 -- décrite dans docs/Lazim-Etapes-Detaillees.md, docs/Wazifa-Etapes-Detaillees.md
 -- et docs/Hadratou-l-Jouma-Etapes-Detaillees.md, validés par le porteur de
--- projet le 2026-08-12. Hadratou-l-Jouma : tahlil fixé à 1600 répétitions
+-- projet le 2026-08-12. Hadratou-l-Jouma : tahlil fixé à 1000 répétitions
 -- (le document source mentionnait 1000/1200/1600, et tidjaniya.com indique
--- 1200 — 1600 reste la valeur explicitement retenue, reconfirmée malgré
--- cette nouvelle source) ; le pilier "Nom Allah" est une cible fixe de 600
--- répétitions, décision produit sans mécanique de calcul d'horaire de
--- prière (voir wirds_content.dart pour la justification complète).
+-- 1200 — 1600 avait d'abord été retenu et reconfirmé à deux reprises, avant
+-- une révision du porteur de projet le 2026-09-21 vers 1000) ; le pilier
+-- "Nom Allah" est une cible fixe de 600 répétitions, décision produit sans
+-- mécanique de calcul d'horaire de prière (voir wirds_content.dart pour la
+-- justification complète).
 --
 -- `arabic_text`/`transliteration`/`french_translation` dans cette table sont
 -- des libellés réservés à l'écran d'administration (jamais montrés au
@@ -1861,7 +1862,7 @@ create index idx_wird_completions_wird_id on public.wird_completions (wird_id);
 insert into public.wirds (key, name_ar, name_fr, frequency, description) values
 ('lazim', 'اللازم', 'Lazim', 'daily', $$Wird obligatoire quotidien de tout disciple tijani, matin et soir. Composé, dans sa forme complète, de : intention d'ouverture, Fatiha, puis les trois piliers Istighfar, Salatoul Fatihi, Tahlil.$$),
 ('wazifa', 'الوظيفة', 'Wazifa', 'daily', $$Deuxième oraison obligatoire, à réciter au moins une fois par jour (deux fois de préférence), en assemblée si possible. Composée, dans sa forme complète, de : intention d'ouverture, Fatiha, puis les quatre piliers Istighfar, Salatoul Fatihi, Tahlil, Jawharatoul Kamal.$$),
-('hadratou_jouma', 'حضرة الجمعة', 'Hadratou-l-Jouma', 'weekly', $$Troisième oraison obligatoire, dhikr collectif hebdomadaire récité uniquement le vendredi entre la prière de l'Asr et celle du Maghreb. Aucun rattrapage possible en cas d'oubli du créneau. Forme complète : intention d'ouverture, Fatiha, Istighfar, Salatoul Fatihi, Tahlil (1600), Nom Allah (600).$$);
+('hadratou_jouma', 'حضرة الجمعة', 'Hadratou-l-Jouma', 'weekly', $$Troisième oraison obligatoire, dhikr collectif hebdomadaire récité uniquement le vendredi entre la prière de l'Asr et celle du Maghreb. Aucun rattrapage possible en cas d'oubli du créneau. Forme complète : intention d'ouverture, Fatiha, Istighfar, Salatoul Fatihi, Tahlil (1000), Nom Allah (600).$$);
 
 -- LAZIM
 insert into public.wird_steps (wird_id, order_index, arabic_text, transliteration, french_translation, repetitions) values
@@ -1921,7 +1922,7 @@ insert into public.wird_steps (wird_id, order_index, arabic_text, transliteratio
  $$Allahoumma salli 'ala sayyidina Mouhammadin-il-Fatihi...$$,
  $$Salatoul Fatihi$$, 3),
 ((select id from public.wirds where key='hadratou_jouma'), 5,
- $$لَا إِلَهَ إِلَّا اللَّهُ$$, $$La ilaha illAllah$$, $$Il n'y a de divinité qu'Allah.$$, 1600),
+ $$لَا إِلَهَ إِلَّا اللَّهُ$$, $$La ilaha illAllah$$, $$Il n'y a de divinité qu'Allah.$$, 1000),
 ((select id from public.wirds where key='hadratou_jouma'), 6,
  $$اللَّهُ$$, $$Allah$$, $$Nom Allah$$, 600);
 

@@ -14,12 +14,12 @@
 // l'app. Ne jamais ajouter/modifier une formule ici sans qu'elle provienne
 // d'une nouvelle version explicitement marquée "validée" du document source.
 //
-// Nombre de répétitions de Hadratou-l-Jouma (pilier Tahlil) : fixé à 1600
-// conformément à docs/01-perimetre-fonctionnel.md § 5.1 (le document source
-// mentionnait 1000/1200/1600 "à confirmer selon l'usage du foyer", et la
-// mise à jour du document via tidjaniya.com indique 1200 — 1600 reste la
-// valeur explicitement retenue par le porteur de projet, décision reconfirmée
-// à deux reprises malgré cette nouvelle source).
+// Nombre de répétitions de Hadratou-l-Jouma (pilier Tahlil) : fixé à 1000
+// conformément à docs/01-perimetre-fonctionnel.md § 5.1. Le document source
+// mentionnait 1000/1200/1600 "à confirmer selon l'usage du foyer", et
+// tidjaniya.com indique 1200 — 1600 avait été retenu et reconfirmé à deux
+// reprises par le porteur de projet, avant qu'il ne revienne sur ce chiffre
+// le 2026-09-21 pour retenir définitivement 1000.
 //
 // Pilier "Nom Allah" de Hadratou-l-Jouma : cible fixe de 600 répétitions.
 // Aucun document source ne donne de chiffre pour cette phase (elle n'y est
@@ -352,6 +352,13 @@ const wazifa = Wird(
         "Porter des vêtements propres.",
       ],
       fullText: _jawharatoulKamalParagraphs,
+      alternative: WirdPillarAlternative(
+        name: 'Salatoul Fatihi',
+        arabic: _salatoulFatihiArabic,
+        transliteration: _salatoulFatihiTranslit,
+        translation: _salatoulFatihiTranslation,
+        repetitions: 20,
+      ),
     ),
   ],
 );
@@ -362,7 +369,7 @@ const hadratouJouma = Wird(
   nameFrench: 'Hadratou-l-Jouma',
   frequency: WirdFrequency.weekly,
   repetitionsNote:
-      '1600 répétitions du tahlil (valeur retenue pour le projet), puis 600 '
+      '1000 répétitions du tahlil (valeur retenue pour le projet), puis 600 '
       'répétitions du Nom Allah.',
   conditionsNote:
       "Dhikr collectif hebdomadaire, uniquement le vendredi entre l'Asr et "
@@ -393,7 +400,7 @@ const hadratouJouma = Wird(
       arabic: 'لَا إِلَهَ إِلَّا اللَّهُ',
       transliteration: 'La ilaha illAllah',
       translation: "Il n'y a de divinité qu'Allah.",
-      repetitions: 1600,
+      repetitions: 1000,
       closingFormulas: [
         WirdClosingFormula(
           intro: 'Après la dernière récitation, ajouter une fois :',
