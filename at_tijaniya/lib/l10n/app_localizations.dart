@@ -215,7 +215,7 @@ abstract class AppLocalizations {
   /// No description provided for @onboardingKhadaraTitle.
   ///
   /// In fr, this message translates to:
-  /// **'Khadara : évènements et diffusions'**
+  /// **'Zawiyas : évènements et diffusions'**
   String get onboardingKhadaraTitle;
 
   /// No description provided for @onboardingKhadaraBody.
@@ -491,7 +491,7 @@ abstract class AppLocalizations {
   /// No description provided for @navKhadara.
   ///
   /// In fr, this message translates to:
-  /// **'Khadara'**
+  /// **'Zawiyas'**
   String get navKhadara;
 
   /// No description provided for @navFigures.
@@ -870,7 +870,7 @@ abstract class AppLocalizations {
   /// No description provided for @homeSectionKhadara.
   ///
   /// In fr, this message translates to:
-  /// **'Khadara à venir'**
+  /// **'Prochain évènement'**
   String get homeSectionKhadara;
 
   /// No description provided for @homeSectionFeaturedFigure.
@@ -1398,7 +1398,7 @@ abstract class AppLocalizations {
   /// No description provided for @khadaraZawiyasTab.
   ///
   /// In fr, this message translates to:
-  /// **'Zawiyas'**
+  /// **'Annuaire'**
   String get khadaraZawiyasTab;
 
   /// No description provided for @khadaraNoEvents.
@@ -1448,6 +1448,60 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'Autre'**
   String get khadaraEventTypeOther;
+
+  /// No description provided for @khadaraWeekdayMonday.
+  ///
+  /// In fr, this message translates to:
+  /// **'lundi'**
+  String get khadaraWeekdayMonday;
+
+  /// No description provided for @khadaraWeekdayTuesday.
+  ///
+  /// In fr, this message translates to:
+  /// **'mardi'**
+  String get khadaraWeekdayTuesday;
+
+  /// No description provided for @khadaraWeekdayWednesday.
+  ///
+  /// In fr, this message translates to:
+  /// **'mercredi'**
+  String get khadaraWeekdayWednesday;
+
+  /// No description provided for @khadaraWeekdayThursday.
+  ///
+  /// In fr, this message translates to:
+  /// **'jeudi'**
+  String get khadaraWeekdayThursday;
+
+  /// No description provided for @khadaraWeekdayFriday.
+  ///
+  /// In fr, this message translates to:
+  /// **'vendredi'**
+  String get khadaraWeekdayFriday;
+
+  /// No description provided for @khadaraWeekdaySaturday.
+  ///
+  /// In fr, this message translates to:
+  /// **'samedi'**
+  String get khadaraWeekdaySaturday;
+
+  /// No description provided for @khadaraWeekdaySunday.
+  ///
+  /// In fr, this message translates to:
+  /// **'dimanche'**
+  String get khadaraWeekdaySunday;
+
+  /// No description provided for @khadaraRecurrenceLabel.
+  ///
+  /// In fr, this message translates to:
+  /// **'Tous les {weekday} à {time}'**
+  String khadaraRecurrenceLabel(String weekday, String time);
+
+  /// No description provided for @khadaraNextOccurrenceLabel.
+  ///
+  /// In fr, this message translates to:
+  /// **'Prochaine occurrence : {date}'**
+  String khadaraNextOccurrenceLabel(String date);
 
   /// No description provided for @khadaraCreateEventButton.
   ///
@@ -1574,6 +1628,48 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'Zawiya'**
   String get eventFormZawiyaLabel;
+
+  /// No description provided for @eventFormRecurringSwitchLabel.
+  ///
+  /// In fr, this message translates to:
+  /// **'Évènement récurrent'**
+  String get eventFormRecurringSwitchLabel;
+
+  /// No description provided for @eventFormRecurrenceDayLabel.
+  ///
+  /// In fr, this message translates to:
+  /// **'Jour de la semaine'**
+  String get eventFormRecurrenceDayLabel;
+
+  /// No description provided for @eventFormRecurrenceTimeLabel.
+  ///
+  /// In fr, this message translates to:
+  /// **'Heure'**
+  String get eventFormRecurrenceTimeLabel;
+
+  /// No description provided for @eventFormPickTime.
+  ///
+  /// In fr, this message translates to:
+  /// **'Choisir une heure'**
+  String get eventFormPickTime;
+
+  /// No description provided for @eventFormRecurrenceUntilLabel.
+  ///
+  /// In fr, this message translates to:
+  /// **'Jusqu\'au (optionnel)'**
+  String get eventFormRecurrenceUntilLabel;
+
+  /// No description provided for @eventFormPickDate.
+  ///
+  /// In fr, this message translates to:
+  /// **'Choisir une date'**
+  String get eventFormPickDate;
+
+  /// No description provided for @eventFormRecurrenceUntilInvalid.
+  ///
+  /// In fr, this message translates to:
+  /// **'La date de fin de récurrence doit être dans le futur.'**
+  String get eventFormRecurrenceUntilInvalid;
 
   /// No description provided for @eventFormSave.
   ///
@@ -1766,6 +1862,36 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'Brouillon non publié — visible uniquement par toi en tant qu\'admin, en attente de validation.'**
   String get khadaraUnderstandingDraftBanner;
+
+  /// No description provided for @khadaraNearbyRecurringTooltip.
+  ///
+  /// In fr, this message translates to:
+  /// **'La Hadra la plus proche'**
+  String get khadaraNearbyRecurringTooltip;
+
+  /// No description provided for @khadaraNearbyRecurringTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'La Hadra la plus proche'**
+  String get khadaraNearbyRecurringTitle;
+
+  /// No description provided for @khadaraNearbyRecurringEmpty.
+  ///
+  /// In fr, this message translates to:
+  /// **'Aucun évènement récurrent avec une zawiya géolocalisée n\'a été trouvé.'**
+  String get khadaraNearbyRecurringEmpty;
+
+  /// No description provided for @khadaraLocationServiceDisabled.
+  ///
+  /// In fr, this message translates to:
+  /// **'La localisation est désactivée sur cet appareil. Activez-la pour trouver l\'évènement le plus proche.'**
+  String get khadaraLocationServiceDisabled;
+
+  /// No description provided for @khadaraLocationPermissionDenied.
+  ///
+  /// In fr, this message translates to:
+  /// **'L\'accès à la position a été refusé. Autorisez-le dans les réglages de l\'appareil pour trouver l\'évènement le plus proche.'**
+  String get khadaraLocationPermissionDenied;
 
   /// No description provided for @khadaraLiveTab.
   ///
@@ -4704,7 +4830,7 @@ abstract class AppLocalizations {
   /// No description provided for @moderationTypeLiveStream.
   ///
   /// In fr, this message translates to:
-  /// **'Direct Khadara'**
+  /// **'Direct Zawiya'**
   String get moderationTypeLiveStream;
 
   /// No description provided for @moderationTypeLineageRequest.

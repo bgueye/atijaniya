@@ -68,7 +68,7 @@ class AppLocalizationsAr extends AppLocalizations {
       'اللازم والوظيفة وحضرة الجمعة: النص والنقحرة والترجمة والسبحة الرقمية لأداء الورد بطمأنينة.';
 
   @override
-  String get onboardingKhadaraTitle => 'الحضرة: مناسبات وبث مباشر';
+  String get onboardingKhadaraTitle => 'الزوايا: مناسبات وبث مباشر';
 
   @override
   String get onboardingKhadaraBody =>
@@ -218,7 +218,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get navWird => 'الورد';
 
   @override
-  String get navKhadara => 'الحضرة';
+  String get navKhadara => 'الزوايا';
 
   @override
   String get navFigures => 'الأعلام';
@@ -423,7 +423,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get homeQuickTasbihLabel => 'تسبيح حر';
 
   @override
-  String get homeSectionKhadara => 'الخدرة القادمة';
+  String get homeSectionKhadara => 'المناسبة القادمة';
 
   @override
   String get homeSectionFeaturedFigure => 'شخصية الأسبوع';
@@ -706,7 +706,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get khadaraEventsTab => 'المناسبات';
 
   @override
-  String get khadaraZawiyasTab => 'الزوايا';
+  String get khadaraZawiyasTab => 'الدليل';
 
   @override
   String get khadaraNoEvents => 'لا توجد مناسبات قادمة حاليًا.';
@@ -731,6 +731,37 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get khadaraEventTypeOther => 'أخرى';
+
+  @override
+  String get khadaraWeekdayMonday => 'الاثنين';
+
+  @override
+  String get khadaraWeekdayTuesday => 'الثلاثاء';
+
+  @override
+  String get khadaraWeekdayWednesday => 'الأربعاء';
+
+  @override
+  String get khadaraWeekdayThursday => 'الخميس';
+
+  @override
+  String get khadaraWeekdayFriday => 'الجمعة';
+
+  @override
+  String get khadaraWeekdaySaturday => 'السبت';
+
+  @override
+  String get khadaraWeekdaySunday => 'الأحد';
+
+  @override
+  String khadaraRecurrenceLabel(String weekday, String time) {
+    return 'كل $weekday الساعة $time';
+  }
+
+  @override
+  String khadaraNextOccurrenceLabel(String date) {
+    return 'الموعد القادم: $date';
+  }
 
   @override
   String get khadaraCreateEventButton => 'إنشاء مناسبة';
@@ -797,6 +828,28 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get eventFormZawiyaLabel => 'الزاوية';
+
+  @override
+  String get eventFormRecurringSwitchLabel => 'مناسبة متكررة';
+
+  @override
+  String get eventFormRecurrenceDayLabel => 'يوم الأسبوع';
+
+  @override
+  String get eventFormRecurrenceTimeLabel => 'الوقت';
+
+  @override
+  String get eventFormPickTime => 'اختيار وقت';
+
+  @override
+  String get eventFormRecurrenceUntilLabel => 'حتى (اختياري)';
+
+  @override
+  String get eventFormPickDate => 'اختيار تاريخ';
+
+  @override
+  String get eventFormRecurrenceUntilInvalid =>
+      'يجب أن يكون تاريخ نهاية التكرار في المستقبل.';
 
   @override
   String get eventFormSave => 'حفظ';
@@ -897,6 +950,24 @@ class AppLocalizationsAr extends AppLocalizations {
   @override
   String get khadaraUnderstandingDraftBanner =>
       'مسودة غير منشورة — مرئية لك فقط كمشرف، في انتظار التحقق منها.';
+
+  @override
+  String get khadaraNearbyRecurringTooltip => 'أقرب حضرة';
+
+  @override
+  String get khadaraNearbyRecurringTitle => 'أقرب حضرة';
+
+  @override
+  String get khadaraNearbyRecurringEmpty =>
+      'لم يتم العثور على أي مناسبة متكررة مرتبطة بزاوية محددة الموقع.';
+
+  @override
+  String get khadaraLocationServiceDisabled =>
+      'تحديد الموقع معطّل على هذا الجهاز. فعّله للعثور على أقرب مناسبة.';
+
+  @override
+  String get khadaraLocationPermissionDenied =>
+      'تم رفض الوصول إلى الموقع. فعّله من إعدادات الجهاز للعثور على أقرب مناسبة.';
 
   @override
   String get khadaraLiveTab => 'البث المباشر';
@@ -2436,7 +2507,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get moderationRetry => 'إعادة المحاولة';
 
   @override
-  String get moderationTypeLiveStream => 'بث مباشر للخضرة';
+  String get moderationTypeLiveStream => 'بث مباشر للزاوية';
 
   @override
   String get moderationTypeLineageRequest => 'طلب تواصل';

@@ -672,7 +672,7 @@ class _KhadaraTeaserCard extends StatelessWidget {
               : const _KhadaraThumbFallback(),
         ),
         title: Text(event.title, style: const TextStyle(fontWeight: FontWeight.w500, fontSize: 13.5), maxLines: 1, overflow: TextOverflow.ellipsis),
-        subtitle: Text(formatKhadaraDateTime(event.startsAt), style: TextStyle(color: AppColors.bronze, fontSize: 11.5)),
+        subtitle: Text(formatKhadaraEventSchedule(event, AppLocalizations.of(context)!), style: TextStyle(color: AppColors.bronze, fontSize: 11.5)),
         trailing: Icon(Icons.chevron_right, color: AppColors.bronze),
       ),
     );

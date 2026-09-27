@@ -13,11 +13,15 @@ import 'khadara_providers.dart';
 import 'khadara_understanding_screen.dart';
 import 'live_stream_providers.dart';
 import 'live_stream_screen.dart';
+import 'nearby_recurring_events_screen.dart';
 import 'zawiya_detail_screen.dart';
 import 'zawiya_form_screen.dart';
 
 /// Module Khadara — calendrier des évènements et annuaire des zawiyas.
-/// Priorité P1 (docs/03-architecture-ecrans.md).
+/// Priorité P1 (docs/03-architecture-ecrans.md). Nom de code inchangé,
+/// mais affiché sous le libellé "Zawiyas" dans la navigation depuis le
+/// 2026-09-27 (voir `home_shell.dart`) : sous-onglet interne "Zawiyas"
+/// (l'annuaire) renommé "Annuaire" pour éviter la redite page/onglet.
 ///
 /// Contrairement aux modules Wirds/Figures, ce contenu vient des tables
 /// Supabase `zawiyas`/`events` (lecture publique, docs/06-architecture-backend.md)
@@ -42,11 +46,18 @@ class KhadaraScreen extends StatelessWidget {
           Row(
             children: [
               Expanded(
+                // `isScrollable: false` (tabs à largeur fixe, répartie à
+                // parts égales) plutôt que `true` : avec un seul bouton
+                // d'action à droite (voir plus bas), c'était encore trop
+                // juste pour afficher "Directs" en entier sans le masquer
+                // partiellement ni exiger un défilement horizontal — constaté
+                // lors d'un test manuel sur téléphone (2026-09-27).
                 child: TabBar(
-                  isScrollable: true,
+                  isScrollable: false,
                   labelColor: AppColors.emerald,
                   unselectedLabelColor: AppColors.bronze,
                   indicatorColor: AppColors.emerald,
+                  labelPadding: const EdgeInsets.symmetric(horizontal: 4),
                   tabs: [
                     Tab(text: l10n.khadaraZawiyasTab),
                     Tab(text: l10n.khadaraEventsTab),
@@ -54,12 +65,44 @@ class KhadaraScreen extends StatelessWidget {
                   ],
                 ),
               ),
-              IconButton(
-                icon: Icon(Icons.help_outline, color: AppColors.bronze),
-                tooltip: l10n.khadaraUnderstandingTooltip,
-                onPressed: () => Navigator.of(context).push(
-                  MaterialPageRoute(builder: (_) => const KhadaraUnderstandingScreen()),
-                ),
+              // Les deux actions secondaires (recherche par proximité,
+              // "Comprendre la Zawiya") regroupées derrière un seul bouton
+              // plutôt que deux `IconButton` côte à côte : à deux, elles
+              // grignotaient trop de largeur sur la barre d'onglets juste au-
+              // dessus (voir la note sur `isScrollable` plus haut).
+              PopupMenuButton<VoidCallback>(
+                icon: Icon(Icons.more_vert, color: AppColors.bronze),
+                onSelected: (action) => action(),
+                itemBuilder: (context) => [
+                  PopupMenuItem<VoidCallback>(
+                    value: () => Navigator.of(context).push(
+                      MaterialPageRoute(builder: (_) => const NearbyRecurringEventsScreen()),
+                    ),
+                    // `Expanded` sur le texte : cette action a le libellé le
+                    // plus long du menu ("Trouver l'évènement récurrent le
+                    // plus proche") et débordait à droite sans lui, la `Row`
+                    // ne le repliant pas spontanément sur plusieurs lignes.
+                    child: Row(
+                      children: [
+                        Icon(Icons.near_me_outlined, color: AppColors.bronze),
+                        const SizedBox(width: 12),
+                        Expanded(child: Text(l10n.khadaraNearbyRecurringTooltip)),
+                      ],
+                    ),
+                  ),
+                  PopupMenuItem<VoidCallback>(
+                    value: () => Navigator.of(context).push(
+                      MaterialPageRoute(builder: (_) => const KhadaraUnderstandingScreen()),
+                    ),
+                    child: Row(
+                      children: [
+                        Icon(Icons.help_outline, color: AppColors.bronze),
+                        const SizedBox(width: 12),
+                        Expanded(child: Text(l10n.khadaraUnderstandingTooltip)),
+                      ],
+                    ),
+                  ),
+                ],
               ),
             ],
           ),
@@ -132,8 +175,8 @@ class _EventsTab extends ConsumerWidget {
             title: Text(event.title),
             subtitle: Text(
               event.zawiyaName != null
-                  ? '${formatKhadaraDateTime(event.startsAt)} · ${event.zawiyaName}'
-                  : formatKhadaraDateTime(event.startsAt),
+                  ? '${formatKhadaraEventSchedule(event, l10n)} · ${event.zawiyaName}'
+                  : formatKhadaraEventSchedule(event, l10n),
             ),
             trailing: Icon(Icons.chevron_right, color: AppColors.bronze),
             onTap: () => Navigator.of(context).push(

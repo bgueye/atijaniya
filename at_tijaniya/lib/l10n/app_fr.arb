@@ -23,7 +23,7 @@
   "onboardingWelcomeBody": "Votre compagnon numérique pour la pratique quotidienne, en français et en arabe.",
   "onboardingWirdTitle": "Vos wirds, guidés pas à pas",
   "onboardingWirdBody": "Lazim, Wazifa et Hadratou-l-Jouma : texte, translittération, traduction et tasbih digital pour réciter sereinement.",
-  "onboardingKhadaraTitle": "Khadara : évènements et diffusions",
+  "onboardingKhadaraTitle": "Zawiyas : évènements et diffusions",
   "onboardingKhadaraBody": "Calendrier des évènements, annuaire des zawiyas et diffusions en direct pour rester connecté à la communauté.",
   "onboardingCommunityTitle": "Une communauté de disciples",
   "onboardingCommunityBody": "Retrouvez votre entourage spirituel et suivez l'actualité de votre zawiya.",
@@ -72,7 +72,7 @@
 
   "navHome": "Accueil",
   "navWird": "Wird",
-  "navKhadara": "Khadara",
+  "navKhadara": "Zawiyas",
   "navFigures": "Figures",
   "navCommunity": "Communauté",
 
@@ -169,7 +169,7 @@
   "reminderFrequencyDaily": "Chaque jour",
   "homeSectionQuickAccess": "Accès rapide",
   "homeQuickTasbihLabel": "Tasbih libre",
-  "homeSectionKhadara": "Khadara à venir",
+  "homeSectionKhadara": "Prochain évènement",
   "homeSectionFeaturedFigure": "Figure de la semaine",
   "homeSectionDonation": "Soutenir At-Tijaniya",
 
@@ -265,7 +265,7 @@
   "tariqaConditionFormSaveError": "Impossible d'enregistrer la modification.",
 
   "khadaraEventsTab": "Évènements",
-  "khadaraZawiyasTab": "Zawiyas",
+  "khadaraZawiyasTab": "Annuaire",
   "khadaraNoEvents": "Aucun évènement à venir pour le moment.",
   "khadaraNoZawiyas": "Aucune zawiya renseignée pour le moment.",
   "khadaraLoadError": "Impossible de charger les données.",
@@ -274,6 +274,22 @@
   "khadaraEventTypeZiyara": "Ziyara",
   "khadaraEventTypeHadra": "Hadra",
   "khadaraEventTypeOther": "Autre",
+
+  "khadaraWeekdayMonday": "lundi",
+  "khadaraWeekdayTuesday": "mardi",
+  "khadaraWeekdayWednesday": "mercredi",
+  "khadaraWeekdayThursday": "jeudi",
+  "khadaraWeekdayFriday": "vendredi",
+  "khadaraWeekdaySaturday": "samedi",
+  "khadaraWeekdaySunday": "dimanche",
+  "khadaraRecurrenceLabel": "Tous les {weekday} à {time}",
+  "@khadaraRecurrenceLabel": {
+    "placeholders": { "weekday": { "type": "String" }, "time": { "type": "String" } }
+  },
+  "khadaraNextOccurrenceLabel": "Prochaine occurrence : {date}",
+  "@khadaraNextOccurrenceLabel": {
+    "placeholders": { "date": { "type": "String" } }
+  },
 
   "khadaraCreateEventButton": "Créer un évènement",
   "khadaraEditEventTooltip": "Modifier",
@@ -296,6 +312,13 @@
   "eventFormEndsAtInvalid": "La date de fin doit être postérieure à la date de début.",
   "eventFormImageLabel": "Image de couverture",
   "eventFormZawiyaLabel": "Zawiya",
+  "eventFormRecurringSwitchLabel": "Évènement récurrent",
+  "eventFormRecurrenceDayLabel": "Jour de la semaine",
+  "eventFormRecurrenceTimeLabel": "Heure",
+  "eventFormPickTime": "Choisir une heure",
+  "eventFormRecurrenceUntilLabel": "Jusqu'au (optionnel)",
+  "eventFormPickDate": "Choisir une date",
+  "eventFormRecurrenceUntilInvalid": "La date de fin de récurrence doit être dans le futur.",
   "eventFormSave": "Enregistrer",
   "eventFormSaveError": "Impossible d'enregistrer l'évènement.",
 
@@ -330,6 +353,12 @@
   "khadaraUnderstandingEmptyBody": "Ce contenu pédagogique sera publié une fois validé par un moqaddam ou érudit reconnu du projet.",
   "khadaraUnderstandingCta": "En attendant, découvrir le calendrier et les zawiyas",
   "khadaraUnderstandingDraftBanner": "Brouillon non publié — visible uniquement par toi en tant qu'admin, en attente de validation.",
+
+  "khadaraNearbyRecurringTooltip": "La Hadra la plus proche",
+  "khadaraNearbyRecurringTitle": "La Hadra la plus proche",
+  "khadaraNearbyRecurringEmpty": "Aucun évènement récurrent avec une zawiya géolocalisée n'a été trouvé.",
+  "khadaraLocationServiceDisabled": "La localisation est désactivée sur cet appareil. Activez-la pour trouver l'évènement le plus proche.",
+  "khadaraLocationPermissionDenied": "L'accès à la position a été refusé. Autorisez-le dans les réglages de l'appareil pour trouver l'évènement le plus proche.",
 
   "khadaraLiveTab": "Directs",
   "khadaraLiveNowSection": "En direct maintenant",
@@ -840,7 +869,7 @@
   "moderationEmptyState": "Aucun signalement en attente.",
   "moderationLoadError": "Impossible de charger les signalements.",
   "moderationRetry": "Réessayer",
-  "moderationTypeLiveStream": "Direct Khadara",
+  "moderationTypeLiveStream": "Direct Zawiya",
   "moderationTypeLineageRequest": "Mise en relation",
   "moderationReasonPrefix": "Raison signalée : {reason}",
   "@moderationReasonPrefix": {

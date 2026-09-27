@@ -36,6 +36,7 @@ class _EventFormScreenState extends ConsumerState<EventFormScreen> {
   final _formKey = GlobalKey<FormState>();
   final _titleController = TextEditingController();
   final _descriptionController = TextEditingController();
+  final _addressController = TextEditingController();
   final _imageUploadService = ImageUploadService();
 
   KhadaraEventType _type = KhadaraEventType.hadra;
@@ -44,6 +45,15 @@ class _EventFormScreenState extends ConsumerState<EventFormScreen> {
   String? _zawiyaId;
   bool _saving = false;
   String? _errorMessage;
+
+  // Récurrence hebdomadaire (Hadratou-l-Jouma...) — voir
+  // `computeNextWeeklyOccurrence` (khadara_models.dart). Quand
+  // `_isRecurring` est vrai, les champs date/heure de début/fin classiques
+  // sont remplacés par jour de semaine + heure + fin optionnelle.
+  bool _isRecurring = false;
+  int _recurrenceDayOfWeek = DateTime.friday;
+  TimeOfDay _recurrenceTime = const TimeOfDay(hour: 14, minute: 0);
+  DateTime? _recurrenceUntil;
 
   // Image de couverture : soit une nouvelle image choisie sur l'appareil
   // (_pickedImageBytes non nul, pas encore téléversée), soit l'image déjà
@@ -68,8 +78,26 @@ class _EventFormScreenState extends ConsumerState<EventFormScreen> {
       _startsAt = event.startsAt;
       _endsAt = event.endsAt;
       _zawiyaId = event.zawiyaId;
+      _addressController.text = event.addressText ?? '';
       _existingImageUrl = event.imageUrl;
+      _isRecurring = event.isRecurring;
+      if (event.isRecurring) {
+        _recurrenceDayOfWeek = event.recurrenceDayOfWeek!;
+        _recurrenceTime = TimeOfDay(hour: event.recurrenceHour!, minute: event.recurrenceMinute!);
+        _recurrenceUntil = event.recurrenceUntil;
+      }
     }
+  }
+
+  /// Pré-remplit l'adresse depuis la zawiya choisie — seulement si le champ
+  /// est encore vide, pour ne jamais écraser une adresse déjà saisie ou
+  /// modifiée à la main (cas d'un évènement ponctuel hors-zawiya). Appelé
+  /// au changement de sélection dans le menu déroulant admin ; pas
+  /// d'équivalent pour un mouqaddam créant pour sa propre zawiya (déjà
+  /// fixe) — reste à saisir manuellement pour l'instant.
+  void _prefillAddressFromZawiya(Zawiya? zawiya) {
+    if (zawiya?.addressText == null || _addressController.text.trim().isNotEmpty) return;
+    _addressController.text = zawiya!.addressText!;
   }
 
   Future<void> _pickImage() async {
@@ -97,6 +125,7 @@ class _EventFormScreenState extends ConsumerState<EventFormScreen> {
   void dispose() {
     _titleController.dispose();
     _descriptionController.dispose();
+    _addressController.dispose();
     super.dispose();
   }
 
@@ -115,6 +144,23 @@ class _EventFormScreenState extends ConsumerState<EventFormScreen> {
     if (time == null || !mounted) return;
     setState(() => _startsAt =
         DateTime(date.year, date.month, date.day, time.hour, time.minute));
+  }
+
+  Future<void> _pickRecurrenceTime() async {
+    final time = await showTimePicker(context: context, initialTime: _recurrenceTime);
+    if (time == null || !mounted) return;
+    setState(() => _recurrenceTime = time);
+  }
+
+  Future<void> _pickRecurrenceUntil() async {
+    final date = await showDatePicker(
+      context: context,
+      initialDate: _recurrenceUntil ?? DateTime.now(),
+      firstDate: DateTime.now(),
+      lastDate: DateTime(2100),
+    );
+    if (date == null || !mounted) return;
+    setState(() => _recurrenceUntil = DateTime(date.year, date.month, date.day));
   }
 
   Future<void> _pickEndsAt() async {
@@ -138,12 +184,20 @@ class _EventFormScreenState extends ConsumerState<EventFormScreen> {
   Future<void> _submit() async {
     final l10n = AppLocalizations.of(context)!;
     if (!_formKey.currentState!.validate()) return;
-    if (_startsAt == null) {
+    // Un évènement récurrent n'a pas de date/heure de début saisie
+    // directement : elle est calculée à partir du jour/heure de récurrence
+    // (voir plus bas, `computeNextWeeklyOccurrence`) — seul un évènement
+    // classique exige `_startsAt`.
+    if (!_isRecurring && _startsAt == null) {
       setState(() => _errorMessage = l10n.eventFormStartsAtRequired);
       return;
     }
-    if (_endsAt != null && !_endsAt!.isAfter(_startsAt!)) {
+    if (!_isRecurring && _endsAt != null && !_endsAt!.isAfter(_startsAt!)) {
       setState(() => _errorMessage = l10n.eventFormEndsAtInvalid);
+      return;
+    }
+    if (_isRecurring && _recurrenceUntil != null && !_recurrenceUntil!.isAfter(DateTime.now())) {
+      setState(() => _errorMessage = l10n.eventFormRecurrenceUntilInvalid);
       return;
     }
 
@@ -159,6 +213,19 @@ class _EventFormScreenState extends ConsumerState<EventFormScreen> {
     // dessus. Admin : la sélection libre du formulaire.
     final zawiyaId = isAdmin ? _zawiyaId : myProfile?.zawiyaId;
     final descriptionText = _descriptionController.text.trim();
+    final addressText = _addressController.text.trim();
+
+    // Pour un évènement récurrent, `starts_at` (colonne `not null`) reçoit
+    // la prochaine occurrence calculée plutôt qu'une saisie manuelle —
+    // sert de première occurrence de référence, l'affichage réel s'appuie
+    // ensuite sur `nextOccurrence()`.
+    final effectiveStartsAt = _isRecurring
+        ? computeNextWeeklyOccurrence(
+            dayOfWeek: _recurrenceDayOfWeek,
+            hour: _recurrenceTime.hour,
+            minute: _recurrenceTime.minute,
+          )!
+        : _startsAt!;
 
     try {
       final repo = ref.read(khadaraRepositoryProvider);
@@ -168,11 +235,17 @@ class _EventFormScreenState extends ConsumerState<EventFormScreen> {
           title: _titleController.text.trim(),
           description: descriptionText.isEmpty ? null : descriptionText,
           type: _type,
-          startsAt: _startsAt!,
-          endsAt: _endsAt,
+          startsAt: effectiveStartsAt,
+          endsAt: _isRecurring ? null : _endsAt,
           zawiyaId: zawiyaId,
           latitude: null,
           longitude: null,
+          addressText: addressText.isEmpty ? null : addressText,
+          isRecurring: _isRecurring,
+          recurrenceDayOfWeek: _isRecurring ? _recurrenceDayOfWeek : null,
+          recurrenceHour: _isRecurring ? _recurrenceTime.hour : null,
+          recurrenceMinute: _isRecurring ? _recurrenceTime.minute : null,
+          recurrenceUntil: _isRecurring ? _recurrenceUntil : null,
         );
       } else {
         saved = await repo.updateEvent(
@@ -180,11 +253,17 @@ class _EventFormScreenState extends ConsumerState<EventFormScreen> {
           title: _titleController.text.trim(),
           description: descriptionText.isEmpty ? null : descriptionText,
           type: _type,
-          startsAt: _startsAt!,
-          endsAt: _endsAt,
+          startsAt: effectiveStartsAt,
+          endsAt: _isRecurring ? null : _endsAt,
           zawiyaId: zawiyaId,
           latitude: widget.event!.latitude,
           longitude: widget.event!.longitude,
+          addressText: addressText.isEmpty ? null : addressText,
+          isRecurring: _isRecurring,
+          recurrenceDayOfWeek: _isRecurring ? _recurrenceDayOfWeek : null,
+          recurrenceHour: _isRecurring ? _recurrenceTime.hour : null,
+          recurrenceMinute: _isRecurring ? _recurrenceTime.minute : null,
+          recurrenceUntil: _isRecurring ? _recurrenceUntil : null,
         );
       }
 
@@ -218,8 +297,14 @@ class _EventFormScreenState extends ConsumerState<EventFormScreen> {
             endsAt: saved.endsAt,
             latitude: saved.latitude,
             longitude: saved.longitude,
+            addressText: saved.addressText,
             createdBy: saved.createdBy,
             imageUrl: imageUrl,
+            isRecurring: saved.isRecurring,
+            recurrenceDayOfWeek: saved.recurrenceDayOfWeek,
+            recurrenceHour: saved.recurrenceHour,
+            recurrenceMinute: saved.recurrenceMinute,
+            recurrenceUntil: saved.recurrenceUntil,
           ),
         );
       }
@@ -341,40 +426,89 @@ class _EventFormScreenState extends ConsumerState<EventFormScreen> {
                       setState(() => _type = value ?? KhadaraEventType.hadra),
                 ),
                 const SizedBox(height: 16),
-                Text(l10n.eventFormStartsAtLabel,
-                    style:
-                        TextStyle(color: AppColors.bronze, fontSize: 13)),
-                const SizedBox(height: 6),
-                OutlinedButton.icon(
-                  onPressed: _pickStartsAt,
-                  icon: const Icon(Icons.event_outlined),
-                  label: Text(_startsAt != null
-                      ? formatKhadaraDateTime(_startsAt!)
-                      : l10n.eventFormPickDateTime),
+                SwitchListTile.adaptive(
+                  contentPadding: EdgeInsets.zero,
+                  value: _isRecurring,
+                  onChanged: (value) => setState(() => _isRecurring = value),
+                  title: Text(l10n.eventFormRecurringSwitchLabel),
                 ),
-                const SizedBox(height: 16),
-                Text(l10n.eventFormEndsAtLabel,
-                    style:
-                        TextStyle(color: AppColors.bronze, fontSize: 13)),
-                const SizedBox(height: 6),
-                Row(
-                  children: [
-                    Expanded(
-                      child: OutlinedButton.icon(
-                        onPressed: _pickEndsAt,
-                        icon: const Icon(Icons.event_outlined),
-                        label: Text(_endsAt != null
-                            ? formatKhadaraDateTime(_endsAt!)
-                            : l10n.eventFormPickDateTime),
+                if (_isRecurring) ...[
+                  const SizedBox(height: 8),
+                  DropdownButtonFormField<int>(
+                    initialValue: _recurrenceDayOfWeek,
+                    decoration: InputDecoration(labelText: l10n.eventFormRecurrenceDayLabel),
+                    items: [
+                      for (var day = DateTime.monday; day <= DateTime.sunday; day++)
+                        DropdownMenuItem(value: day, child: Text(khadaraWeekdayLabel(day, l10n))),
+                    ],
+                    onChanged: (value) => setState(() => _recurrenceDayOfWeek = value ?? DateTime.friday),
+                  ),
+                  const SizedBox(height: 16),
+                  Text(l10n.eventFormRecurrenceTimeLabel, style: TextStyle(color: AppColors.bronze, fontSize: 13)),
+                  const SizedBox(height: 6),
+                  OutlinedButton.icon(
+                    onPressed: _pickRecurrenceTime,
+                    icon: const Icon(Icons.schedule),
+                    label: Text(_recurrenceTime.format(context)),
+                  ),
+                  const SizedBox(height: 16),
+                  Text(l10n.eventFormRecurrenceUntilLabel, style: TextStyle(color: AppColors.bronze, fontSize: 13)),
+                  const SizedBox(height: 6),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: OutlinedButton.icon(
+                          onPressed: _pickRecurrenceUntil,
+                          icon: const Icon(Icons.event_outlined),
+                          label: Text(_recurrenceUntil != null
+                              ? formatKhadaraDate(_recurrenceUntil!)
+                              : l10n.eventFormPickDate),
+                        ),
                       ),
-                    ),
-                    if (_endsAt != null)
-                      IconButton(
-                        icon: Icon(Icons.close, color: AppColors.bronze),
-                        onPressed: () => setState(() => _endsAt = null),
+                      if (_recurrenceUntil != null)
+                        IconButton(
+                          icon: Icon(Icons.close, color: AppColors.bronze),
+                          onPressed: () => setState(() => _recurrenceUntil = null),
+                        ),
+                    ],
+                  ),
+                ] else ...[
+                  const SizedBox(height: 8),
+                  Text(l10n.eventFormStartsAtLabel,
+                      style:
+                          TextStyle(color: AppColors.bronze, fontSize: 13)),
+                  const SizedBox(height: 6),
+                  OutlinedButton.icon(
+                    onPressed: _pickStartsAt,
+                    icon: const Icon(Icons.event_outlined),
+                    label: Text(_startsAt != null
+                        ? formatKhadaraDateTime(_startsAt!)
+                        : l10n.eventFormPickDateTime),
+                  ),
+                  const SizedBox(height: 16),
+                  Text(l10n.eventFormEndsAtLabel,
+                      style:
+                          TextStyle(color: AppColors.bronze, fontSize: 13)),
+                  const SizedBox(height: 6),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: OutlinedButton.icon(
+                          onPressed: _pickEndsAt,
+                          icon: const Icon(Icons.event_outlined),
+                          label: Text(_endsAt != null
+                              ? formatKhadaraDateTime(_endsAt!)
+                              : l10n.eventFormPickDateTime),
+                        ),
                       ),
-                  ],
-                ),
+                      if (_endsAt != null)
+                        IconButton(
+                          icon: Icon(Icons.close, color: AppColors.bronze),
+                          onPressed: () => setState(() => _endsAt = null),
+                        ),
+                    ],
+                  ),
+                ],
                 const SizedBox(height: 16),
                 if (isAdmin)
                   ref.watch(zawiyasProvider).when(
@@ -393,8 +527,17 @@ class _EventFormScreenState extends ConsumerState<EventFormScreen> {
                             ...list.map((z) => DropdownMenuItem<String?>(
                                 value: z.id, child: Text(z.name))),
                           ],
-                          onChanged: (value) =>
-                              setState(() => _zawiyaId = value),
+                          onChanged: (value) => setState(() {
+                            _zawiyaId = value;
+                            Zawiya? selected;
+                            for (final z in list) {
+                              if (z.id == value) {
+                                selected = z;
+                                break;
+                              }
+                            }
+                            _prefillAddressFromZawiya(selected);
+                          }),
                         ),
                       )
                 else
@@ -404,6 +547,12 @@ class _EventFormScreenState extends ConsumerState<EventFormScreen> {
                     decoration:
                         InputDecoration(labelText: l10n.eventFormZawiyaLabel),
                   ),
+                const SizedBox(height: 16),
+                TextFormField(
+                  controller: _addressController,
+                  decoration:
+                      InputDecoration(labelText: l10n.khadaraAddressLabel),
+                ),
                 if (_errorMessage != null) ...[
                   const SizedBox(height: 16),
                   Text(_errorMessage!,

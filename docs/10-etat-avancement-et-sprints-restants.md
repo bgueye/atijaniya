@@ -401,3 +401,50 @@ plus propre que ce que certains documents affirment**, avec un écart de documen
   la politique de confidentialité confirmé (`ad6e546`).
 - **Reste** : finaliser et soumettre effectivement les fiches aux stores — les brouillons
   ne sont pas encore la version publiée.
+
+## Depuis la dernière analyse (2026-08-29 → 2026-09-27)
+
+Quatre évolutions demandées par le porteur de projet sur le module Khadara, livrées dans
+l'ordre proposé et validées par `flutter analyze` (propre) et l'intégralité de la suite de
+tests (tous au vert, dont 22 nouveaux tests unitaires ajoutés à `khadara_models_test.dart`
+pour la récurrence et la proximité géographique) :
+
+- **Onglet "Khadara" renommé "Zawiyas" dans la navigation** — libellé affiché uniquement
+  (`navKhadara`), le code (`features/khadara/`), les tables (`events`, `zawiyas`) et les
+  routes restent inchangés. Le sous-onglet interne qui listait l'annuaire des zawiyas,
+  jusque-là lui aussi nommé "Zawiyas", a été renommé "Annuaire" pour éviter la redite
+  page/onglet. Par cohérence, la section d'accueil "Khadara à venir" est devenue "Prochain
+  évènement" (elle n'affichait de toute façon qu'un seul évènement, jamais une liste).
+- **Adresse + "Ouvrir dans Maps" pour un évènement** — `events.address_text` (migration
+  `add_address_text_to_events`), pré-rempli côté formulaire depuis l'adresse de la zawiya
+  liée mais éditable/indépendant (utile pour un évènement ponctuel hors-zawiya). `open_in_maps.dart`
+  généralisé pour accepter une adresse texte en plus de coordonnées. Corrige au passage un
+  bug latent : le formulaire n'a jamais permis de saisir `latitude`/`longitude` sur un
+  évènement (toujours `null` à la création), rendant le bouton Maps de la fiche évènement
+  inatteignable en pratique — `hasMapsTarget` (adresse OU coordonnées) remplace `hasLocation`
+  comme condition d'affichage.
+- **Évènements récurrents hebdomadaires (Hadratou-l-Jouma...)** — `events.is_recurring` +
+  `recurrence_day_of_week`/`recurrence_hour`/`recurrence_minute`/`recurrence_until`
+  (migration `add_weekly_recurrence_to_events`), une seule ligne en base par évènement
+  récurrent : les occurrences futures sont calculées à la volée
+  (`computeNextWeeklyOccurrence`/`nextOccurrence`, `khadara_models.dart`), jamais dupliquées.
+  Liste des évènements et fiche détail affichent désormais la prochaine occurrence réelle
+  plutôt que le `starts_at` brut (`sortByNextOccurrence`), y compris sur l'accueil et les
+  listes d'évènements liés à une figure/zawiya.
+- **"Trouver l'évènement récurrent le plus proche" (géolocalisation)** — nouveau package
+  `geolocator` (permission `ACCESS_COARSE_LOCATION`/`NSLocationWhenInUseUsageDescription`,
+  demandée uniquement à l'ouverture de ce nouvel écran). Distance (Haversine,
+  `distanceInKm`) calculée jusqu'à la zawiya de chaque évènement récurrent
+  (`findNearbyRecurringEvents`) : un évènement récurrent sans zawiya liée, ou dont la zawiya
+  n'a pas de coordonnées, est simplement exclu plutôt que de planter — cohérent avec le
+  constat qu'une bonne partie des zawiyas n'ont pas encore leurs coordonnées saisies (voir
+  plus haut, chaînes de khalifas manquantes). Accessible depuis une icône dans l'en-tête de
+  la page Zawiyas.
+
+**Non fait, volontairement hors périmètre de cette demande** : pas de sélection de
+coordonnées sur une carte pour un évènement indépendant (reste un champ adresse texte
+libre, même décision que le reste du module) ; pas de récurrence mensuelle/exceptions
+(seule la récurrence hebdomadaire simple a été demandée) ; pas de pré-remplissage
+automatique de l'adresse pour un mouqaddam créant un évènement pour sa propre zawiya
+(seul le sélecteur admin déclenche le pré-remplissage) — à saisir manuellement pour
+l'instant, limitation mineure documentée dans `event_form_screen.dart`.

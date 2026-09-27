@@ -2,8 +2,14 @@
 
 ## Navigation principale
 Barre d'onglets inférieure, 5 destinations (icônes + libellés en Jost, jamais en Amiri) :
-**Accueil · Wird · Khadara · Figures · Communauté**. Profil accessible via une icône
+**Accueil · Wird · Zawiyas · Figures · Communauté**. Profil accessible via une icône
 avatar en en-tête sur toutes les sections principales.
+
+> Onglet "Zawiyas" (ex-"Khadara", renommé le 2026-09-27 à la demande du porteur de
+> projet) : nom de code du module inchangé (`features/khadara`), seul le libellé
+> affiché change. Le sous-onglet interne qui listait l'annuaire des zawiyas
+> (ci-dessous, "Annuaire des zawiyas/daaras") a été renommé "Annuaire" pour éviter
+> la redite avec le nom de la page.
 
 Priorités : P0 = socle indispensable, P1 = enrichissement, P2 = communauté élargie,
 P3 = consolidation avant lancement. Détail du séquencement : `04-roadmap-developpement.md`.

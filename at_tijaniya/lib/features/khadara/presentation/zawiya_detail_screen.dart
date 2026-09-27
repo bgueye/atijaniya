@@ -150,7 +150,7 @@ class _ZawiyaDetailScreenState extends ConsumerState<ZawiyaDetailScreen> {
                           child: ListTile(
                             leading: Icon(khadaraEventTypeIcon(event.type), color: AppColors.emerald),
                             title: Text(event.title),
-                            subtitle: Text(formatKhadaraDateTime(event.startsAt)),
+                            subtitle: Text(formatKhadaraEventSchedule(event, l10n)),
                             onTap: () => Navigator.of(context).push(
                               MaterialPageRoute(builder: (_) => EventDetailScreen(event: event)),
                             ),

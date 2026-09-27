@@ -15,6 +15,13 @@
          passe par le sélecteur système et ne nécessite pas de permission
          dédiée sur les versions d'Android ciblées par ce projet. -->
     <uses-permission android:name="android.permission.CAMERA"/>
+    <!-- "La Hadratou-l-Jouma la plus proche" (module Khadara) : distance
+         jusqu'aux zawiyas organisant un évènement récurrent. Position
+         approximative suffisante (ACCESS_FINE_LOCATION non demandé) — pas
+         besoin d'une précision GPS fine pour trier des zawiyas généralement
+         distantes de plusieurs kilomètres. Demandée à l'exécution par
+         `geolocator` seulement quand le disciple ouvre cet écran. -->
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
     <application
         android:label="at_tijaniya"
         android:name="${applicationName}"

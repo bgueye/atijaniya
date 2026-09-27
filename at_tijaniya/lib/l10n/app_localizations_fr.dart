@@ -69,7 +69,7 @@ class AppLocalizationsFr extends AppLocalizations {
       'Lazim, Wazifa et Hadratou-l-Jouma : texte, translittération, traduction et tasbih digital pour réciter sereinement.';
 
   @override
-  String get onboardingKhadaraTitle => 'Khadara : évènements et diffusions';
+  String get onboardingKhadaraTitle => 'Zawiyas : évènements et diffusions';
 
   @override
   String get onboardingKhadaraBody =>
@@ -222,7 +222,7 @@ class AppLocalizationsFr extends AppLocalizations {
   String get navWird => 'Wird';
 
   @override
-  String get navKhadara => 'Khadara';
+  String get navKhadara => 'Zawiyas';
 
   @override
   String get navFigures => 'Figures';
@@ -428,7 +428,7 @@ class AppLocalizationsFr extends AppLocalizations {
   String get homeQuickTasbihLabel => 'Tasbih libre';
 
   @override
-  String get homeSectionKhadara => 'Khadara à venir';
+  String get homeSectionKhadara => 'Prochain évènement';
 
   @override
   String get homeSectionFeaturedFigure => 'Figure de la semaine';
@@ -724,7 +724,7 @@ class AppLocalizationsFr extends AppLocalizations {
   String get khadaraEventsTab => 'Évènements';
 
   @override
-  String get khadaraZawiyasTab => 'Zawiyas';
+  String get khadaraZawiyasTab => 'Annuaire';
 
   @override
   String get khadaraNoEvents => 'Aucun évènement à venir pour le moment.';
@@ -749,6 +749,37 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get khadaraEventTypeOther => 'Autre';
+
+  @override
+  String get khadaraWeekdayMonday => 'lundi';
+
+  @override
+  String get khadaraWeekdayTuesday => 'mardi';
+
+  @override
+  String get khadaraWeekdayWednesday => 'mercredi';
+
+  @override
+  String get khadaraWeekdayThursday => 'jeudi';
+
+  @override
+  String get khadaraWeekdayFriday => 'vendredi';
+
+  @override
+  String get khadaraWeekdaySaturday => 'samedi';
+
+  @override
+  String get khadaraWeekdaySunday => 'dimanche';
+
+  @override
+  String khadaraRecurrenceLabel(String weekday, String time) {
+    return 'Tous les $weekday à $time';
+  }
+
+  @override
+  String khadaraNextOccurrenceLabel(String date) {
+    return 'Prochaine occurrence : $date';
+  }
 
   @override
   String get khadaraCreateEventButton => 'Créer un évènement';
@@ -816,6 +847,28 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get eventFormZawiyaLabel => 'Zawiya';
+
+  @override
+  String get eventFormRecurringSwitchLabel => 'Évènement récurrent';
+
+  @override
+  String get eventFormRecurrenceDayLabel => 'Jour de la semaine';
+
+  @override
+  String get eventFormRecurrenceTimeLabel => 'Heure';
+
+  @override
+  String get eventFormPickTime => 'Choisir une heure';
+
+  @override
+  String get eventFormRecurrenceUntilLabel => 'Jusqu\'au (optionnel)';
+
+  @override
+  String get eventFormPickDate => 'Choisir une date';
+
+  @override
+  String get eventFormRecurrenceUntilInvalid =>
+      'La date de fin de récurrence doit être dans le futur.';
 
   @override
   String get eventFormSave => 'Enregistrer';
@@ -919,6 +972,24 @@ class AppLocalizationsFr extends AppLocalizations {
   @override
   String get khadaraUnderstandingDraftBanner =>
       'Brouillon non publié — visible uniquement par toi en tant qu\'admin, en attente de validation.';
+
+  @override
+  String get khadaraNearbyRecurringTooltip => 'La Hadra la plus proche';
+
+  @override
+  String get khadaraNearbyRecurringTitle => 'La Hadra la plus proche';
+
+  @override
+  String get khadaraNearbyRecurringEmpty =>
+      'Aucun évènement récurrent avec une zawiya géolocalisée n\'a été trouvé.';
+
+  @override
+  String get khadaraLocationServiceDisabled =>
+      'La localisation est désactivée sur cet appareil. Activez-la pour trouver l\'évènement le plus proche.';
+
+  @override
+  String get khadaraLocationPermissionDenied =>
+      'L\'accès à la position a été refusé. Autorisez-le dans les réglages de l\'appareil pour trouver l\'évènement le plus proche.';
 
   @override
   String get khadaraLiveTab => 'Directs';
@@ -2524,7 +2595,7 @@ class AppLocalizationsFr extends AppLocalizations {
   String get moderationRetry => 'Réessayer';
 
   @override
-  String get moderationTypeLiveStream => 'Direct Khadara';
+  String get moderationTypeLiveStream => 'Direct Zawiya';
 
   @override
   String get moderationTypeLineageRequest => 'Mise en relation';

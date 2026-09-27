@@ -149,13 +149,23 @@ class _EventDetailScreenState extends ConsumerState<EventDetailScreen> {
             const SizedBox(height: 16),
             _InfoRow(
               icon: Icons.schedule,
-              text: _event.endsAt == null
-                  ? formatKhadaraDateTime(_event.startsAt)
-                  : '${formatKhadaraDateTime(_event.startsAt)} → ${formatKhadaraDateTime(_event.endsAt!)}',
+              text: _event.isRecurring
+                  ? formatKhadaraEventSchedule(_event, l10n)
+                  : (_event.endsAt == null
+                      ? formatKhadaraDateTime(_event.startsAt)
+                      : '${formatKhadaraDateTime(_event.startsAt)} → ${formatKhadaraDateTime(_event.endsAt!)}'),
             ),
+            if (_event.isRecurring && formatKhadaraNextOccurrence(_event, l10n) != null) ...[
+              const SizedBox(height: 8),
+              _InfoRow(icon: Icons.event_available_outlined, text: formatKhadaraNextOccurrence(_event, l10n)!),
+            ],
             if (_event.zawiyaName != null) ...[
               const SizedBox(height: 8),
               _InfoRow(icon: Icons.mosque_outlined, text: _event.zawiyaName!),
+            ],
+            if (_event.addressText != null && _event.addressText!.trim().isNotEmpty) ...[
+              const SizedBox(height: 8),
+              _InfoRow(icon: Icons.place_outlined, text: _event.addressText!),
             ],
             if (_event.description != null) ...[
               const SizedBox(height: 20),
@@ -165,11 +175,15 @@ class _EventDetailScreenState extends ConsumerState<EventDetailScreen> {
                     color: AppColors.ink, fontSize: 16, height: 1.4),
               ),
             ],
-            if (_event.hasLocation) ...[
+            if (_event.hasMapsTarget) ...[
               const SizedBox(height: 24),
               OutlinedButton.icon(
-                onPressed: () => openInMaps(context,
-                    latitude: _event.latitude!, longitude: _event.longitude!),
+                onPressed: () => openInMaps(
+                  context,
+                  latitude: _event.latitude,
+                  longitude: _event.longitude,
+                  addressText: _event.addressText,
+                ),
                 icon: const Icon(Icons.map_outlined),
                 label: Text(l10n.khadaraOpenInMaps),
               ),

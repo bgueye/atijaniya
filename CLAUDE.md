@@ -175,7 +175,11 @@ cas ; **création d'une rediffusion par un admin depuis le 2026-08-16**, une
 fois le direct terminé), gestion des évènements Khadara par un admin ou un
 mouqaddam vérifié pour sa propre zawiya (**seule exception actée** à la
 règle "le statut mouqaddam n'accorde aucune permission technique", voir
-plus haut).
+plus haut). **Onglet renommé "Zawiyas" dans la navigation, adresse +
+"Ouvrir dans Maps" sur un évènement, évènements récurrents hebdomadaires
+(Hadratou-l-Jouma...) et recherche de l'évènement récurrent le plus proche
+par géolocalisation, depuis le 2026-09-27** — détail dans
+`docs/10-etat-avancement-et-sprints-restants.md`.
 
 **Groupes et messagerie privée** (`lib/features/communaute/` :
 `groups_repository.dart`, `messages_repository.dart`, `group_detail_screen.dart`,

@@ -477,9 +477,25 @@ create table public.events (
   ends_at timestamptz,
   latitude double precision,
   longitude double precision,
+  address_text text, -- adresse libre, éventuellement copiée depuis zawiyas.address_text côté client (migration add_address_text_to_events, 2026-09-27)
   created_by uuid references auth.users(id),
   created_at timestamptz not null default now(),
-  image_url text -- URL publique Storage (bucket event-images, section 11.2) ; NULL tant qu'aucune image n'a été ajoutée
+  image_url text, -- URL publique Storage (bucket event-images, section 11.2) ; NULL tant qu'aucune image n'a été ajoutée
+  -- Récurrence hebdomadaire (ex. Hadratou-l-Jouma, migration
+  -- add_weekly_recurrence_to_events, 2026-09-27) : une seule ligne par
+  -- évènement récurrent, les occurrences futures sont calculées côté client
+  -- (nextOccurrence(), khadara_models.dart) plutôt que dupliquées en base.
+  -- `starts_at`/`ends_at` restent la première occurrence de référence.
+  is_recurring boolean not null default false,
+  recurrence_day_of_week smallint check (recurrence_day_of_week is null or recurrence_day_of_week between 1 and 7), -- convention Dart DateTime.weekday (1=lundi..7=dimanche)
+  recurrence_hour smallint check (recurrence_hour is null or recurrence_hour between 0 and 23),
+  recurrence_minute smallint check (recurrence_minute is null or recurrence_minute between 0 and 59),
+  recurrence_until date, -- dernier jour (inclus) de la récurrence ; null = sans fin définie
+  constraint events_recurrence_fields_consistency_check check (
+    (is_recurring = false and recurrence_day_of_week is null and recurrence_hour is null and recurrence_minute is null)
+    or
+    (is_recurring = true and recurrence_day_of_week is not null and recurrence_hour is not null and recurrence_minute is not null)
+  )
 );
 comment on column public.events.image_url is
   'URL de l''image de couverture de l''événement (affiche du Gamou, photo de la zawiya, etc.). Nullable.';

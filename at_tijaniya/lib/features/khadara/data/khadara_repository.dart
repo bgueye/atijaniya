@@ -76,17 +76,28 @@ class KhadaraRepository {
     await SupabaseConfig.client.from('zawiyas').delete().eq('id', id);
   }
 
-  /// Évènements à venir (`starts_at >= maintenant`), triés du plus proche au
-  /// plus lointain. Le nom de la zawiya est résolu en une seule requête via
-  /// l'embedding PostgREST plutôt qu'un aller-retour supplémentaire.
+  /// Évènements à venir : soit classiques avec `starts_at >= maintenant`,
+  /// soit récurrents dont la récurrence n'est pas terminée
+  /// (`recurrence_until` nul ou pas encore atteint) — un évènement récurrent
+  /// reste "à venir" même si son `starts_at` (première occurrence de
+  /// référence) est loin dans le passé. Le nom de la zawiya est résolu en
+  /// une seule requête via l'embedding PostgREST. Trié par prochaine
+  /// occurrence réelle côté client (`sortByNextOccurrence`) plutôt que par
+  /// `starts_at` brut, qui ne reflète pas la bonne date pour un évènement
+  /// récurrent.
   Future<List<KhadaraEvent>> fetchUpcomingEvents() async {
-    final nowIso = DateTime.now().toUtc().toIso8601String();
+    final now = DateTime.now();
+    final nowIso = now.toUtc().toIso8601String();
+    final todayIso = DateTime(now.year, now.month, now.day).toIso8601String().split('T').first;
     final rows = await SupabaseConfig.client
         .from('events')
         .select('*, zawiyas(name)')
-        .gte('starts_at', nowIso)
-        .order('starts_at', ascending: true);
-    return rows.map((row) => KhadaraEvent.fromRow(row)).toList();
+        .or(
+          'starts_at.gte.$nowIso,'
+          'and(is_recurring.eq.true,or(recurrence_until.is.null,recurrence_until.gte.$todayIso))',
+        );
+    final events = rows.map((row) => KhadaraEvent.fromRow(row)).toList();
+    return sortByNextOccurrence(events, from: now);
   }
 
   /// Création réservée par RLS (`events_create_admin_or_own_zawiya_mouqaddam`)
@@ -105,6 +116,12 @@ class KhadaraRepository {
     String? zawiyaId,
     double? latitude,
     double? longitude,
+    String? addressText,
+    bool isRecurring = false,
+    int? recurrenceDayOfWeek,
+    int? recurrenceHour,
+    int? recurrenceMinute,
+    DateTime? recurrenceUntil,
   }) async {
     final userId = SupabaseConfig.client.auth.currentUser!.id;
     final row = await SupabaseConfig.client
@@ -118,7 +135,13 @@ class KhadaraRepository {
           'zawiya_id': zawiyaId,
           'latitude': latitude,
           'longitude': longitude,
+          'address_text': addressText,
           'created_by': userId,
+          'is_recurring': isRecurring,
+          'recurrence_day_of_week': recurrenceDayOfWeek,
+          'recurrence_hour': recurrenceHour,
+          'recurrence_minute': recurrenceMinute,
+          'recurrence_until': recurrenceUntil != null ? _dateOnlyIso(recurrenceUntil) : null,
         })
         .select('*, zawiyas(name)')
         .single();
@@ -138,6 +161,12 @@ class KhadaraRepository {
     String? zawiyaId,
     double? latitude,
     double? longitude,
+    String? addressText,
+    bool isRecurring = false,
+    int? recurrenceDayOfWeek,
+    int? recurrenceHour,
+    int? recurrenceMinute,
+    DateTime? recurrenceUntil,
   }) async {
     final row = await SupabaseConfig.client
         .from('events')
@@ -150,12 +179,24 @@ class KhadaraRepository {
           'zawiya_id': zawiyaId,
           'latitude': latitude,
           'longitude': longitude,
+          'address_text': addressText,
+          'is_recurring': isRecurring,
+          'recurrence_day_of_week': recurrenceDayOfWeek,
+          'recurrence_hour': recurrenceHour,
+          'recurrence_minute': recurrenceMinute,
+          'recurrence_until': recurrenceUntil != null ? _dateOnlyIso(recurrenceUntil) : null,
         })
         .eq('id', id)
         .select('*, zawiyas(name)')
         .single();
     return KhadaraEvent.fromRow(row);
   }
+
+  /// Sérialise une date (sans heure) pour la colonne Postgres `date`
+  /// (`recurrence_until`) — évite d'envoyer un timestamp complet qui
+  /// dépendrait du fuseau horaire local au moment de la conversion UTC.
+  String _dateOnlyIso(DateTime date) =>
+      '${date.year.toString().padLeft(4, '0')}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}';
 
   /// Enregistre l'URL publique d'une image déjà téléversée vers le bucket
   /// `event-images` (voir `ImageUploadService`, appelé côté écran juste

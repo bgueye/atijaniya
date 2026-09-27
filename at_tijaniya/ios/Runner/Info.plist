@@ -57,6 +57,8 @@
 	<string>La photothèque est utilisée pour choisir une image d'évènement, de figure ou de publication communautaire.</string>
 	<key>NSCameraUsageDescription</key>
 	<string>L'appareil photo est utilisé pour prendre une image d'évènement, de figure ou de publication communautaire.</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>Votre position est utilisée pour trouver la Hadratou-l-Jouma (ou tout autre évènement récurrent) la plus proche de vous.</string>
 	<!-- Deep link de retour d'authentification (confirmation d'inscription,
 	     réinitialisation de mot de passe) — voir SupabaseConfig.authCallbackUrl
 	     et app.dart. Même schème que le intent-filter Android. -->

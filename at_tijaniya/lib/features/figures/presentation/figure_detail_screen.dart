@@ -180,6 +180,13 @@ class _FigureDetailScreenState extends ConsumerState<FigureDetailScreen> {
                           color: AppColors.bronze.withValues(alpha: 0.2))),
                 ),
                 child: TabBar(
+                  // `isScrollable: true` : à largeur fixe (défaut), "Biographie"
+                  // — le plus long des 4 libellés — se faisait couper à droite
+                  // (la barre d'onglets n'a pas la hauteur nécessaire pour
+                  // passer le texte à la ligne) — constaté lors d'un test
+                  // manuel sur téléphone (2026-09-27), même correctif que
+                  // `khadara_screen.dart`.
+                  isScrollable: true,
                   labelColor: AppColors.emerald,
                   unselectedLabelColor: AppColors.bronze,
                   indicatorColor: AppColors.gold,
@@ -362,8 +369,13 @@ class _FigureHero extends StatelessWidget {
                     figure.nameArabic,
                     textDirection: TextDirection.rtl,
                     textAlign: TextAlign.center,
-                    style: AppTheme.sacredText(
-                        fontSize: 22, color: AppColors.goldSoft),
+                    // `.copyWith(fontWeight: bold)` plutôt que de changer
+                    // `AppTheme.sacredText` : cette fonction est partagée par
+                    // tout le texte religieux/arabe de l'app (wirds, tasbih,
+                    // silsila...), la mettre en gras partout dépasserait la
+                    // demande "le nom de la figure en gras" (2026-09-27).
+                    style: AppTheme.sacredText(fontSize: 22, color: AppColors.goldSoft)
+                        .copyWith(fontWeight: FontWeight.bold),
                   ),
                   const SizedBox(height: 6),
                   Text(
@@ -379,6 +391,7 @@ class _FigureHero extends StatelessWidget {
                         fontFamily: AppFonts.titlesFr,
                         color: _subtitleColor,
                         fontSize: 12,
+                        fontWeight: FontWeight.bold,
                         letterSpacing: 1.4),
                   ),
                 ],
@@ -1352,7 +1365,7 @@ class _ZiyaraEventCard extends StatelessWidget {
         leading:
             Icon(khadaraEventTypeIcon(event.type), color: AppColors.emerald),
         title: Text(event.title),
-        subtitle: Text(formatKhadaraDateTime(event.startsAt)),
+        subtitle: Text(formatKhadaraEventSchedule(event, AppLocalizations.of(context)!)),
         // Un seul bouton Délier ici, pas `_AdminItemActions` (Modifier +
         // Supprimer) : un lien figure↔évènement n'a rien à modifier, un
         // bouton Modifier inerte serait trompeur pour l'admin.
@@ -1440,7 +1453,7 @@ class _EventLinkPickerSheet extends ConsumerWidget {
                           leading: Icon(khadaraEventTypeIcon(event.type),
                               color: AppColors.emerald),
                           title: Text(event.title),
-                          subtitle: Text(formatKhadaraDateTime(event.startsAt)),
+                          subtitle: Text(formatKhadaraEventSchedule(event, AppLocalizations.of(context)!)),
                           onTap: () => Navigator.of(context).pop(event),
                         ),
                     ],

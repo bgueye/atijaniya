@@ -81,6 +81,11 @@ dependencies:
   # brèves — ce plugin donne accès à `Vibrator.vibrate(duration)` côté
   # Android pour une vibration nettement plus longue et perceptible.
   vibration: ^3.2.0
+  # Position de l'utilisateur pour "La Hadratou-l-Jouma la plus proche"
+  # (module Khadara) : calcule la distance jusqu'à chaque zawiya organisant
+  # un évènement récurrent, plutôt qu'une carte interactive (voir la
+  # décision "pas de carte intégrée en V1" dans `open_in_maps.dart`).
+  geolocator: ^14.0.2
 
 dev_dependencies:
   flutter_test:

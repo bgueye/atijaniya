@@ -15,9 +15,15 @@ import '../../wird/presentation/wird_list_screen.dart';
 import 'home_dashboard_provider.dart';
 import 'home_screen.dart';
 
-/// Barre d'onglets inférieure, 5 destinations : Accueil · Wird · Khadara ·
+/// Barre d'onglets inférieure, 5 destinations : Accueil · Wird · Zawiyas ·
 /// Figures · Communauté. Profil accessible via une icône avatar en en-tête.
 /// (docs/03-architecture-ecrans.md — Navigation principale)
+///
+/// L'onglet "Zawiyas" pointe toujours vers `KhadaraScreen`/le module
+/// `features/khadara` : seul le libellé affiché change (2026-09-27,
+/// demande du porteur de projet) — pas le code, les tables (`events`,
+/// `zawiyas`) ni les routes, pour limiter le risque sur un module déjà en
+/// fin de développement.
 class HomeShell extends ConsumerStatefulWidget {
   const HomeShell({super.key});
 
