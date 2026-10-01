@@ -138,6 +138,14 @@ Aujourd'hui `historical_silsila_links` n'accepte qu'un maître par figure. Or Ba
 
 ### 1.5 Type de lieu pour `zawiyas`
 
+> **Fait le 2026-10-01.** Migration `add_kind_to_zawiyas` appliquée : 27 `zawiya`, 6
+> `lieu_saint` (Halwar, Fass-Diacksao, Ndiarndé, Taïba Niassène, Kossi, Boussemghoun), 1
+> `mosquee` (Gaaya), classement validé par le porteur de projet. Écarts par rapport au texte
+> ci-dessous : pas de valeur `projet` ; pas de carte dans l'app, donc des filtres dans
+> l'annuaire ; le rattachement d'un profil ou d'un groupe est limité aux lieux de type
+> `zawiya`. Trois lieux saints gardent un nom en « Zawiya de… » (non renommés). Détail :
+> `docs/09-journal-implementation-frontend.md`.
+
 La table contient aujourd'hui des zawiyas, mais aussi des lieux saints et des mosquées : Halwar, Fass-Diacksao, Ndiarndé, Taïba Niassène, Kossi, Boussemghoun, la Mosquée d'El Hadj Malick Sy de Gaaya.
 
 - Ajouter `kind text not null default 'zawiya' check (kind in ('zawiya','lieu_saint','mosquee','projet'))` et classer ces lignes.
@@ -231,7 +239,7 @@ Ces points portent en partie sur des fiches déjà publiées (lot du 28/09, rest
 ## 7. Ordre recommandé (analyse du 2026-10-01)
 
 1. ~~Migration 1.1 (succession par zawiya + rôle)~~ — fait le 2026-10-01.
-2. Migrations 1.5 (`zawiyas.kind`) et 1.3 (catégories), puis 1.2 (statut des citations et œuvres).
+2. ~~Migration 1.5 (`zawiyas.kind`)~~ — fait le 2026-10-01. Restent 1.3 (catégories), puis 1.2 (statut des citations et œuvres).
 3. Drapeau « date approximative » (première moitié de la section 3), puis glossaire.
 4. Après le lancement : 1.4 complet (maîtres multiples), règles hégiriennes, dahiras, sources structurées.
 

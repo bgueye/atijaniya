@@ -932,6 +932,33 @@ class AppLocalizationsAr extends AppLocalizations {
   String get zawiyaFormSaveError => 'تعذّر حفظ الزاوية.';
 
   @override
+  String get zawiyaFormKindLabel => 'نوع المكان';
+
+  @override
+  String get zawiyaKindZawiya => 'زاوية';
+
+  @override
+  String get zawiyaKindHolyPlace => 'مزار';
+
+  @override
+  String get zawiyaKindMosque => 'مسجد';
+
+  @override
+  String get khadaraFilterAll => 'الكل';
+
+  @override
+  String get khadaraFilterZawiyas => 'الزوايا';
+
+  @override
+  String get khadaraFilterHolyPlaces => 'المزارات';
+
+  @override
+  String get khadaraFilterMosques => 'المساجد';
+
+  @override
+  String get khadaraNoPlacesForFilter => 'لا يوجد مكان من هذا النوع حاليًا.';
+
+  @override
   String get khadaraUnderstandingTooltip => 'فهم الزاوية';
 
   @override

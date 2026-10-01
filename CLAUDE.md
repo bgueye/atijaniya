@@ -15,7 +15,7 @@ attente) : `docs/10-etat-avancement-et-sprints-restants.md`
 dupliquer si l'analyse est refaite.
 Propositions d'évolution du schéma et du contenu (succession par zawiya, catégories de
 figures, silsila à plusieurs maîtres, dates hégiriennes, dahiras), relues et confrontées à
-la base le 2026-10-01, **seul le § 1.1 (succession par zawiya) est implémenté** :
+la base le 2026-10-01, **seuls les § 1.1 (succession par zawiya) et 1.5 (type de lieu) sont implémentés** :
 `docs/12-propositions-evolution-contenu.md`.
 
 ## Stack technique
@@ -159,7 +159,10 @@ porteur de projet du 2026-10-01, les limites connues de ce lot et les
 `docs/12-propositions-evolution-contenu.md`, voir aussi
 `docs/10-etat-avancement-et-sprints-restants.md`), Khadara
 (calendrier évènements/zawiyas, **CRUD zawiyas créer/modifier/supprimer
-réservé à l'admin depuis le 2026-08-15** ; "Comprendre la Khadara" remplacé
+réservé à l'admin depuis le 2026-08-15** ; **type de lieu depuis le
+2026-10-01** — `zawiyas.kind` : `zawiya`, `lieu_saint` ou `mosquee`, icône et
+filtres dans l'annuaire, et rattachement d'un profil ou d'un groupe limité
+aux lieux de type `zawiya` ; "Comprendre la Khadara" remplacé
 par "Comprendre la Zawiya" — voir plus haut, déjà rédigé et validé, pas un
 contenu distinct restant), Fil d'actualité communautaire (publication
 réservée aux comptes rattachés à une zawiya, like/commentaire fonctionnels,

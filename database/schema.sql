@@ -457,6 +457,14 @@ grant execute on function public.search_available_sponsors(text) to authenticate
 create table public.zawiyas (
   id uuid primary key default gen_random_uuid(),
   name text not null,
+  -- Type de lieu (migration add_kind_to_zawiyas, 2026-10-01) : la table
+  -- contient aussi des lieux saints (village natal, lieu de retraite...) et
+  -- une mosquée. Sert à l'icône et aux filtres de l'annuaire ; côté app, un
+  -- profil ou un groupe ne peut se rattacher qu'à un lieu de type 'zawiya'
+  -- (règle appliquée par l'app, pas par une contrainte en base). Pas de
+  -- valeur 'projet' : un lieu qui n'existe pas encore n'a pas sa place dans
+  -- un annuaire public.
+  kind text not null default 'zawiya' check (kind in ('zawiya','lieu_saint','mosquee')),
   description text,
   latitude double precision,
   longitude double precision,

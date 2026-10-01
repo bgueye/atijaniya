@@ -952,6 +952,34 @@ class AppLocalizationsFr extends AppLocalizations {
   String get zawiyaFormSaveError => 'Impossible d\'enregistrer la zawiya.';
 
   @override
+  String get zawiyaFormKindLabel => 'Type de lieu';
+
+  @override
+  String get zawiyaKindZawiya => 'Zawiya';
+
+  @override
+  String get zawiyaKindHolyPlace => 'Lieu saint';
+
+  @override
+  String get zawiyaKindMosque => 'Mosquée';
+
+  @override
+  String get khadaraFilterAll => 'Tous';
+
+  @override
+  String get khadaraFilterZawiyas => 'Zawiyas';
+
+  @override
+  String get khadaraFilterHolyPlaces => 'Lieux saints';
+
+  @override
+  String get khadaraFilterMosques => 'Mosquées';
+
+  @override
+  String get khadaraNoPlacesForFilter =>
+      'Aucun lieu de ce type pour le moment.';
+
+  @override
   String get khadaraUnderstandingTooltip => 'Comprendre la Zawiya';
 
   @override

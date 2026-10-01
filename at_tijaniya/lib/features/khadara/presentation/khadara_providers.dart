@@ -26,6 +26,15 @@ final zawiyasProvider = FutureProvider<List<Zawiya>>((ref) {
   return ref.watch(khadaraRepositoryProvider).fetchZawiyas();
 });
 
+/// Zawiyas proposées quand il s'agit de s'y rattacher (profil, groupe) —
+/// dérivé de [zawiyasProvider] sans requête supplémentaire, voir
+/// `attachableZawiyas` pour la règle. L'annuaire et le formulaire d'évènement
+/// continuent d'utiliser [zawiyasProvider] : un évènement peut se tenir dans
+/// un lieu saint ou une mosquée.
+final attachableZawiyasProvider = FutureProvider<List<Zawiya>>((ref) async {
+  return attachableZawiyas(await ref.watch(zawiyasProvider.future));
+});
+
 /// Évènements à venir pour une zawiya donnée — dérivé de
 /// [upcomingEventsProvider] plutôt qu'une requête réseau séparée, affiché
 /// sur `ZawiyaDetailScreen`.

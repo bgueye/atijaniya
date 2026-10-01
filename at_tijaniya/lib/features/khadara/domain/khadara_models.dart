@@ -19,10 +19,48 @@ KhadaraEventType khadaraEventTypeFromString(String? value) {
   );
 }
 
+/// Type de lieu (`zawiyas.kind`, migration `add_kind_to_zawiyas` du
+/// 2026-10-01) : la table `zawiyas` contient aussi des lieux saints (village
+/// natal, lieu de retraite...) et une mosquée, qui ne sont pas des zawiyas
+/// au sens d'un foyer auquel un disciple se rattache. Sert à l'icône et aux
+/// filtres de l'annuaire, et à [attachableZawiyas].
+enum ZawiyaKind { zawiya, holyPlace, mosque }
+
+/// Toute valeur inconnue ou absente retombe sur [ZawiyaKind.zawiya], la
+/// valeur par défaut de la colonne — une ancienne version de l'app ne doit
+/// pas planter si un type est ajouté plus tard en base.
+ZawiyaKind zawiyaKindFromDb(String? value) {
+  return switch (value) {
+    'lieu_saint' => ZawiyaKind.holyPlace,
+    'mosquee' => ZawiyaKind.mosque,
+    _ => ZawiyaKind.zawiya,
+  };
+}
+
+String zawiyaKindToDb(ZawiyaKind kind) {
+  return switch (kind) {
+    ZawiyaKind.zawiya => 'zawiya',
+    ZawiyaKind.holyPlace => 'lieu_saint',
+    ZawiyaKind.mosque => 'mosquee',
+  };
+}
+
+/// Lieux auxquels un profil ou un groupe peut se rattacher : uniquement les
+/// zawiyas proprement dites (décision du porteur de projet, 2026-10-01). Un
+/// lieu saint ou une mosquée reste consultable dans l'annuaire et peut
+/// accueillir un évènement, mais on ne s'y "rattache" pas.
+List<Zawiya> attachableZawiyas(List<Zawiya> zawiyas) {
+  return [
+    for (final zawiya in zawiyas)
+      if (zawiya.kind == ZawiyaKind.zawiya) zawiya,
+  ];
+}
+
 class Zawiya {
   const Zawiya({
     required this.id,
     required this.name,
+    this.kind = ZawiyaKind.zawiya,
     this.description,
     this.latitude,
     this.longitude,
@@ -32,6 +70,7 @@ class Zawiya {
 
   final String id;
   final String name;
+  final ZawiyaKind kind;
   final String? description;
   final double? latitude;
   final double? longitude;
@@ -44,6 +83,7 @@ class Zawiya {
     return Zawiya(
       id: row['id'] as String,
       name: row['name'] as String,
+      kind: zawiyaKindFromDb(row['kind'] as String?),
       description: row['description'] as String?,
       latitude: (row['latitude'] as num?)?.toDouble(),
       longitude: (row['longitude'] as num?)?.toDouble(),

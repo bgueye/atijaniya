@@ -20,6 +20,7 @@ class KhadaraRepository {
   /// `canManageZawiyasProvider`).
   Future<Zawiya> createZawiya({
     required String name,
+    ZawiyaKind kind = ZawiyaKind.zawiya,
     String? description,
     double? latitude,
     double? longitude,
@@ -30,6 +31,7 @@ class KhadaraRepository {
         .from('zawiyas')
         .insert({
           'name': name,
+          'kind': zawiyaKindToDb(kind),
           'description': description,
           'latitude': latitude,
           'longitude': longitude,
@@ -44,6 +46,7 @@ class KhadaraRepository {
   Future<Zawiya> updateZawiya(
     String id, {
     required String name,
+    required ZawiyaKind kind,
     String? description,
     double? latitude,
     double? longitude,
@@ -54,6 +57,7 @@ class KhadaraRepository {
         .from('zawiyas')
         .update({
           'name': name,
+          'kind': zawiyaKindToDb(kind),
           'description': description,
           'latitude': latitude,
           'longitude': longitude,
@@ -68,7 +72,8 @@ class KhadaraRepository {
 
   /// Peut lever une `PostgrestException` (code `23503`) si la zawiya est
   /// encore référencée ailleurs (`profiles.zawiya_id`, `events.zawiya_id`,
-  /// `posts.author_zawiya_id`, `groups.zawiya_id` — aucune de ces clés
+  /// `posts.author_zawiya_id`, `groups.zawiya_id`,
+  /// `figure_zawiya_khalifas.zawiya_id` — aucune de ces clés
   /// étrangères n'a `on delete cascade`, voir `database/schema.sql`) —
   /// volontairement non catchée ici, voir `classifyZawiyaDeleteError`
   /// (`khadara_errors.dart`) côté appelant.

@@ -493,9 +493,9 @@ migration n'en garde la trace, la dernière reste `add_weekly_recurrence_to_even
 Les évolutions de schéma et de fonctionnalités que cet enrichissement appelle (succession
 par zawiya avec rôle, statut de validation des citations et œuvres, catégories de figures,
 silsila à plusieurs maîtres, type de lieu, dates hégiriennes, dahiras, sources) sont décrites,
-corrigées et ordonnées dans `docs/12-propositions-evolution-contenu.md`. **Seule la
-succession par zawiya (§ 1.1) est implémentée, voir ci-dessous.** Ordre recommandé pour la
-suite : type de lieu et
+corrigées et ordonnées dans `docs/12-propositions-evolution-contenu.md`. **Seuls la
+succession par zawiya (§ 1.1) et le type de lieu (§ 1.5) sont implémentés, voir ci-dessous.**
+Ordre recommandé pour la suite :
 catégories, puis statut des citations/œuvres, puis drapeau "date approximative" et glossaire ;
 le reste après le lancement. Le Sprint 6 (soumission aux stores) et la bascule PayDunya en
 mode live restent ouverts et inchangés.
@@ -529,3 +529,22 @@ refusée avec le message "encore référencée").
 `founder_figure_id` et continue d'afficher les chaînes des fondateurs, mais mélange Aïn Madhi
 et Fès sur la fiche de Cheikh Ahmed Tijani et ne peut plus ajouter de maillon (`zawiya_id`
 obligatoire). À mettre à jour avant toute saisie.
+
+### Type de lieu dans l'annuaire (2026-10-01)
+
+Deuxième évolution de `docs/12` livrée (§ 1.5). Migration `add_kind_to_zawiyas` appliquée
+sur le projet live après essai à blanc : `zawiyas.kind` vaut `zawiya` (27 lignes),
+`lieu_saint` (6) ou `mosquee` (1), classement validé par le porteur de projet.
+
+Côté app : icône par type et filtres "Tous / Zawiyas / Lieux saints / Mosquées" dans
+l'annuaire, type affiché en tête de la fiche d'un lieu, sélecteur "Type de lieu" dans le
+formulaire admin. Le rattachement d'un profil ou d'un groupe est désormais limité aux lieux
+de type `zawiya` (aucun profil ni groupe n'était rattaché à un autre type) ; un évènement
+reste rattachable à n'importe quel lieu. `flutter analyze` propre, 222 tests au vert (4
+nouveaux).
+
+Affichage des filtres validé sur téléphone le 2026-10-01 (une seule ligne centrée, après
+deux reprises). **Reste à valider manuellement sur téléphone** : icône et
+mention du type sur un lieu saint et sur la mosquée de Gaaya, changement de type depuis le
+formulaire admin, absence des lieux saints dans le choix de zawiya du profil et d'un groupe,
+présence de tous les lieux dans le formulaire d'évènement.

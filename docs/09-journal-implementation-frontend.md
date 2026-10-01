@@ -3147,3 +3147,39 @@ absent de la succession publique, sans mention de lacune automatique.
 le rôle et le regroupement, `figure_detail_screen_test.dart` pour l'affichage). **Pas encore
 validé sur téléphone** — scénarios à dérouler listés dans
 `docs/10-etat-avancement-et-sprints-restants.md`.
+
+## Type de lieu dans l'annuaire des zawiyas (2026-10-01)
+
+Deuxième évolution tirée de `docs/12-propositions-evolution-contenu.md` (§ 1.5). Depuis
+l'enrichissement de fin septembre, la table `zawiyas` contient aussi des lieux saints
+(village natal, lieu de retraite) et une mosquée.
+
+**Base.** Migration `add_kind_to_zawiyas` : `kind text not null default 'zawiya'`, valeurs
+`zawiya`/`lieu_saint`/`mosquee`. Sept lignes reclassées par leur nom, le reste garde le
+défaut. La valeur `projet` proposée à l'origine n'a pas été retenue.
+
+**App.** `ZawiyaKind` sur le modèle `Zawiya` (toute valeur inconnue retombe sur `zawiya`).
+Annuaire : icône par type, mention du type sous le nom pour un lieu saint ou une mosquée
+seulement (la répéter sur chaque "Zawiya de…" serait du bruit), et une rangée de puces de
+filtre, état local remis à "Tous" à chaque ouverture. Fiche d'un lieu : type en tête.
+Formulaire admin : sélecteur "Type de lieu". Fiche figure : les lieux rattachés prennent
+l'icône de leur type.
+
+**Rattachement limité aux zawiyas** (décision du porteur de projet) : nouveau
+`attachableZawiyasProvider`, dérivé de `zawiyasProvider`, utilisé par le choix de zawiya du
+profil et par la création/édition d'un groupe. La règle est appliquée par l'app, pas par une
+contrainte en base. Le formulaire d'évènement garde la liste complète.
+
+**Écarts assumés.** Le document parlait de "filtres de carte" : il n'y a pas de carte dans
+l'app. Trois lieux saints gardent un nom en "Zawiya de…" (Taïba Niassène, Kossi,
+Boussemghoun), non renommés. La recherche d'évènement récurrent par proximité ne tient pas
+compte du type.
+
+`flutter analyze` propre et 222 tests au vert (4 nouveaux dans `khadara_models_test.dart`).
+
+**Essai sur téléphone (2026-10-01).** Deux reprises sur la rangée de filtres : en rangée
+défilante, "Mosquées" dépassait du bord ; en `Wrap`, elle passait seule sur une deuxième
+ligne. Version retenue par le porteur de projet : les quatre puces sur une seule ligne
+centrée, compactes, sans coche de sélection, avec un `FittedBox` qui réduit l'ensemble en
+dernier recours. Seul l'affichage des filtres est validé ; le reste des scénarios (voir
+`docs/10`) reste à dérouler.

@@ -444,4 +444,35 @@ void main() {
       expect(canManageEvent(event, userId: null, isAdmin: false), isFalse);
     });
   });
+
+  // Type de lieu (`zawiyas.kind`, migration `add_kind_to_zawiyas`, 2026-10-01).
+  group('ZawiyaKind', () {
+    test('aller-retour base <-> enum sur les trois types', () {
+      for (final kind in ZawiyaKind.values) {
+        expect(zawiyaKindFromDb(zawiyaKindToDb(kind)), kind);
+      }
+      expect(zawiyaKindToDb(ZawiyaKind.holyPlace), 'lieu_saint');
+      expect(zawiyaKindToDb(ZawiyaKind.mosque), 'mosquee');
+    });
+
+    test('valeur inconnue ou absente -> zawiya', () {
+      expect(zawiyaKindFromDb('autre'), ZawiyaKind.zawiya);
+      expect(zawiyaKindFromDb(null), ZawiyaKind.zawiya);
+    });
+
+    test('Zawiya.fromRow lit la colonne kind, zawiya par défaut si absente', () {
+      expect(Zawiya.fromRow({'id': 'z1', 'name': 'Lieu', 'kind': 'lieu_saint'}).kind, ZawiyaKind.holyPlace);
+      expect(Zawiya.fromRow({'id': 'z2', 'name': 'Sans type'}).kind, ZawiyaKind.zawiya);
+    });
+
+    test('attachableZawiyas ne garde que les zawiyas, dans l\'ordre d\'origine', () {
+      const places = [
+        Zawiya(id: 'a', name: 'Zawiya A'),
+        Zawiya(id: 'b', name: 'Village natal', kind: ZawiyaKind.holyPlace),
+        Zawiya(id: 'c', name: 'Mosquée', kind: ZawiyaKind.mosque),
+        Zawiya(id: 'd', name: 'Zawiya D'),
+      ];
+      expect(attachableZawiyas(places).map((z) => z.id), ['a', 'd']);
+    });
+  });
 }

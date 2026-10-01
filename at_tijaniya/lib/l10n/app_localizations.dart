@@ -1827,6 +1827,60 @@ abstract class AppLocalizations {
   /// **'Impossible d\'enregistrer la zawiya.'**
   String get zawiyaFormSaveError;
 
+  /// No description provided for @zawiyaFormKindLabel.
+  ///
+  /// In fr, this message translates to:
+  /// **'Type de lieu'**
+  String get zawiyaFormKindLabel;
+
+  /// No description provided for @zawiyaKindZawiya.
+  ///
+  /// In fr, this message translates to:
+  /// **'Zawiya'**
+  String get zawiyaKindZawiya;
+
+  /// No description provided for @zawiyaKindHolyPlace.
+  ///
+  /// In fr, this message translates to:
+  /// **'Lieu saint'**
+  String get zawiyaKindHolyPlace;
+
+  /// No description provided for @zawiyaKindMosque.
+  ///
+  /// In fr, this message translates to:
+  /// **'Mosquée'**
+  String get zawiyaKindMosque;
+
+  /// No description provided for @khadaraFilterAll.
+  ///
+  /// In fr, this message translates to:
+  /// **'Tous'**
+  String get khadaraFilterAll;
+
+  /// No description provided for @khadaraFilterZawiyas.
+  ///
+  /// In fr, this message translates to:
+  /// **'Zawiyas'**
+  String get khadaraFilterZawiyas;
+
+  /// No description provided for @khadaraFilterHolyPlaces.
+  ///
+  /// In fr, this message translates to:
+  /// **'Lieux saints'**
+  String get khadaraFilterHolyPlaces;
+
+  /// No description provided for @khadaraFilterMosques.
+  ///
+  /// In fr, this message translates to:
+  /// **'Mosquées'**
+  String get khadaraFilterMosques;
+
+  /// No description provided for @khadaraNoPlacesForFilter.
+  ///
+  /// In fr, this message translates to:
+  /// **'Aucun lieu de ce type pour le moment.'**
+  String get khadaraNoPlacesForFilter;
+
   /// No description provided for @khadaraUnderstandingTooltip.
   ///
   /// In fr, this message translates to:

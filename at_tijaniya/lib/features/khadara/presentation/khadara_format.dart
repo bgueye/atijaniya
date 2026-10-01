@@ -119,3 +119,22 @@ String liveStreamSourceLabel(LiveStreamSourceType type, AppLocalizations l10n) {
       return l10n.khadaraSourceOther;
   }
 }
+
+/// Icône d'un lieu de l'annuaire selon son type — la zawiya garde l'icône
+/// historique de l'annuaire.
+IconData zawiyaKindIcon(ZawiyaKind kind) {
+  return switch (kind) {
+    ZawiyaKind.zawiya => Icons.mosque_outlined,
+    ZawiyaKind.holyPlace => Icons.landscape_outlined,
+    ZawiyaKind.mosque => Icons.mosque,
+  };
+}
+
+/// Libellé singulier d'un type de lieu ("Zawiya", "Lieu saint", "Mosquée").
+String zawiyaKindLabel(ZawiyaKind kind, AppLocalizations l10n) {
+  return switch (kind) {
+    ZawiyaKind.zawiya => l10n.zawiyaKindZawiya,
+    ZawiyaKind.holyPlace => l10n.zawiyaKindHolyPlace,
+    ZawiyaKind.mosque => l10n.zawiyaKindMosque,
+  };
+}

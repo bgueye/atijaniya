@@ -1601,7 +1601,7 @@ class _LinkedZawiyaCard extends StatelessWidget {
     return Card(
       margin: const EdgeInsets.only(bottom: 12),
       child: ListTile(
-        leading: Icon(Icons.mosque_outlined, color: AppColors.emerald),
+        leading: Icon(zawiyaKindIcon(zawiya.kind), color: AppColors.emerald),
         title: Text(zawiya.name),
         subtitle: zawiya.addressText != null ? Text(zawiya.addressText!) : null,
         // Un seul bouton Délier ici, comme `_ZiyaraEventCard` : un lien
@@ -1670,7 +1670,7 @@ class _ZawiyaLinkPickerSheet extends ConsumerWidget {
                     children: [
                       for (final zawiya in selectable)
                         ListTile(
-                          leading: Icon(Icons.mosque_outlined, color: AppColors.emerald),
+                          leading: Icon(zawiyaKindIcon(zawiya.kind), color: AppColors.emerald),
                           title: Text(zawiya.name),
                           onTap: () => Navigator.of(context).pop(zawiya),
                         ),

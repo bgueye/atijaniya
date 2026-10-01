@@ -663,7 +663,9 @@ class _EditGroupSheetState extends ConsumerState<_EditGroupSheet> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-    final zawiyas = ref.watch(zawiyasProvider);
+    // Rattachement : uniquement les zawiyas proprement dites, pas les lieux
+    // saints ni les mosquées de l'annuaire (voir `attachableZawiyas`).
+    final zawiyas = ref.watch(attachableZawiyasProvider);
 
     // Mêmes choix (SafeArea + SingleChildScrollView) que _EditPostSheet
     // (post_detail_screen.dart) : évite que le bouton Enregistrer se

@@ -519,7 +519,9 @@ class _CreateGroupSheetState extends ConsumerState<_CreateGroupSheet> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-    final zawiyas = ref.watch(zawiyasProvider);
+    // Rattachement : uniquement les zawiyas proprement dites, pas les lieux
+    // saints ni les mosquées de l'annuaire (voir `attachableZawiyas`).
+    final zawiyas = ref.watch(attachableZawiyasProvider);
 
     // `SafeArea` : évite que le bouton Créer se retrouve masqué sous la
     // barre de navigation Android (3 boutons) — `viewInsets.bottom` seul ne

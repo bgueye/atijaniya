@@ -106,6 +106,17 @@ class _ZawiyaDetailScreenState extends ConsumerState<ZawiyaDetailScreen> {
       body: ListView(
         padding: const EdgeInsets.all(20),
         children: [
+          Row(
+            children: [
+              Icon(zawiyaKindIcon(zawiya.kind), size: 18, color: AppColors.emerald),
+              const SizedBox(width: 8),
+              Text(
+                zawiyaKindLabel(zawiya.kind, l10n),
+                style: TextStyle(fontWeight: FontWeight.w600, fontSize: 13, color: AppColors.bronze),
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
           if (zawiya.description != null) ...[
             Text(
               zawiya.description!,

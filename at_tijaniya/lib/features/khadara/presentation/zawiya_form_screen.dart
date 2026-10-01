@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../l10n/app_localizations.dart';
 import '../domain/khadara_models.dart';
+import 'khadara_format.dart';
 import 'khadara_providers.dart';
 
 /// Création/édition d'une zawiya — réservé par RLS à un compte admin
@@ -29,6 +30,7 @@ class _ZawiyaFormScreenState extends ConsumerState<ZawiyaFormScreen> {
   final _latitudeController = TextEditingController();
   final _longitudeController = TextEditingController();
 
+  ZawiyaKind _kind = ZawiyaKind.zawiya;
   bool _saving = false;
   String? _errorMessage;
 
@@ -37,6 +39,7 @@ class _ZawiyaFormScreenState extends ConsumerState<ZawiyaFormScreen> {
     super.initState();
     final zawiya = widget.zawiya;
     if (zawiya != null) {
+      _kind = zawiya.kind;
       _nameController.text = zawiya.name;
       _descriptionController.text = zawiya.description ?? '';
       _addressController.text = zawiya.addressText ?? '';
@@ -93,6 +96,7 @@ class _ZawiyaFormScreenState extends ConsumerState<ZawiyaFormScreen> {
       if (widget.zawiya == null) {
         saved = await repo.createZawiya(
           name: _nameController.text.trim(),
+          kind: _kind,
           description: descriptionText.isEmpty ? null : descriptionText,
           latitude: _parseOptionalDouble(_latitudeController.text),
           longitude: _parseOptionalDouble(_longitudeController.text),
@@ -103,6 +107,7 @@ class _ZawiyaFormScreenState extends ConsumerState<ZawiyaFormScreen> {
         saved = await repo.updateZawiya(
           widget.zawiya!.id,
           name: _nameController.text.trim(),
+          kind: _kind,
           description: descriptionText.isEmpty ? null : descriptionText,
           latitude: _parseOptionalDouble(_latitudeController.text),
           longitude: _parseOptionalDouble(_longitudeController.text),
@@ -145,6 +150,17 @@ class _ZawiyaFormScreenState extends ConsumerState<ZawiyaFormScreen> {
                   validator: (value) => (value == null || value.trim().isEmpty)
                       ? l10n.zawiyaFormNameRequired
                       : null,
+                ),
+                const SizedBox(height: 16),
+                DropdownButtonFormField<ZawiyaKind>(
+                  initialValue: _kind,
+                  isExpanded: true,
+                  decoration: InputDecoration(labelText: l10n.zawiyaFormKindLabel),
+                  items: [
+                    for (final kind in ZawiyaKind.values)
+                      DropdownMenuItem<ZawiyaKind>(value: kind, child: Text(zawiyaKindLabel(kind, l10n))),
+                  ],
+                  onChanged: (value) => setState(() => _kind = value ?? ZawiyaKind.zawiya),
                 ),
                 const SizedBox(height: 16),
                 TextFormField(

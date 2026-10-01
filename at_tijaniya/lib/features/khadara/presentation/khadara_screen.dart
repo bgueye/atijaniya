@@ -189,14 +189,35 @@ class _EventsTab extends ConsumerWidget {
   }
 }
 
-class _ZawiyasTab extends ConsumerWidget {
+/// Annuaire des lieux — zawiyas, lieux saints et mosquées (`zawiyas.kind`).
+/// Le filtre par type est un simple état local : il s'applique à la liste
+/// déjà chargée, sans requête supplémentaire, et revient à "Tous" à chaque
+/// ouverture de l'onglet.
+class _ZawiyasTab extends ConsumerStatefulWidget {
   const _ZawiyasTab();
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<_ZawiyasTab> createState() => _ZawiyasTabState();
+}
+
+class _ZawiyasTabState extends ConsumerState<_ZawiyasTab> {
+  /// `null` = tous les types.
+  ZawiyaKind? _kindFilter;
+
+  @override
+  Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-    final zawiyas = ref.watch(zawiyasProvider);
+    final kindFilter = _kindFilter;
+    final zawiyas = ref.watch(zawiyasProvider).whenData(
+          (all) => kindFilter == null ? all : all.where((z) => z.kind == kindFilter).toList(),
+        );
     final canManage = ref.watch(canManageZawiyasProvider);
+    final filterLabels = <ZawiyaKind?, String>{
+      null: l10n.khadaraFilterAll,
+      ZawiyaKind.zawiya: l10n.khadaraFilterZawiyas,
+      ZawiyaKind.holyPlace: l10n.khadaraFilterHolyPlaces,
+      ZawiyaKind.mosque: l10n.khadaraFilterMosques,
+    };
 
     return Scaffold(
       floatingActionButton: canManage
@@ -209,28 +230,84 @@ class _ZawiyasTab extends ConsumerWidget {
               label: Text(l10n.khadaraAddZawiyaButton),
             )
           : null,
-      body: _AsyncSection<Zawiya>(
-        value: zawiyas,
-        emptyMessage: l10n.khadaraNoZawiyas,
-        onRetry: () => ref.invalidate(zawiyasProvider),
-        padding: const EdgeInsets.fromLTRB(16, 16, 16, 88),
-        itemBuilder: (context, zawiya) => Card(
-          child: ListTile(
-            leading: Icon(Icons.mosque_outlined, color: AppColors.emerald),
-            title: Text(zawiya.name),
-            // 2 lignes plutôt qu'1 : une adresse assez longue se tronquait en
-            // plein milieu d'une parenthèse — constaté à l'audit design
-            // pré-publication Play Store, même correctif que les noms de
-            // figures (`figures_screen.dart`).
-            subtitle: zawiya.addressText != null
-                ? Text(zawiya.addressText!, maxLines: 2, overflow: TextOverflow.ellipsis)
-                : null,
-            trailing: Icon(Icons.chevron_right, color: AppColors.bronze),
-            onTap: () => Navigator.of(context).push(
-              MaterialPageRoute(builder: (_) => ZawiyaDetailScreen(zawiya: zawiya)),
+      body: Column(
+        children: [
+          // Les quatre puces tiennent toujours sur une seule ligne, centrée
+          // (demande du porteur de projet après essai sur téléphone le
+          // 2026-10-01 : une rangée défilante laissait "Mosquées" dépasser du
+          // bord, un `Wrap` la renvoyait seule sur une deuxième ligne).
+          // Puces compactes, sans coche (`showCheckmark: false`) pour que la
+          // sélection ne change pas leur largeur ; `FittedBox` en dernier
+          // recours réduit l'ensemble si la ligne reste trop large (petit
+          // écran, police agrandie) plutôt que de déborder.
+          Padding(
+            padding: const EdgeInsets.fromLTRB(12, 12, 12, 0),
+            child: SizedBox(
+              width: double.infinity,
+              child: FittedBox(
+                fit: BoxFit.scaleDown,
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    for (final (index, entry) in filterLabels.entries.indexed)
+                      Padding(
+                        padding: EdgeInsetsDirectional.only(start: index == 0 ? 0 : 6),
+                        child: ChoiceChip(
+                          label: Text(entry.value),
+                          selected: _kindFilter == entry.key,
+                          showCheckmark: false,
+                          visualDensity: VisualDensity.compact,
+                          materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                          labelPadding: const EdgeInsets.symmetric(horizontal: 2),
+                          onSelected: (_) => setState(() => _kindFilter = entry.key),
+                        ),
+                      ),
+                  ],
+                ),
+              ),
             ),
           ),
-        ),
+          Expanded(
+            child: _AsyncSection<Zawiya>(
+              value: zawiyas,
+              emptyMessage: kindFilter == null ? l10n.khadaraNoZawiyas : l10n.khadaraNoPlacesForFilter,
+              onRetry: () => ref.invalidate(zawiyasProvider),
+              padding: const EdgeInsets.fromLTRB(16, 12, 16, 88),
+              itemBuilder: (context, zawiya) {
+                // Le type n'est rappelé sous le nom que pour un lieu saint ou
+                // une mosquée : le répéter sur chaque "Zawiya de ..." serait
+                // du bruit.
+                final kindLabel = zawiya.kind == ZawiyaKind.zawiya ? null : zawiyaKindLabel(zawiya.kind, l10n);
+                return Card(
+                  child: ListTile(
+                    leading: Icon(zawiyaKindIcon(zawiya.kind), color: AppColors.emerald),
+                    title: Text(zawiya.name),
+                    // 2 lignes plutôt qu'1 pour l'adresse : une adresse assez
+                    // longue se tronquait en plein milieu d'une parenthèse —
+                    // constaté à l'audit design pré-publication Play Store,
+                    // même correctif que les noms de figures
+                    // (`figures_screen.dart`).
+                    subtitle: kindLabel == null && zawiya.addressText == null
+                        ? null
+                        : Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              if (kindLabel != null)
+                                Text(kindLabel, style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 12)),
+                              if (zawiya.addressText != null)
+                                Text(zawiya.addressText!, maxLines: 2, overflow: TextOverflow.ellipsis),
+                            ],
+                          ),
+                    trailing: Icon(Icons.chevron_right, color: AppColors.bronze),
+                    onTap: () => Navigator.of(context).push(
+                      MaterialPageRoute(builder: (_) => ZawiyaDetailScreen(zawiya: zawiya)),
+                    ),
+                  ),
+                );
+              },
+            ),
+          ),
+        ],
       ),
     );
   }
