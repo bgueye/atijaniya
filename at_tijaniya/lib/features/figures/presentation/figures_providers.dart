@@ -50,12 +50,12 @@ final linkedZawiyasForFigureProvider = FutureProvider.autoDispose.family<List<Za
   return ref.watch(figuresRepositoryProvider).fetchLinkedZawiyas(figureId);
 });
 
-/// Chaîne de succession des khalifas d'une figure fondatrice donnée
-/// (sous-section "Chaîne de khalifas" de l'onglet "Zawiya",
-/// `figure_detail_screen.dart`) — `family` car paramétré par
-/// `founderFigureId`. `.autoDispose` : même raison.
-final khalifaChainProvider = FutureProvider.autoDispose.family<List<FigureKhalifaLink>, String>((ref, founderFigureId) {
-  return ref.watch(figuresRepositoryProvider).fetchKhalifaChain(founderFigureId);
+/// Successions (khalifes, mokaddems, imams) où une figure donnée apparaît,
+/// comme fondatrice ou comme maillon (sous-section "Succession" de l'onglet
+/// "Zawiya", `figure_detail_screen.dart`) — `family` car paramétré par
+/// `figureId`. `.autoDispose` : même raison.
+final successionsForFigureProvider = FutureProvider.autoDispose.family<List<ZawiyaSuccession>, String>((ref, figureId) {
+  return ref.watch(figuresRepositoryProvider).fetchSuccessionsForFigure(figureId);
 });
 
 /// Épinglage admin ("Figure de la semaine") pour une semaine donnée —

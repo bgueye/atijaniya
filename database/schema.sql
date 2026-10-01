@@ -808,25 +808,44 @@ create table public.figure_zawiyas (
   primary key (figure_id, zawiya_id)
 );
 
--- Chaîne de succession des khalifas d'une figure fondatrice (migration
--- add_figure_zawiyas_and_khalifa_chain, 2026-08-21) — modèle à plat
--- (contrairement à historical_silsila_links) : pas de récursivité
--- nécessaire, chaque khalife pointe directement vers la figure fondatrice
--- consultée, order_index fixe son rang. Chaque khalife est lui-même une
--- Figure (décision porteur de projet, 2026-08-20) : mêmes règles de
--- content_status/RLS que la silsila historique. Alimente la sous-section
--- "Chaîne de khalifas" de l'onglet "Zawiya" sur FigureDetailScreen.
+-- Successions d'une zawiya (migration add_figure_zawiyas_and_khalifa_chain,
+-- 2026-08-21, refondue par khalifa_chain_by_zawiya_with_role le 2026-10-01)
+-- — modèle à plat (contrairement à historical_silsila_links) : pas de
+-- récursivité, order_index fixe le rang de chaque maillon. Chaque maillon
+-- est lui-même une Figure (décision porteur de projet, 2026-08-20) : mêmes
+-- règles de content_status/RLS que la silsila historique.
+-- Une succession est identifiée par le couple zawiya + rôle, et non plus
+-- par la figure fondatrice (décision du 2026-10-01, remplace "chaîne unique
+-- par figure fondatrice") : un même fondateur peut avoir plusieurs zawiyas,
+-- et une zawiya n'est pas toujours dirigée par des khalifes (Fès a des
+-- mokaddems). Le nom de la table est conservé malgré le rôle variable.
+-- Alimente la sous-section "Succession" de l'onglet "Zawiya" sur
+-- FigureDetailScreen, affichée sur la fiche du fondateur comme sur celle de
+-- chaque maillon.
 create table public.figure_zawiya_khalifas (
   id uuid primary key default gen_random_uuid(),
+  -- Conservé après le 2026-10-01 uniquement pour afficher le nœud
+  -- "Fondateur" en tête de la succession : toutes les lignes d'une même
+  -- succession portent le même fondateur.
   founder_figure_id uuid not null references public.figures(id) on delete cascade,
   khalifa_figure_id uuid not null references public.figures(id),
+  -- on delete restrict (et non cascade comme figure_zawiyas) : supprimer une
+  -- zawiya ne doit pas effacer silencieusement une succession compilée à la
+  -- main. La suppression est bloquée côté app avec le message générique
+  -- "zawiya encore référencée" (classifyZawiyaDeleteError).
+  zawiya_id uuid not null references public.zawiyas(id) on delete restrict,
+  role text not null default 'khalife' check (role in ('khalife','mokaddem','imam')),
   order_index int not null,
   -- Texte libre ("1902-1922", "vers 1950"...) plutôt que des dates
   -- structurées : même choix que year_text sur get_ijaza_chain, la
   -- précision des sources historiques ne justifie pas des colonnes date.
   period_text text,
-  unique (founder_figure_id, khalifa_figure_id),
-  unique (founder_figure_id, order_index)
+  -- true = des noms manquent entre le rang précédent et celui-ci : l'app
+  -- affiche une mention "liste incomplète" plutôt que de laisser entendre
+  -- que la succession est continue (cas des mokaddems de Fès).
+  follows_gap boolean not null default false,
+  constraint figure_zawiya_khalifas_zawiya_role_khalifa_key unique (zawiya_id, role, khalifa_figure_id),
+  constraint figure_zawiya_khalifas_zawiya_role_order_key unique (zawiya_id, role, order_index)
 );
 
 -- Épinglage admin de la "Figure de la semaine" affichée sur l'accueil
@@ -1810,6 +1829,7 @@ create index idx_featured_figures_figure_id on public.featured_figures (figure_i
 create index idx_figure_events_event_id on public.figure_events (event_id);
 create index idx_figure_zawiya_khalifas_founder on public.figure_zawiya_khalifas (founder_figure_id);
 create index idx_figure_zawiya_khalifas_khalifa on public.figure_zawiya_khalifas (khalifa_figure_id);
+create index idx_figure_zawiya_khalifas_zawiya on public.figure_zawiya_khalifas (zawiya_id);
 create index idx_figure_quotes_figure_id on public.figure_quotes (figure_id);
 create index idx_figure_works_figure_id on public.figure_works (figure_id);
 create index idx_group_memberships_user_id on public.group_memberships (user_id);

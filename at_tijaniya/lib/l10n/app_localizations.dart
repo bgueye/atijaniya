@@ -2562,7 +2562,7 @@ abstract class AppLocalizations {
   /// No description provided for @figureKhalifaChainSectionTitle.
   ///
   /// In fr, this message translates to:
-  /// **'Chaîne de khalifas'**
+  /// **'Succession'**
   String get figureKhalifaChainSectionTitle;
 
   /// No description provided for @figureKhalifaFounderLabel.
@@ -2574,19 +2574,19 @@ abstract class AppLocalizations {
   /// No description provided for @figureKhalifaChainPending.
   ///
   /// In fr, this message translates to:
-  /// **'La chaîne de succession de cette zawiya n\'est pas encore renseignée.'**
+  /// **'Aucune succession n\'est encore renseignée pour cette figure.'**
   String get figureKhalifaChainPending;
 
   /// No description provided for @figureKhalifaChainLoadError.
   ///
   /// In fr, this message translates to:
-  /// **'Impossible de charger la chaîne de khalifas.'**
+  /// **'Impossible de charger la succession.'**
   String get figureKhalifaChainLoadError;
 
   /// No description provided for @figureKhalifaAddButton.
   ///
   /// In fr, this message translates to:
-  /// **'Ajouter un khalife'**
+  /// **'Ajouter à la succession'**
   String get figureKhalifaAddButton;
 
   /// No description provided for @figureKhalifaEditButton.
@@ -2604,7 +2604,7 @@ abstract class AppLocalizations {
   /// No description provided for @figureKhalifaRemoveConfirmTitle.
   ///
   /// In fr, this message translates to:
-  /// **'Retirer ce khalife de la chaîne ?'**
+  /// **'Retirer ce maillon de la succession ?'**
   String get figureKhalifaRemoveConfirmTitle;
 
   /// No description provided for @figureKhalifaRemoveConfirmBody.
@@ -2622,25 +2622,25 @@ abstract class AppLocalizations {
   /// No description provided for @figureKhalifaRemoveError.
   ///
   /// In fr, this message translates to:
-  /// **'Impossible de retirer ce khalife.'**
+  /// **'Impossible de retirer ce maillon.'**
   String get figureKhalifaRemoveError;
 
   /// No description provided for @figureKhalifaFormCreateTitle.
   ///
   /// In fr, this message translates to:
-  /// **'Ajouter un khalife'**
+  /// **'Ajouter à la succession'**
   String get figureKhalifaFormCreateTitle;
 
   /// No description provided for @figureKhalifaFormEditTitle.
   ///
   /// In fr, this message translates to:
-  /// **'Modifier ce khalife'**
+  /// **'Modifier ce maillon'**
   String get figureKhalifaFormEditTitle;
 
   /// No description provided for @figureKhalifaFormFigureLabel.
   ///
   /// In fr, this message translates to:
-  /// **'Figure du khalife'**
+  /// **'Figure'**
   String get figureKhalifaFormFigureLabel;
 
   /// No description provided for @figureKhalifaFormFigureNone.
@@ -2652,13 +2652,13 @@ abstract class AppLocalizations {
   /// No description provided for @figureKhalifaFormOrderLabel.
   ///
   /// In fr, this message translates to:
-  /// **'Rang dans la chaîne'**
+  /// **'Rang dans la succession'**
   String get figureKhalifaFormOrderLabel;
 
   /// No description provided for @figureKhalifaFormOrderHint.
   ///
   /// In fr, this message translates to:
-  /// **'1 pour le premier khalife après le fondateur, puis en augmentant à chaque succession.'**
+  /// **'1 pour le premier successeur après le fondateur, puis en augmentant à chaque succession.'**
   String get figureKhalifaFormOrderHint;
 
   /// No description provided for @figureKhalifaFormOrderRequired.
@@ -2694,8 +2694,68 @@ abstract class AppLocalizations {
   /// No description provided for @figureKhalifaFormSaveError.
   ///
   /// In fr, this message translates to:
-  /// **'Impossible d\'enregistrer ce khalife.'**
+  /// **'Impossible d\'enregistrer ce maillon.'**
   String get figureKhalifaFormSaveError;
+
+  /// No description provided for @figureSuccessionRoleKhalife.
+  ///
+  /// In fr, this message translates to:
+  /// **'Khalifes'**
+  String get figureSuccessionRoleKhalife;
+
+  /// No description provided for @figureSuccessionRoleMokaddem.
+  ///
+  /// In fr, this message translates to:
+  /// **'Mokaddems'**
+  String get figureSuccessionRoleMokaddem;
+
+  /// No description provided for @figureSuccessionRoleImam.
+  ///
+  /// In fr, this message translates to:
+  /// **'Imams'**
+  String get figureSuccessionRoleImam;
+
+  /// No description provided for @figureSuccessionNewButton.
+  ///
+  /// In fr, this message translates to:
+  /// **'Démarrer une succession'**
+  String get figureSuccessionNewButton;
+
+  /// No description provided for @figureSuccessionGapNotice.
+  ///
+  /// In fr, this message translates to:
+  /// **'Liste incomplète : des noms manquent ici.'**
+  String get figureSuccessionGapNotice;
+
+  /// No description provided for @figureSuccessionFormZawiyaLabel.
+  ///
+  /// In fr, this message translates to:
+  /// **'Zawiya'**
+  String get figureSuccessionFormZawiyaLabel;
+
+  /// No description provided for @figureSuccessionFormZawiyaNone.
+  ///
+  /// In fr, this message translates to:
+  /// **'Choisir une zawiya'**
+  String get figureSuccessionFormZawiyaNone;
+
+  /// No description provided for @figureSuccessionFormZawiyaEmpty.
+  ///
+  /// In fr, this message translates to:
+  /// **'Rattachez d\'abord une zawiya à cette figure.'**
+  String get figureSuccessionFormZawiyaEmpty;
+
+  /// No description provided for @figureSuccessionFormRoleLabel.
+  ///
+  /// In fr, this message translates to:
+  /// **'Rôle'**
+  String get figureSuccessionFormRoleLabel;
+
+  /// No description provided for @figureSuccessionFormGapLabel.
+  ///
+  /// In fr, this message translates to:
+  /// **'Des noms manquent avant ce maillon'**
+  String get figureSuccessionFormGapLabel;
 
   /// No description provided for @figuresCreateButton.
   ///
@@ -2742,7 +2802,7 @@ abstract class AppLocalizations {
   /// No description provided for @figureDeleteBlockedByKhalifaChain.
   ///
   /// In fr, this message translates to:
-  /// **'Impossible de supprimer cette figure : elle est encore référencée comme khalife dans une chaîne de succession.'**
+  /// **'Impossible de supprimer cette figure : elle est encore référencée dans une succession.'**
   String get figureDeleteBlockedByKhalifaChain;
 
   /// No description provided for @figureDeleteError.

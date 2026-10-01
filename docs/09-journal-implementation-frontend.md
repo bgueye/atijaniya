@@ -3094,3 +3094,56 @@ choisir cette alternative :
 l'alternative). Pas de test automatisé sur le contrôleur/l'écran Tasbih
 (même limite que l'enchaînement automatique des piliers ci-dessus) —
 comportement à valider manuellement sur téléphone.
+
+## Succession par zawiya, avec un rôle (2026-10-01)
+
+Première évolution tirée de `docs/12-propositions-evolution-contenu.md` (§ 1.1). Le modèle du
+2026-08-21 rangeait la succession par figure fondatrice ; l'enrichissement de fin septembre
+en a montré la limite : Ségou et la Zawiya Omarienne avaient chacune deux "fondateurs"
+portant un morceau de la même succession, et la Zawiya de Fès est dirigée par des mokaddems,
+pas des khalifes.
+
+**Base.** Migration `khalifa_chain_by_zawiya_with_role` sur `figure_zawiya_khalifas` :
+`zawiya_id` (`not null`, `on delete restrict`), `role` (`khalife`/`mokaddem`/`imam`, défaut
+`khalife`), `follows_gap` ; contraintes d'unicité remplacées par (`zawiya_id`, `role`,
+`order_index`) et (`zawiya_id`, `role`, `khalifa_figure_id`). `founder_figure_id` est conservé
+pour afficher le nœud "Fondateur". Les policies RLS ne changent pas. Puis
+`insert_fes_mokaddem_succession` : 8 mokaddems, le rang 8 en `follows_gap`.
+
+Pas de branche Supabase en plan gratuit : la migration a d'abord été jouée dans une
+transaction terminée par une exception volontaire renvoyant un résumé (42 lignes, 9 zawiyas,
+rangs continus, un fondateur par zawiya), donc annulée, avant d'être appliquée.
+
+**Deux lignes supprimées**, avec l'accord du porteur de projet : Thierno Madani Tall →
+Thierno Mountaga Madani Tall et Thierno Seydou Nourou Tall → Thierno Mountaga Tall. Chacune
+répétait le passage du rang 1 au rang 2 d'une succession déjà saisie sous le vrai fondateur,
+vraisemblablement pour que la fiche du khalife montre son successeur. Leurs identifiants
+sont consignés dans le commentaire de la migration.
+
+**App.** `FiguresRepository.fetchSuccessionsForFigure` remplace `fetchKhalifaChain` : il
+renvoie toutes les successions où la figure apparaît, comme fondatrice ou comme maillon, ce
+qui rend les doublons ci-dessus inutiles. Le regroupement est une fonction pure
+(`groupSuccessions`, `figure_models.dart`), testée sans réseau. Dans l'onglet Zawiya, un bloc
+par succession : titre selon le rôle, nom de la zawiya, fondateur, maillons, le maillon de la
+figure consultée encadré (et non cliquable), une mention "liste incomplète" à la place du
+connecteur quand `follows_gap` est vrai. Si la fiche du fondateur est en brouillon, la
+succession s'affiche sans nœud "Fondateur".
+
+Côté admin : "Démarrer une succession" (la figure consultée devient fondatrice, la zawiya se
+choisit parmi celles déjà rattachées à la figure, puis le rôle) et "Ajouter à la succession"
+sous chaque bloc. Zawiya, rôle et figure d'un maillon existant ne se modifient pas (retirer
+puis rajouter). Les libellés qui disaient "khalife" sont devenus neutres ("maillon",
+"succession"), FR et AR, puisqu'un maillon peut être un mokaddem.
+
+**Suppression d'une zawiya** : désormais bloquée tant qu'une succession y est rattachée, avec
+le message générique existant (`classifyZawiyaDeleteError`), sans nouveau cas d'erreur.
+
+**Écarts assumés.** Pas d'affichage de la succession sur l'écran d'une zawiya (onglet
+Zawiyas), seulement sur les fiches figures. La valeur `imam` existe en base et dans le
+formulaire mais aucune succession ne l'utilise. Un maillon en brouillon reste simplement
+absent de la succession publique, sans mention de lacune automatique.
+
+`flutter analyze` propre et 218 tests au vert (7 nouveaux : `figures_models_test.dart` pour
+le rôle et le regroupement, `figure_detail_screen_test.dart` pour l'affichage). **Pas encore
+validé sur téléphone** — scénarios à dérouler listés dans
+`docs/10-etat-avancement-et-sprints-restants.md`.

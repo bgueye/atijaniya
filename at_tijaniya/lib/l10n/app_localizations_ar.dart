@@ -1319,20 +1319,20 @@ class AppLocalizationsAr extends AppLocalizations {
   String get figureZawiyaEventsSectionTitle => 'المناسبات المرتبطة';
 
   @override
-  String get figureKhalifaChainSectionTitle => 'سلسلة الخلفاء';
+  String get figureKhalifaChainSectionTitle => 'سلسلة التعاقب';
 
   @override
   String get figureKhalifaFounderLabel => 'المؤسس';
 
   @override
   String get figureKhalifaChainPending =>
-      'لم تُسجَّل بعد سلسلة خلافة هذه الزاوية.';
+      'لم تُسجَّل بعد أي سلسلة تعاقب لهذه الشخصية.';
 
   @override
-  String get figureKhalifaChainLoadError => 'تعذّر تحميل سلسلة الخلفاء.';
+  String get figureKhalifaChainLoadError => 'تعذّر تحميل السلسلة.';
 
   @override
-  String get figureKhalifaAddButton => 'إضافة خليفة';
+  String get figureKhalifaAddButton => 'إضافة إلى السلسلة';
 
   @override
   String get figureKhalifaEditButton => 'تعديل';
@@ -1341,7 +1341,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get figureKhalifaRemoveButton => 'إزالة';
 
   @override
-  String get figureKhalifaRemoveConfirmTitle => 'إزالة هذا الخليفة من السلسلة؟';
+  String get figureKhalifaRemoveConfirmTitle => 'إزالة هذه الحلقة من السلسلة؟';
 
   @override
   String get figureKhalifaRemoveConfirmBody => 'هذا الإجراء نهائي.';
@@ -1350,16 +1350,16 @@ class AppLocalizationsAr extends AppLocalizations {
   String get figureKhalifaRemoveConfirmAction => 'إزالة';
 
   @override
-  String get figureKhalifaRemoveError => 'تعذّرت إزالة هذا الخليفة.';
+  String get figureKhalifaRemoveError => 'تعذّرت إزالة هذه الحلقة.';
 
   @override
-  String get figureKhalifaFormCreateTitle => 'إضافة خليفة';
+  String get figureKhalifaFormCreateTitle => 'إضافة إلى السلسلة';
 
   @override
-  String get figureKhalifaFormEditTitle => 'تعديل هذا الخليفة';
+  String get figureKhalifaFormEditTitle => 'تعديل هذه الحلقة';
 
   @override
-  String get figureKhalifaFormFigureLabel => 'شخصية الخليفة';
+  String get figureKhalifaFormFigureLabel => 'الشخصية';
 
   @override
   String get figureKhalifaFormFigureNone => 'اختر شخصية';
@@ -1369,7 +1369,7 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get figureKhalifaFormOrderHint =>
-      '١ لأول خليفة بعد المؤسس، ثم بالتزايد مع كل خلافة.';
+      '١ لأول من خلف المؤسس، ثم بالتزايد مع كل تعاقب.';
 
   @override
   String get figureKhalifaFormOrderRequired => 'الرتبة مطلوبة.';
@@ -1389,7 +1389,39 @@ class AppLocalizationsAr extends AppLocalizations {
   String get figureKhalifaFormSave => 'حفظ';
 
   @override
-  String get figureKhalifaFormSaveError => 'تعذّر حفظ هذا الخليفة.';
+  String get figureKhalifaFormSaveError => 'تعذّر حفظ هذه الحلقة.';
+
+  @override
+  String get figureSuccessionRoleKhalife => 'الخلفاء';
+
+  @override
+  String get figureSuccessionRoleMokaddem => 'المقدَّمون';
+
+  @override
+  String get figureSuccessionRoleImam => 'الأئمة';
+
+  @override
+  String get figureSuccessionNewButton => 'بدء سلسلة جديدة';
+
+  @override
+  String get figureSuccessionGapNotice =>
+      'القائمة غير مكتملة: هناك أسماء ناقصة هنا.';
+
+  @override
+  String get figureSuccessionFormZawiyaLabel => 'الزاوية';
+
+  @override
+  String get figureSuccessionFormZawiyaNone => 'اختر زاوية';
+
+  @override
+  String get figureSuccessionFormZawiyaEmpty =>
+      'اربط أولًا زاوية بهذه الشخصية.';
+
+  @override
+  String get figureSuccessionFormRoleLabel => 'الصفة';
+
+  @override
+  String get figureSuccessionFormGapLabel => 'هناك أسماء ناقصة قبل هذه الحلقة';
 
   @override
   String get figuresCreateButton => 'إضافة شخصية';
@@ -1416,7 +1448,7 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get figureDeleteBlockedByKhalifaChain =>
-      'تعذّر حذف هذه الشخصية: لا تزال مرجعًا كخليفة في سلسلة خلافة.';
+      'تعذّر حذف هذه الشخصية: لا تزال مرجعًا في سلسلة تعاقب.';
 
   @override
   String get figureDeleteError => 'تعذّر حذف هذه الشخصية.';

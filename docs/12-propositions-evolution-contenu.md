@@ -27,7 +27,7 @@ Ce document a été relu et confronté à la base live le 2026-10-01 (lecture se
 | `figures` | 70 : 60 `valide`, 10 `brouillon` (les 10 créées le 30/09). 69 en `family_lineage`, 1 en `founder`. Aucun portrait sur les 52 fiches de fin septembre. |
 | `zawiyas` | 34, dont 6 sans coordonnées |
 | `figure_zawiyas` | 74 liens |
-| `figure_zawiya_khalifas` | 44 lignes sur 11 fondateurs |
+| `figure_zawiya_khalifas` | 44 lignes sur 11 fondateurs (50 lignes sur 10 zawiyas après la migration 1.1 du même jour) |
 | `historical_silsila_links` | 44 liens |
 | `figure_quotes` / `figure_works` | 8 / 36 (dont 28 œuvres sur des figures `valide`) |
 | `events` | 23, aucun récurrent |
@@ -40,6 +40,15 @@ Ce document a été relu et confronté à la base live le 2026-10-01 (lecture se
 ## 1. Migrations de schéma (priorité haute)
 
 ### 1.1 Successions par zawiya, avec un rôle — `figure_zawiya_khalifas`
+
+> **Fait le 2026-10-01.** Migrations `khalifa_chain_by_zawiya_with_role` et
+> `insert_fes_mokaddem_succession` appliquées, code Flutter adapté. Écarts par rapport au
+> texte ci-dessous, décidés avec le porteur de projet : les deux lignes des fondateurs hors
+> tableau (Thierno Madani Tall, Thierno Seydou Nourou Tall) étaient des doublons partiels de
+> Ségou et de l'Omarienne et ont été supprimées (44 → 42 lignes, puis 50 avec Fès) ; une
+> colonne `follows_gap` porte la lacune entre les rangs 7 et 8 de Fès ; la FK `zawiya_id` est
+> en `on delete restrict` ; la fiche d'un khalife affiche désormais la succession à laquelle
+> il appartient. Détail : `docs/09-journal-implementation-frontend.md`.
 
 **Problème.** La succession est rangée par fondateur et non par zawiya. Quand un même fondateur a plusieurs zawiyas (El Hadj Oumar Tall, Cheikh Ahmed Tijani), les successions se mélangent ou entrent en conflit sur `order_index`. Par ailleurs, la zawiya de Fès n'a pas de khalifes mais des **mokaddems**.
 
@@ -221,7 +230,7 @@ Ces points portent en partie sur des fiches déjà publiées (lot du 28/09, rest
 
 ## 7. Ordre recommandé (analyse du 2026-10-01)
 
-1. Migration 1.1 (succession par zawiya + rôle), après arbitrage sur les deux fondateurs hors tableau.
+1. ~~Migration 1.1 (succession par zawiya + rôle)~~ — fait le 2026-10-01.
 2. Migrations 1.5 (`zawiyas.kind`) et 1.3 (catégories), puis 1.2 (statut des citations et œuvres).
 3. Drapeau « date approximative » (première moitié de la section 3), puis glossaire.
 4. Après le lancement : 1.4 complet (maîtres multiples), règles hégiriennes, dahiras, sources structurées.

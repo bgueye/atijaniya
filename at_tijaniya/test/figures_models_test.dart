@@ -257,4 +257,97 @@ void main() {
       expect(updated.bioText, 'Nouveau texte.');
     });
   });
+
+  // Successions rangées par zawiya + rôle (migration
+  // `khalifa_chain_by_zawiya_with_role`, 2026-10-01) — données factices.
+  group('successionRoleFromDb / successionRoleToDb', () {
+    test('aller-retour sur les trois rôles', () {
+      for (final role in SuccessionRole.values) {
+        expect(successionRoleFromDb(successionRoleToDb(role)), role);
+      }
+    });
+
+    test('valeur inconnue ou absente -> khalife', () {
+      expect(successionRoleFromDb('autre'), SuccessionRole.khalife);
+      expect(successionRoleFromDb(null), SuccessionRole.khalife);
+    });
+  });
+
+  group('groupSuccessions', () {
+    Map<String, dynamic> figureRow(String id) =>
+        {'id': id, 'name_ar': 'ع-$id', 'name_fr': 'Nom $id', 'category': 'family_lineage', 'portrait_url': null};
+
+    Map<String, dynamic> linkRow({
+      required String id,
+      required String founder,
+      required String khalifa,
+      required String zawiya,
+      required String zawiyaName,
+      String role = 'khalife',
+      required int order,
+      String? period,
+      bool gap = false,
+    }) =>
+        {
+          'id': id,
+          'founder_figure_id': founder,
+          'khalifa_figure_id': khalifa,
+          'zawiya_id': zawiya,
+          'role': role,
+          'order_index': order,
+          'period_text': period,
+          'follows_gap': gap,
+          'zawiyas': {'name': zawiyaName},
+        };
+
+    test('regroupe par zawiya et par rôle, trie par nom de zawiya puis par rang', () {
+      final successions = groupSuccessions(
+        [
+          linkRow(id: 'l3', founder: 'f1', khalifa: 'k3', zawiya: 'zB', zawiyaName: 'Zawiya B', order: 1),
+          linkRow(id: 'l2', founder: 'f1', khalifa: 'k2', zawiya: 'zA', zawiyaName: 'Zawiya A', order: 2, gap: true),
+          linkRow(id: 'l1', founder: 'f1', khalifa: 'k1', zawiya: 'zA', zawiyaName: 'Zawiya A', order: 1, period: '1900'),
+          linkRow(
+              id: 'l4', founder: 'f1', khalifa: 'k1', zawiya: 'zA', zawiyaName: 'Zawiya A', role: 'mokaddem', order: 1),
+        ],
+        {for (final id in ['f1', 'k1', 'k2', 'k3']) id: figureRow(id)},
+      );
+
+      expect(successions.map((s) => '${s.zawiyaName}/${s.role.name}'),
+          ['Zawiya A/khalife', 'Zawiya A/mokaddem', 'Zawiya B/khalife']);
+      final first = successions.first;
+      expect(first.links.map((l) => l.id), ['l1', 'l2']);
+      expect(first.links.first.periodText, '1900');
+      expect(first.links.last.followsGap, isTrue);
+      expect(first.founderFigureId, 'f1');
+      expect(first.founderNameFr, 'Nom f1');
+    });
+
+    test('écarte un maillon dont la figure est illisible, et une succession devenue vide', () {
+      final successions = groupSuccessions(
+        [
+          linkRow(id: 'l1', founder: 'f1', khalifa: 'k1', zawiya: 'zA', zawiyaName: 'Zawiya A', order: 1),
+          linkRow(id: 'l2', founder: 'f1', khalifa: 'brouillon', zawiya: 'zA', zawiyaName: 'Zawiya A', order: 2),
+          linkRow(id: 'l3', founder: 'f2', khalifa: 'brouillon', zawiya: 'zB', zawiyaName: 'Zawiya B', order: 1),
+        ],
+        {'f1': figureRow('f1'), 'k1': figureRow('k1')},
+      );
+
+      expect(successions, hasLength(1));
+      expect(successions.single.links.map((l) => l.id), ['l1']);
+    });
+
+    test('fondateur illisible : succession conservée, sans nom de fondateur', () {
+      final successions = groupSuccessions(
+        [linkRow(id: 'l1', founder: 'brouillon', khalifa: 'k1', zawiya: 'zA', zawiyaName: 'Zawiya A', order: 1)],
+        {'k1': figureRow('k1')},
+      );
+
+      expect(successions.single.founderNameFr, isNull);
+      expect(successions.single.founderNameAr, isNull);
+    });
+
+    test('aucune ligne -> liste vide', () {
+      expect(groupSuccessions([], {}), isEmpty);
+    });
+  });
 }

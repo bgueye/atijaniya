@@ -308,65 +308,94 @@ class FiguresRepository {
     await SupabaseConfig.client.from('figure_zawiyas').delete().match({'figure_id': figureId, 'zawiya_id': zawiyaId});
   }
 
-  /// Chaîne de succession des khalifas de la figure fondatrice [founderFigureId]
-  /// (`figure_zawiya_khalifas`), triée par rang. `figure_zawiya_khalifas` a
-  /// deux FK vers `figures` (`founder_figure_id`/`khalifa_figure_id`) : un
-  /// embed PostgREST direct serait ambigu, d'où la résolution en deux
-  /// requêtes puis jointure côté client — même contournement que
-  /// `_fetchMemberCounts` (`communaute/data/groups_repository.dart`) et
-  /// `_fetchDisplayNames` (`khadara/data/live_stream_repository.dart`). Le
-  /// filtre `figuresById[...] != null` protège en plus côté client contre un
-  /// khalife en brouillon qui échapperait à la RLS (défense en profondeur,
-  /// même logique que le double filtre sur `content_status` ailleurs dans ce
-  /// repository).
-  Future<List<FigureKhalifaLink>> fetchKhalifaChain(String founderFigureId) async {
-    final linkRows = await SupabaseConfig.client
+  /// Successions (`figure_zawiya_khalifas`) dans lesquelles [figureId]
+  /// apparaît, comme fondatrice ou comme maillon — chacune renvoyée en
+  /// entier. Depuis la migration `khalifa_chain_by_zawiya_with_role`
+  /// (2026-10-01), une succession est rangée par zawiya + rôle : la fiche
+  /// d'un khalife montre donc la succession à laquelle il appartient, et
+  /// plus seulement la fiche du fondateur.
+  ///
+  /// Trois requêtes : (1) les couples zawiya + rôle où la figure apparaît,
+  /// (2) toutes les lignes de ces zawiyas, (3) les figures correspondantes.
+  /// `figure_zawiya_khalifas` a deux FK vers `figures`
+  /// (`founder_figure_id`/`khalifa_figure_id`) : un embed PostgREST direct
+  /// serait ambigu, d'où la jointure côté client — même contournement que
+  /// `_fetchMemberCounts` (`communaute/data/groups_repository.dart`). La FK
+  /// vers `zawiyas` est unique, son embed (`zawiyas(name)`) ne pose pas ce
+  /// problème. Le regroupement et le filtrage des maillons non lisibles
+  /// (brouillons) sont faits par `groupSuccessions` (`figure_models.dart`).
+  Future<List<ZawiyaSuccession>> fetchSuccessionsForFigure(String figureId) async {
+    final ownRows = await SupabaseConfig.client
         .from('figure_zawiya_khalifas')
-        .select()
-        .eq('founder_figure_id', founderFigureId)
-        .order('order_index');
-    if (linkRows.isEmpty) return [];
+        .select('zawiya_id, role')
+        .or('founder_figure_id.eq.$figureId,khalifa_figure_id.eq.$figureId');
+    if (ownRows.isEmpty) return [];
 
-    final khalifaIds = linkRows.map((row) => row['khalifa_figure_id'] as String).toSet().toList();
+    // Une zawiya peut porter plusieurs successions (une par rôle) : on charge
+    // toutes ses lignes puis on ne garde que les couples où la figure apparaît.
+    final ownKeys = {for (final row in ownRows) '${row['zawiya_id']}|${row['role']}'};
+    final zawiyaIds = ownRows.map((row) => row['zawiya_id'] as String).toSet().toList();
+    final allRows = await SupabaseConfig.client
+        .from('figure_zawiya_khalifas')
+        .select('*, zawiyas(name)')
+        .inFilter('zawiya_id', zawiyaIds)
+        .order('order_index');
+    final linkRows = [
+      for (final row in allRows)
+        if (ownKeys.contains('${row['zawiya_id']}|${row['role']}')) row,
+    ];
+
+    final figureIds = {
+      for (final row in linkRows) ...[row['khalifa_figure_id'] as String, row['founder_figure_id'] as String],
+    }.toList();
     final figureRows = await SupabaseConfig.client
         .from('figures')
         .select('id, name_ar, name_fr, category, portrait_url')
-        .inFilter('id', khalifaIds);
+        .inFilter('id', figureIds);
     final figuresById = {for (final row in figureRows) row['id'] as String: row};
 
-    return [
-      for (final row in linkRows)
-        if (figuresById[row['khalifa_figure_id']] != null)
-          FigureKhalifaLink.fromRow(row, figuresById[row['khalifa_figure_id']]!),
-    ];
+    return groupSuccessions(linkRows, figuresById);
   }
 
-  /// Ajoute [khalifaFigureId] à la chaîne de succession de [founderFigureId] —
-  /// RLS `figure_zawiya_khalifas_admin_write`. Peut lever une
-  /// `PostgrestException` (violation `unique(founder_figure_id, order_index)`
-  /// ou `unique(founder_figure_id, khalifa_figure_id)`) si le rang ou le
-  /// khalife sont déjà utilisés dans cette chaîne — non catchée ici,
+  /// Ajoute [khalifaFigureId] à la succession [zawiyaId] + [role] — RLS
+  /// `figure_zawiya_khalifas_admin_write`. Peut lever une
+  /// `PostgrestException` (violation `unique(zawiya_id, role, order_index)`
+  /// ou `unique(zawiya_id, role, khalifa_figure_id)`) si le rang ou la
+  /// figure sont déjà utilisés dans cette succession — non catchée ici,
   /// `FigureKhalifaFormScreen` affiche alors l'erreur générique de
   /// sauvegarde.
   Future<void> addKhalifaLink({
     required String founderFigureId,
+    required String zawiyaId,
+    required SuccessionRole role,
     required String khalifaFigureId,
     required int orderIndex,
     String? periodText,
+    bool followsGap = false,
   }) async {
     await SupabaseConfig.client.from('figure_zawiya_khalifas').insert({
       'founder_figure_id': founderFigureId,
+      'zawiya_id': zawiyaId,
+      'role': successionRoleToDb(role),
       'khalifa_figure_id': khalifaFigureId,
       'order_index': orderIndex,
       'period_text': periodText,
+      'follows_gap': followsGap,
     });
   }
 
-  /// RLS `figure_zawiya_khalifas_admin_update`.
-  Future<void> updateKhalifaLink(String id, {required int orderIndex, String? periodText}) async {
+  /// RLS `figure_zawiya_khalifas_admin_update`. La zawiya, le rôle et la
+  /// figure d'un maillon existant ne se modifient pas (retirer puis
+  /// rajouter), seulement son rang, sa période et son drapeau de lacune.
+  Future<void> updateKhalifaLink(
+    String id, {
+    required int orderIndex,
+    String? periodText,
+    required bool followsGap,
+  }) async {
     await SupabaseConfig.client
         .from('figure_zawiya_khalifas')
-        .update({'order_index': orderIndex, 'period_text': periodText})
+        .update({'order_index': orderIndex, 'period_text': periodText, 'follows_gap': followsGap})
         .eq('id', id);
   }
 

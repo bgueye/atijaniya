@@ -247,18 +247,51 @@ class FigureSilsilaLink {
   }
 }
 
-/// Un maillon de la chaîne de succession des khalifas d'une figure
-/// fondatrice (`figure_zawiya_khalifas`) — modèle à plat, distinct de
-/// [HistoricalSilsilaLink]/[FigureSilsilaLink] : pas de récursivité, chaque
-/// khalife pointe directement sur la figure fondatrice consultée (voir
-/// `database/schema.sql`, migration `add_figure_zawiyas_and_khalifa_chain`).
-/// Le khalife est résolu en deux requêtes côté repository (deux FK de
+/// Rôle porté par les maillons d'une succession
+/// (`figure_zawiya_khalifas.role`, migration
+/// `khalifa_chain_by_zawiya_with_role` du 2026-10-01) : une zawiya n'est pas
+/// toujours dirigée par des khalifes — Fès a des mokaddems. Le rôle fait
+/// partie de la clé d'une succession (une même zawiya peut en avoir une par
+/// rôle) et détermine le titre affiché.
+enum SuccessionRole { khalife, mokaddem, imam }
+
+/// Toute valeur inconnue retombe sur [SuccessionRole.khalife], la valeur par
+/// défaut de la colonne — une ancienne version de l'app ne doit pas planter
+/// si un rôle est ajouté plus tard en base.
+SuccessionRole successionRoleFromDb(String? value) {
+  return switch (value) {
+    'mokaddem' => SuccessionRole.mokaddem,
+    'imam' => SuccessionRole.imam,
+    _ => SuccessionRole.khalife,
+  };
+}
+
+String successionRoleToDb(SuccessionRole role) {
+  return switch (role) {
+    SuccessionRole.khalife => 'khalife',
+    SuccessionRole.mokaddem => 'mokaddem',
+    SuccessionRole.imam => 'imam',
+  };
+}
+
+/// Un maillon d'une succession (`figure_zawiya_khalifas`) — modèle à plat,
+/// distinct de [HistoricalSilsilaLink]/[FigureSilsilaLink] : pas de
+/// récursivité, `order_index` fixe le rang. Depuis la migration
+/// `khalifa_chain_by_zawiya_with_role` (2026-10-01), une succession est
+/// identifiée par le couple zawiya + rôle et non plus par la figure
+/// fondatrice : [founderFigureId] ne sert plus qu'à afficher le nœud
+/// "Fondateur" (voir [ZawiyaSuccession]). Le nom "Khalifa" est conservé pour
+/// rester aligné sur la table, mais un maillon peut être un mokaddem ou un
+/// imam selon [role].
+/// La figure du maillon est résolue à part côté repository (deux FK de
 /// `figure_zawiya_khalifas` vers `figures` : un embed PostgREST direct
-/// serait ambigu) — voir `FiguresRepository.fetchKhalifaChain`.
+/// serait ambigu) — voir `FiguresRepository.fetchSuccessionsForFigure`.
 class FigureKhalifaLink {
   const FigureKhalifaLink({
     required this.id,
     required this.founderFigureId,
+    required this.zawiyaId,
+    this.role = SuccessionRole.khalife,
     required this.khalifaFigureId,
     required this.khalifaNameAr,
     required this.khalifaNameFr,
@@ -266,10 +299,13 @@ class FigureKhalifaLink {
     this.khalifaPortraitUrl,
     required this.orderIndex,
     this.periodText,
+    this.followsGap = false,
   });
 
   final String id;
   final String founderFigureId;
+  final String zawiyaId;
+  final SuccessionRole role;
   final String khalifaFigureId;
   final String khalifaNameAr;
   final String khalifaNameFr;
@@ -282,13 +318,21 @@ class FigureKhalifaLink {
   /// justification du texte libre plutôt que des dates structurées.
   final String? periodText;
 
+  /// `figure_zawiya_khalifas.follows_gap` — `true` quand des noms manquent
+  /// entre le maillon précédent et celui-ci : l'écran affiche alors une
+  /// mention "liste incomplète" à la place du simple connecteur, pour ne pas
+  /// laisser entendre que la succession est continue.
+  final bool followsGap;
+
   /// [linkRow] = une ligne de `figure_zawiya_khalifas` ; [figureRow] = la
   /// ligne `figures` correspondante (`khalifa_figure_id`), résolue à part —
-  /// voir `FiguresRepository.fetchKhalifaChain`.
+  /// voir `FiguresRepository.fetchSuccessionsForFigure`.
   factory FigureKhalifaLink.fromRow(Map<String, dynamic> linkRow, Map<String, dynamic> figureRow) {
     return FigureKhalifaLink(
       id: linkRow['id'] as String,
       founderFigureId: linkRow['founder_figure_id'] as String,
+      zawiyaId: linkRow['zawiya_id'] as String,
+      role: successionRoleFromDb(linkRow['role'] as String?),
       khalifaFigureId: linkRow['khalifa_figure_id'] as String,
       khalifaNameAr: figureRow['name_ar'] as String,
       khalifaNameFr: figureRow['name_fr'] as String,
@@ -296,8 +340,89 @@ class FigureKhalifaLink {
       khalifaPortraitUrl: figureRow['portrait_url'] as String?,
       orderIndex: linkRow['order_index'] as int,
       periodText: linkRow['period_text'] as String?,
+      followsGap: (linkRow['follows_gap'] as bool?) ?? false,
     );
   }
+}
+
+/// Une succession complète : tous les maillons d'une même zawiya pour un
+/// même rôle, triés par rang, avec la figure fondatrice affichée en tête.
+///
+/// [founderNameAr]/[founderNameFr] sont `null` quand la figure fondatrice
+/// n'est pas lisible par le compte courant (fiche encore en brouillon,
+/// masquée par la RLS) : la succession s'affiche alors sans nœud
+/// "Fondateur" plutôt que de disparaître entièrement.
+class ZawiyaSuccession {
+  const ZawiyaSuccession({
+    required this.zawiyaId,
+    required this.zawiyaName,
+    required this.role,
+    required this.founderFigureId,
+    this.founderNameAr,
+    this.founderNameFr,
+    required this.links,
+  });
+
+  final String zawiyaId;
+  final String zawiyaName;
+  final SuccessionRole role;
+  final String founderFigureId;
+  final String? founderNameAr;
+  final String? founderNameFr;
+  final List<FigureKhalifaLink> links;
+}
+
+/// Regroupe des lignes brutes de `figure_zawiya_khalifas` en successions
+/// (une par couple zawiya + rôle) — logique pure, isolée du repository pour
+/// être testable sans réseau.
+///
+/// [linkRows] : lignes de la table, chacune embarquant `zawiyas(name)`.
+/// [figuresById] : lignes `figures` lisibles par le compte courant, indexées
+/// par id. Un maillon dont la figure n'y figure pas (brouillon masqué par la
+/// RLS) est écarté : même défense en profondeur que le reste du module. Une
+/// succession qui n'a plus aucun maillon visible n'est pas renvoyée.
+///
+/// Tri : par nom de zawiya puis par rôle pour un ordre d'affichage stable,
+/// et par rang à l'intérieur de chaque succession. Le fondateur d'une
+/// succession est celui de son premier maillon (toutes les lignes d'une même
+/// succession partagent le même `founder_figure_id` par construction).
+List<ZawiyaSuccession> groupSuccessions(
+  List<Map<String, dynamic>> linkRows,
+  Map<String, Map<String, dynamic>> figuresById,
+) {
+  final linksByKey = <String, List<FigureKhalifaLink>>{};
+  final zawiyaNamesById = <String, String>{};
+  for (final row in linkRows) {
+    final figureRow = figuresById[row['khalifa_figure_id']];
+    if (figureRow == null) continue;
+    final link = FigureKhalifaLink.fromRow(row, figureRow);
+    linksByKey.putIfAbsent('${link.zawiyaId}|${link.role.name}', () => []).add(link);
+    final zawiyaRow = row['zawiyas'] as Map<String, dynamic>?;
+    zawiyaNamesById[link.zawiyaId] = (zawiyaRow?['name'] as String?) ?? '';
+  }
+
+  final successions = <ZawiyaSuccession>[
+    for (final links in linksByKey.values)
+      () {
+        links.sort((a, b) => a.orderIndex.compareTo(b.orderIndex));
+        final first = links.first;
+        final founderRow = figuresById[first.founderFigureId];
+        return ZawiyaSuccession(
+          zawiyaId: first.zawiyaId,
+          zawiyaName: zawiyaNamesById[first.zawiyaId] ?? '',
+          role: first.role,
+          founderFigureId: first.founderFigureId,
+          founderNameAr: founderRow?['name_ar'] as String?,
+          founderNameFr: founderRow?['name_fr'] as String?,
+          links: links,
+        );
+      }(),
+  ];
+  successions.sort((a, b) {
+    final byName = a.zawiyaName.compareTo(b.zawiyaName);
+    return byName != 0 ? byName : a.role.index.compareTo(b.role.index);
+  });
+  return successions;
 }
 
 List<String> _biographySections(String bioText) {

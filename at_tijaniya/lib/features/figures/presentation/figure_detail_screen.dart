@@ -1049,8 +1049,12 @@ class _AdminItemActions extends StatelessWidget {
 /// évènements liés qui la célèbrent/commémorent (`figure_events`, contenu
 /// hérité de l'ex-onglet Ziyaras, inchangé — remplace l'ancien texte libre
 /// `Figure.ziyaraNote`, qui n'a jamais été relié à une colonne réelle), et
-/// chaîne de succession des khalifas (`figure_zawiya_khalifas`) — voir
-/// `database/schema.sql`, migration `add_figure_zawiyas_and_khalifa_chain`.
+/// successions (`figure_zawiya_khalifas`) — voir `database/schema.sql`,
+/// migrations `add_figure_zawiyas_and_khalifa_chain` puis
+/// `khalifa_chain_by_zawiya_with_role` (2026-10-01). Depuis cette dernière,
+/// une succession est rangée par zawiya + rôle : la section affiche toutes
+/// celles où la figure apparaît, comme fondatrice ou comme maillon, et non
+/// plus une chaîne unique partant de la figure consultée.
 /// Chaque section a son propre lier/délier réservé à un admin.
 class _ZawiyaTab extends ConsumerStatefulWidget {
   const _ZawiyaTab({required this.figure, required this.isAdmin});
@@ -1181,15 +1185,24 @@ class _ZawiyaTabState extends ConsumerState<_ZawiyaTab> {
     }
   }
 
-  // --- Chaîne de khalifas (figure_zawiya_khalifas) ---
+  // --- Successions (figure_zawiya_khalifas) ---
 
-  Future<void> _addOrEditKhalifa(FigureKhalifaLink? existingLink) async {
+  /// [succession] nul : démarre une nouvelle succession dont la figure
+  /// consultée est fondatrice. Sinon ajoute un maillon à [succession], ou
+  /// modifie [existingLink] s'il est fourni — le fondateur reste alors celui
+  /// de la succession, qui n'est pas forcément la figure consultée (fiche
+  /// d'un khalife).
+  Future<void> _addOrEditKhalifa({ZawiyaSuccession? succession, FigureKhalifaLink? existingLink}) async {
     final saved = await Navigator.of(context).push<bool>(
       MaterialPageRoute(
-        builder: (_) => FigureKhalifaFormScreen(founderFigure: widget.figure, existingLink: existingLink),
+        builder: (_) => FigureKhalifaFormScreen(
+          founderFigureId: succession?.founderFigureId ?? widget.figure.id,
+          succession: succession,
+          existingLink: existingLink,
+        ),
       ),
     );
-    if (saved == true) ref.invalidate(khalifaChainProvider(widget.figure.id));
+    if (saved == true) ref.invalidate(successionsForFigureProvider(widget.figure.id));
   }
 
   Future<void> _removeKhalifa(FigureKhalifaLink link) async {
@@ -1212,7 +1225,7 @@ class _ZawiyaTabState extends ConsumerState<_ZawiyaTab> {
 
     try {
       await ref.read(figuresRepositoryProvider).removeKhalifaLink(link.id);
-      ref.invalidate(khalifaChainProvider(widget.figure.id));
+      ref.invalidate(successionsForFigureProvider(widget.figure.id));
     } catch (_) {
       if (mounted) showErrorSnackBar(context, l10n.figureKhalifaRemoveError);
     }
@@ -1223,7 +1236,7 @@ class _ZawiyaTabState extends ConsumerState<_ZawiyaTab> {
     final l10n = AppLocalizations.of(context)!;
     final zawiyasAsync = ref.watch(linkedZawiyasForFigureProvider(widget.figure.id));
     final eventsAsync = ref.watch(linkedEventsForFigureProvider(widget.figure.id));
-    final khalifaChainAsync = ref.watch(khalifaChainProvider(widget.figure.id));
+    final successionsAsync = ref.watch(successionsForFigureProvider(widget.figure.id));
 
     return ListView(
       padding: const EdgeInsets.all(20),
@@ -1300,13 +1313,13 @@ class _ZawiyaTabState extends ConsumerState<_ZawiyaTab> {
         const SizedBox(height: 12),
         if (widget.isAdmin) ...[
           OutlinedButton.icon(
-            onPressed: () => _addOrEditKhalifa(null),
+            onPressed: () => _addOrEditKhalifa(),
             icon: const Icon(Icons.add, size: 18),
-            label: Text(l10n.figureKhalifaAddButton),
+            label: Text(l10n.figureSuccessionNewButton),
           ),
           const SizedBox(height: 12),
         ],
-        khalifaChainAsync.when(
+        successionsAsync.when(
           loading: () => Center(
               child: Padding(
             padding: const EdgeInsets.symmetric(vertical: 16),
@@ -1318,29 +1331,136 @@ class _ZawiyaTabState extends ConsumerState<_ZawiyaTab> {
                   textAlign: TextAlign.center, style: TextStyle(color: AppColors.bronze)),
               const SizedBox(height: 12),
               OutlinedButton(
-                onPressed: () => ref.invalidate(khalifaChainProvider(widget.figure.id)),
+                onPressed: () => ref.invalidate(successionsForFigureProvider(widget.figure.id)),
                 child: Text(l10n.figuresRetry),
               ),
             ],
           ),
-          data: (chain) => chain.isEmpty && !widget.isAdmin
+          data: (successions) => successions.isEmpty
               ? Text(l10n.figureKhalifaChainPending, style: TextStyle(color: AppColors.bronze))
               : Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    _FounderNode(figure: widget.figure, founderLabel: l10n.figureKhalifaFounderLabel),
-                    for (final link in chain) ...[
-                      const _SilsilaConnector(),
-                      _KhalifaNode(
-                        link: link,
+                    for (final (index, succession) in successions.indexed) ...[
+                      if (index > 0) const SizedBox(height: 28),
+                      _SuccessionBlock(
+                        succession: succession,
+                        currentFigureId: widget.figure.id,
                         isAdmin: widget.isAdmin,
-                        onEdit: () => _addOrEditKhalifa(link),
-                        onRemove: () => _removeKhalifa(link),
+                        onAdd: () => _addOrEditKhalifa(succession: succession),
+                        onEdit: (link) => _addOrEditKhalifa(succession: succession, existingLink: link),
+                        onRemove: _removeKhalifa,
                       ),
                     ],
                   ],
                 ),
         ),
       ],
+    );
+  }
+}
+
+/// Une succession complète (une zawiya, un rôle) : titre selon le rôle
+/// ("Khalifes", "Mokaddems", "Imams"), nom de la zawiya, nœud du fondateur
+/// puis les maillons dans l'ordre. Le maillon correspondant à la figure
+/// consultée ([currentFigureId]) est mis en évidence, pour qu'on la situe
+/// d'un coup d'œil sur la fiche d'un khalife. Un maillon marqué
+/// `followsGap` est précédé d'une mention "liste incomplète" à la place du
+/// simple connecteur.
+class _SuccessionBlock extends StatelessWidget {
+  const _SuccessionBlock({
+    required this.succession,
+    required this.currentFigureId,
+    required this.isAdmin,
+    required this.onAdd,
+    required this.onEdit,
+    required this.onRemove,
+  });
+
+  final ZawiyaSuccession succession;
+  final String currentFigureId;
+  final bool isAdmin;
+  final VoidCallback onAdd;
+  final ValueChanged<FigureKhalifaLink> onEdit;
+  final ValueChanged<FigureKhalifaLink> onRemove;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    final founderNameAr = succession.founderNameAr;
+    final founderNameFr = succession.founderNameFr;
+    final hasFounder = founderNameAr != null && founderNameFr != null;
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        Text(
+          successionRoleLabel(l10n, succession.role),
+          textAlign: TextAlign.center,
+          style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 14, color: AppColors.ink),
+        ),
+        const SizedBox(height: 2),
+        Text(
+          succession.zawiyaName,
+          textAlign: TextAlign.center,
+          style: TextStyle(fontSize: 12, color: AppColors.bronze),
+        ),
+        const SizedBox(height: 12),
+        if (hasFounder)
+          _FounderNode(nameArabic: founderNameAr, nameFrench: founderNameFr, founderLabel: l10n.figureKhalifaFounderLabel),
+        for (final (index, link) in succession.links.indexed) ...[
+          if (link.followsGap)
+            _SuccessionGapNotice(text: l10n.figureSuccessionGapNotice)
+          else if (index > 0 || hasFounder)
+            const _SilsilaConnector(),
+          _KhalifaNode(
+            link: link,
+            isCurrent: link.khalifaFigureId == currentFigureId,
+            isAdmin: isAdmin,
+            onEdit: () => onEdit(link),
+            onRemove: () => onRemove(link),
+          ),
+        ],
+        if (isAdmin) ...[
+          const SizedBox(height: 8),
+          Center(
+            child: TextButton.icon(
+              onPressed: onAdd,
+              icon: const Icon(Icons.add, size: 18),
+              label: Text(l10n.figureKhalifaAddButton),
+            ),
+          ),
+        ],
+      ],
+    );
+  }
+}
+
+/// Remplace le connecteur entre deux maillons quand des noms manquent entre
+/// eux (`follows_gap`) : la succession ne doit pas se lire comme continue.
+class _SuccessionGapNotice extends StatelessWidget {
+  const _SuccessionGapNotice({required this.text});
+
+  final String text;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 10),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(Icons.more_vert, size: 16, color: AppColors.bronze),
+          const SizedBox(width: 6),
+          Flexible(
+            child: Text(
+              text,
+              textAlign: TextAlign.center,
+              style: TextStyle(fontSize: 12, fontStyle: FontStyle.italic, color: AppColors.bronze),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
@@ -1566,14 +1686,16 @@ class _ZawiyaLinkPickerSheet extends ConsumerWidget {
   }
 }
 
-/// Nœud représentant la figure fondatrice consultée, toujours en tête de la
-/// chaîne de khalifas affichée — même style visuel que `_SilsilaNode` pour
-/// la racine (fond zaytoune), mais construit depuis `Figure` (nom AR/FR)
-/// plutôt que `HistoricalSilsilaLink`.
+/// Nœud représentant la figure fondatrice d'une succession, toujours en
+/// tête — même style visuel que `_SilsilaNode` pour la racine (fond
+/// zaytoune). Construit depuis les seuls noms AR/FR : le fondateur n'est
+/// plus forcément la figure consultée (fiche d'un khalife), on ne dispose
+/// donc pas toujours d'une `Figure` complète.
 class _FounderNode extends StatelessWidget {
-  const _FounderNode({required this.figure, required this.founderLabel});
+  const _FounderNode({required this.nameArabic, required this.nameFrench, required this.founderLabel});
 
-  final Figure figure;
+  final String nameArabic;
+  final String nameFrench;
   final String founderLabel;
 
   @override
@@ -1586,7 +1708,7 @@ class _FounderNode extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           Text(
-            figure.nameArabic,
+            nameArabic,
             textDirection: TextDirection.rtl,
             textAlign: TextAlign.center,
             style: AppTheme.sacredText(fontSize: 18, color: AppColors.goldSoft),
@@ -1596,7 +1718,7 @@ class _FounderNode extends StatelessWidget {
           // de cet écran (`_FigureHeader`) — même gap constaté à l'audit
           // design pré-publication Play Store.
           Text(
-            figure.nameFrench,
+            nameFrench,
             textAlign: TextAlign.center,
             style: const TextStyle(fontFamily: AppFonts.titlesFr, fontSize: 12, color: AppColors.parchment),
           ),
@@ -1608,17 +1730,26 @@ class _FounderNode extends StatelessWidget {
   }
 }
 
-/// Un maillon de la chaîne de khalifas — même style visuel que `_SilsilaNode`
-/// (non-racine), avec la période de règne si renseignée et, pour un admin,
-/// les actions Modifier/Retirer. Tap → fiche du khalife : `FigureKhalifaLink`
-/// ne porte pas de `Figure` complète (voir `FiguresRepository.fetchKhalifaChain`),
+/// Un maillon d'une succession — même style visuel que `_SilsilaNode`
+/// (non-racine), avec la période si renseignée et, pour un admin, les
+/// actions Modifier/Retirer. [isCurrent] encadre le maillon de la figure
+/// consultée et désactive son tap (on est déjà sur sa fiche).
+/// Tap → fiche du maillon : `FigureKhalifaLink` ne porte pas de `Figure`
+/// complète (voir `FiguresRepository.fetchSuccessionsForFigure`),
 /// donc on la cherche d'abord dans `figuresProvider` déjà chargé, sinon on la
 /// recharge via `fetchFigureById` (cas d'un khalife encore en brouillon, pas
 /// dans la liste publique, visible seulement par un admin).
 class _KhalifaNode extends ConsumerWidget {
-  const _KhalifaNode({required this.link, required this.isAdmin, required this.onEdit, required this.onRemove});
+  const _KhalifaNode({
+    required this.link,
+    required this.isCurrent,
+    required this.isAdmin,
+    required this.onEdit,
+    required this.onRemove,
+  });
 
   final FigureKhalifaLink link;
+  final bool isCurrent;
   final bool isAdmin;
   final VoidCallback onEdit;
   final VoidCallback onRemove;
@@ -1642,11 +1773,15 @@ class _KhalifaNode extends ConsumerWidget {
     final l10n = AppLocalizations.of(context)!;
     return InkWell(
       borderRadius: BorderRadius.circular(12),
-      onTap: () => _openKhalifaDetail(context, ref),
+      onTap: isCurrent ? null : () => _openKhalifaDetail(context, ref),
       child: Container(
         width: double.infinity,
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-        decoration: BoxDecoration(color: AppColors.offWhite, borderRadius: BorderRadius.circular(12)),
+        decoration: BoxDecoration(
+          color: AppColors.offWhite,
+          borderRadius: BorderRadius.circular(12),
+          border: isCurrent ? Border.all(color: AppColors.gold, width: 1.5) : null,
+        ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [

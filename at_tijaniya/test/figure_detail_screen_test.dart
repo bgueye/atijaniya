@@ -20,7 +20,7 @@ import 'package:at_tijaniya/l10n/app_localizations.dart';
 // currentUserIdProvider -> authStateChangesProvider, qui appelle
 // SupabaseConfig.client (donc Supabase.instance) — non initialisé dans ce
 // test. Même raison pour linkedEventsForFigureProvider/
-// linkedZawiyasForFigureProvider/khalifaChainProvider, tous les trois
+// linkedZawiyasForFigureProvider/successionsForFigureProvider, tous les trois
 // interrogés sans condition par `_ZawiyaTab` (pas seulement pour un admin)
 // et qui appelleraient sinon FiguresRepository (réseau) sans surcharge —
 // aucun des quatre n'a de rapport avec ce que ce fichier vérifie (rendu de
@@ -69,7 +69,7 @@ void main() {
       overrides: [
         linkedEventsForFigureProvider('test-figure').overrideWith((ref) async => [linkedEvent]),
         linkedZawiyasForFigureProvider('test-figure').overrideWith((ref) async => []),
-        khalifaChainProvider('test-figure').overrideWith((ref) async => []),
+        successionsForFigureProvider('test-figure').overrideWith((ref) async => []),
       ],
     ));
     await tester.pumpAndSettle();
@@ -103,5 +103,77 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text('Biographie en attente de validation.'), findsOneWidget);
+  });
+
+  // Succession rangée par zawiya + rôle (migration
+  // `khalifa_chain_by_zawiya_with_role`, 2026-10-01) : la fiche d'un maillon
+  // (et plus seulement celle du fondateur) affiche la succession entière,
+  // titrée selon le rôle, avec la mention de lacune quand `followsGap` est
+  // vrai. Noms factices, locaux au test.
+  testWidgets('FigureDetailScreen affiche la succession par zawiya, son rôle et la mention de liste incomplète',
+      (tester) async {
+    const figure = Figure(
+      id: 'test-mokaddem-2',
+      nameArabic: 'اسم تجريبي',
+      nameFrench: 'Figure consultée',
+      category: FigureCategory.religiousFamily,
+    );
+    const succession = ZawiyaSuccession(
+      zawiyaId: 'z1',
+      zawiyaName: 'Zawiya de test',
+      role: SuccessionRole.mokaddem,
+      founderFigureId: 'test-founder',
+      founderNameAr: 'المؤسس التجريبي',
+      founderNameFr: 'Fondateur de test',
+      links: [
+        FigureKhalifaLink(
+          id: 'l1',
+          founderFigureId: 'test-founder',
+          zawiyaId: 'z1',
+          role: SuccessionRole.mokaddem,
+          khalifaFigureId: 'test-mokaddem-1',
+          khalifaNameAr: 'الأول',
+          khalifaNameFr: 'Premier maillon',
+          khalifaCategory: FigureCategory.religiousFamily,
+          orderIndex: 1,
+        ),
+        FigureKhalifaLink(
+          id: 'l2',
+          founderFigureId: 'test-founder',
+          zawiyaId: 'z1',
+          role: SuccessionRole.mokaddem,
+          khalifaFigureId: 'test-mokaddem-2',
+          khalifaNameAr: 'الثاني',
+          khalifaNameFr: 'Maillon consulté',
+          khalifaCategory: FigureCategory.religiousFamily,
+          orderIndex: 2,
+          periodText: 'actuel',
+          followsGap: true,
+        ),
+      ],
+    );
+
+    await tester.pumpWidget(_wrap(
+      const FigureDetailScreen(figure: figure),
+      overrides: [
+        linkedEventsForFigureProvider('test-mokaddem-2').overrideWith((ref) async => []),
+        linkedZawiyasForFigureProvider('test-mokaddem-2').overrideWith((ref) async => []),
+        successionsForFigureProvider('test-mokaddem-2').overrideWith((ref) async => [succession]),
+      ],
+    ));
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.text('Zawiya'));
+    await tester.pumpAndSettle();
+    await tester.scrollUntilVisible(find.text('Maillon consulté'), 200, scrollable: find.byType(Scrollable).last);
+
+    expect(find.text('Mokaddems'), findsOneWidget);
+    expect(find.text('Khalifes'), findsNothing);
+    expect(find.text('Zawiya de test'), findsOneWidget);
+    expect(find.text('Fondateur de test'), findsOneWidget);
+    expect(find.text('Premier maillon'), findsOneWidget);
+    expect(find.text('Maillon consulté'), findsOneWidget);
+    expect(find.text('actuel'), findsOneWidget);
+    expect(find.text('Liste incomplète : des noms manquent ici.'), findsOneWidget);
   });
 }

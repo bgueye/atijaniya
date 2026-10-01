@@ -493,8 +493,39 @@ migration n'en garde la trace, la dernière reste `add_weekly_recurrence_to_even
 Les évolutions de schéma et de fonctionnalités que cet enrichissement appelle (succession
 par zawiya avec rôle, statut de validation des citations et œuvres, catégories de figures,
 silsila à plusieurs maîtres, type de lieu, dates hégiriennes, dahiras, sources) sont décrites,
-corrigées et ordonnées dans `docs/12-propositions-evolution-contenu.md`. **Rien n'en est
-implémenté à ce jour.** Ordre recommandé : succession par zawiya, puis type de lieu et
+corrigées et ordonnées dans `docs/12-propositions-evolution-contenu.md`. **Seule la
+succession par zawiya (§ 1.1) est implémentée, voir ci-dessous.** Ordre recommandé pour la
+suite : type de lieu et
 catégories, puis statut des citations/œuvres, puis drapeau "date approximative" et glossaire ;
 le reste après le lancement. Le Sprint 6 (soumission aux stores) et la bascule PayDunya en
 mode live restent ouverts et inchangés.
+
+### Succession par zawiya, avec un rôle (2026-10-01)
+
+Première évolution de `docs/12` livrée (§ 1.1). Deux migrations appliquées sur le projet
+live, après un essai à blanc dans une transaction annulée (pas de branche Supabase en plan
+gratuit) :
+
+- `khalifa_chain_by_zawiya_with_role` — `figure_zawiya_khalifas` reçoit `zawiya_id`
+  (`on delete restrict`), `role` (`khalife`/`mokaddem`/`imam`) et `follows_gap` ; l'unicité
+  passe de (fondateur, rang) à (zawiya, rôle, rang). Deux lignes doublons supprimées avec
+  l'accord du porteur de projet (fragments Ségou et Omarienne saisis sous un second
+  "fondateur"), soit 44 → 42 lignes.
+- `insert_fes_mokaddem_succession` — les 8 mokaddems de la Zawiya de Fès, le rang 8 marqué
+  `follows_gap`. Total : 50 lignes, 10 successions.
+
+Côté app, la fiche d'une figure affiche toutes les successions où elle apparaît (fondatrice
+ou maillon), titrées selon le rôle, avec le maillon consulté encadré et une mention "liste
+incomplète" là où des noms manquent. Remplace la décision du 2026-08-21 "chaîne unique par
+figure fondatrice". `flutter analyze` propre, 218 tests au vert (7 nouveaux).
+
+**À valider manuellement sur téléphone** (pas encore fait) : fiche de Cheikh Ahmed Tijani
+(deux successions, Aïn Madhi et Fès, avec la mention de lacune), fiche d'un khalife
+(succession affichée, maillon encadré), cycle admin ajouter/modifier/retirer un maillon et
+"Démarrer une succession", suppression d'une zawiya portant une succession (doit être
+refusée avec le message "encore référencée").
+
+**Compatibilité** : un build installé avant cette livraison lit encore la table par
+`founder_figure_id` et continue d'afficher les chaînes des fondateurs, mais mélange Aïn Madhi
+et Fès sur la fiche de Cheikh Ahmed Tijani et ne peut plus ajouter de maillon (`zawiya_id`
+obligatoire). À mettre à jour avant toute saisie.

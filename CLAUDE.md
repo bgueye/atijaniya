@@ -15,7 +15,7 @@ attente) : `docs/10-etat-avancement-et-sprints-restants.md`
 dupliquer si l'analyse est refaite.
 Propositions d'évolution du schéma et du contenu (succession par zawiya, catégories de
 figures, silsila à plusieurs maîtres, dates hégiriennes, dahiras), relues et confrontées à
-la base le 2026-10-01, **rien n'est encore implémenté** :
+la base le 2026-10-01, **seul le § 1.1 (succession par zawiya) est implémenté** :
 `docs/12-propositions-evolution-contenu.md`.
 
 ## Stack technique
@@ -140,16 +140,20 @@ citation et date de ziara affichées seulement si elles existent, jamais
 inventées) ; **onglet "Ziyaras" renommé "Zawiya" et étendu le 2026-08-21**
 (zawiyas fondées/dirigées par la figure — nouvelle table `figure_zawiyas`,
 lier/délier admin — et chaîne de succession des khalifas — nouvelle table
-`figure_zawiya_khalifas`, chaque khalife étant lui-même une Figure, chaîne
-unique par figure fondatrice, pas par zawiya —, en plus des évènements liés
-déjà existants, conservés tels quels ; **chaîne de la Zawiya de Tivaouane
+`figure_zawiya_khalifas`, chaque khalife étant lui-même une Figure ;
+**depuis le 2026-10-01 une succession est rangée par zawiya + rôle**
+(`khalife`/`mokaddem`/`imam`), ce qui remplace la décision du 21/08 "chaîne
+unique par figure fondatrice" : la fiche du fondateur comme celle de chaque
+maillon affiche la succession entière, `follows_gap` signale une liste
+incomplète, `founder_figure_id` ne sert plus qu'à afficher le fondateur —,
+en plus des évènements liés déjà existants, conservés tels quels ; **chaîne de la Zawiya de Tivaouane
 saisie et validée** (El Hadj Malick Sy, 7 khalifas de 1922 à aujourd'hui) ;
 **contenu fortement enrichi les 28 et 30/09, saisi directement en base sans
 migration** — état réel vérifié le 2026-10-01 : 70 figures (60 `valide`,
-10 `brouillon`), 34 zawiyas, 74 liens figure–zawiya, 44 lignes de
-succession sur 11 fondateurs (Tivaouane, Médina Baye, Léona, Aïn Madhi,
-Omarienne, Louga, Ségou, Nioro, Nguidjilone), 44 liens de silsila
-historique ; les 42 fiches du 28/09 restent `valide` par décision du
+10 `brouillon`), 34 zawiyas, 74 liens figure–zawiya, 50 lignes de
+succession sur 10 zawiyas (khalifes de Tivaouane, Médina Baye, Léona, Aïn
+Madhi, Omarienne, Louga, Ségou, Nioro, Nguidjilone ; mokaddems de Fès),
+44 liens de silsila historique ; les 42 fiches du 28/09 restent `valide` par décision du
 porteur de projet du 2026-10-01, les limites connues de ce lot et les
 évolutions de schéma qu'il appelle sont dans
 `docs/12-propositions-evolution-contenu.md`, voir aussi

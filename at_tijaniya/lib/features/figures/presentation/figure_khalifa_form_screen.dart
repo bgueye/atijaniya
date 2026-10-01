@@ -3,24 +3,49 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/theme/app_colors.dart';
 import '../../../l10n/app_localizations.dart';
+import '../../khadara/domain/khadara_models.dart' show Zawiya;
 import '../domain/figure_models.dart';
 import 'figures_providers.dart';
 
-/// Ajout/édition d'un maillon dans la chaîne de succession des khalifas
-/// d'une figure fondatrice — réservé par RLS à un compte admin
-/// (`figure_zawiya_khalifas_admin_write`/`_update`). Contrairement à
-/// `FigureSilsilaFormScreen` (au plus un maillon par figure, `upsert`), une
-/// figure fondatrice peut avoir plusieurs khalifas : ce formulaire ajoute un
-/// nouveau maillon à la chaîne ou modifie le rang/la période d'un maillon
-/// existant ([existingLink] non nul) — changer QUI est le khalife d'un
-/// maillon existant n'est volontairement pas permis (retirer puis
-/// rajouter), d'où le figure-picker désactivé en édition.
+/// Libellé pluriel d'un rôle de succession ("Khalifes", "Mokaddems",
+/// "Imams") — partagé entre ce formulaire et l'onglet Zawiya de
+/// `FigureDetailScreen`, qui s'en sert comme titre de chaque succession.
+String successionRoleLabel(AppLocalizations l10n, SuccessionRole role) {
+  return switch (role) {
+    SuccessionRole.khalife => l10n.figureSuccessionRoleKhalife,
+    SuccessionRole.mokaddem => l10n.figureSuccessionRoleMokaddem,
+    SuccessionRole.imam => l10n.figureSuccessionRoleImam,
+  };
+}
+
+/// Ajout/édition d'un maillon dans une succession (khalifes, mokaddems ou
+/// imams d'une zawiya) — réservé par RLS à un compte admin
+/// (`figure_zawiya_khalifas_admin_write`/`_update`). Trois usages :
+/// - [succession] nul : démarre une nouvelle succession dont
+///   [founderFigureId] est la figure fondatrice ; l'admin choisit la zawiya
+///   (parmi celles déjà rattachées à cette figure) et le rôle ;
+/// - [succession] non nul, [existingLink] nul : ajoute un maillon à cette
+///   succession, zawiya et rôle étant alors fixés ;
+/// - [existingLink] non nul : modifie le rang, la période ou le drapeau de
+///   lacune d'un maillon existant. Changer QUI est le maillon, sa zawiya ou
+///   son rôle n'est volontairement pas permis (retirer puis rajouter), d'où
+///   les champs correspondants en lecture seule.
 class FigureKhalifaFormScreen extends ConsumerStatefulWidget {
-  const FigureKhalifaFormScreen({super.key, required this.founderFigure, this.existingLink});
+  const FigureKhalifaFormScreen({
+    super.key,
+    required this.founderFigureId,
+    this.succession,
+    this.existingLink,
+  }) : assert(existingLink == null || succession != null, 'Un maillon existant appartient à une succession.');
 
-  final Figure founderFigure;
+  /// Figure fondatrice : celle de [succession] si elle est fournie, sinon la
+  /// figure consultée, qui devient fondatrice de la nouvelle succession.
+  final String founderFigureId;
 
-  /// `null` pour ajouter un nouveau khalife à la chaîne.
+  /// `null` pour démarrer une nouvelle succession.
+  final ZawiyaSuccession? succession;
+
+  /// `null` pour ajouter un nouveau maillon.
   final FigureKhalifaLink? existingLink;
 
   @override
@@ -32,17 +57,35 @@ class _FigureKhalifaFormScreenState extends ConsumerState<FigureKhalifaFormScree
   final _orderIndexController = TextEditingController();
   final _periodController = TextEditingController();
   String? _khalifaFigureId;
+  String? _zawiyaId;
+  SuccessionRole _role = SuccessionRole.khalife;
+  bool _followsGap = false;
   bool _saving = false;
   String? _errorMessage;
 
   @override
   void initState() {
     super.initState();
+    final succession = widget.succession;
+    if (succession != null) {
+      _zawiyaId = succession.zawiyaId;
+      _role = succession.role;
+    }
     final link = widget.existingLink;
     if (link != null) {
       _khalifaFigureId = link.khalifaFigureId;
       _orderIndexController.text = link.orderIndex.toString();
       _periodController.text = link.periodText ?? '';
+      _followsGap = link.followsGap;
+    } else {
+      // Rang suggéré : le plus élevé de la succession + 1 (donc 1 pour une
+      // nouvelle succession) — jamais pour un maillon existant, dont le rang
+      // enregistré prime toujours sur une suggestion.
+      var maxOrder = 0;
+      for (final existing in succession?.links ?? const <FigureKhalifaLink>[]) {
+        if (existing.orderIndex > maxOrder) maxOrder = existing.orderIndex;
+      }
+      _orderIndexController.text = (maxOrder + 1).toString();
     }
   }
 
@@ -51,20 +94,6 @@ class _FigureKhalifaFormScreenState extends ConsumerState<FigureKhalifaFormScree
     _orderIndexController.dispose();
     _periodController.dispose();
     super.dispose();
-  }
-
-  /// Pré-remplit le rang suggéré (rang le plus élevé de la chaîne + 1) —
-  /// jamais pour un maillon déjà existant, dont le rang enregistré prime
-  /// toujours sur une suggestion. Même esprit que `_onParentChanged` dans
-  /// `FigureSilsilaFormScreen`, en plus simple (pas de recherche par figure
-  /// parente, juste le rang maximal actuel de la chaîne).
-  void _suggestOrderIndex(List<FigureKhalifaLink> chain) {
-    if (widget.existingLink != null || _orderIndexController.text.trim().isNotEmpty) return;
-    var maxOrder = 0;
-    for (final link in chain) {
-      if (link.orderIndex > maxOrder) maxOrder = link.orderIndex;
-    }
-    _orderIndexController.text = (maxOrder + 1).toString();
   }
 
   Future<void> _submit() async {
@@ -81,13 +110,21 @@ class _FigureKhalifaFormScreenState extends ConsumerState<FigureKhalifaFormScree
       final repo = ref.read(figuresRepositoryProvider);
       if (widget.existingLink == null) {
         await repo.addKhalifaLink(
-          founderFigureId: widget.founderFigure.id,
+          founderFigureId: widget.founderFigureId,
+          zawiyaId: _zawiyaId!,
+          role: _role,
           khalifaFigureId: _khalifaFigureId!,
           orderIndex: orderIndex,
           periodText: periodText,
+          followsGap: _followsGap,
         );
       } else {
-        await repo.updateKhalifaLink(widget.existingLink!.id, orderIndex: orderIndex, periodText: periodText);
+        await repo.updateKhalifaLink(
+          widget.existingLink!.id,
+          orderIndex: orderIndex,
+          periodText: periodText,
+          followsGap: _followsGap,
+        );
       }
       if (mounted) Navigator.of(context).pop(true);
     } catch (_) {
@@ -101,8 +138,15 @@ class _FigureKhalifaFormScreenState extends ConsumerState<FigureKhalifaFormScree
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     final figuresAsync = ref.watch(figuresProvider);
-    final chainAsync = ref.watch(khalifaChainProvider(widget.founderFigure.id));
     final isEdit = widget.existingLink != null;
+    final succession = widget.succession;
+    // Zawiyas proposées pour une nouvelle succession : uniquement celles déjà
+    // rattachées à la figure fondatrice (sous-section "Zawiyas rattachées"),
+    // pour qu'une succession ne puisse pas pointer vers une zawiya sans lien
+    // affiché avec son fondateur.
+    final List<Zawiya> linkedZawiyas = succession == null
+        ? ref.watch(linkedZawiyasForFigureProvider(widget.founderFigureId)).valueOrNull ?? const <Zawiya>[]
+        : const <Zawiya>[];
 
     return Scaffold(
       appBar: AppBar(title: Text(isEdit ? l10n.figureKhalifaFormEditTitle : l10n.figureKhalifaFormCreateTitle)),
@@ -113,11 +157,11 @@ class _FigureKhalifaFormScreenState extends ConsumerState<FigureKhalifaFormScree
             child: Text(l10n.figuresLoadError, style: TextStyle(color: AppColors.bronze)),
           ),
           data: (figures) {
-            final chain = chainAsync.valueOrNull ?? const <FigureKhalifaLink>[];
-            _suggestOrderIndex(chain);
-            final usedKhalifaIds = {for (final link in chain) link.khalifaFigureId};
+            final usedKhalifaIds = {
+              for (final link in succession?.links ?? const <FigureKhalifaLink>[]) link.khalifaFigureId,
+            };
             final candidates = figures
-                .where((f) => f.id != widget.founderFigure.id && !usedKhalifaIds.contains(f.id))
+                .where((f) => f.id != widget.founderFigureId && !usedKhalifaIds.contains(f.id))
                 .toList();
 
             return SingleChildScrollView(
@@ -127,6 +171,52 @@ class _FigureKhalifaFormScreenState extends ConsumerState<FigureKhalifaFormScree
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
+                    if (succession != null) ...[
+                      InputDecorator(
+                        decoration: InputDecoration(labelText: l10n.figureSuccessionFormZawiyaLabel),
+                        child: Text(succession.zawiyaName),
+                      ),
+                      const SizedBox(height: 16),
+                      InputDecorator(
+                        decoration: InputDecoration(labelText: l10n.figureSuccessionFormRoleLabel),
+                        child: Text(successionRoleLabel(l10n, succession.role)),
+                      ),
+                    ] else ...[
+                      DropdownButtonFormField<String?>(
+                        initialValue: _zawiyaId,
+                        isExpanded: true,
+                        decoration: InputDecoration(
+                          labelText: l10n.figureSuccessionFormZawiyaLabel,
+                          hintText: l10n.figureSuccessionFormZawiyaNone,
+                          helperText: linkedZawiyas.isEmpty ? l10n.figureSuccessionFormZawiyaEmpty : null,
+                          helperMaxLines: 3,
+                        ),
+                        items: [
+                          for (final zawiya in linkedZawiyas)
+                            DropdownMenuItem<String?>(
+                              value: zawiya.id,
+                              child: Text(zawiya.name, overflow: TextOverflow.ellipsis),
+                            ),
+                        ],
+                        validator: (value) => value == null ? l10n.figureSuccessionFormZawiyaNone : null,
+                        onChanged: (value) => setState(() => _zawiyaId = value),
+                      ),
+                      const SizedBox(height: 16),
+                      DropdownButtonFormField<SuccessionRole>(
+                        initialValue: _role,
+                        isExpanded: true,
+                        decoration: InputDecoration(labelText: l10n.figureSuccessionFormRoleLabel),
+                        items: [
+                          for (final role in SuccessionRole.values)
+                            DropdownMenuItem<SuccessionRole>(
+                              value: role,
+                              child: Text(successionRoleLabel(l10n, role)),
+                            ),
+                        ],
+                        onChanged: (value) => setState(() => _role = value ?? SuccessionRole.khalife),
+                      ),
+                    ],
+                    const SizedBox(height: 16),
                     if (isEdit)
                       InputDecorator(
                         decoration: InputDecoration(labelText: l10n.figureKhalifaFormFigureLabel),
@@ -172,6 +262,13 @@ class _FigureKhalifaFormScreenState extends ConsumerState<FigureKhalifaFormScree
                         labelText: l10n.figureKhalifaFormPeriodLabel,
                         helperText: l10n.figureKhalifaFormPeriodHint,
                       ),
+                    ),
+                    const SizedBox(height: 8),
+                    SwitchListTile(
+                      contentPadding: EdgeInsets.zero,
+                      value: _followsGap,
+                      title: Text(l10n.figureSuccessionFormGapLabel),
+                      onChanged: (value) => setState(() => _followsGap = value),
                     ),
                     if (_errorMessage != null) ...[
                       const SizedBox(height: 16),
