@@ -1,4 +1,4 @@
-# État d'avancement et sprints restants (analyse du 2026-08-29)
+# État d'avancement et sprints restants (analyse du 2026-08-29, complétée le 2026-10-01)
 
 Ce document fige un état des lieux complet de l'app à cette date, croisé entre le résumé
 haut niveau de `CLAUDE.md`, l'historique git (`git log`) et le détail du journal
@@ -203,6 +203,10 @@ avant relance. Cohérent avec le reste du contrôleur ; à valider sur télépho
 séparément du reste (voir "Recommandations" du bilan ci-dessous).
 
 ## Contenu religieux : l'essentiel est déjà validé (2026-08-29)
+
+> **Section dépassée depuis le 2026-10-01** : les chiffres ci-dessous (18 figures, 7 zawiyas
+> sans chaîne) datent d'avant l'enrichissement de fin septembre. État réel à jour : voir
+> "Depuis la dernière analyse (2026-09-27 → 2026-10-01)" en fin de document.
 
 En reprenant le chantier "contenu religieux restant" avec le porteur de projet, vérification
 de l'état réel en base (`public.figures`, `public.figure_zawiyas`,
@@ -448,3 +452,49 @@ libre, même décision que le reste du module) ; pas de récurrence mensuelle/ex
 automatique de l'adresse pour un mouqaddam créant un évènement pour sa propre zawiya
 (seul le sélecteur admin déclenche le pré-remplissage) — à saisir manuellement pour
 l'instant, limitation mineure documentée dans `event_form_screen.dart`.
+
+## Depuis la dernière analyse (2026-09-27 → 2026-10-01)
+
+Pas de livraison de code. En revanche, **le contenu en base a été fortement enrichi les 28 et
+30/09**, hors de ce dépôt (session de travail séparée, saisie directe en base : aucune
+migration n'en garde la trace, la dernière reste `add_weekly_recurrence_to_events` du
+2026-09-27). État réel vérifié le 2026-10-01, en lecture seule sur le projet live :
+
+| Table | 2026-08-29 | 2026-10-01 |
+|---|---|---|
+| `figures` | 18 (16 `valide`) | 70 (60 `valide`, 10 `brouillon`) |
+| `zawiyas` | 8 | 34 (dont 6 sans coordonnées) |
+| `figure_zawiyas` | Tivaouane seule | 74 liens |
+| `figure_zawiya_khalifas` | 7 lignes, 1 fondateur | 44 lignes, 11 fondateurs |
+| `historical_silsila_links` | — | 44 liens |
+| `figure_quotes` / `figure_works` | — | 8 / 36 |
+| `events` | — | 23, aucun récurrent |
+| `guide_pages` | `comprendre-zawiya` | + `glossaire` et `a-propos` en `brouillon` |
+
+- **Chaînes de succession désormais saisies** pour Tivaouane (7), Aïn Madhi (12, sous
+  Cheikh Ahmed Tijani), Léona (6), Médina Baye (5), Zawiya Omarienne (4 + 1 sous Thierno
+  Seydou Nourou Tall), Louga (2), Ségou (2 + 1 sous Thierno Madani Tall), Nioro (2) et
+  Nguidjilone (2, fondateur encore en `brouillon`). Le point "compiler la chaîne de khalifas
+  de Médina Baye" du périmètre restant du 2026-08-29 est donc levé. Les mokaddems de Fès ne
+  sont pas encore insérés.
+- **Les 42 fiches créées le 28/09 sont `valide`**, donc visibles des disciples ; les 10 du
+  30/09 sont en `brouillon`. Décision du porteur de projet le 2026-10-01 : rien n'est repassé
+  en brouillon. Limites connues de ce lot, à corriger sur des fiches publiées : `name_ar`
+  souvent translittérés sans source, liens de silsila présumés, 5 biographies de moins de
+  300 caractères, aucun portrait sur les 52 fiches de fin septembre (elles sont donc exclues
+  de la rotation "Figure de la semaine", qui exige un portrait).
+- **Le modèle "chaîne unique par figure fondatrice" (décision du 2026-08-21) atteint sa
+  limite** : Ségou et la Zawiya Omarienne ont chacune deux figures "fondatrices" portant un
+  morceau de la même succession.
+- **`figures.category` ne discrimine plus rien** : 69 figures en `family_lineage`, 1 en
+  `founder`.
+- **`CLAUDE.md` mis à jour** sur ces chiffres le 2026-10-01.
+
+Les évolutions de schéma et de fonctionnalités que cet enrichissement appelle (succession
+par zawiya avec rôle, statut de validation des citations et œuvres, catégories de figures,
+silsila à plusieurs maîtres, type de lieu, dates hégiriennes, dahiras, sources) sont décrites,
+corrigées et ordonnées dans `docs/12-propositions-evolution-contenu.md`. **Rien n'en est
+implémenté à ce jour.** Ordre recommandé : succession par zawiya, puis type de lieu et
+catégories, puis statut des citations/œuvres, puis drapeau "date approximative" et glossaire ;
+le reste après le lancement. Le Sprint 6 (soumission aux stores) et la bascule PayDunya en
+mode live restent ouverts et inchangés.
