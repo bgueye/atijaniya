@@ -290,6 +290,14 @@
   "@khadaraNextOccurrenceLabel": {
     "placeholders": { "date": { "type": "String" } }
   },
+  "khadaraApproximateDateLabel": "Vers le {date} (date approximative)",
+  "@khadaraApproximateDateLabel": {
+    "placeholders": { "date": { "type": "String" } }
+  },
+  "eventFormApproximateDateSwitchLabel": "Date approximative",
+  "eventFormApproximateDateSwitchHint": "La date exacte n'est pas encore annoncée.",
+  "eventFormDateNoteLabel": "Précision sur la date (optionnel)",
+  "eventFormDateNoteHint": "Ex. 12 Rabi' al-awwal, selon l'observation de la lune.",
 
   "khadaraCreateEventButton": "Créer un évènement",
   "khadaraEditEventTooltip": "Modifier",

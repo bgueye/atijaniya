@@ -3183,3 +3183,36 @@ ligne. Version retenue par le porteur de projet : les quatre puces sur une seule
 centrée, compactes, sans coche de sélection, avec un `FittedBox` qui réduit l'ensemble en
 dernier recours. Seul l'affichage des filtres est validé ; le reste des scénarios (voir
 `docs/10`) reste à dérouler.
+
+## Date approximative sur un évènement (2026-10-01)
+
+Troisième évolution tirée de `docs/12-propositions-evolution-contenu.md` (§ 3, première
+moitié seulement). Beaucoup de grands évènements suivent le calendrier hégirien : leur date
+exacte n'est connue qu'une fois annoncée, alors que chaque édition était saisie comme une
+date et une heure fermes.
+
+**Base.** Migration `add_approximate_date_to_events` : `is_date_approximate boolean not null
+default false` et `date_note text`. Aucune ligne existante modifiée, RLS inchangée (les
+policies d'écriture des évènements couvrent déjà ces colonnes, y compris l'exception
+mouqaddam pour sa propre zawiya).
+
+**App.** `KhadaraEvent.showsApproximateDate` vaut vrai seulement pour un évènement à date
+fixe : le drapeau n'a pas de sens sur une récurrence hebdomadaire. `formatKhadaraEventSchedule`
+étant le point unique d'affichage de l'horaire, la mention apparaît partout sans toucher
+chaque écran : "Vers le JJ/MM/AAAA (date approximative)", le jour seul, une heure précise sur
+une date incertaine étant trompeuse. La fiche de l'évènement n'affiche pas non plus d'heure
+de fin dans ce cas, et montre la précision (`date_note`) sur sa propre ligne. Le formulaire
+gagne un interrupteur et un champ de précision, masqués et remis à vide quand l'évènement
+est récurrent.
+
+Au passage, la carte "Figure de la semaine" de l'accueil formatait la prochaine ziara avec
+`formatKhadaraDateTime` directement ; elle passe par `formatKhadaraEventSchedule` comme le
+reste, ce qui corrige aussi son affichage pour un évènement récurrent.
+
+**Écarts assumés.** Les règles de récurrence annuelle, le calcul des dates hégiriennes et le
+branchement des rappels (reste du § 3) ne sont pas faits. Le tri des évènements utilise
+toujours `starts_at`, approximatif ou non. Aucun évènement existant n'a été marqué par la
+migration : la saisie se fait depuis l'app.
+
+`flutter analyze` propre et 225 tests au vert (3 nouveaux dans `khadara_models_test.dart`).
+**Pas encore validé sur téléphone.**

@@ -290,6 +290,14 @@
   "@khadaraNextOccurrenceLabel": {
     "placeholders": { "date": { "type": "String" } }
   },
+  "khadaraApproximateDateLabel": "حوالي {date} (تاريخ تقريبي)",
+  "@khadaraApproximateDateLabel": {
+    "placeholders": { "date": { "type": "String" } }
+  },
+  "eventFormApproximateDateSwitchLabel": "تاريخ تقريبي",
+  "eventFormApproximateDateSwitchHint": "لم يُعلَن بعد عن التاريخ بالضبط.",
+  "eventFormDateNoteLabel": "توضيح حول التاريخ (اختياري)",
+  "eventFormDateNoteHint": "مثال: ١٢ ربيع الأول، حسب رؤية الهلال.",
 
   "khadaraCreateEventButton": "إنشاء مناسبة",
   "khadaraEditEventTooltip": "تعديل",

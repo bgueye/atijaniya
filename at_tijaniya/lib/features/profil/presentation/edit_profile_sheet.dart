@@ -115,6 +115,10 @@ class _EditProfileFormState extends ConsumerState<_EditProfileForm> {
                     LinearProgressIndicator(color: AppColors.emerald),
                 error: (error, stackTrace) => const SizedBox.shrink(),
                 data: (list) => DropdownButtonFormField<String?>(
+                  // `isExpanded` + ellipsis : sans eux la liste prend la largeur du
+                  // nom le plus long et déborde ("right overflowed") avec les noms de
+                  // zawiyas ajoutés fin septembre — constaté sur téléphone le 2026-10-01.
+                  isExpanded: true,
                   initialValue: _zawiyaId,
                   decoration:
                       InputDecoration(labelText: l10n.profileZawiyaLabel),
@@ -122,7 +126,7 @@ class _EditProfileFormState extends ConsumerState<_EditProfileForm> {
                     DropdownMenuItem<String?>(
                         value: null, child: Text(l10n.profileZawiyaNone)),
                     ...list.map((z) => DropdownMenuItem<String?>(
-                        value: z.id, child: Text(z.name))),
+                        value: z.id, child: Text(z.name, overflow: TextOverflow.ellipsis))),
                   ],
                   onChanged: (value) => setState(() => _zawiyaId = value),
                 ),

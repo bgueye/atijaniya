@@ -113,6 +113,8 @@ class KhadaraEvent {
     this.recurrenceHour,
     this.recurrenceMinute,
     this.recurrenceUntil,
+    this.isDateApproximate = false,
+    this.dateNote,
   });
 
   final String id;
@@ -165,6 +167,23 @@ class KhadaraEvent {
   /// définie.
   final DateTime? recurrenceUntil;
 
+  /// `events.is_date_approximate` (migration `add_approximate_date_to_events`,
+  /// 2026-10-01) — la date exacte n'est pas encore annoncée (cas courant des
+  /// évènements calés sur le calendrier hégirien). L'app affiche alors le
+  /// jour sans l'heure, avec la mention "date approximative" — voir
+  /// `formatKhadaraEventSchedule`. Sans objet pour un évènement récurrent.
+  final bool isDateApproximate;
+
+  /// Précision libre sur la date (`events.date_note`), par exemple
+  /// "12 Rabi' al-awwal, selon l'observation de la lune". Affichée sur la
+  /// fiche de l'évènement, que la date soit approximative ou non.
+  final String? dateNote;
+
+  /// `true` seulement pour un évènement à date fixe : un évènement récurrent
+  /// hebdomadaire a un jour et une heure connus, le drapeau n'y a pas de sens
+  /// même s'il était resté à `true` en base.
+  bool get showsApproximateDate => isDateApproximate && !isRecurring;
+
   bool get hasLocation => latitude != null && longitude != null;
 
   /// `true` si la fiche a de quoi ouvrir un plan — coordonnées précises, ou à
@@ -195,6 +214,8 @@ class KhadaraEvent {
       recurrenceHour: (row['recurrence_hour'] as num?)?.toInt(),
       recurrenceMinute: (row['recurrence_minute'] as num?)?.toInt(),
       recurrenceUntil: row['recurrence_until'] != null ? DateTime.parse(row['recurrence_until'] as String) : null,
+      isDateApproximate: row['is_date_approximate'] as bool? ?? false,
+      dateNote: row['date_note'] as String?,
     );
   }
 }

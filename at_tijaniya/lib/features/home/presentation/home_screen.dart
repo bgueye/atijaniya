@@ -778,7 +778,7 @@ class _FeaturedFigureCard extends StatelessWidget {
                             const SizedBox(width: 4),
                             Expanded(
                               child: Text(
-                                '${nextZiyara.title} · ${formatKhadaraDateTime(nextZiyara.startsAt)}',
+                                '${nextZiyara.title} · ${formatKhadaraEventSchedule(nextZiyara, AppLocalizations.of(context)!)}',
                                 style: const TextStyle(color: AppColors.goldSoft, fontSize: 11.5),
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,

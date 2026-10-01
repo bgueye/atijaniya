@@ -782,6 +782,25 @@ class AppLocalizationsFr extends AppLocalizations {
   }
 
   @override
+  String khadaraApproximateDateLabel(String date) {
+    return 'Vers le $date (date approximative)';
+  }
+
+  @override
+  String get eventFormApproximateDateSwitchLabel => 'Date approximative';
+
+  @override
+  String get eventFormApproximateDateSwitchHint =>
+      'La date exacte n\'est pas encore annoncée.';
+
+  @override
+  String get eventFormDateNoteLabel => 'Précision sur la date (optionnel)';
+
+  @override
+  String get eventFormDateNoteHint =>
+      'Ex. 12 Rabi\' al-awwal, selon l\'observation de la lune.';
+
+  @override
   String get khadaraCreateEventButton => 'Créer un évènement';
 
   @override

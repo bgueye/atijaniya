@@ -475,4 +475,41 @@ void main() {
       expect(attachableZawiyas(places).map((z) => z.id), ['a', 'd']);
     });
   });
+
+  // Date approximative (`events.is_date_approximate`/`date_note`, migration
+  // `add_approximate_date_to_events`, 2026-10-01).
+  group('KhadaraEvent — date approximative', () {
+    Map<String, dynamic> row(Map<String, dynamic> extra) => {
+          'id': 'e1',
+          'title': 'Évènement de test',
+          'event_type': 'ziyara',
+          'starts_at': '2027-03-06T10:00:00Z',
+          ...extra,
+        };
+
+    test('colonnes absentes -> date exacte, pas de précision', () {
+      final event = KhadaraEvent.fromRow(row({}));
+      expect(event.isDateApproximate, isFalse);
+      expect(event.showsApproximateDate, isFalse);
+      expect(event.dateNote, isNull);
+    });
+
+    test('lit le drapeau et la précision', () {
+      final event = KhadaraEvent.fromRow(row({'is_date_approximate': true, 'date_note': 'Selon la lune'}));
+      expect(event.showsApproximateDate, isTrue);
+      expect(event.dateNote, 'Selon la lune');
+    });
+
+    test('drapeau ignoré pour un évènement récurrent', () {
+      final event = KhadaraEvent.fromRow(row({
+        'is_date_approximate': true,
+        'is_recurring': true,
+        'recurrence_day_of_week': 5,
+        'recurrence_hour': 14,
+        'recurrence_minute': 0,
+      }));
+      expect(event.isDateApproximate, isTrue);
+      expect(event.showsApproximateDate, isFalse);
+    });
+  });
 }

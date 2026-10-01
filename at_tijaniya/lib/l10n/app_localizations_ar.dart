@@ -764,6 +764,24 @@ class AppLocalizationsAr extends AppLocalizations {
   }
 
   @override
+  String khadaraApproximateDateLabel(String date) {
+    return 'حوالي $date (تاريخ تقريبي)';
+  }
+
+  @override
+  String get eventFormApproximateDateSwitchLabel => 'تاريخ تقريبي';
+
+  @override
+  String get eventFormApproximateDateSwitchHint =>
+      'لم يُعلَن بعد عن التاريخ بالضبط.';
+
+  @override
+  String get eventFormDateNoteLabel => 'توضيح حول التاريخ (اختياري)';
+
+  @override
+  String get eventFormDateNoteHint => 'مثال: ١٢ ربيع الأول، حسب رؤية الهلال.';
+
+  @override
   String get khadaraCreateEventButton => 'إنشاء مناسبة';
 
   @override

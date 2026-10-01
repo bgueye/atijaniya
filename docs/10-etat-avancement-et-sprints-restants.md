@@ -493,8 +493,10 @@ migration n'en garde la trace, la dernière reste `add_weekly_recurrence_to_even
 Les évolutions de schéma et de fonctionnalités que cet enrichissement appelle (succession
 par zawiya avec rôle, statut de validation des citations et œuvres, catégories de figures,
 silsila à plusieurs maîtres, type de lieu, dates hégiriennes, dahiras, sources) sont décrites,
-corrigées et ordonnées dans `docs/12-propositions-evolution-contenu.md`. **Seuls la
-succession par zawiya (§ 1.1) et le type de lieu (§ 1.5) sont implémentés, voir ci-dessous.**
+corrigées et ordonnées dans `docs/12-propositions-evolution-contenu.md`. **Sont implémentés
+la succession par zawiya (§ 1.1), le type de lieu (§ 1.5) et le drapeau "date approximative"
+(§ 3, première moitié), voir ci-dessous ; les § 1.2 (statut des citations et œuvres) et 1.3
+(catégories de figures) sont écartés par décision du porteur de projet le 2026-10-01.**
 Ordre recommandé pour la suite :
 catégories, puis statut des citations/œuvres, puis drapeau "date approximative" et glossaire ;
 le reste après le lancement. Le Sprint 6 (soumission aux stores) et la bascule PayDunya en
@@ -548,3 +550,23 @@ deux reprises). **Reste à valider manuellement sur téléphone** : icône et
 mention du type sur un lieu saint et sur la mosquée de Gaaya, changement de type depuis le
 formulaire admin, absence des lieux saints dans le choix de zawiya du profil et d'un groupe,
 présence de tous les lieux dans le formulaire d'évènement.
+
+### Date approximative sur un évènement (2026-10-01)
+
+Troisième évolution de `docs/12` livrée (§ 3, première moitié). Migration
+`add_approximate_date_to_events` appliquée sur le projet live : `events.is_date_approximate`
+(défaut `false`) et `events.date_note`, colonnes purement additives.
+
+Côté app : interrupteur "Date approximative" et champ "Précision sur la date" dans le
+formulaire d'évènement (masqués pour un évènement récurrent) ; un évènement marqué affiche
+"Vers le JJ/MM/AAAA (date approximative)", sans l'heure, dans la liste, sur l'accueil, sur la
+fiche et sur les fiches figure et zawiya ; la précision s'affiche sur la fiche de
+l'évènement. `flutter analyze` propre, 225 tests au vert (3 nouveaux).
+
+**Aucun des 23 évènements existants n'est marqué approximatif** : à faire depuis l'app par le
+porteur de projet, évènement par évènement (voir la liste du § 3 de `docs/12`).
+
+**À valider manuellement sur téléphone** (pas encore fait) : marquer un évènement comme
+approximatif avec une précision, vérifier la mention dans la liste, sur la fiche et sur
+l'accueil, puis retirer le drapeau ; vérifier que l'interrupteur disparaît quand "Évènement
+récurrent" est activé.

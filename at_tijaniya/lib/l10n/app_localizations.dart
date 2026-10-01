@@ -1503,6 +1503,36 @@ abstract class AppLocalizations {
   /// **'Prochaine occurrence : {date}'**
   String khadaraNextOccurrenceLabel(String date);
 
+  /// No description provided for @khadaraApproximateDateLabel.
+  ///
+  /// In fr, this message translates to:
+  /// **'Vers le {date} (date approximative)'**
+  String khadaraApproximateDateLabel(String date);
+
+  /// No description provided for @eventFormApproximateDateSwitchLabel.
+  ///
+  /// In fr, this message translates to:
+  /// **'Date approximative'**
+  String get eventFormApproximateDateSwitchLabel;
+
+  /// No description provided for @eventFormApproximateDateSwitchHint.
+  ///
+  /// In fr, this message translates to:
+  /// **'La date exacte n\'est pas encore annoncée.'**
+  String get eventFormApproximateDateSwitchHint;
+
+  /// No description provided for @eventFormDateNoteLabel.
+  ///
+  /// In fr, this message translates to:
+  /// **'Précision sur la date (optionnel)'**
+  String get eventFormDateNoteLabel;
+
+  /// No description provided for @eventFormDateNoteHint.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ex. 12 Rabi\' al-awwal, selon l\'observation de la lune.'**
+  String get eventFormDateNoteHint;
+
   /// No description provided for @khadaraCreateEventButton.
   ///
   /// In fr, this message translates to:

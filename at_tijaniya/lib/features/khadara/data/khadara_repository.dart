@@ -127,6 +127,8 @@ class KhadaraRepository {
     int? recurrenceHour,
     int? recurrenceMinute,
     DateTime? recurrenceUntil,
+    bool isDateApproximate = false,
+    String? dateNote,
   }) async {
     final userId = SupabaseConfig.client.auth.currentUser!.id;
     final row = await SupabaseConfig.client
@@ -147,6 +149,8 @@ class KhadaraRepository {
           'recurrence_hour': recurrenceHour,
           'recurrence_minute': recurrenceMinute,
           'recurrence_until': recurrenceUntil != null ? _dateOnlyIso(recurrenceUntil) : null,
+          'is_date_approximate': isDateApproximate,
+          'date_note': dateNote,
         })
         .select('*, zawiyas(name)')
         .single();
@@ -172,6 +176,8 @@ class KhadaraRepository {
     int? recurrenceHour,
     int? recurrenceMinute,
     DateTime? recurrenceUntil,
+    bool isDateApproximate = false,
+    String? dateNote,
   }) async {
     final row = await SupabaseConfig.client
         .from('events')
@@ -190,6 +196,8 @@ class KhadaraRepository {
           'recurrence_hour': recurrenceHour,
           'recurrence_minute': recurrenceMinute,
           'recurrence_until': recurrenceUntil != null ? _dateOnlyIso(recurrenceUntil) : null,
+          'is_date_approximate': isDateApproximate,
+          'date_note': dateNote,
         })
         .eq('id', id)
         .select('*, zawiyas(name)')

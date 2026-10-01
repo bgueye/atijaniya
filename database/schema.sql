@@ -499,6 +499,12 @@ create table public.events (
   recurrence_hour smallint check (recurrence_hour is null or recurrence_hour between 0 and 23),
   recurrence_minute smallint check (recurrence_minute is null or recurrence_minute between 0 and 59),
   recurrence_until date, -- dernier jour (inclus) de la récurrence ; null = sans fin définie
+  -- Date approximative (migration add_approximate_date_to_events, 2026-10-01) :
+  -- la date exacte n'est pas encore annoncée (évènements calés sur le
+  -- calendrier hégirien). L'app affiche le jour sans l'heure et la mention
+  -- "date approximative" ; sans objet pour un évènement récurrent.
+  is_date_approximate boolean not null default false,
+  date_note text, -- précision libre sur la date ("12 Rabi' al-awwal, selon l'observation de la lune")
   constraint events_recurrence_fields_consistency_check check (
     (is_recurring = false and recurrence_day_of_week is null and recurrence_hour is null and recurrence_minute is null)
     or

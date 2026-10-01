@@ -15,7 +15,9 @@ attente) : `docs/10-etat-avancement-et-sprints-restants.md`
 dupliquer si l'analyse est refaite.
 Propositions d'évolution du schéma et du contenu (succession par zawiya, catégories de
 figures, silsila à plusieurs maîtres, dates hégiriennes, dahiras), relues et confrontées à
-la base le 2026-10-01, **seuls les § 1.1 (succession par zawiya) et 1.5 (type de lieu) sont implémentés** :
+la base le 2026-10-01, **sont implémentés les § 1.1 (succession par zawiya), 1.5 (type de lieu) et la première
+moitié du § 3 (drapeau "date approximative") ; les § 1.2 et 1.3 sont écartés par décision
+du porteur de projet** :
 `docs/12-propositions-evolution-contenu.md`.
 
 ## Stack technique
@@ -195,7 +197,9 @@ règle "le statut mouqaddam n'accorde aucune permission technique", voir
 plus haut). **Onglet renommé "Zawiyas" dans la navigation, adresse +
 "Ouvrir dans Maps" sur un évènement, évènements récurrents hebdomadaires
 (Hadratou-l-Jouma...) et recherche de l'évènement récurrent le plus proche
-par géolocalisation, depuis le 2026-09-27** — détail dans
+par géolocalisation, depuis le 2026-09-27 ; date approximative sur un
+évènement (`events.is_date_approximate`/`date_note`) depuis le 2026-10-01**
+— détail dans
 `docs/10-etat-avancement-et-sprints-restants.md`.
 
 **Groupes et messagerie privée** (`lib/features/communaute/` :

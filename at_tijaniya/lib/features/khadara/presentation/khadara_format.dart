@@ -46,7 +46,12 @@ String khadaraWeekdayLabel(int dayOfWeek, AppLocalizations l10n) {
 /// classique, ou motif récurrent ("Tous les vendredis à 14:00") pour un
 /// évènement récurrent. Centralisé ici pour que l'accueil, la liste et la
 /// fiche détail affichent la même chose.
+///
+/// Date approximative (`KhadaraEvent.showsApproximateDate`) : le jour seul,
+/// sans l'heure (une heure précise sur une date incertaine serait
+/// trompeuse), suivi de la mention "date approximative".
 String formatKhadaraEventSchedule(KhadaraEvent event, AppLocalizations l10n) {
+  if (event.showsApproximateDate) return l10n.khadaraApproximateDateLabel(formatKhadaraDate(event.startsAt));
   if (!event.isRecurring) return formatKhadaraDateTime(event.startsAt);
   String two(int n) => n.toString().padLeft(2, '0');
   final weekday = khadaraWeekdayLabel(event.recurrenceDayOfWeek!, l10n);

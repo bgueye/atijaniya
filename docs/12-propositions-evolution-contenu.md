@@ -98,6 +98,10 @@ Ce document a été relu et confronté à la base live le 2026-10-01 (lecture se
 
 ### 1.2 Statut de validation pour les citations et les œuvres
 
+> **Écarté par décision du porteur de projet le 2026-10-01.** Rien n'est implémenté : les
+> citations et les œuvres restent visibles dès que leur figure est validée. Ne pas relancer
+> cette section sans nouvelle demande explicite.
+
 `figure_quotes` et `figure_works` n'ont pas de `content_status`. Elles sont donc visibles dès que la figure est validée, même si la citation ne l'a pas été.
 
 - Ajouter `content_status text not null default 'brouillon' check (content_status in ('brouillon','valide'))`, avec `validated_by` et `validated_at` comme dans `guide_pages` (`figures` n'a pas ces colonnes).
@@ -106,6 +110,10 @@ Ce document a été relu et confronté à la base live le 2026-10-01 (lecture se
 - **Flutter :** n'afficher que les lignes `valide` côté disciple. Prévoir l'écran de validation pour l'admin, comme pour les fiches.
 
 ### 1.3 Nouvelle catégorie de figures
+
+> **Écarté par décision du porteur de projet le 2026-10-01.** Rien n'est implémenté :
+> `figures.category` garde ses deux valeurs et aucune fiche n'est reclassée. Ne pas relancer
+> cette section sans nouvelle demande explicite.
 
 `figures.category` n'accepte que `founder` et `family_lineage`, alors que plusieurs figures ne relèvent d'aucune des deux.
 
@@ -180,6 +188,13 @@ Les sources sont aujourd'hui écrites en texte à la fin de `bio_text` (« SOURC
 
 ## 3. Événements : dates lunaires et récurrence annuelle
 
+> **Première moitié faite le 2026-10-01** : `is_date_approximate` et `date_note` (migration
+> `add_approximate_date_to_events`), case et champ dans le formulaire d'évènement, mention
+> "date approximative" partout où l'horaire est affiché. Aucun évènement existant n'a été
+> marqué : c'est à faire depuis l'app, évènement par évènement. **Non fait** : les règles de
+> récurrence annuelle (`recurrence_kind`, `recurrence_rule`), le calcul des dates hégiriennes
+> et le branchement des rappels.
+
 La plupart des grands événements suivent le calendrier hégirien : Gamou le 12 Rabi' al-awwal, Taïba Niassène le 15 Rajab, Halwar le dernier mercredi de Chaabane. Chaque édition est aujourd'hui saisie à la main, avec une date approximative.
 
 - **Colonnes à ajouter à `events` :**
@@ -239,8 +254,8 @@ Ces points portent en partie sur des fiches déjà publiées (lot du 28/09, rest
 ## 7. Ordre recommandé (analyse du 2026-10-01)
 
 1. ~~Migration 1.1 (succession par zawiya + rôle)~~ — fait le 2026-10-01.
-2. ~~Migration 1.5 (`zawiyas.kind`)~~ — fait le 2026-10-01. Restent 1.3 (catégories), puis 1.2 (statut des citations et œuvres).
-3. Drapeau « date approximative » (première moitié de la section 3), puis glossaire.
+2. ~~Migration 1.5 (`zawiyas.kind`)~~ — fait le 2026-10-01. 1.3 (catégories) et 1.2 (statut des citations et œuvres) sont écartées par décision du porteur de projet le 2026-10-01.
+3. ~~Drapeau « date approximative » (première moitié de la section 3)~~ — fait le 2026-10-01. Reste le glossaire.
 4. Après le lancement : 1.4 complet (maîtres multiples), règles hégiriennes, dahiras, sources structurées.
 
 Chaque migration est livrée avec son code Flutter, ses tests et la mise à jour de `database/schema.sql`. Il reste par ailleurs le Sprint 6 (soumission aux stores) et la bascule PayDunya en mode live, voir `docs/10-etat-avancement-et-sprints-restants.md`.

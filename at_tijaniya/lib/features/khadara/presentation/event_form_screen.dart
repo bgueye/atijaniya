@@ -37,6 +37,7 @@ class _EventFormScreenState extends ConsumerState<EventFormScreen> {
   final _titleController = TextEditingController();
   final _descriptionController = TextEditingController();
   final _addressController = TextEditingController();
+  final _dateNoteController = TextEditingController();
   final _imageUploadService = ImageUploadService();
 
   KhadaraEventType _type = KhadaraEventType.hadra;
@@ -54,6 +55,10 @@ class _EventFormScreenState extends ConsumerState<EventFormScreen> {
   int _recurrenceDayOfWeek = DateTime.friday;
   TimeOfDay _recurrenceTime = const TimeOfDay(hour: 14, minute: 0);
   DateTime? _recurrenceUntil;
+
+  // Date approximative (`events.is_date_approximate`) : proposée seulement
+  // pour un évènement à date fixe, voir `KhadaraEvent.showsApproximateDate`.
+  bool _isDateApproximate = false;
 
   // Image de couverture : soit une nouvelle image choisie sur l'appareil
   // (_pickedImageBytes non nul, pas encore téléversée), soit l'image déjà
@@ -79,6 +84,8 @@ class _EventFormScreenState extends ConsumerState<EventFormScreen> {
       _endsAt = event.endsAt;
       _zawiyaId = event.zawiyaId;
       _addressController.text = event.addressText ?? '';
+      _dateNoteController.text = event.dateNote ?? '';
+      _isDateApproximate = event.isDateApproximate;
       _existingImageUrl = event.imageUrl;
       _isRecurring = event.isRecurring;
       if (event.isRecurring) {
@@ -125,6 +132,7 @@ class _EventFormScreenState extends ConsumerState<EventFormScreen> {
   void dispose() {
     _titleController.dispose();
     _descriptionController.dispose();
+    _dateNoteController.dispose();
     _addressController.dispose();
     super.dispose();
   }
@@ -213,6 +221,10 @@ class _EventFormScreenState extends ConsumerState<EventFormScreen> {
     // dessus. Admin : la sélection libre du formulaire.
     final zawiyaId = isAdmin ? _zawiyaId : myProfile?.zawiyaId;
     final descriptionText = _descriptionController.text.trim();
+    // Drapeau et précision sans objet pour un évènement récurrent : remis à
+    // faux/vide plutôt que de laisser en base une valeur que l'écran ignore.
+    final dateNoteText = _isRecurring ? '' : _dateNoteController.text.trim();
+    final isDateApproximate = !_isRecurring && _isDateApproximate;
     final addressText = _addressController.text.trim();
 
     // Pour un évènement récurrent, `starts_at` (colonne `not null`) reçoit
@@ -246,6 +258,8 @@ class _EventFormScreenState extends ConsumerState<EventFormScreen> {
           recurrenceHour: _isRecurring ? _recurrenceTime.hour : null,
           recurrenceMinute: _isRecurring ? _recurrenceTime.minute : null,
           recurrenceUntil: _isRecurring ? _recurrenceUntil : null,
+          isDateApproximate: isDateApproximate,
+          dateNote: dateNoteText.isEmpty ? null : dateNoteText,
         );
       } else {
         saved = await repo.updateEvent(
@@ -264,6 +278,8 @@ class _EventFormScreenState extends ConsumerState<EventFormScreen> {
           recurrenceHour: _isRecurring ? _recurrenceTime.hour : null,
           recurrenceMinute: _isRecurring ? _recurrenceTime.minute : null,
           recurrenceUntil: _isRecurring ? _recurrenceUntil : null,
+          isDateApproximate: isDateApproximate,
+          dateNote: dateNoteText.isEmpty ? null : dateNoteText,
         );
       }
 
@@ -508,6 +524,23 @@ class _EventFormScreenState extends ConsumerState<EventFormScreen> {
                         ),
                     ],
                   ),
+                  const SizedBox(height: 8),
+                  SwitchListTile.adaptive(
+                    contentPadding: EdgeInsets.zero,
+                    value: _isDateApproximate,
+                    onChanged: (value) => setState(() => _isDateApproximate = value),
+                    title: Text(l10n.eventFormApproximateDateSwitchLabel),
+                    subtitle: Text(l10n.eventFormApproximateDateSwitchHint),
+                  ),
+                  const SizedBox(height: 8),
+                  TextFormField(
+                    controller: _dateNoteController,
+                    decoration: InputDecoration(
+                      labelText: l10n.eventFormDateNoteLabel,
+                      helperText: l10n.eventFormDateNoteHint,
+                      helperMaxLines: 2,
+                    ),
+                  ),
                 ],
                 const SizedBox(height: 16),
                 if (isAdmin)
@@ -518,6 +551,10 @@ class _EventFormScreenState extends ConsumerState<EventFormScreen> {
                             l10n.khadaraLoadError,
                             style: TextStyle(color: AppColors.bronze)),
                         data: (list) => DropdownButtonFormField<String?>(
+                          // `isExpanded` + ellipsis : sans eux la liste prend la largeur du
+                          // nom le plus long et déborde ("right overflowed") avec les noms de
+                          // zawiyas ajoutés fin septembre — constaté sur téléphone le 2026-10-01.
+                          isExpanded: true,
                           initialValue: _zawiyaId,
                           decoration: InputDecoration(
                               labelText: l10n.eventFormZawiyaLabel),
@@ -525,7 +562,7 @@ class _EventFormScreenState extends ConsumerState<EventFormScreen> {
                             const DropdownMenuItem<String?>(
                                 value: null, child: Text('—')),
                             ...list.map((z) => DropdownMenuItem<String?>(
-                                value: z.id, child: Text(z.name))),
+                                value: z.id, child: Text(z.name, overflow: TextOverflow.ellipsis))),
                           ],
                           onChanged: (value) => setState(() {
                             _zawiyaId = value;

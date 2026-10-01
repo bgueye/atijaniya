@@ -149,7 +149,9 @@ class _EventDetailScreenState extends ConsumerState<EventDetailScreen> {
             const SizedBox(height: 16),
             _InfoRow(
               icon: Icons.schedule,
-              text: _event.isRecurring
+              // Récurrent ou date approximative : libellé centralisé (pas
+              // d'heure de fin affichée sur une date incertaine).
+              text: _event.isRecurring || _event.showsApproximateDate
                   ? formatKhadaraEventSchedule(_event, l10n)
                   : (_event.endsAt == null
                       ? formatKhadaraDateTime(_event.startsAt)
@@ -158,6 +160,10 @@ class _EventDetailScreenState extends ConsumerState<EventDetailScreen> {
             if (_event.isRecurring && formatKhadaraNextOccurrence(_event, l10n) != null) ...[
               const SizedBox(height: 8),
               _InfoRow(icon: Icons.event_available_outlined, text: formatKhadaraNextOccurrence(_event, l10n)!),
+            ],
+            if (_event.dateNote != null && _event.dateNote!.trim().isNotEmpty) ...[
+              const SizedBox(height: 8),
+              _InfoRow(icon: Icons.info_outline, text: _event.dateNote!),
             ],
             if (_event.zawiyaName != null) ...[
               const SizedBox(height: 8),
