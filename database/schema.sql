@@ -175,6 +175,13 @@ create table public.mouqaddam_status (
   verified_at timestamptz,
   revoked_at timestamptz,
   revoked_reason text,
+  -- Zawiya dont ce mouqaddam peut gérer les évènements (audit du 2026-10-04,
+  -- point S02a). Attribuée UNIQUEMENT par l'admin via
+  -- admin_set_mouqaddam_zawiya() : auparavant la RLS des évènements lisait
+  -- profiles.zawiya_id, que chacun modifie librement, ce qui vidait de son
+  -- sens le « pour sa propre zawiya » de la seule exception actée au statut
+  -- mouqaddam. FK vers zawiyas ajoutée en section 4 (ordre de création).
+  managed_zawiya_id uuid,
   updated_at timestamptz not null default now()
 );
 create trigger trg_mq_status_updated before update on public.mouqaddam_status
@@ -474,6 +481,51 @@ create table public.zawiyas (
 );
 alter table public.profiles
   add constraint fk_profiles_zawiya foreign key (zawiya_id) references public.zawiyas(id);
+alter table public.mouqaddam_status
+  add constraint fk_mq_status_managed_zawiya foreign key (managed_zawiya_id)
+  references public.zawiyas(id) on delete set null;
+
+-- Zawiya gérée par le compte connecté, ou NULL s'il n'est pas mouqaddam
+-- confirmé ou si l'admin ne lui a rien attribué. Sans paramètre, exprès :
+-- une version prenant un user_id permettrait de sonder le statut d'autrui.
+create or replace function public.my_managed_zawiya()
+returns uuid
+language sql stable security definer set search_path = public
+as $$
+  select ms.managed_zawiya_id
+  from public.mouqaddam_status ms
+  where ms.user_id = (select auth.uid()) and ms.status = 'verified';
+$$;
+revoke all on function public.my_managed_zawiya() from public;
+revoke all on function public.my_managed_zawiya() from anon;
+grant execute on function public.my_managed_zawiya() to authenticated;
+
+-- Seul point d'entrée pour attribuer (ou retirer, avec NULL) la zawiya gérée
+-- par un mouqaddam confirmé. Le contrôle admin est fait dans la fonction.
+create or replace function public.admin_set_mouqaddam_zawiya(p_user_id uuid, p_zawiya_id uuid)
+returns void
+language plpgsql security definer set search_path = public
+as $$
+begin
+  if not public.is_admin((select auth.uid())) then
+    raise exception 'Réservé à l''administration' using errcode = '42501';
+  end if;
+  if p_zawiya_id is not null and not exists (
+    select 1 from public.zawiyas z where z.id = p_zawiya_id and z.kind = 'zawiya'
+  ) then
+    raise exception 'Le lieu doit être de type zawiya' using errcode = '23514';
+  end if;
+  update public.mouqaddam_status
+  set managed_zawiya_id = p_zawiya_id
+  where user_id = p_user_id and status = 'verified';
+  if not found then
+    raise exception 'Ce compte n''a pas de parrainage confirmé' using errcode = 'P0002';
+  end if;
+end;
+$$;
+revoke all on function public.admin_set_mouqaddam_zawiya(uuid, uuid) from public;
+revoke all on function public.admin_set_mouqaddam_zawiya(uuid, uuid) from anon;
+grant execute on function public.admin_set_mouqaddam_zawiya(uuid, uuid) to authenticated;
 
 create table public.events (
   id uuid primary key default gen_random_uuid(),
@@ -929,6 +981,9 @@ create table public.posts (
   -- rattachés à une zawiya (trust implicite), pas de flux de review avant
   -- publication en V1 — voir docs/implantation-fil-communaute.md.
   content_status text not null default 'valide' check (content_status in ('brouillon', 'valide')),
+  -- Masquage par la modération (audit du 2026-10-04, S61) : jamais supprimé,
+  -- filtré par la RLS, écrit uniquement par resolve_report().
+  hidden_at timestamptz,
   check (author_user_id is not null or author_zawiya_id is not null)
 );
 
@@ -944,7 +999,8 @@ create table public.post_comments (
   post_id uuid not null references public.posts(id) on delete cascade,
   user_id uuid not null references auth.users(id),
   content_text text not null,
-  created_at timestamptz not null default now()
+  created_at timestamptz not null default now(),
+  hidden_at timestamptz -- masquage par la modération, voir posts.hidden_at
 );
 
 create table public.groups (
@@ -1077,7 +1133,7 @@ create table public.sensitive_data_access_log (
 create table public.content_reports (
   id uuid primary key default gen_random_uuid(),
   reporter_id uuid not null references auth.users(id) on delete cascade,
-  content_type text not null check (content_type in ('live_stream','lineage_connection_request')),
+  content_type text not null check (content_type in ('live_stream','lineage_connection_request','post','post_comment')),
   content_id uuid not null,
   reason text,
   status text not null default 'pending' check (status in ('pending','resolved','dismissed')),
@@ -1238,8 +1294,48 @@ create policy lineage_requests_recipient_or_admin_update on public.lineage_conne
 
 -- --- Profils, appareils, pratique personnelle ---
 create policy profiles_read_all on public.profiles for select using (true);
-create policy profiles_owner_update on public.profiles for update using ((select auth.uid()) = user_id);
-create policy profiles_owner_insert on public.profiles for insert with check ((select auth.uid()) = user_id);
+create policy profiles_owner_update on public.profiles for update
+  using ((select auth.uid()) = user_id)
+  with check ((select auth.uid()) = user_id);
+
+-- Audit du 2026-10-04, point S01 : la policy ci-dessus ne filtre que la LIGNE,
+-- pas les COLONNES. Sans restriction de colonnes, un compte connecté pouvait
+-- passer son propre `is_admin` à true par un appel direct à l'API, et
+-- `is_admin()` ouvrait alors toutes les policies admin du schéma. Trois
+-- verrous indépendants :
+--   1. privilèges de colonne : les rôles clients ne peuvent écrire que les
+--      colonnes éditables du profil (jamais `is_admin`, `user_id`,
+--      `created_at`) ;
+--   2. plus de policy d'insertion ni de privilège INSERT : le profil est créé
+--      uniquement par le trigger `handle_new_user` (SECURITY DEFINER), jamais
+--      par le client — une insertion directe aurait pu fixer `is_admin` ;
+--   3. trigger de garde (plus bas) : refuse tout changement de `is_admin`
+--      venant d'un rôle client, même si les privilèges de colonne étaient
+--      rétablis par erreur (ex. recréation de la table, GRANT global).
+-- `is_admin` ne se modifie donc qu'en SQL avec un rôle d'administration de
+-- la base (bootstrap du porteur de projet).
+revoke insert, update on public.profiles from anon, authenticated;
+grant update (display_name, avatar_url, locale, zawiya_id, bio) on public.profiles to authenticated;
+
+create or replace function public.protect_profile_admin_flag()
+returns trigger as $$
+begin
+  if new.is_admin is distinct from old.is_admin
+     and current_user in ('anon', 'authenticated') then
+    raise exception 'is_admin ne peut pas être modifié par un compte client'
+      using errcode = '42501';
+  end if;
+  return new;
+end;
+$$ language plpgsql set search_path = public;
+
+create trigger trg_profiles_protect_admin_flag
+  before update on public.profiles
+  for each row execute function public.protect_profile_admin_flag();
+
+revoke execute on function public.protect_profile_admin_flag() from public;
+revoke execute on function public.protect_profile_admin_flag() from anon;
+revoke execute on function public.protect_profile_admin_flag() from authenticated;
 
 create policy devices_owner_only on public.devices for all
   using ((select auth.uid()) = user_id) with check ((select auth.uid()) = user_id);
@@ -1266,31 +1362,79 @@ create policy events_read_all on public.events for select using (true);
 -- Remplace events_authenticated_create (trop permissif : n'importe quel
 -- utilisateur connecté), migration
 -- restrict_events_create_update_to_admin_or_own_zawiya_mouqaddam.
+-- Audit du 2026-10-04 (S02a, S02b) : la zawiya comparée est celle attribuée
+-- par l'admin (my_managed_zawiya(), NULL si le compte n'est pas mouqaddam
+-- confirmé), plus profiles.zawiya_id. Modifier et supprimer exigent la même
+-- condition que créer : un mouqaddam révoqué, ou dont la zawiya gérée a
+-- changé, perd la main sur ses anciens évènements (l'admin la garde).
 create policy events_create_admin_or_own_zawiya_mouqaddam on public.events for insert
   with check (
     public.is_admin((select auth.uid()))
-    or (
-      public.is_verified_mouqaddam((select auth.uid()))
-      and created_by = (select auth.uid())
-      and zawiya_id = (select p.zawiya_id from public.profiles p where p.user_id = (select auth.uid()))
-    )
+    or (created_by = (select auth.uid()) and zawiya_id = public.my_managed_zawiya())
   );
--- WITH CHECK ajouté (même migration) : admin illimité ; le créateur non-admin
--- ne peut garder son évènement que sur SA zawiya actuelle, pour empêcher de
--- le réassigner à une autre zawiya via édition (contournerait sinon la
--- contrainte de création ci-dessus). USING (qui peut tenter la
--- modification) inchangé.
 create policy events_owner_or_admin_update on public.events for update
-  using ((select auth.uid()) = created_by or public.is_admin((select auth.uid())))
+  using (
+    public.is_admin((select auth.uid()))
+    or ((select auth.uid()) = created_by and zawiya_id = public.my_managed_zawiya())
+  )
   with check (
     public.is_admin((select auth.uid()))
-    or (
-      (select auth.uid()) = created_by
-      and zawiya_id = (select p.zawiya_id from public.profiles p where p.user_id = (select auth.uid()))
-    )
+    or ((select auth.uid()) = created_by and zawiya_id = public.my_managed_zawiya())
   );
 create policy events_owner_or_admin_delete on public.events for delete
-  using ((select auth.uid()) = created_by or public.is_admin((select auth.uid())));
+  using (
+    public.is_admin((select auth.uid()))
+    or ((select auth.uid()) = created_by and zawiya_id = public.my_managed_zawiya())
+  );
+
+-- Audit du 2026-10-04 (S02c) : la règle « un profil ou un groupe ne se
+-- rattache qu'à un lieu de type 'zawiya' » n'était appliquée que par l'app.
+create or replace function public.enforce_zawiya_kind_attachment()
+returns trigger
+language plpgsql security definer set search_path = public
+as $$
+begin
+  if new.zawiya_id is not null
+     and (tg_op = 'INSERT' or new.zawiya_id is distinct from old.zawiya_id)
+     and not exists (select 1 from public.zawiyas z where z.id = new.zawiya_id and z.kind = 'zawiya') then
+    raise exception 'Le rattachement n''est possible qu''à un lieu de type zawiya' using errcode = '23514';
+  end if;
+  return new;
+end;
+$$;
+revoke all on function public.enforce_zawiya_kind_attachment() from public;
+revoke all on function public.enforce_zawiya_kind_attachment() from anon;
+revoke all on function public.enforce_zawiya_kind_attachment() from authenticated;
+
+create trigger trg_profiles_zawiya_kind before insert or update of zawiya_id on public.profiles
+  for each row execute function public.enforce_zawiya_kind_attachment();
+create trigger trg_groups_zawiya_kind before insert or update of zawiya_id on public.groups
+  for each row execute function public.enforce_zawiya_kind_attachment();
+
+-- Un lieu ne peut pas quitter le type 'zawiya' tant que des profils, des
+-- groupes ou un mouqaddam y sont rattachés (code 23503, comme une clé
+-- étrangère bloquante) : il faut d'abord les détacher.
+create or replace function public.prevent_zawiya_kind_change_when_attached()
+returns trigger
+language plpgsql security definer set search_path = public
+as $$
+begin
+  if old.kind = 'zawiya' and new.kind <> 'zawiya' and (
+    exists (select 1 from public.profiles p where p.zawiya_id = old.id)
+    or exists (select 1 from public.groups g where g.zawiya_id = old.id)
+    or exists (select 1 from public.mouqaddam_status ms where ms.managed_zawiya_id = old.id)
+  ) then
+    raise exception 'Des profils, groupes ou mouqaddams sont rattachés à cette zawiya' using errcode = '23503';
+  end if;
+  return new;
+end;
+$$;
+revoke all on function public.prevent_zawiya_kind_change_when_attached() from public;
+revoke all on function public.prevent_zawiya_kind_change_when_attached() from anon;
+revoke all on function public.prevent_zawiya_kind_change_when_attached() from authenticated;
+
+create trigger trg_zawiyas_kind_change before update of kind on public.zawiyas
+  for each row execute function public.prevent_zawiya_kind_change_when_attached();
 
 -- Public si group_id est nul (direct d'évènement) ; réservé aux membres du
 -- groupe sinon (migration add_group_scoped_live_streams) — même règle que
@@ -1346,12 +1490,111 @@ create policy live_streams_group_manager_or_admin_delete on public.live_streams 
 -- Pas de policy de lecture pour le déclarant (content_reports_authenticated_create
 -- couvre l'insertion, jamais la lecture) : "modération a posteriori suffit"
 -- (docs/01-perimetre-fonctionnel.md §6), pas de fil de suivi côté utilisateur en V1.
+-- Audit du 2026-10-04 (S09, S60, S61). Avant : un compte pouvait signaler un
+-- content_id arbitraire (chaque ligne notifiant tous les admins) et choisir
+-- lui-même status / resolved_*. Désormais :
+--   - can_report_content() vérifie que le contenu existe, que le déclarant
+--     peut le voir et qu'il n'en est pas l'auteur ;
+--   - les privilèges de colonne ne laissent écrire que le signalement
+--     lui-même ;
+--   - le traitement passe uniquement par resolve_report() (plus de policy
+--     UPDATE) : masquage du contenu et clôture de TOUS les signalements en
+--     attente du même contenu dans une seule transaction, y compris pour un
+--     direct de groupe dont l'admin n'est pas membre (S60).
+create or replace function public.can_report_content(p_content_type text, p_content_id uuid)
+returns boolean
+language sql stable security definer set search_path = public
+as $$
+  select case p_content_type
+    when 'live_stream' then exists (
+      select 1 from public.live_streams s
+      where s.id = p_content_id and s.hidden_at is null
+        and s.started_by is distinct from (select auth.uid())
+        and (s.group_id is null or exists (
+          select 1 from public.group_memberships gm
+          where gm.group_id = s.group_id and gm.user_id = (select auth.uid())))
+    )
+    when 'lineage_connection_request' then exists (
+      select 1 from public.lineage_connection_requests r
+      where r.id = p_content_id
+        and (select auth.uid()) in (r.requester_id, r.recipient_id)
+    )
+    when 'post' then exists (
+      select 1 from public.posts p
+      where p.id = p_content_id and p.content_status = 'valide' and p.hidden_at is null
+        and p.author_user_id is distinct from (select auth.uid())
+    )
+    when 'post_comment' then exists (
+      select 1 from public.post_comments c
+      join public.posts p on p.id = c.post_id
+      where c.id = p_content_id and c.hidden_at is null
+        and p.content_status = 'valide' and p.hidden_at is null
+        and c.user_id is distinct from (select auth.uid())
+    )
+    else false
+  end;
+$$;
+revoke all on function public.can_report_content(text, uuid) from public;
+revoke all on function public.can_report_content(text, uuid) from anon;
+grant execute on function public.can_report_content(text, uuid) to authenticated;
+
 create policy content_reports_authenticated_create on public.content_reports for insert
-  with check ((select auth.uid()) is not null and reporter_id = (select auth.uid()));
+  with check (
+    reporter_id = (select auth.uid())
+    and status = 'pending'
+    and resolved_at is null
+    and resolved_by is null
+    and public.can_report_content(content_type, content_id)
+  );
 create policy content_reports_admin_read on public.content_reports for select
   using (public.is_admin((select auth.uid())));
-create policy content_reports_admin_update on public.content_reports for update
-  using (public.is_admin((select auth.uid())));
+revoke insert, update, delete on public.content_reports from anon, authenticated;
+grant insert (reporter_id, content_type, content_id, reason) on public.content_reports to authenticated;
+
+create or replace function public.resolve_report(p_report_id uuid, p_take_action boolean)
+returns void
+language plpgsql security definer set search_path = public
+as $$
+declare
+  v_admin uuid := (select auth.uid());
+  v_report public.content_reports%rowtype;
+begin
+  if not public.is_admin(v_admin) then
+    raise exception 'Réservé à l''administration' using errcode = '42501';
+  end if;
+  select * into v_report from public.content_reports where id = p_report_id and status = 'pending' for update;
+  if not found then
+    raise exception 'Signalement introuvable ou déjà traité' using errcode = 'P0002';
+  end if;
+
+  if not p_take_action then
+    update public.content_reports
+    set status = 'dismissed', resolved_at = now(), resolved_by = v_admin
+    where id = p_report_id;
+    return;
+  end if;
+
+  case v_report.content_type
+    when 'live_stream' then
+      update public.live_streams set hidden_at = now(), status = 'ended' where id = v_report.content_id;
+    when 'lineage_connection_request' then
+      update public.lineage_connection_requests
+      set status = 'declined', blocked_at = now(), decided_at = now()
+      where id = v_report.content_id;
+    when 'post' then
+      update public.posts set hidden_at = now() where id = v_report.content_id;
+    when 'post_comment' then
+      update public.post_comments set hidden_at = now() where id = v_report.content_id;
+  end case;
+
+  update public.content_reports
+  set status = 'resolved', resolved_at = now(), resolved_by = v_admin
+  where content_type = v_report.content_type and content_id = v_report.content_id and status = 'pending';
+end;
+$$;
+revoke all on function public.resolve_report(uuid, boolean) from public;
+revoke all on function public.resolve_report(uuid, boolean) from anon;
+grant execute on function public.resolve_report(uuid, boolean) to authenticated;
 
 -- stream_replays/live_chat_messages n'ont pas de group_id propre : passent
 -- par une jointure sur live_streams.group_id, même principe que ci-dessus.
@@ -1530,21 +1773,47 @@ create policy donations_owner_create on public.donations for insert
   with check ((select auth.uid()) = user_id or user_id is null);
 
 -- --- Communauté : fil, groupes, messagerie ---
+-- Audit du 2026-10-04 (S04, S61). Avant : la policy d'insertion ne contrôlait
+-- que l'auteur, donc un appel direct à l'API pouvait publier au nom de
+-- n'importe quelle zawiya (affichée en priorité comme auteur) ou choisir
+-- content_status ; la règle « compte rattaché à une zawiya » n'existait que
+-- côté client. Désormais : la zawiya d'auteur est forcément celle du profil,
+-- et les privilèges de colonne limitent ce que l'auteur peut écrire
+-- (jamais content_status ni hidden_at, jamais la zawiya après coup).
 create policy posts_read_valid_or_admin on public.posts for select
-  using (content_status = 'valide' or public.is_admin((select auth.uid())));
-create policy posts_author_create on public.posts for insert with check ((select auth.uid()) = author_user_id);
+  using ((content_status = 'valide' and hidden_at is null) or public.is_admin((select auth.uid())));
+create policy posts_author_create on public.posts for insert
+  with check (
+    (select auth.uid()) = author_user_id
+    and content_status = 'valide'
+    and hidden_at is null
+    and author_zawiya_id is not null
+    and author_zawiya_id = (select p.zawiya_id from public.profiles p where p.user_id = (select auth.uid()))
+  );
 create policy posts_author_delete on public.posts for delete using ((select auth.uid()) = author_user_id);
--- Ajoutée après coup (migration add_posts_author_update_policy, 2026-08-20)
--- pour permettre à l'auteur de modifier sa propre publication depuis le fil
--- "Communauté" — jusque-là seule la suppression était possible côté RLS.
-create policy posts_author_update on public.posts for update using ((select auth.uid()) = author_user_id);
+create policy posts_author_update on public.posts for update
+  using ((select auth.uid()) = author_user_id)
+  with check ((select auth.uid()) = author_user_id);
+revoke insert, update on public.posts from anon, authenticated;
+grant insert (author_user_id, author_zawiya_id, content_text, media_url) on public.posts to authenticated;
+grant update (content_text, media_url) on public.posts to authenticated;
 
 create policy post_likes_read_all on public.post_likes for select using (true);
 create policy post_likes_owner_only on public.post_likes for insert with check ((select auth.uid()) = user_id);
 create policy post_likes_owner_delete on public.post_likes for delete using ((select auth.uid()) = user_id);
 
-create policy post_comments_read_all on public.post_comments for select using (true);
-create policy post_comments_author_create on public.post_comments for insert with check ((select auth.uid()) = user_id);
+create policy post_comments_read_all on public.post_comments for select
+  using (hidden_at is null or public.is_admin((select auth.uid())));
+-- Le EXISTS est évalué avec la RLS de posts : on ne commente qu'une
+-- publication visible (ni brouillon, ni masquée).
+create policy post_comments_author_create on public.post_comments for insert
+  with check (
+    (select auth.uid()) = user_id
+    and hidden_at is null
+    and exists (select 1 from public.posts p where p.id = post_comments.post_id)
+  );
+revoke insert, update on public.post_comments from anon, authenticated;
+grant insert (post_id, user_id, content_text) on public.post_comments to authenticated;
 create policy post_comments_author_delete on public.post_comments for delete using ((select auth.uid()) = user_id);
 
 create policy groups_read_all on public.groups for select using (true);
@@ -1579,11 +1848,12 @@ create policy group_posts_author_delete on public.group_posts for delete
 
 create policy conversations_participants_read on public.conversations for select
   using (exists (select 1 from public.conversation_participants cp where cp.conversation_id = conversations.id and cp.user_id = (select auth.uid())));
--- On peut toujours créer une conversation vide et s'y ajouter soi-même (symétrique à
--- group_memberships_self_join). La policy SELECT ci-dessus la rend invisible tant
--- qu'aucun autre participant n'y est ajouté.
-create policy conversations_authenticated_create on public.conversations
-  for insert with check ((select auth.uid()) is not null);
+-- Audit du 2026-10-04 (S03) : plus aucune insertion directe par le client dans
+-- conversations ni conversation_participants. L'ancienne policy
+-- conversation_participants_insert autorisait « s'ajouter soi-même » sans
+-- condition : quiconque connaissait un conversation_id pouvait s'y ajouter
+-- et lire tous les messages. Seule start_conversation() (plus bas) crée une
+-- conversation, toujours à deux participants.
 
 -- conversation_participants_self_read et conversation_participants_insert
 -- référencent toutes les deux conversation_participants dans leur propre clause via
@@ -1613,24 +1883,75 @@ create policy conversation_participants_self_read on public.conversation_partici
     (select auth.uid()) = user_id
     or public.is_conversation_participant(conversation_participants.conversation_id, (select auth.uid()))
   );
-create policy conversation_participants_insert on public.conversation_participants
-  for insert with check (
-    -- S'ajouter soi-même : toujours permis (créateur de la conversation).
-    (select auth.uid()) = user_id
-    or (
-      -- Ajouter quelqu'un d'autre : seulement si je suis déjà participant de cette
-      -- conversation ET que je partage au moins un groupe avec cette personne — la
-      -- messagerie privée n'est ouverte qu'entre disciples d'un même groupe, faute
-      -- d'annuaire public de disciples ailleurs dans l'app.
-      public.is_conversation_participant(conversation_participants.conversation_id, (select auth.uid()))
-      and exists (
-        select 1 from public.group_memberships gm1
-        join public.group_memberships gm2 on gm1.group_id = gm2.group_id
-        where gm1.user_id = (select auth.uid())
-          and gm2.user_id = conversation_participants.user_id
-      )
-    )
-  );
+
+-- Ouvre (ou retrouve) la conversation privée à deux entre le compte connecté
+-- et p_other_user_id. Règles, toutes vérifiées ici et nulle part côté client :
+--   - un groupe en commun est requis (pas d'annuaire public de disciples) ;
+--   - le réglage « Qui peut vous contacter » du destinataire est respecté
+--     (audit S26 : il n'était lu par rien) : 'everyone' = tout membre d'un
+--     groupe commun ; 'matches_only' (défaut) = seulement un disciple avec
+--     une mise en relation par lignée acceptée et non bloquée.
+-- Une conversation déjà ouverte est rendue telle quelle : le réglage
+-- gouverne la prise de contact, pas la poursuite d'un échange existant.
+-- Codes d'erreur lus par l'app : AT001 (aucun groupe commun), AT002
+-- (destinataire limité à ses correspondances).
+create or replace function public.start_conversation(p_other_user_id uuid)
+returns uuid
+language plpgsql security definer set search_path = public
+as $$
+declare
+  v_me uuid := (select auth.uid());
+  v_conversation uuid;
+  v_contact text;
+begin
+  if v_me is null then
+    raise exception 'Connexion requise' using errcode = '42501';
+  end if;
+  if p_other_user_id is null or p_other_user_id = v_me
+     or not exists (select 1 from public.profiles p where p.user_id = p_other_user_id) then
+    raise exception 'Destinataire invalide' using errcode = '22023';
+  end if;
+
+  select cp1.conversation_id into v_conversation
+  from public.conversation_participants cp1
+  join public.conversation_participants cp2 on cp2.conversation_id = cp1.conversation_id
+  where cp1.user_id = v_me and cp2.user_id = p_other_user_id
+    and (select count(*) from public.conversation_participants c where c.conversation_id = cp1.conversation_id) = 2
+  limit 1;
+  if v_conversation is not null then
+    return v_conversation;
+  end if;
+
+  if not exists (
+    select 1 from public.group_memberships gm1
+    join public.group_memberships gm2 on gm1.group_id = gm2.group_id
+    where gm1.user_id = v_me and gm2.user_id = p_other_user_id
+  ) then
+    raise exception 'Aucun groupe en commun' using errcode = 'AT001';
+  end if;
+
+  select ps.who_can_contact into v_contact from public.privacy_settings ps where ps.user_id = p_other_user_id;
+  if coalesce(v_contact, 'matches_only') <> 'everyone' and not exists (
+    select 1 from public.lineage_connection_requests r
+    where r.status = 'accepted' and r.blocked_at is null
+      and ((r.requester_id = v_me and r.recipient_id = p_other_user_id)
+        or (r.requester_id = p_other_user_id and r.recipient_id = v_me))
+  ) then
+    raise exception 'Ce disciple n''accepte que les messages de ses correspondances' using errcode = 'AT002';
+  end if;
+
+  insert into public.conversations default values returning id into v_conversation;
+  insert into public.conversation_participants (conversation_id, user_id)
+  values (v_conversation, v_me), (v_conversation, p_other_user_id);
+  return v_conversation;
+end;
+$$;
+revoke all on function public.start_conversation(uuid) from public;
+revoke all on function public.start_conversation(uuid) from anon;
+grant execute on function public.start_conversation(uuid) to authenticated;
+
+revoke insert, update, delete on public.conversations from anon, authenticated;
+revoke insert, update, delete on public.conversation_participants from anon, authenticated;
 
 create policy messages_participants_only on public.messages
   for select using (exists (
@@ -2007,3 +2328,697 @@ insert into public.wird_steps (wird_id, order_index, arabic_text, transliteratio
 -- insert into public.admin_actions_log (admin_user_id, action_type, target_user_id, details)
 -- values ('<UUID_DU_COMPTE>', 'founder_validation', '<UUID_DU_COMPTE>',
 --         '{"note": "Premier mouqaddam fondateur, amorçage du mécanisme de parrainage"}'::jsonb);
+
+-- ============================================================================
+-- 12. AUDIT DU 2026-10-04 — correctifs de sécurité et de confidentialité
+-- ============================================================================
+-- Les points S01 à S04, S09, S26, S60 et S61 de docs/13-audit-ecrans-2026-10-04.md
+-- sont intégrés directement dans les sections ci-dessus. Les migrations
+-- suivantes sont reprises ici telles qu'appliquées (fichiers de
+-- database/migrations/) : elles REMPLACENT les définitions du même nom
+-- données plus haut (drop policy if exists / create or replace). En cas de
+-- différence entre une section antérieure et cette section, c'est cette
+-- section qui décrit l'état réel de la base.
+
+-- ---- 2026-10-04_audit_s05_s06_live_streams.sql ----
+-- Audit du 2026-10-04 — S05a/b/c/d (directs) et S06 (direct masqué).
+-- Appliquée sur le projet live sous le nom audit_s05_s06_live_streams.
+--
+-- Avant : tout compte connecté pouvait créer un direct public sur n'importe
+-- quel évènement (notifié à tous les profils), l'attribuer à un tiers
+-- (started_by non contrôlé), avec un lien de n'importe quel schéma (tel:,
+-- intent:...) ; l'auteur pouvait changer le lien ou repasser en `live` après
+-- coup ; la rediffusion et le chat d'un direct masqué restaient lisibles.
+
+-- S05a : exactement un rattachement (évènement OU groupe).
+alter table public.live_streams drop constraint if exists live_streams_one_target_check;
+alter table public.live_streams add constraint live_streams_one_target_check
+  check ((event_id is null) <> (group_id is null));
+
+-- S05c : seuls les liens http(s) sont acceptés, en base comme dans l'app.
+alter table public.live_streams drop constraint if exists live_streams_external_url_http_check;
+alter table public.live_streams add constraint live_streams_external_url_http_check
+  check (external_url is null or external_url ~* '^https?://[^[:space:]]+$');
+alter table public.stream_replays drop constraint if exists stream_replays_video_url_http_check;
+alter table public.stream_replays add constraint stream_replays_video_url_http_check
+  check (video_url ~* '^https?://[^[:space:]]+$');
+
+-- S05d : un seul direct `live` à la fois par évènement et par groupe.
+create unique index if not exists live_streams_one_live_per_event
+  on public.live_streams (event_id) where status = 'live' and event_id is not null;
+create unique index if not exists live_streams_one_live_per_group
+  on public.live_streams (group_id) where status = 'live' and group_id is not null;
+
+-- S05a + S05d : qui peut démarrer un direct.
+--   - direct de groupe : tout membre du groupe (inchangé) ;
+--   - direct public d'évènement : l'admin, le créateur de l'évènement, ou le
+--     mouqaddam confirmé de la zawiya de l'évènement (décision du porteur de
+--     projet du 2026-10-04 — même périmètre que la gestion des évènements,
+--     seule exception actée au statut mouqaddam).
+drop policy if exists streams_authenticated_create on public.live_streams;
+create policy streams_authenticated_create on public.live_streams for insert
+  with check (
+    started_by = (select auth.uid())
+    and hidden_at is null
+    and ended_at is null
+    and status = 'live'
+    and (
+      (group_id is not null and exists (
+        select 1 from public.group_memberships gm
+        where gm.group_id = live_streams.group_id and gm.user_id = (select auth.uid())
+      ))
+      or (event_id is not null and (
+        public.is_admin((select auth.uid()))
+        or exists (
+          select 1 from public.events e
+          where e.id = live_streams.event_id
+            and (e.created_by = (select auth.uid()) or e.zawiya_id = public.my_managed_zawiya())
+        )
+      ))
+    )
+  );
+
+-- S05b : l'auteur (ou l'admin) ne peut que terminer le direct.
+drop policy if exists streams_owner_or_admin_update on public.live_streams;
+create policy streams_owner_or_admin_update on public.live_streams for update
+  using ((select auth.uid()) = started_by or public.is_admin((select auth.uid())))
+  with check ((select auth.uid()) = started_by or public.is_admin((select auth.uid())));
+
+revoke insert, update on public.live_streams from anon, authenticated;
+grant insert (event_id, group_id, source_type, external_url, status, started_by, started_at)
+  on public.live_streams to authenticated;
+grant update (status, ended_at) on public.live_streams to authenticated;
+
+-- Un direct terminé ne repasse jamais en `live` depuis un compte client
+-- (le masquage par la modération passe par resolve_report(), SECURITY DEFINER).
+create or replace function public.live_streams_no_resurrection()
+returns trigger as $$
+begin
+  if old.status = 'ended' and new.status <> 'ended'
+     and current_user in ('anon', 'authenticated') then
+    raise exception 'Un direct terminé ne peut pas être relancé' using errcode = '42501';
+  end if;
+  return new;
+end;
+$$ language plpgsql set search_path = public;
+revoke execute on function public.live_streams_no_resurrection() from public;
+revoke execute on function public.live_streams_no_resurrection() from anon;
+revoke execute on function public.live_streams_no_resurrection() from authenticated;
+
+drop trigger if exists trg_live_streams_no_resurrection on public.live_streams;
+create trigger trg_live_streams_no_resurrection
+  before update of status on public.live_streams
+  for each row execute function public.live_streams_no_resurrection();
+
+-- S06 : rediffusions et chat suivent la visibilité du direct. Le EXISTS est
+-- évalué avec la RLS de live_streams (masquage + appartenance au groupe),
+-- donc une seule règle à maintenir. Écrire dans le chat exige un direct en
+-- cours.
+drop policy if exists replays_read_public_or_group_member on public.stream_replays;
+create policy replays_read_public_or_group_member on public.stream_replays for select
+  using (exists (select 1 from public.live_streams ls where ls.id = stream_replays.stream_id));
+
+drop policy if exists live_chat_read_public_or_group_member on public.live_chat_messages;
+create policy live_chat_read_public_or_group_member on public.live_chat_messages for select
+  using (exists (select 1 from public.live_streams ls where ls.id = live_chat_messages.stream_id));
+
+drop policy if exists live_chat_authenticated_write on public.live_chat_messages;
+create policy live_chat_authenticated_write on public.live_chat_messages for insert
+  with check (
+    (select auth.uid()) = user_id
+    and exists (
+      select 1 from public.live_streams ls
+      where ls.id = live_chat_messages.stream_id and ls.status = 'live'
+    )
+  );
+revoke insert, update on public.live_chat_messages from anon, authenticated;
+grant insert (stream_id, user_id, message) on public.live_chat_messages to authenticated;
+
+-- ---- 2026-10-04_audit_s07_s08_s10_s11_s12_s28_s29_s30.sql ----
+-- Audit du 2026-10-04 — S07 (dons), S08a/b (demandes de mise en relation),
+-- S10 (notifications), S11 (conditions de la Tariqa), S12 (cycle de silsila),
+-- S28/S29/S30 (lignée), plus la normalisation des noms saisis en arabe.
+-- Appliquée sur le projet live sous le nom audit_s07_to_s30_misc_rls.
+
+-- ---------------------------------------------------------------------------
+-- S07 — Dons : plus aucune insertion par le client. La ligne `pending` est
+-- créée par l'Edge Function create-donation-checkout (clé service_role) ;
+-- l'ancienne policy laissait insérer directement un don `completed`.
+-- ---------------------------------------------------------------------------
+drop policy if exists donations_owner_create on public.donations;
+revoke insert, update, delete on public.donations from anon, authenticated;
+
+-- ---------------------------------------------------------------------------
+-- Lignée — normalisation : l'ancienne expression remplaçait tout caractère
+-- hors [a-zA-Z0-9] par une espace, donc un nom saisi en arabe devenait une
+-- chaîne vide et « Retrouver mes condisciples » ne trouvait jamais rien.
+-- On conserve désormais les lettres arabes, sans les signes de vocalisation
+-- ni le tatweel (deux graphies du même nom doivent se rejoindre).
+-- ---------------------------------------------------------------------------
+create or replace function public.normalize_moqaddam_name()
+returns trigger as $$
+begin
+  new.moqaddam_name_normalized := btrim(lower(regexp_replace(
+    regexp_replace(extensions.unaccent(new.moqaddam_name_text), '[ً-ْـ]', '', 'g'),
+    '[^a-zA-Z0-9ء-ي]+', ' ', 'g')));
+  new.updated_at := now();
+  return new;
+end;
+$$ language plpgsql set search_path = public, extensions;
+
+-- Recalcule les lignes existantes avec la nouvelle règle (avant de poser le
+-- limiteur ci-dessous, pour ne pas le déclencher).
+update public.lineage_declarations set moqaddam_name_text = moqaddam_name_text;
+
+-- ---------------------------------------------------------------------------
+-- S29 — moqaddam_name_normalized n'est plus lisible ni inscriptible par un
+-- rôle client (privilèges de colonne). Le client doit lister ses colonnes :
+-- un `select *` est désormais refusé.
+-- ---------------------------------------------------------------------------
+revoke select, insert, update on public.lineage_declarations from anon, authenticated;
+grant select (user_id, foyer, foyer_autre_text, moqaddam_name_text, transmission_year, zawiya_text, created_at, updated_at)
+  on public.lineage_declarations to authenticated;
+grant insert (user_id, foyer, foyer_autre_text, moqaddam_name_text, transmission_year, zawiya_text)
+  on public.lineage_declarations to authenticated;
+-- user_id figure dans la liste UPDATE parce que l'upsert de l'app le réécrit
+-- (ON CONFLICT DO UPDATE) ; la policy lineage_owner_only empêche de le changer.
+grant update (user_id, foyer, foyer_autre_text, moqaddam_name_text, transmission_year, zawiya_text)
+  on public.lineage_declarations to authenticated;
+
+-- ---------------------------------------------------------------------------
+-- S28 — Limiteur : un disciple pouvait réécrire sa déclaration à volonté et
+-- rappeler search_lineage_matches() pour tester des noms de moqaddam un par
+-- un. Au plus 5 changements de foyer / nom par 24 h (suppression et
+-- recréation comprises : le journal survit à la suppression de la ligne).
+-- Code d'erreur AT010.
+-- ---------------------------------------------------------------------------
+create table if not exists public.lineage_change_log (
+  id bigint generated always as identity primary key,
+  user_id uuid not null references auth.users(id) on delete cascade,
+  changed_at timestamptz not null default now()
+);
+create index if not exists idx_lineage_change_log_user on public.lineage_change_log (user_id, changed_at);
+alter table public.lineage_change_log enable row level security;
+revoke all on public.lineage_change_log from anon, authenticated;
+
+create or replace function public.limit_lineage_changes()
+returns trigger
+language plpgsql security definer set search_path = public
+as $$
+begin
+  if tg_op = 'UPDATE'
+     and new.foyer = old.foyer
+     and coalesce(new.foyer_autre_text, '') = coalesce(old.foyer_autre_text, '')
+     and new.moqaddam_name_text = old.moqaddam_name_text then
+    return new;
+  end if;
+  -- La fonction est SECURITY DEFINER (elle écrit dans un journal fermé aux
+  -- clients), donc current_user vaut ici le propriétaire : on reconnaît un
+  -- appel venant de l'API à son rôle de session et à ses claims JWT. Une
+  -- correction faite en SQL par l'administration n'est pas limitée.
+  if session_user not in ('authenticator') and current_setting('request.jwt.claims', true) is null then
+    return new;
+  end if;
+  if (select count(*) from public.lineage_change_log l
+      where l.user_id = new.user_id and l.changed_at > now() - interval '24 hours') >= 5 then
+    raise exception 'Trop de modifications de la lignée aujourd''hui, réessayez demain' using errcode = 'AT010';
+  end if;
+  insert into public.lineage_change_log (user_id) values (new.user_id);
+  return new;
+end;
+$$;
+revoke all on function public.limit_lineage_changes() from public;
+revoke all on function public.limit_lineage_changes() from anon;
+revoke all on function public.limit_lineage_changes() from authenticated;
+
+drop trigger if exists trg_lineage_limit_changes on public.lineage_declarations;
+create trigger trg_lineage_limit_changes before insert or update on public.lineage_declarations
+  for each row execute function public.limit_lineage_changes();
+
+-- ---------------------------------------------------------------------------
+-- S30 — Supprimer sa déclaration retire aussi l'accord de mise en relation
+-- et les demandes non bloquées (une demande bloquée par la modération reste,
+-- c'est une trace d'audit).
+-- ---------------------------------------------------------------------------
+create or replace function public.cleanup_after_lineage_delete()
+returns trigger
+language plpgsql security definer set search_path = public
+as $$
+begin
+  update public.privacy_settings set lineage_visible = false where user_id = old.user_id;
+  delete from public.lineage_connection_requests
+  where blocked_at is null and old.user_id in (requester_id, recipient_id);
+  return old;
+end;
+$$;
+revoke all on function public.cleanup_after_lineage_delete() from public;
+revoke all on function public.cleanup_after_lineage_delete() from anon;
+revoke all on function public.cleanup_after_lineage_delete() from authenticated;
+
+drop trigger if exists trg_lineage_cleanup_after_delete on public.lineage_declarations;
+create trigger trg_lineage_cleanup_after_delete after delete on public.lineage_declarations
+  for each row execute function public.cleanup_after_lineage_delete();
+
+-- ---------------------------------------------------------------------------
+-- S08a — Une demande ne se crée que `pending`, vers un disciple qui est une
+-- correspondance réelle (search_lineage_matches() : même lignée et accord
+-- des deux côtés). Avant : insertion directe en `accepted` vers n'importe qui.
+-- S08b — Le destinataire ne change que le statut, jamais une demande bloquée.
+-- ---------------------------------------------------------------------------
+drop policy if exists lineage_requests_create on public.lineage_connection_requests;
+create policy lineage_requests_create on public.lineage_connection_requests for insert
+  with check (
+    (select auth.uid()) = requester_id
+    and status = 'pending'
+    and decided_at is null
+    and blocked_at is null
+    and exists (select 1 from public.search_lineage_matches() m where m.user_id = recipient_id)
+  );
+
+drop policy if exists lineage_requests_recipient_or_admin_update on public.lineage_connection_requests;
+create policy lineage_requests_recipient_update on public.lineage_connection_requests for update
+  using ((select auth.uid()) = recipient_id and blocked_at is null)
+  with check ((select auth.uid()) = recipient_id and blocked_at is null and status in ('accepted', 'declined'));
+
+revoke insert, update, delete on public.lineage_connection_requests from anon, authenticated;
+grant insert (requester_id, recipient_id, status) on public.lineage_connection_requests to authenticated;
+grant update (status, decided_at) on public.lineage_connection_requests to authenticated;
+
+-- ---------------------------------------------------------------------------
+-- S10 — Notifications : le propriétaire lit et marque comme lu, rien d'autre.
+-- Les lignes sont écrites par les triggers SECURITY DEFINER.
+-- ---------------------------------------------------------------------------
+drop policy if exists notifications_owner_only on public.notifications;
+create policy notifications_owner_read on public.notifications for select
+  using ((select auth.uid()) = user_id);
+create policy notifications_owner_mark_read on public.notifications for update
+  using ((select auth.uid()) = user_id)
+  with check ((select auth.uid()) = user_id);
+revoke insert, update, delete on public.notifications from anon, authenticated;
+grant update (read_at) on public.notifications to authenticated;
+
+-- ---------------------------------------------------------------------------
+-- S11 — Conditions de la Tariqa : l'admin ne corrige que le contenu, jamais
+-- content_status ni order_index (une ligne passée en brouillon devenait
+-- invisible et irrécupérable depuis l'app).
+-- ---------------------------------------------------------------------------
+revoke insert, update, delete on public.tariqa_conditions from anon, authenticated;
+grant update (category, text_fr, text_ar, source_note) on public.tariqa_conditions to authenticated;
+
+-- ---------------------------------------------------------------------------
+-- S12 — Silsila historique : ni auto-référence ni cycle. Un cycle faisait
+-- boucler get_historical_silsila_chain() pour tous les disciples.
+-- ---------------------------------------------------------------------------
+alter table public.historical_silsila_links drop constraint if exists historical_silsila_links_no_self_parent;
+alter table public.historical_silsila_links add constraint historical_silsila_links_no_self_parent
+  check (parent_figure_id is null or parent_figure_id <> figure_id);
+
+create or replace function public.prevent_silsila_cycle()
+returns trigger
+language plpgsql security definer set search_path = public
+as $$
+declare
+  v_current uuid := new.parent_figure_id;
+  v_steps int := 0;
+begin
+  while v_current is not null loop
+    if v_current = new.figure_id then
+      raise exception 'Ce lien créerait une boucle dans la silsila' using errcode = '23514';
+    end if;
+    v_steps := v_steps + 1;
+    exit when v_steps > 500;
+    select l.parent_figure_id into v_current
+    from public.historical_silsila_links l where l.figure_id = v_current;
+    if not found then
+      v_current := null;
+    end if;
+  end loop;
+  return new;
+end;
+$$;
+revoke all on function public.prevent_silsila_cycle() from public;
+revoke all on function public.prevent_silsila_cycle() from anon;
+revoke all on function public.prevent_silsila_cycle() from authenticated;
+
+drop trigger if exists trg_silsila_no_cycle on public.historical_silsila_links;
+create trigger trg_silsila_no_cycle before insert or update on public.historical_silsila_links
+  for each row execute function public.prevent_silsila_cycle();
+
+-- ---- 2026-10-04_audit_s20_s25_mouqaddam_privacy.sql ----
+-- Audit du 2026-10-04 — S20 à S25 : confidentialité du statut mouqaddam.
+-- Appliquée sur le projet live sous le nom audit_s20_s25_mouqaddam_privacy.
+
+-- Schéma non exposé par l'API : ses fonctions restent utilisables dans les
+-- policies RLS (évaluées avec les droits de l'appelant), mais ne peuvent pas
+-- être appelées en RPC.
+create schema if not exists private;
+grant usage on schema private to authenticated;
+
+-- ---------------------------------------------------------------------------
+-- S20 — public.is_verified_mouqaddam(uuid) était appelable en RPC par tout
+-- compte connecté : on pouvait tester chaque user_id (tous lisibles dans
+-- profiles) et savoir qui est mouqaddam, même sans son accord de visibilité.
+-- La version publique n'est plus exécutable par les rôles clients ; les
+-- policies passent par le schéma privé.
+-- ---------------------------------------------------------------------------
+create or replace function private.is_verified_mouqaddam(p_user_id uuid)
+returns boolean
+language sql stable security definer set search_path = public
+as $$
+  select exists (
+    select 1 from public.mouqaddam_status ms where ms.user_id = p_user_id and ms.status = 'verified'
+  );
+$$;
+revoke all on function private.is_verified_mouqaddam(uuid) from public;
+grant execute on function private.is_verified_mouqaddam(uuid) to authenticated;
+
+-- S24 — parrain sollicitable : confirmé ET ayant activé « disponible comme
+-- parrain ». Le succès ou l'échec d'une demande ne révèle donc plus que ce
+-- que la recherche de parrain montre déjà.
+create or replace function private.is_available_sponsor(p_user_id uuid)
+returns boolean
+language sql stable security definer set search_path = public
+as $$
+  select exists (
+    select 1 from public.mouqaddam_status ms
+    join public.privacy_settings ps on ps.user_id = ms.user_id
+    where ms.user_id = p_user_id and ms.status = 'verified' and ps.available_as_sponsor = true
+  );
+$$;
+revoke all on function private.is_available_sponsor(uuid) from public;
+grant execute on function private.is_available_sponsor(uuid) to authenticated;
+
+drop policy if exists sponsorship_candidate_create on public.mouqaddam_sponsorships;
+create policy sponsorship_candidate_create on public.mouqaddam_sponsorships
+  for insert with check (
+    (select auth.uid()) = candidate_user_id
+    and status = 'pending'
+    and sponsor_user_id is not null
+    and sponsor_user_id <> (select auth.uid())
+    and private.is_available_sponsor(sponsor_user_id)
+    and not private.is_verified_mouqaddam((select auth.uid()))
+  );
+
+revoke execute on function public.is_verified_mouqaddam(uuid) from authenticated;
+revoke execute on function public.is_verified_mouqaddam(uuid) from anon;
+revoke execute on function public.is_verified_mouqaddam(uuid) from public;
+
+-- ---------------------------------------------------------------------------
+-- S23 — Le statut d'un compte n'est lisible par autrui que s'il est confirmé
+-- ET visible. Avant, la ligne d'un mouqaddam révoqué (avec revoked_reason)
+-- et ses maillons manuels restaient lisibles s'il avait activé la visibilité.
+-- ---------------------------------------------------------------------------
+drop policy if exists mouqaddam_status_visibility on public.mouqaddam_status;
+create policy mouqaddam_status_visibility on public.mouqaddam_status
+  for select using (
+    user_id = (select auth.uid())
+    or (status = 'verified' and public.mouqaddam_status_visible_to(user_id, (select auth.uid())))
+  );
+
+drop policy if exists manual_chain_links_visibility on public.mouqaddam_manual_chain_links;
+create policy manual_chain_links_visibility on public.mouqaddam_manual_chain_links
+  for select using (
+    mouqaddam_user_id = (select auth.uid())
+    or (
+      private.is_verified_mouqaddam(mouqaddam_user_id)
+      and public.mouqaddam_status_visible_to(mouqaddam_user_id, (select auth.uid()))
+    )
+  );
+
+-- ---------------------------------------------------------------------------
+-- S21 — get_ijaza_chain() : la visibilité n'était testée que pour le
+-- titulaire demandé, puis la récursion renvoyait user_id et année de tous
+-- ses ascendants. Désormais, pour un appelant autre que le titulaire, un
+-- maillon dont le compte n'a pas rendu son statut visible est renvoyé
+-- anonymisé (user_id et année à NULL) : la longueur de la chaîne reste
+-- exacte, l'identité reste privée. Le titulaire voit toujours sa propre
+-- chaîne en entier. Une chaîne n'est renvoyée que pour un compte confirmé.
+-- ---------------------------------------------------------------------------
+create or replace function public.get_ijaza_chain(p_mouqaddam_id uuid)
+returns table (
+  depth int,
+  user_id uuid,
+  ijaza_year smallint,
+  is_manual boolean,
+  name_text text,
+  year_text text,
+  is_ultimate_source boolean
+) as $$
+  with recursive allowed as (
+    select (
+      p_mouqaddam_id = (select auth.uid())
+      or (
+        private.is_verified_mouqaddam(p_mouqaddam_id)
+        and public.mouqaddam_status_visible_to(p_mouqaddam_id, (select auth.uid()))
+      )
+    ) as ok
+  ),
+  chain as (
+    select 0 as depth, ms.candidate_user_id as user_id, ms.ijaza_year,
+           false as is_manual, null::text as name_text, null::text as year_text, ms.sponsor_user_id
+    from public.mouqaddam_sponsorships ms
+    where ms.candidate_user_id = p_mouqaddam_id and ms.status = 'accepted'
+      and (select ok from allowed)
+    union all
+    select c.depth + 1, ms.candidate_user_id, ms.ijaza_year,
+           false, null::text, null::text, ms.sponsor_user_id
+    from public.mouqaddam_sponsorships ms
+    join chain c on ms.candidate_user_id = c.sponsor_user_id
+    where ms.status = 'accepted' and c.depth < 200
+  )
+  select c.depth,
+         case when p_mouqaddam_id = (select auth.uid())
+                or public.mouqaddam_status_visible_to(c.user_id, (select auth.uid()))
+              then c.user_id end,
+         case when p_mouqaddam_id = (select auth.uid())
+                or public.mouqaddam_status_visible_to(c.user_id, (select auth.uid()))
+              then c.ijaza_year end,
+         c.is_manual, c.name_text, c.year_text, false as is_ultimate_source
+  from chain c
+  union all
+  select
+    (select coalesce(max(depth), -1) + 1 + mcl.order_index from chain),
+    null, null, true, mcl.name_text, mcl.year_text, mcl.is_ultimate_source
+  from public.mouqaddam_manual_chain_links mcl
+  where mcl.mouqaddam_user_id = coalesce(
+    (select chain.user_id from chain order by chain.depth desc limit 1),
+    p_mouqaddam_id
+  )
+  and (select ok from allowed)
+  order by 1;
+$$ language sql stable security definer set search_path = public;
+revoke all on function public.get_ijaza_chain(uuid) from public;
+revoke all on function public.get_ijaza_chain(uuid) from anon;
+grant execute on function public.get_ijaza_chain(uuid) to authenticated;
+
+-- ---------------------------------------------------------------------------
+-- S22 — get_ijaza_share_visibility() ne répond plus que pour les comptes de
+-- la propre chaîne de l'appelant (seul usage : la carte de partage).
+-- ---------------------------------------------------------------------------
+create or replace function public.get_ijaza_share_visibility(p_user_ids uuid[])
+returns table (user_id uuid, visible boolean)
+language sql stable security definer set search_path = public
+as $$
+  select u.id as user_id, coalesce(ps.mouqaddam_status_visible, false) as visible
+  from unnest(p_user_ids) as u(id)
+  left join public.privacy_settings ps on ps.user_id = u.id
+  where u.id in (select c.user_id from public.get_ijaza_chain((select auth.uid())) c where c.user_id is not null);
+$$;
+revoke all on function public.get_ijaza_share_visibility(uuid[]) from public;
+revoke all on function public.get_ijaza_share_visibility(uuid[]) from anon;
+grant execute on function public.get_ijaza_share_visibility(uuid[]) to authenticated;
+
+-- ---------------------------------------------------------------------------
+-- S25 — Recherche de parrain : au moins 2 caractères, jokers neutralisés,
+-- 20 résultats au plus. Une requête vide ne renvoie plus tout l'annuaire des
+-- parrains disponibles.
+-- ---------------------------------------------------------------------------
+create or replace function public.search_available_sponsors(p_query text default null)
+returns table (user_id uuid, display_name text, zawiya_name text)
+language sql stable security definer set search_path = public
+as $$
+  select p.user_id, p.display_name, z.name
+  from public.mouqaddam_status ms
+  join public.privacy_settings ps on ps.user_id = ms.user_id
+  join public.profiles p on p.user_id = ms.user_id
+  left join public.zawiyas z on z.id = p.zawiya_id
+  where ms.status = 'verified'
+    and ps.available_as_sponsor = true
+    and ms.user_id <> (select auth.uid())
+    and char_length(btrim(coalesce(p_query, ''))) >= 2
+    and p.display_name ilike
+      '%' || replace(replace(replace(btrim(p_query), '\', '\\'), '%', '\%'), '_', '\_') || '%'
+  order by p.display_name
+  limit 20;
+$$;
+revoke all on function public.search_available_sponsors(text) from public;
+revoke all on function public.search_available_sponsors(text) from anon;
+grant execute on function public.search_available_sponsors(text) to authenticated;
+
+-- ---- 2026-10-04_audit_s22b_private_helpers.sql ----
+-- Audit du 2026-10-04 — suite de S20/S22, relevée par l'advisor de sécurité
+-- Supabase après les migrations précédentes. Deux fonctions SECURITY DEFINER
+-- utilisées par des policies étaient aussi appelables en RPC :
+--   - mouqaddam_status_visible_to(owner, viewer) révélait le réglage de
+--     visibilité de n'importe quel compte ;
+--   - is_conversation_participant(conversation, user) permettait de tester
+--     l'appartenance d'un tiers à une conversation (et restait exécutable
+--     sans connexion).
+-- Elles passent dans le schéma privé (utilisable par les policies, pas par
+-- l'API) ; les versions publiques ne sont plus exécutables par les clients.
+-- Appliquée sous le nom audit_s22b_private_helpers.
+
+create or replace function private.mouqaddam_status_visible_to(p_owner_id uuid, p_viewer_id uuid)
+returns boolean
+language sql stable security definer set search_path = public
+as $$
+  select p_viewer_id = p_owner_id
+    or exists (
+      select 1 from public.privacy_settings ps
+      where ps.user_id = p_owner_id and ps.mouqaddam_status_visible = true
+    );
+$$;
+revoke all on function private.mouqaddam_status_visible_to(uuid, uuid) from public;
+grant execute on function private.mouqaddam_status_visible_to(uuid, uuid) to authenticated;
+
+create or replace function private.is_conversation_participant(p_conversation_id uuid, p_user_id uuid)
+returns boolean
+language sql stable security definer set search_path = public
+as $$
+  select exists (
+    select 1 from public.conversation_participants cp
+    where cp.conversation_id = p_conversation_id and cp.user_id = p_user_id
+  );
+$$;
+revoke all on function private.is_conversation_participant(uuid, uuid) from public;
+grant execute on function private.is_conversation_participant(uuid, uuid) to authenticated;
+
+drop policy if exists mouqaddam_status_visibility on public.mouqaddam_status;
+create policy mouqaddam_status_visibility on public.mouqaddam_status
+  for select using (
+    user_id = (select auth.uid())
+    or (status = 'verified' and private.mouqaddam_status_visible_to(user_id, (select auth.uid())))
+  );
+
+drop policy if exists manual_chain_links_visibility on public.mouqaddam_manual_chain_links;
+create policy manual_chain_links_visibility on public.mouqaddam_manual_chain_links
+  for select using (
+    mouqaddam_user_id = (select auth.uid())
+    or (
+      private.is_verified_mouqaddam(mouqaddam_user_id)
+      and private.mouqaddam_status_visible_to(mouqaddam_user_id, (select auth.uid()))
+    )
+  );
+
+drop policy if exists conversation_participants_self_read on public.conversation_participants;
+create policy conversation_participants_self_read on public.conversation_participants for select
+  using (
+    (select auth.uid()) = user_id
+    or private.is_conversation_participant(conversation_participants.conversation_id, (select auth.uid()))
+  );
+
+-- Les versions publiques restent pour les fonctions SECURITY DEFINER qui les
+-- appellent (get_ijaza_chain), mais ne sont plus exposées aux clients.
+revoke execute on function public.mouqaddam_status_visible_to(uuid, uuid) from public, anon, authenticated;
+revoke execute on function public.is_conversation_participant(uuid, uuid) from public, anon, authenticated;
+
+-- ---- 2026-10-04_audit_s51_s52_delete_account.sql ----
+-- Audit du 2026-10-04 — S51 / S52 : suppression de compte atomique.
+-- Appliquée sur le projet live sous le nom audit_s51_s52_delete_account.
+--
+-- Avant : l'Edge Function delete-account enchaînait huit écritures sans lire
+-- leurs erreurs, puis supprimait l'utilisateur. Si cette dernière étape
+-- échouait (clé étrangère non traitée : groupe créé, message dans le chat
+-- d'un direct, figure de la semaine épinglée, signalement traité...), les
+-- commentaires, messages de groupe et messages privés étaient déjà effacés
+-- alors que le compte subsistait.
+--
+-- Désormais tout se passe dans UNE transaction : soit le compte et ses
+-- données personnelles disparaissent ensemble, soit rien n'est modifié.
+
+-- Les journaux d'audit gardent leurs lignes, anonymisées, quand un compte
+-- cité disparaît (ils bloquaient jusqu'ici la suppression du compte).
+alter table public.admin_actions_log alter column admin_user_id drop not null;
+alter table public.sensitive_data_access_log alter column accessed_by drop not null;
+alter table public.sensitive_data_access_log alter column subject_user_id drop not null;
+alter table public.guide_pages alter column validated_by drop not null;
+
+create or replace function public.delete_my_account()
+returns void
+language plpgsql security definer set search_path = public
+as $$
+declare
+  v_user uuid := (select auth.uid());
+begin
+  if v_user is null then
+    raise exception 'Connexion requise' using errcode = '42501';
+  end if;
+
+  -- Contenu personnel : supprimé avec le compte (décision du porteur de
+  -- projet du 2026-08-16).
+  delete from public.post_comments where user_id = v_user;
+  delete from public.group_posts where author_user_id = v_user;
+  delete from public.messages where sender_id = v_user;
+  delete from public.live_chat_messages where user_id = v_user;
+  -- Une publication sans zawiya d'auteur ne peut pas être anonymisée
+  -- (contrainte : auteur OU zawiya) : elle est supprimée.
+  delete from public.posts where author_user_id = v_user and author_zawiya_id is null;
+
+  -- Contenu institutionnel : conservé, auteur anonymisé.
+  update public.posts set author_user_id = null where author_user_id = v_user;
+  update public.events set created_by = null where created_by = v_user;
+  update public.live_streams set started_by = null where started_by = v_user;
+  update public.wird_recitations set validated_by = null where validated_by = v_user;
+  update public.featured_figures set created_by = null where created_by = v_user;
+  update public.guide_pages set validated_by = null where validated_by = v_user;
+  update public.groups set created_by_user_id = null where created_by_user_id = v_user;
+  update public.donations set user_id = null where user_id = v_user;
+  update public.content_reports set resolved_by = null where resolved_by = v_user;
+  update public.admin_actions_log set admin_user_id = null where admin_user_id = v_user;
+  update public.admin_actions_log set target_user_id = null where target_user_id = v_user;
+  update public.sensitive_data_access_log set accessed_by = null where accessed_by = v_user;
+  update public.sensitive_data_access_log set subject_user_id = null where subject_user_id = v_user;
+
+  -- Le reste (profil, lignée, statut mouqaddam, parrainages, likes,
+  -- appartenances, conversations, notifications...) est en cascade.
+  delete from auth.users where id = v_user;
+end;
+$$;
+revoke all on function public.delete_my_account() from public;
+revoke all on function public.delete_my_account() from anon;
+grant execute on function public.delete_my_account() to authenticated;
+
+-- ---- 2026-10-04_audit_s66_guide_pages_reprise.sql ----
+-- Audit du 2026-10-04 — S66 : reprise dans le dépôt de la table guide_pages.
+-- Cette table (page « Comprendre la Zawiya ») existait en base avec ses
+-- politiques, mais pas dans database/schema.sql : sa RLS, seule garantie
+-- qu'un disciple ne reçoit pas un brouillon, n'était pas auditable depuis le
+-- dépôt. Définition relevée sur la base live le 2026-10-04 ; ce fichier est
+-- sans effet s'il est rejoué (if not exists / drop policy if exists).
+create table if not exists public.guide_pages (
+  id uuid primary key default gen_random_uuid(),
+  slug text not null unique,
+  title text not null,
+  module text,
+  body_markdown text not null,
+  content_status text not null default 'brouillon' check (content_status in ('brouillon', 'valide')),
+  content_version integer not null default 1,
+  -- Nullable depuis la migration audit_s51_s52_delete_account : mis à NULL
+  -- quand le compte du valideur est supprimé.
+  validated_by uuid references auth.users(id),
+  validated_at timestamptz,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now()
+);
+alter table public.guide_pages enable row level security;
+
+drop policy if exists guide_pages_read_valid_or_admin on public.guide_pages;
+create policy guide_pages_read_valid_or_admin on public.guide_pages for select
+  using (content_status = 'valide' or public.is_admin((select auth.uid())));
+drop policy if exists guide_pages_admin_write on public.guide_pages;
+create policy guide_pages_admin_write on public.guide_pages for insert
+  with check (public.is_admin((select auth.uid())));
+drop policy if exists guide_pages_admin_update on public.guide_pages;
+create policy guide_pages_admin_update on public.guide_pages for update
+  using (public.is_admin((select auth.uid())))
+  with check (public.is_admin((select auth.uid())));
