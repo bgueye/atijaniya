@@ -7,6 +7,10 @@ import '../domain/community_models.dart';
 final communityRepositoryProvider = Provider<CommunityRepository>((ref) => const CommunityRepository());
 
 final communityFeedProvider = FutureProvider<List<CommunityPost>>((ref) {
+  // Lié au compte connecté (audit du 2026-10-04, S40/S41) : sans cette
+  // dépendance, le résultat restait en cache après une déconnexion et le
+  // compte suivant voyait les données du précédent.
+  ref.watch(currentUserIdProvider);
   return ref.watch(communityRepositoryProvider).fetchFeed();
 });
 

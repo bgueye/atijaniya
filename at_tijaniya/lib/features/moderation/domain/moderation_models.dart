@@ -1,14 +1,18 @@
 /// Modération a posteriori (Sprint 2, P3) — table Supabase `content_reports`,
-/// générique pour les deux contenus signalables en V1 (docs/01 §6 : "modération
+/// générique pour les contenus signalables (docs/01 §6 : "modération
 /// a posteriori suffit", pas de rôle modérateur ni de modération automatisée).
+/// Publications et commentaires du fil ajoutés le 2026-10-04 (audit, S61) ;
+/// messages de groupe et messages privés restent hors périmètre.
 library;
 
-enum ReportableContentType { liveStream, lineageConnectionRequest }
+enum ReportableContentType { liveStream, lineageConnectionRequest, post, postComment }
 
 String reportableContentTypeToDbValue(ReportableContentType type) {
   return switch (type) {
     ReportableContentType.liveStream => 'live_stream',
     ReportableContentType.lineageConnectionRequest => 'lineage_connection_request',
+    ReportableContentType.post => 'post',
+    ReportableContentType.postComment => 'post_comment',
   };
 }
 
@@ -16,6 +20,8 @@ ReportableContentType reportableContentTypeFromDbValue(String value) {
   return switch (value) {
     'live_stream' => ReportableContentType.liveStream,
     'lineage_connection_request' => ReportableContentType.lineageConnectionRequest,
+    'post' => ReportableContentType.post,
+    'post_comment' => ReportableContentType.postComment,
     _ => throw ArgumentError('Type de contenu signalable inconnu : $value'),
   };
 }

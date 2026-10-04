@@ -8,6 +8,7 @@
 /// `post_comments_author_create`).
 library;
 
+import '../../../core/storage/image_upload_service.dart';
 import '../../../core/supabase/supabase_config.dart';
 import '../domain/community_models.dart';
 
@@ -56,10 +57,11 @@ class CommunityRepository {
   }
 
   /// Réservé en V1 aux comptes rattachés à une zawiya (`profiles.zawiya_id`
-  /// non nul, vérifié côté écran — `canCreatePostProvider`) pour ne pas
-  /// ouvrir la modération à tous les disciples dès cette itération ; la RLS
-  /// `posts_author_create` elle-même n'impose que `auth.uid() = author_user_id`,
-  /// donc cette restriction n'est aujourd'hui appliquée que côté client.
+  /// non nul) pour ne pas ouvrir la modération à tous les disciples dès
+  /// cette itération. Depuis l'audit du 2026-10-04 (S04), la RLS
+  /// `posts_author_create` l'impose aussi côté serveur : [zawiyaId] doit
+  /// être la zawiya du profil de l'auteur, sinon l'insertion est refusée —
+  /// `canCreatePostProvider` n'est plus qu'un reflet côté écran.
   ///
   /// [mediaUrl] : URL publique d'une image déjà téléversée par l'appelant
   /// vers le bucket `post-media` (voir `ImageUploadService`,
@@ -125,8 +127,12 @@ class CommunityRepository {
   /// sa propre publication. `post_likes`/`post_comments` référencent
   /// `posts.id` avec `on delete cascade` (`database/schema.sql`), donc
   /// aucune violation de clé étrangère possible à ce niveau.
-  Future<void> deletePost(String id) async {
+  ///
+  /// [mediaUrl] : image de la publication, retirée du bucket public une fois
+  /// la ligne supprimée (audit du 2026-10-04, S63).
+  Future<void> deletePost(String id, {String? mediaUrl}) async {
     await SupabaseConfig.client.from('posts').delete().eq('id', id);
+    await ImageUploadService().removeByPublicUrl(bucket: 'post-media', url: mediaUrl);
   }
 
   /// Réservé à l'auteur par la RLS `posts_author_update` (migration
@@ -135,11 +141,17 @@ class CommunityRepository {
   /// [mediaUrl] : `null` retire l'image existante, une valeur non nulle la
   /// remplace ; pas de flux de review à réinitialiser (`posts.content_status`
   /// reste `valide`, voir la note dans `createPost`).
-  Future<void> updatePost(String id, String contentText, {String? mediaUrl}) async {
+  ///
+  /// [previousMediaUrl] : image avant modification — retirée du bucket
+  /// public si elle a été remplacée ou enlevée (audit du 2026-10-04, S63).
+  Future<void> updatePost(String id, String contentText, {String? mediaUrl, String? previousMediaUrl}) async {
     await SupabaseConfig.client.from('posts').update({
       'content_text': contentText,
       'media_url': mediaUrl,
     }).eq('id', id);
+    if (previousMediaUrl != mediaUrl) {
+      await ImageUploadService().removeByPublicUrl(bucket: 'post-media', url: previousMediaUrl);
+    }
   }
 
   Future<void> addComment(String postId, String contentText) async {

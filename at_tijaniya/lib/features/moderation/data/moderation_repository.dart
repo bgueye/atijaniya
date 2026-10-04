@@ -1,14 +1,16 @@
 /// Accès aux données de la modération a posteriori (Supabase —
-/// `content_reports`). Policy RLS : n'importe quel compte authentifié peut
-/// signaler (`content_reports_authenticated_create`), seul un admin peut
-/// lister/traiter les signalements (`content_reports_admin_read`/`_update`).
+/// `content_reports`). Un compte authentifié peut signaler un contenu qu'il
+/// voit et dont il n'est pas l'auteur (policy
+/// `content_reports_authenticated_create` + `can_report_content()`), seul un
+/// admin peut lister les signalements (`content_reports_admin_read`) et les
+/// traiter, uniquement via la fonction serveur `resolve_report()`.
 ///
 /// Traiter un signalement marque le contenu visé (`hidden_at` sur
-/// `live_streams`, `blocked_at` + `status='declined'` sur
-/// `lineage_connection_requests`) plutôt que de le supprimer — ces deux
-/// colonnes sont filtrées au niveau RLS (`database/schema.sql`, section 11),
-/// donc aucun autre repository n'a besoin d'être modifié pour respecter le
-/// masquage.
+/// `live_streams`, `posts`, `post_comments` ; `blocked_at` +
+/// `status='declined'` sur `lineage_connection_requests`) plutôt que de le
+/// supprimer — ces colonnes sont filtrées au niveau RLS
+/// (`database/schema.sql`, section 11), donc aucun autre repository n'a
+/// besoin d'être modifié pour respecter le masquage.
 library;
 
 import '../../../core/supabase/supabase_config.dart';
@@ -51,16 +53,39 @@ class ModerationRepository {
         .map((r) => r.contentId)
         .toSet();
 
+    final postIds =
+        reports.where((r) => r.contentType == ReportableContentType.post).map((r) => r.contentId).toSet();
+    final commentIds =
+        reports.where((r) => r.contentType == ReportableContentType.postComment).map((r) => r.contentId).toSet();
+
     final streamPreviews = await _fetchStreamPreviews(streamIds);
     final requestPreviews = await _fetchLineageRequestPreviews(requestIds);
+    final postPreviews = await _fetchTextPreviews('posts', postIds);
+    final commentPreviews = await _fetchTextPreviews('post_comments', commentIds);
 
     return reports.map((report) {
-      final preview = report.contentType == ReportableContentType.liveStream
-          ? streamPreviews[report.contentId]
-          : requestPreviews[report.contentId];
+      final preview = switch (report.contentType) {
+        ReportableContentType.liveStream => streamPreviews[report.contentId],
+        ReportableContentType.lineageConnectionRequest => requestPreviews[report.contentId],
+        ReportableContentType.post => postPreviews[report.contentId],
+        ReportableContentType.postComment => commentPreviews[report.contentId],
+      };
       return ReportWithPreview(report: report, preview: preview);
     }).toList();
   }
+
+  /// Aperçu du texte d'une publication ou d'un commentaire signalé — l'admin
+  /// doit lire le contenu pour décider, tronqué pour rester une carte.
+  Future<Map<String, String>> _fetchTextPreviews(String table, Set<String> ids) async {
+    if (ids.isEmpty) return {};
+    final rows = await SupabaseConfig.client.from(table).select('id, content_text').inFilter('id', ids.toList());
+    return {
+      for (final row in rows)
+        row['id'] as String: _truncate(row['content_text'] as String? ?? '—'),
+    };
+  }
+
+  static String _truncate(String text) => text.length <= 280 ? text : '${text.substring(0, 280)}…';
 
   Future<Map<String, String>> _fetchStreamPreviews(Set<String> ids) async {
     if (ids.isEmpty) return {};
@@ -107,32 +132,17 @@ class ModerationRepository {
   /// Traite un signalement — `takeAction: true` masque/bloque le contenu visé
   /// en plus de marquer le signalement `resolved` ; `false` le marque
   /// `dismissed` sans toucher au contenu.
-  Future<void> resolveReport({
-    required String reportId,
-    required ReportableContentType contentType,
-    required String contentId,
-    required bool takeAction,
-  }) async {
-    if (takeAction) {
-      switch (contentType) {
-        case ReportableContentType.liveStream:
-          await SupabaseConfig.client
-              .from('live_streams')
-              .update({'hidden_at': DateTime.now().toUtc().toIso8601String(), 'status': 'ended'}).eq(
-                  'id', contentId);
-        case ReportableContentType.lineageConnectionRequest:
-          await SupabaseConfig.client.from('lineage_connection_requests').update({
-            'status': 'declined',
-            'blocked_at': DateTime.now().toUtc().toIso8601String(),
-            'decided_at': DateTime.now().toUtc().toIso8601String(),
-          }).eq('id', contentId);
-      }
-    }
-    final adminId = SupabaseConfig.client.auth.currentUser!.id;
-    await SupabaseConfig.client.from('content_reports').update({
-      'status': takeAction ? 'resolved' : 'dismissed',
-      'resolved_at': DateTime.now().toUtc().toIso8601String(),
-      'resolved_by': adminId,
-    }).eq('id', reportId);
+  ///
+  /// Tout se passe dans la fonction serveur `resolve_report()` (audit du
+  /// 2026-10-04, S60) : auparavant deux requêtes client successives, donc un
+  /// contenu masqué pouvait garder son signalement en attente, et un direct
+  /// de groupe dont l'admin n'était pas membre passait « traité » sans être
+  /// masqué. La fonction clôt aussi d'un coup tous les signalements en
+  /// attente du même contenu.
+  Future<void> resolveReport({required String reportId, required bool takeAction}) async {
+    await SupabaseConfig.client.rpc('resolve_report', params: {
+      'p_report_id': reportId,
+      'p_take_action': takeAction,
+    });
   }
 }

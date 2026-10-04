@@ -2,13 +2,18 @@ import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:supabase_flutter/supabase_flutter.dart' show PostgrestException;
 
 import '../../../core/storage/image_source_sheet.dart';
 import '../../../core/storage/image_upload_service.dart';
 import '../../../core/supabase/supabase_config.dart';
 import '../../../core/theme/app_colors.dart';
+import '../../../core/widgets/app_snackbar.dart';
 import '../../../l10n/app_localizations.dart';
+import '../../moderation/domain/moderation_models.dart';
+import '../../moderation/presentation/report_content_dialog.dart';
 import '../../profil/presentation/profile_providers.dart';
+import '../data/messages_repository.dart';
 import '../domain/community_models.dart';
 import 'community_format.dart';
 import 'community_providers.dart';
@@ -108,7 +113,7 @@ class _PostDetailScreenState extends ConsumerState<PostDetailScreen> {
 
     setState(() => _deleting = true);
     try {
-      await ref.read(communityRepositoryProvider).deletePost(widget.post.id);
+      await ref.read(communityRepositoryProvider).deletePost(widget.post.id, mediaUrl: _mediaUrl);
       ref.invalidate(communityFeedProvider);
       if (mounted) Navigator.of(context).pop();
     } catch (_) {
@@ -194,7 +199,8 @@ class _PostDetailScreenState extends ConsumerState<PostDetailScreen> {
     final l10n = AppLocalizations.of(context)!;
     final post = widget.post;
     final comments = ref.watch(postCommentsProvider(post.id));
-    final isAuthor = post.authorUserId != null && post.authorUserId == ref.watch(currentUserIdProvider);
+    final myUserId = ref.watch(currentUserIdProvider);
+    final isAuthor = post.authorUserId != null && post.authorUserId == myUserId;
 
     return Scaffold(
       appBar: AppBar(
@@ -218,7 +224,22 @@ class _PostDetailScreenState extends ConsumerState<PostDetailScreen> {
                   onPressed: _deleting ? null : _confirmDelete,
                 ),
               ]
-            : null,
+            // Signalement (audit du 2026-10-04, S61) : tout compte connecté
+            // qui n'est pas l'auteur — même règle que côté serveur
+            // (`can_report_content`).
+            : [
+                if (myUserId != null)
+                  IconButton(
+                    icon: const Icon(Icons.flag_outlined),
+                    tooltip: l10n.moderationReportAction,
+                    onPressed: () => showReportContentDialog(
+                      context,
+                      ref,
+                      contentType: ReportableContentType.post,
+                      contentId: post.id,
+                    ),
+                  ),
+              ],
       ),
       body: Column(
         children: [
@@ -297,8 +318,16 @@ class _PostDetailScreenState extends ConsumerState<PostDetailScreen> {
                               _CommentTile(
                                 comment: comment,
                                 fallback: l10n.communityDefaultAuthor,
-                                isAuthor: comment.userId == ref.watch(currentUserIdProvider),
+                                isAuthor: comment.userId == myUserId,
                                 onDelete: () => _deleteComment(comment),
+                                onReport: myUserId == null || comment.userId == myUserId
+                                    ? null
+                                    : () => showReportContentDialog(
+                                          context,
+                                          ref,
+                                          contentType: ReportableContentType.postComment,
+                                          contentId: comment.id,
+                                        ),
                               ),
                           ],
                         ),
@@ -342,12 +371,16 @@ class _CommentTile extends StatelessWidget {
     required this.fallback,
     required this.isAuthor,
     required this.onDelete,
+    required this.onReport,
   });
 
   final CommunityComment comment;
   final String fallback;
   final bool isAuthor;
   final VoidCallback onDelete;
+
+  /// `null` pour l'auteur du commentaire et pour un invité : pas de bouton.
+  final VoidCallback? onReport;
 
   @override
   Widget build(BuildContext context) {
@@ -375,6 +408,16 @@ class _CommentTile extends StatelessWidget {
                   child: Tooltip(
                     message: l10n.communityDeleteCommentTooltip,
                     child: Icon(Icons.delete_outline, size: 16, color: AppColors.bronze),
+                  ),
+                ),
+              ],
+              if (onReport != null) ...[
+                const Spacer(),
+                InkWell(
+                  onTap: onReport,
+                  child: Tooltip(
+                    message: l10n.moderationReportAction,
+                    child: Icon(Icons.flag_outlined, size: 16, color: AppColors.bronze),
                   ),
                 ),
               ],
@@ -426,8 +469,25 @@ class _MessageAuthorButton extends ConsumerWidget {
   Widget _button(BuildContext context, WidgetRef ref, AppLocalizations l10n) {
     return InkWell(
       onTap: () async {
-        final conversationId =
-            await ref.read(messagesRepositoryProvider).findOrCreateConversationWith(authorUserId);
+        final String conversationId;
+        try {
+          conversationId = await ref.read(messagesRepositoryProvider).findOrCreateConversationWith(authorUserId);
+        } on PostgrestException catch (error) {
+          // Le destinataire limite les messages à ses correspondances : on le
+          // dit clairement plutôt que d'afficher une erreur générique.
+          if (context.mounted) {
+            showErrorSnackBar(
+              context,
+              error.code == MessagesRepository.contactRestrictedCode
+                  ? l10n.communityContactRestricted
+                  : l10n.communityStartConversationError,
+            );
+          }
+          return;
+        } catch (_) {
+          if (context.mounted) showErrorSnackBar(context, l10n.communityStartConversationError);
+          return;
+        }
         if (context.mounted) {
           Navigator.of(context).push(
             MaterialPageRoute(
@@ -541,7 +601,12 @@ class _EditPostSheetState extends ConsumerState<_EditPostSheet> {
         mediaUrl = null;
       }
       final contentText = _contentController.text.trim();
-      await ref.read(communityRepositoryProvider).updatePost(widget.postId, contentText, mediaUrl: mediaUrl);
+      await ref.read(communityRepositoryProvider).updatePost(
+            widget.postId,
+            contentText,
+            mediaUrl: mediaUrl,
+            previousMediaUrl: widget.initialMediaUrl,
+          );
       if (mounted) {
         Navigator.of(context).pop(_EditPostResult(contentText: contentText, mediaUrl: mediaUrl));
       }

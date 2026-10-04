@@ -82,7 +82,17 @@ class _ReportCardState extends ConsumerState<_ReportCard> {
     return switch (widget.item.report.contentType) {
       ReportableContentType.liveStream => l10n.moderationTypeLiveStream,
       ReportableContentType.lineageConnectionRequest => l10n.moderationTypeLineageRequest,
+      ReportableContentType.post => l10n.moderationTypePost,
+      ReportableContentType.postComment => l10n.moderationTypePostComment,
     };
+  }
+
+  /// « Bloquer » pour une mise en relation, « Masquer » pour tout contenu publié.
+  String _actionLabel() {
+    final l10n = widget.l10n;
+    return widget.item.report.contentType == ReportableContentType.lineageConnectionRequest
+        ? l10n.moderationBlockRequestAction
+        : l10n.moderationHideStreamAction;
   }
 
   Future<void> _resolve({required bool takeAction}) async {
@@ -96,8 +106,6 @@ class _ReportCardState extends ConsumerState<_ReportCard> {
     try {
       await ref.read(moderationRepositoryProvider).resolveReport(
             reportId: widget.item.report.id,
-            contentType: widget.item.report.contentType,
-            contentId: widget.item.report.contentId,
             takeAction: takeAction,
           );
       ref.invalidate(pendingReportsProvider);
@@ -118,12 +126,22 @@ class _ReportCardState extends ConsumerState<_ReportCard> {
 
   Future<bool?> _confirmAction(BuildContext context) {
     final l10n = widget.l10n;
-    final isStream = widget.item.report.contentType == ReportableContentType.liveStream;
+    final type = widget.item.report.contentType;
+    final (title, body) = switch (type) {
+      ReportableContentType.liveStream => (l10n.moderationConfirmHideStreamTitle, l10n.moderationConfirmHideStreamBody),
+      ReportableContentType.lineageConnectionRequest => (
+          l10n.moderationConfirmBlockRequestTitle,
+          l10n.moderationConfirmBlockRequestBody
+        ),
+      ReportableContentType.post ||
+      ReportableContentType.postComment =>
+        (l10n.moderationConfirmHideContentTitle, l10n.moderationConfirmHideContentBody),
+    };
     return showDialog<bool>(
       context: context,
       builder: (dialogContext) => AlertDialog(
-        title: Text(isStream ? l10n.moderationConfirmHideStreamTitle : l10n.moderationConfirmBlockRequestTitle),
-        content: Text(isStream ? l10n.moderationConfirmHideStreamBody : l10n.moderationConfirmBlockRequestBody),
+        title: Text(title),
+        content: Text(body),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(dialogContext).pop(false),
@@ -132,7 +150,7 @@ class _ReportCardState extends ConsumerState<_ReportCard> {
           TextButton(
             onPressed: () => Navigator.of(dialogContext).pop(true),
             child: Text(
-              isStream ? l10n.moderationHideStreamAction : l10n.moderationBlockRequestAction,
+              _actionLabel(),
               style: const TextStyle(color: Colors.redAccent),
             ),
           ),
@@ -145,7 +163,6 @@ class _ReportCardState extends ConsumerState<_ReportCard> {
   Widget build(BuildContext context) {
     final l10n = widget.l10n;
     final report = widget.item.report;
-    final isStream = report.contentType == ReportableContentType.liveStream;
 
     return Card(
       child: Padding(
@@ -175,7 +192,7 @@ class _ReportCardState extends ConsumerState<_ReportCard> {
                 OutlinedButton(
                   onPressed: _busy ? null : () => _resolve(takeAction: true),
                   style: OutlinedButton.styleFrom(foregroundColor: Colors.redAccent),
-                  child: Text(isStream ? l10n.moderationHideStreamAction : l10n.moderationBlockRequestAction),
+                  child: Text(_actionLabel()),
                 ),
               ],
             ),

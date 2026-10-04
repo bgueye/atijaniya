@@ -29,8 +29,6 @@
 /// `conversations` avant d'avoir ajouté un participant.
 library;
 
-import 'package:uuid/uuid.dart';
-
 import '../../../core/supabase/supabase_config.dart';
 import '../domain/message_models.dart';
 
@@ -85,38 +83,22 @@ class MessagesRepository {
     return conversations;
   }
 
-  /// Réutilise une conversation existante à exactement 2 participants
-  /// {moi, otherUserId} si elle existe, sinon en crée une : insère
-  /// `conversations`, s'y ajoute (toujours permis), puis ajoute
-  /// `otherUserId` (permis seulement si un groupe est partagé — voir
-  /// `conversation_participants_insert` dans `database/schema.sql`).
+  /// Réutilise la conversation à deux {moi, otherUserId} si elle existe,
+  /// sinon en crée une — entièrement côté serveur, via la fonction
+  /// `start_conversation` (`database/schema.sql`). Depuis l'audit du
+  /// 2026-10-04 (S03, S26), le client n'insère plus rien lui-même dans
+  /// `conversations`/`conversation_participants` : c'est la fonction qui
+  /// vérifie le groupe commun et le réglage « Qui peut vous contacter » du
+  /// destinataire. Lève une `PostgrestException` dont le `code` vaut
+  /// [contactRestrictedCode] quand ce réglage refuse le contact.
   Future<String> findOrCreateConversationWith(String otherUserId) async {
-    final userId = SupabaseConfig.client.auth.currentUser!.id;
-
-    final participantRows = await SupabaseConfig.client.from('conversation_participants').select();
-    final usersByConversation = <String, Set<String>>{};
-    for (final row in participantRows) {
-      final conversationId = row['conversation_id'] as String;
-      (usersByConversation[conversationId] ??= {}).add(row['user_id'] as String);
-    }
-    final existing = usersByConversation.entries.firstWhere(
-      (entry) => entry.value.length == 2 && entry.value.contains(otherUserId),
-      orElse: () => const MapEntry('', {}),
-    );
-    if (existing.key.isNotEmpty) return existing.key;
-
-    final conversationId = const Uuid().v4();
-    await SupabaseConfig.client.from('conversations').insert({'id': conversationId});
-    await SupabaseConfig.client.from('conversation_participants').insert({
-      'conversation_id': conversationId,
-      'user_id': userId,
-    });
-    await SupabaseConfig.client.from('conversation_participants').insert({
-      'conversation_id': conversationId,
-      'user_id': otherUserId,
-    });
-    return conversationId;
+    final id = await SupabaseConfig.client.rpc('start_conversation', params: {'p_other_user_id': otherUserId});
+    return id as String;
   }
+
+  /// Code d'erreur de `start_conversation` : le destinataire n'accepte que
+  /// les messages de ses correspondances (mise en relation acceptée).
+  static const contactRestrictedCode = 'AT002';
 
   Future<List<DirectMessage>> fetchMessages(String conversationId) async {
     final rows = await SupabaseConfig.client

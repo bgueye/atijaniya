@@ -88,4 +88,41 @@ class ImageUploadService {
     final publicUrl = SupabaseConfig.client.storage.from(bucket).getPublicUrl(path);
     return '$publicUrl?v=${DateTime.now().millisecondsSinceEpoch}';
   }
+
+  /// Chemin interne (`dossier/fichier.ext`) d'un fichier à partir de son URL
+  /// publique dans [bucket], ou `null` si l'URL ne vient pas de ce bucket.
+  /// Le paramètre `?v=` ajouté par [uploadImage] est ignoré.
+  static String? storagePathFromPublicUrl(String url, String bucket) {
+    final marker = '/object/public/$bucket/';
+    final index = url.indexOf(marker);
+    if (index < 0) return null;
+    final path = Uri.decodeComponent(url.substring(index + marker.length).split('?').first);
+    return path.isEmpty ? null : path;
+  }
+
+  /// Supprime du Storage le fichier désigné par son URL publique — au mieux
+  /// (audit du 2026-10-04, S63) : une image remplacée ou retirée restait
+  /// lisible indéfiniment dans un bucket public. Un échec n'est jamais
+  /// remonté : l'action de l'utilisateur (changer de photo, supprimer une
+  /// publication) a déjà réussi, le fichier orphelin n'est qu'un reliquat.
+  Future<void> removeByPublicUrl({required String bucket, required String? url}) async {
+    if (url == null) return;
+    final path = storagePathFromPublicUrl(url, bucket);
+    if (path == null) return;
+    try {
+      await SupabaseConfig.client.storage.from(bucket).remove([path]);
+    } catch (_) {}
+  }
+
+  /// Supprime tous les fichiers de `[bucket]/[folder]` sauf [keepPath] — au
+  /// mieux, comme [removeByPublicUrl]. Sert à ne garder qu'une photo de
+  /// profil (l'ancienne survivait à un changement d'extension, .jpg puis
+  /// .png) et à vider le dossier d'un compte supprimé (`keepPath` nul).
+  Future<void> removeFolderExcept({required String bucket, required String folder, String? keepPath}) async {
+    try {
+      final files = await SupabaseConfig.client.storage.from(bucket).list(path: folder);
+      final paths = files.map((f) => '$folder/${f.name}').where((path) => path != keepPath).toList();
+      if (paths.isNotEmpty) await SupabaseConfig.client.storage.from(bucket).remove(paths);
+    } catch (_) {}
+  }
 }
