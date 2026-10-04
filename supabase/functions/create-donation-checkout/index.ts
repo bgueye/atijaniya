@@ -42,8 +42,13 @@ Deno.serve(async (req: Request) => {
   }
 
   const amount = Number(body.amount);
-  if (!Number.isFinite(amount) || amount <= 0) {
-    return new Response(JSON.stringify({ error: 'amount must be a positive number' }), { status: 400 });
+  // Montant en francs CFA : entier, borné (audit du 2026-10-04, S62). Une
+  // valeur comme 0.001 était arrondie à 0 puis rejetée par la base avec une
+  // erreur 500, et aucun plafond n'existait.
+  if (!Number.isInteger(amount) || amount < 100 || amount > 5_000_000) {
+    return new Response(JSON.stringify({ error: 'amount must be an integer between 100 and 5000000' }), {
+      status: 400,
+    });
   }
 
   const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
@@ -130,10 +135,16 @@ Deno.serve(async (req: Request) => {
       );
     }
 
-    await admin
+    const { error: refError } = await admin
       .from('donations')
       .update({ payment_provider_ref: paydunyaBody.token, payment_method: 'paydunya' })
       .eq('id', donationId);
+    if (refError) {
+      // Sans cette référence, le webhook ne retrouverait jamais ce don : on
+      // ne renvoie pas d'URL de paiement pour une facture qu'on ne pourra
+      // pas rapprocher.
+      return new Response(JSON.stringify({ error: refError.message }), { status: 500 });
+    }
 
     return new Response(JSON.stringify({ donationId, checkoutUrl: paydunyaBody.response_text }), {
       headers: { 'Content-Type': 'application/json' },

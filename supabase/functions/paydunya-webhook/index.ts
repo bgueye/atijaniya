@@ -20,6 +20,14 @@ Deno.serve(async (req: Request) => {
   if (!token) {
     return new Response(JSON.stringify({ error: 'Missing token' }), { status: 400 });
   }
+  // Audit du 2026-10-04 (S62) : le jeton est inséré dans l'URL d'un appel
+  // sortant qui porte les clés marchandes. Sans ce contrôle, une valeur
+  // comme `../autre/chemin` détournait cet appel vers un autre point de
+  // l'API PayDunya. On n'accepte que la forme d'un jeton de facture, et il
+  // est en plus encodé à l'insertion.
+  if (!/^[A-Za-z0-9_-]{6,128}$/.test(token)) {
+    return new Response(JSON.stringify({ error: 'Invalid token' }), { status: 400 });
+  }
 
   const masterKey = Deno.env.get('PAYDUNYA_MASTER_KEY');
   const privateKey = Deno.env.get('PAYDUNYA_PRIVATE_KEY');
@@ -32,7 +40,7 @@ Deno.serve(async (req: Request) => {
     mode === 'live' ? 'https://app.paydunya.com/api/v1' : 'https://app.paydunya.com/sandbox-api/v1';
 
   try {
-    const confirmRes = await fetch(`${baseUrl}/checkout-invoice/confirm/${token}`, {
+    const confirmRes = await fetch(`${baseUrl}/checkout-invoice/confirm/${encodeURIComponent(token)}`, {
       headers: {
         'PAYDUNYA-MASTER-KEY': masterKey,
         'PAYDUNYA-PRIVATE-KEY': privateKey,
@@ -57,7 +65,16 @@ Deno.serve(async (req: Request) => {
     const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
     const serviceRoleKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
     const admin = createClient(supabaseUrl, serviceRoleKey);
-    await admin.from('donations').update({ status: newStatus }).eq('payment_provider_ref', token);
+    // Un don déjà `completed` n'est jamais rétrogradé par une notification
+    // tardive ou rejouée.
+    let update = admin.from('donations').update({ status: newStatus }).eq('payment_provider_ref', token);
+    if (newStatus !== 'completed') update = update.neq('status', 'completed');
+    const { error: updateError } = await update;
+    if (updateError) {
+      // 500 et non 200 : PayDunya renverra la notification, au lieu de
+      // laisser un don payé indéfiniment `pending` (l'erreur était ignorée).
+      return new Response(JSON.stringify({ error: updateError.message }), { status: 500 });
+    }
 
     return new Response(JSON.stringify({ ok: true }), { headers: { 'Content-Type': 'application/json' } });
   } catch (error) {
