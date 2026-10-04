@@ -3936,7 +3936,7 @@ abstract class AppLocalizations {
   /// No description provided for @lineagePrivacyNote.
   ///
   /// In fr, this message translates to:
-  /// **'Ces informations restent strictement privées : visibles uniquement par vous, jamais dans un annuaire public.'**
+  /// **'Ces informations sont privées par défaut et n\'apparaissent jamais dans un annuaire public. Si vous activez la mise en relation, seuls votre nom, votre photo et l\'année de transmission sont montrés aux disciples de la même lignée, jamais le nom de votre moqaddam.'**
   String get lineagePrivacyNote;
 
   /// No description provided for @lineageFoyerLabel.
@@ -5096,6 +5096,78 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'Ce direct n\'est plus disponible.'**
   String get notificationStreamUnavailable;
+
+  /// No description provided for @communityContactRestricted.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ce disciple n\'accepte que les messages de ses correspondances.'**
+  String get communityContactRestricted;
+
+  /// No description provided for @communityStartConversationError.
+  ///
+  /// In fr, this message translates to:
+  /// **'Impossible d\'ouvrir la conversation. Réessayez.'**
+  String get communityStartConversationError;
+
+  /// No description provided for @moderationTypePost.
+  ///
+  /// In fr, this message translates to:
+  /// **'Publication du fil'**
+  String get moderationTypePost;
+
+  /// No description provided for @moderationTypePostComment.
+  ///
+  /// In fr, this message translates to:
+  /// **'Commentaire'**
+  String get moderationTypePostComment;
+
+  /// No description provided for @moderationConfirmHideContentTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Masquer ce contenu ?'**
+  String get moderationConfirmHideContentTitle;
+
+  /// No description provided for @moderationConfirmHideContentBody.
+  ///
+  /// In fr, this message translates to:
+  /// **'Le contenu sera retiré de l\'application pour tous les disciples. Cette action est définitive.'**
+  String get moderationConfirmHideContentBody;
+
+  /// No description provided for @khadaraExternalUrlInvalid.
+  ///
+  /// In fr, this message translates to:
+  /// **'Entrez un lien complet commençant par https:// ou http://.'**
+  String get khadaraExternalUrlInvalid;
+
+  /// No description provided for @mouqaddamSearchPrompt.
+  ///
+  /// In fr, this message translates to:
+  /// **'Saisissez au moins deux lettres du nom du mouqaddam que vous cherchez.'**
+  String get mouqaddamSearchPrompt;
+
+  /// No description provided for @resetPasswordCancel.
+  ///
+  /// In fr, this message translates to:
+  /// **'Annuler et revenir à la connexion'**
+  String get resetPasswordCancel;
+
+  /// No description provided for @sponsorshipBadgeLabel.
+  ///
+  /// In fr, this message translates to:
+  /// **'Parrainage confirmé'**
+  String get sponsorshipBadgeLabel;
+
+  /// No description provided for @sponsorshipBadgeExplanationTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'En savoir plus sur ce statut'**
+  String get sponsorshipBadgeExplanationTitle;
+
+  /// No description provided for @sponsorshipBadgeExplanation.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ce statut atteste qu\'un parrainage a été confirmé au sein de la communauté At-Tijaniya. Ce n\'est pas une reconnaissance ou une habilitation religieuse officielle.'**
+  String get sponsorshipBadgeExplanation;
 }
 
 class _AppLocalizationsDelegate

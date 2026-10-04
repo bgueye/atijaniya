@@ -2101,7 +2101,7 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get lineagePrivacyNote =>
-      'Ces informations restent strictement privées : visibles uniquement par vous, jamais dans un annuaire public.';
+      'Ces informations sont privées par défaut et n\'apparaissent jamais dans un annuaire public. Si vous activez la mise en relation, seuls votre nom, votre photo et l\'année de transmission sont montrés aux disciples de la même lignée, jamais le nom de votre moqaddam.';
 
   @override
   String get lineageFoyerLabel => 'Foyer';
@@ -2744,4 +2744,46 @@ class AppLocalizationsFr extends AppLocalizations {
   @override
   String get notificationStreamUnavailable =>
       'Ce direct n\'est plus disponible.';
+
+  @override
+  String get communityContactRestricted =>
+      'Ce disciple n\'accepte que les messages de ses correspondances.';
+
+  @override
+  String get communityStartConversationError =>
+      'Impossible d\'ouvrir la conversation. Réessayez.';
+
+  @override
+  String get moderationTypePost => 'Publication du fil';
+
+  @override
+  String get moderationTypePostComment => 'Commentaire';
+
+  @override
+  String get moderationConfirmHideContentTitle => 'Masquer ce contenu ?';
+
+  @override
+  String get moderationConfirmHideContentBody =>
+      'Le contenu sera retiré de l\'application pour tous les disciples. Cette action est définitive.';
+
+  @override
+  String get khadaraExternalUrlInvalid =>
+      'Entrez un lien complet commençant par https:// ou http://.';
+
+  @override
+  String get mouqaddamSearchPrompt =>
+      'Saisissez au moins deux lettres du nom du mouqaddam que vous cherchez.';
+
+  @override
+  String get resetPasswordCancel => 'Annuler et revenir à la connexion';
+
+  @override
+  String get sponsorshipBadgeLabel => 'Parrainage confirmé';
+
+  @override
+  String get sponsorshipBadgeExplanationTitle => 'En savoir plus sur ce statut';
+
+  @override
+  String get sponsorshipBadgeExplanation =>
+      'Ce statut atteste qu\'un parrainage a été confirmé au sein de la communauté At-Tijaniya. Ce n\'est pas une reconnaissance ou une habilitation religieuse officielle.';
 }

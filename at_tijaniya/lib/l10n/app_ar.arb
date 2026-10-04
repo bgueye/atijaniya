@@ -710,7 +710,7 @@
   "profileCancel": "إلغاء",
 
   "lineageTitle": "سلسلتي الروحية",
-  "lineagePrivacyNote": "تبقى هذه المعلومات خاصة تمامًا: لا يراها سواك، ولا تظهر أبدًا في دليل عام.",
+  "lineagePrivacyNote": "هذه المعلومات خاصة افتراضيًا ولا تظهر أبدًا في دليل عام. إذا فعّلت التواصل، فلن يُعرض لمريدي السلسلة نفسها سوى اسمك وصورتك وسنة التلقين، ولا يُعرض اسم مقدَّمك أبدًا.",
   "lineageFoyerLabel": "الفرع",
   "lineageFoyerTivaouane": "تيفاوان",
   "lineageFoyerKaolack": "كاولاك",
@@ -921,5 +921,17 @@
   "notificationStreamLiveBody": "اضغط للانضمام إلى البث المباشر.",
   "notificationContentReportTitle": "بلاغ جديد",
   "notificationContentReportBody": "تم الإبلاغ عن محتوى، يحتاج إلى المراجعة.",
-  "notificationStreamUnavailable": "هذا البث المباشر لم يعد متاحًا."
+  "notificationStreamUnavailable": "هذا البث المباشر لم يعد متاحًا.",
+  "communityContactRestricted": "هذا المريد لا يقبل الرسائل إلا من مطابقاته.",
+  "communityStartConversationError": "تعذّر فتح المحادثة. حاول مرة أخرى.",
+  "moderationTypePost": "منشور",
+  "moderationTypePostComment": "تعليق",
+  "moderationConfirmHideContentTitle": "إخفاء هذا المحتوى؟",
+  "moderationConfirmHideContentBody": "سيُزال المحتوى من التطبيق لجميع المريدين. هذا الإجراء نهائي.",
+  "khadaraExternalUrlInvalid": "أدخل رابطًا كاملًا يبدأ بـ https:// أو http://.",
+  "mouqaddamSearchPrompt": "اكتب حرفين على الأقل من اسم المقدَّم الذي تبحث عنه.",
+  "resetPasswordCancel": "إلغاء والعودة إلى تسجيل الدخول",
+  "sponsorshipBadgeLabel": "كفالة مؤكدة",
+  "sponsorshipBadgeExplanationTitle": "اعرف المزيد عن هذه الصفة",
+  "sponsorshipBadgeExplanation": "تشهد هذه الصفة بأن كفالة قد تأكدت ضمن مجتمع تطبيق «التجانية». وهذا ليس اعترافاً أو تخويلاً دينياً رسمياً."
 }

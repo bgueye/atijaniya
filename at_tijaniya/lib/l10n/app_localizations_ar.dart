@@ -2037,7 +2037,7 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get lineagePrivacyNote =>
-      'تبقى هذه المعلومات خاصة تمامًا: لا يراها سواك، ولا تظهر أبدًا في دليل عام.';
+      'هذه المعلومات خاصة افتراضيًا ولا تظهر أبدًا في دليل عام. إذا فعّلت التواصل، فلن يُعرض لمريدي السلسلة نفسها سوى اسمك وصورتك وسنة التلقين، ولا يُعرض اسم مقدَّمك أبدًا.';
 
   @override
   String get lineageFoyerLabel => 'الفرع';
@@ -2650,4 +2650,46 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get notificationStreamUnavailable => 'هذا البث المباشر لم يعد متاحًا.';
+
+  @override
+  String get communityContactRestricted =>
+      'هذا المريد لا يقبل الرسائل إلا من مطابقاته.';
+
+  @override
+  String get communityStartConversationError =>
+      'تعذّر فتح المحادثة. حاول مرة أخرى.';
+
+  @override
+  String get moderationTypePost => 'منشور';
+
+  @override
+  String get moderationTypePostComment => 'تعليق';
+
+  @override
+  String get moderationConfirmHideContentTitle => 'إخفاء هذا المحتوى؟';
+
+  @override
+  String get moderationConfirmHideContentBody =>
+      'سيُزال المحتوى من التطبيق لجميع المريدين. هذا الإجراء نهائي.';
+
+  @override
+  String get khadaraExternalUrlInvalid =>
+      'أدخل رابطًا كاملًا يبدأ بـ https:// أو http://.';
+
+  @override
+  String get mouqaddamSearchPrompt =>
+      'اكتب حرفين على الأقل من اسم المقدَّم الذي تبحث عنه.';
+
+  @override
+  String get resetPasswordCancel => 'إلغاء والعودة إلى تسجيل الدخول';
+
+  @override
+  String get sponsorshipBadgeLabel => 'كفالة مؤكدة';
+
+  @override
+  String get sponsorshipBadgeExplanationTitle => 'اعرف المزيد عن هذه الصفة';
+
+  @override
+  String get sponsorshipBadgeExplanation =>
+      'تشهد هذه الصفة بأن كفالة قد تأكدت ضمن مجتمع تطبيق «التجانية». وهذا ليس اعترافاً أو تخويلاً دينياً رسمياً.';
 }

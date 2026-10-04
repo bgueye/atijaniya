@@ -711,7 +711,7 @@
   "profileCancel": "Annuler",
 
   "lineageTitle": "Ma lignée spirituelle",
-  "lineagePrivacyNote": "Ces informations restent strictement privées : visibles uniquement par vous, jamais dans un annuaire public.",
+  "lineagePrivacyNote": "Ces informations sont privées par défaut et n'apparaissent jamais dans un annuaire public. Si vous activez la mise en relation, seuls votre nom, votre photo et l'année de transmission sont montrés aux disciples de la même lignée, jamais le nom de votre moqaddam.",
   "lineageFoyerLabel": "Foyer",
   "lineageFoyerTivaouane": "Tivaouane",
   "lineageFoyerKaolack": "Kaolack",
@@ -922,5 +922,17 @@
   "notificationStreamLiveBody": "Touchez pour rejoindre le direct.",
   "notificationContentReportTitle": "Nouveau signalement",
   "notificationContentReportBody": "Un contenu a été signalé, à examiner.",
-  "notificationStreamUnavailable": "Ce direct n'est plus disponible."
+  "notificationStreamUnavailable": "Ce direct n'est plus disponible.",
+  "communityContactRestricted": "Ce disciple n'accepte que les messages de ses correspondances.",
+  "communityStartConversationError": "Impossible d'ouvrir la conversation. Réessayez.",
+  "moderationTypePost": "Publication du fil",
+  "moderationTypePostComment": "Commentaire",
+  "moderationConfirmHideContentTitle": "Masquer ce contenu ?",
+  "moderationConfirmHideContentBody": "Le contenu sera retiré de l'application pour tous les disciples. Cette action est définitive.",
+  "khadaraExternalUrlInvalid": "Entrez un lien complet commençant par https:// ou http://.",
+  "mouqaddamSearchPrompt": "Saisissez au moins deux lettres du nom du mouqaddam que vous cherchez.",
+  "resetPasswordCancel": "Annuler et revenir à la connexion",
+  "sponsorshipBadgeLabel": "Parrainage confirmé",
+  "sponsorshipBadgeExplanationTitle": "En savoir plus sur ce statut",
+  "sponsorshipBadgeExplanation": "Ce statut atteste qu'un parrainage a été confirmé au sein de la communauté At-Tijaniya. Ce n'est pas une reconnaissance ou une habilitation religieuse officielle."
 }
