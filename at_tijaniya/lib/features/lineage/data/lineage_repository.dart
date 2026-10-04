@@ -21,7 +21,11 @@ class LineageRepository {
     final userId = SupabaseConfig.client.auth.currentUser!.id;
     final row = await SupabaseConfig.client
         .from('lineage_declarations')
-        .select()
+        // Colonnes listées une à une : `moqaddam_name_normalized` est réservée
+        // au serveur (trigger `normalize_moqaddam_name`) et n'est plus lisible
+        // par un rôle client depuis l'audit du 2026-10-04 (S29) — un `select()`
+        // sans liste serait refusé par la base.
+        .select('foyer, foyer_autre_text, moqaddam_name_text, transmission_year, zawiya_text')
         .eq('user_id', userId)
         .maybeSingle();
     return row == null ? null : LineageDeclaration.fromRow(row);

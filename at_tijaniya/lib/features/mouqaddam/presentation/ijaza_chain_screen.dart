@@ -7,6 +7,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../core/theme/rosace_painter.dart';
+import '../../../core/widgets/app_snackbar.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../profil/presentation/profile_providers.dart';
 import '../data/silsila_intro_store.dart';
@@ -237,7 +238,25 @@ class _SilsilaRevealSectionState extends State<_SilsilaRevealSection> with Ticke
               const SizedBox(width: 12),
               Expanded(
                 child: FilledButton.icon(
-                  onPressed: () => showSilsilaSharePreview(context, widget.chain),
+                  // La chaîne est relue au moment du partage (audit du
+                  // 2026-10-04, S32) : la visibilité de chaque maillon doit
+                  // être celle d'aujourd'hui, pas celle de l'ouverture de
+                  // l'écran — un parrain a pu repasser son statut en privé
+                  // entre-temps. En cas d'échec, on ne partage rien.
+                  onPressed: () async {
+                    // Ce widget n'est pas un ConsumerWidget : le dépôt est lu
+                    // dans le conteneur Riverpod, avant tout `await`.
+                    final repository =
+                        ProviderScope.containerOf(context, listen: false).read(mouqaddamRepositoryProvider);
+                    final List<IjazaChainLink> fresh;
+                    try {
+                      fresh = await repository.fetchMyIjazaChain();
+                    } catch (_) {
+                      if (context.mounted) showErrorSnackBar(context, l10n.mouqaddamChainLoadError);
+                      return;
+                    }
+                    if (context.mounted) showSilsilaSharePreview(context, fresh);
+                  },
                   icon: const Icon(Icons.ios_share, size: 18),
                   label: Text(l10n.mouqaddamChainShareButton),
                 ),

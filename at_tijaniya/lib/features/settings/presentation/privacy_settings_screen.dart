@@ -80,12 +80,21 @@ class _PrivacyFormState extends ConsumerState<_PrivacyForm> {
   late PrivacySettings _settings = widget.settings;
   String? _errorMessage;
 
+  /// Une écriture à la fois (audit du 2026-10-04, S27). Chaque écriture
+  /// envoie la ligne entière : deux bascules rapprochées pouvaient se
+  /// croiser, et l'échec de la première ramenait l'écran sur « privé » alors
+  /// que la seconde avait déjà enregistré « visible » en base. Les contrôles
+  /// sont inertes tant que l'écriture en cours n'est pas terminée.
+  bool _saving = false;
+
   Future<void> _apply(PrivacySettings next) async {
+    if (_saving) return;
     final l10n = AppLocalizations.of(context)!;
     final previous = _settings;
     setState(() {
       _settings = next;
       _errorMessage = null;
+      _saving = true;
     });
     try {
       await ref.read(privacySettingsRepositoryProvider).updateMyPrivacySettings(next);
@@ -97,7 +106,20 @@ class _PrivacyFormState extends ConsumerState<_PrivacyForm> {
           _errorMessage = l10n.privacyUpdateError;
         });
       }
+    } finally {
+      if (mounted) setState(() => _saving = false);
     }
+  }
+
+  /// Les deux réglages mouqaddam ne s'ACTIVENT qu'avec un parrainage
+  /// confirmé, mais se DÉSACTIVENT toujours (S23) : un mouqaddam révoqué qui
+  /// avait rendu son statut visible restait bloqué en position activée.
+  ValueChanged<bool>? _mouqaddamToggle(bool current, PrivacySettings Function(bool) build) {
+    if (!widget.isVerifiedMouqaddam && !current) return null;
+    return (value) {
+      if (value && !widget.isVerifiedMouqaddam) return;
+      _apply(build(value));
+    };
   }
 
   @override
@@ -120,9 +142,10 @@ class _PrivacyFormState extends ConsumerState<_PrivacyForm> {
               ? l10n.privacyMouqaddamVisibleDescription
               : l10n.privacyMouqaddamGatedDescription,
           value: _settings.mouqaddamStatusVisible,
-          onChanged: widget.isVerifiedMouqaddam
-              ? (value) => _apply(_settings.copyWith(mouqaddamStatusVisible: value))
-              : null,
+          onChanged: _mouqaddamToggle(
+            _settings.mouqaddamStatusVisible,
+            (value) => _settings.copyWith(mouqaddamStatusVisible: value),
+          ),
         ),
         const SizedBox(height: 12),
         _PrivacySwitch(
@@ -131,9 +154,10 @@ class _PrivacyFormState extends ConsumerState<_PrivacyForm> {
               ? l10n.privacyAvailableAsSponsorDescription
               : l10n.privacyMouqaddamGatedDescription,
           value: _settings.availableAsSponsor,
-          onChanged: widget.isVerifiedMouqaddam
-              ? (value) => _apply(_settings.copyWith(availableAsSponsor: value))
-              : null,
+          onChanged: _mouqaddamToggle(
+            _settings.availableAsSponsor,
+            (value) => _settings.copyWith(availableAsSponsor: value),
+          ),
         ),
         const SizedBox(height: 20),
         Text(l10n.privacyWhoCanContactLabel, style: const TextStyle(fontWeight: FontWeight.w600, color: AppColors.ink)),

@@ -15,18 +15,23 @@ library;
 
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../../../core/storage/user_scoped_prefs.dart';
+
 class SilsilaIntroStore {
   const SilsilaIntroStore();
 
-  static const _key = 'silsila_intro_played_chain_length';
+  static const _baseKey = 'silsila_intro_played_chain_length';
+
+  /// Clé propre au compte connecté — voir `user_scoped_prefs.dart`.
+  String _key(SharedPreferences prefs) => userScopedKey(prefs, _baseKey);
 
   Future<int> lastPlayedChainLength() async {
     final prefs = await SharedPreferences.getInstance();
-    return prefs.getInt(_key) ?? 0;
+    return prefs.getInt(_key(prefs)) ?? 0;
   }
 
   Future<void> markPlayed(int chainLength) async {
     final prefs = await SharedPreferences.getInstance();
-    await prefs.setInt(_key, chainLength);
+    await prefs.setInt(_key(prefs), chainLength);
   }
 }

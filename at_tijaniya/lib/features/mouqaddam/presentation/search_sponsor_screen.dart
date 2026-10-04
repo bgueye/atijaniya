@@ -23,14 +23,19 @@ class SearchSponsorScreen extends ConsumerStatefulWidget {
 class _SearchSponsorScreenState extends ConsumerState<SearchSponsorScreen> {
   final _queryController = TextEditingController();
   List<AvailableSponsor>? _results;
-  bool _loading = true;
+  bool _loading = false;
   bool _hasError = false;
 
-  @override
-  void initState() {
-    super.initState();
-    _search();
-  }
+  /// Longueur minimale d'une recherche — même règle que la fonction serveur
+  /// `search_available_sponsors` (audit du 2026-10-04, S25) : une requête
+  /// vide ne renvoie plus la liste complète des parrains disponibles, la
+  /// recherche n'est pas un annuaire. Aucune requête n'est donc lancée à
+  /// l'ouverture de l'écran.
+  static const _minQueryLength = 2;
+
+  /// Numéro de la dernière recherche lancée : une réponse plus ancienne qui
+  /// arrive après une plus récente est ignorée.
+  int _searchSeq = 0;
 
   @override
   void dispose() {
@@ -39,17 +44,27 @@ class _SearchSponsorScreenState extends ConsumerState<SearchSponsorScreen> {
   }
 
   Future<void> _search() async {
+    final query = _queryController.text.trim();
+    final seq = ++_searchSeq;
+    if (query.length < _minQueryLength) {
+      setState(() {
+        _results = null;
+        _loading = false;
+        _hasError = false;
+      });
+      return;
+    }
     setState(() {
       _loading = true;
       _hasError = false;
     });
     try {
-      final results = await ref.read(mouqaddamRepositoryProvider).searchAvailableSponsors(_queryController.text);
-      if (mounted) setState(() => _results = results);
+      final results = await ref.read(mouqaddamRepositoryProvider).searchAvailableSponsors(query);
+      if (mounted && seq == _searchSeq) setState(() => _results = results);
     } catch (_) {
-      if (mounted) setState(() => _hasError = true);
+      if (mounted && seq == _searchSeq) setState(() => _hasError = true);
     } finally {
-      if (mounted) setState(() => _loading = false);
+      if (mounted && seq == _searchSeq) setState(() => _loading = false);
     }
   }
 
@@ -103,7 +118,10 @@ class _SearchSponsorScreenState extends ConsumerState<SearchSponsorScreen> {
 
     final results = _results ?? [];
     if (results.isEmpty) {
-      final message = _queryController.text.trim().isEmpty ? l10n.mouqaddamSearchEmpty : l10n.mouqaddamSearchNoResults;
+      // `_results == null` : aucune recherche valable lancée (moins de deux
+      // caractères) — on invite à saisir un nom plutôt que d'annoncer à tort
+      // qu'aucun parrain n'existe.
+      final message = _results == null ? l10n.mouqaddamSearchPrompt : l10n.mouqaddamSearchNoResults;
       return Center(
         child: Padding(
           padding: const EdgeInsets.all(24),
