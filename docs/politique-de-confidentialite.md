@@ -48,9 +48,16 @@ prestataire PayDunya. Un don peut être fait de façon anonyme, sans compte.
 Si vous activez les notifications, le jeton technique de votre appareil est conservé pour
 vous les envoyer (aucune donnée personnelle supplémentaire n'y est associée).
 
+### Localisation
+La fonction « La Hadra la plus proche » demande, uniquement quand vous l'ouvrez, la position
+approximative de votre appareil pour classer les zawiyas par distance. Ce calcul est fait
+sur votre téléphone : votre position n'est ni enregistrée, ni envoyée à nos serveurs, ni
+partagée. Vous pouvez refuser cette autorisation ; le reste de l'application fonctionne
+sans elle.
+
 ### Ce que nous ne collectons pas
 Aucun outil d'analyse d'usage ou de publicité tiers (pas de SDK publicitaire, pas de
-traceur marketing). Aucune géolocalisation.
+traceur marketing). Aucun suivi de votre position.
 
 ## 3. Pourquoi nous utilisons ces données
 
