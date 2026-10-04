@@ -426,22 +426,31 @@ void main() {
       'event_type': 'hadra',
       'starts_at': '2026-08-07T14:00:00.000Z',
       'created_by': 'u1',
+      'zawiya_id': 'z1',
     });
 
     test('un admin peut toujours gérer', () {
-      expect(canManageEvent(event, userId: 'other', isAdmin: true), isTrue);
+      expect(canManageEvent(event, userId: 'other', isAdmin: true, managedZawiyaId: null), isTrue);
     });
 
-    test("l'auteur peut gérer son propre évènement", () {
-      expect(canManageEvent(event, userId: 'u1', isAdmin: false), isTrue);
+    test("l'auteur peut gérer son évènement tant qu'il gère cette zawiya", () {
+      expect(canManageEvent(event, userId: 'u1', isAdmin: false, managedZawiyaId: 'z1'), isTrue);
+    });
+
+    test("l'auteur sans zawiya attribuée (révoqué, ou jamais attribuée) ne peut plus gérer", () {
+      expect(canManageEvent(event, userId: 'u1', isAdmin: false, managedZawiyaId: null), isFalse);
+    });
+
+    test("l'auteur ne peut plus gérer un évènement d'une zawiya qui n'est plus la sienne", () {
+      expect(canManageEvent(event, userId: 'u1', isAdmin: false, managedZawiyaId: 'z2'), isFalse);
     });
 
     test('un non-auteur non-admin ne peut pas gérer', () {
-      expect(canManageEvent(event, userId: 'other', isAdmin: false), isFalse);
+      expect(canManageEvent(event, userId: 'other', isAdmin: false, managedZawiyaId: 'z1'), isFalse);
     });
 
     test('un invité (userId null) ne peut pas gérer', () {
-      expect(canManageEvent(event, userId: null, isAdmin: false), isFalse);
+      expect(canManageEvent(event, userId: null, isAdmin: false, managedZawiyaId: null), isFalse);
     });
   });
 

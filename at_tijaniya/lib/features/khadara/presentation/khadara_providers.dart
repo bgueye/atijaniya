@@ -15,6 +15,10 @@ final khadaraRepositoryProvider = Provider<KhadaraRepository>((ref) => const Kha
 /// pas `valide` côté RLS — `KhadaraUnderstandingScreen` retombe alors sur
 /// son état vide.
 final khadaraUnderstandingPageProvider = FutureProvider<GuidePage?>((ref) {
+  // Lié au compte connecté (audit du 2026-10-04, S40/S41) : sans cette
+  // dépendance, le résultat restait en cache après une déconnexion et le
+  // compte suivant voyait les données du précédent.
+  ref.watch(currentUserIdProvider);
   return const GuidePageRepository().fetchBySlug('comprendre-zawiya');
 });
 
@@ -44,16 +48,17 @@ final eventsForZawiyaProvider = Provider.family<AsyncValue<List<KhadaraEvent>>, 
 });
 
 /// `true` si le compte peut créer un évènement Khadara — admin, ou
-/// mouqaddam vérifié rattaché à une zawiya (`profiles.zawiya_id`). `false`
-/// par défaut (invité, chargement, erreur, mouqaddam sans zawiya). Même
+/// mouqaddam confirmé à qui l'admin a attribué une zawiya
+/// (`mouqaddam_status.managed_zawiya_id`, plus `profiles.zawiya_id` depuis
+/// l'audit du 2026-10-04). `false` par défaut (invité, chargement, erreur,
+/// mouqaddam sans zawiya attribuée). Même
 /// forme que `isAdminProvider`/`canCreatePostProvider`. Exception
 /// volontaire et scopée à Khadara au statut mouqaddam qui, normalement,
 /// n'accorde aucun droit technique (voir CLAUDE.md) — décision explicite
 /// du porteur de projet, ne pas généraliser ailleurs.
 final canCreateEventProvider = Provider<bool>((ref) {
   if (ref.watch(isAdminProvider)) return true;
-  if (!ref.watch(isVerifiedMouqaddamProvider)) return false;
-  return ref.watch(myProfileProvider).maybeWhen(data: (profile) => profile.zawiyaId != null, orElse: () => false);
+  return ref.watch(myManagedZawiyaIdProvider) != null;
 });
 
 /// `true` si le compte peut créer/modifier/supprimer une zawiya — reflet

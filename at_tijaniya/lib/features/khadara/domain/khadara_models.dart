@@ -349,14 +349,25 @@ List<NearbyRecurringEvent> findNearbyRecurringEvents({
 }
 
 /// Un compte peut modifier/supprimer un évènement s'il est administrateur,
-/// ou s'il en est l'auteur (`events.created_by`) — reflet côté client des
-/// RLS `events_owner_or_admin_update`/`_delete` ; la RLS reste la source de
-/// vérité en cas de désaccord (ex. profil rechargé après une modification
+/// ou s'il en est l'auteur (`events.created_by`) ET que l'évènement est
+/// toujours rattaché à la zawiya que l'admin lui a attribuée
+/// (`managedZawiyaId`, `null` pour un compte qui n'est pas ou plus
+/// mouqaddam confirmé) — reflet côté client des RLS
+/// `events_owner_or_admin_update`/`_delete` ; la RLS reste la source de
+/// vérité en cas de désaccord (ex. statut rechargé après une modification
 /// serveur). Logique pure, testable sans Riverpod ni Supabase — même esprit
 /// que `classifyAuthError` (`auth/domain/auth_error_message.dart`).
-bool canManageEvent(KhadaraEvent event, {required String? userId, required bool isAdmin}) {
+bool canManageEvent(
+  KhadaraEvent event, {
+  required String? userId,
+  required bool isAdmin,
+  required String? managedZawiyaId,
+}) {
   if (isAdmin) return true;
-  return userId != null && userId == event.createdBy;
+  return userId != null &&
+      userId == event.createdBy &&
+      managedZawiyaId != null &&
+      managedZawiyaId == event.zawiyaId;
 }
 
 /// Direct (`live_streams`) — "Lecteur natif + agrégation de flux externes"

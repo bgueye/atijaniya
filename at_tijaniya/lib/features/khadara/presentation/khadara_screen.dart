@@ -4,6 +4,7 @@ import 'package:url_launcher/url_launcher.dart';
 
 import '../../../core/theme/app_colors.dart';
 import '../../../core/widgets/empty_notice.dart';
+import '../../../core/url/safe_url.dart';
 import '../../../l10n/app_localizations.dart';
 import '../domain/khadara_models.dart';
 import 'event_detail_screen.dart';
@@ -380,7 +381,7 @@ class _LiveTab extends ConsumerWidget {
                             title: Text(replay.displayTitle(l10n.khadaraLiveTab)),
                             trailing: Icon(Icons.open_in_new, color: AppColors.bronze),
                             onTap: () async {
-                              final uri = Uri.tryParse(replay.videoUrl);
+                              final uri = parseSafeHttpUrl(replay.videoUrl);
                               final launched = uri != null && await launchUrl(uri, mode: LaunchMode.externalApplication);
                               if (!launched && context.mounted) {
                                 ScaffoldMessenger.of(context).showSnackBar(

@@ -7,6 +7,7 @@ import '../../../core/storage/image_source_sheet.dart';
 import '../../../core/storage/image_upload_service.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../l10n/app_localizations.dart';
+import '../../mouqaddam/presentation/mouqaddam_providers.dart';
 import '../../profil/presentation/profile_providers.dart';
 import '../domain/khadara_models.dart';
 import 'khadara_format.dart';
@@ -215,11 +216,11 @@ class _EventFormScreenState extends ConsumerState<EventFormScreen> {
     });
 
     final isAdmin = ref.read(isAdminProvider);
-    final myProfile = ref.read(myProfileProvider).valueOrNull;
-    // Mouqaddam : toujours sa zawiya actuelle (jamais celle, possiblement
-    // périmée, de l'évènement en édition) — la RLS s'aligne naturellement
-    // dessus. Admin : la sélection libre du formulaire.
-    final zawiyaId = isAdmin ? _zawiyaId : myProfile?.zawiyaId;
+    // Mouqaddam : toujours la zawiya que l'admin lui a attribuée (jamais
+    // celle du profil ni celle, possiblement périmée, de l'évènement en
+    // édition) — c'est exactement ce que la RLS compare. Admin : la
+    // sélection libre du formulaire.
+    final zawiyaId = isAdmin ? _zawiyaId : ref.read(myManagedZawiyaIdProvider);
     final descriptionText = _descriptionController.text.trim();
     // Drapeau et précision sans objet pour un évènement récurrent : remis à
     // faux/vide plutôt que de laisser en base une valeur que l'écran ignore.
@@ -389,7 +390,13 @@ class _EventFormScreenState extends ConsumerState<EventFormScreen> {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     final isAdmin = ref.watch(isAdminProvider);
-    final myProfileAsync = ref.watch(myProfileProvider);
+    // Nom de la zawiya attribuée au mouqaddam, pour le champ en lecture
+    // seule : retrouvé dans l'annuaire déjà chargé, sans requête de plus.
+    final managedZawiyaId = ref.watch(myManagedZawiyaIdProvider);
+    final managedZawiyaName = ref.watch(zawiyasProvider).valueOrNull
+        ?.where((z) => z.id == managedZawiyaId)
+        .map((z) => z.name)
+        .firstOrNull;
     final isEdit = widget.event != null;
 
     return Scaffold(
@@ -580,7 +587,10 @@ class _EventFormScreenState extends ConsumerState<EventFormScreen> {
                 else
                   TextFormField(
                     enabled: false,
-                    initialValue: myProfileAsync.valueOrNull?.zawiyaName ?? '—',
+                    // `key` : le nom arrive après le premier build (annuaire
+                    // en cours de chargement), `initialValue` seul resterait figé.
+                    key: ValueKey(managedZawiyaName),
+                    initialValue: managedZawiyaName ?? '—',
                     decoration:
                         InputDecoration(labelText: l10n.eventFormZawiyaLabel),
                   ),

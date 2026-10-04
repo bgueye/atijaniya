@@ -20,11 +20,23 @@ MouqaddamVerificationStatus _statusFromDb(String value) {
 }
 
 class MouqaddamStatus {
-  const MouqaddamStatus({required this.status, required this.isFounder, this.verifiedAt});
+  const MouqaddamStatus({
+    required this.status,
+    required this.isFounder,
+    this.verifiedAt,
+    this.managedZawiyaId,
+  });
 
   final MouqaddamVerificationStatus status;
   final bool isFounder;
   final DateTime? verifiedAt;
+
+  /// Zawiya dont ce mouqaddam peut gérer les évènements
+  /// (`mouqaddam_status.managed_zawiya_id`) — attribuée par l'admin, jamais
+  /// par l'intéressé (audit du 2026-10-04, point S02a : la zawiya du profil,
+  /// librement modifiable, ne donne plus aucun droit). `null` tant que
+  /// l'admin n'a rien attribué.
+  final String? managedZawiyaId;
 
   bool get isVerified => status == MouqaddamVerificationStatus.verified;
 
@@ -33,6 +45,7 @@ class MouqaddamStatus {
       status: _statusFromDb(row['status'] as String),
       isFounder: row['is_founder'] as bool,
       verifiedAt: row['verified_at'] != null ? DateTime.parse(row['verified_at'] as String) : null,
+      managedZawiyaId: row['managed_zawiya_id'] as String?,
     );
   }
 }

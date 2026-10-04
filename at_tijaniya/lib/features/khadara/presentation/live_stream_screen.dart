@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../../core/theme/app_colors.dart';
+import '../../../core/url/safe_url.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../moderation/domain/moderation_models.dart';
 import '../../moderation/presentation/report_content_dialog.dart';
@@ -81,7 +82,7 @@ class _LiveStreamScreenState extends ConsumerState<LiveStreamScreen> {
                 decoration: InputDecoration(labelText: l10n.khadaraAddReplayUrlLabel),
                 keyboardType: TextInputType.url,
                 validator: (value) =>
-                    (value == null || Uri.tryParse(value.trim())?.hasScheme != true) ? l10n.khadaraAddReplayUrlInvalid : null,
+                    parseSafeHttpUrl(value) == null ? l10n.khadaraAddReplayUrlInvalid : null,
               ),
               const SizedBox(height: 12),
               TextFormField(
@@ -134,7 +135,7 @@ class _LiveStreamScreenState extends ConsumerState<LiveStreamScreen> {
     final l10n = AppLocalizations.of(context)!;
     final url = widget.stream.externalUrl;
     if (url == null) return;
-    final uri = Uri.tryParse(url);
+    final uri = parseSafeHttpUrl(url);
     final launched = uri != null && await launchUrl(uri, mode: LaunchMode.externalApplication);
     if (!launched && mounted) {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(l10n.khadaraOpenReplayError)));
@@ -236,7 +237,11 @@ class _LiveStreamScreenState extends ConsumerState<LiveStreamScreen> {
           ),
           SafeArea(
             top: false,
-            child: myUserId == null
+            // Chat fermé une fois le direct terminé (la RLS refuse l'écriture,
+            // audit S06) : on n'affiche plus de champ de saisie inopérant.
+            child: widget.stream.status == LiveStreamStatus.ended
+                ? const SizedBox.shrink()
+                : myUserId == null
                 ? Padding(
                     padding: const EdgeInsets.all(16),
                     child: Text(l10n.khadaraChatSignInToWrite, style: TextStyle(color: AppColors.bronze)),

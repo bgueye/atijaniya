@@ -2,6 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../data/live_stream_repository.dart';
 import '../domain/khadara_models.dart';
+import '../../profil/presentation/profile_providers.dart';
 
 final liveStreamRepositoryProvider = Provider<LiveStreamRepository>((ref) => const LiveStreamRepository());
 
@@ -17,19 +18,26 @@ final latestStreamForEventProvider = FutureProvider.autoDispose.family<LiveStrea
 
 /// Symétrique côté groupe — voir `LiveStreamRepository.fetchLatestStreamForGroup`.
 final latestStreamForGroupProvider = FutureProvider.autoDispose.family<LiveStream?, String>((ref, groupId) {
+  // Lié au compte connecté (audit du 2026-10-04, S40/S41) : sans cette
+  // dépendance, le résultat restait en cache après une déconnexion et le
+  // compte suivant voyait les données du précédent.
+  ref.watch(currentUserIdProvider);
   return ref.watch(liveStreamRepositoryProvider).fetchLatestStreamForGroup(groupId);
 });
 
 /// Voir `LiveStreamRepository.fetchPastStreamsForGroup`.
 final pastStreamsForGroupProvider = FutureProvider.autoDispose.family<List<LiveStream>, String>((ref, groupId) {
+  ref.watch(currentUserIdProvider); // lié au compte, voir plus haut
   return ref.watch(liveStreamRepositoryProvider).fetchPastStreamsForGroup(groupId);
 });
 
 final allLiveStreamsProvider = FutureProvider<List<LiveStream>>((ref) {
+  ref.watch(currentUserIdProvider); // lié au compte, voir plus haut
   return ref.watch(liveStreamRepositoryProvider).fetchAllLiveStreams();
 });
 
 final streamReplaysProvider = FutureProvider<List<StreamReplay>>((ref) {
+  ref.watch(currentUserIdProvider); // lié au compte, voir plus haut
   return ref.watch(liveStreamRepositoryProvider).fetchReplays();
 });
 
@@ -37,5 +45,6 @@ final streamReplaysProvider = FutureProvider<List<StreamReplay>>((ref) {
 /// provider lui-même via un polling léger tant que l'écran est ouvert (voir
 /// commentaire de `LiveChatMessage`).
 final chatMessagesProvider = FutureProvider.family<List<LiveChatMessage>, String>((ref, streamId) {
+  ref.watch(currentUserIdProvider); // lié au compte, voir plus haut
   return ref.watch(liveStreamRepositoryProvider).fetchChatMessages(streamId);
 });

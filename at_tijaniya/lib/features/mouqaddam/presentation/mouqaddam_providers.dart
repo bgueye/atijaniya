@@ -22,6 +22,18 @@ final isVerifiedMouqaddamProvider = Provider<bool>((ref) {
   return ref.watch(myMouqaddamStatusProvider).maybeWhen(data: (status) => status.isVerified, orElse: () => false);
 });
 
+/// Zawiya dont le compte connecté peut gérer les évènements — `null` s'il
+/// n'est pas mouqaddam confirmé, si l'admin ne lui a rien attribué, ou
+/// pendant le chargement. Reflet client de `my_managed_zawiya()` côté base,
+/// qui reste la source de vérité (RLS des évènements).
+final myManagedZawiyaIdProvider = Provider<String?>((ref) {
+  if (ref.watch(currentUserIdProvider) == null) return null;
+  return ref.watch(myMouqaddamStatusProvider).maybeWhen(
+        data: (status) => status.isVerified ? status.managedZawiyaId : null,
+        orElse: () => null,
+      );
+});
+
 final myLatestSponsorshipRequestProvider = FutureProvider<SponsorshipRequest?>((ref) {
   ref.watch(currentUserIdProvider);
   return ref.watch(mouqaddamRepositoryProvider).fetchMyLatestRequest();

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/theme/app_colors.dart';
+import '../../../core/url/safe_url.dart';
 import '../../../l10n/app_localizations.dart';
 import '../domain/khadara_models.dart';
 import 'live_stream_providers.dart';
@@ -137,9 +138,13 @@ class _StartLiveStreamScreenState extends ConsumerState<StartLiveStreamScreen> {
                 keyboardType: TextInputType.url,
                 decoration:
                     InputDecoration(labelText: l10n.khadaraExternalUrlLabel),
-                validator: (value) => (value == null || value.trim().isEmpty)
-                    ? l10n.khadaraExternalUrlRequired
-                    : null,
+                // http(s) uniquement, comme la contrainte en base : un lien
+                // sans schéma ou d'un autre schéma serait notifié à tous puis
+                // impossible (ou dangereux) à ouvrir.
+                validator: (value) {
+                  if (value == null || value.trim().isEmpty) return l10n.khadaraExternalUrlRequired;
+                  return parseSafeHttpUrl(value) == null ? l10n.khadaraExternalUrlInvalid : null;
+                },
               ),
               const SizedBox(height: 20),
               FilledButton(

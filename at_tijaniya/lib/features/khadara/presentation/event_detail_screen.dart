@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/theme/app_colors.dart';
 import '../../../l10n/app_localizations.dart';
+import '../../mouqaddam/presentation/mouqaddam_providers.dart';
 import '../../profil/presentation/profile_providers.dart';
 import '../domain/khadara_errors.dart';
 import '../domain/khadara_models.dart';
@@ -86,6 +87,7 @@ class _EventDetailScreenState extends ConsumerState<EventDetailScreen> {
       _event,
       userId: ref.watch(currentUserIdProvider),
       isAdmin: ref.watch(isAdminProvider),
+      managedZawiyaId: ref.watch(myManagedZawiyaIdProvider),
     );
 
     return Scaffold(
@@ -233,7 +235,16 @@ class _LiveStreamSection extends ConsumerWidget {
             label: Text(l10n.khadaraJoinLive),
           );
         }
-        if (myUserId == null) return const SizedBox.shrink();
+        // Démarrer un direct public : admin, créateur de l'évènement, ou
+        // mouqaddam confirmé de la zawiya de l'évènement — reflet de la
+        // policy `streams_authenticated_create` (audit du 2026-10-04, S05d ;
+        // auparavant tout compte connecté, avec notification à tous).
+        final managedZawiyaId = ref.watch(myManagedZawiyaIdProvider);
+        final canStart = myUserId != null &&
+            (ref.watch(isAdminProvider) ||
+                myUserId == event.createdBy ||
+                (managedZawiyaId != null && managedZawiyaId == event.zawiyaId));
+        if (!canStart) return const SizedBox.shrink();
         return OutlinedButton.icon(
           onPressed: () => Navigator.of(context).push(
             MaterialPageRoute(
