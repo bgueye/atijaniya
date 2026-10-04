@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../core/storage/user_scoped_prefs.dart';
 import '../../../core/storage/image_source_sheet.dart';
 import '../../../core/storage/image_upload_service.dart';
 import '../../../core/supabase/supabase_config.dart';
@@ -13,6 +14,7 @@ import '../../moderation/presentation/moderation_reports_screen.dart';
 import '../../mouqaddam/presentation/become_mouqaddam_screen.dart';
 import '../../mouqaddam/presentation/ijaza_chain_screen.dart';
 import '../../mouqaddam/presentation/mouqaddam_providers.dart';
+import '../../mouqaddam/presentation/sponsorship_badge.dart';
 import '../../mouqaddam/presentation/sponsorship_requests_screen.dart';
 import '../../settings/presentation/settings_screen.dart';
 import '../domain/profile_models.dart';
@@ -271,8 +273,22 @@ class _DeleteAccountDialogState extends ConsumerState<_DeleteAccountDialog> {
       _errorMessage = null;
     });
     try {
+      final userId = SupabaseConfig.client.auth.currentUser?.id;
+      // Photo de profil retirée du bucket public AVANT la suppression : une
+      // fois le compte supprimé, plus aucune session ne permet de le faire.
+      if (userId != null) {
+        await ImageUploadService().removeFolderExcept(bucket: 'avatars', folder: userId);
+      }
       await ref.read(profileRepositoryProvider).deleteMyAccount();
-      await SupabaseConfig.client.auth.signOut();
+      // Le compte n'existe plus côté serveur à partir d'ici : rien de ce qui
+      // suit ne doit faire afficher « Impossible de supprimer » (audit du
+      // 2026-10-04, S53). On efface les données locales du compte, puis on
+      // ferme la session ; un échec de ces deux étapes est sans conséquence
+      // (session déjà invalide côté serveur).
+      try {
+        if (userId != null) await clearUserScopedPrefs(userId);
+        await SupabaseConfig.client.auth.signOut();
+      } catch (_) {}
       if (mounted) Navigator.of(context).pop(true);
     } catch (_) {
       if (mounted) {
@@ -376,6 +392,12 @@ class _ProfileHeaderState extends ConsumerState<_ProfileHeader> {
         contentType: imageContentTypeForExtension(extension),
       );
       await ref.read(profileRepositoryProvider).updateMyAvatar(url);
+      // Une seule photo de profil par compte dans le bucket public.
+      await _imageUploadService.removeFolderExcept(
+        bucket: 'avatars',
+        folder: userId,
+        keepPath: '$userId/avatar.$extension',
+      );
       ref.invalidate(myProfileProvider);
       if (mounted) setState(() => _avatarUrlOverride = url);
     } catch (_) {
@@ -462,6 +484,9 @@ class _ProfileHeaderState extends ConsumerState<_ProfileHeader> {
                         profile.zawiyaName ?? l10n.profileZawiyaNoneLabel,
                         style: TextStyle(color: AppColors.bronze, fontSize: 13),
                       ),
+                      // Jamais le mot « vérifié » : libellé et explication au
+                      // tap portés ensemble par `SponsorshipBadge`.
+                      if (ref.watch(isVerifiedMouqaddamProvider)) const SponsorshipBadge(),
                     ],
                   ),
                 ),

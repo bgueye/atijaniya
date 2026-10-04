@@ -60,7 +60,13 @@ class ProfileRepository {
   /// fil). Peut échouer (compte admin avec des entrées non couvertes dans
   /// `admin_actions_log`/`sensitive_data_access_log`) — non catché ici,
   /// message générique affiché côté écran.
+  ///
+  /// Depuis l'audit du 2026-10-04 (S51, S52), la suppression passe par la
+  /// fonction SQL `delete_my_account()` : une seule transaction, donc soit
+  /// tout est supprimé, soit rien ne l'est. L'ancienne Edge Function
+  /// enchaînait ses écritures sans lire leurs erreurs et pouvait effacer les
+  /// messages d'un compte qu'elle n'arrivait pas ensuite à supprimer.
   Future<void> deleteMyAccount() async {
-    await SupabaseConfig.client.functions.invoke('delete-account');
+    await SupabaseConfig.client.rpc('delete_my_account');
   }
 }

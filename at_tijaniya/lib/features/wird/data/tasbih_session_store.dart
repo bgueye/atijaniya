@@ -10,27 +10,29 @@ import 'dart:convert';
 
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../../../core/storage/user_scoped_prefs.dart';
 import '../domain/tasbih_session.dart';
 
 class TasbihSessionStore {
   const TasbihSessionStore();
 
-  String _key(String wirdId) => 'tasbih_session_$wirdId';
+  /// Clé propre au compte connecté — voir `user_scoped_prefs.dart`.
+  String _key(SharedPreferences prefs, String wirdId) => userScopedKey(prefs, 'tasbih_session_$wirdId');
 
   Future<TasbihSession?> load(String wirdId) async {
     final prefs = await SharedPreferences.getInstance();
-    final raw = prefs.getString(_key(wirdId));
+    final raw = prefs.getString(_key(prefs, wirdId));
     if (raw == null) return null;
     return TasbihSession.tryFromJson(jsonDecode(raw) as Map<String, dynamic>);
   }
 
   Future<void> save(TasbihSession session) async {
     final prefs = await SharedPreferences.getInstance();
-    await prefs.setString(_key(session.wirdId), jsonEncode(session.toJson()));
+    await prefs.setString(_key(prefs, session.wirdId), jsonEncode(session.toJson()));
   }
 
   Future<void> clear(String wirdId) async {
     final prefs = await SharedPreferences.getInstance();
-    await prefs.remove(_key(wirdId));
+    await prefs.remove(_key(prefs, wirdId));
   }
 }

@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
@@ -17,6 +19,7 @@ class SplashScreen extends StatefulWidget {
 class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderStateMixin {
   late final AnimationController _controller;
   late final Animation<double> _fade;
+  Timer? _timer;
 
   @override
   void initState() {
@@ -24,11 +27,18 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
     _controller = AnimationController(vsync: this, duration: const Duration(milliseconds: 900));
     _fade = CurvedAnimation(parent: _controller, curve: Curves.easeOut);
     _controller.forward();
-    Future.delayed(const Duration(milliseconds: 1600), widget.onFinished);
+    // Minuteur annulable (audit du 2026-10-04, S50) : un `Future.delayed` nu
+    // se déclenchait même après le démontage du splash et réécrivait l'étape
+    // de l'app — notamment par-dessus l'écran de réinitialisation ouvert par
+    // un lien reçu par e-mail.
+    _timer = Timer(const Duration(milliseconds: 1600), () {
+      if (mounted) widget.onFinished();
+    });
   }
 
   @override
   void dispose() {
+    _timer?.cancel();
     _controller.dispose();
     super.dispose();
   }

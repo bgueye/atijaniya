@@ -5,6 +5,7 @@
 /// la fois (voir `free_wird_store.dart`).
 library;
 
+import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../data/free_wird_store.dart';
@@ -63,9 +64,19 @@ final freeWirdControllerProvider = StateNotifierProvider.autoDispose<FreeWirdCon
   (ref) => FreeWirdController(),
 );
 
-class FreeWirdController extends StateNotifier<FreeWirdState> {
+class FreeWirdController extends StateNotifier<FreeWirdState> with WidgetsBindingObserver {
   FreeWirdController() : super(const FreeWirdState()) {
+    WidgetsBinding.instance.addObserver(this);
     _load();
+  }
+
+  /// Coupe le micro dès que l'app n'est plus au premier plan (audit du
+  /// 2026-10-04, S64) : sans cet observateur, la boucle vocale relançait
+  /// l'écoute en arrière-plan. Le disciple relance la voix lui-même au
+  /// retour, jamais automatiquement.
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state != AppLifecycleState.resumed) stopListening();
   }
 
   final FreeWirdStore _store = const FreeWirdStore();
@@ -238,6 +249,7 @@ class FreeWirdController extends StateNotifier<FreeWirdState> {
 
   @override
   void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
     _voiceLoopActive = false;
     _restartScheduled = false;
     _voice.cancel();

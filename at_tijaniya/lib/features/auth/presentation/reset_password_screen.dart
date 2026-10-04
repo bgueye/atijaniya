@@ -13,9 +13,13 @@ import '../../../l10n/app_localizations.dart';
 /// disciple est donc directement connecté, pas besoin de repasser par
 /// l'écran de connexion.
 class ResetPasswordScreen extends StatefulWidget {
-  const ResetPasswordScreen({super.key, required this.onDone});
+  const ResetPasswordScreen({super.key, required this.onDone, required this.onCancel});
 
   final VoidCallback onDone;
+
+  /// Abandon de la réinitialisation — l'appelant déconnecte la session
+  /// ouverte par le lien (voir `app.dart`).
+  final VoidCallback onCancel;
 
   @override
   State<ResetPasswordScreen> createState() => _ResetPasswordScreenState();
@@ -130,6 +134,11 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                     child: _submitting
                         ? const SizedBox(height: 18, width: 18, child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white))
                         : Text(l10n.resetPasswordSubmit, style: const TextStyle(fontWeight: FontWeight.w600)),
+                  ),
+                  const SizedBox(height: 8),
+                  TextButton(
+                    onPressed: _submitting ? null : widget.onCancel,
+                    child: Text(l10n.resetPasswordCancel),
                   ),
                 ],
               ),

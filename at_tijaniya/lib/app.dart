@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'core/supabase/supabase_config.dart';
@@ -36,6 +37,24 @@ enum _Step { splash, language, onboarding, auth, resetPassword, home }
 class _AtTijaniyaAppState extends ConsumerState<AtTijaniyaApp> {
   _Step _step = _Step.splash;
   final _onboardingStore = const OnboardingStore();
+
+  /// Réinitialisation de mot de passe en attente (audit du 2026-10-04, S50).
+  /// La session ouverte par le lien reçu par e-mail est une session
+  /// complète : rien, côté serveur, n'oblige à choisir un nouveau mot de
+  /// passe. Ce drapeau, enregistré sur l'appareil, garantit que l'app ramène
+  /// sur l'écran de réinitialisation tant que le mot de passe n'a pas été
+  /// changé (ou la réinitialisation abandonnée, ce qui déconnecte) — y
+  /// compris après une fermeture puis réouverture de l'app.
+  static const _recoveryPendingKey = 'password_recovery_pending';
+
+  Future<void> _setRecoveryPending(bool pending) async {
+    final prefs = await SharedPreferences.getInstance();
+    if (pending) {
+      await prefs.setBool(_recoveryPendingKey, true);
+    } else {
+      await prefs.remove(_recoveryPendingKey);
+    }
+  }
   // Permet de purger les routes poussées par-dessus HomeShell (ProfilScreen,
   // Paramètres, Ma lignée...) avant de basculer `_step` — sans ça, ces routes
   // resteraient affichées par-dessus le nouvel écran racine tant qu'on ne les
@@ -69,10 +88,11 @@ class _AtTijaniyaAppState extends ConsumerState<AtTijaniyaApp> {
         setState(() => _step = _Step.auth);
       } else if (event == AuthChangeEvent.passwordRecovery && mounted) {
         // Lien de réinitialisation de mot de passe ouvert depuis l'e-mail
-        // (deep link, voir SupabaseConfig.authCallbackUrl) : la session
-        // "recovery" qui vient d'être établie n'autorise qu'un `updateUser`,
-        // jamais un accès direct au reste de l'app tant que le mot de passe
-        // n'a pas été changé.
+        // (deep link, voir SupabaseConfig.authCallbackUrl). La session
+        // "recovery" est une session complète côté serveur : c'est l'app qui
+        // impose de changer le mot de passe avant tout accès au reste, via
+        // `_recoveryPendingKey` (voir plus haut).
+        _setRecoveryPending(true);
         _navigatorKey.currentState?.popUntil((route) => route.isFirst);
         setState(() => _step = _Step.resetPassword);
       } else if (event == AuthChangeEvent.signedIn &&
@@ -122,7 +142,11 @@ class _AtTijaniyaAppState extends ConsumerState<AtTijaniyaApp> {
   Widget _buildStep() {
     switch (_step) {
       case _Step.splash:
-        return SplashScreen(onFinished: () => setState(() => _step = _Step.language));
+        // Ne quitte le splash que si l'étape n'a pas déjà été fixée par un
+        // évènement d'authentification arrivé pendant l'animation.
+        return SplashScreen(onFinished: () {
+          if (_step == _Step.splash) setState(() => _step = _Step.language);
+        });
       case _Step.language:
         // On avance automatiquement dès qu'une langue est choisie
         // (localeControllerProvider passe de null à une Locale).
@@ -138,7 +162,22 @@ class _AtTijaniyaAppState extends ConsumerState<AtTijaniyaApp> {
           onContinueAsGuest: () => setState(() => _step = _Step.home),
         );
       case _Step.resetPassword:
-        return ResetPasswordScreen(onDone: () => setState(() => _step = _Step.home));
+        return ResetPasswordScreen(
+          onDone: () {
+            _setRecoveryPending(false);
+            setState(() => _step = _Step.home);
+          },
+          // Abandon : on ferme la session ouverte par le lien, sinon le
+          // disciple resterait connecté avec un mot de passe qu'il ne
+          // connaît plus.
+          onCancel: () async {
+            await _setRecoveryPending(false);
+            try {
+              await SupabaseConfig.client.auth.signOut();
+            } catch (_) {}
+            if (mounted) setState(() => _step = _Step.auth);
+          },
+        );
       case _Step.home:
         return const HomeShell();
     }
@@ -146,7 +185,15 @@ class _AtTijaniyaAppState extends ConsumerState<AtTijaniyaApp> {
 
   Future<void> _afterLanguageChosen() async {
     final seen = await _onboardingStore.hasSeenOnboarding();
+    final recoveryPending = (await SharedPreferences.getInstance()).getBool(_recoveryPendingKey) ?? false;
     if (!mounted) return;
+    // Un évènement d'authentification a déjà fixé l'étape pendant le choix
+    // de la langue (lien e-mail) : on ne la réécrit pas.
+    if (_step != _Step.language) return;
+    if (SupabaseConfig.client.auth.currentSession != null && recoveryPending) {
+      setState(() => _step = _Step.resetPassword);
+      return;
+    }
     if (SupabaseConfig.client.auth.currentSession != null) {
       // Session restaurée par supabase_flutter au démarrage (voir
       // `main.dart`, `SupabaseConfig.init()` est attendu avant `runApp`) :

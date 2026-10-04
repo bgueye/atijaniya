@@ -12,10 +12,13 @@ library;
 
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../../../core/storage/user_scoped_prefs.dart';
+
 class WirdCompletionStore {
   const WirdCompletionStore();
 
-  String _key(String wirdId) => 'wird_completions_$wirdId';
+  /// Clé propre au compte connecté — voir `user_scoped_prefs.dart`.
+  String _key(SharedPreferences prefs, String wirdId) => userScopedKey(prefs, 'wird_completions_$wirdId');
 
   String _format(DateTime date) =>
       '${date.year.toString().padLeft(4, '0')}-'
@@ -24,7 +27,7 @@ class WirdCompletionStore {
 
   Future<List<DateTime>> load(String wirdId) async {
     final prefs = await SharedPreferences.getInstance();
-    final raw = prefs.getStringList(_key(wirdId)) ?? const [];
+    final raw = prefs.getStringList(_key(prefs, wirdId)) ?? const [];
     return raw.map(DateTime.parse).toList()..sort();
   }
 
@@ -33,7 +36,7 @@ class WirdCompletionStore {
   /// jour.
   Future<void> recordCompletionToday(String wirdId) async {
     final prefs = await SharedPreferences.getInstance();
-    final key = _key(wirdId);
+    final key = _key(prefs, wirdId);
     final existing = (prefs.getStringList(key) ?? const []).toSet();
     existing.add(_format(DateTime.now()));
     await prefs.setStringList(key, existing.toList()..sort());

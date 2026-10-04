@@ -9,6 +9,7 @@ library;
 
 import 'dart:async';
 
+import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../data/tasbih_session_store.dart';
@@ -67,10 +68,20 @@ final tasbihControllerProvider =
   (ref, wird) => TasbihController(wird: wird),
 );
 
-class TasbihController extends StateNotifier<TasbihState> {
+class TasbihController extends StateNotifier<TasbihState> with WidgetsBindingObserver {
   TasbihController({required this.wird})
       : super(TasbihState(session: TasbihSession.initial(wird.id))) {
+    WidgetsBinding.instance.addObserver(this);
     _load();
+  }
+
+  /// Coupe le micro dès que l'app n'est plus au premier plan (audit du
+  /// 2026-10-04, S64) : sans cet observateur, la boucle vocale relançait
+  /// l'écoute en arrière-plan. Le disciple relance la voix lui-même au
+  /// retour, jamais automatiquement.
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state != AppLifecycleState.resumed) stopListening();
   }
 
   final Wird wird;
@@ -324,6 +335,7 @@ class TasbihController extends StateNotifier<TasbihState> {
 
   @override
   void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
     _voiceLoopActive = false;
     _restartScheduled = false;
     _cancelAutoAdvance();

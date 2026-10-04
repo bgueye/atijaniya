@@ -8,27 +8,31 @@ import 'dart:convert';
 
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../../../core/storage/user_scoped_prefs.dart';
 import '../domain/free_wird_session.dart';
 
 class FreeWirdStore {
   const FreeWirdStore();
 
-  static const _key = 'free_wird_session';
+  static const _baseKey = 'free_wird_session';
+
+  /// Clé propre au compte connecté — voir `user_scoped_prefs.dart`.
+  String _key(SharedPreferences prefs) => userScopedKey(prefs, _baseKey);
 
   Future<FreeWirdSession?> load() async {
     final prefs = await SharedPreferences.getInstance();
-    final raw = prefs.getString(_key);
+    final raw = prefs.getString(_key(prefs));
     if (raw == null) return null;
     return FreeWirdSession.tryFromJson(jsonDecode(raw) as Map<String, dynamic>);
   }
 
   Future<void> save(FreeWirdSession session) async {
     final prefs = await SharedPreferences.getInstance();
-    await prefs.setString(_key, jsonEncode(session.toJson()));
+    await prefs.setString(_key(prefs), jsonEncode(session.toJson()));
   }
 
   Future<void> clear() async {
     final prefs = await SharedPreferences.getInstance();
-    await prefs.remove(_key);
+    await prefs.remove(_key(prefs));
   }
 }

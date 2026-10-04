@@ -4,6 +4,7 @@ import '../../khadara/domain/khadara_models.dart' show KhadaraEvent, Zawiya;
 import '../data/figures_repository.dart';
 import '../domain/featured_figure.dart';
 import '../domain/figure_models.dart';
+import '../../profil/presentation/profile_providers.dart';
 
 final figuresRepositoryProvider = Provider<FiguresRepository>((ref) => const FiguresRepository());
 
@@ -15,6 +16,10 @@ final figuresProvider = FutureProvider<List<Figure>>((ref) {
 /// (`FiguresReviewScreen`) — voir la note sur `is_admin` dans
 /// `FiguresRepository.fetchDraftFigures`.
 final draftFiguresProvider = FutureProvider<List<Figure>>((ref) {
+  // Lié au compte connecté (audit du 2026-10-04, S40/S41) : sans cette
+  // dépendance, le résultat restait en cache après une déconnexion et le
+  // compte suivant voyait les données du précédent.
+  ref.watch(currentUserIdProvider);
   return ref.watch(figuresRepositoryProvider).fetchDraftFigures();
 });
 

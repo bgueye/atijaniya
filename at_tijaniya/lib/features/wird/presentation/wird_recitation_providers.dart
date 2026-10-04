@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../data/wirds_content.dart';
 import '../data/wird_recitation_repository.dart';
 import '../domain/wird_recitation.dart';
+import '../../profil/presentation/profile_providers.dart';
 
 final wirdRecitationRepositoryProvider = Provider<WirdRecitationRepository>(
     (ref) => const WirdRecitationRepository());
@@ -12,6 +13,10 @@ final wirdRecitationRepositoryProvider = Provider<WirdRecitationRepository>(
 /// `WirdRecitationRepository.fetchDraftRecitations`.
 final draftWirdRecitationsProvider =
     FutureProvider<List<WirdRecitationDraft>>((ref) {
+  // Lié au compte connecté (audit du 2026-10-04, S40/S41) : sans cette
+  // dépendance, le résultat restait en cache après une déconnexion et le
+  // compte suivant voyait les données du précédent.
+  ref.watch(currentUserIdProvider);
   return ref.watch(wirdRecitationRepositoryProvider).fetchDraftRecitations();
 });
 
@@ -21,6 +26,7 @@ final draftWirdRecitationsProvider =
 /// connus statiquement, pas besoin de la complexité d'un family ici.
 final allWirdStepRecitationsProvider =
     FutureProvider<Map<String, List<WirdStepRecitations>>>((ref) async {
+  ref.watch(currentUserIdProvider); // lié au compte, voir plus haut
   final repository = ref.watch(wirdRecitationRepositoryProvider);
   final entries = await Future.wait(
     validatedWirds.map((wird) async => MapEntry(
