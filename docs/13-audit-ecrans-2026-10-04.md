@@ -228,15 +228,27 @@ Reste à faire :
 - Également alignés le 2026-10-06 : la translittération de la même formule dans la
   Hadratou-l-Jouma (reprise de son document validé), et le message d'état vide de
   « Comprendre la Zawiya », qui n'annonce plus une validation par un moqaddam.
-- **Parcours** : succession à deux fondateurs possible ; maillon manuel de silsila perdu
-  quand on a un parrain dans l'app ; réordonnancement d'une succession ; dépublication
-  d'une figure ; like désynchronisé entre le fil et le détail d'une publication.
-- **Dons** (désactivés) : montant entier à aligner avec la fonction serveur ; déclenchement
-  réel de la notification PayDunya jamais observé.
-- **RTL** : quelques alignements non directionnels ; noms de figures en français dans les
-  listes admin ; dates en chiffres latins.
-- **Accessibilité** : libellés sémantiques et zones tactiles relevés écran par écran.
-- **Tests** : presque aucun test d'écran ni de repository, aucun test automatisé de la RLS.
+- **Corrigé le 2026-10-06** (migrations `succession_founder_and_reorder` et
+  `succession_reorder_closes_gap`, vérifiées en base) :
+  - une succession (zawiya + rôle) n'a qu'un fondateur, avec un message dédié dans le
+    formulaire ; ajouter ou déplacer un maillon à un rang déjà pris décale les suivants ;
+  - dépublication d'une figure (« Repasser en brouillon ») depuis sa fiche, pour l'admin ;
+  - complément manuel de la silsila d'ijaza proposé seulement au mouqaddam situé au sommet
+    de la chaîne (les autres voyaient « Maillon ajouté » sans effet) ;
+  - montant d'un don : entier entre 100 et 5 000 000 F CFA, comme côté serveur ;
+  - chevrons de fin de ligne et derniers alignements suivant le sens de lecture en arabe
+    (`DirectionalChevron`).
+- **Reste à faire** :
+  - **Dons** (désactivés) : déclenchement réel de la notification PayDunya jamais observé.
+  - **Arabe** : noms de figures en français dans les listes admin ; dates en chiffres latins
+    (choix assumé dans le code).
+  - **Accessibilité** : libellés sémantiques et zones tactiles relevés écran par écran dans
+    les rapports, non traités.
+  - **Modération** : signalement des messages de groupe et des messages privés (sprint
+    dédié).
+  - **iOS** : rien n'a été compilé ni vérifié pendant ce travail.
+  - **Tests** : presque aucun test d'écran ni de repository, aucun test automatisé de la RLS.
+  - **Journal** `docs/09` : décrit encore l'ancien fonctionnement sur plusieurs points.
 
 ## Index des rapports par module
 
