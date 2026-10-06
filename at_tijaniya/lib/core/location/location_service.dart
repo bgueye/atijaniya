@@ -24,19 +24,30 @@ class LocationService {
   const LocationService();
 
   Future<LocationResult> getCurrentPosition() async {
-    if (!await Geolocator.isLocationServiceEnabled()) {
-      return const LocationResult(failure: LocationFailure.serviceDisabled);
-    }
-    var permission = await Geolocator.checkPermission();
-    if (permission == LocationPermission.denied) {
-      permission = await Geolocator.requestPermission();
+    LocationPermission permission;
+    try {
+      if (!await Geolocator.isLocationServiceEnabled()) {
+        return const LocationResult(failure: LocationFailure.serviceDisabled);
+      }
+      permission = await Geolocator.checkPermission();
+      if (permission == LocationPermission.denied) {
+        permission = await Geolocator.requestPermission();
+      }
+    } catch (_) {
+      // Ces appels peuvent lever (demande de permission déjà en cours...) :
+      // un échec propre plutôt qu'une exception non rattrapée.
+      return const LocationResult(failure: LocationFailure.unknown);
     }
     if (permission == LocationPermission.denied || permission == LocationPermission.deniedForever) {
       return const LocationResult(failure: LocationFailure.permissionDenied);
     }
     try {
       final position = await Geolocator.getCurrentPosition(
-        locationSettings: const LocationSettings(accuracy: LocationAccuracy.low),
+        // Sans limite, l'attente pouvait durer indéfiniment en intérieur.
+        locationSettings: const LocationSettings(
+          accuracy: LocationAccuracy.low,
+          timeLimit: Duration(seconds: 20),
+        ),
       );
       return LocationResult(position: position);
     } catch (_) {

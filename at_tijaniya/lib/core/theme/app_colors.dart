@@ -49,6 +49,11 @@ class AppColors {
   /// Texte principal
   static const ink = Color(0xFF2B2620);
 
+  /// Messages d'erreur, actions destructrices. Ajoutée lors de l'audit du
+  /// 2026-10-04 : faute de jeton, `Colors.redAccent` était écrit en dur dans
+  /// 26 fichiers. Même valeur que `colorScheme.error` (app_theme.dart).
+  static const danger = Color(0xFFB3261E);
+
   /// Texte secondaire, bordures, légendes. Échoue l'AA texte normal sur
   /// fond clair (3,72:1 sur parchemin, 4,09:1 sur off_white — seuil 4,5:1) :
   /// c'est la couleur qui motive le mode contraste renforcé.

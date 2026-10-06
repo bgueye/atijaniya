@@ -31,6 +31,9 @@ colors:
   off_white:
     hex: "#FFFDF8"
     usage: "Cartes, surfaces sur fond ivoire"
+  danger:
+    hex: "#B3261E"
+    usage: "Messages d'erreur, actions destructrices (supprimer, se déconnecter)"
 
 typography:
   titles_fr:

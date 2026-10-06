@@ -69,7 +69,7 @@ class AppTheme {
         onTertiary: isLight ? AppColors.offWhite : AppColors.ink,
         tertiaryContainer: isLight ? AppColors.goldSoft : AppColors.bronze.withValues(alpha: 0.3),
         onTertiaryContainer: isLight ? AppColors.ink : AppColors.parchment,
-        error: const Color(0xFFB3261E),
+        error: AppColors.danger,
         onError: AppColors.offWhite,
         surface: surface,
         onSurface: onSurface,
