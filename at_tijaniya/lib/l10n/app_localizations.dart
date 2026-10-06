@@ -5259,24 +5259,6 @@ abstract class AppLocalizations {
   /// **'At-Tijaniya reste gratuite grâce à vous — faire un don'**
   String get wirdTasbihDonationNudge;
 
-  /// No description provided for @wirdHistoryTitle.
-  ///
-  /// In fr, this message translates to:
-  /// **'Historique — {wird}'**
-  String wirdHistoryTitle(Object wird);
-
-  /// No description provided for @wirdHistoryLastWeeks.
-  ///
-  /// In fr, this message translates to:
-  /// **'{count} dernières semaines'**
-  String wirdHistoryLastWeeks(Object count);
-
-  /// No description provided for @wirdHistoryLastDays.
-  ///
-  /// In fr, this message translates to:
-  /// **'{count} derniers jours'**
-  String wirdHistoryLastDays(Object count);
-
   /// No description provided for @wirdHistoryStreakFridays.
   ///
   /// In fr, this message translates to:
@@ -5300,12 +5282,6 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'Récitations complètes au total'**
   String get wirdHistoryTotalDaily;
-
-  /// No description provided for @wirdHistoryRecentRegularity.
-  ///
-  /// In fr, this message translates to:
-  /// **'Régularité récente'**
-  String get wirdHistoryRecentRegularity;
 
   /// No description provided for @communityMessageSendError.
   ///
@@ -5570,6 +5546,84 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'J\'aime'**
   String get a11yLike;
+
+  /// No description provided for @wirdHistoryHeading.
+  ///
+  /// In fr, this message translates to:
+  /// **'Historique'**
+  String get wirdHistoryHeading;
+
+  /// No description provided for @wirdHistoryEmptyTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Aucune récitation enregistrée pour l\'instant'**
+  String get wirdHistoryEmptyTitle;
+
+  /// No description provided for @wirdHistoryEmptyHint.
+  ///
+  /// In fr, this message translates to:
+  /// **'Terminez le wird au Tasbih pour qu\'il soit marqué ici.'**
+  String get wirdHistoryEmptyHint;
+
+  /// No description provided for @wirdHistoryDaysPractised.
+  ///
+  /// In fr, this message translates to:
+  /// **'Jours pratiqués'**
+  String get wirdHistoryDaysPractised;
+
+  /// No description provided for @wirdHistoryFridaysPractised.
+  ///
+  /// In fr, this message translates to:
+  /// **'Vendredis pratiqués'**
+  String get wirdHistoryFridaysPractised;
+
+  /// No description provided for @wirdHistoryRatio.
+  ///
+  /// In fr, this message translates to:
+  /// **'{done} sur {total}'**
+  String wirdHistoryRatio(Object done, Object total);
+
+  /// No description provided for @wirdHistorySince.
+  ///
+  /// In fr, this message translates to:
+  /// **'depuis le {date}'**
+  String wirdHistorySince(Object date);
+
+  /// No description provided for @wirdHistoryDone.
+  ///
+  /// In fr, this message translates to:
+  /// **'Fait'**
+  String get wirdHistoryDone;
+
+  /// No description provided for @wirdHistoryMissed.
+  ///
+  /// In fr, this message translates to:
+  /// **'Manqué'**
+  String get wirdHistoryMissed;
+
+  /// No description provided for @wirdHistoryToday.
+  ///
+  /// In fr, this message translates to:
+  /// **'Aujourd\'hui'**
+  String get wirdHistoryToday;
+
+  /// No description provided for @wirdHistoryPending.
+  ///
+  /// In fr, this message translates to:
+  /// **'Pas encore fait'**
+  String get wirdHistoryPending;
+
+  /// No description provided for @wirdHistoryStreakDaySingular.
+  ///
+  /// In fr, this message translates to:
+  /// **'jour d\'affilée'**
+  String get wirdHistoryStreakDaySingular;
+
+  /// No description provided for @wirdHistoryStreakFridaySingular.
+  ///
+  /// In fr, this message translates to:
+  /// **'vendredi d\'affilée'**
+  String get wirdHistoryStreakFridaySingular;
 }
 
 class _AppLocalizationsDelegate

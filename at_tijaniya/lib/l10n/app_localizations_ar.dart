@@ -2752,21 +2752,6 @@ class AppLocalizationsAr extends AppLocalizations {
       'يبقى تطبيق التجانية مجانيًا بفضلكم — تبرّع';
 
   @override
-  String wirdHistoryTitle(Object wird) {
-    return 'السجل — $wird';
-  }
-
-  @override
-  String wirdHistoryLastWeeks(Object count) {
-    return 'آخر $count أسابيع';
-  }
-
-  @override
-  String wirdHistoryLastDays(Object count) {
-    return 'آخر $count يومًا';
-  }
-
-  @override
   String get wirdHistoryStreakFridays => 'جمعات متتالية';
 
   @override
@@ -2777,9 +2762,6 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get wirdHistoryTotalDaily => 'مجموع التلاوات المكتملة';
-
-  @override
-  String get wirdHistoryRecentRegularity => 'الانتظام في الفترة الأخيرة';
 
   @override
   String get communityMessageSendError => 'تعذّر إرسال الرسالة. حاول مرة أخرى.';
@@ -2920,4 +2902,47 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get a11yLike => 'إعجاب';
+
+  @override
+  String get wirdHistoryHeading => 'السجل';
+
+  @override
+  String get wirdHistoryEmptyTitle => 'لا توجد تلاوة مسجّلة حتى الآن';
+
+  @override
+  String get wirdHistoryEmptyHint => 'أكمل الورد بالتسبيح ليُسجَّل هنا.';
+
+  @override
+  String get wirdHistoryDaysPractised => 'الأيام المنجزة';
+
+  @override
+  String get wirdHistoryFridaysPractised => 'الجمعات المنجزة';
+
+  @override
+  String wirdHistoryRatio(Object done, Object total) {
+    return '$done من $total';
+  }
+
+  @override
+  String wirdHistorySince(Object date) {
+    return 'منذ $date';
+  }
+
+  @override
+  String get wirdHistoryDone => 'منجز';
+
+  @override
+  String get wirdHistoryMissed => 'فائت';
+
+  @override
+  String get wirdHistoryToday => 'اليوم';
+
+  @override
+  String get wirdHistoryPending => 'لم يُنجز بعد';
+
+  @override
+  String get wirdHistoryStreakDaySingular => 'يوم متتالٍ';
+
+  @override
+  String get wirdHistoryStreakFridaySingular => 'جمعة متتالية';
 }

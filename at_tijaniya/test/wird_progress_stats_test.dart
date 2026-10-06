@@ -58,15 +58,76 @@ void main() {
       expect(stats.completionRate, 0);
     });
 
-    test('taux de complétion calculé sur la fenêtre de 30 jours', () {
-      final dates = List.generate(15, (i) => today.subtract(Duration(days: i)));
+    test('taux plafonné à une fenêtre de 30 jours', () {
+      // Première récitation il y a 59 jours, puis un jour sur deux.
+      final dates = List.generate(30, (i) => DateTime(2026, 8, 6 - 2 * i));
       final stats = computeWirdProgressStats(
         frequency: WirdFrequency.daily,
         completionDates: dates,
         now: today,
       );
       expect(stats.ratePeriods, 30);
+      expect(stats.completedInRateWindow, 15);
       expect(stats.completionRate, closeTo(15 / 30, 0.001));
+    });
+
+    test('taux compté depuis la première récitation quand elle a moins de 30 jours', () {
+      // Trois premiers jours de pratique, sans en manquer un : 3 sur 3, pas 3 sur 30.
+      final stats = computeWirdProgressStats(
+        frequency: WirdFrequency.daily,
+        completionDates: [DateTime(2026, 8, 4), DateTime(2026, 8, 5), DateTime(2026, 8, 6)],
+        now: today,
+      );
+      expect(stats.ratePeriods, 3);
+      expect(stats.completedInRateWindow, 3);
+      expect(stats.completionRate, 1);
+      expect(stats.firstCompletion, DateTime(2026, 8, 4));
+    });
+
+    test("la journée en cours, pas encore faite, n'entre pas dans le taux", () {
+      final stats = computeWirdProgressStats(
+        frequency: WirdFrequency.daily,
+        completionDates: [DateTime(2026, 8, 3), DateTime(2026, 8, 5)],
+        now: today,
+      );
+      // 3, 4 (manqué) et 5 août ; le 6 reste à faire.
+      expect(stats.ratePeriods, 3);
+      expect(stats.completedInRateWindow, 2);
+      expect(stats.recentPeriods.last.state, WirdPeriodState.pending);
+    });
+
+    test('aucune récitation : pas de fenêtre de taux', () {
+      final stats = computeWirdProgressStats(frequency: WirdFrequency.daily, completionDates: const [], now: today);
+      expect(stats.ratePeriods, 0);
+      expect(stats.firstCompletion, isNull);
+    });
+
+    test('calendrier : semaines entières, états distincts pour manqué, à venir et avant le début', () {
+      final stats = computeWirdProgressStats(
+        frequency: WirdFrequency.daily,
+        completionDates: [DateTime(2026, 8, 3), DateTime(2026, 8, 5)],
+        now: today, // jeudi 6 août
+      );
+      final days = buildWirdCalendar(stats: stats);
+      WirdPeriodState stateOf(int day) => days.firstWhere((d) => d.date == DateTime(2026, 8, day)).state;
+
+      expect(days.length, 35);
+      expect(days.first.date, DateTime(2026, 7, 6)); // lundi, quatre semaines avant celle en cours
+      expect(days.first.date.weekday, DateTime.monday);
+      expect(days.last.date, DateTime(2026, 8, 9)); // dimanche de la semaine en cours
+      expect(days.first.state, WirdPeriodState.beforeStart);
+      expect(stateOf(2), WirdPeriodState.beforeStart);
+      expect(stateOf(3), WirdPeriodState.done);
+      expect(stateOf(4), WirdPeriodState.missed);
+      expect(stateOf(6), WirdPeriodState.pending);
+      expect(stateOf(7), WirdPeriodState.upcoming);
+    });
+
+    test('calendrier : la semaine commence le samedi quand la langue le demande', () {
+      final stats = computeWirdProgressStats(frequency: WirdFrequency.daily, completionDates: const [], now: today);
+      final days = buildWirdCalendar(stats: stats, firstWeekday: DateTime.saturday);
+      expect(days.first.date.weekday, DateTime.saturday);
+      expect(days.last.date, DateTime(2026, 8, 7)); // vendredi
     });
 
     test('les points récents sont triés du plus ancien au plus récent', () {
@@ -109,6 +170,29 @@ void main() {
         now: DateTime(2026, 8, 8),
       );
       expect(stats.currentStreak, 1);
+    });
+
+    test('un vendredi manqué, vu le samedi, compte dans le taux', () {
+      final stats = computeWirdProgressStats(
+        frequency: WirdFrequency.weekly,
+        completionDates: [DateTime(2026, 7, 24), DateTime(2026, 7, 31)],
+        now: DateTime(2026, 8, 8),
+      );
+      expect(stats.ratePeriods, 3);
+      expect(stats.completedInRateWindow, 2);
+      expect(stats.recentPeriods.last.state, WirdPeriodState.missed);
+      // Vendredis antérieurs à la première Hadra : ni faits ni manqués.
+      expect(stats.recentPeriods.first.state, WirdPeriodState.beforeStart);
+    });
+
+    test("le vendredi même, pas encore fait, n'est pas compté comme manqué", () {
+      final stats = computeWirdProgressStats(
+        frequency: WirdFrequency.weekly,
+        completionDates: [DateTime(2026, 7, 31)],
+        now: DateTime(2026, 8, 7),
+      );
+      expect(stats.ratePeriods, 1);
+      expect(stats.recentPeriods.last.state, WirdPeriodState.pending);
     });
   });
 }

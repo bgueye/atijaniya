@@ -2846,21 +2846,6 @@ class AppLocalizationsFr extends AppLocalizations {
       'At-Tijaniya reste gratuite grâce à vous — faire un don';
 
   @override
-  String wirdHistoryTitle(Object wird) {
-    return 'Historique — $wird';
-  }
-
-  @override
-  String wirdHistoryLastWeeks(Object count) {
-    return '$count dernières semaines';
-  }
-
-  @override
-  String wirdHistoryLastDays(Object count) {
-    return '$count derniers jours';
-  }
-
-  @override
   String get wirdHistoryStreakFridays => 'vendredis d\'affilée';
 
   @override
@@ -2871,9 +2856,6 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get wirdHistoryTotalDaily => 'Récitations complètes au total';
-
-  @override
-  String get wirdHistoryRecentRegularity => 'Régularité récente';
 
   @override
   String get communityMessageSendError =>
@@ -3025,4 +3007,49 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get a11yLike => 'J\'aime';
+
+  @override
+  String get wirdHistoryHeading => 'Historique';
+
+  @override
+  String get wirdHistoryEmptyTitle =>
+      'Aucune récitation enregistrée pour l\'instant';
+
+  @override
+  String get wirdHistoryEmptyHint =>
+      'Terminez le wird au Tasbih pour qu\'il soit marqué ici.';
+
+  @override
+  String get wirdHistoryDaysPractised => 'Jours pratiqués';
+
+  @override
+  String get wirdHistoryFridaysPractised => 'Vendredis pratiqués';
+
+  @override
+  String wirdHistoryRatio(Object done, Object total) {
+    return '$done sur $total';
+  }
+
+  @override
+  String wirdHistorySince(Object date) {
+    return 'depuis le $date';
+  }
+
+  @override
+  String get wirdHistoryDone => 'Fait';
+
+  @override
+  String get wirdHistoryMissed => 'Manqué';
+
+  @override
+  String get wirdHistoryToday => 'Aujourd\'hui';
+
+  @override
+  String get wirdHistoryPending => 'Pas encore fait';
+
+  @override
+  String get wirdHistoryStreakDaySingular => 'jour d\'affilée';
+
+  @override
+  String get wirdHistoryStreakFridaySingular => 'vendredi d\'affilée';
 }
