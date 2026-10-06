@@ -22,6 +22,23 @@ void main() {
       expect(post.commentCount, 2);
     });
 
+    test('affiche le disciple puis sa zawiya quand les deux sont connus', () {
+      final post = CommunityPost.fromRow(
+        {
+          'id': 'p0',
+          'author_user_id': 'u1',
+          'author_zawiya_id': 'z1',
+          'content_text': 'Texte',
+          'created_at': '2026-08-06T10:00:00.000Z',
+          'zawiyas': {'name': 'Zawiya Test'},
+          'profiles': {'display_name': 'Amina'},
+        },
+        likeCount: 0,
+        commentCount: 0,
+      );
+      expect(post.authorLabel('Disciple'), 'Amina · Zawiya Test');
+    });
+
     test('résout le nom du disciple quand il n\'y a pas de zawiya auteure', () {
       final post = CommunityPost.fromRow(
         {

@@ -43,9 +43,18 @@ class CommunityPost {
   /// filtrée sur l'utilisateur courant — `false` par défaut (invité).
   final bool isLikedByMe;
 
-  /// Nom affiché : zawiya auteure en priorité, sinon le disciple, sinon un
-  /// repli générique (compte supprimé, profil introuvable...).
-  String authorLabel(String fallback) => authorZawiyaName ?? authorDisplayName ?? fallback;
+  /// Nom affiché : « disciple · zawiya » (décision du porteur de projet du
+  /// 2026-10-06). La zawiya seule était affichée en priorité, alors que le
+  /// rattachement est déclaré par le disciple lui-même : une publication
+  /// pouvait passer pour une parole officielle de la zawiya. La zawiya seule
+  /// ne subsiste que pour une publication dont le compte a été supprimé,
+  /// puis un repli générique si rien n'est connu.
+  String authorLabel(String fallback) {
+    final name = authorDisplayName;
+    final zawiya = authorZawiyaName;
+    if (name != null && zawiya != null) return '$name · $zawiya';
+    return name ?? zawiya ?? fallback;
+  }
 
   factory CommunityPost.fromRow(
     Map<String, dynamic> row, {
