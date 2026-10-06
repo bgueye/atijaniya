@@ -1451,7 +1451,7 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get figureKhalifaFormOrderHint =>
-      '1 pour le premier successeur après le fondateur, puis en augmentant à chaque succession.';
+      '1 pour le premier successeur après le fondateur, puis en augmentant. Si le rang est déjà pris, les maillons suivants sont décalés d\'un cran.';
 
   @override
   String get figureKhalifaFormOrderRequired => 'Le rang est requis.';
@@ -2610,7 +2610,7 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get donationAmountInvalid =>
-      'Merci de choisir ou saisir un montant valide.';
+      'Merci de choisir ou saisir un montant entier entre 100 et 5 000 000 F CFA.';
 
   @override
   String get donationSubmitButton => 'Faire un don';
@@ -2969,4 +2969,29 @@ class AppLocalizationsFr extends AppLocalizations {
   @override
   String get figuresReviewError =>
       'La publication a échoué. Vérifiez votre connexion et réessayez.';
+
+  @override
+  String get figureKhalifaFormOtherFounder =>
+      'Cette succession existe déjà avec un autre fondateur. Ajoutez le maillon depuis la fiche de ce fondateur.';
+
+  @override
+  String get mouqaddamChainManualOwnedBySponsor =>
+      'La suite de votre silsila, au-delà de l\'application, est renseignée par le mouqaddam situé au sommet de votre chaîne.';
+
+  @override
+  String get figureUnpublishAction => 'Repasser en brouillon';
+
+  @override
+  String get figureUnpublishConfirmTitle =>
+      'Retirer cette figure de la publication ?';
+
+  @override
+  String get figureUnpublishConfirmBody =>
+      'Elle ne sera plus visible des disciples et reviendra dans « Contenu à valider ». Rien n\'est supprimé.';
+
+  @override
+  String get figureUnpublishSuccess => 'Figure repassée en brouillon.';
+
+  @override
+  String get figureUnpublishError => 'Impossible de dépublier cette figure.';
 }

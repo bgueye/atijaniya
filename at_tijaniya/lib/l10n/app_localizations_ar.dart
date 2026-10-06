@@ -1414,7 +1414,7 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get figureKhalifaFormOrderHint =>
-      '١ لأول من خلف المؤسس، ثم بالتزايد مع كل تعاقب.';
+      '١ لأول من خلف المؤسس، ثم بالتزايد. إذا كانت المرتبة مشغولة تُزاح الحلقات التالية درجة واحدة.';
 
   @override
   String get figureKhalifaFormOrderRequired => 'الرتبة مطلوبة.';
@@ -2521,7 +2521,8 @@ class AppLocalizationsAr extends AppLocalizations {
   String get donationCustomAmountHint => 'مبلغ آخر…';
 
   @override
-  String get donationAmountInvalid => 'يرجى اختيار أو إدخال مبلغ صحيح.';
+  String get donationAmountInvalid =>
+      'يرجى اختيار أو إدخال مبلغ صحيح بين 100 و5 000 000 فرنك إفريقي.';
 
   @override
   String get donationSubmitButton => 'تقديم تبرع';
@@ -2865,4 +2866,28 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get figuresReviewError => 'فشل النشر. تحقّق من اتصالك وحاول مرة أخرى.';
+
+  @override
+  String get figureKhalifaFormOtherFounder =>
+      'هذه الخلافة موجودة بالفعل بمؤسس آخر. أضف الحلقة من صفحة ذلك المؤسس.';
+
+  @override
+  String get mouqaddamChainManualOwnedBySponsor =>
+      'تتمّة سلسلتك خارج التطبيق يُدخلها المقدَّم الموجود في أعلى سلسلتك.';
+
+  @override
+  String get figureUnpublishAction => 'إعادة إلى مسودة';
+
+  @override
+  String get figureUnpublishConfirmTitle => 'سحب هذه الشخصية من النشر؟';
+
+  @override
+  String get figureUnpublishConfirmBody =>
+      'لن تظهر للمريدين وستعود إلى «محتوى للمراجعة». لن يُحذف شيء.';
+
+  @override
+  String get figureUnpublishSuccess => 'أُعيدت الشخصية إلى مسودة.';
+
+  @override
+  String get figureUnpublishError => 'تعذّر سحب هذه الشخصية من النشر.';
 }

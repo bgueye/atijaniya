@@ -506,7 +506,7 @@
   "figureKhalifaFormFigureLabel": "Figure",
   "figureKhalifaFormFigureNone": "Choisir une figure",
   "figureKhalifaFormOrderLabel": "Rang dans la succession",
-  "figureKhalifaFormOrderHint": "1 pour le premier successeur après le fondateur, puis en augmentant à chaque succession.",
+  "figureKhalifaFormOrderHint": "1 pour le premier successeur après le fondateur, puis en augmentant. Si le rang est déjà pris, les maillons suivants sont décalés d'un cran.",
   "figureKhalifaFormOrderRequired": "Le rang est requis.",
   "figureKhalifaFormOrderInvalid": "Le rang doit être un nombre entier.",
   "figureKhalifaFormPeriodLabel": "Période (optionnel)",
@@ -874,7 +874,7 @@
   "donationSubtitle": "At-Tijaniya reste gratuite grâce à vous.",
   "donationCustomAmountLabel": "Montant libre",
   "donationCustomAmountHint": "Autre montant…",
-  "donationAmountInvalid": "Merci de choisir ou saisir un montant valide.",
+  "donationAmountInvalid": "Merci de choisir ou saisir un montant entier entre 100 et 5 000 000 F CFA.",
   "donationSubmitButton": "Faire un don",
   "donationSubmitError": "Impossible d'enregistrer votre don pour le moment.",
   "donationOpenCheckoutError": "Impossible d'ouvrir la page de paiement — réessayez.",
@@ -984,5 +984,12 @@
   "wirdDetailPillarsTitle": "Piliers obligatoires",
   "wirdDetailStrictConditions": "Conditions strictes",
   "wirdDetailFullText": "Texte intégral",
-  "figuresReviewError": "La publication a échoué. Vérifiez votre connexion et réessayez."
+  "figuresReviewError": "La publication a échoué. Vérifiez votre connexion et réessayez.",
+  "figureKhalifaFormOtherFounder": "Cette succession existe déjà avec un autre fondateur. Ajoutez le maillon depuis la fiche de ce fondateur.",
+  "mouqaddamChainManualOwnedBySponsor": "La suite de votre silsila, au-delà de l'application, est renseignée par le mouqaddam situé au sommet de votre chaîne.",
+  "figureUnpublishAction": "Repasser en brouillon",
+  "figureUnpublishConfirmTitle": "Retirer cette figure de la publication ?",
+  "figureUnpublishConfirmBody": "Elle ne sera plus visible des disciples et reviendra dans « Contenu à valider ». Rien n'est supprimé.",
+  "figureUnpublishSuccess": "Figure repassée en brouillon.",
+  "figureUnpublishError": "Impossible de dépublier cette figure."
 }

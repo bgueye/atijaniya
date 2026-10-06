@@ -2742,7 +2742,7 @@ abstract class AppLocalizations {
   /// No description provided for @figureKhalifaFormOrderHint.
   ///
   /// In fr, this message translates to:
-  /// **'1 pour le premier successeur après le fondateur, puis en augmentant à chaque succession.'**
+  /// **'1 pour le premier successeur après le fondateur, puis en augmentant. Si le rang est déjà pris, les maillons suivants sont décalés d\'un cran.'**
   String get figureKhalifaFormOrderHint;
 
   /// No description provided for @figureKhalifaFormOrderRequired.
@@ -4854,7 +4854,7 @@ abstract class AppLocalizations {
   /// No description provided for @donationAmountInvalid.
   ///
   /// In fr, this message translates to:
-  /// **'Merci de choisir ou saisir un montant valide.'**
+  /// **'Merci de choisir ou saisir un montant entier entre 100 et 5 000 000 F CFA.'**
   String get donationAmountInvalid;
 
   /// No description provided for @donationSubmitButton.
@@ -5468,6 +5468,48 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'La publication a échoué. Vérifiez votre connexion et réessayez.'**
   String get figuresReviewError;
+
+  /// No description provided for @figureKhalifaFormOtherFounder.
+  ///
+  /// In fr, this message translates to:
+  /// **'Cette succession existe déjà avec un autre fondateur. Ajoutez le maillon depuis la fiche de ce fondateur.'**
+  String get figureKhalifaFormOtherFounder;
+
+  /// No description provided for @mouqaddamChainManualOwnedBySponsor.
+  ///
+  /// In fr, this message translates to:
+  /// **'La suite de votre silsila, au-delà de l\'application, est renseignée par le mouqaddam situé au sommet de votre chaîne.'**
+  String get mouqaddamChainManualOwnedBySponsor;
+
+  /// No description provided for @figureUnpublishAction.
+  ///
+  /// In fr, this message translates to:
+  /// **'Repasser en brouillon'**
+  String get figureUnpublishAction;
+
+  /// No description provided for @figureUnpublishConfirmTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Retirer cette figure de la publication ?'**
+  String get figureUnpublishConfirmTitle;
+
+  /// No description provided for @figureUnpublishConfirmBody.
+  ///
+  /// In fr, this message translates to:
+  /// **'Elle ne sera plus visible des disciples et reviendra dans « Contenu à valider ». Rien n\'est supprimé.'**
+  String get figureUnpublishConfirmBody;
+
+  /// No description provided for @figureUnpublishSuccess.
+  ///
+  /// In fr, this message translates to:
+  /// **'Figure repassée en brouillon.'**
+  String get figureUnpublishSuccess;
+
+  /// No description provided for @figureUnpublishError.
+  ///
+  /// In fr, this message translates to:
+  /// **'Impossible de dépublier cette figure.'**
+  String get figureUnpublishError;
 }
 
 class _AppLocalizationsDelegate

@@ -505,7 +505,7 @@
   "figureKhalifaFormFigureLabel": "الشخصية",
   "figureKhalifaFormFigureNone": "اختر شخصية",
   "figureKhalifaFormOrderLabel": "الرتبة في السلسلة",
-  "figureKhalifaFormOrderHint": "١ لأول من خلف المؤسس، ثم بالتزايد مع كل تعاقب.",
+  "figureKhalifaFormOrderHint": "١ لأول من خلف المؤسس، ثم بالتزايد. إذا كانت المرتبة مشغولة تُزاح الحلقات التالية درجة واحدة.",
   "figureKhalifaFormOrderRequired": "الرتبة مطلوبة.",
   "figureKhalifaFormOrderInvalid": "يجب أن تكون الرتبة رقمًا صحيحًا.",
   "figureKhalifaFormPeriodLabel": "الفترة (اختياري)",
@@ -873,7 +873,7 @@
   "donationSubtitle": "تطبيق التجانية يبقى مجانيًا بفضلكم.",
   "donationCustomAmountLabel": "مبلغ حر",
   "donationCustomAmountHint": "مبلغ آخر…",
-  "donationAmountInvalid": "يرجى اختيار أو إدخال مبلغ صحيح.",
+  "donationAmountInvalid": "يرجى اختيار أو إدخال مبلغ صحيح بين 100 و5 000 000 فرنك إفريقي.",
   "donationSubmitButton": "تقديم تبرع",
   "donationSubmitError": "تعذّر تسجيل التبرع في الوقت الحالي.",
   "donationOpenCheckoutError": "تعذّر فتح صفحة الدفع — أعد المحاولة.",
@@ -983,5 +983,12 @@
   "wirdDetailPillarsTitle": "الأركان اللازمة",
   "wirdDetailStrictConditions": "الشروط اللازمة",
   "wirdDetailFullText": "النص الكامل",
-  "figuresReviewError": "فشل النشر. تحقّق من اتصالك وحاول مرة أخرى."
+  "figuresReviewError": "فشل النشر. تحقّق من اتصالك وحاول مرة أخرى.",
+  "figureKhalifaFormOtherFounder": "هذه الخلافة موجودة بالفعل بمؤسس آخر. أضف الحلقة من صفحة ذلك المؤسس.",
+  "mouqaddamChainManualOwnedBySponsor": "تتمّة سلسلتك خارج التطبيق يُدخلها المقدَّم الموجود في أعلى سلسلتك.",
+  "figureUnpublishAction": "إعادة إلى مسودة",
+  "figureUnpublishConfirmTitle": "سحب هذه الشخصية من النشر؟",
+  "figureUnpublishConfirmBody": "لن تظهر للمريدين وستعود إلى «محتوى للمراجعة». لن يُحذف شيء.",
+  "figureUnpublishSuccess": "أُعيدت الشخصية إلى مسودة.",
+  "figureUnpublishError": "تعذّر سحب هذه الشخصية من النشر."
 }
