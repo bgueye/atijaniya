@@ -21,6 +21,7 @@ import '../data/wird_recitation_repository.dart';
 import '../data/wird_recitation_version_store.dart';
 import '../domain/wird_models.dart';
 import '../domain/wird_recitation.dart';
+import 'wird_messages.dart';
 
 final wirdPillarAudioProvider =
     StateNotifierProvider.family<WirdPillarAudioController, Map<int, PillarAudioState>, Wird>(
@@ -165,9 +166,9 @@ class WirdPillarAudioController extends StateNotifier<Map<int, PillarAudioState>
   /// la même façon (docs/decision-gestion-audio-wirds.md §4).
   String _downloadErrorMessage(Object error) {
     if (error is FileSystemException) {
-      return "Espace de stockage insuffisant sur l'appareil.";
+      return wirdMsgAudioStorageFull;
     }
-    return 'Téléchargement impossible — vérifiez votre connexion.';
+    return wirdMsgAudioDownloadFailed;
   }
 
   /// Marque [audioPath] comme version active pour le pilier [index] et, si

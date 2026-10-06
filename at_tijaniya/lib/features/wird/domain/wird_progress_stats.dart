@@ -8,6 +8,7 @@
 /// ni de calcul avancé.
 library;
 
+import '../../../core/date/calendar_days.dart';
 import 'wird_models.dart';
 
 class WirdPeriodStatus {
@@ -52,7 +53,7 @@ DateTime _dateOnly(DateTime d) => DateTime(d.year, d.month, d.day);
 /// assumé : c'est le seul wird hebdomadaire de l'app à ce jour.
 DateTime _mostRecentFriday(DateTime today) {
   final diff = (today.weekday - DateTime.friday) % 7;
-  return today.subtract(Duration(days: diff));
+  return addDays(today, -diff);
 }
 
 DateTime _currentPeriod(DateTime today, WirdFrequency frequency) {
@@ -60,7 +61,7 @@ DateTime _currentPeriod(DateTime today, WirdFrequency frequency) {
 }
 
 DateTime _previousPeriod(DateTime period, WirdFrequency frequency) {
-  return period.subtract(Duration(days: frequency == WirdFrequency.weekly ? 7 : 1));
+  return addDays(period, frequency == WirdFrequency.weekly ? -7 : -1);
 }
 
 WirdProgressStats computeWirdProgressStats({

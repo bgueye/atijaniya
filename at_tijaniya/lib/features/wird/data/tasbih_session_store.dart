@@ -23,7 +23,13 @@ class TasbihSessionStore {
     final prefs = await SharedPreferences.getInstance();
     final raw = prefs.getString(_key(prefs, wirdId));
     if (raw == null) return null;
-    return TasbihSession.tryFromJson(jsonDecode(raw) as Map<String, dynamic>);
+    // Valeur illisible (ancienne version, écriture interrompue) : on repart
+    // de zéro plutôt que de laisser l'écran bloqué sur son chargement.
+    try {
+      return TasbihSession.tryFromJson(jsonDecode(raw) as Map<String, dynamic>);
+    } catch (_) {
+      return null;
+    }
   }
 
   Future<void> save(TasbihSession session) async {

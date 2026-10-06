@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_theme.dart';
+import '../../../l10n/app_localizations.dart';
 import '../../donation/data/donation_feature_flag.dart';
 import '../../donation/data/donation_nudge_store.dart';
 import '../../donation/presentation/donation_screen.dart';
@@ -11,6 +12,8 @@ import '../domain/tasbih_session.dart';
 import '../domain/wird_models.dart';
 import 'tasbih_beads_ring.dart';
 import 'tasbih_controller.dart';
+import 'voice_error_message.dart';
+import 'wird_display_name.dart';
 
 /// Tasbih digital — tape manuel, reconnaissance vocale, reprise de session.
 /// Priorité P0 (docs/03-architecture-ecrans.md).
@@ -38,7 +41,7 @@ class TasbihScreen extends ConsumerWidget {
         appBar: AppBar(
           backgroundColor: AppColors.zaytoune,
           foregroundColor: AppColors.parchment,
-          title: Text('Tasbih — ${wird.nameFrench}'),
+          title: Text(AppLocalizations.of(context)!.wirdTasbihTitle(wirdDisplayName(context, wird))),
         ),
         body: SafeArea(
           child: state.loadingSession
@@ -90,7 +93,7 @@ class _TasbihBody extends StatelessWidget {
         child: Column(
         children: [
           Text(
-            'Pilier ${state.session.pillarIndex + 1} / ${wird.pillars.length}',
+            AppLocalizations.of(context)!.wirdTasbihPillarProgress(state.session.pillarIndex + 1, wird.pillars.length),
             style: TextStyle(color: AppColors.bronze, fontWeight: FontWeight.w600),
           ),
           const SizedBox(height: 12),
@@ -126,7 +129,7 @@ class _TasbihBody extends StatelessWidget {
               dense: true,
               activeThumbColor: AppColors.gold,
               title: Text(
-                'Remplacer par ${alternative.repetitions} ${alternative.name}',
+                AppLocalizations.of(context)!.wirdTasbihUseAlternative(alternative.repetitions, alternative.name),
                 style: const TextStyle(color: AppColors.parchment, fontSize: 13),
               ),
               value: usingAlternative,
@@ -164,9 +167,17 @@ class _TasbihBody extends StatelessWidget {
             ],
           const SizedBox(height: 20),
           SegmentedButton<TasbihMode>(
-            segments: const [
-              ButtonSegment(value: TasbihMode.manual, label: Text('Tape manuel'), icon: Icon(Icons.touch_app)),
-              ButtonSegment(value: TasbihMode.voice, label: Text('Voix'), icon: Icon(Icons.mic)),
+            segments: [
+              ButtonSegment(
+                value: TasbihMode.manual,
+                label: Text(AppLocalizations.of(context)!.wirdFreeManualMode),
+                icon: const Icon(Icons.touch_app),
+              ),
+              ButtonSegment(
+                value: TasbihMode.voice,
+                label: Text(AppLocalizations.of(context)!.wirdFreeVoiceMode),
+                icon: const Icon(Icons.mic),
+              ),
             ],
             selected: {state.session.mode},
             onSelectionChanged: (selection) => controller.setMode(selection.first),
@@ -191,13 +202,13 @@ class _TasbihBody extends StatelessWidget {
                 TextButton.icon(
                   onPressed: count == 0 ? null : controller.undo,
                   icon: const Icon(Icons.undo, color: AppColors.parchment),
-                  label: const Text('Corriger -1', style: TextStyle(color: AppColors.parchment)),
+                  label: Text(AppLocalizations.of(context)!.wirdFreeUndo, style: const TextStyle(color: AppColors.parchment)),
                 ),
                 const SizedBox(width: 12),
                 TextButton.icon(
                   onPressed: count == 0 ? null : controller.resetPillar,
                   icon: const Icon(Icons.replay, color: AppColors.parchment),
-                  label: const Text('Réinitialiser', style: TextStyle(color: AppColors.parchment)),
+                  label: Text(AppLocalizations.of(context)!.wirdFreeReset, style: const TextStyle(color: AppColors.parchment)),
                 ),
               ],
             )
@@ -217,7 +228,7 @@ class _TasbihBody extends StatelessWidget {
                     Padding(
                       padding: const EdgeInsets.only(bottom: 8),
                       child: Text(
-                        'Pilier suivant dans un instant…',
+                        AppLocalizations.of(context)!.wirdTasbihNextPillarSoon,
                         style: TextStyle(color: AppColors.bronze, fontSize: 12),
                       ),
                     ),
@@ -227,7 +238,9 @@ class _TasbihBody extends StatelessWidget {
                       controller.nextPillar();
                     },
                     icon: Icon(controller.isLastPillar ? Icons.check_circle : Icons.arrow_forward),
-                    label: Text(controller.isLastPillar ? 'Terminer le wird' : 'Pilier suivant'),
+                    label: Text(controller.isLastPillar
+                        ? AppLocalizations.of(context)!.wirdTasbihFinishWird
+                        : AppLocalizations.of(context)!.wirdTasbihNextPillar),
                   ),
                 ],
               ),
@@ -283,7 +296,7 @@ class _ManualCounter extends StatelessWidget {
                 Icon(Icons.check_circle, color: AppColors.gold, size: 26)
               else
                 Text(
-                  'Toucher pour compter',
+                  AppLocalizations.of(context)!.wirdFreeTapToCount,
                   style: TextStyle(color: AppColors.bronze, fontSize: 12),
                 ),
             ],
@@ -335,14 +348,14 @@ class _VoiceCounter extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 12),
             child: Text(
-              state.voiceError ?? 'Reconnaissance vocale indisponible sur cet appareil.',
+              voiceErrorMessage(AppLocalizations.of(context)!, state.voiceError) ?? AppLocalizations.of(context)!.wirdFreeVoiceUnavailable,
               textAlign: TextAlign.center,
               style: TextStyle(color: AppColors.gold, fontSize: 13),
             ),
           )
         else
           Text(
-            state.isListening ? "À l'écoute — récitez, une pause de silence = +1" : 'Micro en pause',
+            state.isListening ? AppLocalizations.of(context)!.wirdFreeListeningActive : AppLocalizations.of(context)!.wirdFreeListeningPaused,
             textAlign: TextAlign.center,
             style: TextStyle(color: AppColors.bronze, fontSize: 13),
           ),
@@ -351,7 +364,7 @@ class _VoiceCounter extends StatelessWidget {
           ElevatedButton.icon(
             onPressed: state.isListening ? controller.stopListening : controller.startListening,
             icon: Icon(state.isListening ? Icons.mic_off : Icons.mic),
-            label: Text(state.isListening ? 'Mettre en pause' : "Démarrer l'écoute"),
+            label: Text(state.isListening ? AppLocalizations.of(context)!.wirdFreeStopListening : AppLocalizations.of(context)!.wirdFreeStartListening),
           ),
       ],
     );
@@ -374,19 +387,19 @@ class _WirdCompletedView extends StatelessWidget {
             Icon(Icons.check_circle, color: AppColors.gold, size: 72),
             const SizedBox(height: 16),
             Text(
-              '${wird.nameFrench} terminé',
+              AppLocalizations.of(context)!.wirdTasbihCompletedTitle(wirdDisplayName(context, wird)),
               style: const TextStyle(color: AppColors.parchment, fontSize: 20, fontWeight: FontWeight.w600),
             ),
             const SizedBox(height: 8),
             Text(
-              'Tous les piliers ont été récités.',
+              AppLocalizations.of(context)!.wirdTasbihCompletedBody,
               textAlign: TextAlign.center,
               style: TextStyle(color: AppColors.bronze),
             ),
             const SizedBox(height: 24),
             ElevatedButton(
               onPressed: () => Navigator.of(context).pop(),
-              child: const Text('Retour au guide'),
+              child: Text(AppLocalizations.of(context)!.wirdTasbihBackToGuide),
             ),
             if (kDonationsEnabled) const _DonationNudge(),
           ],
@@ -438,7 +451,7 @@ class _DonationNudgeState extends State<_DonationNudge> {
             Icon(Icons.favorite_outline, size: 14, color: AppColors.gold),
             const SizedBox(width: 6),
             Text(
-              'At-Tijaniya reste gratuite grâce à vous — faire un don',
+              AppLocalizations.of(context)!.wirdTasbihDonationNudge,
               style: TextStyle(color: AppColors.bronze, fontSize: 12, decoration: TextDecoration.underline, decorationColor: AppColors.bronze),
             ),
           ],

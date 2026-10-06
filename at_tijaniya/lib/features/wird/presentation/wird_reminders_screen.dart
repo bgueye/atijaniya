@@ -7,6 +7,7 @@ import '../data/wird_reminder_slots.dart';
 import '../domain/wird_models.dart';
 import '../domain/wird_reminder.dart';
 import 'wird_reminder_controller.dart';
+import 'wird_messages.dart';
 
 /// Traduit le libellé d'un créneau par son `id` plutôt que d'afficher
 /// `slot.label` (toujours en français, `wird_reminder_slots.dart`) — même
@@ -47,7 +48,7 @@ class WirdRemindersScreen extends ConsumerWidget {
       if (next.errorMessage != null && next.errorMessage != previous?.errorMessage) {
         ScaffoldMessenger.of(context)
           ..hideCurrentSnackBar()
-          ..showSnackBar(SnackBar(content: Text(next.errorMessage!)));
+          ..showSnackBar(SnackBar(content: Text(wirdMessage(AppLocalizations.of(context)!, next.errorMessage!))));
       }
     });
 

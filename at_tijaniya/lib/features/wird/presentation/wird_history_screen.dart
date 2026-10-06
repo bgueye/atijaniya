@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/theme/app_colors.dart';
+import '../../../l10n/app_localizations.dart';
 import '../domain/wird_models.dart';
 import '../domain/wird_progress_stats.dart';
+import 'wird_display_name.dart';
 import 'wird_history_controller.dart';
 
 /// Historique & progression du Wird — P1 (docs/03-architecture-ecrans.md :
@@ -26,7 +28,11 @@ class WirdHistoryScreen extends ConsumerWidget {
     return Scaffold(
       backgroundColor: AppColors.parchment,
       appBar: AppBar(
-        title: Text('Historique — ${wird.nameFrench}', maxLines: 1, overflow: TextOverflow.ellipsis),
+        title: Text(
+          AppLocalizations.of(context)!.wirdHistoryTitle(wirdDisplayName(context, wird)),
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+        ),
       ),
       body: state.loading || state.stats == null
           ? Center(child: CircularProgressIndicator(color: AppColors.emerald))
@@ -44,8 +50,10 @@ class _HistoryBody extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final ratePercent = (stats.completionRate * 100).round();
-    final rateLabel = weekly ? '${stats.ratePeriods} dernières semaines' : '${stats.ratePeriods} derniers jours';
-    final streakLabel = weekly ? 'vendredis d\'affilée' : 'jours d\'affilée';
+    final l10n = AppLocalizations.of(context)!;
+    final rateLabel =
+        weekly ? l10n.wirdHistoryLastWeeks(stats.ratePeriods) : l10n.wirdHistoryLastDays(stats.ratePeriods);
+    final streakLabel = weekly ? l10n.wirdHistoryStreakFridays : l10n.wirdHistoryStreakDays;
 
     return ListView(
       padding: const EdgeInsets.all(20),
@@ -73,13 +81,13 @@ class _HistoryBody extends StatelessWidget {
         _StatCard(
           icon: Icons.check_circle_outline,
           value: '${stats.totalCompletions}',
-          label: weekly ? 'Hadratou-l-Jouma terminées au total' : 'Récitations complètes au total',
+          label: weekly ? l10n.wirdHistoryTotalWeekly : l10n.wirdHistoryTotalDaily,
           wide: true,
         ),
         const SizedBox(height: 24),
-        const Text(
-          'Régularité récente',
-          style: TextStyle(fontWeight: FontWeight.w600, color: AppColors.ink, fontSize: 16),
+        Text(
+          l10n.wirdHistoryRecentRegularity,
+          style: const TextStyle(fontWeight: FontWeight.w600, color: AppColors.ink, fontSize: 16),
         ),
         const SizedBox(height: 12),
         _RegularityRow(periods: stats.recentPeriods, weekly: weekly),
@@ -145,8 +153,6 @@ class _RegularityRow extends StatelessWidget {
   final List<WirdPeriodStatus> periods;
   final bool weekly;
 
-  static const _dayLabels = ['L', 'M', 'M', 'J', 'V', 'S', 'D'];
-
   /// Sépare [periods] en (au plus) 2 lignes de taille égale (la 1ʳᵉ absorbe
   /// l'éventuel reste impair) — un `Wrap` seul répartit selon ce qui tient
   /// sur la largeur de l'écran (ex. 8 points puis 6 sur un wird quotidien à
@@ -192,7 +198,11 @@ class _RegularityRow extends StatelessWidget {
                     ),
                     const SizedBox(height: 4),
                     Text(
-                      weekly ? '${period.date.day}/${period.date.month}' : _dayLabels[period.date.weekday - 1],
+                      // Initiales des jours fournies par Flutter dans la langue
+                      // de l'interface (index 0 = dimanche).
+                      weekly
+                          ? '${period.date.day}/${period.date.month}'
+                          : MaterialLocalizations.of(context).narrowWeekdays[period.date.weekday % 7],
                       style: TextStyle(fontSize: 10, color: AppColors.bronze),
                     ),
                   ],

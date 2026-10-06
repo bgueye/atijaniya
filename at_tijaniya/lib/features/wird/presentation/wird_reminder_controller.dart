@@ -2,6 +2,8 @@
 /// "Paramètres de rappels").
 library;
 
+import 'dart:ui' show Locale;
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../data/wird_notification_service.dart';
@@ -9,6 +11,9 @@ import '../data/wird_reminder_slots.dart';
 import '../data/wird_reminder_store.dart';
 import '../domain/wird_models.dart';
 import '../domain/wird_reminder.dart';
+import '../../../core/theme/locale_controller.dart';
+import '../../../l10n/app_localizations.dart';
+import 'wird_messages.dart';
 
 class WirdReminderState {
   const WirdReminderState({this.loading = true, this.settings = const {}, this.errorMessage});
@@ -36,15 +41,24 @@ class WirdReminderState {
 
 final wirdReminderControllerProvider =
     StateNotifierProvider.family<WirdReminderController, WirdReminderState, Wird>(
-  (ref, wird) => WirdReminderController(wird: wird),
+  (ref, wird) {
+    // Dépend de la langue choisie : à un changement de langue, le contrôleur
+    // est recréé et `_load()` reprogramme les rappels actifs avec le texte
+    // de la nouvelle langue (ils restaient en français, audit 2026-10-04).
+    final locale = ref.watch(localeControllerProvider) ?? const Locale('fr');
+    return WirdReminderController(wird: wird, locale: locale);
+  },
 );
 
 class WirdReminderController extends StateNotifier<WirdReminderState> {
-  WirdReminderController({required this.wird}) : super(const WirdReminderState()) {
+  WirdReminderController({required this.wird, required this.locale}) : super(const WirdReminderState()) {
     _load();
   }
 
   final Wird wird;
+
+  /// Langue du texte des notifications programmées par ce contrôleur.
+  final Locale locale;
   final WirdReminderStore _store = const WirdReminderStore();
 
   List<WirdReminderSlot> get slots => wirdReminderSlots[wird.id] ?? const [];
@@ -72,7 +86,7 @@ class WirdReminderController extends StateNotifier<WirdReminderState> {
       final granted = await WirdNotificationService.instance.requestPermission();
       if (!granted) {
         state = state.copyWith(
-          errorMessage: "Autorisez les notifications dans les réglages du téléphone pour activer ce rappel.",
+          errorMessage: wirdMsgReminderPermissionDenied,
         );
         return;
       }
@@ -99,8 +113,8 @@ class WirdReminderController extends StateNotifier<WirdReminderState> {
     return WirdNotificationService.instance.scheduleReminder(
       slot: slot,
       setting: setting,
-      title: wird.nameFrench,
-      body: 'Rappel — prenez un moment pour réciter votre wird.',
+      title: locale.languageCode == 'ar' ? wird.nameArabic : wird.nameFrench,
+      body: lookupAppLocalizations(locale).wirdReminderNotificationBody,
     );
   }
 }

@@ -58,9 +58,16 @@ String buildWirdAudioPath({
   required int orderIndex,
   required int contentVersion,
   required String extension,
+  String? uniqueToken,
 }) {
   final suffix = contentVersion <= 1 ? '' : '_v$contentVersion';
-  return '$wirdKey/$orderIndex$suffix.$extension';
+  // [uniqueToken] rend le chemin unique à chaque téléversement. Sans lui,
+  // supprimer la version la plus haute puis téléverser la correction
+  // redonnait exactement le même chemin (le numéro de version est recalculé
+  // à partir des lignes restantes) : le cache des disciples, indexé par
+  // chemin, gardait alors l'ancien fichier pour toujours.
+  final token = uniqueToken == null ? '' : '-$uniqueToken';
+  return '$wirdKey/$orderIndex$suffix$token.$extension';
 }
 
 /// Prochain `content_version` pour un pilier — 1 si aucune récitation
@@ -202,6 +209,7 @@ class WirdRecitationRepository {
       orderIndex: orderIndex,
       contentVersion: contentVersion,
       extension: extension,
+      uniqueToken: DateTime.now().millisecondsSinceEpoch.toRadixString(36),
     );
     await SupabaseConfig.client.storage.from('wird-audio').uploadBinary(
           audioPath,

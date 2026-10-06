@@ -121,7 +121,7 @@ class _PillarCard extends ConsumerWidget {
               )
             else
               for (final entry in step.recitations)
-                _RecitationEntryTile(entry: entry, l10n: l10n),
+                _RecitationEntryTile(key: ValueKey(entry.id), entry: entry, l10n: l10n),
             Align(
               alignment: Alignment.centerLeft,
               child: TextButton.icon(
@@ -149,7 +149,7 @@ class _PillarCard extends ConsumerWidget {
 }
 
 class _RecitationEntryTile extends ConsumerStatefulWidget {
-  const _RecitationEntryTile({required this.entry, required this.l10n});
+  const _RecitationEntryTile({super.key, required this.entry, required this.l10n});
 
   final WirdRecitationEntry entry;
   final AppLocalizations l10n;
@@ -173,6 +173,13 @@ class _RecitationEntryTileState extends ConsumerState<_RecitationEntryTile> {
   /// Même logique que `WirdRecitationsReviewScreen._DraftCard._togglePreview` :
   /// fichier temporaire dédié, jamais le cache disciple.
   Future<void> _togglePreview() async {
+    // Piste terminée : just_audio reste « en lecture » en fin de fichier, il
+    // faut revenir au début pour pouvoir réécouter.
+    if (_previewPlayer.processingState == ProcessingState.completed) {
+      await _previewPlayer.seek(Duration.zero);
+      await _previewPlayer.play();
+      return;
+    }
     if (_previewPlayer.playing) {
       await _previewPlayer.pause();
       return;
@@ -190,7 +197,9 @@ class _RecitationEntryTileState extends ConsumerState<_RecitationEntryTile> {
           .read(wirdRecitationRepositoryProvider)
           .downloadAudioBytes(widget.entry.audioPath);
       final dir = await getTemporaryDirectory();
-      final file = File('${dir.path}/wird_recitation_manage_preview.audio');
+      // Un fichier par récitation — voir WirdRecitationsReviewScreen.
+      final extension = widget.entry.audioPath.split('.').last;
+      final file = File('${dir.path}/wird_manage_${widget.entry.id}.$extension');
       await file.writeAsBytes(bytes, flush: true);
       await _previewPlayer.setFilePath(file.path);
       await _previewPlayer.play();

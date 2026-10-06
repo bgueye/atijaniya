@@ -18,11 +18,17 @@ class WirdReminderStore {
     final prefs = await SharedPreferences.getInstance();
     final raw = prefs.getString(_key(wirdId));
     if (raw == null) return const [];
-    final decoded = jsonDecode(raw) as List<dynamic>;
-    return decoded
-        .map((e) => WirdReminderSetting.tryFromJson(e as Map<String, dynamic>))
-        .whereType<WirdReminderSetting>()
-        .toList();
+    // Valeur illisible (ancienne version, écriture interrompue) : on repart
+    // de zéro plutôt que de laisser l'écran bloqué sur son chargement.
+    try {
+      final decoded = jsonDecode(raw) as List<dynamic>;
+      return decoded
+          .map((e) => WirdReminderSetting.tryFromJson(e as Map<String, dynamic>))
+          .whereType<WirdReminderSetting>()
+          .toList();
+    } catch (_) {
+      return const [];
+    }
   }
 
   Future<void> save(String wirdId, List<WirdReminderSetting> settings) async {

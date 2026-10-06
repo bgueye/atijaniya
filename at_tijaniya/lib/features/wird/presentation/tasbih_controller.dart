@@ -17,6 +17,7 @@ import '../data/tasbih_voice_service.dart';
 import '../data/wird_completion_store.dart';
 import '../domain/tasbih_session.dart';
 import '../domain/wird_models.dart';
+import 'voice_error_message.dart';
 import 'wird_counter_feedback.dart';
 
 class TasbihState {
@@ -254,7 +255,7 @@ class TasbihController extends StateNotifier<TasbihState> with WidgetsBindingObs
     if (!ready) {
       state = state.copyWith(
         voiceSupported: false,
-        voiceError: "Micro indisponible ou permission refusée — utilisez le mode tape manuel.",
+        voiceError: voiceErrorMicUnavailable,
       );
       return;
     }
@@ -301,8 +302,7 @@ class TasbihController extends StateNotifier<TasbihState> with WidgetsBindingObs
     if (_consecutiveVoiceErrors >= _maxConsecutiveVoiceErrors) {
       _stopVoiceLoop();
       state = state.copyWith(
-        voiceError:
-            "La reconnaissance vocale rencontre un problème répété sur cet appareil ($error) — utilisez le mode tape manuel.",
+        voiceError: voiceErrorRepeatedFailure,
       );
     } else {
       state = state.copyWith(voiceError: error, isListening: false);

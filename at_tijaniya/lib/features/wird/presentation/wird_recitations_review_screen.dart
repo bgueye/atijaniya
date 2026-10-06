@@ -89,7 +89,11 @@ class WirdRecitationsReviewScreen extends ConsumerWidget {
             itemCount: drafts.length,
             separatorBuilder: (_, __) => const SizedBox(height: 12),
             itemBuilder: (context, i) =>
-                _DraftCard(draft: drafts[i], l10n: l10n),
+                // `key` par récitation : sans elle, après une validation ou
+                // une suppression, la carte qui remontait à la même position
+                // gardait le lecteur déjà chargé et rejouait le brouillon
+                // précédent — l'admin pouvait valider un audio jamais écouté.
+                _DraftCard(key: ValueKey(drafts[i].id), draft: drafts[i], l10n: l10n),
           );
         },
       ),
@@ -98,7 +102,7 @@ class WirdRecitationsReviewScreen extends ConsumerWidget {
 }
 
 class _DraftCard extends ConsumerStatefulWidget {
-  const _DraftCard({required this.draft, required this.l10n});
+  const _DraftCard({super.key, required this.draft, required this.l10n});
 
   final WirdRecitationDraft draft;
   final AppLocalizations l10n;
@@ -122,6 +126,13 @@ class _DraftCardState extends ConsumerState<_DraftCard> {
   /// cache "disciple", réservé au contenu déjà validé) : téléchargement
   /// direct vers un fichier temporaire, propre à cette prévisualisation.
   Future<void> _togglePreview() async {
+    // Piste terminée : just_audio reste « en lecture » en fin de fichier, il
+    // faut revenir au début pour pouvoir réécouter.
+    if (_previewPlayer.processingState == ProcessingState.completed) {
+      await _previewPlayer.seek(Duration.zero);
+      await _previewPlayer.play();
+      return;
+    }
     if (_previewPlayer.playing) {
       await _previewPlayer.pause();
       return;
@@ -139,7 +150,10 @@ class _DraftCardState extends ConsumerState<_DraftCard> {
           .read(wirdRecitationRepositoryProvider)
           .downloadAudioBytes(widget.draft.audioPath);
       final dir = await getTemporaryDirectory();
-      final file = File('${dir.path}/wird_recitation_review_preview.audio');
+      // Un fichier par récitation, avec sa vraie extension : un fichier
+      // unique partagé entre les cartes faisait rejouer l'audio d'une autre.
+      final extension = widget.draft.audioPath.split('.').last;
+      final file = File('${dir.path}/wird_review_${widget.draft.id}.$extension');
       await file.writeAsBytes(bytes, flush: true);
       await _previewPlayer.setFilePath(file.path);
       await _previewPlayer.play();

@@ -20,6 +20,7 @@ import '../data/wird_audio_player_service.dart';
 import '../domain/wird_models.dart';
 import '../domain/wird_recitation.dart';
 import 'wird_pillar_audio_controller.dart';
+import 'wird_messages.dart';
 
 class WirdAudioState {
   const WirdAudioState({
@@ -101,7 +102,7 @@ class WirdAudioController extends StateNotifier<WirdAudioState> {
       return;
     }
     if (!_hasRecitation(index)) {
-      state = state.copyWith(errorMessage: "Récitation audio pas encore disponible pour ce pilier.");
+      state = state.copyWith(errorMessage: wirdMsgPillarAudioUnavailable);
       return;
     }
     state = state.copyWith(
@@ -113,7 +114,7 @@ class WirdAudioController extends StateNotifier<WirdAudioState> {
     final localPath = await ref.read(wirdPillarAudioProvider(wird).notifier).ensureDownloaded(index);
     if (localPath == null) {
       final downloadError = ref.read(wirdPillarAudioProvider(wird))[index]?.errorMessage;
-      state = state.copyWith(errorMessage: downloadError ?? "Impossible de lire cette récitation pour le moment.");
+      state = state.copyWith(errorMessage: downloadError ?? wirdMsgAudioPlayFailed);
       return;
     }
     if (!mounted) return;
@@ -121,7 +122,7 @@ class WirdAudioController extends StateNotifier<WirdAudioState> {
       await _service.load(localPath);
       await _service.play();
     } catch (_) {
-      state = state.copyWith(errorMessage: "Impossible de lire cette récitation pour le moment.");
+      state = state.copyWith(errorMessage: wirdMsgAudioPlayFailed);
     }
   }
 
@@ -129,7 +130,7 @@ class WirdAudioController extends StateNotifier<WirdAudioState> {
     if (state.activePillarIndex == null) {
       final firstWithAudio = _firstIndexWithAudio();
       if (firstWithAudio == -1) {
-        state = state.copyWith(errorMessage: "Récitations audio pas encore disponibles pour ce Wird.");
+        state = state.copyWith(errorMessage: wirdMsgWirdAudioUnavailable);
         return;
       }
       await playPillar(firstWithAudio);

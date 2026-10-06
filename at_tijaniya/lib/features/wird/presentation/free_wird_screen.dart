@@ -2,12 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../core/text/numerals.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../l10n/app_localizations.dart';
 import '../domain/free_wird_session.dart';
 import '../domain/tasbih_session.dart' show TasbihMode;
 import 'free_wird_controller.dart';
+import 'voice_error_message.dart';
 import 'tasbih_beads_ring.dart';
 
 /// Wird libre — compteur paramétré par le disciple (nom + cible), en plus
@@ -92,7 +94,7 @@ class _SetupFormState extends State<_SetupForm> {
   }
 
   void _submit() {
-    final target = int.tryParse(_targetController.text.trim());
+    final target = parseLocalizedInt(_targetController.text.trim());
     if (target == null || target <= 0) {
       setState(() => _error = widget.l10n.wirdFreeTargetRequired);
       return;
@@ -137,7 +139,7 @@ class _SetupFormState extends State<_SetupForm> {
           TextField(
             controller: _targetController,
             keyboardType: TextInputType.number,
-            inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+            inputFormatters: [FilteringTextInputFormatter.allow(RegExp(r'[0-9٠-٩۰-۹]'))],
             style: const TextStyle(color: AppColors.parchment),
             onChanged: (_) => setState(() => _error = null),
             decoration: InputDecoration(
@@ -248,6 +250,34 @@ class _CounterBody extends StatelessWidget {
                   onPressed: session.currentCount == 0 ? null : controller.resetCount,
                   icon: const Icon(Icons.replay, color: AppColors.parchment),
                   label: Text(l10n.wirdFreeReset, style: const TextStyle(color: AppColors.parchment)),
+                ),
+                // Abandonner le compteur en cours pour en paramétrer un autre :
+                // sans ce bouton, une cible saisie par erreur obligeait à
+                // compter jusqu'au bout (le compteur est restauré à chaque
+                // retour sur l'écran).
+                IconButton(
+                  tooltip: l10n.wirdFreeNewCounterButton,
+                  icon: const Icon(Icons.close, color: AppColors.parchment),
+                  onPressed: () async {
+                    final confirmed = await showDialog<bool>(
+                      context: context,
+                      builder: (dialogContext) => AlertDialog(
+                        title: Text(l10n.wirdFreeAbandonConfirmTitle),
+                        content: Text(l10n.wirdFreeAbandonConfirmBody),
+                        actions: [
+                          TextButton(
+                            onPressed: () => Navigator.of(dialogContext).pop(false),
+                            child: Text(MaterialLocalizations.of(dialogContext).cancelButtonLabel),
+                          ),
+                          TextButton(
+                            onPressed: () => Navigator.of(dialogContext).pop(true),
+                            child: Text(l10n.wirdFreeNewCounterButton),
+                          ),
+                        ],
+                      ),
+                    );
+                    if (confirmed == true) await controller.newCounter();
+                  },
                 ),
               ],
             )
@@ -366,7 +396,7 @@ class _VoiceCounter extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 12),
             child: Text(
-              state.voiceError ?? l10n.wirdFreeVoiceUnavailable,
+              voiceErrorMessage(l10n, state.voiceError) ?? l10n.wirdFreeVoiceUnavailable,
               textAlign: TextAlign.center,
               style: TextStyle(color: AppColors.gold, fontSize: 13),
             ),

@@ -3,11 +3,14 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_theme.dart';
+import '../../../l10n/app_localizations.dart';
 import '../domain/wird_models.dart';
 import '../domain/wird_recitation.dart';
 import 'tasbih_screen.dart';
 import 'wird_audio_controller.dart';
+import 'wird_display_name.dart';
 import 'wird_history_screen.dart';
+import 'wird_messages.dart';
 import 'wird_pillar_audio_controller.dart';
 import 'wird_reminders_screen.dart';
 
@@ -62,7 +65,7 @@ class _WirdDetailScreenState extends ConsumerState<WirdDetailScreen> {
       if (next.errorMessage != null && next.errorMessage != previous?.errorMessage) {
         ScaffoldMessenger.of(context)
           ..hideCurrentSnackBar()
-          ..showSnackBar(SnackBar(content: Text(next.errorMessage!)));
+          ..showSnackBar(SnackBar(content: Text(wirdMessage(AppLocalizations.of(context)!, next.errorMessage!))));
       }
     });
 
@@ -83,18 +86,18 @@ class _WirdDetailScreenState extends ConsumerState<WirdDetailScreen> {
         appBar: AppBar(
         backgroundColor: AppColors.zaytoune,
         foregroundColor: AppColors.parchment,
-        title: Text(wird.nameFrench),
+        title: Text(wirdDisplayName(context, wird)),
         actions: [
           IconButton(
             icon: const Icon(Icons.insights_outlined),
-            tooltip: 'Historique',
+            tooltip: AppLocalizations.of(context)!.wirdDetailHistoryTooltip,
             onPressed: () => Navigator.of(context).push(
               MaterialPageRoute(builder: (_) => WirdHistoryScreen(wird: wird)),
             ),
           ),
           IconButton(
             icon: const Icon(Icons.notifications_active_outlined),
-            tooltip: 'Rappels',
+            tooltip: AppLocalizations.of(context)!.wirdDetailRemindersTooltip,
             onPressed: () => Navigator.of(context).push(
               MaterialPageRoute(builder: (_) => WirdRemindersScreen(wird: wird)),
             ),
@@ -106,7 +109,7 @@ class _WirdDetailScreenState extends ConsumerState<WirdDetailScreen> {
         backgroundColor: AppColors.gold,
         foregroundColor: AppColors.ink,
         icon: const Icon(Icons.touch_app),
-        label: const Text('Tasbih'),
+        label: Text(AppLocalizations.of(context)!.wirdDetailTasbihButton),
         onPressed: () => Navigator.of(context).push(
           MaterialPageRoute(builder: (_) => TasbihScreen(wird: wird)),
         ),
@@ -144,9 +147,9 @@ class _WirdDetailScreenState extends ConsumerState<WirdDetailScreen> {
               _InfoBanner(text: wird.repetitionsNote!, icon: Icons.repeat),
             ],
             const SizedBox(height: 24),
-            const Text(
-              'Piliers obligatoires',
-              style: TextStyle(
+            Text(
+              AppLocalizations.of(context)!.wirdDetailPillarsTitle,
+              style: const TextStyle(
                 color: AppColors.parchment,
                 fontWeight: FontWeight.w600,
                 fontSize: 16,
@@ -296,9 +299,9 @@ class _PillarCard extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text(
-                    'Conditions strictes',
-                    style: TextStyle(fontWeight: FontWeight.w600, color: AppColors.ink, fontSize: 12),
+                  Text(
+                    AppLocalizations.of(context)!.wirdDetailStrictConditions,
+                    style: const TextStyle(fontWeight: FontWeight.w600, color: AppColors.ink, fontSize: 12),
                   ),
                   const SizedBox(height: 4),
                   for (final c in pillar.conditions!)
@@ -317,7 +320,7 @@ class _PillarCard extends StatelessWidget {
               child: ExpansionTile(
                 tilePadding: EdgeInsets.zero,
                 title: Text(
-                  'Texte intégral',
+                  AppLocalizations.of(context)!.wirdDetailFullText,
                   style: TextStyle(fontSize: 13, color: AppColors.emerald, fontWeight: FontWeight.w500),
                 ),
                 children: [
@@ -453,10 +456,10 @@ class _AudioPlayerBar extends StatelessWidget {
     final activeIndex = state.activePillarIndex;
     final isDownloading = activePillarAvailability == PillarAudioAvailability.downloading;
     final label = activeIndex != null
-        ? (isDownloading ? 'Téléchargement en cours…' : wird.pillars[activeIndex].transliteration)
+        ? (isDownloading ? AppLocalizations.of(context)!.wirdAudioDownloading : wird.pillars[activeIndex].transliteration)
         : hasAnyAudio
-            ? 'Lecture audio du Wird'
-            : 'Récitation audio bientôt disponible';
+            ? AppLocalizations.of(context)!.wirdAudioPlayLabel
+            : AppLocalizations.of(context)!.wirdAudioSoonLabel;
     final position = state.position;
     final duration = state.duration ?? Duration.zero;
     final progress = duration.inMilliseconds == 0
