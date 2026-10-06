@@ -1,14 +1,20 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Accès réseau (Supabase, images, audio des wirds). Indispensable en
+         version de publication : jusqu'à l'audit du 2026-10-04, cette
+         permission n'existait que dans les manifestes `debug` et `profile`
+         générés par Flutter, et aucun plugin ne la déclare — une version
+         `release` installée sur un téléphone n'aurait eu aucun accès à
+         Internet. -->
+    <uses-permission android:name="android.permission.INTERNET"/>
     <!-- Tasbih digital — mode reconnaissance vocale (docs/03-architecture-ecrans.md) -->
     <uses-permission android:name="android.permission.RECORD_AUDIO"/>
     <!-- Rappels du Wird — notifications locales (docs/03-architecture-ecrans.md).
          Permission requise à l'exécution sur Android 13+, demandée par
-         WirdReminderController quand le disciple active son premier rappel.
-         Pas de récepteur de redémarrage déclaré par ce plugin à cette
-         version : les rappels actifs sont donc reprogrammés à chaque
-         ouverture d'un écran de wird plutôt qu'automatiquement au boot — voir
-         WirdReminderController._load(). -->
+         WirdReminderController quand le disciple active son premier rappel. -->
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
+    <!-- Reprogrammation des rappels après un redémarrage du téléphone ou une
+         mise à jour de l'app — voir les deux <receiver> plus bas. -->
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
     <!-- Photo d'un évènement Khadara / portrait d'une figure / publication du
          fil communautaire — capture directe avec l'appareil photo (docs/09-
          journal-implementation-frontend.md). La sélection dans la galerie
@@ -23,7 +29,7 @@
          `geolocator` seulement quand le disciple ouvre cet écran. -->
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
     <application
-        android:label="at_tijaniya"
+        android:label="At-Tijaniya"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity
@@ -61,6 +67,25 @@
                     android:host="login-callback"/>
             </intent-filter>
         </activity>
+        <!-- Rappels du Wird (flutter_local_notifications 18.x). Le plugin ne
+             déclare aucun récepteur dans son propre manifeste : c'est à l'app
+             de le faire. Sans eux (constat de l'audit du 2026-10-04), l'alarme
+             était bien posée par `zonedSchedule` mais rien ne la recevait,
+             donc aucun rappel ne s'affichait ; et rien ne reprogrammait les
+             rappels après un redémarrage. -->
+        <receiver
+            android:name="com.dexterous.flutterlocalnotifications.ScheduledNotificationReceiver"
+            android:exported="false" />
+        <receiver
+            android:name="com.dexterous.flutterlocalnotifications.ScheduledNotificationBootReceiver"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED"/>
+                <action android:name="android.intent.action.MY_PACKAGE_REPLACED"/>
+                <action android:name="android.intent.action.QUICKBOOT_POWERON"/>
+                <action android:name="com.htc.intent.action.QUICKBOOT_POWERON"/>
+            </intent-filter>
+        </receiver>
         <!-- Don't delete the meta-data below.
              This is used by the Flutter tool to generate GeneratedPluginRegistrant.java -->
         <meta-data
