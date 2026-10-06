@@ -238,16 +238,25 @@ Reste à faire :
   - montant d'un don : entier entre 100 et 5 000 000 F CFA, comme côté serveur ;
   - chevrons de fin de ligne et derniers alignements suivant le sens de lecture en arabe
     (`DirectionalChevron`).
+- **Accessibilité (2026-10-06)** : les 19 boutons à icône sans libellé en ont un ; la zone de
+  tape du tasbih et du wird libre, le « j'aime » et la bascule Connexion / Créer un compte
+  sont annoncés comme des boutons avec leur état ; les icônes d'action de 16 px ont une zone
+  tactile élargie.
+- **Tests (2026-10-06)** : `database/tests/securite_regression.sql` rejoue, sans rien
+  modifier, les contrôles de sécurité de l'audit — à lancer après toute migration touchant
+  la RLS ; tests d'écran pour l'envoi de message partagé et pour le badge « Parrainage
+  confirmé ».
 - **Reste à faire** :
   - **Dons** (désactivés) : déclenchement réel de la notification PayDunya jamais observé.
-  - **Arabe** : noms de figures en français dans les listes admin ; dates en chiffres latins
-    (choix assumé dans le code).
-  - **Accessibilité** : libellés sémantiques et zones tactiles relevés écran par écran dans
-    les rapports, non traités.
+  - **Arabe** : relecture des libellés par un arabophone (reportée) ; noms de figures en
+    français dans les listes admin ; dates en chiffres latins (choix assumé dans le code).
+  - **Accessibilité** : pastilles de l'historique, en-têtes de section et portraits sans
+    libellé sémantique ; aucun essai avec TalkBack ou VoiceOver.
   - **Modération** : signalement des messages de groupe et des messages privés (sprint
     dédié).
   - **iOS** : rien n'a été compilé ni vérifié pendant ce travail.
-  - **Tests** : presque aucun test d'écran ni de repository, aucun test automatisé de la RLS.
+  - **Tests** : la plupart des écrans et des repositories restent sans test ; le script de
+    sécurité se lance à la main, il n'est branché sur aucune intégration continue.
   - **Journal** `docs/09` : décrit encore l'ancien fonctionnement sur plusieurs points.
 
 ## Index des rapports par module
