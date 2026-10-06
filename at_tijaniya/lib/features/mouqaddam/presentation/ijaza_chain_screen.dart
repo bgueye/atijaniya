@@ -71,13 +71,34 @@ class IjazaChainScreen extends ConsumerWidget {
               else
                 _SilsilaRevealSection(chain: chain, currentUserId: currentUserId, l10n: l10n),
               const SizedBox(height: 32),
-              _CompleteChainSection(l10n: l10n, chainCompleted: chain.isNotEmpty && chain.last.isUltimateSource),
+              // Le complément manuel décrit ce qui précède l'app : il appartient
+              // au mouqaddam situé au sommet de la chaîne (celui qui n'a pas de
+              // parrain dans l'app), et `get_ijaza_chain()` ne lit que le sien.
+              // Un mouqaddam parrainé dans l'app qui en saisissait un voyait
+              // « Maillon ajouté » sans que rien n'apparaisse jamais : on lui
+              // explique plutôt d'où vient la suite de sa silsila.
+              if (_isChainRoot(chain, currentUserId))
+                _CompleteChainSection(l10n: l10n, chainCompleted: chain.isNotEmpty && chain.last.isUltimateSource)
+              else
+                Text(
+                  l10n.mouqaddamChainManualOwnedBySponsor,
+                  textAlign: TextAlign.center,
+                  style: TextStyle(color: AppColors.bronze),
+                ),
             ],
           );
         },
       ),
     );
   }
+}
+
+/// `true` si le compte connecté est le dernier maillon automatique de sa
+/// chaîne (aucun parrain dans l'app), donc celui dont le complément manuel
+/// est affiché. Une chaîne vide ou sans maillon automatique compte aussi.
+bool _isChainRoot(List<IjazaChainLink> chain, String? currentUserId) {
+  final automatic = chain.where((link) => !link.isManual).toList();
+  return automatic.isEmpty || automatic.last.userId == currentUserId;
 }
 
 /// Révélation animée de la chaîne, maillon par maillon, du disciple (en bas)

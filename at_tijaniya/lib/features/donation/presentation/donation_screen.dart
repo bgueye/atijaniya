@@ -42,9 +42,7 @@ class _DonationScreenState extends ConsumerState<DonationScreen> {
     super.dispose();
   }
 
-  double? get _effectiveAmount => _selectedPreset != null
-      ? _selectedPreset!.toDouble()
-      : parseDonationAmount(_customAmountController.text);
+  int? get _effectiveAmount => _selectedPreset ?? parseDonationAmount(_customAmountController.text);
 
   void _selectPreset(int amount) {
     setState(() {

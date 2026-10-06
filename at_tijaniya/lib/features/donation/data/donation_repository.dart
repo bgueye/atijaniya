@@ -22,7 +22,7 @@ import '../domain/donation_checkout.dart';
 class DonationRepository {
   const DonationRepository();
 
-  Future<DonationCheckout> startCheckout({required double amount}) async {
+  Future<DonationCheckout> startCheckout({required int amount}) async {
     final response = await SupabaseConfig.client.functions.invoke(
       'create-donation-checkout',
       body: {'amount': amount},
