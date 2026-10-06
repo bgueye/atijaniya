@@ -271,7 +271,11 @@ class _PostDetailScreenState extends ConsumerState<PostDetailScreen> {
                 const SizedBox(height: 16),
                 Row(
                   children: [
-                    InkWell(
+                    Semantics(
+                      button: true,
+                      selected: _liked,
+                      label: AppLocalizations.of(context)!.a11yLike,
+                      child: InkWell(
                       onTap: _toggleLike,
                       child: Row(
                         children: [
@@ -284,6 +288,7 @@ class _PostDetailScreenState extends ConsumerState<PostDetailScreen> {
                           Text('$_likeCount', style: TextStyle(color: AppColors.bronze)),
                         ],
                       ),
+                    ),
                     ),
                     if (post.authorUserId != null) ...[
                       const SizedBox(width: 20),
@@ -351,7 +356,7 @@ class _PostDetailScreenState extends ConsumerState<PostDetailScreen> {
                       onTap: _isSignedIn ? null : _promptSignIn,
                     ),
                   ),
-                  IconButton(
+                  IconButton(tooltip: AppLocalizations.of(context)!.a11ySend, 
                     icon: Icon(Icons.send, color: AppColors.emerald),
                     onPressed: _submitComment,
                   ),
@@ -407,7 +412,10 @@ class _CommentTile extends StatelessWidget {
                   onTap: onDelete,
                   child: Tooltip(
                     message: l10n.communityDeleteCommentTooltip,
-                    child: Icon(Icons.delete_outline, size: 16, color: AppColors.bronze),
+                    child: Padding(
+                      padding: const EdgeInsets.all(10),
+                      child: Icon(Icons.delete_outline, size: 16, color: AppColors.bronze),
+                    ),
                   ),
                 ),
               ],
@@ -417,7 +425,10 @@ class _CommentTile extends StatelessWidget {
                   onTap: onReport,
                   child: Tooltip(
                     message: l10n.moderationReportAction,
-                    child: Icon(Icons.flag_outlined, size: 16, color: AppColors.bronze),
+                    child: Padding(
+                      padding: const EdgeInsets.all(10),
+                      child: Icon(Icons.flag_outlined, size: 16, color: AppColors.bronze),
+                    ),
                   ),
                 ),
               ],
@@ -686,7 +697,7 @@ class _EditPostSheetState extends ConsumerState<_EditPostSheet> {
                   ),
                   if (_pickedImageBytes != null || showExistingImage) ...[
                     const SizedBox(width: 8),
-                    IconButton(icon: Icon(Icons.close, color: AppColors.bronze), onPressed: _clearImage),
+                    IconButton(tooltip: AppLocalizations.of(context)!.a11yRemove, icon: Icon(Icons.close, color: AppColors.bronze), onPressed: _clearImage),
                   ],
                 ],
               ),

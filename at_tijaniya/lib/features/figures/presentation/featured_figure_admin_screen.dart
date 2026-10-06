@@ -130,12 +130,12 @@ class _FeaturedFigureAdminScreenState extends ConsumerState<FeaturedFigureAdminS
                     return Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        IconButton(
+                        IconButton(tooltip: AppLocalizations.of(context)!.a11yPreviousWeek, 
                           onPressed: () => _changeWeek(-1),
                           icon: Transform.flip(flipX: isRtl, child: const Icon(Icons.chevron_left)),
                         ),
                         Text(_weekLabel(), style: const TextStyle(fontWeight: FontWeight.w600)),
-                        IconButton(
+                        IconButton(tooltip: AppLocalizations.of(context)!.a11yNextWeek, 
                           onPressed: () => _changeWeek(1),
                           icon: Transform.flip(flipX: isRtl, child: const Icon(Icons.chevron_right)),
                         ),

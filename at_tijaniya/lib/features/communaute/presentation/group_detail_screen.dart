@@ -553,15 +553,20 @@ class _GroupPostTileState extends ConsumerState<_GroupPostTile> {
                   onTap: _busy ? null : _edit,
                   child: Tooltip(
                     message: l10n.communityGroupsEditPostTooltip,
-                    child: Icon(Icons.edit_outlined, size: 16, color: AppColors.bronze),
+                    child: Padding(
+                      padding: const EdgeInsets.all(10),
+                      child: Icon(Icons.edit_outlined, size: 16, color: AppColors.bronze),
+                    ),
                   ),
                 ),
-                const SizedBox(width: 12),
                 InkWell(
                   onTap: _busy ? null : _delete,
                   child: Tooltip(
                     message: l10n.communityGroupsDeletePostTooltip,
-                    child: Icon(Icons.delete_outline, size: 16, color: AppColors.bronze),
+                    child: Padding(
+                      padding: const EdgeInsets.all(10),
+                      child: Icon(Icons.delete_outline, size: 16, color: AppColors.bronze),
+                    ),
                   ),
                 ),
               ],

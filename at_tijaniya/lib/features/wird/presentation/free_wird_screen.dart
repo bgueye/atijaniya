@@ -316,7 +316,11 @@ class _ManualCounter extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
+    return Semantics(
+      button: true,
+      label: AppLocalizations.of(context)!.wirdFreeTapToCount,
+      value: '$count / $target',
+      child: GestureDetector(
       onTap: complete ? null : onTap,
       behavior: HitTestBehavior.opaque,
       child: TasbihBeadsRing(
@@ -349,6 +353,7 @@ class _ManualCounter extends StatelessWidget {
           ),
         ),
       ),
+    ),
     );
   }
 }

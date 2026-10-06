@@ -93,7 +93,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                     obscureText: _obscured,
                     enabled: !_submitting,
                     decoration: _fieldDecoration(l10n.authPasswordLabel).copyWith(
-                      suffixIcon: IconButton(
+                      suffixIcon: IconButton(tooltip: AppLocalizations.of(context)!.a11yTogglePasswordVisibility, 
                         icon: Icon(_obscured ? Icons.visibility_outlined : Icons.visibility_off_outlined, color: AppColors.bronze),
                         onPressed: () => setState(() => _obscured = !_obscured),
                       ),

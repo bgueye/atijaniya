@@ -304,7 +304,7 @@ class _CreatePostSheetState extends ConsumerState<_CreatePostSheet> {
                   ),
                   if (_pickedImageBytes != null) ...[
                     const SizedBox(width: 8),
-                    IconButton(
+                    IconButton(tooltip: AppLocalizations.of(context)!.a11yRemove, 
                       icon: Icon(Icons.close, color: AppColors.bronze),
                       onPressed: _clearImage,
                     ),
@@ -756,7 +756,11 @@ class _PostCardState extends ConsumerState<_PostCard> {
                   // InkWell propre à cette zone : intercepte le tap avant
                   // qu'il n'atteigne l'InkWell de la carte (qui ouvre le
                   // détail), pour pouvoir aimer sans quitter le fil.
-                  InkWell(
+                  Semantics(
+                    button: true,
+                    selected: _liked,
+                    label: AppLocalizations.of(context)!.a11yLike,
+                    child: InkWell(
                     borderRadius: BorderRadius.circular(8),
                     onTap: _toggleLike,
                     child: Padding(
@@ -777,6 +781,7 @@ class _PostCardState extends ConsumerState<_PostCard> {
                         ],
                       ),
                     ),
+                  ),
                   ),
                   const SizedBox(width: 16),
                   Icon(Icons.mode_comment_outlined,

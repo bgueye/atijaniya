@@ -1071,14 +1071,14 @@ class _AdminItemActions extends StatelessWidget {
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
-        IconButton(
+        IconButton(tooltip: AppLocalizations.of(context)!.figureEditTooltip, 
           icon: Icon(Icons.edit_outlined,
               size: 18, color: AppColors.bronze),
           padding: EdgeInsets.zero,
           constraints: const BoxConstraints(minWidth: 32, minHeight: 32),
           onPressed: busy ? null : onEdit,
         ),
-        IconButton(
+        IconButton(tooltip: AppLocalizations.of(context)!.figureDeleteTooltip, 
           icon: busy
               ? const SizedBox(
                   width: 14,
@@ -1542,7 +1542,7 @@ class _ZiyaraEventCard extends StatelessWidget {
         // Supprimer) : un lien figure↔évènement n'a rien à modifier, un
         // bouton Modifier inerte serait trompeur pour l'admin.
         trailing: isAdmin
-            ? IconButton(
+            ? IconButton(tooltip: AppLocalizations.of(context)!.a11yUnlink, 
                 icon: busy
                     ? const SizedBox(
                         width: 14,
@@ -1659,7 +1659,7 @@ class _LinkedZawiyaCard extends StatelessWidget {
         // Un seul bouton Délier ici, comme `_ZiyaraEventCard` : un lien
         // figure↔zawiya n'a rien à modifier.
         trailing: isAdmin
-            ? IconButton(
+            ? IconButton(tooltip: AppLocalizations.of(context)!.a11yUnlink, 
                 icon: busy
                     ? const SizedBox(width: 14, height: 14, child: CircularProgressIndicator(strokeWidth: 2))
                     : Icon(Icons.link_off, size: 20, color: AppColors.bronze),

@@ -479,11 +479,11 @@ class _AudioPlayerBar extends StatelessWidget {
           children: [
             Row(
               children: [
-                IconButton(
+                IconButton(tooltip: AppLocalizations.of(context)!.a11yPrevious, 
                   icon: const Icon(Icons.skip_previous, color: AppColors.parchment),
                   onPressed: hasAnyAudio && controller.hasPrevious ? controller.playPrevious : null,
                 ),
-                IconButton(
+                IconButton(tooltip: AppLocalizations.of(context)!.a11yPlayPause, 
                   iconSize: 34,
                   icon: Icon(
                     state.isPlaying ? Icons.pause_circle_filled : Icons.play_circle_fill,
@@ -491,7 +491,7 @@ class _AudioPlayerBar extends StatelessWidget {
                   ),
                   onPressed: controller.togglePlayPause,
                 ),
-                IconButton(
+                IconButton(tooltip: AppLocalizations.of(context)!.a11yNext, 
                   icon: const Icon(Icons.skip_next, color: AppColors.parchment),
                   onPressed: hasAnyAudio && controller.hasNext ? controller.playNext : null,
                 ),

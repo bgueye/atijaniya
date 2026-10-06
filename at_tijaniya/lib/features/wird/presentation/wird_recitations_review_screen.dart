@@ -266,7 +266,7 @@ class _DraftCardState extends ConsumerState<_DraftCard> {
                       stream: _previewPlayer.playerStateStream,
                       builder: (context, snapshot) {
                         final playing = snapshot.data?.playing ?? false;
-                        return IconButton(
+                        return IconButton(tooltip: AppLocalizations.of(context)!.a11yPlayPause, 
                           icon: Icon(
                             playing
                                 ? Icons.pause_circle_filled

@@ -388,7 +388,7 @@ class _EventFormScreenState extends ConsumerState<EventFormScreen> {
             ),
             if (hasPickedImage || hasExistingImage) ...[
               const SizedBox(width: 8),
-              IconButton(
+              IconButton(tooltip: AppLocalizations.of(context)!.a11yRemove, 
                 icon: Icon(Icons.close, color: AppColors.bronze),
                 onPressed: _clearImage,
               ),
@@ -502,7 +502,7 @@ class _EventFormScreenState extends ConsumerState<EventFormScreen> {
                         ),
                       ),
                       if (_recurrenceUntil != null)
-                        IconButton(
+                        IconButton(tooltip: AppLocalizations.of(context)!.a11yRemove, 
                           icon: Icon(Icons.close, color: AppColors.bronze),
                           onPressed: () => setState(() => _recurrenceUntil = null),
                         ),
@@ -538,7 +538,7 @@ class _EventFormScreenState extends ConsumerState<EventFormScreen> {
                         ),
                       ),
                       if (_endsAt != null)
-                        IconButton(
+                        IconButton(tooltip: AppLocalizations.of(context)!.a11yRemove, 
                           icon: Icon(Icons.close, color: AppColors.bronze),
                           onPressed: () => setState(() => _endsAt = null),
                         ),

@@ -387,7 +387,7 @@ class _AuthScreenState extends State<AuthScreen> {
   }
 
   Widget _obscureToggleIcon({required bool obscured, required VoidCallback onPressed}) {
-    return IconButton(
+    return IconButton(tooltip: AppLocalizations.of(context)!.a11yTogglePasswordVisibility, 
       icon: Icon(obscured ? Icons.visibility_outlined : Icons.visibility_off_outlined, color: AppColors.bronze),
       onPressed: onPressed,
     );
@@ -454,11 +454,15 @@ class _SegmentedToggle extends StatelessWidget {
   }
 
   Widget _segment({required String label, required bool active, required VoidCallback onTap}) {
-    return GestureDetector(
+    return Semantics(
+      button: true,
+      selected: active,
+      child: GestureDetector(
       onTap: onTap,
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 180),
-        padding: const EdgeInsets.symmetric(vertical: 10),
+        // 14 de marge verticale : hauteur tactile d'au moins 48 px.
+        padding: const EdgeInsets.symmetric(vertical: 14),
         decoration: BoxDecoration(
           color: active ? AppColors.emerald : Colors.transparent,
           borderRadius: BorderRadius.circular(18),
@@ -473,6 +477,7 @@ class _SegmentedToggle extends StatelessWidget {
           ),
         ),
       ),
+    ),
     );
   }
 }
