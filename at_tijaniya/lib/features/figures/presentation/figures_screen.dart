@@ -12,6 +12,7 @@ import 'figure_form_screen.dart';
 import 'figures_providers.dart';
 import 'figures_review_screen.dart';
 import '../../profil/presentation/profile_providers.dart';
+import '../../../core/widgets/directional_chevron.dart';
 
 /// Liste des figures — fondateurs et familles religieuses. Priorité P1
 /// (docs/03-architecture-ecrans.md).
@@ -255,7 +256,7 @@ class _FigureTile extends StatelessWidget {
                 ),
               ),
               const SizedBox(width: 8),
-              Icon(Icons.chevron_right, size: 16, color: AppColors.bronze.withValues(alpha: 0.6)),
+              DirectionalChevron(size: 16, color: AppColors.bronze.withValues(alpha: 0.6)),
             ],
           ),
         ),

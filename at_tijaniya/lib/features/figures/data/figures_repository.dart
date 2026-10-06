@@ -63,6 +63,21 @@ class FiguresRepository {
         .single();
   }
 
+  /// Repasse une figure publiée en "brouillon" : elle disparaît aussitôt pour
+  /// les disciples (RLS `figures_read_valid_or_admin`) et revient dans la
+  /// liste de review. Ajouté après l'audit du 2026-10-04 : une publication
+  /// faite par erreur ne se corrigeait que par suppression ou en base.
+  /// Réservé à l'admin par la RLS `figures_admin_update` ; `.single()` fait
+  /// échouer l'appel si aucune ligne n'a été modifiée.
+  Future<void> unpublishFigure(String figureId) async {
+    await SupabaseConfig.client
+        .from('figures')
+        .update({'content_status': 'brouillon'})
+        .eq('id', figureId)
+        .select('id')
+        .single();
+  }
+
   /// Enregistre l'URL publique d'un portrait déjà téléversé vers le bucket
   /// `figure-portraits` (voir `ImageUploadService`, appelé côté écran juste
   /// avant) — RLS `figures_admin_update`, même protection que
@@ -381,16 +396,26 @@ class FiguresRepository {
     String? periodText,
     bool followsGap = false,
   }) async {
-    await SupabaseConfig.client.from('figure_zawiya_khalifas').insert({
-      'founder_figure_id': founderFigureId,
-      'zawiya_id': zawiyaId,
-      'role': successionRoleToDb(role),
-      'khalifa_figure_id': khalifaFigureId,
-      'order_index': orderIndex,
-      'period_text': periodText,
-      'follows_gap': followsGap,
+    // Fonction serveur plutôt qu'une insertion directe : si le rang demandé
+    // est déjà pris, les maillons suivants sont décalés d'un cran dans la
+    // même transaction (la contrainte d'unicité sur le rang rendait une
+    // insertion au milieu impossible). Elle refuse aussi, avec le code
+    // [successionOtherFounderCode], un second fondateur pour la même
+    // succession.
+    await SupabaseConfig.client.rpc('add_succession_link', params: {
+      'p_founder_figure_id': founderFigureId,
+      'p_zawiya_id': zawiyaId,
+      'p_role': successionRoleToDb(role),
+      'p_khalifa_figure_id': khalifaFigureId,
+      'p_order_index': orderIndex,
+      'p_period_text': periodText,
+      'p_follows_gap': followsGap,
     });
   }
+
+  /// Code d'erreur serveur : la succession (zawiya + rôle) existe déjà avec
+  /// un autre fondateur.
+  static const successionOtherFounderCode = 'AT020';
 
   /// RLS `figure_zawiya_khalifas_admin_update`. La zawiya, le rôle et la
   /// figure d'un maillon existant ne se modifient pas (retirer puis
@@ -401,10 +426,14 @@ class FiguresRepository {
     String? periodText,
     required bool followsGap,
   }) async {
-    await SupabaseConfig.client
-        .from('figure_zawiya_khalifas')
-        .update({'order_index': orderIndex, 'period_text': periodText, 'follows_gap': followsGap})
-        .eq('id', id);
+    // Fonction serveur : changer de rang referme le rang quitté et décale les
+    // maillons suivants, ce qu'une mise à jour directe ne pouvait pas faire.
+    await SupabaseConfig.client.rpc('update_succession_link', params: {
+      'p_id': id,
+      'p_order_index': orderIndex,
+      'p_period_text': periodText,
+      'p_follows_gap': followsGap,
+    });
   }
 
   /// RLS `figure_zawiya_khalifas_admin_delete`.

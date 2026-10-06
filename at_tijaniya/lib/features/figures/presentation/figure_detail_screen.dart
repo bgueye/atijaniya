@@ -57,6 +57,45 @@ class _FigureDetailScreenState extends ConsumerState<FigureDetailScreen> {
   bool _changingPortrait = false;
   bool _deleting = false;
 
+  /// Retire la figure de la vue des disciples sans la supprimer.
+  Future<void> _confirmUnpublish() async {
+    final l10n = AppLocalizations.of(context)!;
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: Text(l10n.figureUnpublishConfirmTitle),
+        content: Text(l10n.figureUnpublishConfirmBody),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(dialogContext).pop(false),
+            child: Text(l10n.profileCancel),
+          ),
+          TextButton(
+            onPressed: () => Navigator.of(dialogContext).pop(true),
+            child: Text(l10n.figureUnpublishAction),
+          ),
+        ],
+      ),
+    );
+    if (confirmed != true || !mounted) return;
+
+    setState(() => _deleting = true);
+    try {
+      await ref.read(figuresRepositoryProvider).unpublishFigure(_figure.id);
+      if (!mounted) return;
+      ref.invalidate(figuresProvider);
+      ref.invalidate(draftFiguresProvider);
+      ScaffoldMessenger.of(context)
+        ..hideCurrentSnackBar()
+        ..showSnackBar(SnackBar(content: Text(l10n.figureUnpublishSuccess)));
+      Navigator.of(context).pop();
+    } catch (_) {
+      if (mounted) showErrorSnackBar(context, l10n.figureUnpublishError);
+    } finally {
+      if (mounted) setState(() => _deleting = false);
+    }
+  }
+
   Future<void> _editFigure() async {
     final updated = await Navigator.of(context).push<Figure>(
       MaterialPageRoute(builder: (_) => FigureFormScreen(figure: _figure)),
@@ -172,6 +211,19 @@ class _FigureDetailScreenState extends ConsumerState<FigureDetailScreen> {
                 editTooltip: l10n.figureEditTooltip,
                 deleteTooltip: l10n.figureDeleteTooltip,
               ),
+              // Dépublication : proposée à l'admin seulement pour une figure
+              // actuellement publiée (présente dans la liste des figures
+              // valides), jamais pour un brouillon ouvert depuis la review.
+              if (isAdmin &&
+                  (ref.watch(figuresProvider).valueOrNull?.any((f) => f.id == _figure.id) ?? false))
+                Align(
+                  alignment: AlignmentDirectional.centerEnd,
+                  child: TextButton.icon(
+                    onPressed: _deleting ? null : _confirmUnpublish,
+                    icon: const Icon(Icons.unpublished_outlined, size: 18),
+                    label: Text(l10n.figureUnpublishAction),
+                  ),
+                ),
               DecoratedBox(
                 decoration: BoxDecoration(
                   color: AppColors.offWhite,

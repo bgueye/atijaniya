@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:supabase_flutter/supabase_flutter.dart' show PostgrestException;
 
 import '../../../core/text/numerals.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../khadara/domain/khadara_models.dart' show Zawiya;
+import '../data/figures_repository.dart';
 import '../domain/figure_models.dart';
 import 'figures_providers.dart';
 
@@ -128,6 +130,14 @@ class _FigureKhalifaFormScreenState extends ConsumerState<FigureKhalifaFormScree
         );
       }
       if (mounted) Navigator.of(context).pop(true);
+    } on PostgrestException catch (error) {
+      // Cas à expliquer plutôt qu'à noyer dans l'erreur générique : cette
+      // succession a déjà été démarrée depuis la fiche d'un autre fondateur.
+      if (mounted) {
+        setState(() => _errorMessage = error.code == FiguresRepository.successionOtherFounderCode
+            ? l10n.figureKhalifaFormOtherFounder
+            : l10n.figureKhalifaFormSaveError);
+      }
     } catch (_) {
       if (mounted) setState(() => _errorMessage = l10n.figureKhalifaFormSaveError);
     } finally {

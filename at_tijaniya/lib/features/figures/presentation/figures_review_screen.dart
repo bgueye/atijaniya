@@ -7,6 +7,7 @@ import '../../../l10n/app_localizations.dart';
 import '../domain/figure_models.dart';
 import 'figure_detail_screen.dart';
 import 'figures_providers.dart';
+import '../../../core/widgets/directional_chevron.dart';
 
 /// Review admin des figures en brouillon — seul écran de l'app permettant de
 /// relire une biographie avant publication et de la faire passer à
@@ -121,13 +122,13 @@ class _DraftCard extends ConsumerWidget {
               subtitle: figure.summary != null
                   ? Text(figure.summary!, maxLines: 2, overflow: TextOverflow.ellipsis)
                   : null,
-              trailing: Icon(Icons.chevron_right, color: AppColors.bronze),
+              trailing: DirectionalChevron(color: AppColors.bronze),
               onTap: () => Navigator.of(context).push(
                 MaterialPageRoute(builder: (_) => FigureDetailScreen(figure: figure)),
               ),
             ),
             Align(
-              alignment: Alignment.centerRight,
+              alignment: AlignmentDirectional.centerEnd,
               child: OutlinedButton.icon(
                 onPressed: () => _confirmAndValidate(context, ref),
                 icon: const Icon(Icons.check_circle_outline, size: 18),
