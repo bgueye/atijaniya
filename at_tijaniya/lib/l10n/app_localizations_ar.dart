@@ -2692,4 +2692,177 @@ class AppLocalizationsAr extends AppLocalizations {
   @override
   String get sponsorshipBadgeExplanation =>
       'تشهد هذه الصفة بأن كفالة قد تأكدت ضمن مجتمع تطبيق «التجانية». وهذا ليس اعترافاً أو تخويلاً دينياً رسمياً.';
+
+  @override
+  String get wirdFreeAbandonConfirmTitle => 'التخلي عن هذا العدّاد؟';
+
+  @override
+  String get wirdFreeAbandonConfirmBody =>
+      'سيُمحى العدّ الجاري ويمكنك إعداد عدّاد جديد.';
+
+  @override
+  String get wirdVoiceMicUnavailable =>
+      'الميكروفون غير متاح أو الإذن مرفوض. استخدم وضع «عد يدوي».';
+
+  @override
+  String get wirdVoiceRepeatedFailure =>
+      'يواجه التعرف الصوتي مشكلة متكررة على هذا الجهاز. استخدم وضع «عد يدوي».';
+
+  @override
+  String get wirdVoiceTemporaryError => 'انقطع الاستماع لحظة وهو يُستأنف.';
+
+  @override
+  String wirdTasbihTitle(Object wird) {
+    return 'التسبيح — $wird';
+  }
+
+  @override
+  String wirdTasbihPillarProgress(Object current, Object total) {
+    return 'الركن $current / $total';
+  }
+
+  @override
+  String wirdTasbihUseAlternative(Object count, Object name) {
+    return 'استبدال بـ $count $name';
+  }
+
+  @override
+  String get wirdTasbihNextPillarSoon => 'الركن التالي بعد لحظة…';
+
+  @override
+  String get wirdTasbihNextPillar => 'الركن التالي';
+
+  @override
+  String get wirdTasbihFinishWird => 'إنهاء الورد';
+
+  @override
+  String wirdTasbihCompletedTitle(Object wird) {
+    return 'تمّ $wird';
+  }
+
+  @override
+  String get wirdTasbihCompletedBody => 'تمّت تلاوة جميع الأركان.';
+
+  @override
+  String get wirdTasbihBackToGuide => 'العودة إلى الدليل';
+
+  @override
+  String get wirdTasbihDonationNudge =>
+      'يبقى تطبيق التجانية مجانيًا بفضلكم — تبرّع';
+
+  @override
+  String wirdHistoryTitle(Object wird) {
+    return 'السجل — $wird';
+  }
+
+  @override
+  String wirdHistoryLastWeeks(Object count) {
+    return 'آخر $count أسابيع';
+  }
+
+  @override
+  String wirdHistoryLastDays(Object count) {
+    return 'آخر $count يومًا';
+  }
+
+  @override
+  String get wirdHistoryStreakFridays => 'جمعات متتالية';
+
+  @override
+  String get wirdHistoryStreakDays => 'أيام متتالية';
+
+  @override
+  String get wirdHistoryTotalWeekly => 'مجموع حضرات الجمعة المنجزة';
+
+  @override
+  String get wirdHistoryTotalDaily => 'مجموع التلاوات المكتملة';
+
+  @override
+  String get wirdHistoryRecentRegularity => 'الانتظام في الفترة الأخيرة';
+
+  @override
+  String get communityMessageSendError => 'تعذّر إرسال الرسالة. حاول مرة أخرى.';
+
+  @override
+  String get communityMessagesLoadError => 'تعذّر تحميل الرسائل.';
+
+  @override
+  String get adminMouqaddamZawiyasTitle => 'زوايا المقدَّمين';
+
+  @override
+  String get adminMouqaddamZawiyasIntro =>
+      'عيّن لكل مقدَّم الزاوية التي يمكنه إدارة فعالياتها وبثوثها المباشرة. بدون تعيين لا يمكنه إنشاء أي فعالية.';
+
+  @override
+  String get adminMouqaddamZawiyasFieldLabel => 'الزاوية المُدارة';
+
+  @override
+  String get adminMouqaddamZawiyasNone => 'لا شيء';
+
+  @override
+  String get adminMouqaddamZawiyasEmpty =>
+      'لا يوجد حاليًا مقدَّم بكفالة مؤكدة.';
+
+  @override
+  String get adminMouqaddamZawiyasLoadError => 'تعذّر تحميل القائمة.';
+
+  @override
+  String get adminMouqaddamZawiyasSaved => 'تم حفظ التعيين.';
+
+  @override
+  String get adminMouqaddamZawiyasSaveError => 'تعذّر حفظ التعيين.';
+
+  @override
+  String get wirdAudioPillarUnavailable =>
+      'التلاوة الصوتية غير متوفرة بعد لهذا الركن.';
+
+  @override
+  String get wirdAudioWirdUnavailable =>
+      'التلاوات الصوتية غير متوفرة بعد لهذا الورد.';
+
+  @override
+  String get wirdAudioPlayFailed => 'تعذّر تشغيل هذه التلاوة حاليًا.';
+
+  @override
+  String get wirdAudioStorageFull => 'مساحة التخزين على الجهاز غير كافية.';
+
+  @override
+  String get wirdAudioDownloadFailed => 'تعذّر التنزيل. تحقّق من اتصالك.';
+
+  @override
+  String get wirdAudioDownloading => 'جارٍ التنزيل…';
+
+  @override
+  String get wirdAudioPlayLabel => 'الاستماع إلى الورد';
+
+  @override
+  String get wirdAudioSoonLabel => 'التلاوة الصوتية متوفرة قريبًا';
+
+  @override
+  String get wirdReminderPermissionDenied =>
+      'اسمح بالإشعارات من إعدادات الهاتف لتفعيل هذا التذكير.';
+
+  @override
+  String get wirdReminderNotificationBody => 'تذكير — خصّص لحظة لتلاوة وردك.';
+
+  @override
+  String get wirdDetailHistoryTooltip => 'السجل';
+
+  @override
+  String get wirdDetailRemindersTooltip => 'التذكيرات';
+
+  @override
+  String get wirdDetailTasbihButton => 'التسبيح';
+
+  @override
+  String get wirdDetailPillarsTitle => 'الأركان اللازمة';
+
+  @override
+  String get wirdDetailStrictConditions => 'الشروط اللازمة';
+
+  @override
+  String get wirdDetailFullText => 'النص الكامل';
+
+  @override
+  String get figuresReviewError => 'فشل النشر. تحقّق من اتصالك وحاول مرة أخرى.';
 }

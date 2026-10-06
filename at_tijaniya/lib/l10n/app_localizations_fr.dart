@@ -2786,4 +2786,187 @@ class AppLocalizationsFr extends AppLocalizations {
   @override
   String get sponsorshipBadgeExplanation =>
       'Ce statut atteste qu\'un parrainage a été confirmé au sein de la communauté At-Tijaniya. Ce n\'est pas une reconnaissance ou une habilitation religieuse officielle.';
+
+  @override
+  String get wirdFreeAbandonConfirmTitle => 'Abandonner ce compteur ?';
+
+  @override
+  String get wirdFreeAbandonConfirmBody =>
+      'Le décompte en cours sera effacé et vous pourrez en paramétrer un nouveau.';
+
+  @override
+  String get wirdVoiceMicUnavailable =>
+      'Micro indisponible ou autorisation refusée. Utilisez le mode « Tape manuel ».';
+
+  @override
+  String get wirdVoiceRepeatedFailure =>
+      'La reconnaissance vocale rencontre un problème répété sur cet appareil. Utilisez le mode « Tape manuel ».';
+
+  @override
+  String get wirdVoiceTemporaryError =>
+      'L\'écoute s\'est interrompue un instant, elle reprend.';
+
+  @override
+  String wirdTasbihTitle(Object wird) {
+    return 'Tasbih — $wird';
+  }
+
+  @override
+  String wirdTasbihPillarProgress(Object current, Object total) {
+    return 'Pilier $current / $total';
+  }
+
+  @override
+  String wirdTasbihUseAlternative(Object count, Object name) {
+    return 'Remplacer par $count $name';
+  }
+
+  @override
+  String get wirdTasbihNextPillarSoon => 'Pilier suivant dans un instant…';
+
+  @override
+  String get wirdTasbihNextPillar => 'Pilier suivant';
+
+  @override
+  String get wirdTasbihFinishWird => 'Terminer le wird';
+
+  @override
+  String wirdTasbihCompletedTitle(Object wird) {
+    return '$wird terminé';
+  }
+
+  @override
+  String get wirdTasbihCompletedBody => 'Tous les piliers ont été récités.';
+
+  @override
+  String get wirdTasbihBackToGuide => 'Retour au guide';
+
+  @override
+  String get wirdTasbihDonationNudge =>
+      'At-Tijaniya reste gratuite grâce à vous — faire un don';
+
+  @override
+  String wirdHistoryTitle(Object wird) {
+    return 'Historique — $wird';
+  }
+
+  @override
+  String wirdHistoryLastWeeks(Object count) {
+    return '$count dernières semaines';
+  }
+
+  @override
+  String wirdHistoryLastDays(Object count) {
+    return '$count derniers jours';
+  }
+
+  @override
+  String get wirdHistoryStreakFridays => 'vendredis d\'affilée';
+
+  @override
+  String get wirdHistoryStreakDays => 'jours d\'affilée';
+
+  @override
+  String get wirdHistoryTotalWeekly => 'Hadratou-l-Jouma terminées au total';
+
+  @override
+  String get wirdHistoryTotalDaily => 'Récitations complètes au total';
+
+  @override
+  String get wirdHistoryRecentRegularity => 'Régularité récente';
+
+  @override
+  String get communityMessageSendError =>
+      'Le message n\'a pas pu être envoyé. Réessayez.';
+
+  @override
+  String get communityMessagesLoadError =>
+      'Impossible de charger les messages.';
+
+  @override
+  String get adminMouqaddamZawiyasTitle => 'Zawiyas des mouqaddams';
+
+  @override
+  String get adminMouqaddamZawiyasIntro =>
+      'Attribuez à chaque mouqaddam la zawiya dont il peut gérer les évènements et les directs. Sans attribution, il ne peut en créer aucun.';
+
+  @override
+  String get adminMouqaddamZawiyasFieldLabel => 'Zawiya gérée';
+
+  @override
+  String get adminMouqaddamZawiyasNone => 'Aucune';
+
+  @override
+  String get adminMouqaddamZawiyasEmpty =>
+      'Aucun mouqaddam au parrainage confirmé pour le moment.';
+
+  @override
+  String get adminMouqaddamZawiyasLoadError =>
+      'Impossible de charger la liste.';
+
+  @override
+  String get adminMouqaddamZawiyasSaved => 'Attribution enregistrée.';
+
+  @override
+  String get adminMouqaddamZawiyasSaveError =>
+      'Impossible d\'enregistrer l\'attribution.';
+
+  @override
+  String get wirdAudioPillarUnavailable =>
+      'Récitation audio pas encore disponible pour ce pilier.';
+
+  @override
+  String get wirdAudioWirdUnavailable =>
+      'Récitations audio pas encore disponibles pour ce wird.';
+
+  @override
+  String get wirdAudioPlayFailed =>
+      'Impossible de lire cette récitation pour le moment.';
+
+  @override
+  String get wirdAudioStorageFull =>
+      'Espace de stockage insuffisant sur l\'appareil.';
+
+  @override
+  String get wirdAudioDownloadFailed =>
+      'Téléchargement impossible. Vérifiez votre connexion.';
+
+  @override
+  String get wirdAudioDownloading => 'Téléchargement en cours…';
+
+  @override
+  String get wirdAudioPlayLabel => 'Lecture audio du wird';
+
+  @override
+  String get wirdAudioSoonLabel => 'Récitation audio bientôt disponible';
+
+  @override
+  String get wirdReminderPermissionDenied =>
+      'Autorisez les notifications dans les réglages du téléphone pour activer ce rappel.';
+
+  @override
+  String get wirdReminderNotificationBody =>
+      'Rappel — prenez un moment pour réciter votre wird.';
+
+  @override
+  String get wirdDetailHistoryTooltip => 'Historique';
+
+  @override
+  String get wirdDetailRemindersTooltip => 'Rappels';
+
+  @override
+  String get wirdDetailTasbihButton => 'Tasbih';
+
+  @override
+  String get wirdDetailPillarsTitle => 'Piliers obligatoires';
+
+  @override
+  String get wirdDetailStrictConditions => 'Conditions strictes';
+
+  @override
+  String get wirdDetailFullText => 'Texte intégral';
+
+  @override
+  String get figuresReviewError =>
+      'La publication a échoué. Vérifiez votre connexion et réessayez.';
 }

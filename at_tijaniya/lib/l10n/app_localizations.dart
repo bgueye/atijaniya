@@ -5168,6 +5168,306 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'Ce statut atteste qu\'un parrainage a été confirmé au sein de la communauté At-Tijaniya. Ce n\'est pas une reconnaissance ou une habilitation religieuse officielle.'**
   String get sponsorshipBadgeExplanation;
+
+  /// No description provided for @wirdFreeAbandonConfirmTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Abandonner ce compteur ?'**
+  String get wirdFreeAbandonConfirmTitle;
+
+  /// No description provided for @wirdFreeAbandonConfirmBody.
+  ///
+  /// In fr, this message translates to:
+  /// **'Le décompte en cours sera effacé et vous pourrez en paramétrer un nouveau.'**
+  String get wirdFreeAbandonConfirmBody;
+
+  /// No description provided for @wirdVoiceMicUnavailable.
+  ///
+  /// In fr, this message translates to:
+  /// **'Micro indisponible ou autorisation refusée. Utilisez le mode « Tape manuel ».'**
+  String get wirdVoiceMicUnavailable;
+
+  /// No description provided for @wirdVoiceRepeatedFailure.
+  ///
+  /// In fr, this message translates to:
+  /// **'La reconnaissance vocale rencontre un problème répété sur cet appareil. Utilisez le mode « Tape manuel ».'**
+  String get wirdVoiceRepeatedFailure;
+
+  /// No description provided for @wirdVoiceTemporaryError.
+  ///
+  /// In fr, this message translates to:
+  /// **'L\'écoute s\'est interrompue un instant, elle reprend.'**
+  String get wirdVoiceTemporaryError;
+
+  /// No description provided for @wirdTasbihTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Tasbih — {wird}'**
+  String wirdTasbihTitle(Object wird);
+
+  /// No description provided for @wirdTasbihPillarProgress.
+  ///
+  /// In fr, this message translates to:
+  /// **'Pilier {current} / {total}'**
+  String wirdTasbihPillarProgress(Object current, Object total);
+
+  /// No description provided for @wirdTasbihUseAlternative.
+  ///
+  /// In fr, this message translates to:
+  /// **'Remplacer par {count} {name}'**
+  String wirdTasbihUseAlternative(Object count, Object name);
+
+  /// No description provided for @wirdTasbihNextPillarSoon.
+  ///
+  /// In fr, this message translates to:
+  /// **'Pilier suivant dans un instant…'**
+  String get wirdTasbihNextPillarSoon;
+
+  /// No description provided for @wirdTasbihNextPillar.
+  ///
+  /// In fr, this message translates to:
+  /// **'Pilier suivant'**
+  String get wirdTasbihNextPillar;
+
+  /// No description provided for @wirdTasbihFinishWird.
+  ///
+  /// In fr, this message translates to:
+  /// **'Terminer le wird'**
+  String get wirdTasbihFinishWird;
+
+  /// No description provided for @wirdTasbihCompletedTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'{wird} terminé'**
+  String wirdTasbihCompletedTitle(Object wird);
+
+  /// No description provided for @wirdTasbihCompletedBody.
+  ///
+  /// In fr, this message translates to:
+  /// **'Tous les piliers ont été récités.'**
+  String get wirdTasbihCompletedBody;
+
+  /// No description provided for @wirdTasbihBackToGuide.
+  ///
+  /// In fr, this message translates to:
+  /// **'Retour au guide'**
+  String get wirdTasbihBackToGuide;
+
+  /// No description provided for @wirdTasbihDonationNudge.
+  ///
+  /// In fr, this message translates to:
+  /// **'At-Tijaniya reste gratuite grâce à vous — faire un don'**
+  String get wirdTasbihDonationNudge;
+
+  /// No description provided for @wirdHistoryTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Historique — {wird}'**
+  String wirdHistoryTitle(Object wird);
+
+  /// No description provided for @wirdHistoryLastWeeks.
+  ///
+  /// In fr, this message translates to:
+  /// **'{count} dernières semaines'**
+  String wirdHistoryLastWeeks(Object count);
+
+  /// No description provided for @wirdHistoryLastDays.
+  ///
+  /// In fr, this message translates to:
+  /// **'{count} derniers jours'**
+  String wirdHistoryLastDays(Object count);
+
+  /// No description provided for @wirdHistoryStreakFridays.
+  ///
+  /// In fr, this message translates to:
+  /// **'vendredis d\'affilée'**
+  String get wirdHistoryStreakFridays;
+
+  /// No description provided for @wirdHistoryStreakDays.
+  ///
+  /// In fr, this message translates to:
+  /// **'jours d\'affilée'**
+  String get wirdHistoryStreakDays;
+
+  /// No description provided for @wirdHistoryTotalWeekly.
+  ///
+  /// In fr, this message translates to:
+  /// **'Hadratou-l-Jouma terminées au total'**
+  String get wirdHistoryTotalWeekly;
+
+  /// No description provided for @wirdHistoryTotalDaily.
+  ///
+  /// In fr, this message translates to:
+  /// **'Récitations complètes au total'**
+  String get wirdHistoryTotalDaily;
+
+  /// No description provided for @wirdHistoryRecentRegularity.
+  ///
+  /// In fr, this message translates to:
+  /// **'Régularité récente'**
+  String get wirdHistoryRecentRegularity;
+
+  /// No description provided for @communityMessageSendError.
+  ///
+  /// In fr, this message translates to:
+  /// **'Le message n\'a pas pu être envoyé. Réessayez.'**
+  String get communityMessageSendError;
+
+  /// No description provided for @communityMessagesLoadError.
+  ///
+  /// In fr, this message translates to:
+  /// **'Impossible de charger les messages.'**
+  String get communityMessagesLoadError;
+
+  /// No description provided for @adminMouqaddamZawiyasTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Zawiyas des mouqaddams'**
+  String get adminMouqaddamZawiyasTitle;
+
+  /// No description provided for @adminMouqaddamZawiyasIntro.
+  ///
+  /// In fr, this message translates to:
+  /// **'Attribuez à chaque mouqaddam la zawiya dont il peut gérer les évènements et les directs. Sans attribution, il ne peut en créer aucun.'**
+  String get adminMouqaddamZawiyasIntro;
+
+  /// No description provided for @adminMouqaddamZawiyasFieldLabel.
+  ///
+  /// In fr, this message translates to:
+  /// **'Zawiya gérée'**
+  String get adminMouqaddamZawiyasFieldLabel;
+
+  /// No description provided for @adminMouqaddamZawiyasNone.
+  ///
+  /// In fr, this message translates to:
+  /// **'Aucune'**
+  String get adminMouqaddamZawiyasNone;
+
+  /// No description provided for @adminMouqaddamZawiyasEmpty.
+  ///
+  /// In fr, this message translates to:
+  /// **'Aucun mouqaddam au parrainage confirmé pour le moment.'**
+  String get adminMouqaddamZawiyasEmpty;
+
+  /// No description provided for @adminMouqaddamZawiyasLoadError.
+  ///
+  /// In fr, this message translates to:
+  /// **'Impossible de charger la liste.'**
+  String get adminMouqaddamZawiyasLoadError;
+
+  /// No description provided for @adminMouqaddamZawiyasSaved.
+  ///
+  /// In fr, this message translates to:
+  /// **'Attribution enregistrée.'**
+  String get adminMouqaddamZawiyasSaved;
+
+  /// No description provided for @adminMouqaddamZawiyasSaveError.
+  ///
+  /// In fr, this message translates to:
+  /// **'Impossible d\'enregistrer l\'attribution.'**
+  String get adminMouqaddamZawiyasSaveError;
+
+  /// No description provided for @wirdAudioPillarUnavailable.
+  ///
+  /// In fr, this message translates to:
+  /// **'Récitation audio pas encore disponible pour ce pilier.'**
+  String get wirdAudioPillarUnavailable;
+
+  /// No description provided for @wirdAudioWirdUnavailable.
+  ///
+  /// In fr, this message translates to:
+  /// **'Récitations audio pas encore disponibles pour ce wird.'**
+  String get wirdAudioWirdUnavailable;
+
+  /// No description provided for @wirdAudioPlayFailed.
+  ///
+  /// In fr, this message translates to:
+  /// **'Impossible de lire cette récitation pour le moment.'**
+  String get wirdAudioPlayFailed;
+
+  /// No description provided for @wirdAudioStorageFull.
+  ///
+  /// In fr, this message translates to:
+  /// **'Espace de stockage insuffisant sur l\'appareil.'**
+  String get wirdAudioStorageFull;
+
+  /// No description provided for @wirdAudioDownloadFailed.
+  ///
+  /// In fr, this message translates to:
+  /// **'Téléchargement impossible. Vérifiez votre connexion.'**
+  String get wirdAudioDownloadFailed;
+
+  /// No description provided for @wirdAudioDownloading.
+  ///
+  /// In fr, this message translates to:
+  /// **'Téléchargement en cours…'**
+  String get wirdAudioDownloading;
+
+  /// No description provided for @wirdAudioPlayLabel.
+  ///
+  /// In fr, this message translates to:
+  /// **'Lecture audio du wird'**
+  String get wirdAudioPlayLabel;
+
+  /// No description provided for @wirdAudioSoonLabel.
+  ///
+  /// In fr, this message translates to:
+  /// **'Récitation audio bientôt disponible'**
+  String get wirdAudioSoonLabel;
+
+  /// No description provided for @wirdReminderPermissionDenied.
+  ///
+  /// In fr, this message translates to:
+  /// **'Autorisez les notifications dans les réglages du téléphone pour activer ce rappel.'**
+  String get wirdReminderPermissionDenied;
+
+  /// No description provided for @wirdReminderNotificationBody.
+  ///
+  /// In fr, this message translates to:
+  /// **'Rappel — prenez un moment pour réciter votre wird.'**
+  String get wirdReminderNotificationBody;
+
+  /// No description provided for @wirdDetailHistoryTooltip.
+  ///
+  /// In fr, this message translates to:
+  /// **'Historique'**
+  String get wirdDetailHistoryTooltip;
+
+  /// No description provided for @wirdDetailRemindersTooltip.
+  ///
+  /// In fr, this message translates to:
+  /// **'Rappels'**
+  String get wirdDetailRemindersTooltip;
+
+  /// No description provided for @wirdDetailTasbihButton.
+  ///
+  /// In fr, this message translates to:
+  /// **'Tasbih'**
+  String get wirdDetailTasbihButton;
+
+  /// No description provided for @wirdDetailPillarsTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Piliers obligatoires'**
+  String get wirdDetailPillarsTitle;
+
+  /// No description provided for @wirdDetailStrictConditions.
+  ///
+  /// In fr, this message translates to:
+  /// **'Conditions strictes'**
+  String get wirdDetailStrictConditions;
+
+  /// No description provided for @wirdDetailFullText.
+  ///
+  /// In fr, this message translates to:
+  /// **'Texte intégral'**
+  String get wirdDetailFullText;
+
+  /// No description provided for @figuresReviewError.
+  ///
+  /// In fr, this message translates to:
+  /// **'La publication a échoué. Vérifiez votre connexion et réessayez.'**
+  String get figuresReviewError;
 }
 
 class _AppLocalizationsDelegate
