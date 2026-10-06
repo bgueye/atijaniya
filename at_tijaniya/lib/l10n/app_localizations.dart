@@ -5510,6 +5510,66 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'Impossible de dépublier cette figure.'**
   String get figureUnpublishError;
+
+  /// No description provided for @a11yTogglePasswordVisibility.
+  ///
+  /// In fr, this message translates to:
+  /// **'Afficher ou masquer le mot de passe'**
+  String get a11yTogglePasswordVisibility;
+
+  /// No description provided for @a11yRemove.
+  ///
+  /// In fr, this message translates to:
+  /// **'Retirer'**
+  String get a11yRemove;
+
+  /// No description provided for @a11ySend.
+  ///
+  /// In fr, this message translates to:
+  /// **'Envoyer'**
+  String get a11ySend;
+
+  /// No description provided for @a11yPreviousWeek.
+  ///
+  /// In fr, this message translates to:
+  /// **'Semaine précédente'**
+  String get a11yPreviousWeek;
+
+  /// No description provided for @a11yNextWeek.
+  ///
+  /// In fr, this message translates to:
+  /// **'Semaine suivante'**
+  String get a11yNextWeek;
+
+  /// No description provided for @a11yUnlink.
+  ///
+  /// In fr, this message translates to:
+  /// **'Délier'**
+  String get a11yUnlink;
+
+  /// No description provided for @a11yPrevious.
+  ///
+  /// In fr, this message translates to:
+  /// **'Précédent'**
+  String get a11yPrevious;
+
+  /// No description provided for @a11yNext.
+  ///
+  /// In fr, this message translates to:
+  /// **'Suivant'**
+  String get a11yNext;
+
+  /// No description provided for @a11yPlayPause.
+  ///
+  /// In fr, this message translates to:
+  /// **'Lire ou mettre en pause'**
+  String get a11yPlayPause;
+
+  /// No description provided for @a11yLike.
+  ///
+  /// In fr, this message translates to:
+  /// **'J\'aime'**
+  String get a11yLike;
 }
 
 class _AppLocalizationsDelegate

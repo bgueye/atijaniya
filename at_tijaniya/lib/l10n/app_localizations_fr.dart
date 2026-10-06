@@ -2994,4 +2994,35 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get figureUnpublishError => 'Impossible de dépublier cette figure.';
+
+  @override
+  String get a11yTogglePasswordVisibility =>
+      'Afficher ou masquer le mot de passe';
+
+  @override
+  String get a11yRemove => 'Retirer';
+
+  @override
+  String get a11ySend => 'Envoyer';
+
+  @override
+  String get a11yPreviousWeek => 'Semaine précédente';
+
+  @override
+  String get a11yNextWeek => 'Semaine suivante';
+
+  @override
+  String get a11yUnlink => 'Délier';
+
+  @override
+  String get a11yPrevious => 'Précédent';
+
+  @override
+  String get a11yNext => 'Suivant';
+
+  @override
+  String get a11yPlayPause => 'Lire ou mettre en pause';
+
+  @override
+  String get a11yLike => 'J\'aime';
 }

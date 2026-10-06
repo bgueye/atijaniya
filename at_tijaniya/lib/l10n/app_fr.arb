@@ -991,5 +991,15 @@
   "figureUnpublishConfirmTitle": "Retirer cette figure de la publication ?",
   "figureUnpublishConfirmBody": "Elle ne sera plus visible des disciples et reviendra dans « Contenu à valider ». Rien n'est supprimé.",
   "figureUnpublishSuccess": "Figure repassée en brouillon.",
-  "figureUnpublishError": "Impossible de dépublier cette figure."
+  "figureUnpublishError": "Impossible de dépublier cette figure.",
+  "a11yTogglePasswordVisibility": "Afficher ou masquer le mot de passe",
+  "a11yRemove": "Retirer",
+  "a11ySend": "Envoyer",
+  "a11yPreviousWeek": "Semaine précédente",
+  "a11yNextWeek": "Semaine suivante",
+  "a11yUnlink": "Délier",
+  "a11yPrevious": "Précédent",
+  "a11yNext": "Suivant",
+  "a11yPlayPause": "Lire ou mettre en pause",
+  "a11yLike": "J'aime"
 }

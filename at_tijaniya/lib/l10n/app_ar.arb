@@ -990,5 +990,15 @@
   "figureUnpublishConfirmTitle": "سحب هذه الشخصية من النشر؟",
   "figureUnpublishConfirmBody": "لن تظهر للمريدين وستعود إلى «محتوى للمراجعة». لن يُحذف شيء.",
   "figureUnpublishSuccess": "أُعيدت الشخصية إلى مسودة.",
-  "figureUnpublishError": "تعذّر سحب هذه الشخصية من النشر."
+  "figureUnpublishError": "تعذّر سحب هذه الشخصية من النشر.",
+  "a11yTogglePasswordVisibility": "إظهار أو إخفاء كلمة المرور",
+  "a11yRemove": "إزالة",
+  "a11ySend": "إرسال",
+  "a11yPreviousWeek": "الأسبوع السابق",
+  "a11yNextWeek": "الأسبوع التالي",
+  "a11yUnlink": "فكّ الربط",
+  "a11yPrevious": "السابق",
+  "a11yNext": "التالي",
+  "a11yPlayPause": "تشغيل أو إيقاف مؤقت",
+  "a11yLike": "إعجاب"
 }

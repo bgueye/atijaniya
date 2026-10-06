@@ -2890,4 +2890,34 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get figureUnpublishError => 'تعذّر سحب هذه الشخصية من النشر.';
+
+  @override
+  String get a11yTogglePasswordVisibility => 'إظهار أو إخفاء كلمة المرور';
+
+  @override
+  String get a11yRemove => 'إزالة';
+
+  @override
+  String get a11ySend => 'إرسال';
+
+  @override
+  String get a11yPreviousWeek => 'الأسبوع السابق';
+
+  @override
+  String get a11yNextWeek => 'الأسبوع التالي';
+
+  @override
+  String get a11yUnlink => 'فكّ الربط';
+
+  @override
+  String get a11yPrevious => 'السابق';
+
+  @override
+  String get a11yNext => 'التالي';
+
+  @override
+  String get a11yPlayPause => 'تشغيل أو إيقاف مؤقت';
+
+  @override
+  String get a11yLike => 'إعجاب';
 }
