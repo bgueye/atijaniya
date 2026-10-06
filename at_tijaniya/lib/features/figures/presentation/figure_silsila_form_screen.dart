@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../core/text/numerals.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../l10n/app_localizations.dart';
 import '../domain/figure_models.dart';
@@ -80,7 +81,7 @@ class _FigureSilsilaFormScreenState extends ConsumerState<FigureSilsilaFormScree
       await ref.read(figuresRepositoryProvider).setSilsilaLink(
             figureId: widget.figure.id,
             parentFigureId: _parentFigureId,
-            orderIndex: int.parse(_orderIndexController.text.trim()),
+            orderIndex: parseLocalizedInt(_orderIndexController.text.trim())!,
           );
       ref.invalidate(silsilaLinksProvider);
       ref.invalidate(historicalSilsilaChainProvider(widget.figure.id));
@@ -149,12 +150,12 @@ class _FigureSilsilaFormScreenState extends ConsumerState<FigureSilsilaFormScree
                       validator: (value) {
                         final trimmed = value?.trim() ?? '';
                         if (trimmed.isEmpty) return l10n.figureSilsilaFormOrderRequired;
-                        return int.tryParse(trimmed) == null ? l10n.figureSilsilaFormOrderInvalid : null;
+                        return parseLocalizedInt(trimmed) == null ? l10n.figureSilsilaFormOrderInvalid : null;
                       },
                     ),
                     if (_errorMessage != null) ...[
                       const SizedBox(height: 16),
-                      Text(_errorMessage!, style: const TextStyle(color: Colors.redAccent)),
+                      Text(_errorMessage!, style: const TextStyle(color: AppColors.danger)),
                     ],
                     const SizedBox(height: 24),
                     ElevatedButton(

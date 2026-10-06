@@ -78,7 +78,7 @@ class _FigureDetailScreenState extends ConsumerState<FigureDetailScreen> {
           TextButton(
             onPressed: () => Navigator.of(context).pop(true),
             child: Text(l10n.figureDeleteConfirmAction,
-                style: const TextStyle(color: Colors.redAccent)),
+                style: const TextStyle(color: AppColors.danger)),
           ),
         ],
       ),
@@ -536,7 +536,7 @@ class _SilsilaTabState extends ConsumerState<_SilsilaTab> {
           TextButton(
             onPressed: () => Navigator.of(context).pop(true),
             child: Text(l10n.figureSilsilaRemoveConfirmAction,
-                style: const TextStyle(color: Colors.redAccent)),
+                style: const TextStyle(color: AppColors.danger)),
           ),
         ],
       ),
@@ -790,7 +790,7 @@ class _CitationsTabState extends ConsumerState<_CitationsTab> {
           TextButton(
             onPressed: () => Navigator.of(context).pop(true),
             child: Text(l10n.figureCitationDeleteConfirmAction,
-                style: const TextStyle(color: Colors.redAccent)),
+                style: const TextStyle(color: AppColors.danger)),
           ),
         ],
       ),
@@ -847,7 +847,7 @@ class _CitationsTabState extends ConsumerState<_CitationsTab> {
           TextButton(
             onPressed: () => Navigator.of(context).pop(true),
             child: Text(l10n.figureWorkDeleteConfirmAction,
-                style: const TextStyle(color: Colors.redAccent)),
+                style: const TextStyle(color: AppColors.danger)),
           ),
         ],
       ),
@@ -1111,7 +1111,7 @@ class _ZawiyaTabState extends ConsumerState<_ZawiyaTab> {
           TextButton(onPressed: () => Navigator.of(context).pop(false), child: Text(l10n.profileCancel)),
           TextButton(
             onPressed: () => Navigator.of(context).pop(true),
-            child: Text(l10n.figureZawiyasUnlinkConfirmAction, style: const TextStyle(color: Colors.redAccent)),
+            child: Text(l10n.figureZawiyasUnlinkConfirmAction, style: const TextStyle(color: AppColors.danger)),
           ),
         ],
       ),
@@ -1167,7 +1167,7 @@ class _ZawiyaTabState extends ConsumerState<_ZawiyaTab> {
           TextButton(onPressed: () => Navigator.of(context).pop(false), child: Text(l10n.profileCancel)),
           TextButton(
             onPressed: () => Navigator.of(context).pop(true),
-            child: Text(l10n.figureZiyarasUnlinkConfirmAction, style: const TextStyle(color: Colors.redAccent)),
+            child: Text(l10n.figureZiyarasUnlinkConfirmAction, style: const TextStyle(color: AppColors.danger)),
           ),
         ],
       ),
@@ -1216,7 +1216,7 @@ class _ZawiyaTabState extends ConsumerState<_ZawiyaTab> {
           TextButton(onPressed: () => Navigator.of(context).pop(false), child: Text(l10n.profileCancel)),
           TextButton(
             onPressed: () => Navigator.of(context).pop(true),
-            child: Text(l10n.figureKhalifaRemoveConfirmAction, style: const TextStyle(color: Colors.redAccent)),
+            child: Text(l10n.figureKhalifaRemoveConfirmAction, style: const TextStyle(color: AppColors.danger)),
           ),
         ],
       ),
@@ -1805,7 +1805,7 @@ class _KhalifaNode extends ConsumerWidget {
                   TextButton(onPressed: onEdit, child: Text(l10n.figureKhalifaEditButton)),
                   TextButton(
                     onPressed: onRemove,
-                    child: Text(l10n.figureKhalifaRemoveButton, style: const TextStyle(color: Colors.redAccent)),
+                    child: Text(l10n.figureKhalifaRemoveButton, style: const TextStyle(color: AppColors.danger)),
                   ),
                 ],
               ),
@@ -1907,9 +1907,13 @@ class _CitationCard extends StatelessWidget {
             ),
             const SizedBox(height: 4),
           ],
-          Text(citation.translation,
-              style: const TextStyle(color: AppColors.ink, fontSize: 16)),
-          const SizedBox(height: 8),
+          // Citation en arabe seul : l'arabe est déjà affiché plus haut, on ne
+          // le répète pas à la place de la traduction.
+          if (citation.french != null || citation.arabic == null) ...[
+            Text(citation.translation,
+                style: const TextStyle(color: AppColors.ink, fontSize: 16)),
+            const SizedBox(height: 8),
+          ],
           Text(
             '— ${citation.source}',
             style: TextStyle(

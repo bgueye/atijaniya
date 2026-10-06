@@ -52,7 +52,15 @@ class FiguresRepository {
   /// `figures_admin_update` exige `is_admin` côté serveur, donc échoue pour
   /// tout autre compte même si cette méthode était appelée par erreur.
   Future<void> validateFigure(String figureId) async {
-    await SupabaseConfig.client.from('figures').update({'content_status': 'valide'}).eq('id', figureId);
+    // `.select().single()` : sans lui, une mise à jour qui ne touche aucune
+    // ligne (figure supprimée entre-temps, droit refusé) passait pour un
+    // succès. Ici elle lève une erreur.
+    await SupabaseConfig.client
+        .from('figures')
+        .update({'content_status': 'valide'})
+        .eq('id', figureId)
+        .select('id')
+        .single();
   }
 
   /// Enregistre l'URL publique d'un portrait déjà téléversé vers le bucket

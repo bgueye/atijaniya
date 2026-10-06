@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../core/auth/sign_in_request.dart';
 import '../../../core/storage/user_scoped_prefs.dart';
 import '../../../core/storage/image_source_sheet.dart';
 import '../../../core/storage/image_upload_service.dart';
@@ -13,6 +14,7 @@ import '../../lineage/presentation/lineage_screen.dart';
 import '../../moderation/presentation/moderation_reports_screen.dart';
 import '../../mouqaddam/presentation/become_mouqaddam_screen.dart';
 import '../../mouqaddam/presentation/ijaza_chain_screen.dart';
+import '../../mouqaddam/presentation/admin_mouqaddam_zawiyas_screen.dart';
 import '../../mouqaddam/presentation/mouqaddam_providers.dart';
 import '../../mouqaddam/presentation/sponsorship_badge.dart';
 import '../../mouqaddam/presentation/sponsorship_requests_screen.dart';
@@ -50,13 +52,13 @@ class ProfilScreen extends ConsumerWidget {
   }
 }
 
-class _SignInRequired extends StatelessWidget {
+class _SignInRequired extends ConsumerWidget {
   const _SignInRequired({required this.l10n});
 
   final AppLocalizations l10n;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return Center(
       child: Padding(
         padding: const EdgeInsets.all(24),
@@ -69,6 +71,11 @@ class _SignInRequired extends StatelessWidget {
               l10n.profileSignInRequired,
               textAlign: TextAlign.center,
               style: TextStyle(color: AppColors.bronze),
+            ),
+            const SizedBox(height: 16),
+            FilledButton(
+              onPressed: () => ref.read(signInRequestProvider.notifier).state++,
+              child: Text(l10n.authSignInAction),
             ),
           ],
         ),
@@ -142,6 +149,19 @@ class _ProfileBody extends ConsumerWidget {
                 ),
               ),
             ),
+          // Attribution, par l'admin, de la zawiya dont chaque mouqaddam
+          // confirmé gère les évènements — voir AdminMouqaddamZawiyasScreen.
+          if (ref.watch(isAdminProvider))
+            Card(
+              child: ListTile(
+                leading: Icon(Icons.assignment_ind_outlined, color: AppColors.gold),
+                title: Text(l10n.adminMouqaddamZawiyasTitle),
+                trailing: Icon(Icons.chevron_right, color: AppColors.bronze),
+                onTap: () => Navigator.of(context).push(
+                  MaterialPageRoute(builder: (_) => const AdminMouqaddamZawiyasScreen()),
+                ),
+              ),
+            ),
           if (ref.watch(isVerifiedMouqaddamProvider)) ...[
             Card(
               child: ListTile(
@@ -198,13 +218,13 @@ class _ProfileBody extends ConsumerWidget {
           ),
           const SizedBox(height: 8),
           ListTile(
-            leading: const Icon(Icons.logout, color: Colors.redAccent),
-            title: Text(l10n.profileSignOut, style: const TextStyle(color: Colors.redAccent)),
+            leading: const Icon(Icons.logout, color: AppColors.danger),
+            title: Text(l10n.profileSignOut, style: const TextStyle(color: AppColors.danger)),
             onTap: () => _confirmSignOut(context, l10n),
           ),
           ListTile(
-            leading: const Icon(Icons.delete_forever_outlined, color: Colors.redAccent),
-            title: Text(l10n.profileDeleteAccount, style: const TextStyle(color: Colors.redAccent)),
+            leading: const Icon(Icons.delete_forever_outlined, color: AppColors.danger),
+            title: Text(l10n.profileDeleteAccount, style: const TextStyle(color: AppColors.danger)),
             onTap: () => _confirmDeleteAccount(context),
           ),
         ],
@@ -222,7 +242,7 @@ class _ProfileBody extends ConsumerWidget {
           TextButton(onPressed: () => Navigator.of(context).pop(false), child: Text(l10n.profileCancel)),
           TextButton(
             onPressed: () => Navigator.of(context).pop(true),
-            child: Text(l10n.profileSignOutConfirmAction, style: const TextStyle(color: Colors.redAccent)),
+            child: Text(l10n.profileSignOutConfirmAction, style: const TextStyle(color: AppColors.danger)),
           ),
         ],
       ),
@@ -332,7 +352,7 @@ class _DeleteAccountDialogState extends ConsumerState<_DeleteAccountDialog> {
           ),
           if (_errorMessage != null) ...[
             const SizedBox(height: 12),
-            Text(_errorMessage!, style: const TextStyle(color: Colors.redAccent)),
+            Text(_errorMessage!, style: const TextStyle(color: AppColors.danger)),
           ],
         ],
       ),
@@ -345,7 +365,7 @@ class _DeleteAccountDialogState extends ConsumerState<_DeleteAccountDialog> {
           onPressed: canSubmit ? () => _submit(expectedWord) : null,
           child: _deleting
               ? const SizedBox(width: 16, height: 16, child: CircularProgressIndicator(strokeWidth: 2))
-              : Text(l10n.profileDeleteAccountConfirmAction, style: const TextStyle(color: Colors.redAccent)),
+              : Text(l10n.profileDeleteAccountConfirmAction, style: const TextStyle(color: AppColors.danger)),
         ),
       ],
     );

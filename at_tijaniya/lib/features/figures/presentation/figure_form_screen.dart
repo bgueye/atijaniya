@@ -5,6 +5,8 @@ import '../../../l10n/app_localizations.dart';
 import '../../lineage/domain/lineage_models.dart' show Foyer;
 import '../domain/figure_models.dart';
 import 'figures_providers.dart';
+import '../../../core/text/numerals.dart';
+import '../../../core/theme/app_colors.dart';
 
 /// Création/édition d'une figure — réservé par RLS à un compte admin
 /// (`figures_admin_write`/`_update`, voir `isAdminProvider`).
@@ -82,7 +84,7 @@ class _FigureFormScreenState extends ConsumerState<FigureFormScreen> {
           category: _category,
           foyer: _foyer,
           birthYearHijri:
-              birthYearText.isEmpty ? null : int.parse(birthYearText),
+              birthYearText.isEmpty ? null : parseLocalizedInt(birthYearText)!,
           bioText: bioText.isEmpty ? null : bioText,
         );
       } else {
@@ -93,7 +95,7 @@ class _FigureFormScreenState extends ConsumerState<FigureFormScreen> {
           category: _category,
           foyer: _foyer,
           birthYearHijri:
-              birthYearText.isEmpty ? null : int.parse(birthYearText),
+              birthYearText.isEmpty ? null : parseLocalizedInt(birthYearText)!,
           bioText: bioText.isEmpty ? null : bioText,
         );
       }
@@ -200,7 +202,7 @@ class _FigureFormScreenState extends ConsumerState<FigureFormScreen> {
                   validator: (value) {
                     final trimmed = value?.trim() ?? '';
                     if (trimmed.isEmpty) return null;
-                    return int.tryParse(trimmed) == null
+                    return parseLocalizedInt(trimmed) == null
                         ? l10n.figureFormBirthYearHijriInvalid
                         : null;
                   },
@@ -219,7 +221,7 @@ class _FigureFormScreenState extends ConsumerState<FigureFormScreen> {
                 if (_errorMessage != null) ...[
                   const SizedBox(height: 16),
                   Text(_errorMessage!,
-                      style: const TextStyle(color: Colors.redAccent)),
+                      style: const TextStyle(color: AppColors.danger)),
                 ],
                 const SizedBox(height: 24),
                 ElevatedButton(

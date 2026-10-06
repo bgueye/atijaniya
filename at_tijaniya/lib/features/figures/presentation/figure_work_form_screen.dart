@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../l10n/app_localizations.dart';
 import '../domain/figure_models.dart';
 import 'figures_providers.dart';
+import '../../../core/theme/app_colors.dart';
 
 /// Création/édition d'une œuvre attribuée à une figure — réservé par RLS à
 /// un compte admin (`figure_works_admin_write`/`_admin_update`, ajoutées le
@@ -127,7 +128,7 @@ class _FigureWorkFormScreenState extends ConsumerState<FigureWorkFormScreen> {
                 if (_errorMessage != null) ...[
                   const SizedBox(height: 16),
                   Text(_errorMessage!,
-                      style: const TextStyle(color: Colors.redAccent)),
+                      style: const TextStyle(color: AppColors.danger)),
                 ],
                 const SizedBox(height: 24),
                 ElevatedButton(

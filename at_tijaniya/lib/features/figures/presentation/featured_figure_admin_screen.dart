@@ -1,3 +1,4 @@
+import '../../../core/date/calendar_days.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -35,7 +36,7 @@ class _FeaturedFigureAdminScreenState extends ConsumerState<FeaturedFigureAdminS
 
   void _changeWeek(int deltaWeeks) {
     setState(() {
-      _weekStart = _weekStart.add(Duration(days: 7 * deltaWeeks));
+      _weekStart = addDays(_weekStart, 7 * deltaWeeks);
       _selectedFigureId = null;
       _errorMessage = null;
     });
@@ -81,7 +82,7 @@ class _FeaturedFigureAdminScreenState extends ConsumerState<FeaturedFigureAdminS
 
   String _weekLabel() {
     String two(int n) => n.toString().padLeft(2, '0');
-    final end = _weekStart.add(const Duration(days: 6));
+    final end = addDays(_weekStart, 6);
     return '${two(_weekStart.day)}/${two(_weekStart.month)} – ${two(end.day)}/${two(end.month)}/${end.year}';
   }
 
@@ -187,7 +188,7 @@ class _FeaturedFigureAdminScreenState extends ConsumerState<FeaturedFigureAdminS
                   ],
                   if (_errorMessage != null) ...[
                     const SizedBox(height: 16),
-                    Text(_errorMessage!, style: const TextStyle(color: Colors.redAccent)),
+                    Text(_errorMessage!, style: const TextStyle(color: AppColors.danger)),
                   ],
                 ],
               ),

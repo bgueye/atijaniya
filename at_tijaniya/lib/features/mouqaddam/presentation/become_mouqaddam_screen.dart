@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../core/text/numerals.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../l10n/app_localizations.dart';
 import '../domain/mouqaddam_models.dart';
@@ -83,7 +84,7 @@ class _PendingRequestView extends ConsumerWidget {
           TextButton(
             onPressed: () => Navigator.of(context).pop(true),
             child: Text(l10n.mouqaddamPendingCancelConfirmAction,
-                style: const TextStyle(color: Colors.redAccent)),
+                style: const TextStyle(color: AppColors.danger)),
           ),
         ],
       ),
@@ -146,7 +147,7 @@ class _PendingRequestView extends ConsumerWidget {
           const SizedBox(height: 20),
           OutlinedButton(
             onPressed: () => _cancel(context, ref),
-            style: OutlinedButton.styleFrom(foregroundColor: Colors.redAccent),
+            style: OutlinedButton.styleFrom(foregroundColor: AppColors.danger),
             child: Text(l10n.mouqaddamPendingCancelButton),
           ),
         ],
@@ -202,7 +203,7 @@ class _RequestFormState extends ConsumerState<_RequestForm> {
       final yearText = _yearController.text.trim();
       await ref.read(mouqaddamRepositoryProvider).requestSponsorship(
             sponsorUserId: _selectedSponsor!.userId,
-            ijazaYear: yearText.isEmpty ? null : int.parse(yearText),
+            ijazaYear: yearText.isEmpty ? null : parseLocalizedInt(yearText)!,
           );
       ref.invalidate(myLatestSponsorshipRequestProvider);
     } catch (_) {
@@ -242,7 +243,7 @@ class _RequestFormState extends ConsumerState<_RequestForm> {
                 SponsorshipRequestStatus.rejected) ...[
               const SizedBox(height: 16),
               Text(l10n.mouqaddamRejectedNote,
-                  style: const TextStyle(color: Colors.redAccent)),
+                  style: const TextStyle(color: AppColors.danger)),
             ],
             const SizedBox(height: 24),
             Text(l10n.mouqaddamSelectedSponsorLabel,
@@ -269,7 +270,7 @@ class _RequestFormState extends ConsumerState<_RequestForm> {
               validator: (value) {
                 final text = value?.trim() ?? '';
                 if (text.isEmpty) return null;
-                final year = int.tryParse(text);
+                final year = parseLocalizedInt(text);
                 if (year == null || year < 1200 || year > 2100) {
                   return l10n.mouqaddamYearInvalid;
                 }
@@ -279,7 +280,7 @@ class _RequestFormState extends ConsumerState<_RequestForm> {
             if (_errorMessage != null) ...[
               const SizedBox(height: 16),
               Text(_errorMessage!,
-                  style: const TextStyle(color: Colors.redAccent)),
+                  style: const TextStyle(color: AppColors.danger)),
             ],
             const SizedBox(height: 24),
             ElevatedButton(

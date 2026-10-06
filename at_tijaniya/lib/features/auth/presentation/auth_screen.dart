@@ -515,7 +515,7 @@ class _MessageBanner extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 8),
-      child: Text(text, style: TextStyle(color: isError ? Colors.redAccent : AppColors.emerald)),
+      child: Text(text, style: TextStyle(color: isError ? AppColors.danger : AppColors.emerald)),
     );
   }
 }

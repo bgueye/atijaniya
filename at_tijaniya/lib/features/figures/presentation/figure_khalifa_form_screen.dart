@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../core/text/numerals.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../khadara/domain/khadara_models.dart' show Zawiya;
@@ -105,7 +106,7 @@ class _FigureKhalifaFormScreenState extends ConsumerState<FigureKhalifaFormScree
       _errorMessage = null;
     });
     try {
-      final orderIndex = int.parse(_orderIndexController.text.trim());
+      final orderIndex = parseLocalizedInt(_orderIndexController.text.trim())!;
       final periodText = _periodController.text.trim().isEmpty ? null : _periodController.text.trim();
       final repo = ref.read(figuresRepositoryProvider);
       if (widget.existingLink == null) {
@@ -252,7 +253,7 @@ class _FigureKhalifaFormScreenState extends ConsumerState<FigureKhalifaFormScree
                       validator: (value) {
                         final trimmed = value?.trim() ?? '';
                         if (trimmed.isEmpty) return l10n.figureKhalifaFormOrderRequired;
-                        return int.tryParse(trimmed) == null ? l10n.figureKhalifaFormOrderInvalid : null;
+                        return parseLocalizedInt(trimmed) == null ? l10n.figureKhalifaFormOrderInvalid : null;
                       },
                     ),
                     const SizedBox(height: 16),
@@ -272,7 +273,7 @@ class _FigureKhalifaFormScreenState extends ConsumerState<FigureKhalifaFormScree
                     ),
                     if (_errorMessage != null) ...[
                       const SizedBox(height: 16),
-                      Text(_errorMessage!, style: const TextStyle(color: Colors.redAccent)),
+                      Text(_errorMessage!, style: const TextStyle(color: AppColors.danger)),
                     ],
                     const SizedBox(height: 24),
                     ElevatedButton(

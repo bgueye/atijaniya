@@ -29,7 +29,14 @@ class FigureBiographyParagraph {
 /// Une citation attribuée à la figure — toujours avec sa source, pour rester
 /// traçable (docs/01 § 8 : "Recueil de citations et enseignements", P2).
 class FigureCitation {
-  const FigureCitation({this.id, this.arabic, this.transliteration, required this.translation, required this.source});
+  const FigureCitation({
+    this.id,
+    this.arabic,
+    this.transliteration,
+    this.french,
+    required this.translation,
+    required this.source,
+  });
 
   /// `figure_quotes.id` — `null` seulement pour une citation pas encore
   /// enregistrée (formulaire de création). Nécessaire pour cibler
@@ -37,6 +44,15 @@ class FigureCitation {
   final String? id;
   final String? arabic;
   final String? transliteration;
+
+  /// Traduction française telle qu'enregistrée (`figure_quotes.text_fr`),
+  /// `null` pour une citation saisie en arabe seul. À utiliser pour
+  /// préremplir un formulaire : [translation] retombe sur l'arabe quand il
+  /// n'y a pas de français, et s'en servir pour l'édition recopiait l'arabe
+  /// dans `text_fr` au premier enregistrement (audit du 2026-10-04).
+  final String? french;
+
+  /// Texte à afficher : la traduction française, sinon l'arabe.
   final String translation;
 
   /// Référence du document source de la citation — jamais une citation sans
@@ -454,6 +470,7 @@ List<FigureCitation>? _citationsFrom(List<dynamic>? quotesRows) {
       FigureCitation(
         id: raw['id'] as String?,
         arabic: raw['text_ar'] as String?,
+        french: raw['text_fr'] as String?,
         translation: (raw['text_fr'] as String?) ?? (raw['text_ar'] as String?) ?? '',
         source: (raw['source_note'] as String?) ?? '—',
       ),

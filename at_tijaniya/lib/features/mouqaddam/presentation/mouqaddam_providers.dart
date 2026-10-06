@@ -34,12 +34,14 @@ final myManagedZawiyaIdProvider = Provider<String?>((ref) {
       );
 });
 
-final myLatestSponsorshipRequestProvider = FutureProvider<SponsorshipRequest?>((ref) {
+final myLatestSponsorshipRequestProvider = FutureProvider.autoDispose<SponsorshipRequest?>((ref) {
   ref.watch(currentUserIdProvider);
   return ref.watch(mouqaddamRepositoryProvider).fetchMyLatestRequest();
 });
 
-final receivedSponsorshipRequestsProvider = FutureProvider<List<SponsorshipRequest>>((ref) {
+// `autoDispose` : sans lui, une demande arrivée après la première ouverture
+// de l'écran restait invisible jusqu'au redémarrage de l'app.
+final receivedSponsorshipRequestsProvider = FutureProvider.autoDispose<List<SponsorshipRequest>>((ref) {
   ref.watch(currentUserIdProvider);
   return ref.watch(mouqaddamRepositoryProvider).fetchReceivedRequests();
 });

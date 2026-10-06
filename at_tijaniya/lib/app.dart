@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+import 'core/auth/sign_in_request.dart';
 import 'core/supabase/supabase_config.dart';
 import 'core/theme/app_colors.dart';
 import 'core/theme/app_theme.dart';
@@ -12,6 +13,7 @@ import 'core/theme/contrast_controller.dart';
 import 'core/theme/locale_controller.dart';
 import 'features/auth/presentation/auth_screen.dart';
 import 'features/auth/presentation/reset_password_screen.dart';
+import 'features/home/presentation/home_dashboard_provider.dart';
 import 'features/home/presentation/home_shell.dart';
 import 'features/onboarding/data/onboarding_store.dart';
 import 'features/onboarding/presentation/language_selection_screen.dart';
@@ -19,6 +21,18 @@ import 'features/onboarding/presentation/onboarding_screen.dart';
 import 'features/profil/presentation/profile_providers.dart';
 import 'features/splash/presentation/splash_screen.dart';
 import 'l10n/app_localizations.dart';
+
+/// Prévient quand une route dépilée ramène sur l'écran racine.
+class _ReturnToRootObserver extends NavigatorObserver {
+  _ReturnToRootObserver(this.onReturnToRoot);
+
+  final VoidCallback onReturnToRoot;
+
+  @override
+  void didPop(Route<dynamic> route, Route<dynamic>? previousRoute) {
+    if (previousRoute?.isFirst ?? false) onReturnToRoot();
+  }
+}
 
 /// Orchestre le parcours P0/P1 : Splash -> Choix de langue -> Onboarding
 /// (une seule fois, voir `OnboardingStore`) -> Auth (ou mode invité) ->
@@ -109,6 +123,13 @@ class _AtTijaniyaAppState extends ConsumerState<AtTijaniyaApp> {
       }
     });
 
+    // Un invité demande à se connecter (voir `signInRequestProvider`).
+    ref.listen(signInRequestProvider, (previous, next) {
+      if (!mounted || _step != _Step.home) return;
+      _navigatorKey.currentState?.popUntil((route) => route.isFirst);
+      setState(() => _step = _Step.auth);
+    });
+
     return MaterialApp(
       // Bascule le contraste = clé différente = Flutter démonte et remonte
       // tout l'arbre sous MaterialApp (Navigator et route poussées inclus),
@@ -124,6 +145,15 @@ class _AtTijaniyaAppState extends ConsumerState<AtTijaniyaApp> {
       // tree — voir `SupabaseConfig`/`authStateChangesProvider`).
       key: ValueKey(highContrast),
       navigatorKey: _navigatorKey,
+      // Au retour sur l'écran racine (wird terminé, tasbih avancé, rappel
+      // modifié depuis une carte de l'accueil), le tableau de bord doit
+      // refléter ce qui vient d'être fait : il n'était rechargé qu'au
+      // changement d'onglet.
+      navigatorObservers: [
+        _ReturnToRootObserver(() {
+          if (mounted) ref.invalidate(homeDashboardProvider);
+        }),
+      ],
       title: 'At-Tijaniya',
       debugShowCheckedModeBanner: false,
       theme: AppTheme.standard,

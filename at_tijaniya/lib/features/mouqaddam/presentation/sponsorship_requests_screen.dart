@@ -84,7 +84,7 @@ class _RequestCard extends ConsumerWidget {
             onPressed: () => Navigator.of(context).pop(true),
             child: Text(
               l10n.mouqaddamRequestsConfirmAction,
-              style: TextStyle(color: accept ? AppColors.emerald : Colors.redAccent),
+              style: TextStyle(color: accept ? AppColors.emerald : AppColors.danger),
             ),
           ),
         ],
@@ -141,7 +141,7 @@ class _RequestCard extends ConsumerWidget {
               children: [
                 OutlinedButton(
                   onPressed: () => _respond(context, ref, accept: false),
-                  style: OutlinedButton.styleFrom(foregroundColor: Colors.redAccent),
+                  style: OutlinedButton.styleFrom(foregroundColor: AppColors.danger),
                   child: Text(l10n.mouqaddamRequestsReject),
                 ),
                 const SizedBox(width: 8),

@@ -5,8 +5,13 @@ import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/nav_icons.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../communaute/presentation/communaute_screen.dart';
+import '../../communaute/presentation/community_providers.dart';
+import '../../communaute/presentation/groups_providers.dart';
 import '../../figures/presentation/figures_screen.dart';
+import '../../khadara/presentation/khadara_providers.dart';
 import '../../khadara/presentation/khadara_screen.dart';
+import '../../khadara/presentation/live_stream_providers.dart';
+import '../../mouqaddam/presentation/mouqaddam_providers.dart';
 import '../../notifications/presentation/notifications_providers.dart';
 import '../../notifications/presentation/notifications_screen.dart';
 import '../../profil/presentation/profil_screen.dart';
@@ -86,6 +91,27 @@ class _HomeShellState extends ConsumerState<HomeShell> {
           // démonté. Un wird terminé ou une session de tasbih avancée dans
           // un autre onglet doit se refléter dès le retour sur "Accueil".
           if (i == 0 && _index != 0) ref.invalidate(homeDashboardProvider);
+          // Même raison pour les listes venues du réseau : ces providers ne
+          // sont jamais libérés (onglets toujours montés), donc un direct
+          // démarré ou terminé par quelqu'un d'autre, un évènement passé ou
+          // une nouvelle publication n'apparaissaient qu'au redémarrage de
+          // l'app. On recharge à l'arrivée sur l'onglet ; l'ancien contenu
+          // reste affiché pendant le rechargement.
+          if (i != _index) {
+            if (i == 0 || i == 2) ref.invalidate(upcomingEventsProvider);
+            if (i == 2) {
+              // Statut mouqaddam et zawiya attribuée : décidés par d'autres
+              // (parrain, admin) pendant que l'app est ouverte, ils n'étaient
+              // jamais relus avant un redémarrage.
+              ref.invalidate(myMouqaddamStatusProvider);
+              ref.invalidate(allLiveStreamsProvider);
+              ref.invalidate(streamReplaysProvider);
+            }
+            if (i == 4) {
+              ref.invalidate(communityFeedProvider);
+              ref.invalidate(groupsProvider);
+            }
+          }
           setState(() => _index = i);
         },
         items: [

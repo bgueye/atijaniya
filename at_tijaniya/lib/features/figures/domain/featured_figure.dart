@@ -3,6 +3,7 @@
 /// `home/domain/home_dashboard.dart`.
 library;
 
+import '../../../core/date/calendar_days.dart';
 import '../../khadara/domain/khadara_models.dart' show KhadaraEvent;
 import 'figure_models.dart';
 
@@ -11,7 +12,7 @@ import 'figure_models.dart';
 /// côté serveur) et pour la rotation automatique ci-dessous.
 DateTime weekStartFor(DateTime now) {
   final date = DateTime(now.year, now.month, now.day);
-  return date.subtract(Duration(days: date.weekday - DateTime.monday));
+  return addDays(date, DateTime.monday - date.weekday);
 }
 
 /// Figures éligibles à la rotation automatique. La demande du porteur de
@@ -59,7 +60,10 @@ Figure? pickFigureOfTheWeek(
   final eligible = eligibleForRotation(figures);
   if (eligible.isEmpty) return null;
 
-  final weeksSinceEpoch = weekStartFor(now ?? DateTime.now()).difference(_rotationEpoch).inDays ~/ 7;
+  // Arrondi sur les heures : une semaine contenant un changement d'heure
+  // dure 167 ou 169 h, et `inDays ~/ 7` perdait alors une semaine entière.
+  final weeksSinceEpoch =
+      (weekStartFor(now ?? DateTime.now()).difference(_rotationEpoch).inHours / (7 * 24)).round();
   return eligible[weeksSinceEpoch % eligible.length];
 }
 

@@ -133,7 +133,7 @@ class _EditProfileFormState extends ConsumerState<_EditProfileForm> {
               ),
               if (_error != null) ...[
                 const SizedBox(height: 12),
-                Text(_error!, style: const TextStyle(color: Colors.redAccent)),
+                Text(_error!, style: const TextStyle(color: AppColors.danger)),
               ],
               const SizedBox(height: 24),
               ElevatedButton(

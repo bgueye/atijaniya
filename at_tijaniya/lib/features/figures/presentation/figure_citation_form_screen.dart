@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../l10n/app_localizations.dart';
 import '../domain/figure_models.dart';
 import 'figures_providers.dart';
+import '../../../core/theme/app_colors.dart';
 
 /// Création/édition d'une citation attribuée à une figure — réservé par RLS
 /// à un compte admin (`figure_quotes_admin_write`/`_admin_update`, ajoutées
@@ -43,7 +44,7 @@ class _FigureCitationFormScreenState
     final citation = widget.citation;
     if (citation != null) {
       _arabicController.text = citation.arabic ?? '';
-      _frenchController.text = citation.translation;
+      _frenchController.text = citation.french ?? '';
       _sourceController.text = citation.source == '—' ? '' : citation.source;
     }
   }
@@ -149,7 +150,7 @@ class _FigureCitationFormScreenState
                 if (_errorMessage != null) ...[
                   const SizedBox(height: 16),
                   Text(_errorMessage!,
-                      style: const TextStyle(color: Colors.redAccent)),
+                      style: const TextStyle(color: AppColors.danger)),
                 ],
                 const SizedBox(height: 24),
                 ElevatedButton(

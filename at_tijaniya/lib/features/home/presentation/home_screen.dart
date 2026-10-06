@@ -441,7 +441,10 @@ class _ResumeTasbihCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final pillar = resumable.wird.pillars[resumable.session.pillarIndex];
+    // Index borné : une session enregistrée par une ancienne version peut
+    // pointer au-delà du nombre de piliers actuel.
+    final pillars = resumable.wird.pillars;
+    final pillar = pillars[resumable.session.pillarIndex.clamp(0, pillars.length - 1)];
     final isArabic = Localizations.localeOf(context).languageCode == 'ar';
     final wirdName = isArabic ? resumable.wird.nameArabic : resumable.wird.nameFrench;
     final subtitle =
@@ -712,10 +715,17 @@ class _FeaturedFigureCard extends StatelessWidget {
           child: Stack(
             fit: StackFit.expand,
             children: [
+              // Une figure épinglée par l'admin peut ne pas avoir de portrait
+              // (saisie directe en base) : fond uni plutôt qu'un plantage de
+              // l'accueil pour tous les disciples.
+              if (figure.portraitUrl == null)
+                const ColoredBox(color: AppColors.zaytoune)
+              else
               Image.network(
                 figure.portraitUrl!,
                 fit: BoxFit.cover,
                 alignment: Alignment.topCenter,
+                errorBuilder: (context, error, stackTrace) => const ColoredBox(color: AppColors.zaytoune),
                 // Voir la même note dans event_detail_screen.dart.
                 cacheWidth: (MediaQuery.of(context).size.width * MediaQuery.of(context).devicePixelRatio).round(),
               ),

@@ -144,7 +144,7 @@ class _DonationScreenState extends ConsumerState<DonationScreen> {
             if (_errorMessage != null) ...[
               const SizedBox(height: 16),
               Text(_errorMessage!,
-                  style: const TextStyle(color: Colors.redAccent)),
+                  style: const TextStyle(color: AppColors.danger)),
             ],
             const SizedBox(height: 28),
             ElevatedButton(

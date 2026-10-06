@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../l10n/app_localizations.dart';
 import '../domain/tariqa_condition_models.dart';
 import 'tariqa_conditions_providers.dart';
+import '../../../core/theme/app_colors.dart';
 
 /// Correction d'une condition de la tariqa existante — réservé par RLS à un
 /// compte admin (`tariqa_conditions_admin_update`, voir `isAdminProvider`
@@ -143,7 +144,7 @@ class _TariqaConditionFormScreenState extends ConsumerState<TariqaConditionFormS
                 ),
                 if (_errorMessage != null) ...[
                   const SizedBox(height: 16),
-                  Text(_errorMessage!, style: const TextStyle(color: Colors.redAccent)),
+                  Text(_errorMessage!, style: const TextStyle(color: AppColors.danger)),
                 ],
                 const SizedBox(height: 24),
                 ElevatedButton(

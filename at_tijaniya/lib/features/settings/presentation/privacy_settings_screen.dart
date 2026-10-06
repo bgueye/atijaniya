@@ -172,7 +172,7 @@ class _PrivacyFormState extends ConsumerState<_PrivacyForm> {
         ),
         if (_errorMessage != null) ...[
           const SizedBox(height: 16),
-          Text(_errorMessage!, style: const TextStyle(color: Colors.redAccent)),
+          Text(_errorMessage!, style: const TextStyle(color: AppColors.danger)),
         ],
       ],
     );

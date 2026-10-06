@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/theme/app_colors.dart';
+import '../../../core/widgets/app_snackbar.dart';
 import '../../../l10n/app_localizations.dart';
 import '../domain/figure_models.dart';
 import 'figure_detail_screen.dart';
@@ -90,11 +91,17 @@ class _DraftCard extends ConsumerWidget {
     );
     if (confirmed != true || !context.mounted) return;
 
-    await ref.read(figuresRepositoryProvider).validateFigure(figure.id);
+    try {
+      await ref.read(figuresRepositoryProvider).validateFigure(figure.id);
+    } catch (_) {
+      // Publication d'un contenu religieux : un échec doit se voir.
+      if (context.mounted) showErrorSnackBar(context, l10n.figuresReviewError);
+      return;
+    }
+    if (!context.mounted) return;
     ref.invalidate(draftFiguresProvider);
     ref.invalidate(figuresProvider);
 
-    if (!context.mounted) return;
     ScaffoldMessenger.of(context)
       ..hideCurrentSnackBar()
       ..showSnackBar(SnackBar(content: Text(l10n.figuresReviewSuccess)));
