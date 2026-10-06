@@ -12,6 +12,7 @@ import 'free_wird_screen.dart';
 import 'wird_detail_screen.dart';
 import 'wird_recitations_management_screen.dart';
 import 'wird_recitations_review_screen.dart';
+import '../../../core/widgets/directional_chevron.dart';
 
 /// Liste des Wirds — Lazim, Wazifa, Hadratou-l-Jouma, puis le Wird libre.
 /// Priorité P0 pour les trois premiers ; le Wird libre (compteur paramétré
@@ -65,7 +66,7 @@ class _RecitationsReviewCard extends StatelessWidget {
         contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
         leading: Icon(Icons.fact_check_outlined, color: AppColors.emerald),
         title: Text(l10n.wirdRecitationsReviewButton, style: const TextStyle(fontWeight: FontWeight.w500)),
-        trailing: Icon(Icons.chevron_right, color: AppColors.bronze),
+        trailing: DirectionalChevron(color: AppColors.bronze),
         onTap: () => Navigator.of(context).push(
           MaterialPageRoute(builder: (_) => const WirdRecitationsReviewScreen()),
         ),
@@ -94,7 +95,7 @@ class _RecitationsManageCard extends StatelessWidget {
         leading: Icon(Icons.library_music_outlined, color: AppColors.emerald),
         title: Text(l10n.wirdRecitationsManageTitle, style: const TextStyle(fontWeight: FontWeight.w500)),
         subtitle: Text(l10n.wirdRecitationsManageCardSubtitle, style: TextStyle(color: AppColors.bronze)),
-        trailing: Icon(Icons.chevron_right, color: AppColors.bronze),
+        trailing: DirectionalChevron(color: AppColors.bronze),
         onTap: () => Navigator.of(context).push(
           MaterialPageRoute(builder: (_) => const WirdRecitationsManagementScreen()),
         ),
@@ -145,7 +146,7 @@ class _WirdCard extends StatelessWidget {
           wird.frequency == WirdFrequency.daily ? l10n.wirdFrequencyDaily : l10n.homeWirdSubtitleWeeklyInfo,
           style: TextStyle(color: AppColors.bronze),
         ),
-        trailing: Icon(Icons.chevron_right, color: AppColors.bronze),
+        trailing: DirectionalChevron(color: AppColors.bronze),
         onTap: () => Navigator.of(context).push(
           MaterialPageRoute(builder: (_) => WirdDetailScreen(wird: wird)),
         ),
@@ -167,7 +168,7 @@ class _FreeWirdCard extends StatelessWidget {
         leading: Icon(Icons.tune, color: AppColors.emerald),
         title: Text(l10n.wirdFreeTitle, style: const TextStyle(fontWeight: FontWeight.w500)),
         subtitle: Text(l10n.wirdFreeSubtitle, style: TextStyle(color: AppColors.bronze)),
-        trailing: Icon(Icons.chevron_right, color: AppColors.bronze),
+        trailing: DirectionalChevron(color: AppColors.bronze),
         onTap: () => Navigator.of(context).push(
           MaterialPageRoute(builder: (_) => const FreeWirdScreen()),
         ),
@@ -189,7 +190,7 @@ class _TariqaConditionsCard extends StatelessWidget {
         leading: Icon(Icons.rule_outlined, color: AppColors.emerald),
         title: Text(l10n.tariqaConditionsCardTitle, style: const TextStyle(fontWeight: FontWeight.w500)),
         subtitle: Text(l10n.tariqaConditionsCardSubtitle, style: TextStyle(color: AppColors.bronze)),
-        trailing: Icon(Icons.chevron_right, color: AppColors.bronze),
+        trailing: DirectionalChevron(color: AppColors.bronze),
         onTap: () => Navigator.of(context).push(
           MaterialPageRoute(builder: (_) => const TariqaConditionsScreen()),
         ),

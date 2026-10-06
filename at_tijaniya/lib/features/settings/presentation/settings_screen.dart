@@ -10,6 +10,7 @@ import '../../donation/data/donation_feature_flag.dart';
 import '../../donation/presentation/donation_screen.dart';
 import 'about_screen.dart';
 import 'privacy_settings_screen.dart';
+import '../../../core/widgets/directional_chevron.dart';
 
 /// Paramètres généraux — langue, notifications, confidentialité, à propos.
 /// Priorité P0 (docs/03-architecture-ecrans.md).
@@ -72,7 +73,7 @@ class SettingsScreen extends ConsumerWidget {
                 leading: const Icon(Icons.privacy_tip_outlined),
                 title: Text(l10n.privacyTitle),
                 subtitle: Text(l10n.settingsPrivacyTileSubtitle),
-                trailing: const Icon(Icons.chevron_right),
+                trailing: const DirectionalChevron(),
                 onTap: () => Navigator.of(context).push(
                   MaterialPageRoute(
                       builder: (_) => const PrivacySettingsScreen()),
@@ -87,7 +88,7 @@ class SettingsScreen extends ConsumerWidget {
                   leading: const Icon(Icons.favorite_outline),
                   title: Text(l10n.settingsDonationSection),
                   subtitle: Text(l10n.settingsDonationTileSubtitle),
-                  trailing: const Icon(Icons.chevron_right),
+                  trailing: const DirectionalChevron(),
                   onTap: () => Navigator.of(context).push(
                     MaterialPageRoute(builder: (_) => const DonationScreen()),
                   ),
@@ -115,7 +116,7 @@ class SettingsScreen extends ConsumerWidget {
                 leading: const Icon(Icons.info_outline),
                 title: Text(l10n.appName),
                 subtitle: const _AboutVersionSubtitle(),
-                trailing: const Icon(Icons.chevron_right),
+                trailing: const DirectionalChevron(),
                 onTap: () => Navigator.of(context).push(
                   MaterialPageRoute(builder: (_) => const AboutScreen()),
                 ),

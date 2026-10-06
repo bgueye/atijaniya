@@ -24,6 +24,7 @@ import '../../wird/presentation/tasbih_screen.dart';
 import '../../wird/presentation/wird_detail_screen.dart';
 import '../domain/home_dashboard.dart';
 import 'home_dashboard_provider.dart';
+import '../../../core/widgets/directional_chevron.dart';
 
 /// Accueil / Tableau de bord — "Statut du jour, accès rapide, prochain
 /// horaire" (P0, docs/03-architecture-ecrans.md). Construit entièrement à
@@ -236,7 +237,7 @@ class _StatusPill extends StatelessWidget {
           Container(
             width: 8,
             height: 8,
-            margin: const EdgeInsets.only(right: 10),
+            margin: const EdgeInsetsDirectional.only(end: 10),
             decoration: BoxDecoration(color: AppColors.gold, shape: BoxShape.circle),
           ),
           Expanded(
@@ -428,7 +429,7 @@ class _WirdRow extends StatelessWidget {
               decoration: BoxDecoration(color: AppColors.goldSoft, borderRadius: BorderRadius.circular(999)),
               child: Text(streakLabel, style: TextStyle(color: AppColors.gold, fontSize: 10.5, fontWeight: FontWeight.w500)),
             )
-          : Icon(Icons.chevron_right, color: AppColors.bronze),
+          : DirectionalChevron(color: AppColors.bronze),
     );
   }
 }
@@ -640,7 +641,7 @@ class _DonationCard extends StatelessWidget {
         ),
         title: Text(l10n.donationTitle, style: const TextStyle(fontWeight: FontWeight.w500)),
         subtitle: Text(l10n.settingsDonationTileSubtitle, style: TextStyle(color: AppColors.bronze, fontSize: 12)),
-        trailing: Icon(Icons.chevron_right, color: AppColors.bronze),
+        trailing: DirectionalChevron(color: AppColors.bronze),
       ),
     );
   }
@@ -676,7 +677,7 @@ class _KhadaraTeaserCard extends StatelessWidget {
         ),
         title: Text(event.title, style: const TextStyle(fontWeight: FontWeight.w500, fontSize: 13.5), maxLines: 1, overflow: TextOverflow.ellipsis),
         subtitle: Text(formatKhadaraEventSchedule(event, AppLocalizations.of(context)!), style: TextStyle(color: AppColors.bronze, fontSize: 11.5)),
-        trailing: Icon(Icons.chevron_right, color: AppColors.bronze),
+        trailing: DirectionalChevron(color: AppColors.bronze),
       ),
     );
   }

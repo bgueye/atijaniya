@@ -151,7 +151,7 @@ class _ReminderTile extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.only(bottom: 10),
               child: Align(
-                alignment: Alignment.centerLeft,
+                alignment: AlignmentDirectional.centerStart,
                 child: TextButton.icon(
                   onPressed: () async {
                     final picked = await showTimePicker(context: context, initialTime: time);

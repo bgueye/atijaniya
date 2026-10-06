@@ -123,7 +123,7 @@ class _PillarCard extends ConsumerWidget {
               for (final entry in step.recitations)
                 _RecitationEntryTile(key: ValueKey(entry.id), entry: entry, l10n: l10n),
             Align(
-              alignment: Alignment.centerLeft,
+              alignment: AlignmentDirectional.centerStart,
               child: TextButton.icon(
                 onPressed: () => _openUploadSheet(context, ref),
                 icon: Icon(Icons.upload_file,
@@ -326,7 +326,7 @@ class _RecitationEntryTileState extends ConsumerState<_RecitationEntryTile> {
         ),
         if (_previewError != null)
           Padding(
-            padding: const EdgeInsets.only(left: 16, bottom: 8),
+            padding: const EdgeInsetsDirectional.only(start: 16, bottom: 8),
             child: Text(_previewError!,
                 style: TextStyle(color: AppColors.bronze, fontSize: 12)),
           ),

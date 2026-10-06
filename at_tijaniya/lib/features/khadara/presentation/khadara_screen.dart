@@ -17,6 +17,7 @@ import 'live_stream_screen.dart';
 import 'nearby_recurring_events_screen.dart';
 import 'zawiya_detail_screen.dart';
 import 'zawiya_form_screen.dart';
+import '../../../core/widgets/directional_chevron.dart';
 
 /// Module Khadara — calendrier des évènements et annuaire des zawiyas.
 /// Priorité P1 (docs/03-architecture-ecrans.md). Nom de code inchangé,
@@ -179,7 +180,7 @@ class _EventsTab extends ConsumerWidget {
                   ? '${formatKhadaraEventSchedule(event, l10n)} · ${event.zawiyaName}'
                   : formatKhadaraEventSchedule(event, l10n),
             ),
-            trailing: Icon(Icons.chevron_right, color: AppColors.bronze),
+            trailing: DirectionalChevron(color: AppColors.bronze),
             onTap: () => Navigator.of(context).push(
               MaterialPageRoute(builder: (_) => EventDetailScreen(event: event)),
             ),
@@ -299,7 +300,7 @@ class _ZawiyasTabState extends ConsumerState<_ZawiyasTab> {
                                 Text(zawiya.addressText!, maxLines: 2, overflow: TextOverflow.ellipsis),
                             ],
                           ),
-                    trailing: Icon(Icons.chevron_right, color: AppColors.bronze),
+                    trailing: DirectionalChevron(color: AppColors.bronze),
                     onTap: () => Navigator.of(context).push(
                       MaterialPageRoute(builder: (_) => ZawiyaDetailScreen(zawiya: zawiya)),
                     ),
@@ -351,7 +352,7 @@ class _LiveTab extends ConsumerWidget {
                             leading: Icon(Icons.podcasts, color: AppColors.emerald),
                             title: Text(stream.displayTitle(l10n.khadaraLiveTab)),
                             subtitle: Text(l10n.khadaraLiveBadge),
-                            trailing: Icon(Icons.chevron_right, color: AppColors.bronze),
+                            trailing: DirectionalChevron(color: AppColors.bronze),
                             onTap: () => Navigator.of(context).push(
                               MaterialPageRoute(builder: (_) => LiveStreamScreen(stream: stream)),
                             ),
