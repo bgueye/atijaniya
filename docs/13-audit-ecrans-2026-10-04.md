@@ -169,6 +169,70 @@ Détail dans les fichiers par module ; regroupés ici par thème pour le plan de
   d'erreur dans `app_colors.dart` ; vert zaytoune sur l'accueil et l'en-tête des figures.
 - **Tests** : presque aucun test d'écran ni de repository, aucun test de la RLS.
 
+### Avancement des chantiers hors sécurité (au 2026-10-05)
+
+Corrigé (code de l'app, plus les migrations `audit_h1_deletions_and_groups` et
+`audit_h2_admin_list_mouqaddams` appliquées et vérifiées sur la base live) :
+
+- **Version de publication Android** : la permission `INTERNET` manquait dans le manifeste
+  principal (elle n'existait qu'en `debug`/`profile`) — une version `release` n'aurait eu
+  aucun accès réseau. Nom affiché corrigé en « At-Tijaniya ». Une version `release` a été
+  compilée avec succès ; le manifeste fusionné contient bien la permission et les récepteurs.
+- **Rappels de wird sur Android** : récepteurs du plugin de notifications et permission de
+  redémarrage déclarés ; texte de la notification dans la langue choisie, reprogrammé au
+  changement de langue. À valider sur téléphone (jamais vu s'afficher).
+- **Récitations audio** : chemin Storage unique à chaque téléversement ; pré-écoute admin
+  fiable (une carte = un lecteur = un fichier, réécoute possible en fin de piste).
+- **Suppressions** : figure fondatrice protégée tant qu'une succession lui est rattachée ;
+  évènement avec direct terminé supprimable.
+- **Création de groupe** atomique (le créateur est ajouté comme membre par trigger).
+- **Formulaire d'évènement** : plus de doublon quand l'envoi de l'image échoue ; date
+  approximative conservée après modification.
+- **Citation en arabe seul** : plus recopiée dans la traduction française.
+- **Messagerie privée, discussion de groupe, chat de direct** : envoi partagé
+  (`MessageComposer`) avec message d'erreur, anti double-envoi, texte rendu en cas d'échec ;
+  liste calée sur le dernier message ; rechargement automatique ; tuiles identifiées par
+  message (plus de texte d'un message supprimé affiché sur le suivant).
+- **Écran admin « Zawiyas des mouqaddams »** (Profil) : attribue à chaque mouqaddam la
+  zawiya dont il gère évènements et directs.
+- **Invité** : bouton « Se connecter » sur le profil. **Wird libre** : abandon possible.
+- **Listes** : rechargées à l'arrivée sur un onglet ; tableau de bord rechargé au retour d'un
+  écran ; conversations et demandes de parrainage rechargées à chaque ouverture ; statut
+  mouqaddam relu à l'arrivée sur l'onglet Zawiyas.
+- **Changement d'heure** : séries de wirds, « Figure de la semaine » et évènements
+  récurrents calculés en jours civils (`addDays`).
+- **Charte** : couleur `danger` ajoutée aux jetons, `Colors.redAccent` remplacé partout.
+- **Arabe** : tasbih, historique, guide d'un wird, rappels et messages audio traduits ;
+  messages de la reconnaissance vocale traduits ; chiffres arabo-indiens acceptés dans les
+  champs numériques ; noms des wirds en arabe dans les titres.
+- **Robustesse** : accueil protégé contre une figure épinglée sans portrait et une session
+  de tasbih hors bornes ; validation d'une figure avec gestion d'erreur (plus de faux
+  succès) ; ouverture d'une notification hors ligne ; « Hadra la plus proche » sans sablier
+  infini ; données locales illisibles ignorées au lieu de bloquer l'écran.
+
+Reste à faire :
+
+- **À trancher par le porteur de projet** (rien n'a été modifié sur ces points) :
+  1. formule de clôture du tahlil (Lazim, Wazifa) différente des documents validés, et
+     translittération de la Wazifa déclarée absente alors que le document en fournit une ;
+  2. conditions de la Tariqa à inscrire au tableau de validation de `docs/01` ;
+  3. relecture par un arabophone des libellés arabes ajoutés pendant l'audit (environ 70),
+     dont « الركن » pour « pilier », et de la version arabe de « À propos » ;
+  4. évènements passés qui bloquent la suppression d'un lieu : les supprimer avec lui ou
+     les détacher ;
+  5. Hadratou-l-Jouma terminée un autre jour que vendredi : doit-elle compter dans la série ;
+  6. affichage de l'auteur d'une publication : aujourd'hui le nom de la zawiya seul, alors
+     que le rattachement est déclaré par le disciple lui-même.
+- **Parcours** : succession à deux fondateurs possible ; maillon manuel de silsila perdu
+  quand on a un parrain dans l'app ; réordonnancement d'une succession ; dépublication
+  d'une figure ; like désynchronisé entre le fil et le détail d'une publication.
+- **Dons** (désactivés) : montant entier à aligner avec la fonction serveur ; déclenchement
+  réel de la notification PayDunya jamais observé.
+- **RTL** : quelques alignements non directionnels ; noms de figures en français dans les
+  listes admin ; dates en chiffres latins.
+- **Accessibilité** : libellés sémantiques et zones tactiles relevés écran par écran.
+- **Tests** : presque aucun test d'écran ni de repository, aucun test automatisé de la RLS.
+
 ## Index des rapports par module
 
 | Fichier | Écrans |
