@@ -1,7 +1,10 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/theme/app_colors.dart';
+import '../../../core/widgets/message_composer.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../profil/presentation/profile_providers.dart';
 import '../domain/message_models.dart';
@@ -23,19 +26,28 @@ class ConversationScreen extends ConsumerStatefulWidget {
 }
 
 class _ConversationScreenState extends ConsumerState<ConversationScreen> {
-  final _messageController = TextEditingController();
+  Timer? _pollTimer;
+
+  @override
+  void initState() {
+    super.initState();
+    // Pas de Realtime sur la messagerie : un rechargement léger tant que
+    // l'écran est ouvert, comme le chat d'un direct. Sans lui, un message
+    // reçu n'apparaissait qu'après avoir soi-même écrit (audit 2026-10-04).
+    _pollTimer = Timer.periodic(const Duration(seconds: 5), (_) {
+      if (mounted) ref.invalidate(conversationMessagesProvider(widget.conversationId));
+    });
+  }
 
   @override
   void dispose() {
-    _messageController.dispose();
+    _pollTimer?.cancel();
     super.dispose();
   }
 
-  Future<void> _send() async {
-    final text = _messageController.text.trim();
-    if (text.isEmpty) return;
+  Future<void> _send(String text) async {
     await ref.read(messagesRepositoryProvider).sendMessage(widget.conversationId, text);
-    _messageController.clear();
+    if (!mounted) return;
     ref.invalidate(conversationMessagesProvider(widget.conversationId));
     ref.invalidate(conversationsProvider);
   }
@@ -54,7 +66,16 @@ class _ConversationScreenState extends ConsumerState<ConversationScreen> {
             child: messages.when(
               loading: () => Center(child: CircularProgressIndicator(color: AppColors.emerald)),
               error: (error, stackTrace) => Center(
-                child: Text(l10n.communityConversationsLoadError, style: TextStyle(color: AppColors.bronze)),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(l10n.communityMessagesLoadError, style: TextStyle(color: AppColors.bronze)),
+                    TextButton(
+                      onPressed: () => ref.invalidate(conversationMessagesProvider(widget.conversationId)),
+                      child: Text(l10n.homeRetry),
+                    ),
+                  ],
+                ),
               ),
               data: (list) => list.isEmpty
                   ? Center(
@@ -67,31 +88,31 @@ class _ConversationScreenState extends ConsumerState<ConversationScreen> {
                         ),
                       ),
                     )
+                  // `reverse` : la liste s'ouvre sur le message le plus récent
+                  // et y reste quand un nouveau arrive (elle s'ouvrait sur les
+                  // plus anciens, le message envoyé restait hors écran).
                   : ListView.builder(
+                      reverse: true,
                       padding: const EdgeInsets.all(16),
                       itemCount: list.length,
-                      itemBuilder: (context, i) => _MessageBubble(message: list[i], isMine: list[i].senderId == myUserId),
+                      itemBuilder: (context, i) {
+                        final message = list[list.length - 1 - i];
+                        return _MessageBubble(
+                          key: ValueKey(message.id),
+                          message: message,
+                          isMine: message.senderId == myUserId,
+                        );
+                      },
                     ),
             ),
           ),
           SafeArea(
             top: false,
-            child: Padding(
-              padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
-              child: Row(
-                children: [
-                  Expanded(
-                    child: TextField(
-                      controller: _messageController,
-                      decoration: InputDecoration(hintText: l10n.communityGroupsPostHint),
-                    ),
-                  ),
-                  IconButton(
-                    icon: Icon(Icons.send, color: AppColors.emerald),
-                    onPressed: _send,
-                  ),
-                ],
-              ),
+            child: MessageComposer(
+              hintText: l10n.communityGroupsPostHint,
+              sendTooltip: l10n.communitySendMessageButton,
+              errorMessage: l10n.communityMessageSendError,
+              onSend: _send,
             ),
           ),
         ],
@@ -101,7 +122,7 @@ class _ConversationScreenState extends ConsumerState<ConversationScreen> {
 }
 
 class _MessageBubble extends StatelessWidget {
-  const _MessageBubble({required this.message, required this.isMine});
+  const _MessageBubble({super.key, required this.message, required this.isMine});
 
   final DirectMessage message;
   final bool isMine;

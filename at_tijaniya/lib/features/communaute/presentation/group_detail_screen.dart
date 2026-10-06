@@ -1,8 +1,11 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/theme/app_colors.dart';
 import '../../../core/widgets/app_snackbar.dart';
+import '../../../core/widgets/message_composer.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../khadara/domain/khadara_models.dart';
 import '../../khadara/presentation/khadara_providers.dart';
@@ -35,14 +38,24 @@ class GroupDetailScreen extends ConsumerStatefulWidget {
 }
 
 class _GroupDetailScreenState extends ConsumerState<GroupDetailScreen> {
-  final _messageController = TextEditingController();
+  Timer? _pollTimer;
+
+  @override
+  void initState() {
+    super.initState();
+    // Même rechargement léger que la messagerie privée : les messages des
+    // autres membres n'apparaissaient qu'en rouvrant l'écran.
+    _pollTimer = Timer.periodic(const Duration(seconds: 6), (_) {
+      if (mounted && _group.isMember) ref.invalidate(groupPostsProvider(_group.id));
+    });
+  }
   late Group _group = widget.group;
   bool _updatingMembership = false;
   bool _deletingGroup = false;
 
   @override
   void dispose() {
-    _messageController.dispose();
+    _pollTimer?.cancel();
     super.dispose();
   }
 
@@ -74,7 +87,7 @@ class _GroupDetailScreenState extends ConsumerState<GroupDetailScreen> {
           TextButton(onPressed: () => Navigator.of(context).pop(false), child: Text(l10n.profileCancel)),
           TextButton(
             onPressed: () => Navigator.of(context).pop(true),
-            child: Text(l10n.communityGroupsLeaveConfirmAction, style: const TextStyle(color: Colors.redAccent)),
+            child: Text(l10n.communityGroupsLeaveConfirmAction, style: const TextStyle(color: AppColors.danger)),
           ),
         ],
       ),
@@ -132,7 +145,7 @@ class _GroupDetailScreenState extends ConsumerState<GroupDetailScreen> {
           TextButton(onPressed: () => Navigator.of(context).pop(false), child: Text(l10n.profileCancel)),
           TextButton(
             onPressed: () => Navigator.of(context).pop(true),
-            child: Text(l10n.communityGroupsDeleteConfirmAction, style: const TextStyle(color: Colors.redAccent)),
+            child: Text(l10n.communityGroupsDeleteConfirmAction, style: const TextStyle(color: AppColors.danger)),
           ),
         ],
       ),
@@ -155,18 +168,9 @@ class _GroupDetailScreenState extends ConsumerState<GroupDetailScreen> {
     }
   }
 
-  Future<void> _sendMessage() async {
-    final l10n = AppLocalizations.of(context)!;
-    final userId = ref.read(currentUserIdProvider);
-    if (userId == null) {
-      _promptSignIn(l10n.communityGroupsSignInToJoin);
-      return;
-    }
-    final text = _messageController.text.trim();
-    if (text.isEmpty) return;
+  Future<void> _sendMessage(String text) async {
     await ref.read(groupsRepositoryProvider).addGroupPost(_group.id, text);
-    _messageController.clear();
-    ref.invalidate(groupPostsProvider(_group.id));
+    if (mounted) ref.invalidate(groupPostsProvider(_group.id));
   }
 
   @override
@@ -220,22 +224,11 @@ class _GroupDetailScreenState extends ConsumerState<GroupDetailScreen> {
           if (_group.isMember)
             SafeArea(
               top: false,
-              child: Padding(
-                padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
-                child: Row(
-                  children: [
-                    Expanded(
-                      child: TextField(
-                        controller: _messageController,
-                        decoration: InputDecoration(hintText: l10n.communityGroupsPostHint),
-                      ),
-                    ),
-                    IconButton(
-                      icon: Icon(Icons.send, color: AppColors.emerald),
-                      onPressed: _sendMessage,
-                    ),
-                  ],
-                ),
+              child: MessageComposer(
+                hintText: l10n.communityGroupsPostHint,
+                sendTooltip: l10n.communitySendMessageButton,
+                errorMessage: l10n.communityMessageSendError,
+                onSend: _sendMessage,
               ),
             ),
         ],
@@ -293,7 +286,7 @@ class _GroupHeader extends StatelessWidget {
             child: group.isMember
                 ? OutlinedButton(
                     onPressed: updating ? null : onLeave,
-                    style: OutlinedButton.styleFrom(foregroundColor: Colors.redAccent),
+                    style: OutlinedButton.styleFrom(foregroundColor: AppColors.danger),
                     child: Text(l10n.communityGroupsLeave),
                   )
                 : ElevatedButton(
@@ -423,10 +416,18 @@ class _GroupPosts extends ConsumerWidget {
                 ),
               ),
             )
+          // `key` par message : sans elle, après une suppression ou un
+          // rechargement, la tuile réutilisait l'état de la précédente à la
+          // même position (texte d'un message supprimé affiché sur le
+          // suivant, boutons restés désactivés).
           : ListView.builder(
               padding: const EdgeInsets.all(16),
               itemCount: list.length,
-              itemBuilder: (context, i) => _GroupPostTile(post: list[i], fallback: l10n.communityDefaultAuthor),
+              itemBuilder: (context, i) => _GroupPostTile(
+                key: ValueKey(list[i].id),
+                post: list[i],
+                fallback: l10n.communityDefaultAuthor,
+              ),
             ),
     );
   }
@@ -437,7 +438,7 @@ class _GroupPosts extends ConsumerWidget {
 /// `add_group_posts_author_update_delete_policies`, 2026-08-20), aucune
 /// exception admin, même restriction que `CommunityRepository`/`posts`.
 class _GroupPostTile extends ConsumerStatefulWidget {
-  const _GroupPostTile({required this.post, required this.fallback});
+  const _GroupPostTile({super.key, required this.post, required this.fallback});
 
   final GroupPost post;
   final String fallback;
@@ -506,7 +507,7 @@ class _GroupPostTileState extends ConsumerState<_GroupPostTile> {
           TextButton(onPressed: () => Navigator.of(context).pop(false), child: Text(l10n.profileCancel)),
           TextButton(
             onPressed: () => Navigator.of(context).pop(true),
-            child: Text(l10n.communityGroupsDeletePostConfirmAction, style: const TextStyle(color: Colors.redAccent)),
+            child: Text(l10n.communityGroupsDeletePostConfirmAction, style: const TextStyle(color: AppColors.danger)),
           ),
         ],
       ),

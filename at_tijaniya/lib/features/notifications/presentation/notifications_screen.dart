@@ -64,7 +64,12 @@ class _NotificationTile extends ConsumerWidget {
   }
 
   Future<void> _open(BuildContext context, WidgetRef ref) async {
-    await ref.read(notificationsRepositoryProvider).markAsRead(notification.id);
+    try {
+      await ref.read(notificationsRepositoryProvider).markAsRead(notification.id);
+    } catch (_) {
+      // Hors ligne : on ouvre quand même la notification.
+    }
+    if (!context.mounted) return;
 
     switch (notification.type) {
       case AppNotificationType.streamLive:

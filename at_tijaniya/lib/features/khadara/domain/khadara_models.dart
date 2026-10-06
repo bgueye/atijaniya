@@ -8,6 +8,7 @@
 /// `khadara_repository.dart`.
 library;
 
+import '../../../core/date/calendar_days.dart';
 import 'dart:math';
 
 enum KhadaraEventType { ziyara, hadra, other }
@@ -256,9 +257,9 @@ DateTime? computeNextWeeklyOccurrence({
   // `%` sur des `int` en Dart renvoie toujours un résultat non négatif quand
   // le diviseur est positif — pas besoin de gérer un décalage négatif ici.
   final dayDelta = (dayOfWeek - candidate.weekday) % 7;
-  candidate = candidate.add(Duration(days: dayDelta));
+  candidate = addDays(candidate, dayDelta);
   if (!candidate.isAfter(reference)) {
-    candidate = candidate.add(const Duration(days: 7));
+    candidate = addDays(candidate, 7);
   }
   if (until != null && DateTime(candidate.year, candidate.month, candidate.day).isAfter(until)) {
     return null;

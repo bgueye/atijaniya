@@ -53,7 +53,7 @@ class _EventDetailScreenState extends ConsumerState<EventDetailScreen> {
           TextButton(
             onPressed: () => Navigator.of(context).pop(true),
             child: Text(l10n.khadaraDeleteEventConfirmAction,
-                style: const TextStyle(color: Colors.redAccent)),
+                style: const TextStyle(color: AppColors.danger)),
           ),
         ],
       ),

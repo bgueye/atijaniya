@@ -54,18 +54,28 @@ class _NearbyRecurringEventsScreenState extends ConsumerState<NearbyRecurringEve
     }
 
     final repo = ref.read(khadaraRepositoryProvider);
-    final events = await repo.fetchUpcomingEvents();
-    final zawiyas = await repo.fetchZawiyas();
-    if (!mounted) return;
-    setState(() {
-      _loading = false;
-      _results = findNearbyRecurringEvents(
-        events: events,
-        zawiyas: zawiyas,
-        userLatitude: locationResult.position!.latitude,
-        userLongitude: locationResult.position!.longitude,
-      );
-    });
+    try {
+      // Les deux listes sont indépendantes : chargées en parallèle.
+      final (events, zawiyas) = await (repo.fetchUpcomingEvents(), repo.fetchZawiyas()).wait;
+      if (!mounted) return;
+      setState(() {
+        _loading = false;
+        _results = findNearbyRecurringEvents(
+          events: events,
+          zawiyas: zawiyas,
+          userLatitude: locationResult.position!.latitude,
+          userLongitude: locationResult.position!.longitude,
+        );
+      });
+    } catch (_) {
+      // Réseau coupé : sans ce cas, l'écran restait sur son sablier.
+      if (mounted) {
+        setState(() {
+          _loading = false;
+          _failure = LocationFailure.unknown;
+        });
+      }
+    }
   }
 
   String _failureMessage(LocationFailure failure, AppLocalizations l10n) {

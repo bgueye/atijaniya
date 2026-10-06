@@ -4,8 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import '../../../core/text/numerals.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/url/safe_url.dart';
+import '../../../core/widgets/message_composer.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../moderation/domain/moderation_models.dart';
 import '../../moderation/presentation/report_content_dialog.dart';
@@ -28,7 +30,6 @@ class LiveStreamScreen extends ConsumerStatefulWidget {
 }
 
 class _LiveStreamScreenState extends ConsumerState<LiveStreamScreen> {
-  final _messageController = TextEditingController();
   final _replayUrlController = TextEditingController();
   final _replayDurationController = TextEditingController();
   Timer? _pollTimer;
@@ -40,15 +41,17 @@ class _LiveStreamScreenState extends ConsumerState<LiveStreamScreen> {
     // l'app) : un polling léger tant que l'écran est ouvert suffit à
     // donner une sensation de "direct" au chat sans introduire une
     // dépendance/complexité supplémentaire.
-    _pollTimer = Timer.periodic(const Duration(seconds: 4), (_) {
-      if (mounted) ref.invalidate(chatMessagesProvider(widget.stream.id));
-    });
+    // Aucun polling pour un direct déjà terminé : son chat est fermé.
+    if (widget.stream.status != LiveStreamStatus.ended) {
+      _pollTimer = Timer.periodic(const Duration(seconds: 4), (_) {
+        if (mounted) ref.invalidate(chatMessagesProvider(widget.stream.id));
+      });
+    }
   }
 
   @override
   void dispose() {
     _pollTimer?.cancel();
-    _messageController.dispose();
     _replayUrlController.dispose();
     _replayDurationController.dispose();
     super.dispose();
@@ -109,7 +112,7 @@ class _LiveStreamScreenState extends ConsumerState<LiveStreamScreen> {
     );
     if (confirmed != true || !mounted) return;
 
-    final minutes = int.tryParse(_replayDurationController.text.trim());
+    final minutes = parseLocalizedInt(_replayDurationController.text.trim());
     try {
       await ref.read(liveStreamRepositoryProvider).createReplay(
             streamId: widget.stream.id,
@@ -142,12 +145,9 @@ class _LiveStreamScreenState extends ConsumerState<LiveStreamScreen> {
     }
   }
 
-  Future<void> _send() async {
-    final text = _messageController.text.trim();
-    if (text.isEmpty) return;
+  Future<void> _send(String text) async {
     await ref.read(liveStreamRepositoryProvider).sendChatMessage(widget.stream.id, text);
-    _messageController.clear();
-    ref.invalidate(chatMessagesProvider(widget.stream.id));
+    if (mounted) ref.invalidate(chatMessagesProvider(widget.stream.id));
   }
 
   Future<void> _confirmEnd() async {
@@ -199,7 +199,7 @@ class _LiveStreamScreenState extends ConsumerState<LiveStreamScreen> {
           if (isOwner && !isEnded)
             TextButton(
               onPressed: _confirmEnd,
-              child: Text(l10n.khadaraEndLiveButton, style: const TextStyle(color: Colors.red)),
+              child: Text(l10n.khadaraEndLiveButton, style: const TextStyle(color: AppColors.danger)),
             ),
           if (isAdmin && isEnded)
             IconButton(
@@ -246,19 +246,12 @@ class _LiveStreamScreenState extends ConsumerState<LiveStreamScreen> {
                     padding: const EdgeInsets.all(16),
                     child: Text(l10n.khadaraChatSignInToWrite, style: TextStyle(color: AppColors.bronze)),
                   )
-                : Padding(
-                    padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
-                    child: Row(
-                      children: [
-                        Expanded(
-                          child: TextField(
-                            controller: _messageController,
-                            decoration: InputDecoration(hintText: l10n.khadaraChatHint),
-                          ),
-                        ),
-                        IconButton(icon: Icon(Icons.send, color: AppColors.emerald), onPressed: _send),
-                      ],
-                    ),
+                : MessageComposer(
+                    hintText: l10n.khadaraChatHint,
+                    sendTooltip: l10n.communitySendMessageButton,
+                    errorMessage: l10n.communityMessageSendError,
+                    maxLength: 500,
+                    onSend: _send,
                   ),
           ),
         ],
@@ -292,10 +285,15 @@ class _ChatMessagesList extends ConsumerWidget {
           ? Center(
               child: Text(l10n.khadaraChatEmpty, style: TextStyle(color: AppColors.bronze)),
             )
+          // `reverse` : le chat reste calé sur le dernier message.
           : ListView.builder(
+              reverse: true,
               padding: const EdgeInsets.all(16),
               itemCount: list.length,
-              itemBuilder: (context, i) => _ChatBubble(message: list[i], isMine: list[i].userId == myUserId),
+              itemBuilder: (context, i) {
+                final message = list[list.length - 1 - i];
+                return _ChatBubble(message: message, isMine: message.userId == myUserId);
+              },
             ),
     );
   }

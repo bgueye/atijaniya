@@ -45,6 +45,12 @@ class _EventFormScreenState extends ConsumerState<EventFormScreen> {
   DateTime? _startsAt;
   DateTime? _endsAt;
   String? _zawiyaId;
+
+  /// Évènement déjà enregistré pendant cette ouverture du formulaire. Si
+  /// l'envoi de l'image échoue ensuite, l'écran reste ouvert sur une erreur :
+  /// un second « Enregistrer » doit alors MODIFIER cet évènement, pas en
+  /// créer un deuxième (doublon constaté par l'audit du 2026-10-04).
+  KhadaraEvent? _savedEvent;
   bool _saving = false;
   String? _errorMessage;
 
@@ -243,7 +249,8 @@ class _EventFormScreenState extends ConsumerState<EventFormScreen> {
     try {
       final repo = ref.read(khadaraRepositoryProvider);
       KhadaraEvent saved;
-      if (widget.event == null) {
+      final existing = _savedEvent ?? widget.event;
+      if (existing == null) {
         saved = await repo.createEvent(
           title: _titleController.text.trim(),
           description: descriptionText.isEmpty ? null : descriptionText,
@@ -264,15 +271,15 @@ class _EventFormScreenState extends ConsumerState<EventFormScreen> {
         );
       } else {
         saved = await repo.updateEvent(
-          widget.event!.id,
+          existing.id,
           title: _titleController.text.trim(),
           description: descriptionText.isEmpty ? null : descriptionText,
           type: _type,
           startsAt: effectiveStartsAt,
           endsAt: _isRecurring ? null : _endsAt,
           zawiyaId: zawiyaId,
-          latitude: widget.event!.latitude,
-          longitude: widget.event!.longitude,
+          latitude: existing.latitude,
+          longitude: existing.longitude,
           addressText: addressText.isEmpty ? null : addressText,
           isRecurring: _isRecurring,
           recurrenceDayOfWeek: _isRecurring ? _recurrenceDayOfWeek : null,
@@ -283,6 +290,8 @@ class _EventFormScreenState extends ConsumerState<EventFormScreen> {
           dateNote: dateNoteText.isEmpty ? null : dateNoteText,
         );
       }
+
+      _savedEvent = saved;
 
       // Image : étape séparée, après coup — le chemin de Storage exige un
       // event_id déjà existant (voir KhadaraRepository.updateEventImage).
@@ -322,6 +331,10 @@ class _EventFormScreenState extends ConsumerState<EventFormScreen> {
             recurrenceHour: saved.recurrenceHour,
             recurrenceMinute: saved.recurrenceMinute,
             recurrenceUntil: saved.recurrenceUntil,
+            // Sans ces deux champs, la fiche réaffichait une heure précise
+            // après l'édition, et une réédition immédiate les effaçait en base.
+            isDateApproximate: saved.isDateApproximate,
+            dateNote: saved.dateNote,
           ),
         );
       }
@@ -603,7 +616,7 @@ class _EventFormScreenState extends ConsumerState<EventFormScreen> {
                 if (_errorMessage != null) ...[
                   const SizedBox(height: 16),
                   Text(_errorMessage!,
-                      style: const TextStyle(color: Colors.redAccent)),
+                      style: const TextStyle(color: AppColors.danger)),
                 ],
                 const SizedBox(height: 24),
                 ElevatedButton(

@@ -39,7 +39,7 @@ class GroupPastLiveStreamsScreen extends ConsumerWidget {
           TextButton(onPressed: () => Navigator.of(dialogContext).pop(false), child: Text(l10n.profileCancel)),
           TextButton(
             onPressed: () => Navigator.of(dialogContext).pop(true),
-            child: Text(l10n.communityGroupsDeleteStreamConfirmAction, style: const TextStyle(color: Colors.redAccent)),
+            child: Text(l10n.communityGroupsDeleteStreamConfirmAction, style: const TextStyle(color: AppColors.danger)),
           ),
         ],
       ),

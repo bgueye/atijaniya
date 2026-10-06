@@ -5,6 +5,8 @@ import '../../../l10n/app_localizations.dart';
 import '../domain/khadara_models.dart';
 import 'khadara_format.dart';
 import 'khadara_providers.dart';
+import '../../../core/text/numerals.dart';
+import '../../../core/theme/app_colors.dart';
 
 /// Création/édition d'une zawiya — réservé par RLS à un compte admin
 /// (`zawiyas_admin_write`/`_update`, voir `canManageZawiyasProvider`) :
@@ -72,7 +74,7 @@ class _ZawiyaFormScreenState extends ConsumerState<ZawiyaFormScreen> {
   String? _validateOptionalDouble(String? value, AppLocalizations l10n) {
     final trimmed = value?.trim() ?? '';
     if (trimmed.isEmpty) return null;
-    return double.tryParse(trimmed.replaceAll(',', '.')) == null
+    return parseLocalizedDouble(trimmed) == null
         ? l10n.zawiyaFormCoordinateInvalid
         : null;
   }
@@ -212,7 +214,7 @@ class _ZawiyaFormScreenState extends ConsumerState<ZawiyaFormScreen> {
                 if (_errorMessage != null) ...[
                   const SizedBox(height: 16),
                   Text(_errorMessage!,
-                      style: const TextStyle(color: Colors.redAccent)),
+                      style: const TextStyle(color: AppColors.danger)),
                 ],
                 const SizedBox(height: 24),
                 ElevatedButton(

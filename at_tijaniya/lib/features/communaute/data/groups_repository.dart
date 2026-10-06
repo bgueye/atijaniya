@@ -57,20 +57,16 @@ class GroupsRepository {
     String? regionText,
   }) async {
     final userId = SupabaseConfig.client.auth.currentUser!.id;
-    final inserted = await SupabaseConfig.client
-        .from('groups')
-        .insert({
-          'name': name,
-          'description': description,
-          'zawiya_id': zawiyaId,
-          'region_text': regionText,
-          'created_by_user_id': userId,
-        })
-        .select('id')
-        .single();
-    await SupabaseConfig.client.from('group_memberships').insert({
-      'group_id': inserted['id'] as String,
-      'user_id': userId,
+    // Une seule requête : le créateur est ajouté comme membre par le trigger
+    // `trg_groups_add_creator`, dans la même transaction. Auparavant une
+    // seconde insertion côté app pouvait échouer et laisser un groupe sans
+    // son créateur (puis un doublon à la tentative suivante).
+    await SupabaseConfig.client.from('groups').insert({
+      'name': name,
+      'description': description,
+      'zawiya_id': zawiyaId,
+      'region_text': regionText,
+      'created_by_user_id': userId,
     });
   }
 

@@ -104,7 +104,7 @@ class _PostDetailScreenState extends ConsumerState<PostDetailScreen> {
           TextButton(onPressed: () => Navigator.of(context).pop(false), child: Text(l10n.profileCancel)),
           TextButton(
             onPressed: () => Navigator.of(context).pop(true),
-            child: Text(l10n.communityDeletePostConfirmAction, style: const TextStyle(color: Colors.redAccent)),
+            child: Text(l10n.communityDeletePostConfirmAction, style: const TextStyle(color: AppColors.danger)),
           ),
         ],
       ),
@@ -160,7 +160,7 @@ class _PostDetailScreenState extends ConsumerState<PostDetailScreen> {
           TextButton(onPressed: () => Navigator.of(context).pop(false), child: Text(l10n.profileCancel)),
           TextButton(
             onPressed: () => Navigator.of(context).pop(true),
-            child: Text(l10n.communityDeleteCommentConfirmAction, style: const TextStyle(color: Colors.redAccent)),
+            child: Text(l10n.communityDeleteCommentConfirmAction, style: const TextStyle(color: AppColors.danger)),
           ),
         ],
       ),

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../core/text/numerals.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../l10n/app_localizations.dart';
 import '../domain/lineage_models.dart';
@@ -80,10 +81,13 @@ class _LineageScreenState extends ConsumerState<LineageScreen> {
                 ? _foyerAutreController.text.trim()
                 : null,
             moqaddamNameText: _moqaddamNameController.text.trim(),
-            transmissionYear: yearText.isEmpty ? null : int.parse(yearText),
+            transmissionYear: yearText.isEmpty ? null : parseLocalizedInt(yearText)!,
             zawiyaText: zawiyaText.isEmpty ? null : zawiyaText,
           );
       ref.invalidate(myLineageProvider);
+      // Les correspondances et les demandes dépendent de la déclaration.
+      ref.invalidate(lineageMatchesProvider);
+      ref.invalidate(myConnectionRequestsProvider);
       if (mounted) Navigator.of(context).pop(true);
     } catch (_) {
       if (mounted) setState(() => _errorMessage = l10n.lineageSaveError);
@@ -106,7 +110,7 @@ class _LineageScreenState extends ConsumerState<LineageScreen> {
           TextButton(
             onPressed: () => Navigator.of(context).pop(true),
             child: Text(l10n.lineageDeleteConfirmAction,
-                style: const TextStyle(color: Colors.redAccent)),
+                style: const TextStyle(color: AppColors.danger)),
           ),
         ],
       ),
@@ -132,6 +136,9 @@ class _LineageScreenState extends ConsumerState<LineageScreen> {
       _yearController.clear();
       _zawiyaController.clear();
       ref.invalidate(myLineageProvider);
+      // Les correspondances et les demandes dépendent de la déclaration.
+      ref.invalidate(lineageMatchesProvider);
+      ref.invalidate(myConnectionRequestsProvider);
       if (mounted) {
         setState(() {
           _foyer = Foyer.tivaouane;
@@ -278,7 +285,7 @@ class _LineageScreenState extends ConsumerState<LineageScreen> {
                       validator: (value) {
                         final text = value?.trim() ?? '';
                         if (text.isEmpty) return null;
-                        final year = int.tryParse(text);
+                        final year = parseLocalizedInt(text);
                         if (year == null || year < 1900 || year > 2100) {
                           return l10n.lineageYearInvalid;
                         }
@@ -294,7 +301,7 @@ class _LineageScreenState extends ConsumerState<LineageScreen> {
                     if (_errorMessage != null) ...[
                       const SizedBox(height: 16),
                       Text(_errorMessage!,
-                          style: const TextStyle(color: Colors.redAccent)),
+                          style: const TextStyle(color: AppColors.danger)),
                     ],
                     if (_infoMessage != null) ...[
                       const SizedBox(height: 16),
@@ -318,7 +325,7 @@ class _LineageScreenState extends ConsumerState<LineageScreen> {
                       OutlinedButton(
                         onPressed: _saving ? null : _delete,
                         style: OutlinedButton.styleFrom(
-                            foregroundColor: Colors.redAccent),
+                            foregroundColor: AppColors.danger),
                         child: Text(l10n.lineageDelete),
                       ),
                     ],

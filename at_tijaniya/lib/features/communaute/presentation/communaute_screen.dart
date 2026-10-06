@@ -130,7 +130,11 @@ class _FeedTab extends ConsumerWidget {
                 // design pré-publication Play Store.
                 padding: const EdgeInsets.fromLTRB(16, 16, 16, 100),
                 itemCount: posts.length,
+                // `key` par publication : sans elle, après une création ou une
+                // suppression, chaque carte gardait le « j'aime » de la carte
+                // qui occupait sa position avant.
                 itemBuilder: (context, i) => _PostCard(
+                    key: ValueKey(posts[i].id),
                     post: posts[i],
                     fallbackAuthor: l10n.communityDefaultAuthor),
               ),
@@ -605,7 +609,7 @@ class _CreateGroupSheetState extends ConsumerState<_CreateGroupSheet> {
 }
 
 class _PostCard extends ConsumerStatefulWidget {
-  const _PostCard({required this.post, required this.fallbackAuthor});
+  const _PostCard({super.key, required this.post, required this.fallbackAuthor});
 
   final CommunityPost post;
   final String fallbackAuthor;
@@ -621,6 +625,17 @@ class _PostCardState extends ConsumerState<_PostCard> {
   late bool _liked = widget.post.isLikedByMe;
   late int _likeCount = widget.post.likeCount;
   bool _likeInFlight = false;
+
+  /// Le fil rechargé fait foi (retour de l'écran de détail, rechargement de
+  /// l'onglet) : l'état local se réaligne dessus, sauf pendant un « j'aime »
+  /// en cours d'envoi.
+  @override
+  void didUpdateWidget(covariant _PostCard oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (_likeInFlight) return;
+    _liked = widget.post.isLikedByMe;
+    _likeCount = widget.post.likeCount;
+  }
 
   bool get _isSignedIn => SupabaseConfig.client.auth.currentUser != null;
 
@@ -666,9 +681,31 @@ class _PostCardState extends ConsumerState<_PostCard> {
     return Card(
       child: InkWell(
         borderRadius: BorderRadius.circular(16),
-        onTap: () => Navigator.of(context).push(
-          MaterialPageRoute(builder: (_) => PostDetailScreen(post: post)),
-        ),
+        // Le détail reçoit l'état courant du « j'aime » (pas celui du dernier
+        // chargement), et le fil est rechargé au retour : les deux écrans
+        // pouvaient se contredire, puis échouer en silence au tap suivant.
+        onTap: () async {
+          await Navigator.of(context).push(
+            MaterialPageRoute(
+              builder: (_) => PostDetailScreen(
+                post: CommunityPost(
+                  id: post.id,
+                  authorUserId: post.authorUserId,
+                  authorZawiyaId: post.authorZawiyaId,
+                  authorDisplayName: post.authorDisplayName,
+                  authorZawiyaName: post.authorZawiyaName,
+                  contentText: post.contentText,
+                  mediaUrl: post.mediaUrl,
+                  createdAt: post.createdAt,
+                  likeCount: _likeCount,
+                  commentCount: post.commentCount,
+                  isLikedByMe: _liked,
+                ),
+              ),
+            ),
+          );
+          if (mounted) ref.invalidate(communityFeedProvider);
+        },
         child: Padding(
           padding: const EdgeInsets.all(16),
           child: Column(

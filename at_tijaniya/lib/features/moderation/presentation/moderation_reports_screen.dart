@@ -151,7 +151,7 @@ class _ReportCardState extends ConsumerState<_ReportCard> {
             onPressed: () => Navigator.of(dialogContext).pop(true),
             child: Text(
               _actionLabel(),
-              style: const TextStyle(color: Colors.redAccent),
+              style: const TextStyle(color: AppColors.danger),
             ),
           ),
         ],
@@ -191,7 +191,7 @@ class _ReportCardState extends ConsumerState<_ReportCard> {
                 const SizedBox(width: 8),
                 OutlinedButton(
                   onPressed: _busy ? null : () => _resolve(takeAction: true),
-                  style: OutlinedButton.styleFrom(foregroundColor: Colors.redAccent),
+                  style: OutlinedButton.styleFrom(foregroundColor: AppColors.danger),
                   child: Text(_actionLabel()),
                 ),
               ],

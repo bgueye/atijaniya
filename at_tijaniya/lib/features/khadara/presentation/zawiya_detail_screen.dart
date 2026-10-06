@@ -45,7 +45,7 @@ class _ZawiyaDetailScreenState extends ConsumerState<ZawiyaDetailScreen> {
           TextButton(onPressed: () => Navigator.of(context).pop(false), child: Text(l10n.profileCancel)),
           TextButton(
             onPressed: () => Navigator.of(context).pop(true),
-            child: Text(l10n.khadaraDeleteZawiyaConfirmAction, style: const TextStyle(color: Colors.redAccent)),
+            child: Text(l10n.khadaraDeleteZawiyaConfirmAction, style: const TextStyle(color: AppColors.danger)),
           ),
         ],
       ),

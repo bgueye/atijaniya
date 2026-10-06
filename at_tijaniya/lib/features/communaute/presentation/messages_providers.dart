@@ -6,7 +6,9 @@ import '../../profil/presentation/profile_providers.dart';
 
 final messagesRepositoryProvider = Provider<MessagesRepository>((ref) => const MessagesRepository());
 
-final conversationsProvider = FutureProvider<List<Conversation>>((ref) {
+// `autoDispose` : la liste est rechargée à chaque ouverture de l'écran (une
+// conversation ou un message reçus restaient invisibles jusqu'au redémarrage).
+final conversationsProvider = FutureProvider.autoDispose<List<Conversation>>((ref) {
   // Lié au compte connecté (audit du 2026-10-04, S40/S41) : sans cette
   // dépendance, le résultat restait en cache après une déconnexion et le
   // compte suivant voyait les données du précédent.

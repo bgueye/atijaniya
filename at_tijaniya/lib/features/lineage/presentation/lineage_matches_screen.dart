@@ -204,7 +204,7 @@ class _ReceivedRequestCard extends ConsumerWidget {
               children: [
                 OutlinedButton(
                   onPressed: () => _respond(context, ref, l10n, accept: false),
-                  style: OutlinedButton.styleFrom(foregroundColor: Colors.redAccent),
+                  style: OutlinedButton.styleFrom(foregroundColor: AppColors.danger),
                   child: Text(l10n.lineageMatchesDecline),
                 ),
                 const SizedBox(width: 8),
