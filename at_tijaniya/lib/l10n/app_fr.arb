@@ -249,7 +249,7 @@
   "tariqaConditionsLoadError": "Impossible de charger les données.",
   "tariqaConditionsRetry": "Réessayer",
   "tariqaConditionsEmptyTitle": "Contenu en cours de compilation",
-  "tariqaConditionsEmptyBody": "Ce contenu sera publié une fois validé par un moqaddam ou érudit reconnu du projet.",
+  "tariqaConditionsEmptyBody": "Ce contenu sera publié une fois validé.",
   "tariqaConditionsCategoryValiditeTalqin": "Validité du talqîn",
   "tariqaConditionsCategoryCompagnonnage": "Compagnonnage envers le Cheikh",
   "tariqaConditionsCategoryConditionsGenerales": "Conditions générales",
@@ -367,7 +367,7 @@
   "khadaraUnderstandingTooltip": "Comprendre la Zawiya",
   "khadaraUnderstandingTitle": "Comprendre la Zawiya",
   "khadaraUnderstandingEmptyTitle": "Contenu en cours de compilation",
-  "khadaraUnderstandingEmptyBody": "Ce contenu pédagogique sera publié une fois validé par un moqaddam ou érudit reconnu du projet.",
+  "khadaraUnderstandingEmptyBody": "Ce contenu pédagogique sera publié une fois validé.",
   "khadaraUnderstandingCta": "En attendant, découvrir le calendrier et les zawiyas",
   "khadaraUnderstandingDraftBanner": "Brouillon non publié — visible uniquement par toi en tant qu'admin, en attente de validation.",
 

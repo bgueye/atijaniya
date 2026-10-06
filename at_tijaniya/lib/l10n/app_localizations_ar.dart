@@ -660,7 +660,7 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get tariqaConditionsEmptyBody =>
-      'سيُنشر هذا المحتوى بعد التحقق من صحته من طرف مقدَّم أو عالم معتمد للمشروع.';
+      'سيُنشر هذا المحتوى بعد التحقق من صحته.';
 
   @override
   String get tariqaConditionsCategoryValiditeTalqin => 'شروط صحة التلقين';
@@ -987,7 +987,7 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get khadaraUnderstandingEmptyBody =>
-      'سيُنشر هذا المحتوى التربوي بعد التحقق من صحته من طرف مقدَّم أو عالم معتمد للمشروع.';
+      'سيُنشر هذا المحتوى التربوي بعد التحقق من صحته.';
 
   @override
   String get khadaraUnderstandingCta => 'في الانتظار، اكتشف التقويم والزوايا';

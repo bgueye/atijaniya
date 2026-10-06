@@ -673,7 +673,7 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get tariqaConditionsEmptyBody =>
-      'Ce contenu sera publié une fois validé par un moqaddam ou érudit reconnu du projet.';
+      'Ce contenu sera publié une fois validé.';
 
   @override
   String get tariqaConditionsCategoryValiditeTalqin => 'Validité du talqîn';
@@ -1010,7 +1010,7 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get khadaraUnderstandingEmptyBody =>
-      'Ce contenu pédagogique sera publié une fois validé par un moqaddam ou érudit reconnu du projet.';
+      'Ce contenu pédagogique sera publié une fois validé.';
 
   @override
   String get khadaraUnderstandingCta =>

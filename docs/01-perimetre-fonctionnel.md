@@ -166,6 +166,7 @@ autres pour sa pratique personnelle, avec cette fonctionnalité en plus sur son 
 | Biographie du fondateur (Cheikh Ahmed Tijani) | **Validé** | Déjà en base (`content_status = 'valide'`) |
 | Biographies familles religieuses | **Majoritairement validé** (vérifié en base le 2026-08-29) | 16 des 17 figures `family_lineage` validées ; reste **Thierno Ciré Diop** (texte encore à l'état de stub, ~60 caractères) et la **chaîne de khalifas des foyers hors Tivaouane** (Médina Baye et les 6 autres zawiyas n'ont aucune figure/chaîne liée) — à compiler par le porteur de projet, en cours |
 | Audio récitations modèles | À produire | Sur la base du texte déjà validé |
+| Conditions de la Tariqa (`tariqa_conditions`, 23 chouroutes) | **Validé** (inscrit le 2026-10-06) | Compilées et validées par le porteur de projet directement en base, à partir du site tidjaniya.com recoupé avec des sources sénégalaises reconnues ; aucune relecture par un moqaddam à ce jour. L'admin peut corriger un texte depuis l'app, sans circuit de relecture ni historique (voir `docs/13`) |
 | Page pédagogique "Comprendre la Zawiya" (`guide_pages`, slug `comprendre-zawiya`) | **Validé** (2026-08-29) | Validé par le porteur de projet (Bocar) ; compilation à partir de sources externes (Wikipédia, Techno-Science, Enass, The Culture Mapper, zawiya.defarsci.fr, revues.imist.ma) |
 
 > **Règle impérative : aucun contenu religieux ne doit être publié sans validation

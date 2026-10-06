@@ -1308,7 +1308,7 @@ abstract class AppLocalizations {
   /// No description provided for @tariqaConditionsEmptyBody.
   ///
   /// In fr, this message translates to:
-  /// **'Ce contenu sera publié une fois validé par un moqaddam ou érudit reconnu du projet.'**
+  /// **'Ce contenu sera publié une fois validé.'**
   String get tariqaConditionsEmptyBody;
 
   /// No description provided for @tariqaConditionsCategoryValiditeTalqin.
@@ -1932,7 +1932,7 @@ abstract class AppLocalizations {
   /// No description provided for @khadaraUnderstandingEmptyBody.
   ///
   /// In fr, this message translates to:
-  /// **'Ce contenu pédagogique sera publié une fois validé par un moqaddam ou érudit reconnu du projet.'**
+  /// **'Ce contenu pédagogique sera publié une fois validé.'**
   String get khadaraUnderstandingEmptyBody;
 
   /// No description provided for @khadaraUnderstandingCta.

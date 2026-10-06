@@ -209,8 +209,11 @@ const lazim = Wird(
       closingFormulas: [
         WirdClosingFormula(
           intro: 'Après la 100ᵉ récitation, ajouter une fois :',
-          arabic: 'مُحَمَّدٌ رَسُولُ اللَّهِ عَلَيْهِ سَلَامُ اللَّهِ',
-          transliteration: "Muhammadun Rasoulullah, 'alayhi Salamoullah.",
+          // Formule et translittération reprises mot pour mot de l'étape 5 de
+          // docs/Lazim-Etapes-Detaillees.md (décision du porteur de projet du
+          // 2026-10-06 : l'app affichait la forme sans le premier mot).
+          arabic: 'سَيِّدُنَا مُحَمَّدٌ رَسُولُ اللَّهِ عَلَيْهِ سَلَامُ اللَّهِ',
+          transliteration: "Sayyidounâ Mouhammadoun Rasoûlou-Llâhi 'alayhi salâmou-Llâh",
         ),
         WirdClosingFormula(
           intro: 'Puis (Sourate Al-Ahzab, 33:56) :',
@@ -325,10 +328,12 @@ const wazifa = Wird(
       closingFormulas: [
         WirdClosingFormula(
           intro: 'Après la 100ᵉ récitation, ajouter :',
-          arabic: 'مُحَمَّدٌ رَسُولُ اللَّهِ عَلَيْهِ سَلَامُ اللَّهِ',
-          // Pas de translittération fournie pour cette formule précise
-          // dans le document source (contrairement à la même formule dans
-          // le Lazim) — voir la note sur WirdClosingFormula.transliteration.
+          // Formule et translittération reprises mot pour mot de l'étape 5 de
+          // docs/Wazifa-Etapes-Detaillees.md (décision du porteur de projet
+          // du 2026-10-06). Le commentaire précédent affirmait à tort que le
+          // document ne fournissait pas de translittération.
+          arabic: 'سَيِّدُنَا مُحَمَّدٌ رَسُولُ اللَّهِ عَلَيْهِ سَلَامُ اللَّهِ',
+          transliteration: "Sayyidounâ Mouhammadoun Rasoûlou-Llâhi 'alayhi salâmou-Llâh",
         ),
       ],
     ),
@@ -405,7 +410,10 @@ const hadratouJouma = Wird(
         WirdClosingFormula(
           intro: 'Après la dernière récitation, ajouter une fois :',
           arabic: 'سَيِّدُنَا مُحَمَّدٌ رَسُولُ اللَّهِ عَلَيْهِ سَلَامُ اللَّهِ',
-          transliteration: "Seyidouna Muhammadoun Rasoulullah, 'alayhi Salamoullah.",
+          // Translittération reprise mot pour mot de l'étape correspondante de
+          // docs/Hadratou-l-Jouma-Etapes-Detaillees.md (alignement décidé le
+          // 2026-10-06, comme pour le Lazim et la Wazifa).
+          transliteration: "Sayyidounâ Mouhammadoun Rasoûlou-Llâhi 'alayhi salâmou-Llâh",
         ),
       ],
     ),

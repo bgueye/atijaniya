@@ -249,7 +249,7 @@
   "tariqaConditionsLoadError": "تعذّر تحميل البيانات.",
   "tariqaConditionsRetry": "إعادة المحاولة",
   "tariqaConditionsEmptyTitle": "المحتوى قيد الإعداد",
-  "tariqaConditionsEmptyBody": "سيُنشر هذا المحتوى بعد التحقق من صحته من طرف مقدَّم أو عالم معتمد للمشروع.",
+  "tariqaConditionsEmptyBody": "سيُنشر هذا المحتوى بعد التحقق من صحته.",
   "tariqaConditionsCategoryValiditeTalqin": "شروط صحة التلقين",
   "tariqaConditionsCategoryCompagnonnage": "شروط الصحبة",
   "tariqaConditionsCategoryConditionsGenerales": "الشروط العامة",
@@ -366,7 +366,7 @@
   "khadaraUnderstandingTooltip": "فهم الزاوية",
   "khadaraUnderstandingTitle": "فهم الزاوية",
   "khadaraUnderstandingEmptyTitle": "المحتوى قيد الإعداد",
-  "khadaraUnderstandingEmptyBody": "سيُنشر هذا المحتوى التربوي بعد التحقق من صحته من طرف مقدَّم أو عالم معتمد للمشروع.",
+  "khadaraUnderstandingEmptyBody": "سيُنشر هذا المحتوى التربوي بعد التحقق من صحته.",
   "khadaraUnderstandingCta": "في الانتظار، اكتشف التقويم والزوايا",
   "khadaraUnderstandingDraftBanner": "مسودة غير منشورة — مرئية لك فقط كمشرف، في انتظار التحقق منها.",
 

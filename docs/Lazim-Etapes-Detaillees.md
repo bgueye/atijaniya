@@ -165,7 +165,7 @@ moqaddam référent, ces usages pouvant varier d'un foyer à l'autre :
 5. Verset de clôture (Sourate As-Saffât, 37:180-182).
 6. 100 fois Salâtoul Fâtihi.
 7. Verset de clôture (Sourate As-Saffât, 37:180-182).
-8. 100 fois Lâ ilâha illâ-Llâh, suivi de « Muhammadun Rasoulullah, 'alayhi Salamoullah ».
+8. 100 fois Lâ ilâha illâ-Llâh, suivi de « Sayyidounâ Mouhammadoun Rasoûlou-Llâhi 'alayhi salâmou-Llâh ».
 9. Verset Innallâha wa malâ'ikatahoû... (Sourate Al-Ahzâb, 33:56).
 10. Sallallâhou ta'âla 'alayhi wa 'alâ âlihi wa sahbihi wa sallama tasliman.
 11. Verset de clôture (Sourate As-Saffât, 37:180-182).
