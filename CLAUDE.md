@@ -20,6 +20,13 @@ moitié du § 3 (drapeau "date approximative") ; les § 1.2 et 1.3 sont écarté
 du porteur de projet** :
 `docs/12-propositions-evolution-contenu.md`.
 
+Audit complet des 56 écrans et formulaires (2026-10-04) : synthèse, tableau de suivi des
+points de sécurité et de confidentialité, décisions du porteur de projet et liste de ce qui
+reste à faire dans `docs/13-audit-ecrans-2026-10-04.md` ; rapports bruts par module dans
+`docs/audit-2026-10-04/`. **À lire avant de toucher à la RLS, à la messagerie, aux directs,
+au statut mouqaddam ou à la suppression de compte** : plusieurs règles décrites plus bas ont
+été durcies à cette occasion (voir « Règles issues de l'audit »).
+
 ## Stack technique
 - Flutter (Android + iOS), support RTL natif obligatoire pour l'arabe.
 - Backend : Supabase (Postgres + Auth + Storage + Realtime + Edge Functions).
@@ -39,9 +46,33 @@ du porteur de projet** :
   reconstruire la chaîne de parrainage côté client ou la dupliquer dans une
   autre table.
 
+### Règles issues de l'audit du 2026-10-04
+Le client ne peut plus tout écrire : beaucoup de tables n'acceptent que certaines colonnes
+(privilèges de colonne) ou passent par une fonction serveur. Avant d'ajouter une écriture,
+vérifier la section 12 de `database/schema.sql` et `database/migrations/`.
+- `profiles` : le client n'écrit que `display_name`, `avatar_url`, `locale`, `zawiya_id`,
+  `bio`. `is_admin` ne se modifie qu'en SQL d'administration (trigger de garde). Pas
+  d'insertion client : le profil est créé par `handle_new_user`.
+- `lineage_declarations` : toujours lister les colonnes dans un `select` — un `select()`
+  sans liste est refusé, `moqaddam_name_normalized` n'étant plus lisible par le client.
+- Messagerie privée : ne jamais insérer dans `conversations`/`conversation_participants`.
+  Passer par `start_conversation()`, qui applique le groupe commun et le réglage « Qui peut
+  vous contacter ».
+- Modération : signaler par insertion dans `content_reports` (contrôlée par
+  `can_report_content()`), traiter uniquement par `resolve_report()`.
+- Suppression de compte : fonction SQL transactionnelle `delete_my_account()` ; l'Edge
+  Function `delete-account` ne fait plus que la relayer pour les anciennes versions.
+- Fonctions de contrôle utilisées par les policies : les placer dans le schéma `private`
+  (non exposé par l'API), jamais dans `public`, sinon elles deviennent appelables en RPC et
+  peuvent révéler une donnée privée (statut mouqaddam, appartenance à une conversation).
+- Toute nouvelle migration : fichier dans `database/migrations/`, puis régénération de la
+  section 12 de `schema.sql` ; vérifier le résultat en base par un scénario annulé.
+
 ## Design system
 - Tokens de couleurs et typographies : `design/design_tokens.yaml` (source unique — ne pas
   redéfinir des couleurs en dur ailleurs dans le code).
+- Couleur d'erreur et d'action destructrice : `AppColors.danger` (jeton `danger`), jamais
+  `Colors.red`/`Colors.redAccent`.
 - Assets de marque (logo) : `assets/branding/`.
 - Détail complet de la charte graphique : `docs/02-identite-visuelle-design-system.md`.
 - Règle stricte : la police Amiri est réservée aux textes religieux et titres arabes, jamais
@@ -93,6 +124,14 @@ une zawiya (texte complet : `docs/11-a-propos.md`).
 (créer/modifier/supprimer, voir paragraphe "Gestion des évènements Khadara" plus bas) — décision
 explicite du porteur de projet, à ne pas généraliser par analogie à d'autres fonctionnalités sans
 nouvelle confirmation explicite.
+
+**Depuis l'audit du 2026-10-04**, cette exception est bornée côté serveur : la zawiya dont un
+mouqaddam gère les évènements est **attribuée par l'admin** (`mouqaddam_status.managed_zawiya_id`,
+fonction `admin_set_mouqaddam_zawiya`, écran Profil → « Zawiyas des mouqaddams »), plus celle de
+son profil, que chacun modifie librement. Elle couvre aussi le démarrage d'un direct public sur
+un évènement de cette zawiya (décision du porteur de projet du 2026-10-04) ; un mouqaddam
+révoqué ou sans zawiya attribuée n'a aucun de ces droits. Le badge et son explication au tap
+sont portés par le widget `SponsorshipBadge` : ne jamais afficher le libellé seul.
 
 ## Écrans et priorités
 Liste complète des écrans par module et par priorité (P0 à P3) : `docs/03-architecture-ecrans.md`.
@@ -219,9 +258,23 @@ absence bloquait silencieusement la suppression d'un groupe tant qu'un
 direct y restait rattaché) — validé manuellement sur téléphone Android le
 2026-08-20, détail dans le journal.
 
+**Audit du 2026-10-04 et suites (jusqu'au 2026-10-06)** — détail dans `docs/13` : corrections
+de sécurité et de confidentialité appliquées en base et dans l'app ; signalement et masquage
+des publications et commentaires du fil ; auteur d'une publication affiché « disciple ·
+zawiya » ; messagerie, discussion de groupe et chat de direct sur un envoi partagé
+(`MessageComposer`) ; module Wirds traduit en arabe ; données locales de pratique séparées par
+compte ; version de publication Android corrigée (permission `INTERNET`, récepteurs des
+rappels) et installée sur le téléphone de test le 2026-10-06. Formules de clôture des wirds
+alignées sur les documents validés ; conditions de la Tariqa inscrites comme validées par le
+porteur de projet (`docs/01` § 8). **Reste à valider sur téléphone et à faire** : voir la
+section « Reste à faire » de `docs/13`.
+
 ## Commandes utiles
 - `flutter pub get`
 - `flutter analyze`
 - `flutter test`
 - `flutter gen-l10n` (régénère `AppLocalizations` depuis `lib/l10n/*.arb`)
 - `flutter run --dart-define=SUPABASE_URL=... --dart-define=SUPABASE_ANON_KEY=...`
+- `flutter build apk --release` / `flutter build appbundle --release` avec les deux mêmes
+  `--dart-define` (signature par `android/key.properties`, hors dépôt). Sur le téléphone de
+  test : `adb install -r` de la version signée, jamais une version de débogage par-dessus.
