@@ -212,17 +212,22 @@ Corrigé (code de l'app, plus les migrations `audit_h1_deletions_and_groups` et
 
 Reste à faire :
 
-- **À trancher par le porteur de projet** (rien n'a été modifié sur ces points) :
-  1. formule de clôture du tahlil (Lazim, Wazifa) différente des documents validés, et
-     translittération de la Wazifa déclarée absente alors que le document en fournit une ;
-  2. conditions de la Tariqa à inscrire au tableau de validation de `docs/01` ;
-  3. relecture par un arabophone des libellés arabes ajoutés pendant l'audit (environ 70),
-     dont « الركن » pour « pilier », et de la version arabe de « À propos » ;
-  4. évènements passés qui bloquent la suppression d'un lieu : les supprimer avec lui ou
-     les détacher ;
-  5. Hadratou-l-Jouma terminée un autre jour que vendredi : doit-elle compter dans la série ;
-  6. affichage de l'auteur d'une publication : aujourd'hui le nom de la zawiya seul, alors
-     que le rattachement est déclaré par le disciple lui-même.
+- **Décisions du porteur de projet du 2026-10-06** (appliquées) :
+  1. tahlil du Lazim et de la Wazifa : l'app reprend la formule et la translittération des
+     étapes détaillées des documents validés ; le récapitulatif du document du Lazim est
+     aligné ;
+  2. conditions de la Tariqa inscrites comme validées par le porteur de projet dans
+     `docs/01` § 8 ;
+  3. un lieu se supprime avec ses évènements passés non récurrents (migration
+     `delete_past_events_with_zawiya`) ; un évènement à venir ou récurrent bloque toujours ;
+  4. Hadratou-l-Jouma : inchangé, seule une Hadra terminée un vendredi compte dans la série ;
+  5. auteur d'une publication affiché « disciple · zawiya ».
+- **Reporté par le porteur de projet** : relecture par un arabophone des libellés arabes
+  ajoutés pendant l'audit (environ 80, dont « الركن » pour « pilier » et « كفالة مؤكدة » pour
+  « Parrainage confirmé ») et de la version arabe de « À propos ».
+- Également alignés le 2026-10-06 : la translittération de la même formule dans la
+  Hadratou-l-Jouma (reprise de son document validé), et le message d'état vide de
+  « Comprendre la Zawiya », qui n'annonce plus une validation par un moqaddam.
 - **Parcours** : succession à deux fondateurs possible ; maillon manuel de silsila perdu
   quand on a un parrain dans l'app ; réordonnancement d'une succession ; dépublication
   d'une figure ; like désynchronisé entre le fil et le détail d'une publication.
