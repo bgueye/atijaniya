@@ -131,10 +131,16 @@ Reste à faire, hors de portée d'une migration ou d'un changement de code :
   il faut appeler `admin_set_mouqaddam_zawiya(user_id, zawiya_id)`. À la reprise de
   l'existant, un des deux mouqaddams confirmés avait une zawiya dans son profil (reprise) ;
   l'autre n'en a pas et ne peut donc pas créer d'évènement.
-- **Activer la protection contre les mots de passe compromis** dans le tableau de bord
-  Supabase (Auth) — signalé par l'advisor de sécurité, réglage hors base.
-- **Aligner `politique-de-confidentialite.docx` et les fiches des stores** sur la version
-  `.md` (paragraphe « Localisation »).
+- **Protection contre les mots de passe compromis** (Supabase Auth, signalée par l'advisor
+  de sécurité) : **non applicable sur l'offre gratuite** — le tableau de bord la refuse
+  (« available on Pro Plans and up », constaté le 2026-10-08). À activer au passage en Pro,
+  sans changement dans l'app. En attendant : longueur minimale du mot de passe à 8 côté
+  serveur, comme dans l'app (réglage à faire par le porteur de projet).
+- ~~Aligner `politique-de-confidentialite.docx` et la page publiée sur la version `.md`~~
+  — fait le 2026-10-08 : paragraphe « Localisation », date, et libellé « Parrainage
+  confirmé » dans les trois versions. Restent les formulaires de confidentialité des deux
+  stores, à remplir par le porteur de projet (position non collectée : calcul sur
+  l'appareil).
 - Messages de groupe et messages privés : signalement à traiter dans un sprint de
   modération dédié (S61).
 - Une conversation de test n'a plus qu'un participant (l'autre compte a été supprimé) ;

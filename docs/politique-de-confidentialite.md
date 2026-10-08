@@ -1,6 +1,6 @@
 # Politique de confidentialité — At-Tijaniya
 
-Dernière mise à jour : 24 août 2026.
+Dernière mise à jour : 8 octobre 2026.
 
 ## 1. Qui sommes-nous
 
@@ -23,13 +23,12 @@ constituée à ce jour. Contact : voir §10.
   journalisée.
 
 ### Lignée spirituelle et statut mouqaddam — données sensibles
-Ces informations bénéficient d'une protection renforcée, décrite dans nos règles de
-développement internes (`CLAUDE.md` du projet) :
+Ces informations bénéficient d'une protection renforcée :
 - **Lignée spirituelle** : foyer, nom du moqaddam ayant transmis le Wird, année, zawiya.
   Privée par défaut. Ne sert à la mise en relation avec d'autres disciples que si vous
   l'activez explicitement (opt-in). Jamais affichée dans un annuaire public, jamais
   incluse dans un export ou une API publique.
-- **Statut « Mouqaddam vérifié »** et silsila d'ijaza (chaîne de parrainage) : privés par
+- **Statut « Parrainage confirmé »** et silsila d'ijaza (chaîne de parrainage) : privés par
   défaut, avec un réglage opt-in distinct pour apparaître comme parrain disponible.
 - Toute consultation de ces champs sensibles par un autre mouqaddam (dans le cadre d'un
   parrainage) est journalisée à des fins d'audit.
