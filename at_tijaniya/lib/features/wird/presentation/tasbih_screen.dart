@@ -4,23 +4,26 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_theme.dart';
+import '../../../core/widgets/keep_screen_on.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../donation/data/donation_feature_flag.dart';
 import '../../donation/data/donation_nudge_store.dart';
 import '../../donation/presentation/donation_screen.dart';
-import '../domain/tasbih_session.dart';
 import '../domain/wird_models.dart';
-import 'tasbih_beads_ring.dart';
 import 'tasbih_controller.dart';
-import 'voice_error_message.dart';
+import 'tasbih_counter_panel.dart';
 import 'wird_display_name.dart';
 
-/// Tasbih digital — tape manuel, reconnaissance vocale, reprise de session.
-/// Priorité P0 (docs/03-architecture-ecrans.md).
+/// Tasbih digital — comptage au toucher, reconnaissance vocale, reprise de
+/// session. Priorité P0 (docs/03-architecture-ecrans.md).
 ///
 /// Fait dérouler les piliers obligatoires du wird (`Wird.pillars`) dans
 /// l'ordre impératif du corpus validé — voir la règle "contenu religieux"
 /// dans CLAUDE.md : aucun texte n'est saisi ici, seul le comptage l'est.
+///
+/// Présentation revue le 2026-10-06 : le texte du pilier défile seul en
+/// haut, le compteur reste fixe en bas (`TasbihCounterLayout`), et l'écran ne
+/// se met plus en veille pendant la récitation.
 class TasbihScreen extends ConsumerWidget {
   const TasbihScreen({super.key, required this.wird});
 
@@ -41,14 +44,16 @@ class TasbihScreen extends ConsumerWidget {
         appBar: AppBar(
           backgroundColor: AppColors.zaytoune,
           foregroundColor: AppColors.parchment,
-          title: Text(AppLocalizations.of(context)!.wirdTasbihTitle(wirdDisplayName(context, wird))),
+          // Le nom du wird seul : "Tasbih —" n'apprenait rien à qui vient
+          // d'appuyer sur "Tasbih".
+          title: Text(wirdDisplayName(context, wird), maxLines: 1, overflow: TextOverflow.ellipsis),
         ),
         body: SafeArea(
           child: state.loadingSession
               ? Center(child: CircularProgressIndicator(color: AppColors.gold))
               : state.wirdCompleted
                   ? _WirdCompletedView(wird: wird)
-                  : _TasbihBody(wird: wird, state: state, controller: controller),
+                  : KeepScreenOn(child: _TasbihBody(wird: wird, state: state, controller: controller)),
         ),
       ),
     );
@@ -64,315 +69,249 @@ class _TasbihBody extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final pillar = controller.currentPillar;
-    final usingAlternative = controller.usingAlternative;
-    final alternative = pillar.alternative;
-    final target = controller.targetCount;
+    final l10n = AppLocalizations.of(context)!;
     final count = state.session.currentCount;
     final complete = controller.isPillarComplete;
 
-    // SingleChildScrollView plutôt qu'un Column simple : le pilier
-    // "Intention" (piliers[0], ajouté le 2026-08-12) est un paragraphe
-    // complet — bien plus haut que les formules courtes des autres piliers
-    // — qui dépasse la hauteur d'écran sur la plupart des appareils. Le
-    // cercle de comptage (TasbihBeadsRing) a une taille fixe (voir
-    // _ManualCounter/_VoiceCounter) : sans scroll, il se retrouvait écrasé
-    // dans l'espace résiduel laissé par un Expanded plutôt que de
-    // s'afficher à sa taille prévue.
-    return SingleChildScrollView(
-      padding: const EdgeInsets.all(20),
-      // `SizedBox(width: double.infinity)` plutôt qu'un Column nu : sans lui,
-      // le Column se contracte à la largeur de son enfant le plus large (ici
-      // la rangée "Corriger -1 / Réinitialiser", visible seulement pendant
-      // le comptage) au lieu d'occuper toute la largeur du SingleChildScrollView
-      // — quand cette rangée disparaît à la complétion du pilier, tout le
-      // bloc, centré sur sa propre largeur réduite, se retrouve visuellement
-      // plaqué à gauche de l'écran.
-      child: SizedBox(
-        width: double.infinity,
-        child: Column(
-        children: [
-          Text(
-            AppLocalizations.of(context)!.wirdTasbihPillarProgress(state.session.pillarIndex + 1, wird.pillars.length),
-            style: TextStyle(color: AppColors.bronze, fontWeight: FontWeight.w600),
-          ),
-          const SizedBox(height: 12),
-          Text(
-            usingAlternative ? alternative!.transliteration : pillar.transliteration,
-            textAlign: TextAlign.center,
-            style: const TextStyle(color: AppColors.parchment, fontSize: 16, fontStyle: FontStyle.italic),
-          ),
-          const SizedBox(height: 4),
-          Text(
-            usingAlternative ? alternative!.arabic : pillar.arabic,
-            textAlign: TextAlign.center,
-            textDirection: TextDirection.rtl,
-            style: AppTheme.sacredText(fontSize: 26, color: AppColors.gold),
-          ),
-          // Le pilier normal explique dans sa note quand recourir à
-          // l'alternative (ex. conditions de Jawharatoul Kamal non
-          // réunies) — cette explication n'a plus lieu d'être une fois
-          // l'alternative choisie, et les formules de clôture ci-dessous
-          // sont propres au pilier normal, pas à l'alternative.
-          if (!usingAlternative && pillar.note != null) ...[
-            const SizedBox(height: 8),
-            Text(
-              pillar.note!,
-              textAlign: TextAlign.center,
-              style: TextStyle(fontSize: 12, color: AppColors.bronze),
-            ),
-          ],
-          if (alternative != null) ...[
-            const SizedBox(height: 12),
-            SwitchListTile(
-              contentPadding: EdgeInsets.zero,
-              dense: true,
-              activeThumbColor: AppColors.gold,
-              title: Text(
-                AppLocalizations.of(context)!.wirdTasbihUseAlternative(alternative.repetitions, alternative.name),
-                style: const TextStyle(color: AppColors.parchment, fontSize: 13),
-              ),
-              value: usingAlternative,
-              // Ignoré une fois le comptage commencé (voir
-              // `TasbihController.setUseAlternative`) : le bouton reste
-              // visible mais n'a plus d'effet, pour ne pas faire
-              // disparaître l'option sous les yeux du disciple en pleine
-              // récitation.
-              onChanged: count == 0 ? (value) => controller.setUseAlternative(value) : null,
-            ),
-          ],
-          if (!usingAlternative && pillar.closingFormulas != null)
-            for (final formula in pillar.closingFormulas!) ...[
-              const SizedBox(height: 10),
-              Text(
-                formula.intro,
-                textAlign: TextAlign.center,
-                style: TextStyle(fontSize: 12, color: AppColors.bronze),
-              ),
-              const SizedBox(height: 4),
-              Text(
-                formula.arabic,
-                textAlign: TextAlign.center,
-                textDirection: TextDirection.rtl,
-                style: AppTheme.sacredText(fontSize: 18, color: AppColors.gold),
-              ),
-              if (formula.transliteration != null) ...[
-                const SizedBox(height: 2),
-                Text(
-                  formula.transliteration!,
-                  textAlign: TextAlign.center,
-                  style: TextStyle(fontStyle: FontStyle.italic, fontSize: 12, color: AppColors.bronze),
-                ),
-              ],
-            ],
-          const SizedBox(height: 20),
-          SegmentedButton<TasbihMode>(
-            segments: [
-              ButtonSegment(
-                value: TasbihMode.manual,
-                label: Text(AppLocalizations.of(context)!.wirdFreeManualMode),
-                icon: const Icon(Icons.touch_app),
-              ),
-              ButtonSegment(
-                value: TasbihMode.voice,
-                label: Text(AppLocalizations.of(context)!.wirdFreeVoiceMode),
-                icon: const Icon(Icons.mic),
-              ),
-            ],
-            selected: {state.session.mode},
-            onSelectionChanged: (selection) => controller.setMode(selection.first),
-          ),
-          const SizedBox(height: 24),
-          state.session.mode == TasbihMode.manual
-              ? _ManualCounter(
-                  count: count,
-                  target: target,
-                  complete: complete,
-                  onTap: () {
-                    HapticFeedback.lightImpact();
-                    controller.increment();
-                  },
-                )
-              : _VoiceCounter(state: state, count: count, target: target, complete: complete, controller: controller),
-          const SizedBox(height: 24),
-          if (!complete)
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                TextButton.icon(
-                  onPressed: count == 0 ? null : controller.undo,
-                  icon: const Icon(Icons.undo, color: AppColors.parchment),
-                  label: Text(AppLocalizations.of(context)!.wirdFreeUndo, style: const TextStyle(color: AppColors.parchment)),
-                ),
-                const SizedBox(width: 12),
-                TextButton.icon(
-                  onPressed: count == 0 ? null : controller.resetPillar,
-                  icon: const Icon(Icons.replay, color: AppColors.parchment),
-                  label: Text(AppLocalizations.of(context)!.wirdFreeReset, style: const TextStyle(color: AppColors.parchment)),
-                ),
-              ],
-            )
-          else
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 8),
-              child: Column(
-                children: [
-                  // Piliers intermédiaires : le contrôleur enchaîne tout seul
-                  // après un court délai (`_scheduleAutoAdvance`) pour ne pas
-                  // casser le rythme de récitation ; ce bouton reste
-                  // disponible pour qui veut avancer sans attendre. Sur le
-                  // dernier pilier, pas d'enchaînement auto — terminer le
-                  // wird déclenche l'enregistrement de la complétion et doit
-                  // rester un geste volontaire.
-                  if (!controller.isLastPillar)
-                    Padding(
-                      padding: const EdgeInsets.only(bottom: 8),
-                      child: Text(
-                        AppLocalizations.of(context)!.wirdTasbihNextPillarSoon,
-                        style: TextStyle(color: AppColors.bronze, fontSize: 12),
-                      ),
-                    ),
-                  ElevatedButton.icon(
-                    onPressed: () {
-                      HapticFeedback.mediumImpact();
-                      controller.nextPillar();
-                    },
-                    icon: Icon(controller.isLastPillar ? Icons.check_circle : Icons.arrow_forward),
-                    label: Text(controller.isLastPillar
-                        ? AppLocalizations.of(context)!.wirdTasbihFinishWird
-                        : AppLocalizations.of(context)!.wirdTasbihNextPillar),
-                  ),
-                ],
-              ),
-            ),
-        ],
-        ),
-      ),
-    );
-  }
-}
-
-class _ManualCounter extends StatelessWidget {
-  const _ManualCounter({
-    required this.count,
-    required this.target,
-    required this.complete,
-    required this.onTap,
-  });
-
-  final int count;
-  final int target;
-  final bool complete;
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    return Semantics(
-      button: true,
-      label: AppLocalizations.of(context)!.wirdFreeTapToCount,
-      value: '$count / $target',
-      child: GestureDetector(
-      onTap: complete ? null : onTap,
-      behavior: HitTestBehavior.opaque,
-      child: TasbihBeadsRing(
-        count: count,
-        target: target,
-        size: 240,
-        complete: complete,
-        child: Container(
-          width: 190,
-          height: 190,
-          decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            color: AppColors.emerald.withValues(alpha: complete ? 0.35 : 0.18),
-          ),
-          alignment: Alignment.center,
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text(
-                '$count',
-                style: const TextStyle(color: AppColors.parchment, fontSize: 56, fontWeight: FontWeight.bold),
-              ),
-              Text('/ $target', style: TextStyle(color: AppColors.bronze, fontSize: 18)),
-              const SizedBox(height: 8),
-              if (complete)
-                Icon(Icons.check_circle, color: AppColors.gold, size: 26)
-              else
-                Text(
-                  AppLocalizations.of(context)!.wirdFreeTapToCount,
-                  style: TextStyle(color: AppColors.bronze, fontSize: 12),
-                ),
-            ],
-          ),
-        ),
-      ),
-    ),
-    );
-  }
-}
-
-class _VoiceCounter extends StatelessWidget {
-  const _VoiceCounter({
-    required this.state,
-    required this.count,
-    required this.target,
-    required this.complete,
-    required this.controller,
-  });
-
-  final TasbihState state;
-  final int count;
-  final int target;
-  final bool complete;
-  final TasbihController controller;
-
-  @override
-  Widget build(BuildContext context) {
     return Column(
-      mainAxisSize: MainAxisSize.min,
       children: [
-        TasbihBeadsRing(
-          count: count,
-          target: target,
-          size: 220,
-          complete: complete,
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text(
-                '$count',
-                style: const TextStyle(color: AppColors.parchment, fontSize: 48, fontWeight: FontWeight.bold),
+        _PillarProgress(
+          current: state.session.pillarIndex,
+          total: wird.pillars.length,
+          label: l10n.wirdTasbihPillarProgress(state.session.pillarIndex + 1, wird.pillars.length),
+        ),
+        Expanded(
+          child: TasbihCounterLayout(
+            reading: _Reading(
+              controller: controller,
+              pillarIndex: state.session.pillarIndex,
+              count: count,
+              complete: complete,
+            ),
+            panel: TasbihCounterPanel(
+              count: count,
+              target: controller.targetCount,
+              complete: complete,
+              mode: state.session.mode,
+              onModeChanged: controller.setMode,
+              onCount: () {
+                HapticFeedback.lightImpact();
+                controller.increment();
+              },
+              onUndo: controller.undo,
+              onReset: controller.resetPillar,
+              isListening: state.isListening,
+              voiceSupported: state.voiceSupported,
+              voiceError: state.voiceError,
+              onStartListening: controller.startListening,
+              onStopListening: controller.stopListening,
+              // Piliers intermédiaires sans clôture : le contrôleur enchaîne
+              // tout seul après un court délai, le bouton reste là pour qui
+              // veut avancer sans attendre. Avec une clôture à réciter, ou
+              // sur le dernier pilier, avancer reste un geste volontaire.
+              completeHint: controller.autoAdvancesAfterCompletion ? l10n.wirdTasbihNextPillarSoon : null,
+              completeAction: SizedBox(
+                width: double.infinity,
+                child: ElevatedButton.icon(
+                  onPressed: () {
+                    HapticFeedback.mediumImpact();
+                    controller.nextPillar();
+                  },
+                  icon: Icon(controller.isLastPillar ? Icons.check_circle : Icons.arrow_forward),
+                  label: Text(controller.isLastPillar ? l10n.wirdTasbihFinishWird : l10n.wirdTasbihNextPillar),
+                ),
               ),
-              Text('/ $target', style: TextStyle(color: AppColors.bronze, fontSize: 16)),
-            ],
+            ),
           ),
         ),
-        const SizedBox(height: 16),
-        if (!state.voiceSupported || state.voiceError != null)
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 12),
-            child: Text(
-              voiceErrorMessage(AppLocalizations.of(context)!, state.voiceError) ?? AppLocalizations.of(context)!.wirdFreeVoiceUnavailable,
-              textAlign: TextAlign.center,
-              style: TextStyle(color: AppColors.gold, fontSize: 13),
-            ),
-          )
-        else
-          Text(
-            state.isListening ? AppLocalizations.of(context)!.wirdFreeListeningActive : AppLocalizations.of(context)!.wirdFreeListeningPaused,
-            textAlign: TextAlign.center,
-            style: TextStyle(color: AppColors.bronze, fontSize: 13),
-          ),
-        const SizedBox(height: 12),
-        if (state.voiceSupported && !complete)
-          ElevatedButton.icon(
-            onPressed: state.isListening ? controller.stopListening : controller.startListening,
-            icon: Icon(state.isListening ? Icons.mic_off : Icons.mic),
-            label: Text(state.isListening ? AppLocalizations.of(context)!.wirdFreeStopListening : AppLocalizations.of(context)!.wirdFreeStartListening),
-          ),
       ],
     );
+  }
+}
+
+/// Avancement dans le wird : un segment par pilier (les piliers forment bien
+/// une suite ordonnée), doré jusqu'au pilier en cours, et le rappel chiffré.
+class _PillarProgress extends StatelessWidget {
+  const _PillarProgress({required this.current, required this.total, required this.label});
+
+  final int current;
+  final int total;
+  final String label;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(20, 0, 20, 10),
+      child: Column(
+        children: [
+          // Décor : l'information est portée par le texte juste en dessous.
+          ExcludeSemantics(
+            child: Row(
+              children: [
+                for (var i = 0; i < total; i++)
+                  Expanded(
+                    child: Container(
+                      height: 3,
+                      margin: const EdgeInsetsDirectional.only(end: 4),
+                      decoration: BoxDecoration(
+                        color: i <= current ? AppColors.gold : AppColors.parchment.withValues(alpha: 0.2),
+                        borderRadius: BorderRadius.circular(2),
+                      ),
+                    ),
+                  ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 8),
+          Text(label, style: TextStyle(color: tasbihSecondaryText(), fontSize: 13, fontWeight: FontWeight.w500)),
+        ],
+      ),
+    );
+  }
+}
+
+/// Zone de lecture du pilier : le texte arabe d'abord (c'est lui qui est
+/// récité), sa translittération ensuite, puis la note et la clôture. Défile
+/// seule, avec un fondu en bas quand le texte dépasse.
+///
+/// Une fois le compte atteint, si le pilier a une formule de clôture, elle
+/// prend toute la zone en grand : c'est à ce moment qu'elle se récite.
+class _Reading extends StatelessWidget {
+  const _Reading({
+    required this.controller,
+    required this.pillarIndex,
+    required this.count,
+    required this.complete,
+  });
+
+  final TasbihController controller;
+  final int pillarIndex;
+  final int count;
+  final bool complete;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    final pillar = controller.currentPillar;
+    final usingAlternative = controller.usingAlternative;
+    final alternative = pillar.alternative;
+    // Les formules de clôture sont propres au pilier normal, pas à
+    // l'alternative.
+    final closing = usingAlternative ? null : pillar.closingFormulas;
+    final closingNow = complete && closing != null;
+
+    return ShaderMask(
+      // Fondu des 28 derniers pixels : signale qu'il reste du texte à faire
+      // défiler sans qu'une ligne soit coupée net contre le socle.
+      shaderCallback: (rect) => LinearGradient(
+        begin: Alignment.topCenter,
+        end: Alignment.bottomCenter,
+        colors: const [Colors.white, Colors.white, Colors.transparent],
+        stops: [0, (rect.height - 28).clamp(0, rect.height) / rect.height, 1],
+      ).createShader(rect),
+      blendMode: BlendMode.dstIn,
+      child: SingleChildScrollView(
+        // Nouvelle clé à chaque changement de contenu : la lecture repart du
+        // haut au pilier suivant et à l'apparition de la clôture.
+        key: ValueKey('${controller.wird.id}-$pillarIndex-$usingAlternative-$closingNow'),
+        padding: const EdgeInsets.fromLTRB(20, 4, 20, 32),
+        child: SizedBox(
+          width: double.infinity,
+          child: Column(
+            children: [
+              if (closingNow)
+                for (final formula in closing) ..._closing(formula, large: true)
+              else ...[
+                Text(
+                  usingAlternative ? alternative!.arabic : pillar.arabic,
+                  textAlign: TextAlign.center,
+                  textDirection: TextDirection.rtl,
+                  style: AppTheme.sacredText(fontSize: 28, color: AppColors.gold),
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  usingAlternative ? alternative!.transliteration : pillar.transliteration,
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(
+                    color: AppColors.parchment,
+                    fontSize: 16,
+                    height: 1.45,
+                    fontStyle: FontStyle.italic,
+                  ),
+                ),
+                // Le pilier normal explique dans sa note quand recourir à
+                // l'alternative (ex. conditions de Jawharatoul Kamal non
+                // réunies) — cette explication n'a plus lieu d'être une fois
+                // l'alternative choisie.
+                if (!usingAlternative && pillar.note != null) ...[
+                  const SizedBox(height: 12),
+                  Text(
+                    pillar.note!,
+                    textAlign: TextAlign.center,
+                    style: TextStyle(fontSize: 14, height: 1.4, color: tasbihSecondaryText()),
+                  ),
+                ],
+                if (alternative != null) ...[
+                  const SizedBox(height: 12),
+                  SwitchListTile(
+                    contentPadding: EdgeInsets.zero,
+                    dense: true,
+                    activeThumbColor: AppColors.gold,
+                    title: Text(
+                      l10n.wirdTasbihUseAlternative(alternative.repetitions, alternative.name),
+                      style: const TextStyle(color: AppColors.parchment, fontSize: 14),
+                    ),
+                    value: usingAlternative,
+                    // Ignoré une fois le comptage commencé (voir
+                    // `TasbihController.setUseAlternative`) : le bouton reste
+                    // visible mais n'a plus d'effet, pour ne pas faire
+                    // disparaître l'option sous les yeux du disciple en pleine
+                    // récitation.
+                    onChanged: count == 0 ? (value) => controller.setUseAlternative(value) : null,
+                  ),
+                ],
+                if (closing != null)
+                  for (final formula in closing) ..._closing(formula, large: false),
+              ],
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  /// Bloc d'une formule de clôture : introduction française, arabe en Amiri,
+  /// translittération quand le document source en fournit une.
+  List<Widget> _closing(WirdClosingFormula formula, {required bool large}) {
+    return [
+      SizedBox(height: large ? 4 : 18),
+      Text(
+        formula.intro,
+        textAlign: TextAlign.center,
+        style: TextStyle(fontSize: large ? 15 : 14, height: 1.4, color: tasbihSecondaryText()),
+      ),
+      const SizedBox(height: 6),
+      Text(
+        formula.arabic,
+        textAlign: TextAlign.center,
+        textDirection: TextDirection.rtl,
+        style: AppTheme.sacredText(fontSize: large ? 26 : 20, color: AppColors.gold),
+      ),
+      if (formula.transliteration != null) ...[
+        const SizedBox(height: 4),
+        Text(
+          formula.transliteration!,
+          textAlign: TextAlign.center,
+          style: TextStyle(
+            fontStyle: FontStyle.italic,
+            fontSize: large ? 16 : 14,
+            height: 1.45,
+            color: large ? AppColors.parchment : tasbihSecondaryText(),
+          ),
+        ),
+      ],
+      if (large) const SizedBox(height: 12),
+    ];
   }
 }
 

@@ -960,7 +960,7 @@ abstract class AppLocalizations {
   /// No description provided for @wirdFreeManualMode.
   ///
   /// In fr, this message translates to:
-  /// **'Tape manuel'**
+  /// **'Au toucher'**
   String get wirdFreeManualMode;
 
   /// No description provided for @wirdFreeVoiceMode.
@@ -5184,13 +5184,13 @@ abstract class AppLocalizations {
   /// No description provided for @wirdVoiceMicUnavailable.
   ///
   /// In fr, this message translates to:
-  /// **'Micro indisponible ou autorisation refusée. Utilisez le mode « Tape manuel ».'**
+  /// **'Micro indisponible ou autorisation refusée. Utilisez le mode « Au toucher ».'**
   String get wirdVoiceMicUnavailable;
 
   /// No description provided for @wirdVoiceRepeatedFailure.
   ///
   /// In fr, this message translates to:
-  /// **'La reconnaissance vocale rencontre un problème répété sur cet appareil. Utilisez le mode « Tape manuel ».'**
+  /// **'La reconnaissance vocale rencontre un problème répété sur cet appareil. Utilisez le mode « Au toucher ».'**
   String get wirdVoiceRepeatedFailure;
 
   /// No description provided for @wirdVoiceTemporaryError.
@@ -5624,6 +5624,18 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'vendredi d\'affilée'**
   String get wirdHistoryStreakFridaySingular;
+
+  /// No description provided for @homeStreakDailySingular.
+  ///
+  /// In fr, this message translates to:
+  /// **'{count} jour de suite'**
+  String homeStreakDailySingular(Object count);
+
+  /// No description provided for @homeStreakWeeklySingular.
+  ///
+  /// In fr, this message translates to:
+  /// **'{count} vendredi de suite'**
+  String homeStreakWeeklySingular(Object count);
 }
 
 class _AppLocalizationsDelegate

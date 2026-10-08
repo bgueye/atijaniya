@@ -1009,5 +1009,7 @@
   "wirdHistoryToday": "اليوم",
   "wirdHistoryPending": "لم يُنجز بعد",
   "wirdHistoryStreakDaySingular": "يوم متتالٍ",
-  "wirdHistoryStreakFridaySingular": "جمعة متتالية"
+  "wirdHistoryStreakFridaySingular": "جمعة متتالية",
+  "homeStreakDailySingular": "{count} يوم متتالٍ",
+  "homeStreakWeeklySingular": "{count} جمعة متتالية"
 }

@@ -185,7 +185,7 @@
   "wirdFreeTargetFieldLabel": "Nombre de répétitions",
   "wirdFreeTargetRequired": "Indiquez un nombre de répétitions supérieur à 0.",
   "wirdFreeStartButton": "Commencer",
-  "wirdFreeManualMode": "Tape manuel",
+  "wirdFreeManualMode": "Au toucher",
   "wirdFreeVoiceMode": "Voix",
   "wirdFreeUndo": "Corriger -1",
   "wirdFreeReset": "Réinitialiser",
@@ -937,8 +937,8 @@
   "sponsorshipBadgeExplanation": "Ce statut atteste qu'un parrainage a été confirmé au sein de la communauté At-Tijaniya. Ce n'est pas une reconnaissance ou une habilitation religieuse officielle.",
   "wirdFreeAbandonConfirmTitle": "Abandonner ce compteur ?",
   "wirdFreeAbandonConfirmBody": "Le décompte en cours sera effacé et vous pourrez en paramétrer un nouveau.",
-  "wirdVoiceMicUnavailable": "Micro indisponible ou autorisation refusée. Utilisez le mode « Tape manuel ».",
-  "wirdVoiceRepeatedFailure": "La reconnaissance vocale rencontre un problème répété sur cet appareil. Utilisez le mode « Tape manuel ».",
+  "wirdVoiceMicUnavailable": "Micro indisponible ou autorisation refusée. Utilisez le mode « Au toucher ».",
+  "wirdVoiceRepeatedFailure": "La reconnaissance vocale rencontre un problème répété sur cet appareil. Utilisez le mode « Au toucher ».",
   "wirdVoiceTemporaryError": "L'écoute s'est interrompue un instant, elle reprend.",
   "wirdTasbihTitle": "Tasbih — {wird}",
   "wirdTasbihPillarProgress": "Pilier {current} / {total}",
@@ -1010,5 +1010,7 @@
   "wirdHistoryToday": "Aujourd'hui",
   "wirdHistoryPending": "Pas encore fait",
   "wirdHistoryStreakDaySingular": "jour d'affilée",
-  "wirdHistoryStreakFridaySingular": "vendredi d'affilée"
+  "wirdHistoryStreakFridaySingular": "vendredi d'affilée",
+  "homeStreakDailySingular": "{count} jour de suite",
+  "homeStreakWeeklySingular": "{count} vendredi de suite"
 }

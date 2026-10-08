@@ -392,8 +392,9 @@ class _WirdRow extends StatelessWidget {
   String? _streakLabel() {
     if (status.streak <= 0) return null;
     return status.wird.frequency == WirdFrequency.daily
-        ? l10n.homeStreakDaily(status.streak)
-        : l10n.homeStreakWeekly(status.streak);
+        // Singulier jusqu'à 1 : "1 jour de suite", "2 jours de suite".
+        ? (status.streak <= 1 ? l10n.homeStreakDailySingular(status.streak) : l10n.homeStreakDaily(status.streak))
+        : (status.streak <= 1 ? l10n.homeStreakWeeklySingular(status.streak) : l10n.homeStreakWeekly(status.streak));
   }
 
   @override

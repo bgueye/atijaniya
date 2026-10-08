@@ -135,7 +135,10 @@ class TasbihController extends StateNotifier<TasbihState> with WidgetsBindingObs
   /// pauses naturelles pour respirer qu'un silence trop court interprète à
   /// tort comme la fin de l'énoncé. Les formules courtes (ex. "Allah",
   /// répété des centaines de fois) ont au contraire besoin d'un silence
-  /// court pour rester réactives entre deux répétitions. Voir
+  /// court pour rester réactives entre deux répétitions : 1,5 s pour les
+  /// plus brèves (jusqu'à 30 caractères, voyelles comprises — "La ilaha
+  /// illAllah", "Astaghfirullah"), que 3 s d'attente à chaque répétition
+  /// rendaient lentes sur cent récitations (retour du 2026-10-08). Voir
   /// `tasbih_voice_service.dart` pour pourquoi cette segmentation est faite
   /// côté Dart plutôt que via le paramètre natif `pauseFor`.
   Duration get _utteranceSilence {
@@ -143,7 +146,8 @@ class TasbihController extends StateNotifier<TasbihState> with WidgetsBindingObs
         usingAlternative ? currentPillar.alternative!.arabic.length : currentPillar.arabic.length;
     if (length > 120) return const Duration(seconds: 8);
     if (length > 50) return const Duration(seconds: 5);
-    return const Duration(seconds: 3);
+    if (length > 30) return const Duration(seconds: 3);
+    return const Duration(milliseconds: 1500);
   }
 
   /// Bascule vers la récitation alternative de ce pilier, ou revient au
@@ -160,6 +164,17 @@ class TasbihController extends StateNotifier<TasbihState> with WidgetsBindingObs
   bool get isPillarComplete => state.session.currentCount >= targetCount;
 
   bool get isLastPillar => state.session.pillarIndex == wird.pillars.length - 1;
+
+  /// `true` si le pilier en cours se termine par une formule de clôture (ex.
+  /// le verset d'As-Saffat après la 100ᵉ Salatoul Fatihi) — propre au pilier
+  /// normal, pas à son alternative.
+  bool get hasClosingToRecite => !usingAlternative && (currentPillar.closingFormulas?.isNotEmpty ?? false);
+
+  /// `true` si, une fois le compte atteint, l'écran passe tout seul au pilier
+  /// suivant. Jamais sur le dernier pilier (terminer le wird reste un geste
+  /// volontaire), ni quand une clôture est à réciter : deux secondes ne
+  /// laissaient pas le temps de la dire (décision du 2026-10-06).
+  bool get autoAdvancesAfterCompletion => !isLastPillar && !hasClosingToRecite;
 
   Future<void> _load() async {
     final saved = await _store.load(wird.id);
@@ -187,7 +202,7 @@ class TasbihController extends StateNotifier<TasbihState> with WidgetsBindingObs
   /// geste qui doit rester explicite plutôt que déclenché par un tap ou une
   /// répétition vocale de trop.
   void _scheduleAutoAdvance() {
-    if (isLastPillar) return;
+    if (!autoAdvancesAfterCompletion) return;
     _autoAdvanceTimer?.cancel();
     _autoAdvanceTimer = Timer(_autoAdvanceDelay, () {
       if (!mounted) return;

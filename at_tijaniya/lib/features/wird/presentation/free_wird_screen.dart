@@ -5,21 +5,19 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/text/numerals.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_theme.dart';
+import '../../../core/widgets/keep_screen_on.dart';
 import '../../../l10n/app_localizations.dart';
-import '../domain/free_wird_session.dart';
-import '../domain/tasbih_session.dart' show TasbihMode;
 import 'free_wird_controller.dart';
-import 'voice_error_message.dart';
-import 'tasbih_beads_ring.dart';
+import 'tasbih_counter_panel.dart';
 
 /// Wird libre — compteur paramétré par le disciple (nom + cible), en plus
 /// des trois wirds au contenu fixe et validé. Priorité demandée par le
 /// porteur de projet, en complément du module Wirds P0/P1.
 ///
-/// Volontairement autonome vis-à-vis de `tasbih_screen.dart`/
-/// `tasbih_controller.dart` (écran P0 déjà validé en conditions réelles,
-/// piloté par `Wird.pillars`) : pas de refactor partagé, pour ne prendre
-/// aucun risque de régression sur ce dernier. Aucun texte religieux n'est
+/// Contrôleur volontairement autonome vis-à-vis de `tasbih_controller.dart`
+/// (piloté par `Wird.pillars`). Depuis le 2026-10-06, la présentation du
+/// compteur, elle, est commune aux deux écrans (`tasbih_counter_panel.dart`) :
+/// compteur fixe en bas, zone de comptage élargie. Aucun texte religieux n'est
 /// fourni par l'app ici — [FreeWirdSession.label] est entièrement saisi et
 /// privé au disciple (voir la règle "contenu religieux" de CLAUDE.md, qui
 /// ne s'applique qu'au contenu publié par l'app elle-même).
@@ -202,224 +200,93 @@ class _CounterBody extends StatelessWidget {
   final FreeWirdState state;
   final FreeWirdController controller;
 
+  /// Abandonner le compteur en cours pour en paramétrer un autre : sans ce
+  /// bouton, une cible saisie par erreur obligeait à compter jusqu'au bout
+  /// (le compteur est restauré à chaque retour sur l'écran).
+  Future<void> _abandon(BuildContext context) async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: Text(l10n.wirdFreeAbandonConfirmTitle),
+        content: Text(l10n.wirdFreeAbandonConfirmBody),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(dialogContext).pop(false),
+            child: Text(MaterialLocalizations.of(dialogContext).cancelButtonLabel),
+          ),
+          TextButton(
+            onPressed: () => Navigator.of(dialogContext).pop(true),
+            child: Text(l10n.wirdFreeNewCounterButton),
+          ),
+        ],
+      ),
+    );
+    if (confirmed == true) await controller.newCounter();
+  }
+
   @override
   Widget build(BuildContext context) {
     final session = state.session!;
     final complete = controller.isTargetReached;
 
-    return Padding(
-      padding: const EdgeInsets.all(20),
-      child: Column(
-        children: [
-          SegmentedButton<TasbihMode>(
-            segments: [
-              ButtonSegment(value: TasbihMode.manual, label: Text(l10n.wirdFreeManualMode), icon: const Icon(Icons.touch_app)),
-              ButtonSegment(value: TasbihMode.voice, label: Text(l10n.wirdFreeVoiceMode), icon: const Icon(Icons.mic)),
-            ],
-            selected: {session.mode},
-            onSelectionChanged: (selection) => controller.setMode(selection.first),
-          ),
-          const SizedBox(height: 8),
-          Expanded(
-            child: Center(
-              child: session.mode == TasbihMode.manual
-                  ? _ManualCounter(
-                      l10n: l10n,
-                      count: session.currentCount,
-                      target: session.target,
-                      complete: complete,
-                      onTap: () {
-                        HapticFeedback.lightImpact();
-                        controller.increment();
-                      },
-                    )
-                  : _VoiceCounter(l10n: l10n, state: state, session: session, complete: complete, controller: controller),
-            ),
-          ),
-          if (!complete)
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                TextButton.icon(
-                  onPressed: session.currentCount == 0 ? null : controller.undo,
-                  icon: const Icon(Icons.undo, color: AppColors.parchment),
-                  label: Text(l10n.wirdFreeUndo, style: const TextStyle(color: AppColors.parchment)),
-                ),
-                const SizedBox(width: 12),
-                TextButton.icon(
-                  onPressed: session.currentCount == 0 ? null : controller.resetCount,
-                  icon: const Icon(Icons.replay, color: AppColors.parchment),
-                  label: Text(l10n.wirdFreeReset, style: const TextStyle(color: AppColors.parchment)),
-                ),
-                // Abandonner le compteur en cours pour en paramétrer un autre :
-                // sans ce bouton, une cible saisie par erreur obligeait à
-                // compter jusqu'au bout (le compteur est restauré à chaque
-                // retour sur l'écran).
-                IconButton(
-                  tooltip: l10n.wirdFreeNewCounterButton,
-                  icon: const Icon(Icons.close, color: AppColors.parchment),
-                  onPressed: () async {
-                    final confirmed = await showDialog<bool>(
-                      context: context,
-                      builder: (dialogContext) => AlertDialog(
-                        title: Text(l10n.wirdFreeAbandonConfirmTitle),
-                        content: Text(l10n.wirdFreeAbandonConfirmBody),
-                        actions: [
-                          TextButton(
-                            onPressed: () => Navigator.of(dialogContext).pop(false),
-                            child: Text(MaterialLocalizations.of(dialogContext).cancelButtonLabel),
-                          ),
-                          TextButton(
-                            onPressed: () => Navigator.of(dialogContext).pop(true),
-                            child: Text(l10n.wirdFreeNewCounterButton),
-                          ),
-                        ],
-                      ),
-                    );
-                    if (confirmed == true) await controller.newCounter();
-                  },
-                ),
-              ],
-            )
-          else
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 8),
-              child: ElevatedButton.icon(
-                onPressed: () {
-                  HapticFeedback.mediumImpact();
-                  controller.finish();
-                },
-                icon: const Icon(Icons.check_circle),
-                label: Text(l10n.wirdFreeFinishButton),
-              ),
-            ),
-        ],
-      ),
-    );
-  }
-}
-
-class _ManualCounter extends StatelessWidget {
-  const _ManualCounter({
-    required this.l10n,
-    required this.count,
-    required this.target,
-    required this.complete,
-    required this.onTap,
-  });
-
-  final AppLocalizations l10n;
-  final int count;
-  final int target;
-  final bool complete;
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    return Semantics(
-      button: true,
-      label: AppLocalizations.of(context)!.wirdFreeTapToCount,
-      value: '$count / $target',
-      child: GestureDetector(
-      onTap: complete ? null : onTap,
-      behavior: HitTestBehavior.opaque,
-      child: TasbihBeadsRing(
-        count: count,
-        target: target,
-        size: 240,
-        complete: complete,
-        child: Container(
-          width: 190,
-          height: 190,
-          decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            color: AppColors.emerald.withValues(alpha: complete ? 0.35 : 0.18),
-          ),
-          alignment: Alignment.center,
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text(
-                '$count',
-                style: const TextStyle(color: AppColors.parchment, fontSize: 56, fontWeight: FontWeight.bold),
-              ),
-              Text('/ $target', style: TextStyle(color: AppColors.bronze, fontSize: 18)),
-              const SizedBox(height: 8),
-              if (complete)
-                Icon(Icons.check_circle, color: AppColors.gold, size: 26)
-              else
-                Text(l10n.wirdFreeTapToCount, style: TextStyle(color: AppColors.bronze, fontSize: 12)),
-            ],
+    // Même mise en page que le Tasbih d'un wird (`TasbihCounterLayout`) : ce
+    // que le disciple récite en haut, le compteur fixe en bas, écran maintenu
+    // allumé. Seule la présentation est partagée — les deux contrôleurs
+    // restent indépendants.
+    return KeepScreenOn(
+      child: TasbihCounterLayout(
+        reading: Center(
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+            // Texte saisi par le disciple, jamais fourni par l'app. Déjà
+            // présent dans le titre : repris ici en grand, à l'endroit où les
+            // wirds validés affichent leur formule.
+            child: session.label.isEmpty
+                ? const SizedBox.shrink()
+                : ExcludeSemantics(
+                    child: Text(
+                      session.label,
+                      textAlign: TextAlign.center,
+                      style: const TextStyle(color: AppColors.parchment, fontSize: 24, height: 1.5),
+                    ),
+                  ),
           ),
         ),
-      ),
-    ),
-    );
-  }
-}
-
-class _VoiceCounter extends StatelessWidget {
-  const _VoiceCounter({
-    required this.l10n,
-    required this.state,
-    required this.session,
-    required this.complete,
-    required this.controller,
-  });
-
-  final AppLocalizations l10n;
-  final FreeWirdState state;
-  final FreeWirdSession session;
-  final bool complete;
-  final FreeWirdController controller;
-
-  @override
-  Widget build(BuildContext context) {
-    final count = session.currentCount;
-    final target = session.target;
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        TasbihBeadsRing(
-          count: count,
-          target: target,
-          size: 220,
+        panel: TasbihCounterPanel(
+          count: session.currentCount,
+          target: session.target,
           complete: complete,
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text(
-                '$count',
-                style: const TextStyle(color: AppColors.parchment, fontSize: 48, fontWeight: FontWeight.bold),
-              ),
-              Text('/ $target', style: TextStyle(color: AppColors.bronze, fontSize: 16)),
-            ],
+          mode: session.mode,
+          onModeChanged: controller.setMode,
+          onCount: () {
+            HapticFeedback.lightImpact();
+            controller.increment();
+          },
+          onUndo: controller.undo,
+          onReset: controller.resetCount,
+          isListening: state.isListening,
+          voiceSupported: state.voiceSupported,
+          voiceError: state.voiceError,
+          onStartListening: controller.startListening,
+          onStopListening: controller.stopListening,
+          extraAction: IconButton(
+            tooltip: l10n.wirdFreeNewCounterButton,
+            icon: const Icon(Icons.close, color: AppColors.parchment),
+            onPressed: () => _abandon(context),
+          ),
+          completeAction: SizedBox(
+            width: double.infinity,
+            child: ElevatedButton.icon(
+              onPressed: () {
+                HapticFeedback.mediumImpact();
+                controller.finish();
+              },
+              icon: const Icon(Icons.check_circle),
+              label: Text(l10n.wirdFreeFinishButton),
+            ),
           ),
         ),
-        const SizedBox(height: 16),
-        if (!state.voiceSupported || state.voiceError != null)
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 12),
-            child: Text(
-              voiceErrorMessage(l10n, state.voiceError) ?? l10n.wirdFreeVoiceUnavailable,
-              textAlign: TextAlign.center,
-              style: TextStyle(color: AppColors.gold, fontSize: 13),
-            ),
-          )
-        else
-          Text(
-            state.isListening ? l10n.wirdFreeListeningActive : l10n.wirdFreeListeningPaused,
-            textAlign: TextAlign.center,
-            style: TextStyle(color: AppColors.bronze, fontSize: 13),
-          ),
-        const SizedBox(height: 12),
-        if (state.voiceSupported && !complete)
-          ElevatedButton.icon(
-            onPressed: state.isListening ? controller.stopListening : controller.startListening,
-            icon: Icon(state.isListening ? Icons.mic_off : Icons.mic),
-            label: Text(state.isListening ? l10n.wirdFreeStopListening : l10n.wirdFreeStartListening),
-          ),
-      ],
+      ),
     );
   }
 }

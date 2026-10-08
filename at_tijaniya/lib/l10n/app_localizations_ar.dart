@@ -2945,4 +2945,14 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get wirdHistoryStreakFridaySingular => 'جمعة متتالية';
+
+  @override
+  String homeStreakDailySingular(Object count) {
+    return '$count يوم متتالٍ';
+  }
+
+  @override
+  String homeStreakWeeklySingular(Object count) {
+    return '$count جمعة متتالية';
+  }
 }

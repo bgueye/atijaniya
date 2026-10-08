@@ -474,7 +474,7 @@ class AppLocalizationsFr extends AppLocalizations {
   String get wirdFreeStartButton => 'Commencer';
 
   @override
-  String get wirdFreeManualMode => 'Tape manuel';
+  String get wirdFreeManualMode => 'Au toucher';
 
   @override
   String get wirdFreeVoiceMode => 'Voix';
@@ -2796,11 +2796,11 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get wirdVoiceMicUnavailable =>
-      'Micro indisponible ou autorisation refusée. Utilisez le mode « Tape manuel ».';
+      'Micro indisponible ou autorisation refusée. Utilisez le mode « Au toucher ».';
 
   @override
   String get wirdVoiceRepeatedFailure =>
-      'La reconnaissance vocale rencontre un problème répété sur cet appareil. Utilisez le mode « Tape manuel ».';
+      'La reconnaissance vocale rencontre un problème répété sur cet appareil. Utilisez le mode « Au toucher ».';
 
   @override
   String get wirdVoiceTemporaryError =>
@@ -3052,4 +3052,14 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get wirdHistoryStreakFridaySingular => 'vendredi d\'affilée';
+
+  @override
+  String homeStreakDailySingular(Object count) {
+    return '$count jour de suite';
+  }
+
+  @override
+  String homeStreakWeeklySingular(Object count) {
+    return '$count vendredi de suite';
+  }
 }
