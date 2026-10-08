@@ -62,6 +62,12 @@ android {
             } else {
                 signingConfigs.getByName("debug")
             }
+            // Voir proguard-rules.pro : sans ces règles, les rappels de wird
+            // ne se programment pas dans la version de publication.
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro",
+            )
         }
     }
 }
