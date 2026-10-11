@@ -131,7 +131,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get authSignUpAction => 'إنشاء حساب';
 
   @override
-  String get authContinueWithoutAccount => 'الاستمرار بدون حساب (الورد فقط)';
+  String get authContinueWithoutAccount => 'الاستمرار بدون حساب';
 
   @override
   String get authEmailRequired => 'البريد الإلكتروني إلزامي.';

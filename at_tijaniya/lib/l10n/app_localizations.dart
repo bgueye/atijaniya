@@ -335,7 +335,7 @@ abstract class AppLocalizations {
   /// No description provided for @authContinueWithoutAccount.
   ///
   /// In fr, this message translates to:
-  /// **'Continuer sans compte (pratique du Wird uniquement)'**
+  /// **'Continuer sans compte'**
   String get authContinueWithoutAccount;
 
   /// No description provided for @authEmailRequired.

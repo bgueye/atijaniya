@@ -133,8 +133,7 @@ class AppLocalizationsFr extends AppLocalizations {
   String get authSignUpAction => 'Créer un compte';
 
   @override
-  String get authContinueWithoutAccount =>
-      'Continuer sans compte (pratique du Wird uniquement)';
+  String get authContinueWithoutAccount => 'Continuer sans compte';
 
   @override
   String get authEmailRequired => 'L\'adresse e-mail est obligatoire.';

@@ -296,9 +296,14 @@ Tout a été revérifié à l'écran après correction, en arabe puis en frança
 jamais de `Transform.flip` ni de choix d'icône selon la langue pour un chevron ; une
 correction d'affichage se vérifie sur un écran, pas dans le code.
 
-**Non couverts par cette passe** (inaccessibles avec un compte connecté, admin et déjà
-parrainé, ou sans donnée) : connexion, inscription, réinitialisation du mot de passe,
-onboarding, « Devenir mouqaddam », recherche de parrain, « Retrouver mes condisciples »,
+Complément du même jour, compte déconnecté : choix de la langue, connexion, inscription,
+demande de mot de passe oublié (avec leurs messages de validation, champs vides, sans rien
+envoyer) et mode sans compte (accueil, profil, fil, figures), en arabe et en français —
+aucun défaut relevé.
+
+**Non couverts par cette passe** (inaccessibles avec un compte admin et déjà parrainé, ou
+sans donnée) : écran de nouveau mot de passe (ouvert depuis l'e-mail), onboarding (déjà
+vu sur cet appareil), « Devenir mouqaddam », recherche de parrain, « Retrouver mes condisciples »,
 conversation privée, direct en cours, don, conditions de la Tariqa, formulaires de citation,
 d'œuvre, de silsila et de succession. Restent aussi en français dans l'interface en arabe,
 faute de traduction du contenu : biographies, zawiyas, évènements, « Comprendre la Zawiya »,

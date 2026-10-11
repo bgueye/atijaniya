@@ -50,7 +50,7 @@ Un seul écran avec un **toggle segmenté** en haut (`Connexion` / `Créer un co
 6. Bouton primaire **Se connecter** (fond émeraude, texte blanc, pleine largeur)
 7. Séparateur `ou continuer avec`
 8. 3 boutons de connexion sociale, empilés, bordés (`#ECE4D0`), fond blanc, texte encre : **Google**, **Apple**, **Facebook**
-9. Lien texte centré **"Continuer sans compte (pratique du Wird uniquement)"** — accès invité, wirds uniquement
+9. Lien texte centré **"Continuer sans compte"** — accès invité. Libellé raccourci le 2026-10-11 (décision du porteur de projet) : la mention « pratique du Wird uniquement » ne correspondait plus à l'app, où un invité consulte aussi les zawiyas, les figures et le fil, sans pouvoir publier ni accéder à un profil
 
 ### Panneau "Créer un compte"
 1. Titre `Créer un compte`

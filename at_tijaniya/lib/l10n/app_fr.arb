@@ -44,7 +44,7 @@
   "authResetPasswordSent": "E-mail de réinitialisation envoyé. Vérifiez votre boîte mail.",
   "authSignInAction": "Se connecter",
   "authSignUpAction": "Créer un compte",
-  "authContinueWithoutAccount": "Continuer sans compte (pratique du Wird uniquement)",
+  "authContinueWithoutAccount": "Continuer sans compte",
   "authEmailRequired": "L'adresse e-mail est obligatoire.",
   "authEmailInvalid": "Adresse e-mail invalide.",
   "authPasswordRequired": "Le mot de passe est obligatoire.",

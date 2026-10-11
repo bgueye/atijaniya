@@ -44,7 +44,7 @@
   "authResetPasswordSent": "تم إرسال بريد إعادة التعيين. تحقّق من بريدك الإلكتروني.",
   "authSignInAction": "تسجيل الدخول",
   "authSignUpAction": "إنشاء حساب",
-  "authContinueWithoutAccount": "الاستمرار بدون حساب (الورد فقط)",
+  "authContinueWithoutAccount": "الاستمرار بدون حساب",
   "authEmailRequired": "البريد الإلكتروني إلزامي.",
   "authEmailInvalid": "عنوان بريد إلكتروني غير صالح.",
   "authPasswordRequired": "كلمة السر إلزامية.",
