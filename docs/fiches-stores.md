@@ -13,10 +13,11 @@ limites de chaque store ; recompter après toute modification.
   `docs/09-journal-implementation-frontend.md` § Sprint 2).
 - **Gratuite**, financée par les dons — aucun achat intégré, aucune publicité.
 - **URL de la politique de confidentialité** : https://claude.ai/code/artifact/f0eed457-0f53-4cb8-9e94-52604f6fe7ac
-  (Artifact publié le 2026-08-29, republié le 2026-10-08 avec le paragraphe « Localisation » ;
+  (Artifact publié le 2026-08-29, republié le 2026-10-08 avec le paragraphe « Localisation »
+  puis le 2026-10-11 avec « Signalement et blocage » ;
   contenu identique à `docs/politique-de-confidentialite.md`. Partagé à « toute personne
   disposant du lien » — **vérifier en navigation privée, avant soumission, que la page
-  affiche bien « 8 octobre 2026 »** ; sinon basculer le partage sur la dernière version
+  affiche bien « 11 octobre 2026 »** ; sinon basculer le partage sur la dernière version
   depuis le menu de partage de la page).
 
 ---

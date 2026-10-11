@@ -1,6 +1,6 @@
 # Politique de confidentialité — At-Tijaniya
 
-Dernière mise à jour : 8 octobre 2026.
+Dernière mise à jour : 11 octobre 2026.
 
 ## 1. Qui sommes-nous
 
@@ -37,6 +37,11 @@ Ces informations bénéficient d'une protection renforcée :
 Publications du fil d'actualité, commentaires, likes, messages privés, groupes et leurs
 membres — visibles selon les réglages de confidentialité du groupe/de la conversation
 concernée.
+
+### Signalement et blocage
+Si vous signalez un message de groupe ou un message privé, une copie de ce message et le nom de son auteur sont transmis à la modération. Elle ne lit rien d'autre de la discussion. Cette copie est effacée dès que le signalement est traité.
+
+Si vous bloquez un disciple, ce blocage est enregistré sur nos serveurs pour être appliqué : il ne peut plus vous écrire et vous ne voyez plus ce qu'il écrit. Il reste privé ; la personne bloquée n'en est pas informée, et vous pouvez l'annuler à tout moment.
 
 ### Dons
 Montant, devise et statut de la transaction. **Nous ne recevons ni ne stockons vos
