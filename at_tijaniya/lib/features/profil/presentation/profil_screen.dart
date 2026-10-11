@@ -23,6 +23,7 @@ import '../domain/profile_models.dart';
 import 'edit_profile_sheet.dart';
 import 'profile_providers.dart';
 import '../../../core/widgets/directional_chevron.dart';
+import '../../../core/widgets/content_text.dart';
 
 /// Mon profil — infos de base, zawiya, "Ma lignée spirituelle". Priorité P0
 /// (docs/03-architecture-ecrans.md).
@@ -353,7 +354,7 @@ class _DeleteAccountDialogState extends ConsumerState<_DeleteAccountDialog> {
           ),
           if (_errorMessage != null) ...[
             const SizedBox(height: 12),
-            Text(_errorMessage!, style: const TextStyle(color: AppColors.danger)),
+            ContentText(_errorMessage!, style: const TextStyle(color: AppColors.danger)),
           ],
         ],
       ),
@@ -500,7 +501,7 @@ class _ProfileHeaderState extends ConsumerState<_ProfileHeader> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(profile.displayName, style: Theme.of(context).textTheme.titleMedium),
+                      ContentText(profile.displayName, style: Theme.of(context).textTheme.titleMedium),
                       Text(
                         profile.zawiyaName ?? l10n.profileZawiyaNoneLabel,
                         style: TextStyle(color: AppColors.bronze, fontSize: 13),

@@ -9,6 +9,7 @@ import 'event_detail_screen.dart';
 import 'khadara_format.dart';
 import 'khadara_providers.dart';
 import 'open_in_maps.dart';
+import '../../../core/widgets/content_text.dart';
 
 /// "Trouver l'évènement récurrent le plus proche" — typiquement la
 /// Hadratou-l-Jouma, mais couvre tout évènement Khadara récurrent
@@ -138,7 +139,7 @@ class _NearbyRecurringEventsScreenState extends ConsumerState<NearbyRecurringEve
         return Card(
           child: ListTile(
             leading: Icon(khadaraEventTypeIcon(result.event.type), color: AppColors.emerald),
-            title: Text(result.event.title),
+            title: ContentText(result.event.title),
             isThreeLine: true,
             subtitle: Text(
               '${formatKhadaraEventSchedule(result.event, l10n)}\n'

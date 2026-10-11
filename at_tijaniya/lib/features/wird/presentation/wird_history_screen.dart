@@ -9,6 +9,7 @@ import '../../../l10n/app_localizations.dart';
 import '../domain/wird_models.dart';
 import '../domain/wird_progress_stats.dart';
 import 'wird_history_controller.dart';
+import '../../../core/widgets/content_text.dart';
 
 /// Historique & progression du Wird — P1 (docs/03-architecture-ecrans.md :
 /// "Régularité, jours consécutifs, taux de complétion").
@@ -131,7 +132,7 @@ class _WirdName extends StatelessWidget {
           style: AppTheme.sacredText(fontSize: 26, color: AppColors.ink).copyWith(height: 1.5),
         ),
         if (!arabicUi)
-          Text(
+          ContentText(
             wird.nameFrench,
             textAlign: TextAlign.center,
             style: const TextStyle(fontSize: 15, color: AppColors.ink),
@@ -167,7 +168,7 @@ class _StreakHero extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
+            ContentText(
               '$streak',
               style: const TextStyle(
                 fontSize: 60,
@@ -177,7 +178,7 @@ class _StreakHero extends StatelessWidget {
                 fontFeatures: _tabularFigures,
               ),
             ),
-            Text(label, style: const TextStyle(fontSize: 17, color: AppColors.ink)),
+            ContentText(label, style: const TextStyle(fontSize: 17, color: AppColors.ink)),
           ],
         ),
       ),
@@ -200,9 +201,9 @@ class _EmptyHero extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(title, style: const TextStyle(fontSize: 19, fontWeight: FontWeight.w600, color: AppColors.ink)),
+          ContentText(title, style: const TextStyle(fontSize: 19, fontWeight: FontWeight.w600, color: AppColors.ink)),
           const SizedBox(height: 6),
-          Text(hint, style: const TextStyle(fontSize: 15, height: 1.4, color: AppColors.ink)),
+          ContentText(hint, style: const TextStyle(fontSize: 15, height: 1.4, color: AppColors.ink)),
         ],
       ),
     );
@@ -266,7 +267,7 @@ class _MonthGrid extends StatelessWidget {
             children: [
               for (final day in days.take(7))
                 Expanded(
-                  child: Text(
+                  child: ContentText(
                     material.narrowWeekdays[day.date.weekday % 7],
                     textAlign: TextAlign.center,
                     style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w500, color: AppColors.ink),
@@ -319,7 +320,7 @@ class _FridayStrip extends StatelessWidget {
                       ? ExcludeSemantics(
                           child: FittedBox(
                             fit: BoxFit.scaleDown,
-                            child: Text(
+                            child: ContentText(
                               month.format(periods[i].date),
                               style: const TextStyle(fontSize: 12, color: AppColors.ink),
                             ),
@@ -372,7 +373,7 @@ class _DayCell extends StatelessWidget {
           border: state == WirdPeriodState.missed ? Border.all(color: AppColors.bronze, width: 1.5) : null,
         ),
         alignment: Alignment.center,
-        child: Text(
+        child: ContentText(
           '${status.date.day}',
           style: TextStyle(
             fontSize: 14,
@@ -420,7 +421,7 @@ class _Legend extends StatelessWidget {
         children: [
           Container(width: 12, height: 12, decoration: swatch),
           const SizedBox(width: 6),
-          Text(label, style: const TextStyle(fontSize: 13, color: AppColors.ink)),
+          ContentText(label, style: const TextStyle(fontSize: 13, color: AppColors.ink)),
         ],
       );
     }
@@ -462,9 +463,9 @@ class _StatLine extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.baseline,
         textBaseline: TextBaseline.alphabetic,
         children: [
-          Expanded(child: Text(label, style: const TextStyle(fontSize: 15, color: AppColors.ink))),
+          Expanded(child: ContentText(label, style: const TextStyle(fontSize: 15, color: AppColors.ink))),
           const SizedBox(width: 12),
-          Text(
+          ContentText(
             value,
             style: const TextStyle(
               fontSize: 18,

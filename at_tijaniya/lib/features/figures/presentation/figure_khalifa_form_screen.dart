@@ -9,6 +9,7 @@ import '../../khadara/domain/khadara_models.dart' show Zawiya;
 import '../data/figures_repository.dart';
 import '../domain/figure_models.dart';
 import 'figures_providers.dart';
+import '../../../core/widgets/content_text.dart';
 
 /// Libellé pluriel d'un rôle de succession ("Khalifes", "Mokaddems",
 /// "Imams") — partagé entre ce formulaire et l'onglet Zawiya de
@@ -185,7 +186,7 @@ class _FigureKhalifaFormScreenState extends ConsumerState<FigureKhalifaFormScree
                     if (succession != null) ...[
                       InputDecorator(
                         decoration: InputDecoration(labelText: l10n.figureSuccessionFormZawiyaLabel),
-                        child: Text(succession.zawiyaName),
+                        child: ContentText(succession.zawiyaName),
                       ),
                       const SizedBox(height: 16),
                       InputDecorator(
@@ -206,7 +207,7 @@ class _FigureKhalifaFormScreenState extends ConsumerState<FigureKhalifaFormScree
                           for (final zawiya in linkedZawiyas)
                             DropdownMenuItem<String?>(
                               value: zawiya.id,
-                              child: Text(zawiya.name, overflow: TextOverflow.ellipsis),
+                              child: ContentText(zawiya.name, overflow: TextOverflow.ellipsis),
                             ),
                         ],
                         validator: (value) => value == null ? l10n.figureSuccessionFormZawiyaNone : null,
@@ -231,7 +232,7 @@ class _FigureKhalifaFormScreenState extends ConsumerState<FigureKhalifaFormScree
                     if (isEdit)
                       InputDecorator(
                         decoration: InputDecoration(labelText: l10n.figureKhalifaFormFigureLabel),
-                        child: Text(widget.existingLink!.khalifaNameFr),
+                        child: ContentText(widget.existingLink!.khalifaNameFr),
                       )
                     else
                       DropdownButtonFormField<String?>(
@@ -245,7 +246,7 @@ class _FigureKhalifaFormScreenState extends ConsumerState<FigureKhalifaFormScree
                           for (final candidate in candidates)
                             DropdownMenuItem<String?>(
                               value: candidate.id,
-                              child: Text(candidate.nameFrench, overflow: TextOverflow.ellipsis),
+                              child: ContentText(candidate.nameFrench, overflow: TextOverflow.ellipsis),
                             ),
                         ],
                         validator: (value) => value == null ? l10n.figureKhalifaFormFigureNone : null,
@@ -283,7 +284,7 @@ class _FigureKhalifaFormScreenState extends ConsumerState<FigureKhalifaFormScree
                     ),
                     if (_errorMessage != null) ...[
                       const SizedBox(height: 16),
-                      Text(_errorMessage!, style: const TextStyle(color: AppColors.danger)),
+                      ContentText(_errorMessage!, style: const TextStyle(color: AppColors.danger)),
                     ],
                     const SizedBox(height: 24),
                     ElevatedButton(

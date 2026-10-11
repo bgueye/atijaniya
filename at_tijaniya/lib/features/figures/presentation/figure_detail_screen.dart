@@ -23,6 +23,8 @@ import 'figure_khalifa_form_screen.dart';
 import 'figure_silsila_form_screen.dart';
 import 'figure_work_form_screen.dart';
 import 'figures_providers.dart';
+import '../../../core/widgets/content_text.dart';
+import '../../../core/widgets/directional_chevron.dart';
 
 /// Biographie détaillée d'une figure — en-tête immersif (rosace + noms) et
 /// onglets Biographie/Silsila/Citations/Ziyaras. Priorité P1
@@ -430,7 +432,7 @@ class _FigureHero extends StatelessWidget {
                         .copyWith(fontWeight: FontWeight.bold),
                   ),
                   const SizedBox(height: 6),
-                  Text(
+                  ContentText(
                     figure.nameFrench.toUpperCase(),
                     textAlign: TextAlign.center,
                     // `AppFonts.titlesFr` (CormorantGaramond) — même police que
@@ -505,7 +507,7 @@ class _PendingTab extends StatelessWidget {
             Icon(Icons.hourglass_empty,
                 color: AppColors.bronze, size: 32),
             const SizedBox(height: 12),
-            Text(message,
+            ContentText(message,
                 textAlign: TextAlign.center,
                 style: TextStyle(color: AppColors.bronze, fontSize: 15)),
           ],
@@ -760,7 +762,7 @@ class _SilsilaNode extends StatelessWidget {
                 color: isRoot ? AppColors.goldSoft : AppColors.zaytoune),
           ),
           const SizedBox(height: 2),
-          Text(
+          ContentText(
             link.nameFr,
             textAlign: TextAlign.center,
             style: TextStyle(
@@ -769,7 +771,7 @@ class _SilsilaNode extends StatelessWidget {
           ),
           if (isRoot) ...[
             const SizedBox(height: 2),
-            Text(founderLabel,
+            ContentText(founderLabel,
                 style: TextStyle(
                     fontSize: 10,
                     color: AppColors.gold,
@@ -992,7 +994,7 @@ class _SectionTitle extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Text(title,
+    return ContentText(title,
         style: const TextStyle(
             fontWeight: FontWeight.w600, fontSize: 16, color: AppColors.ink));
   }
@@ -1028,7 +1030,7 @@ class _WorkCard extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Expanded(
-                child: Text(
+                child: ContentText(
                   work.title,
                   style: const TextStyle(
                     fontFamily: AppFonts.titlesFr,
@@ -1045,7 +1047,7 @@ class _WorkCard extends StatelessWidget {
           ),
           if (work.description != null) ...[
             const SizedBox(height: 6),
-            Text(work.description!,
+            ContentText(work.description!,
                 style: const TextStyle(
                     color: AppColors.ink, fontSize: 15, height: 1.4)),
           ],
@@ -1452,7 +1454,7 @@ class _SuccessionBlock extends StatelessWidget {
           style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 14, color: AppColors.ink),
         ),
         const SizedBox(height: 2),
-        Text(
+        ContentText(
           succession.zawiyaName,
           textAlign: TextAlign.center,
           style: TextStyle(fontSize: 12, color: AppColors.bronze),
@@ -1505,7 +1507,7 @@ class _SuccessionGapNotice extends StatelessWidget {
           Icon(Icons.more_vert, size: 16, color: AppColors.bronze),
           const SizedBox(width: 6),
           Flexible(
-            child: Text(
+            child: ContentText(
               text,
               textAlign: TextAlign.center,
               style: TextStyle(fontSize: 12, fontStyle: FontStyle.italic, color: AppColors.bronze),
@@ -1536,7 +1538,7 @@ class _ZiyaraEventCard extends StatelessWidget {
       child: ListTile(
         leading:
             Icon(khadaraEventTypeIcon(event.type), color: AppColors.emerald),
-        title: Text(event.title),
+        title: ContentText(event.title),
         subtitle: Text(formatKhadaraEventSchedule(event, AppLocalizations.of(context)!)),
         // Un seul bouton Délier ici, pas `_AdminItemActions` (Modifier +
         // Supprimer) : un lien figure↔évènement n'a rien à modifier, un
@@ -1552,16 +1554,9 @@ class _ZiyaraEventCard extends StatelessWidget {
                         size: 20, color: AppColors.bronze),
                 onPressed: busy ? null : onUnlink,
               )
-            // Transform.flip : `Icons.chevron_right` n'a pas
-            // `matchTextDirection` activé (contrairement à `IconData` qui
-            // porterait ce champ) — sans ça ce chevron "aller voir le
-            // détail" pointerait toujours physiquement à droite, y compris
-            // en arabe où il devrait pointer vers le sens de lecture
-            // (gauche).
-            : Transform.flip(
-                flipX: Directionality.of(context) == TextDirection.rtl,
-                child: Icon(Icons.chevron_right, color: AppColors.bronze),
-              ),
+            // Flutter retourne lui-même ce chevron en arabe : voir
+            // `DirectionalChevron`.
+            : DirectionalChevron(color: AppColors.bronze),
         onTap: () => Navigator.of(context).push(
           MaterialPageRoute(builder: (_) => EventDetailScreen(event: event)),
         ),
@@ -1624,7 +1619,7 @@ class _EventLinkPickerSheet extends ConsumerWidget {
                         ListTile(
                           leading: Icon(khadaraEventTypeIcon(event.type),
                               color: AppColors.emerald),
-                          title: Text(event.title),
+                          title: ContentText(event.title),
                           subtitle: Text(formatKhadaraEventSchedule(event, AppLocalizations.of(context)!)),
                           onTap: () => Navigator.of(context).pop(event),
                         ),
@@ -1654,8 +1649,8 @@ class _LinkedZawiyaCard extends StatelessWidget {
       margin: const EdgeInsets.only(bottom: 12),
       child: ListTile(
         leading: Icon(zawiyaKindIcon(zawiya.kind), color: AppColors.emerald),
-        title: Text(zawiya.name),
-        subtitle: zawiya.addressText != null ? Text(zawiya.addressText!) : null,
+        title: ContentText(zawiya.name),
+        subtitle: zawiya.addressText != null ? ContentText(zawiya.addressText!) : null,
         // Un seul bouton Délier ici, comme `_ZiyaraEventCard` : un lien
         // figure↔zawiya n'a rien à modifier.
         trailing: isAdmin
@@ -1665,11 +1660,7 @@ class _LinkedZawiyaCard extends StatelessWidget {
                     : Icon(Icons.link_off, size: 20, color: AppColors.bronze),
                 onPressed: busy ? null : onUnlink,
               )
-            // Transform.flip : voir la même note dans `_ZiyaraEventCard`.
-            : Transform.flip(
-                flipX: Directionality.of(context) == TextDirection.rtl,
-                child: Icon(Icons.chevron_right, color: AppColors.bronze),
-              ),
+            : DirectionalChevron(color: AppColors.bronze),
         onTap: () => Navigator.of(context).push(
           MaterialPageRoute(builder: (_) => ZawiyaDetailScreen(zawiya: zawiya)),
         ),
@@ -1723,7 +1714,7 @@ class _ZawiyaLinkPickerSheet extends ConsumerWidget {
                       for (final zawiya in selectable)
                         ListTile(
                           leading: Icon(zawiyaKindIcon(zawiya.kind), color: AppColors.emerald),
-                          title: Text(zawiya.name),
+                          title: ContentText(zawiya.name),
                           onTap: () => Navigator.of(context).pop(zawiya),
                         ),
                     ],
@@ -1769,13 +1760,13 @@ class _FounderNode extends StatelessWidget {
           // `AppFonts.titlesFr` : même correctif que le sous-titre de l'en-tête
           // de cet écran (`_FigureHeader`) — même gap constaté à l'audit
           // design pré-publication Play Store.
-          Text(
+          ContentText(
             nameFrench,
             textAlign: TextAlign.center,
             style: const TextStyle(fontFamily: AppFonts.titlesFr, fontSize: 12, color: AppColors.parchment),
           ),
           const SizedBox(height: 2),
-          Text(founderLabel, style: TextStyle(fontSize: 10, color: AppColors.gold, fontWeight: FontWeight.w600)),
+          ContentText(founderLabel, style: TextStyle(fontSize: 10, color: AppColors.gold, fontWeight: FontWeight.w600)),
         ],
       ),
     );
@@ -1844,10 +1835,10 @@ class _KhalifaNode extends ConsumerWidget {
               style: AppTheme.sacredText(fontSize: 15, color: AppColors.zaytoune),
             ),
             const SizedBox(height: 2),
-            Text(link.khalifaNameFr, textAlign: TextAlign.center, style: TextStyle(fontSize: 12, color: AppColors.bronze)),
+            ContentText(link.khalifaNameFr, textAlign: TextAlign.center, style: TextStyle(fontSize: 12, color: AppColors.bronze)),
             if (link.periodText != null) ...[
               const SizedBox(height: 2),
-              Text(link.periodText!, style: TextStyle(fontSize: 11, color: AppColors.bronze)),
+              ContentText(link.periodText!, style: TextStyle(fontSize: 11, color: AppColors.bronze)),
             ],
             if (isAdmin) ...[
               const SizedBox(height: 4),
@@ -1891,7 +1882,7 @@ class _BiographyParagraph extends StatelessWidget {
             const SizedBox(height: 6),
           ],
           if (paragraph.transliteration != null) ...[
-            Text(
+            ContentText(
               paragraph.transliteration!,
               style: TextStyle(
                   fontStyle: FontStyle.italic,
@@ -1900,7 +1891,7 @@ class _BiographyParagraph extends StatelessWidget {
             ),
             const SizedBox(height: 4),
           ],
-          Text(paragraph.translation,
+          ContentText(paragraph.translation,
               style: const TextStyle(color: AppColors.ink, fontSize: 16)),
         ],
       ),
@@ -1950,7 +1941,7 @@ class _CitationCard extends StatelessWidget {
             const SizedBox(height: 6),
           ],
           if (citation.transliteration != null) ...[
-            Text(
+            ContentText(
               citation.transliteration!,
               style: TextStyle(
                   fontStyle: FontStyle.italic,
@@ -1962,11 +1953,11 @@ class _CitationCard extends StatelessWidget {
           // Citation en arabe seul : l'arabe est déjà affiché plus haut, on ne
           // le répète pas à la place de la traduction.
           if (citation.french != null || citation.arabic == null) ...[
-            Text(citation.translation,
+            ContentText(citation.translation,
                 style: const TextStyle(color: AppColors.ink, fontSize: 16)),
             const SizedBox(height: 8),
           ],
-          Text(
+          ContentText(
             '— ${citation.source}',
             style: TextStyle(
                 color: AppColors.bronze,

@@ -5,6 +5,7 @@ import '../../../core/theme/app_colors.dart';
 import '../../../l10n/app_localizations.dart';
 import '../domain/mouqaddam_models.dart';
 import 'mouqaddam_providers.dart';
+import '../../../core/widgets/content_text.dart';
 
 /// Rechercher un parrain — pour l'écran "Devenir Mouqaddam". Priorité P2
 /// (docs/03-architecture-ecrans.md).
@@ -125,7 +126,7 @@ class _SearchSponsorScreenState extends ConsumerState<SearchSponsorScreen> {
       return Center(
         child: Padding(
           padding: const EdgeInsets.all(24),
-          child: Text(message, textAlign: TextAlign.center, style: TextStyle(color: AppColors.bronze)),
+          child: ContentText(message, textAlign: TextAlign.center, style: TextStyle(color: AppColors.bronze)),
         ),
       );
     }
@@ -140,7 +141,7 @@ class _SearchSponsorScreenState extends ConsumerState<SearchSponsorScreen> {
             backgroundColor: AppColors.emeraldSoft,
             child: Icon(Icons.person_outline, color: AppColors.emerald),
           ),
-          title: Text(sponsor.displayName),
+          title: ContentText(sponsor.displayName),
           subtitle: Text(sponsor.zawiyaName ?? l10n.profileZawiyaNoneLabel),
           onTap: () => Navigator.of(context).pop(sponsor),
         );

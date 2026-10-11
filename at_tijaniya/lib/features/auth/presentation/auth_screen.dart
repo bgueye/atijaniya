@@ -5,6 +5,7 @@ import '../../../core/supabase/supabase_config.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../l10n/app_localizations.dart';
 import '../domain/auth_error_message.dart';
+import '../../../core/widgets/content_text.dart';
 
 /// Inscription / Connexion — email/mot de passe. Téléphone/OTP hors
 /// périmètre pour l'instant : nécessiterait un fournisseur SMS non
@@ -408,7 +409,7 @@ class _PanelTitle extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
+        ContentText(
           title,
           style: GoogleFonts.cormorantGaramond(
             fontSize: 26,
@@ -417,7 +418,7 @@ class _PanelTitle extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 4),
-        Text(subtitle, style: TextStyle(color: AppColors.bronze, fontSize: 12, height: 1.4)),
+        ContentText(subtitle, style: TextStyle(color: AppColors.bronze, fontSize: 12, height: 1.4)),
       ],
     );
   }
@@ -468,7 +469,7 @@ class _SegmentedToggle extends StatelessWidget {
           borderRadius: BorderRadius.circular(18),
         ),
         alignment: Alignment.center,
-        child: Text(
+        child: ContentText(
           label,
           style: TextStyle(
             color: active ? Colors.white : AppColors.bronze,
@@ -505,7 +506,7 @@ class _PrimaryButton extends StatelessWidget {
               width: 18,
               child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
             )
-          : Text(label, style: const TextStyle(fontWeight: FontWeight.w600)),
+          : ContentText(label, style: const TextStyle(fontWeight: FontWeight.w600)),
     );
   }
 }
@@ -520,7 +521,7 @@ class _MessageBanner extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 8),
-      child: Text(text, style: TextStyle(color: isError ? AppColors.danger : AppColors.emerald)),
+      child: ContentText(text, style: TextStyle(color: isError ? AppColors.danger : AppColors.emerald)),
     );
   }
 }

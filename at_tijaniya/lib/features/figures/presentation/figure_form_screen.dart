@@ -7,6 +7,7 @@ import '../domain/figure_models.dart';
 import 'figures_providers.dart';
 import '../../../core/text/numerals.dart';
 import '../../../core/theme/app_colors.dart';
+import '../../../core/widgets/content_text.dart';
 
 /// Création/édition d'une figure — réservé par RLS à un compte admin
 /// (`figures_admin_write`/`_update`, voir `isAdminProvider`).
@@ -220,7 +221,7 @@ class _FigureFormScreenState extends ConsumerState<FigureFormScreen> {
                 ),
                 if (_errorMessage != null) ...[
                   const SizedBox(height: 16),
-                  Text(_errorMessage!,
+                  ContentText(_errorMessage!,
                       style: const TextStyle(color: AppColors.danger)),
                 ],
                 const SizedBox(height: 24),

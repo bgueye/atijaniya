@@ -11,6 +11,7 @@ import '../../settings/presentation/privacy_settings_screen.dart';
 import '../domain/lineage_models.dart';
 import 'lineage_providers.dart';
 import 'lineage_screen.dart';
+import '../../../core/widgets/content_text.dart';
 
 /// Retrouver mes condisciples — mise en relation par correspondance de lignée
 /// spirituelle. Priorité P1 (docs/03-architecture-ecrans.md).
@@ -144,7 +145,7 @@ class _SectionHeader extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 12),
-      child: Text(title, style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 16, color: AppColors.ink)),
+      child: ContentText(title, style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 16, color: AppColors.ink)),
     );
   }
 }
@@ -184,7 +185,7 @@ class _ReceivedRequestCard extends ConsumerWidget {
                 ),
                 const SizedBox(width: 12),
                 Expanded(
-                  child: Text(request.otherUserName ?? '—', style: const TextStyle(fontWeight: FontWeight.w500, fontSize: 16)),
+                  child: ContentText(request.otherUserName ?? '—', style: const TextStyle(fontWeight: FontWeight.w500, fontSize: 16)),
                 ),
                 IconButton(
                   icon: Icon(Icons.flag_outlined, size: 20, color: AppColors.bronze),
@@ -274,8 +275,8 @@ class _MatchCard extends ConsumerWidget {
               : null,
           child: match.avatarUrl == null ? Icon(Icons.person_outline, color: AppColors.emerald) : null,
         ),
-        title: Text(match.displayName, style: const TextStyle(fontWeight: FontWeight.w500)),
-        subtitle: match.transmissionYear != null ? Text('${match.transmissionYear}') : null,
+        title: ContentText(match.displayName, style: const TextStyle(fontWeight: FontWeight.w500)),
+        subtitle: match.transmissionYear != null ? ContentText('${match.transmissionYear}') : null,
         trailing: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -291,7 +292,7 @@ class _MatchCard extends ConsumerWidget {
                 ),
               ),
             if (statusLabel != null)
-              Text(statusLabel, style: TextStyle(color: AppColors.bronze, fontSize: 13))
+              ContentText(statusLabel, style: TextStyle(color: AppColors.bronze, fontSize: 13))
             else
               OutlinedButton(
                 onPressed: () => _sendRequest(context, ref, l10n),
@@ -328,12 +329,12 @@ class _EmptyState extends StatelessWidget {
               child: Icon(icon, color: AppColors.bronze, size: 32),
             ),
             const SizedBox(height: 20),
-            Text(title, style: Theme.of(context).textTheme.headlineSmall, textAlign: TextAlign.center),
+            ContentText(title, style: Theme.of(context).textTheme.headlineSmall, textAlign: TextAlign.center),
             const SizedBox(height: 8),
-            Text(body, textAlign: TextAlign.center, style: TextStyle(color: AppColors.bronze)),
+            ContentText(body, textAlign: TextAlign.center, style: TextStyle(color: AppColors.bronze)),
             if (ctaLabel != null) ...[
               const SizedBox(height: 24),
-              OutlinedButton(onPressed: onTap, child: Text(ctaLabel!)),
+              OutlinedButton(onPressed: onTap, child: ContentText(ctaLabel!)),
             ],
           ],
         ),
@@ -358,7 +359,7 @@ class _ErrorState extends StatelessWidget {
           children: [
             Icon(Icons.wifi_off, color: AppColors.bronze, size: 32),
             const SizedBox(height: 12),
-            Text(message, textAlign: TextAlign.center, style: TextStyle(color: AppColors.bronze)),
+            ContentText(message, textAlign: TextAlign.center, style: TextStyle(color: AppColors.bronze)),
             const SizedBox(height: 12),
             OutlinedButton(onPressed: onRetry, child: Text(AppLocalizations.of(context)!.lineageMatchesRetry)),
           ],

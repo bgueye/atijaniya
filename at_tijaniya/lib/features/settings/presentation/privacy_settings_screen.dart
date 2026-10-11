@@ -6,6 +6,7 @@ import '../../../l10n/app_localizations.dart';
 import '../../mouqaddam/presentation/mouqaddam_providers.dart';
 import '../domain/privacy_settings_models.dart';
 import 'privacy_settings_providers.dart';
+import '../../../core/widgets/content_text.dart';
 
 /// Paramètres de confidentialité — visibilité de la lignée et du statut
 /// mouqaddam (opt-in), disponibilité comme parrain, qui peut contacter.
@@ -172,7 +173,7 @@ class _PrivacyFormState extends ConsumerState<_PrivacyForm> {
         ),
         if (_errorMessage != null) ...[
           const SizedBox(height: 16),
-          Text(_errorMessage!, style: const TextStyle(color: AppColors.danger)),
+          ContentText(_errorMessage!, style: const TextStyle(color: AppColors.danger)),
         ],
       ],
     );
@@ -200,8 +201,8 @@ class _PrivacySwitch extends StatelessWidget {
     return Card(
       child: SwitchListTile(
         activeThumbColor: AppColors.emerald,
-        title: Text(label, style: const TextStyle(fontWeight: FontWeight.w600, color: AppColors.ink)),
-        subtitle: Text(description, style: TextStyle(color: AppColors.bronze, fontSize: 14)),
+        title: ContentText(label, style: const TextStyle(fontWeight: FontWeight.w600, color: AppColors.ink)),
+        subtitle: ContentText(description, style: TextStyle(color: AppColors.bronze, fontSize: 14)),
         value: value,
         onChanged: onChanged,
       ),

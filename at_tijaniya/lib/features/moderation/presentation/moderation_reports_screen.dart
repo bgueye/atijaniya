@@ -5,6 +5,7 @@ import '../../../core/theme/app_colors.dart';
 import '../../../l10n/app_localizations.dart';
 import '../domain/moderation_models.dart';
 import 'moderation_providers.dart';
+import '../../../core/widgets/content_text.dart';
 
 /// Écran admin de modération a posteriori (Sprint 2, P3) : file des
 /// signalements en attente sur les directs Khadara et les demandes de mise
@@ -140,8 +141,8 @@ class _ReportCardState extends ConsumerState<_ReportCard> {
     return showDialog<bool>(
       context: context,
       builder: (dialogContext) => AlertDialog(
-        title: Text(title),
-        content: Text(body),
+        title: ContentText(title),
+        content: ContentText(body),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(dialogContext).pop(false),
@@ -149,7 +150,7 @@ class _ReportCardState extends ConsumerState<_ReportCard> {
           ),
           TextButton(
             onPressed: () => Navigator.of(dialogContext).pop(true),
-            child: Text(
+            child: ContentText(
               _actionLabel(),
               style: const TextStyle(color: AppColors.danger),
             ),
@@ -170,9 +171,9 @@ class _ReportCardState extends ConsumerState<_ReportCard> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(_typeLabel(), style: TextStyle(fontWeight: FontWeight.w600, color: AppColors.emerald)),
+            ContentText(_typeLabel(), style: TextStyle(fontWeight: FontWeight.w600, color: AppColors.emerald)),
             const SizedBox(height: 4),
-            Text(widget.item.preview ?? '—', style: const TextStyle(fontWeight: FontWeight.w500)),
+            ContentText(widget.item.preview ?? '—', style: const TextStyle(fontWeight: FontWeight.w500)),
             if (report.reason != null && report.reason!.trim().isNotEmpty) ...[
               const SizedBox(height: 6),
               Text(
@@ -192,7 +193,7 @@ class _ReportCardState extends ConsumerState<_ReportCard> {
                 OutlinedButton(
                   onPressed: _busy ? null : () => _resolve(takeAction: true),
                   style: OutlinedButton.styleFrom(foregroundColor: AppColors.danger),
-                  child: Text(_actionLabel()),
+                  child: ContentText(_actionLabel()),
                 ),
               ],
             ),

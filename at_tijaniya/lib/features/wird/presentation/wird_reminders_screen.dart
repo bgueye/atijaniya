@@ -8,6 +8,7 @@ import '../domain/wird_models.dart';
 import '../domain/wird_reminder.dart';
 import 'wird_reminder_controller.dart';
 import 'wird_messages.dart';
+import '../../../core/widgets/content_text.dart';
 
 /// Traduit le libellé d'un créneau par son `id` plutôt que d'afficher
 /// `slot.label` (toujours en français, `wird_reminder_slots.dart`) — même
@@ -158,7 +159,7 @@ class _ReminderTile extends StatelessWidget {
                     if (picked != null) onPickTime(picked);
                   },
                   icon: Icon(Icons.schedule, color: AppColors.emerald, size: 18),
-                  label: Text(
+                  label: ContentText(
                     time.format(context),
                     style: TextStyle(color: AppColors.emerald, fontWeight: FontWeight.w600),
                   ),

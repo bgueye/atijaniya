@@ -7,6 +7,7 @@ import '../../../l10n/app_localizations.dart';
 import '../domain/khadara_models.dart';
 import 'live_stream_providers.dart';
 import 'live_stream_screen.dart';
+import '../../../core/widgets/content_text.dart';
 
 /// Démarrer un direct pour un évènement — "Lecteur natif + agrégation de
 /// flux externes" (P2, docs/03-architecture-ecrans.md). Seule l'agrégation
@@ -95,7 +96,7 @@ class _StartLiveStreamScreenState extends ConsumerState<StartLiveStreamScreen> {
           child: ListView(
             padding: const EdgeInsets.all(20),
             children: [
-              Text(widget.contextTitle,
+              ContentText(widget.contextTitle,
                   style: const TextStyle(
                       fontWeight: FontWeight.w600, fontSize: 16)),
               const SizedBox(height: 8),
@@ -197,9 +198,9 @@ class _SourceTile extends StatelessWidget {
         child: ListTile(
           leading: Icon(icon,
               color: selected ? AppColors.emerald : AppColors.bronze),
-          title: Text(label),
+          title: ContentText(label),
           subtitle: subtitle != null
-              ? Text(subtitle!, style: const TextStyle(fontSize: 12))
+              ? ContentText(subtitle!, style: const TextStyle(fontSize: 12))
               : null,
           trailing: selected
               ? Icon(Icons.check_circle, color: AppColors.emerald)

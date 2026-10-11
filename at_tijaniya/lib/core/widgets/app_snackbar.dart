@@ -8,6 +8,7 @@
 // les messages d'erreur restent cohérents avec la charte plutôt que le
 // fallback Material générique.
 import 'package:flutter/material.dart';
+import 'content_text.dart';
 
 void showErrorSnackBar(BuildContext context, String message) {
   final colorScheme = Theme.of(context).colorScheme;
@@ -15,6 +16,6 @@ void showErrorSnackBar(BuildContext context, String message) {
     ..hideCurrentSnackBar()
     ..showSnackBar(SnackBar(
       backgroundColor: colorScheme.error,
-      content: Text(message, style: TextStyle(color: colorScheme.onError)),
+      content: ContentText(message, style: TextStyle(color: colorScheme.onError)),
     ));
 }

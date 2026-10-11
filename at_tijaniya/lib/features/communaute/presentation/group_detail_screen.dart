@@ -18,6 +18,7 @@ import '../domain/group_models.dart';
 import 'community_format.dart';
 import 'group_past_streams_screen.dart';
 import 'groups_providers.dart';
+import '../../../core/widgets/content_text.dart';
 
 /// Détail d'un groupe — en-tête (description, lieu, membres), action
 /// rejoindre/quitter, discussions. Priorité P2 (docs/03-architecture-ecrans.md
@@ -62,7 +63,7 @@ class _GroupDetailScreenState extends ConsumerState<GroupDetailScreen> {
   void _promptSignIn(String message) {
     ScaffoldMessenger.of(context)
       ..hideCurrentSnackBar()
-      ..showSnackBar(SnackBar(content: Text(message)));
+      ..showSnackBar(SnackBar(content: ContentText(message)));
   }
 
   Future<void> _join() async {
@@ -181,7 +182,7 @@ class _GroupDetailScreenState extends ConsumerState<GroupDetailScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(_group.name),
+        title: ContentText(_group.name),
         actions: canManage
             ? [
                 IconButton(
@@ -264,7 +265,7 @@ class _GroupHeader extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           if (group.description != null) ...[
-            Text(group.description!, style: const TextStyle(color: AppColors.ink, fontSize: 16, height: 1.4)),
+            ContentText(group.description!, style: const TextStyle(color: AppColors.ink, fontSize: 16, height: 1.4)),
             const SizedBox(height: 12),
           ],
           Row(
@@ -272,12 +273,12 @@ class _GroupHeader extends StatelessWidget {
               if (group.locationLabel != null) ...[
                 Icon(Icons.place_outlined, size: 16, color: AppColors.bronze),
                 const SizedBox(width: 4),
-                Text(group.locationLabel!, style: TextStyle(color: AppColors.bronze, fontSize: 13)),
+                ContentText(group.locationLabel!, style: TextStyle(color: AppColors.bronze, fontSize: 13)),
                 const SizedBox(width: 16),
               ],
               Icon(Icons.people_alt_outlined, size: 16, color: AppColors.bronze),
               const SizedBox(width: 4),
-              Text('${group.memberCount}', style: TextStyle(color: AppColors.bronze, fontSize: 13)),
+              ContentText('${group.memberCount}', style: TextStyle(color: AppColors.bronze, fontSize: 13)),
             ],
           ),
           const SizedBox(height: 16),
@@ -538,12 +539,12 @@ class _GroupPostTileState extends ConsumerState<_GroupPostTile> {
         children: [
           Row(
             children: [
-              Text(
+              ContentText(
                 widget.post.authorDisplayName ?? widget.fallback,
                 style: const TextStyle(fontWeight: FontWeight.w600, color: AppColors.ink, fontSize: 13),
               ),
               const SizedBox(width: 8),
-              Text(
+              ContentText(
                 formatCommunityDateTime(widget.post.createdAt),
                 style: TextStyle(color: AppColors.bronze, fontSize: 11),
               ),
@@ -573,7 +574,7 @@ class _GroupPostTileState extends ConsumerState<_GroupPostTile> {
             ],
           ),
           const SizedBox(height: 2),
-          Text(_contentText, style: const TextStyle(color: AppColors.ink, fontSize: 15)),
+          ContentText(_contentText, style: const TextStyle(color: AppColors.ink, fontSize: 15)),
         ],
       ),
     );
@@ -714,7 +715,7 @@ class _EditGroupSheetState extends ConsumerState<_EditGroupSheet> {
                   decoration: InputDecoration(labelText: l10n.communityGroupsZawiyaLabel),
                   items: [
                     const DropdownMenuItem<String?>(value: null, child: Text('—')),
-                    ...list.map((z) => DropdownMenuItem<String?>(value: z.id, child: Text(z.name, overflow: TextOverflow.ellipsis))),
+                    ...list.map((z) => DropdownMenuItem<String?>(value: z.id, child: ContentText(z.name, overflow: TextOverflow.ellipsis))),
                   ],
                   onChanged: (value) => setState(() => _zawiyaId = value),
                 ),

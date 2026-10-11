@@ -13,6 +13,7 @@ import 'figures_providers.dart';
 import 'figures_review_screen.dart';
 import '../../profil/presentation/profile_providers.dart';
 import '../../../core/widgets/directional_chevron.dart';
+import '../../../core/widgets/content_text.dart';
 
 /// Liste des figures — fondateurs et familles religieuses. Priorité P1
 /// (docs/03-architecture-ecrans.md).
@@ -137,9 +138,9 @@ class _EmptyState extends StatelessWidget {
           children: [
             Icon(Icons.auto_stories_outlined, color: AppColors.bronze, size: 40),
             const SizedBox(height: 16),
-            Text(title, style: Theme.of(context).textTheme.headlineSmall, textAlign: TextAlign.center),
+            ContentText(title, style: Theme.of(context).textTheme.headlineSmall, textAlign: TextAlign.center),
             const SizedBox(height: 8),
-            Text(body, textAlign: TextAlign.center, style: TextStyle(color: AppColors.bronze)),
+            ContentText(body, textAlign: TextAlign.center, style: TextStyle(color: AppColors.bronze)),
           ],
         ),
       ),
@@ -156,7 +157,7 @@ class _SectionHeader extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 12),
-      child: Text(
+      child: ContentText(
         title,
         style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 16, color: AppColors.ink),
       ),
@@ -227,7 +228,7 @@ class _FigureTile extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Text(
+                    ContentText(
                       figure.nameFrench,
                       // 2 lignes plutôt qu'1 : un nom tronqué à 1 ligne
                       // masquait parfois l'épithète qui différencie deux

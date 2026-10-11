@@ -7,6 +7,7 @@ import '../../../core/theme/app_colors.dart';
 import '../../../l10n/app_localizations.dart';
 import '../domain/donation_amount.dart';
 import 'donation_providers.dart';
+import '../../../core/widgets/content_text.dart';
 
 /// Faire un don — don ponctuel, priorité P1 (docs/03-architecture-ecrans.md).
 ///
@@ -141,7 +142,7 @@ class _DonationScreenState extends ConsumerState<DonationScreen> {
             ),
             if (_errorMessage != null) ...[
               const SizedBox(height: 16),
-              Text(_errorMessage!,
+              ContentText(_errorMessage!,
                   style: const TextStyle(color: AppColors.danger)),
             ],
             const SizedBox(height: 28),

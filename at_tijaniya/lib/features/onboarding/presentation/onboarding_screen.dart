@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../l10n/app_localizations.dart';
 import '../data/onboarding_store.dart';
+import '../../../core/widgets/content_text.dart';
 
 /// Onboarding — présentation de l'app en 4 écrans (accueil, Wirds, Khadara,
 /// Communauté). Priorité P1 (docs/03-architecture-ecrans.md : "3-4 écrans
@@ -139,13 +140,13 @@ class _OnboardingSlide extends StatelessWidget {
             child: Icon(icon, size: 56, color: AppColors.emerald),
           ),
           const SizedBox(height: 32),
-          Text(
+          ContentText(
             title,
             textAlign: TextAlign.center,
             style: Theme.of(context).textTheme.headlineSmall,
           ),
           const SizedBox(height: 12),
-          Text(
+          ContentText(
             body,
             textAlign: TextAlign.center,
             style: TextStyle(color: AppColors.bronze, fontSize: 16, height: 1.4),

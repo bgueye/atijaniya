@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../../core/theme/app_colors.dart';
 import '../../../l10n/app_localizations.dart';
+import '../../../core/widgets/content_text.dart';
 
 /// À propos d'At-Tijaniya — positionnement institutionnel (non-affiliation,
 /// statut du contenu religieux, badge "Parrainage confirmé", neutralité
@@ -89,7 +90,7 @@ class _AboutSection extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
+          ContentText(
             title,
             style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 17, color: AppColors.ink),
           ),

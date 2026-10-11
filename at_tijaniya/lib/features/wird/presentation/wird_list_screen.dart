@@ -13,6 +13,7 @@ import 'wird_detail_screen.dart';
 import 'wird_recitations_management_screen.dart';
 import 'wird_recitations_review_screen.dart';
 import '../../../core/widgets/directional_chevron.dart';
+import '../../../core/widgets/content_text.dart';
 
 /// Liste des Wirds — Lazim, Wazifa, Hadratou-l-Jouma, puis le Wird libre.
 /// Priorité P0 pour les trois premiers ; le Wird libre (compteur paramétré
@@ -136,7 +137,7 @@ class _WirdCard extends StatelessWidget {
       child: ListTile(
         contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
         leading: Icon(_iconForWird(wird.id), color: AppColors.emerald),
-        title: Text(
+        title: ContentText(
           isArabic ? wird.nameArabic : wird.nameFrench,
           style: isArabic
               ? AppTheme.sacredText(fontSize: 18, color: AppColors.ink)

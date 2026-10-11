@@ -4,6 +4,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../../core/supabase/supabase_config.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../l10n/app_localizations.dart';
+import '../../../core/widgets/content_text.dart';
 
 /// Nouveau mot de passe — ouvert automatiquement par `AtTijaniyaApp` quand le
 /// lien de réinitialisation reçu par e-mail (deep link vers
@@ -120,7 +121,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                   ),
                   if (_errorMessage != null) ...[
                     const SizedBox(height: 12),
-                    Text(_errorMessage!, style: const TextStyle(color: AppColors.danger)),
+                    ContentText(_errorMessage!, style: const TextStyle(color: AppColors.danger)),
                   ],
                   const SizedBox(height: 24),
                   ElevatedButton(

@@ -5,6 +5,7 @@ import '../../../core/theme/app_colors.dart';
 import '../../../l10n/app_localizations.dart';
 import '../data/khadara_understanding_content.dart';
 import 'khadara_providers.dart';
+import '../../../core/widgets/content_text.dart';
 
 /// Comprendre la Zawiya — contenu pédagogique pour les nouveaux disciples
 /// qui parcourent l'annuaire des zawiyas de l'onglet Khadara (pas le
@@ -74,7 +75,7 @@ class _DraftBanner extends StatelessWidget {
         children: [
           Icon(Icons.edit_note, color: AppColors.bronze, size: 20),
           const SizedBox(width: 8),
-          Expanded(child: Text(label, style: TextStyle(color: AppColors.bronze))),
+          Expanded(child: ContentText(label, style: TextStyle(color: AppColors.bronze))),
         ],
       ),
     );
@@ -103,9 +104,9 @@ class _EmptyState extends StatelessWidget {
               child: Icon(Icons.menu_book_outlined, color: AppColors.bronze, size: 32),
             ),
             const SizedBox(height: 20),
-            Text(title, style: Theme.of(context).textTheme.headlineSmall, textAlign: TextAlign.center),
+            ContentText(title, style: Theme.of(context).textTheme.headlineSmall, textAlign: TextAlign.center),
             const SizedBox(height: 8),
-            Text(body, textAlign: TextAlign.center, style: TextStyle(color: AppColors.bronze)),
+            ContentText(body, textAlign: TextAlign.center, style: TextStyle(color: AppColors.bronze)),
             const SizedBox(height: 24),
             // Renvoie vers le calendrier/l'annuaire déjà fonctionnels de l'onglet
             // Khadara (cet écran est poussé par-dessus), plutôt que de laisser un
@@ -113,7 +114,7 @@ class _EmptyState extends StatelessWidget {
             OutlinedButton.icon(
               onPressed: () => Navigator.of(context).pop(),
               icon: const Icon(Icons.event_outlined, size: 18),
-              label: Text(ctaLabel, textAlign: TextAlign.center),
+              label: ContentText(ctaLabel, textAlign: TextAlign.center),
             ),
           ],
         ),
@@ -135,9 +136,9 @@ class _SectionTile extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(section.title, style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 16, color: AppColors.ink)),
+            ContentText(section.title, style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 16, color: AppColors.ink)),
             const SizedBox(height: 8),
-            Text(
+            ContentText(
               section.body,
               style: const TextStyle(color: AppColors.ink, fontSize: 16, height: 1.4),
             ),

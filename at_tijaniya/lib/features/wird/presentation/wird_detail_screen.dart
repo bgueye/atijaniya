@@ -13,6 +13,7 @@ import 'wird_history_screen.dart';
 import 'wird_messages.dart';
 import 'wird_pillar_audio_controller.dart';
 import 'wird_reminders_screen.dart';
+import '../../../core/widgets/content_text.dart';
 
 /// Guide d'un Wird — arabe, translittération, traduction, lecture séquencée,
 /// lecteur audio synchronisé au texte. Priorité P0
@@ -86,7 +87,7 @@ class _WirdDetailScreenState extends ConsumerState<WirdDetailScreen> {
         appBar: AppBar(
         backgroundColor: AppColors.zaytoune,
         foregroundColor: AppColors.parchment,
-        title: Text(wirdDisplayName(context, wird)),
+        title: ContentText(wirdDisplayName(context, wird)),
         actions: [
           IconButton(
             icon: const Icon(Icons.insights_outlined),
@@ -133,7 +134,7 @@ class _WirdDetailScreenState extends ConsumerState<WirdDetailScreen> {
           // de l'audit design pré-publication Play Store.
           padding: const EdgeInsets.fromLTRB(20, 20, 20, 96),
           children: [
-            Text(
+            ContentText(
               wird.nameArabic,
               textAlign: TextAlign.center,
               style: AppTheme.sacredText(fontSize: 32, color: AppColors.gold),
@@ -201,7 +202,7 @@ class _InfoBanner extends StatelessWidget {
           Icon(icon, color: AppColors.gold, size: 18),
           const SizedBox(width: 8),
           Expanded(
-            child: Text(text, style: const TextStyle(color: AppColors.parchment, fontSize: 13)),
+            child: ContentText(text, style: const TextStyle(color: AppColors.parchment, fontSize: 13)),
           ),
         ],
       ),
@@ -263,7 +264,7 @@ class _PillarCard extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 10),
-          Text(
+          ContentText(
             pillar.transliteration,
             style: TextStyle(
               fontStyle: FontStyle.italic,
@@ -272,13 +273,13 @@ class _PillarCard extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 6),
-          Text(
+          ContentText(
             pillar.translation,
             style: const TextStyle(color: AppColors.ink, fontSize: 16),
           ),
           if (pillar.note != null) ...[
             const SizedBox(height: 10),
-            Text(
+            ContentText(
               pillar.note!,
               style: TextStyle(fontSize: 12, color: AppColors.bronze),
             ),
@@ -307,7 +308,7 @@ class _PillarCard extends StatelessWidget {
                   for (final c in pillar.conditions!)
                     Padding(
                       padding: const EdgeInsets.only(top: 2),
-                      child: Text('• $c', style: const TextStyle(fontSize: 12, color: AppColors.ink)),
+                      child: ContentText('• $c', style: const TextStyle(fontSize: 12, color: AppColors.ink)),
                     ),
                 ],
               ),
@@ -350,7 +351,7 @@ class _ClosingFormulaBlock extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        Text(formula.intro, style: TextStyle(fontSize: 12, color: AppColors.bronze)),
+        ContentText(formula.intro, style: TextStyle(fontSize: 12, color: AppColors.bronze)),
         const SizedBox(height: 4),
         Text(
           formula.arabic,
@@ -360,7 +361,7 @@ class _ClosingFormulaBlock extends StatelessWidget {
         ),
         if (formula.transliteration != null) ...[
           const SizedBox(height: 2),
-          Text(
+          ContentText(
             formula.transliteration!,
             style: TextStyle(fontStyle: FontStyle.italic, fontSize: 12, color: AppColors.bronze),
           ),
@@ -497,7 +498,7 @@ class _AudioPlayerBar extends StatelessWidget {
                 ),
                 const SizedBox(width: 4),
                 Expanded(
-                  child: Text(
+                  child: ContentText(
                     label,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
@@ -509,7 +510,7 @@ class _AudioPlayerBar extends StatelessWidget {
                   ),
                 ),
                 if (activeIndex != null)
-                  Text(
+                  ContentText(
                     '${_formatDuration(position)} / ${_formatDuration(duration)}',
                     style: TextStyle(color: AppColors.bronze, fontSize: 11),
                   ),
@@ -563,12 +564,12 @@ class _ParagraphBlock extends StatelessWidget {
             style: AppTheme.sacredText(fontSize: 18, color: AppColors.ink),
           ),
           const SizedBox(height: 6),
-          Text(
+          ContentText(
             paragraph.transliteration,
             style: TextStyle(fontStyle: FontStyle.italic, fontSize: 15, color: AppColors.bronze),
           ),
           const SizedBox(height: 4),
-          Text(paragraph.translation, style: const TextStyle(fontSize: 16, color: AppColors.ink)),
+          ContentText(paragraph.translation, style: const TextStyle(fontSize: 16, color: AppColors.ink)),
         ],
       ),
     );
@@ -590,6 +591,8 @@ class _RepetitionBadge extends StatelessWidget {
       ),
       child: Text(
         '×$count',
+        // Toujours « ×100 » : en arabe le signe passait après le nombre.
+        textDirection: TextDirection.ltr,
         style: TextStyle(color: AppColors.emerald, fontWeight: FontWeight.w600, fontSize: 13),
       ),
     );

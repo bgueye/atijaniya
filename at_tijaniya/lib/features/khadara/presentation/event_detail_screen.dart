@@ -14,6 +14,7 @@ import 'live_stream_providers.dart';
 import 'live_stream_screen.dart';
 import 'open_in_maps.dart';
 import 'start_live_stream_screen.dart';
+import '../../../core/widgets/content_text.dart';
 
 /// Détail d'un évènement Khadara — lieu, date, description, et
 /// rejoindre/démarrer un direct (P2, docs/03-architecture-ecrans.md :
@@ -73,7 +74,7 @@ class _EventDetailScreenState extends ConsumerState<EventDetailScreen> {
       if (mounted) {
         ScaffoldMessenger.of(context)
           ..hideCurrentSnackBar()
-          ..showSnackBar(SnackBar(content: Text(message)));
+          ..showSnackBar(SnackBar(content: ContentText(message)));
       }
     } finally {
       if (mounted) setState(() => _deleting = false);
@@ -92,7 +93,7 @@ class _EventDetailScreenState extends ConsumerState<EventDetailScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(_event.title),
+        title: ContentText(_event.title),
         actions: canManage
             ? [
                 IconButton(
@@ -177,7 +178,7 @@ class _EventDetailScreenState extends ConsumerState<EventDetailScreen> {
             ],
             if (_event.description != null) ...[
               const SizedBox(height: 20),
-              Text(
+              ContentText(
                 _event.description!,
                 style: const TextStyle(
                     color: AppColors.ink, fontSize: 16, height: 1.4),
@@ -274,7 +275,7 @@ class _InfoRow extends StatelessWidget {
         Icon(icon, size: 18, color: AppColors.bronze),
         const SizedBox(width: 8),
         Expanded(
-            child: Text(text, style: const TextStyle(color: AppColors.ink))),
+            child: ContentText(text, style: const TextStyle(color: AppColors.ink))),
       ],
     );
   }

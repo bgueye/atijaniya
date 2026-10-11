@@ -7,6 +7,7 @@ import 'khadara_format.dart';
 import 'khadara_providers.dart';
 import '../../../core/text/numerals.dart';
 import '../../../core/theme/app_colors.dart';
+import '../../../core/widgets/content_text.dart';
 
 /// Création/édition d'une zawiya — réservé par RLS à un compte admin
 /// (`zawiyas_admin_write`/`_update`, voir `canManageZawiyasProvider`) :
@@ -213,7 +214,7 @@ class _ZawiyaFormScreenState extends ConsumerState<ZawiyaFormScreen> {
                 ),
                 if (_errorMessage != null) ...[
                   const SizedBox(height: 16),
-                  Text(_errorMessage!,
+                  ContentText(_errorMessage!,
                       style: const TextStyle(color: AppColors.danger)),
                 ],
                 const SizedBox(height: 24),

@@ -10,6 +10,7 @@ import 'khadara_format.dart';
 import 'khadara_providers.dart';
 import 'open_in_maps.dart';
 import 'zawiya_form_screen.dart';
+import '../../../core/widgets/content_text.dart';
 
 /// Fiche détail d'une zawiya/daara — annuaire des zawiyas, priorité P1
 /// (docs/03-architecture-ecrans.md). Modifier/supprimer réservés à un admin
@@ -65,7 +66,7 @@ class _ZawiyaDetailScreenState extends ConsumerState<ZawiyaDetailScreen> {
       if (mounted) {
         ScaffoldMessenger.of(context)
           ..hideCurrentSnackBar()
-          ..showSnackBar(SnackBar(content: Text(message)));
+          ..showSnackBar(SnackBar(content: ContentText(message)));
       }
     } finally {
       if (mounted) setState(() => _deleting = false);
@@ -81,7 +82,7 @@ class _ZawiyaDetailScreenState extends ConsumerState<ZawiyaDetailScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(zawiya.name),
+        title: ContentText(zawiya.name),
         actions: canManage
             ? [
                 IconButton(
@@ -118,7 +119,7 @@ class _ZawiyaDetailScreenState extends ConsumerState<ZawiyaDetailScreen> {
           ),
           const SizedBox(height: 12),
           if (zawiya.description != null) ...[
-            Text(
+            ContentText(
               zawiya.description!,
               style: const TextStyle(color: AppColors.ink, fontSize: 16, height: 1.4),
             ),
@@ -160,7 +161,7 @@ class _ZawiyaDetailScreenState extends ConsumerState<ZawiyaDetailScreen> {
                         Card(
                           child: ListTile(
                             leading: Icon(khadaraEventTypeIcon(event.type), color: AppColors.emerald),
-                            title: Text(event.title),
+                            title: ContentText(event.title),
                             subtitle: Text(formatKhadaraEventSchedule(event, l10n)),
                             onTap: () => Navigator.of(context).push(
                               MaterialPageRoute(builder: (_) => EventDetailScreen(event: event)),

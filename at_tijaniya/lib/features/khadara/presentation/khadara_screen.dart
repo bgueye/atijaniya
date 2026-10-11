@@ -18,6 +18,7 @@ import 'nearby_recurring_events_screen.dart';
 import 'zawiya_detail_screen.dart';
 import 'zawiya_form_screen.dart';
 import '../../../core/widgets/directional_chevron.dart';
+import '../../../core/widgets/content_text.dart';
 
 /// Module Khadara — calendrier des évènements et annuaire des zawiyas.
 /// Priorité P1 (docs/03-architecture-ecrans.md). Nom de code inchangé,
@@ -174,7 +175,7 @@ class _EventsTab extends ConsumerWidget {
                     ),
                   )
                 : Icon(khadaraEventTypeIcon(event.type), color: AppColors.emerald),
-            title: Text(event.title),
+            title: ContentText(event.title),
             subtitle: Text(
               event.zawiyaName != null
                   ? '${formatKhadaraEventSchedule(event, l10n)} · ${event.zawiyaName}'
@@ -255,7 +256,7 @@ class _ZawiyasTabState extends ConsumerState<_ZawiyasTab> {
                       Padding(
                         padding: EdgeInsetsDirectional.only(start: index == 0 ? 0 : 6),
                         child: ChoiceChip(
-                          label: Text(entry.value),
+                          label: ContentText(entry.value),
                           selected: _kindFilter == entry.key,
                           showCheckmark: false,
                           visualDensity: VisualDensity.compact,
@@ -283,7 +284,7 @@ class _ZawiyasTabState extends ConsumerState<_ZawiyasTab> {
                 return Card(
                   child: ListTile(
                     leading: Icon(zawiyaKindIcon(zawiya.kind), color: AppColors.emerald),
-                    title: Text(zawiya.name),
+                    title: ContentText(zawiya.name),
                     // 2 lignes plutôt qu'1 pour l'adresse : une adresse assez
                     // longue se tronquait en plein milieu d'une parenthèse —
                     // constaté à l'audit design pré-publication Play Store,
@@ -295,9 +296,9 @@ class _ZawiyasTabState extends ConsumerState<_ZawiyasTab> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               if (kindLabel != null)
-                                Text(kindLabel, style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 12)),
+                                ContentText(kindLabel, style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 12)),
                               if (zawiya.addressText != null)
-                                Text(zawiya.addressText!, maxLines: 2, overflow: TextOverflow.ellipsis),
+                                ContentText(zawiya.addressText!, maxLines: 2, overflow: TextOverflow.ellipsis),
                             ],
                           ),
                     trailing: DirectionalChevron(color: AppColors.bronze),
@@ -445,7 +446,7 @@ class _AsyncSection<T> extends StatelessWidget {
           ? Center(
               child: Padding(
                 padding: const EdgeInsets.all(24),
-                child: Text(emptyMessage, textAlign: TextAlign.center, style: TextStyle(color: AppColors.bronze)),
+                child: ContentText(emptyMessage, textAlign: TextAlign.center, style: TextStyle(color: AppColors.bronze)),
               ),
             )
           : ListView.builder(

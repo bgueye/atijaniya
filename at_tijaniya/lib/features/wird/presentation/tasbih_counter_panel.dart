@@ -7,6 +7,7 @@ import '../../../l10n/app_localizations.dart';
 import '../domain/tasbih_session.dart' show TasbihMode;
 import 'tasbih_beads_ring.dart';
 import 'voice_error_message.dart';
+import '../../../core/widgets/content_text.dart';
 
 /// Texte secondaire sur fond zaytoune. Le bronze de la charte y tombait à
 /// environ 3:1 de contraste (notes de pilier, "/ 100", "Toucher pour
@@ -219,7 +220,7 @@ class TasbihCounterPanel extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Text(
+          ContentText(
             message,
             textAlign: TextAlign.center,
             maxLines: compact ? 1 : 2,
@@ -286,7 +287,7 @@ class TasbihCounterPanel extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           if (completeHint != null) ...[
-            Text(
+            ContentText(
               completeHint!,
               textAlign: TextAlign.center,
               style: TextStyle(color: tasbihSecondaryText(), fontSize: 13),
@@ -362,7 +363,7 @@ class _Ring extends StatelessWidget {
               child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Text(
+              ContentText(
                 '$count',
                 style: TextStyle(
                   color: AppColors.parchment,
@@ -419,7 +420,7 @@ class _PanelAction extends StatelessWidget {
             children: [
               Icon(icon, color: color, size: 22),
               const SizedBox(height: 2),
-              Text(
+              ContentText(
                 label,
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,

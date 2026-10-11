@@ -11,6 +11,7 @@ import '../../donation/presentation/donation_screen.dart';
 import 'about_screen.dart';
 import 'privacy_settings_screen.dart';
 import '../../../core/widgets/directional_chevron.dart';
+import '../../../core/widgets/content_text.dart';
 
 /// Paramètres généraux — langue, notifications, confidentialité, à propos.
 /// Priorité P0 (docs/03-architecture-ecrans.md).
@@ -156,7 +157,7 @@ class _SectionLabel extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.fromLTRB(8, 4, 8, 8),
-      child: Text(
+      child: ContentText(
         label,
         style: TextStyle(
             fontWeight: FontWeight.w600, color: AppColors.bronze, fontSize: 13),

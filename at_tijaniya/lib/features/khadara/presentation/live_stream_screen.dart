@@ -14,6 +14,7 @@ import '../../moderation/presentation/report_content_dialog.dart';
 import '../../profil/presentation/profile_providers.dart';
 import '../domain/khadara_models.dart';
 import 'live_stream_providers.dart';
+import '../../../core/widgets/content_text.dart';
 
 /// Rejoindre un direct — lien externe (YouTube/Facebook/autre) + chat en
 /// direct (`live_chat_messages`). Le "natif" n'est jamais atteignable via
@@ -345,9 +346,9 @@ class _ChatBubble extends StatelessWidget {
             if (!isMine && message.senderName != null)
               Padding(
                 padding: const EdgeInsets.only(bottom: 2),
-                child: Text(message.senderName!, style: TextStyle(color: AppColors.emerald, fontSize: 11, fontWeight: FontWeight.w600)),
+                child: ContentText(message.senderName!, style: TextStyle(color: AppColors.emerald, fontSize: 11, fontWeight: FontWeight.w600)),
               ),
-            Text(message.message, style: const TextStyle(color: AppColors.ink, fontSize: 15)),
+            ContentText(message.message, style: const TextStyle(color: AppColors.ink, fontSize: 15)),
           ],
         ),
       ),

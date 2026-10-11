@@ -9,6 +9,7 @@ import '../../../core/widgets/keep_screen_on.dart';
 import '../../../l10n/app_localizations.dart';
 import 'free_wird_controller.dart';
 import 'tasbih_counter_panel.dart';
+import '../../../core/widgets/content_text.dart';
 
 /// Wird libre — compteur paramétré par le disciple (nom + cible), en plus
 /// des trois wirds au contenu fixe et validé. Priorité demandée par le
@@ -181,7 +182,7 @@ class _QuickTargetPill extends StatelessWidget {
           borderRadius: BorderRadius.circular(20),
           border: Border.all(color: AppColors.bronze.withValues(alpha: 0.4)),
         ),
-        child: Text(
+        child: ContentText(
           '$value',
           style: TextStyle(
             color: selected ? AppColors.ink : AppColors.parchment,
@@ -244,7 +245,7 @@ class _CounterBody extends StatelessWidget {
             child: session.label.isEmpty
                 ? const SizedBox.shrink()
                 : ExcludeSemantics(
-                    child: Text(
+                    child: ContentText(
                       session.label,
                       textAlign: TextAlign.center,
                       style: const TextStyle(color: AppColors.parchment, fontSize: 24, height: 1.5),

@@ -5,6 +5,7 @@ import '../../../core/theme/app_colors.dart';
 import '../../../l10n/app_localizations.dart';
 import '../domain/mouqaddam_models.dart';
 import 'mouqaddam_providers.dart';
+import '../../../core/widgets/content_text.dart';
 
 /// Demandes de parrainage — côté mouqaddam vérifié : demandes reçues,
 /// accepter/refuser. Priorité P2 (docs/03-architecture-ecrans.md).
@@ -124,7 +125,7 @@ class _RequestCard extends ConsumerWidget {
                 ),
                 const SizedBox(width: 12),
                 Expanded(
-                  child: Text(request.candidateName ?? '—', style: const TextStyle(fontWeight: FontWeight.w500, fontSize: 16)),
+                  child: ContentText(request.candidateName ?? '—', style: const TextStyle(fontWeight: FontWeight.w500, fontSize: 16)),
                 ),
               ],
             ),

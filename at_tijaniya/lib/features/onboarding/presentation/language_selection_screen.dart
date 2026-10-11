@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/locale_controller.dart';
+import '../../../core/widgets/content_text.dart';
 
 /// Choix de la langue au premier lancement — bascule RTL immédiate.
 /// Priorité P0 (docs/03-architecture-ecrans.md).
@@ -86,7 +87,7 @@ class _LanguageButton extends StatelessWidget {
           side: BorderSide(color: AppColors.gold),
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         ),
-        child: Text(label, style: const TextStyle(fontSize: 18, color: AppColors.ink)),
+        child: ContentText(label, style: const TextStyle(fontSize: 18, color: AppColors.ink)),
       ),
     );
   }

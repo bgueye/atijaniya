@@ -269,6 +269,42 @@ Reste à faire :
     sécurité se lance à la main, il n'est branché sur aucune intégration continue.
   - **Journal** `docs/09` : décrit encore l'ancien fonctionnement sur plusieurs points.
 
+
+## Passe visuelle sur téléphone — 2026-10-11
+
+L'audit du 4 octobre a lu le code des écrans ; il n'en a regardé aucun affiché. Cette passe
+a capturé sur téléphone (version signée, compte admin) 60 écrans en arabe et 45 en français,
+relus un par un. Elle a trouvé des défauts invisibles à la lecture du code :
+
+- **Chevrons de fin de ligne inversés en arabe** sur une vingtaine de lignes (profil, accueil,
+  paramètres, liste des wirds, zawiyas, fiche d'une figure, figure de la semaine). Cause :
+  Flutter retourne déjà `Icons.chevron_right` en arabe (`matchTextDirection`) ; le widget
+  `DirectionalChevron` ajouté à la suite de l'audit, et quatre `Transform.flip` plus anciens,
+  le retournaient une seconde fois. **Régression introduite par la correction du 4 octobre.**
+- **Contenu en caractères latins dans l'interface en arabe** (noms et adresses de zawiyas,
+  biographies, évènements, translittérations, notes des piliers, publications, « Comprendre
+  la Zawiya ») : ponctuation finale rejetée en début de ligne, point d'interrogation avant la
+  question, titres trop longs coupés par le mauvais bout. Corrigé par `ContentText`
+  (`lib/core/widgets/content_text.dart`), qui choisit le sens d'écriture d'après le contenu et
+  garde l'alignement de l'interface ; il remplace `Text` sur 219 textes dynamiques.
+- **Chiffres et signes** : « / 100 » affiché « 100 / », « ×100 » affiché « 100× », « -1 » affiché
+  « 1- », semaine de la figure épinglée affichée « fin — début ».
+
+Tout a été revérifié à l'écran après correction, en arabe puis en français.
+
+**Règles à retenir** : tout texte qui n'est pas un libellé traduit passe par `ContentText` ;
+jamais de `Transform.flip` ni de choix d'icône selon la langue pour un chevron ; une
+correction d'affichage se vérifie sur un écran, pas dans le code.
+
+**Non couverts par cette passe** (inaccessibles avec un compte connecté, admin et déjà
+parrainé, ou sans donnée) : connexion, inscription, réinitialisation du mot de passe,
+onboarding, « Devenir mouqaddam », recherche de parrain, « Retrouver mes condisciples »,
+conversation privée, direct en cours, don, conditions de la Tariqa, formulaires de citation,
+d'œuvre, de silsila et de succession. Restent aussi en français dans l'interface en arabe,
+faute de traduction du contenu : biographies, zawiyas, évènements, « Comprendre la Zawiya »,
+notes et traductions des wirds, quelques libellés d'administration (« Récitation de
+référence », nom du wird dans la gestion des récitations).
+
 ## Index des rapports par module
 
 | Fichier | Écrans |

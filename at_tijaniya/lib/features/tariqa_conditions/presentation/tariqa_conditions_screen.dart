@@ -8,6 +8,7 @@ import '../../profil/presentation/profile_providers.dart';
 import '../domain/tariqa_condition_models.dart';
 import 'tariqa_condition_form_screen.dart';
 import 'tariqa_conditions_providers.dart';
+import '../../../core/widgets/content_text.dart';
 
 /// Conditions de la Tariqa (chouroutes) — les 23 conditions régissant
 /// l'affiliation et la pratique du Wird, accessibles depuis une carte en bas
@@ -105,9 +106,9 @@ class _EmptyState extends StatelessWidget {
           children: [
             Icon(Icons.rule_outlined, color: AppColors.bronze, size: 40),
             const SizedBox(height: 16),
-            Text(title, style: Theme.of(context).textTheme.headlineSmall, textAlign: TextAlign.center),
+            ContentText(title, style: Theme.of(context).textTheme.headlineSmall, textAlign: TextAlign.center),
             const SizedBox(height: 8),
-            Text(body, textAlign: TextAlign.center, style: TextStyle(color: AppColors.bronze)),
+            ContentText(body, textAlign: TextAlign.center, style: TextStyle(color: AppColors.bronze)),
           ],
         ),
       ),
@@ -124,7 +125,7 @@ class _SectionHeader extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 12),
-      child: Text(
+      child: ContentText(
         title,
         style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 16, color: AppColors.ink),
       ),
@@ -150,7 +151,7 @@ class _ConditionTile extends StatelessWidget {
     final isArabic = Localizations.localeOf(context).languageCode == 'ar';
     final showArabicFirst = isArabic && condition.textAr != null;
 
-    final frenchText = Text(condition.textFr, style: const TextStyle(color: AppColors.ink, fontSize: 16, height: 1.4));
+    final frenchText = ContentText(condition.textFr, style: const TextStyle(color: AppColors.ink, fontSize: 16, height: 1.4));
     final arabicText = condition.textAr != null
         ? Text(
             condition.textAr!,
@@ -176,7 +177,7 @@ class _ConditionTile extends StatelessWidget {
                 height: 28,
                 alignment: Alignment.center,
                 decoration: const BoxDecoration(color: AppColors.goldSoft, shape: BoxShape.circle),
-                child: Text(
+                child: ContentText(
                   '${condition.orderIndex}',
                   style: TextStyle(color: AppColors.bronze, fontWeight: FontWeight.w600, fontSize: 13),
                 ),
@@ -195,7 +196,7 @@ class _ConditionTile extends StatelessWidget {
           ],
           if (condition.sourceNote != null) ...[
             const SizedBox(height: 8),
-            Text(
+            ContentText(
               condition.sourceNote!,
               style: TextStyle(color: AppColors.bronze, fontSize: 12, fontStyle: FontStyle.italic),
             ),

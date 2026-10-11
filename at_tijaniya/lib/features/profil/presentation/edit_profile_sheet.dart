@@ -6,6 +6,7 @@ import '../../../l10n/app_localizations.dart';
 import '../../khadara/presentation/khadara_providers.dart';
 import '../domain/profile_models.dart';
 import 'profile_providers.dart';
+import '../../../core/widgets/content_text.dart';
 
 /// Formulaire d'édition des infos de base du profil (nom, bio, zawiya) —
 /// ouvert en bottom sheet depuis `ProfilScreen`. La lignée spirituelle et le
@@ -126,14 +127,14 @@ class _EditProfileFormState extends ConsumerState<_EditProfileForm> {
                     DropdownMenuItem<String?>(
                         value: null, child: Text(l10n.profileZawiyaNone)),
                     ...list.map((z) => DropdownMenuItem<String?>(
-                        value: z.id, child: Text(z.name, overflow: TextOverflow.ellipsis))),
+                        value: z.id, child: ContentText(z.name, overflow: TextOverflow.ellipsis))),
                   ],
                   onChanged: (value) => setState(() => _zawiyaId = value),
                 ),
               ),
               if (_error != null) ...[
                 const SizedBox(height: 12),
-                Text(_error!, style: const TextStyle(color: AppColors.danger)),
+                ContentText(_error!, style: const TextStyle(color: AppColors.danger)),
               ],
               const SizedBox(height: 24),
               ElevatedButton(

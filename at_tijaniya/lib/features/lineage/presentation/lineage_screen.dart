@@ -7,6 +7,7 @@ import '../../../l10n/app_localizations.dart';
 import '../domain/lineage_models.dart';
 import 'lineage_matches_screen.dart';
 import 'lineage_providers.dart';
+import '../../../core/widgets/content_text.dart';
 
 /// Renseigner ma lignée spirituelle — foyer, nom du moqaddam, année de
 /// transmission, zawiya/lieu de transmission (optionnel). Priorité P1
@@ -300,12 +301,12 @@ class _LineageScreenState extends ConsumerState<LineageScreen> {
                     ),
                     if (_errorMessage != null) ...[
                       const SizedBox(height: 16),
-                      Text(_errorMessage!,
+                      ContentText(_errorMessage!,
                           style: const TextStyle(color: AppColors.danger)),
                     ],
                     if (_infoMessage != null) ...[
                       const SizedBox(height: 16),
-                      Text(_infoMessage!,
+                      ContentText(_infoMessage!,
                           style: TextStyle(color: AppColors.emerald)),
                     ],
                     const SizedBox(height: 24),

@@ -19,6 +19,7 @@ import '../../profil/presentation/profile_providers.dart';
 import '../../wird/presentation/wird_list_screen.dart';
 import 'home_dashboard_provider.dart';
 import 'home_screen.dart';
+import '../../../core/widgets/content_text.dart';
 
 /// Barre d'onglets inférieure, 5 destinations : Accueil · Wird · Zawiyas ·
 /// Figures · Communauté. Profil accessible via une icône avatar en en-tête.
@@ -61,7 +62,7 @@ class _HomeShellState extends ConsumerState<HomeShell> {
           if (isSignedIn)
             IconButton(
               icon: Badge(
-                label: Text('$unreadCount'),
+                label: ContentText('$unreadCount'),
                 isLabelVisible: unreadCount > 0,
                 backgroundColor: AppColors.gold,
                 child: const Icon(Icons.notifications_outlined),

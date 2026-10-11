@@ -12,6 +12,7 @@ import '../../profil/presentation/profile_providers.dart';
 import '../domain/khadara_models.dart';
 import 'khadara_format.dart';
 import 'khadara_providers.dart';
+import '../../../core/widgets/content_text.dart';
 
 /// Création/édition d'un évènement Khadara — réservé par RLS à un admin ou
 /// un mouqaddam vérifié (voir `canCreateEventProvider`,
@@ -485,7 +486,7 @@ class _EventFormScreenState extends ConsumerState<EventFormScreen> {
                   OutlinedButton.icon(
                     onPressed: _pickRecurrenceTime,
                     icon: const Icon(Icons.schedule),
-                    label: Text(_recurrenceTime.format(context)),
+                    label: ContentText(_recurrenceTime.format(context)),
                   ),
                   const SizedBox(height: 16),
                   Text(l10n.eventFormRecurrenceUntilLabel, style: TextStyle(color: AppColors.bronze, fontSize: 13)),
@@ -582,7 +583,7 @@ class _EventFormScreenState extends ConsumerState<EventFormScreen> {
                             const DropdownMenuItem<String?>(
                                 value: null, child: Text('—')),
                             ...list.map((z) => DropdownMenuItem<String?>(
-                                value: z.id, child: Text(z.name, overflow: TextOverflow.ellipsis))),
+                                value: z.id, child: ContentText(z.name, overflow: TextOverflow.ellipsis))),
                           ],
                           onChanged: (value) => setState(() {
                             _zawiyaId = value;
@@ -615,7 +616,7 @@ class _EventFormScreenState extends ConsumerState<EventFormScreen> {
                 ),
                 if (_errorMessage != null) ...[
                   const SizedBox(height: 16),
-                  Text(_errorMessage!,
+                  ContentText(_errorMessage!,
                       style: const TextStyle(color: AppColors.danger)),
                 ],
                 const SizedBox(height: 24),

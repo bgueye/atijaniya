@@ -24,6 +24,7 @@ import '../../../core/theme/app_theme.dart';
 import '../../../core/theme/rosace_painter.dart';
 import '../../../l10n/app_localizations.dart';
 import '../domain/mouqaddam_models.dart';
+import '../../../core/widgets/content_text.dart';
 
 /// Ouvre l'aperçu plein écran de la carte de partage. La capture PNG réelle
 /// n'a lieu qu'au tap sur le bouton "Partager l'image" (jamais à
@@ -214,7 +215,7 @@ class _ShareCardNode extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
       decoration: BoxDecoration(color: Colors.white.withValues(alpha: 0.08), borderRadius: BorderRadius.circular(8)),
       child: link.isVisibleForSharing
-          ? Text(
+          ? ContentText(
               link.displayName('—'),
               textAlign: TextAlign.center,
               style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w600, color: AppColors.goldSoft),

@@ -10,6 +10,7 @@ import '../../profil/presentation/profile_providers.dart';
 import '../domain/message_models.dart';
 import 'community_format.dart';
 import 'messages_providers.dart';
+import '../../../core/widgets/content_text.dart';
 
 /// Fil individuel d'une conversation — Messagerie privée, priorité P2.
 /// Envoyer un message exige d'être déjà participant de la conversation
@@ -59,7 +60,7 @@ class _ConversationScreenState extends ConsumerState<ConversationScreen> {
     final messages = ref.watch(conversationMessagesProvider(widget.conversationId));
 
     return Scaffold(
-      appBar: AppBar(title: Text(widget.otherDisplayName)),
+      appBar: AppBar(title: ContentText(widget.otherDisplayName)),
       body: Column(
         children: [
           Expanded(
@@ -143,9 +144,9 @@ class _MessageBubble extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisSize: MainAxisSize.min,
           children: [
-            Text(message.contentText, style: const TextStyle(color: AppColors.ink, fontSize: 15)),
+            ContentText(message.contentText, style: const TextStyle(color: AppColors.ink, fontSize: 15)),
             const SizedBox(height: 4),
-            Text(
+            ContentText(
               formatCommunityDateTime(message.sentAt),
               style: TextStyle(color: AppColors.bronze, fontSize: 10),
             ),

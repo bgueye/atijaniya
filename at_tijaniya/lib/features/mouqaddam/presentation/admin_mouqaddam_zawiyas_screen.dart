@@ -8,6 +8,7 @@ import '../../../l10n/app_localizations.dart';
 import '../../khadara/domain/khadara_models.dart';
 import '../../khadara/presentation/khadara_providers.dart';
 import '../../profil/presentation/profile_providers.dart';
+import '../../../core/widgets/content_text.dart';
 
 /// Un mouqaddam au parrainage confirmé, vu par l'admin : seulement ce qu'il
 /// faut pour lui attribuer une zawiya (fonction `admin_list_mouqaddams`).
@@ -168,7 +169,7 @@ class _MouqaddamCardState extends ConsumerState<_MouqaddamCard> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
+            ContentText(
               widget.mouqaddam.displayName,
               maxLines: 2,
               overflow: TextOverflow.ellipsis,
@@ -186,7 +187,7 @@ class _MouqaddamCardState extends ConsumerState<_MouqaddamCard> {
                 ...widget.zawiyas.map(
                   (z) => DropdownMenuItem<String?>(
                     value: z.id,
-                    child: Text(z.name, overflow: TextOverflow.ellipsis),
+                    child: ContentText(z.name, overflow: TextOverflow.ellipsis),
                   ),
                 ),
               ],

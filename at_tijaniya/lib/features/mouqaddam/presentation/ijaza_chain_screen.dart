@@ -14,6 +14,7 @@ import '../data/silsila_intro_store.dart';
 import '../domain/mouqaddam_models.dart';
 import 'mouqaddam_providers.dart';
 import 'silsila_share_card.dart';
+import '../../../core/widgets/content_text.dart';
 
 /// Ma silsila d'ijaza — chaîne de transmission reconstruite automatiquement
 /// via le graphe de parrainage (`get_ijaza_chain`), complétée en texte
@@ -446,7 +447,7 @@ class _NodeCard extends StatelessWidget {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Text(
+          ContentText(
             link.displayName('—'),
             textAlign: TextAlign.center,
             style: isFounder
@@ -455,7 +456,7 @@ class _NodeCard extends StatelessWidget {
           ),
           if (metaText != null) ...[
             const SizedBox(height: 4),
-            Text(
+            ContentText(
               metaText,
               style: TextStyle(
                 fontSize: 11,

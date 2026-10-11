@@ -13,6 +13,7 @@ import '../domain/wird_models.dart';
 import 'tasbih_controller.dart';
 import 'tasbih_counter_panel.dart';
 import 'wird_display_name.dart';
+import '../../../core/widgets/content_text.dart';
 
 /// Tasbih digital — comptage au toucher, reconnaissance vocale, reprise de
 /// session. Priorité P0 (docs/03-architecture-ecrans.md).
@@ -46,7 +47,7 @@ class TasbihScreen extends ConsumerWidget {
           foregroundColor: AppColors.parchment,
           // Le nom du wird seul : "Tasbih —" n'apprenait rien à qui vient
           // d'appuyer sur "Tasbih".
-          title: Text(wirdDisplayName(context, wird), maxLines: 1, overflow: TextOverflow.ellipsis),
+          title: ContentText(wirdDisplayName(context, wird), maxLines: 1, overflow: TextOverflow.ellipsis),
         ),
         body: SafeArea(
           child: state.loadingSession
@@ -163,7 +164,7 @@ class _PillarProgress extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 8),
-          Text(label, style: TextStyle(color: tasbihSecondaryText(), fontSize: 13, fontWeight: FontWeight.w500)),
+          ContentText(label, style: TextStyle(color: tasbihSecondaryText(), fontSize: 13, fontWeight: FontWeight.w500)),
         ],
       ),
     );

@@ -25,6 +25,7 @@ import '../data/wirds_content.dart';
 import '../domain/wird_models.dart';
 import '../domain/wird_recitation.dart';
 import 'wird_recitation_providers.dart';
+import '../../../core/widgets/content_text.dart';
 
 class WirdRecitationsManagementScreen extends ConsumerWidget {
   const WirdRecitationsManagementScreen({super.key});
@@ -66,7 +67,7 @@ class WirdRecitationsManagementScreen extends ConsumerWidget {
             for (final wird in validatedWirds) ...[
               Padding(
                 padding: const EdgeInsets.only(top: 8, bottom: 8),
-                child: Text(wird.nameFrench,
+                child: ContentText(wird.nameFrench,
                     style: const TextStyle(
                         fontWeight: FontWeight.w600, fontSize: 18)),
               ),
@@ -109,7 +110,7 @@ class _PillarCard extends ConsumerWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Text(pillar.transliteration,
+            ContentText(pillar.transliteration,
                 style: const TextStyle(fontWeight: FontWeight.w500)),
             const SizedBox(height: 8),
             if (step.recitations.isEmpty)
@@ -297,7 +298,7 @@ class _RecitationEntryTileState extends ConsumerState<_RecitationEntryTile> {
                     );
                   },
                 ),
-          title: Text('${entry.reciterName} · v${entry.contentVersion}'),
+          title: ContentText('${entry.reciterName} · v${entry.contentVersion}'),
           subtitle: Text(
             isDraft
                 ? widget.l10n.wirdRecitationsManageStatusDraft
@@ -327,7 +328,7 @@ class _RecitationEntryTileState extends ConsumerState<_RecitationEntryTile> {
         if (_previewError != null)
           Padding(
             padding: const EdgeInsetsDirectional.only(start: 16, bottom: 8),
-            child: Text(_previewError!,
+            child: ContentText(_previewError!,
                 style: TextStyle(color: AppColors.bronze, fontSize: 12)),
           ),
       ],
@@ -457,7 +458,7 @@ class _UploadRecitationSheetState
             if (_errorMessage != null)
               Padding(
                 padding: const EdgeInsets.only(top: 8),
-                child: Text(_errorMessage!,
+                child: ContentText(_errorMessage!,
                     style:
                         TextStyle(color: AppColors.bronze, fontSize: 12)),
               ),

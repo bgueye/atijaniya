@@ -7,6 +7,7 @@ import '../domain/message_models.dart';
 import 'community_format.dart';
 import 'conversation_screen.dart';
 import 'messages_providers.dart';
+import '../../../core/widgets/content_text.dart';
 
 /// Liste des conversations — Messagerie privée, priorité P2
 /// (docs/03-architecture-ecrans.md : "Liste de conversations + fil
@@ -79,12 +80,12 @@ class _ConversationTile extends StatelessWidget {
         backgroundColor: AppColors.emeraldSoft,
         child: Icon(Icons.person_outline, color: AppColors.emerald),
       ),
-      title: Text(conversation.otherDisplayName ?? fallback),
+      title: ContentText(conversation.otherDisplayName ?? fallback),
       subtitle: conversation.lastMessageText != null
-          ? Text(conversation.lastMessageText!, maxLines: 1, overflow: TextOverflow.ellipsis)
+          ? ContentText(conversation.lastMessageText!, maxLines: 1, overflow: TextOverflow.ellipsis)
           : null,
       trailing: conversation.lastMessageAt != null
-          ? Text(
+          ? ContentText(
               formatCommunityDateTime(conversation.lastMessageAt!),
               style: TextStyle(color: AppColors.bronze, fontSize: 11),
             )

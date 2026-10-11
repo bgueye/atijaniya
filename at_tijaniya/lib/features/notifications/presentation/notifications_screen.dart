@@ -9,6 +9,7 @@ import '../../khadara/presentation/live_stream_screen.dart';
 import '../../moderation/presentation/moderation_reports_screen.dart';
 import '../domain/app_notification.dart';
 import 'notifications_providers.dart';
+import '../../../core/widgets/content_text.dart';
 
 /// Liste des notifications in-app de l'utilisateur courant — direct Khadara
 /// démarré (tous les utilisateurs concernés) ou signalement à examiner
@@ -106,8 +107,8 @@ class _NotificationTile extends ConsumerWidget {
       child: ListTile(
         onTap: () => _open(context, ref),
         leading: Icon(icon, color: AppColors.emerald),
-        title: Text(title, style: TextStyle(fontWeight: unread ? FontWeight.w600 : FontWeight.w400)),
-        subtitle: Text(
+        title: ContentText(title, style: TextStyle(fontWeight: unread ? FontWeight.w600 : FontWeight.w400)),
+        subtitle: ContentText(
           '$body\n${formatKhadaraDateTime(notification.createdAt)}',
           style: TextStyle(color: AppColors.bronze, fontSize: 12),
         ),

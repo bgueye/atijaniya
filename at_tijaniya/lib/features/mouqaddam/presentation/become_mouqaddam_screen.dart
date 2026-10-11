@@ -7,6 +7,7 @@ import '../../../l10n/app_localizations.dart';
 import '../domain/mouqaddam_models.dart';
 import 'mouqaddam_providers.dart';
 import 'search_sponsor_screen.dart';
+import '../../../core/widgets/content_text.dart';
 
 /// Devenir Mouqaddam — déclaration du statut par parrainage, jamais
 /// auto-proclamée (docs/01-perimetre-fonctionnel.md § 5.4.2, CLAUDE.md).
@@ -130,14 +131,14 @@ class _PendingRequestView extends ConsumerWidget {
                   Text(l10n.mouqaddamPendingSponsorLabel,
                       style: TextStyle(
                           color: AppColors.bronze, fontSize: 13)),
-                  Text(request.sponsorName ?? '—',
+                  ContentText(request.sponsorName ?? '—',
                       style: const TextStyle(fontSize: 16)),
                   if (request.ijazaYear != null) ...[
                     const SizedBox(height: 12),
                     Text(l10n.mouqaddamYearFieldLabel,
                         style: TextStyle(
                             color: AppColors.bronze, fontSize: 13)),
-                    Text('${request.ijazaYear}',
+                    ContentText('${request.ijazaYear}',
                         style: const TextStyle(fontSize: 16)),
                   ],
                 ],
@@ -279,7 +280,7 @@ class _RequestFormState extends ConsumerState<_RequestForm> {
             ),
             if (_errorMessage != null) ...[
               const SizedBox(height: 16),
-              Text(_errorMessage!,
+              ContentText(_errorMessage!,
                   style: const TextStyle(color: AppColors.danger)),
             ],
             const SizedBox(height: 24),

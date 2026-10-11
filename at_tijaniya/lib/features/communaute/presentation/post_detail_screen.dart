@@ -19,6 +19,7 @@ import 'community_format.dart';
 import 'community_providers.dart';
 import 'conversation_screen.dart';
 import 'messages_providers.dart';
+import '../../../core/widgets/content_text.dart';
 
 /// Détail d'une publication — contenu, commentaires, likes. Priorité P1
 /// (docs/03-architecture-ecrans.md).
@@ -247,12 +248,12 @@ class _PostDetailScreenState extends ConsumerState<PostDetailScreen> {
             child: ListView(
               padding: const EdgeInsets.all(20),
               children: [
-                Text(
+                ContentText(
                   formatCommunityDateTime(post.createdAt),
                   style: TextStyle(color: AppColors.bronze, fontSize: 12),
                 ),
                 const SizedBox(height: 12),
-                Text(
+                ContentText(
                   _contentText,
                   style: const TextStyle(color: AppColors.ink, fontSize: 16, height: 1.4),
                 ),
@@ -285,7 +286,7 @@ class _PostDetailScreenState extends ConsumerState<PostDetailScreen> {
                             size: 20,
                           ),
                           const SizedBox(width: 6),
-                          Text('$_likeCount', style: TextStyle(color: AppColors.bronze)),
+                          ContentText('$_likeCount', style: TextStyle(color: AppColors.bronze)),
                         ],
                       ),
                     ),
@@ -397,12 +398,12 @@ class _CommentTile extends StatelessWidget {
         children: [
           Row(
             children: [
-              Text(
+              ContentText(
                 comment.authorDisplayName ?? fallback,
                 style: const TextStyle(fontWeight: FontWeight.w600, color: AppColors.ink, fontSize: 13),
               ),
               const SizedBox(width: 8),
-              Text(
+              ContentText(
                 formatCommunityDateTime(comment.createdAt),
                 style: TextStyle(color: AppColors.bronze, fontSize: 11),
               ),
@@ -435,7 +436,7 @@ class _CommentTile extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 2),
-          Text(comment.contentText, style: const TextStyle(color: AppColors.ink, fontSize: 15)),
+          ContentText(comment.contentText, style: const TextStyle(color: AppColors.ink, fontSize: 15)),
           const SizedBox(height: 4),
           _MessageAuthorButton(
             authorUserId: comment.userId,

@@ -5,6 +5,7 @@ import '../../../l10n/app_localizations.dart';
 import '../domain/moderation_errors.dart';
 import '../domain/moderation_models.dart';
 import 'moderation_providers.dart';
+import '../../../core/widgets/content_text.dart';
 
 /// Signaler un direct Khadara ou une demande de mise en relation par lignée
 /// spirituelle — dialogue réutilisable, appelé depuis `LiveStreamScreen` et
@@ -53,7 +54,7 @@ Future<void> showReportContentDialog(
     if (context.mounted) {
       ScaffoldMessenger.of(context)
         ..hideCurrentSnackBar()
-        ..showSnackBar(SnackBar(content: Text(message)));
+        ..showSnackBar(SnackBar(content: ContentText(message)));
     }
   }
 }

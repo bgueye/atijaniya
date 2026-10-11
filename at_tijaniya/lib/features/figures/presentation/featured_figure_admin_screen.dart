@@ -7,6 +7,7 @@ import '../../../l10n/app_localizations.dart';
 import '../domain/featured_figure.dart';
 import '../domain/figure_models.dart';
 import 'figures_providers.dart';
+import '../../../core/widgets/content_text.dart';
 
 /// Épinglage admin de la "Figure de la semaine" (accueil, `home_screen.dart`)
 /// — permet de choisir volontairement une figure pour une semaine donnée
@@ -119,25 +120,27 @@ class _FeaturedFigureAdminScreenState extends ConsumerState<FeaturedFigureAdminS
                   Text(l10n.featuredFigureAdminIntro, style: TextStyle(color: AppColors.bronze, fontSize: 13)),
                   const SizedBox(height: 20),
                   Builder(builder: (context) {
-                    // Transform.flip sur les deux glyphes : Row inverse déjà
-                    // l'ordre physique des boutons selon la locale (le
-                    // premier enfant reste "précédent" côté début de
-                    // lecture), mais `Icon` ne retourne pas le glyphe lui-même
-                    // — sans ça chaque chevron resterait figé et pointerait
-                    // dans le mauvais sens une fois sa position inversée en
-                    // arabe.
-                    final isRtl = Directionality.of(context) == TextDirection.rtl;
+                    // Aucun retournement manuel : `Row` inverse l'ordre des
+                    // boutons en arabe et Flutter retourne lui-même les deux
+                    // chevrons (`matchTextDirection`). Un `Transform.flip` en
+                    // plus les faisait pointer vers l'intérieur (passe
+                    // visuelle du 2026-10-11).
                     return Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         IconButton(tooltip: AppLocalizations.of(context)!.a11yPreviousWeek, 
                           onPressed: () => _changeWeek(-1),
-                          icon: Transform.flip(flipX: isRtl, child: const Icon(Icons.chevron_left)),
+                          icon: const Icon(Icons.chevron_left),
                         ),
-                        Text(_weekLabel(), style: const TextStyle(fontWeight: FontWeight.w600)),
+                        // Dates en chiffres : toujours « début — fin », de gauche à droite.
+                        Text(
+                          _weekLabel(),
+                          textDirection: TextDirection.ltr,
+                          style: const TextStyle(fontWeight: FontWeight.w600),
+                        ),
                         IconButton(tooltip: AppLocalizations.of(context)!.a11yNextWeek, 
                           onPressed: () => _changeWeek(1),
-                          icon: Transform.flip(flipX: isRtl, child: const Icon(Icons.chevron_right)),
+                          icon: const Icon(Icons.chevron_right),
                         ),
                       ],
                     );
@@ -147,7 +150,7 @@ class _FeaturedFigureAdminScreenState extends ConsumerState<FeaturedFigureAdminS
                     Card(
                       child: ListTile(
                         leading: Icon(Icons.push_pin, color: AppColors.gold),
-                        title: Text(pinnedFigure.nameFrench),
+                        title: ContentText(pinnedFigure.nameFrench),
                         subtitle: Text(l10n.featuredFigureAdminPinnedLabel),
                         trailing: TextButton(
                           onPressed: _saving ? null : _clear,
@@ -169,7 +172,7 @@ class _FeaturedFigureAdminScreenState extends ConsumerState<FeaturedFigureAdminS
                         for (final figure in eligible)
                           DropdownMenuItem(
                             value: figure.id,
-                            child: Text(figure.nameFrench, overflow: TextOverflow.ellipsis),
+                            child: ContentText(figure.nameFrench, overflow: TextOverflow.ellipsis),
                           ),
                       ],
                       onChanged: (value) => setState(() => _selectedFigureId = value),
@@ -188,7 +191,7 @@ class _FeaturedFigureAdminScreenState extends ConsumerState<FeaturedFigureAdminS
                   ],
                   if (_errorMessage != null) ...[
                     const SizedBox(height: 16),
-                    Text(_errorMessage!, style: const TextStyle(color: AppColors.danger)),
+                    ContentText(_errorMessage!, style: const TextStyle(color: AppColors.danger)),
                   ],
                 ],
               ),

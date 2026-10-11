@@ -9,6 +9,7 @@ import '../../khadara/presentation/khadara_format.dart';
 import '../../khadara/presentation/live_stream_providers.dart';
 import '../../khadara/presentation/live_stream_screen.dart';
 import '../domain/group_models.dart';
+import '../../../core/widgets/content_text.dart';
 
 /// Directs terminés d'un groupe — invisibles partout ailleurs dans l'app
 /// (`_GroupLiveStreamSection`, group_detail_screen.dart, ne montre plus
@@ -89,7 +90,7 @@ class GroupPastLiveStreamsScreen extends ConsumerWidget {
                     child: ListTile(
                       leading: Icon(liveStreamSourceIcon(stream.sourceType), color: AppColors.bronze),
                       title: Text(liveStreamSourceLabel(stream.sourceType, l10n)),
-                      subtitle: stream.endedAt != null ? Text(formatKhadaraDateTime(stream.endedAt!)) : null,
+                      subtitle: stream.endedAt != null ? ContentText(formatKhadaraDateTime(stream.endedAt!)) : null,
                       trailing: canManage
                           ? IconButton(
                               icon: const Icon(Icons.delete_outline),

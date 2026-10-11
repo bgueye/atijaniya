@@ -25,6 +25,7 @@ import '../../wird/presentation/wird_detail_screen.dart';
 import '../domain/home_dashboard.dart';
 import 'home_dashboard_provider.dart';
 import '../../../core/widgets/directional_chevron.dart';
+import '../../../core/widgets/content_text.dart';
 
 /// Accueil / Tableau de bord — "Statut du jour, accès rapide, prochain
 /// horaire" (P0, docs/03-architecture-ecrans.md). Construit entièrement à
@@ -184,7 +185,7 @@ class _Hero extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Text(
+                  ContentText(
                     greeting,
                     textAlign: TextAlign.center,
                     style: GoogleFonts.cormorantGaramond(
@@ -194,7 +195,7 @@ class _Hero extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 6),
-                  Text(
+                  ContentText(
                     dateLine,
                     textAlign: TextAlign.center,
                     style: TextStyle(fontSize: 12, color: AppColors.offWhite.withValues(alpha: 0.55)),
@@ -241,7 +242,7 @@ class _StatusPill extends StatelessWidget {
             decoration: BoxDecoration(color: AppColors.gold, shape: BoxShape.circle),
           ),
           Expanded(
-            child: Text(text, style: const TextStyle(color: AppColors.offWhite, fontSize: 13.5, height: 1.35)),
+            child: ContentText(text, style: const TextStyle(color: AppColors.offWhite, fontSize: 13.5, height: 1.35)),
           ),
         ],
       ),
@@ -343,7 +344,7 @@ class _SectionLabel extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.fromLTRB(2, 0, 2, 8),
-      child: Text(
+      child: ContentText(
         text,
         style: TextStyle(
           fontSize: 11,
@@ -417,18 +418,18 @@ class _WirdRow extends StatelessWidget {
         status.doneToday ? Icons.check_circle : Icons.radio_button_unchecked,
         color: status.doneToday ? AppColors.emerald : AppColors.bronze,
       ),
-      title: Text(
+      title: ContentText(
         isArabic ? status.wird.nameArabic : status.wird.nameFrench,
         style: isArabic
             ? AppTheme.sacredText(fontSize: 18, color: AppColors.ink)
             : const TextStyle(fontWeight: FontWeight.w500),
       ),
-      subtitle: subtitle != null ? Text(subtitle, style: TextStyle(color: AppColors.bronze, fontSize: 12)) : null,
+      subtitle: subtitle != null ? ContentText(subtitle, style: TextStyle(color: AppColors.bronze, fontSize: 12)) : null,
       trailing: streakLabel != null
           ? Container(
               padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 4),
               decoration: BoxDecoration(color: AppColors.goldSoft, borderRadius: BorderRadius.circular(999)),
-              child: Text(streakLabel, style: TextStyle(color: AppColors.gold, fontSize: 10.5, fontWeight: FontWeight.w500)),
+              child: ContentText(streakLabel, style: TextStyle(color: AppColors.gold, fontSize: 10.5, fontWeight: FontWeight.w500)),
             )
           : DirectionalChevron(color: AppColors.bronze),
     );
@@ -462,7 +463,7 @@ class _ResumeTasbihCard extends StatelessWidget {
           child: Icon(Icons.replay_circle_filled_outlined, color: AppColors.gold, size: 20),
         ),
         title: Text(l10n.homeResumeTasbihTitle, style: const TextStyle(fontWeight: FontWeight.w500)),
-        subtitle: Text(subtitle, style: TextStyle(color: AppColors.bronze, fontSize: 12)),
+        subtitle: ContentText(subtitle, style: TextStyle(color: AppColors.bronze, fontSize: 12)),
         trailing: OutlinedButton(
           style: OutlinedButton.styleFrom(
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
@@ -599,7 +600,7 @@ class _QuickAccessItem extends StatelessWidget {
               child: Icon(icon, color: AppColors.emerald, size: 16),
             ),
             const SizedBox(height: 6),
-            Text(
+            ContentText(
               label,
               textAlign: TextAlign.center,
               maxLines: 2,
@@ -676,7 +677,7 @@ class _KhadaraTeaserCard extends StatelessWidget {
                 )
               : const _KhadaraThumbFallback(),
         ),
-        title: Text(event.title, style: const TextStyle(fontWeight: FontWeight.w500, fontSize: 13.5), maxLines: 1, overflow: TextOverflow.ellipsis),
+        title: ContentText(event.title, style: const TextStyle(fontWeight: FontWeight.w500, fontSize: 13.5), maxLines: 1, overflow: TextOverflow.ellipsis),
         subtitle: Text(formatKhadaraEventSchedule(event, AppLocalizations.of(context)!), style: TextStyle(color: AppColors.bronze, fontSize: 11.5)),
         trailing: DirectionalChevron(color: AppColors.bronze),
       ),
@@ -755,7 +756,7 @@ class _FeaturedFigureCard extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      Text(
+                      ContentText(
                         figure.nameFrench,
                         style: const TextStyle(
                           fontFamily: AppFonts.titlesFr,
@@ -773,7 +774,7 @@ class _FeaturedFigureCard extends StatelessWidget {
                       ),
                       if (citation != null) ...[
                         const SizedBox(height: 8),
-                        Text(
+                        ContentText(
                           '« ${citation.translation} »',
                           style: TextStyle(
                             fontStyle: FontStyle.italic,

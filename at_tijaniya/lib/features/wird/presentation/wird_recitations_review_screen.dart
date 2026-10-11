@@ -23,6 +23,7 @@ import '../../../l10n/app_localizations.dart';
 import '../domain/wird_recitation.dart';
 import 'wird_recitation_providers.dart';
 import 'wird_recitations_management_screen.dart';
+import '../../../core/widgets/content_text.dart';
 
 class WirdRecitationsReviewScreen extends ConsumerWidget {
   const WirdRecitationsReviewScreen({super.key});
@@ -277,14 +278,14 @@ class _DraftCardState extends ConsumerState<_DraftCard> {
                         );
                       },
                     ),
-              title: Text('${draft.wirdNameFrench} — ${draft.pillarLabel}',
+              title: ContentText('${draft.wirdNameFrench} — ${draft.pillarLabel}',
                   style: const TextStyle(fontWeight: FontWeight.w500)),
-              subtitle: Text(draft.reciterName),
+              subtitle: ContentText(draft.reciterName),
             ),
             if (_previewError != null)
               Padding(
                 padding: const EdgeInsets.only(bottom: 8),
-                child: Text(_previewError!,
+                child: ContentText(_previewError!,
                     style:
                         TextStyle(color: AppColors.bronze, fontSize: 12)),
               ),

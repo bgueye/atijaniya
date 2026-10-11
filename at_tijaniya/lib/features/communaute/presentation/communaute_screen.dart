@@ -18,6 +18,7 @@ import 'conversations_screen.dart';
 import 'group_detail_screen.dart';
 import 'groups_providers.dart';
 import 'post_detail_screen.dart';
+import '../../../core/widgets/content_text.dart';
 
 /// Fil d'actualité + Groupes — publications communauté et discussions par
 /// zawiya/région. Priorité P1 pour le fil, P2 pour les groupes
@@ -429,14 +430,14 @@ class _GroupCard extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              Text(group.name,
+              ContentText(group.name,
                   style: const TextStyle(
                       fontWeight: FontWeight.w600,
                       fontSize: 16,
                       color: AppColors.ink)),
               if (group.description != null) ...[
                 const SizedBox(height: 6),
-                Text(
+                ContentText(
                   group.description!,
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
@@ -451,7 +452,7 @@ class _GroupCard extends StatelessWidget {
                         size: 16, color: AppColors.bronze),
                     const SizedBox(width: 4),
                     Expanded(
-                      child: Text(
+                      child: ContentText(
                         group.locationLabel!,
                         overflow: TextOverflow.ellipsis,
                         style: TextStyle(
@@ -463,7 +464,7 @@ class _GroupCard extends StatelessWidget {
                   Icon(Icons.people_alt_outlined,
                       size: 16, color: AppColors.bronze),
                   const SizedBox(width: 4),
-                  Text('${group.memberCount}',
+                  ContentText('${group.memberCount}',
                       style: TextStyle(
                           color: AppColors.bronze, fontSize: 13)),
                 ],
@@ -577,7 +578,7 @@ class _CreateGroupSheetState extends ConsumerState<_CreateGroupSheet> {
                     const DropdownMenuItem<String?>(
                         value: null, child: Text('—')),
                     ...list.map((z) => DropdownMenuItem<String?>(
-                        value: z.id, child: Text(z.name, overflow: TextOverflow.ellipsis))),
+                        value: z.id, child: ContentText(z.name, overflow: TextOverflow.ellipsis))),
                   ],
                   onChanged: (value) => setState(() => _zawiyaId = value),
                 ),
@@ -714,19 +715,19 @@ class _PostCardState extends ConsumerState<_PostCard> {
               Row(
                 children: [
                   Expanded(
-                    child: Text(
+                    child: ContentText(
                       post.authorLabel(fallbackAuthor),
                       style: const TextStyle(
                           fontWeight: FontWeight.w600, color: AppColors.ink),
                     ),
                   ),
-                  Text(formatCommunityDateTime(post.createdAt),
+                  ContentText(formatCommunityDateTime(post.createdAt),
                       style: TextStyle(
                           color: AppColors.bronze, fontSize: 11)),
                 ],
               ),
               const SizedBox(height: 8),
-              Text(
+              ContentText(
                 post.contentText,
                 maxLines: 4,
                 overflow: TextOverflow.ellipsis,
@@ -775,7 +776,7 @@ class _PostCardState extends ConsumerState<_PostCard> {
                             size: 18,
                           ),
                           const SizedBox(width: 4),
-                          Text('$_likeCount',
+                          ContentText('$_likeCount',
                               style: TextStyle(
                                   color: AppColors.bronze, fontSize: 13)),
                         ],
@@ -787,7 +788,7 @@ class _PostCardState extends ConsumerState<_PostCard> {
                   Icon(Icons.mode_comment_outlined,
                       color: AppColors.bronze, size: 18),
                   const SizedBox(width: 4),
-                  Text('${post.commentCount}',
+                  ContentText('${post.commentCount}',
                       style: TextStyle(
                           color: AppColors.bronze, fontSize: 13)),
                 ],

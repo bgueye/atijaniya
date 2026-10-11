@@ -6,6 +6,7 @@ import '../../../core/theme/app_colors.dart';
 import '../../../l10n/app_localizations.dart';
 import '../domain/figure_models.dart';
 import 'figures_providers.dart';
+import '../../../core/widgets/content_text.dart';
 
 /// Édition de la position d'une figure dans la silsila historique — sa
 /// figure parente et son rang. Réservé par RLS à un compte admin
@@ -133,7 +134,7 @@ class _FigureSilsilaFormScreenState extends ConsumerState<FigureSilsilaFormScree
                         for (final candidate in candidates)
                           DropdownMenuItem<String?>(
                             value: candidate.id,
-                            child: Text(candidate.nameFrench, overflow: TextOverflow.ellipsis),
+                            child: ContentText(candidate.nameFrench, overflow: TextOverflow.ellipsis),
                           ),
                       ],
                       onChanged: (value) => _onParentChanged(value, allLinks),
@@ -155,7 +156,7 @@ class _FigureSilsilaFormScreenState extends ConsumerState<FigureSilsilaFormScree
                     ),
                     if (_errorMessage != null) ...[
                       const SizedBox(height: 16),
-                      Text(_errorMessage!, style: const TextStyle(color: AppColors.danger)),
+                      ContentText(_errorMessage!, style: const TextStyle(color: AppColors.danger)),
                     ],
                     const SizedBox(height: 24),
                     ElevatedButton(
