@@ -186,7 +186,11 @@ Corrigé (code de l'app, plus les migrations `audit_h1_deletions_and_groups` et
   compilée avec succès ; le manifeste fusionné contient bien la permission et les récepteurs.
 - **Rappels de wird sur Android** : récepteurs du plugin de notifications et permission de
   redémarrage déclarés ; texte de la notification dans la langue choisie, reprogrammé au
-  changement de langue. À valider sur téléphone (jamais vu s'afficher).
+  changement de langue. Dans la version de publication, la programmation échouait en
+  silence (« Missing type parameter », code réduit par R8) : corrigé le 2026-10-08 par
+  `android/app/proguard-rules.pro`. **Validé sur téléphone le 2026-10-11** par le porteur
+  de projet, version signée 1.0.0+2 : les notifications du Lazim et de la Wazifa
+  s'affichent. Reste à observer celle de Hadratou-l-Jouma (vendredi seulement).
 - **Récitations audio** : chemin Storage unique à chaque téléversement ; pré-écoute admin
   fiable (une carte = un lecteur = un fichier, réécoute possible en fin de piste).
 - **Suppressions** : figure fondatrice protégée tant qu'une succession lui est rattachée ;
