@@ -3,10 +3,12 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/theme/app_colors.dart';
 import '../../../l10n/app_localizations.dart';
+import '../../moderation/presentation/block_user.dart';
 import '../../mouqaddam/presentation/mouqaddam_providers.dart';
 import '../domain/privacy_settings_models.dart';
 import 'privacy_settings_providers.dart';
 import '../../../core/widgets/content_text.dart';
+import '../../../core/widgets/directional_chevron.dart';
 
 /// Paramètres de confidentialité — visibilité de la lignée et du statut
 /// mouqaddam (opt-in), disponibilité comme parrain, qui peut contacter.
@@ -170,6 +172,19 @@ class _PrivacyFormState extends ConsumerState<_PrivacyForm> {
           ],
           selected: {_settings.whoCanContact},
           onSelectionChanged: (selection) => _apply(_settings.copyWith(whoCanContact: selection.first)),
+        ),
+        const SizedBox(height: 20),
+        // Seul endroit où débloquer un disciple (2026-10-11).
+        Card(
+          child: ListTile(
+            leading: Icon(Icons.block, color: AppColors.bronze),
+            title: Text(l10n.blockedUsersTitle, style: const TextStyle(fontWeight: FontWeight.w600, color: AppColors.ink)),
+            subtitle: Text(l10n.blockedUsersSubtitle, style: TextStyle(color: AppColors.bronze, fontSize: 14)),
+            trailing: DirectionalChevron(color: AppColors.bronze),
+            onTap: () => Navigator.of(context).push(
+              MaterialPageRoute(builder: (_) => const BlockedUsersScreen()),
+            ),
+          ),
         ),
         if (_errorMessage != null) ...[
           const SizedBox(height: 16),

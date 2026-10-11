@@ -3078,4 +3078,44 @@ class AppLocalizationsFr extends AppLocalizations {
   @override
   String get moderationConfirmHideMessageBody =>
       'Le message sera retiré pour tous ses destinataires. Cette action est définitive.';
+
+  @override
+  String get blockUserAction => 'Bloquer ce disciple';
+
+  @override
+  String blockUserConfirmTitle(Object name) {
+    return 'Bloquer $name ?';
+  }
+
+  @override
+  String get blockUserConfirmBody =>
+      'Vous ne recevrez plus ses messages et ne verrez plus ce qu\'il écrit. Il ne pourra plus vous écrire et n\'en sera pas informé. Pour le débloquer : Paramètres → Confidentialité → Disciples bloqués.';
+
+  @override
+  String get blockUserSuccess => 'Disciple bloqué.';
+
+  @override
+  String get blockUserError => 'Impossible de bloquer ce disciple.';
+
+  @override
+  String get blockUserFallbackName => 'Disciple';
+
+  @override
+  String get blockedUsersTitle => 'Disciples bloqués';
+
+  @override
+  String get blockedUsersSubtitle =>
+      'Voir et débloquer les disciples que vous avez bloqués';
+
+  @override
+  String get blockedUsersEmpty => 'Vous n\'avez bloqué personne.';
+
+  @override
+  String get blockedUsersLoadError => 'Impossible de charger la liste.';
+
+  @override
+  String get unblockUserAction => 'Débloquer';
+
+  @override
+  String get unblockUserError => 'Impossible de débloquer ce disciple.';
 }

@@ -5666,6 +5666,78 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'Le message sera retiré pour tous ses destinataires. Cette action est définitive.'**
   String get moderationConfirmHideMessageBody;
+
+  /// No description provided for @blockUserAction.
+  ///
+  /// In fr, this message translates to:
+  /// **'Bloquer ce disciple'**
+  String get blockUserAction;
+
+  /// No description provided for @blockUserConfirmTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Bloquer {name} ?'**
+  String blockUserConfirmTitle(Object name);
+
+  /// No description provided for @blockUserConfirmBody.
+  ///
+  /// In fr, this message translates to:
+  /// **'Vous ne recevrez plus ses messages et ne verrez plus ce qu\'il écrit. Il ne pourra plus vous écrire et n\'en sera pas informé. Pour le débloquer : Paramètres → Confidentialité → Disciples bloqués.'**
+  String get blockUserConfirmBody;
+
+  /// No description provided for @blockUserSuccess.
+  ///
+  /// In fr, this message translates to:
+  /// **'Disciple bloqué.'**
+  String get blockUserSuccess;
+
+  /// No description provided for @blockUserError.
+  ///
+  /// In fr, this message translates to:
+  /// **'Impossible de bloquer ce disciple.'**
+  String get blockUserError;
+
+  /// No description provided for @blockUserFallbackName.
+  ///
+  /// In fr, this message translates to:
+  /// **'Disciple'**
+  String get blockUserFallbackName;
+
+  /// No description provided for @blockedUsersTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Disciples bloqués'**
+  String get blockedUsersTitle;
+
+  /// No description provided for @blockedUsersSubtitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Voir et débloquer les disciples que vous avez bloqués'**
+  String get blockedUsersSubtitle;
+
+  /// No description provided for @blockedUsersEmpty.
+  ///
+  /// In fr, this message translates to:
+  /// **'Vous n\'avez bloqué personne.'**
+  String get blockedUsersEmpty;
+
+  /// No description provided for @blockedUsersLoadError.
+  ///
+  /// In fr, this message translates to:
+  /// **'Impossible de charger la liste.'**
+  String get blockedUsersLoadError;
+
+  /// No description provided for @unblockUserAction.
+  ///
+  /// In fr, this message translates to:
+  /// **'Débloquer'**
+  String get unblockUserAction;
+
+  /// No description provided for @unblockUserError.
+  ///
+  /// In fr, this message translates to:
+  /// **'Impossible de débloquer ce disciple.'**
+  String get unblockUserError;
 }
 
 class _AppLocalizationsDelegate

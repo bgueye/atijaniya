@@ -2972,4 +2972,43 @@ class AppLocalizationsAr extends AppLocalizations {
   @override
   String get moderationConfirmHideMessageBody =>
       'ستُزال الرسالة لدى جميع مستلميها. هذا الإجراء نهائي.';
+
+  @override
+  String get blockUserAction => 'حظر هذا المريد';
+
+  @override
+  String blockUserConfirmTitle(Object name) {
+    return 'حظر $name؟';
+  }
+
+  @override
+  String get blockUserConfirmBody =>
+      'لن تصلك رسائله ولن ترى ما يكتبه، ولن يتمكن من مراسلتك ولن يُخطَر بذلك. لإلغاء الحظر: الإعدادات ← الخصوصية ← المريدون المحظورون.';
+
+  @override
+  String get blockUserSuccess => 'تم حظر المريد.';
+
+  @override
+  String get blockUserError => 'تعذّر حظر هذا المريد.';
+
+  @override
+  String get blockUserFallbackName => 'مريد';
+
+  @override
+  String get blockedUsersTitle => 'المريدون المحظورون';
+
+  @override
+  String get blockedUsersSubtitle => 'عرض المريدين الذين حظرتهم وإلغاء حظرهم';
+
+  @override
+  String get blockedUsersEmpty => 'لم تحظر أحدًا.';
+
+  @override
+  String get blockedUsersLoadError => 'تعذّر تحميل القائمة.';
+
+  @override
+  String get unblockUserAction => 'إلغاء الحظر';
+
+  @override
+  String get unblockUserError => 'تعذّر إلغاء حظر هذا المريد.';
 }

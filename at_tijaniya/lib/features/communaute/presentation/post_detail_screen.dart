@@ -505,6 +505,7 @@ class _MessageAuthorButton extends ConsumerWidget {
             MaterialPageRoute(
               builder: (_) => ConversationScreen(
                 conversationId: conversationId,
+                otherUserId: authorUserId,
                 otherDisplayName: authorDisplayName ?? fallback,
               ),
             ),

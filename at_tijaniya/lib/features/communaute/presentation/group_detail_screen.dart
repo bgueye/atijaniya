@@ -13,6 +13,7 @@ import '../../khadara/presentation/live_stream_providers.dart';
 import '../../khadara/presentation/live_stream_screen.dart';
 import '../../khadara/presentation/start_live_stream_screen.dart';
 import '../../moderation/domain/moderation_models.dart';
+import '../../moderation/presentation/block_user.dart';
 import '../../moderation/presentation/report_content_dialog.dart';
 import '../../profil/presentation/profile_providers.dart';
 import '../domain/group_errors.dart';
@@ -573,23 +574,36 @@ class _GroupPostTileState extends ConsumerState<_GroupPostTile> {
                   ),
                 ),
               ] else ...[
-                // Message d'un autre membre : signalable à la modération
-                // (2026-10-11), comme un commentaire du fil.
+                // Message d'un autre membre (2026-10-11) : le signaler à la
+                // modération, ou bloquer son auteur — ses messages
+                // disparaissent alors pour moi seul.
                 const Spacer(),
-                InkWell(
-                  onTap: () => showReportContentDialog(
-                    context,
-                    ref,
-                    contentType: ReportableContentType.groupPost,
-                    contentId: widget.post.id,
-                  ),
-                  child: Tooltip(
-                    message: l10n.moderationReportAction,
-                    child: Padding(
-                      padding: const EdgeInsets.all(10),
-                      child: Icon(Icons.flag_outlined, size: 16, color: AppColors.bronze),
-                    ),
-                  ),
+                PopupMenuButton<String>(
+                  tooltip: l10n.moderationReportAction,
+                  padding: EdgeInsets.zero,
+                  icon: Icon(Icons.more_vert, size: 18, color: AppColors.bronze),
+                  onSelected: (value) async {
+                    if (value == 'report') {
+                      await showReportContentDialog(
+                        context,
+                        ref,
+                        contentType: ReportableContentType.groupPost,
+                        contentId: widget.post.id,
+                      );
+                      return;
+                    }
+                    final blocked = await confirmAndBlockUser(
+                      context,
+                      ref,
+                      userId: widget.post.authorUserId,
+                      displayName: widget.post.authorDisplayName ?? widget.fallback,
+                    );
+                    if (blocked) ref.invalidate(groupPostsProvider(widget.post.groupId));
+                  },
+                  itemBuilder: (_) => [
+                    PopupMenuItem(value: 'report', child: Text(l10n.moderationReportAction)),
+                    PopupMenuItem(value: 'block', child: Text(l10n.blockUserAction)),
+                  ],
                 ),
               ],
             ],

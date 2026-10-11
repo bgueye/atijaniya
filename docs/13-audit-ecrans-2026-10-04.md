@@ -355,9 +355,34 @@ scénario de non-régression dans `database/tests/signalement_messages.sql`.
 - **Vérifié en base** par vingt contrôles joués avec chaque rôle (tiers, auteur,
   destinataire, admin), dans une transaction annulée. **Pas encore vu sur téléphone** : il
   faut deux comptes dans un même groupe ou une même conversation.
-- **Reste hors périmètre** : bloquer un disciple (l'empêcher d'écrire à quelqu'un). Les
-  règles de Google Play sur les contenus d'utilisateurs le demandent pour les applications
-  de messagerie ; à trancher avant une publication ouverte au public.
+- **Bloquer un disciple** : fait le même jour, voir la section suivante.
+
+### Blocage d'un disciple (2026-10-11)
+
+Demande du porteur de projet ; les règles de Google Play sur les contenus d'utilisateurs le
+demandent pour une application de messagerie. Migration `user_blocks` (appliquée sur le
+projet live), scénario dans `database/tests/blocage_disciple.sql`.
+
+- **Où** : menu d'une conversation privée, et menu de chaque message de groupe d'un autre
+  membre (« Signaler » / « Bloquer ce disciple »). Déblocage depuis Paramètres →
+  Confidentialité → « Disciples bloqués », seul endroit prévu.
+- **Effets, garantis par le serveur** : plus aucun message privé entre les deux disciples
+  (dans les deux sens), aucune conversation ne peut être ouverte, aucune mise en relation
+  par lignée ; celui qui bloque ne voit plus les messages privés, messages de groupe,
+  publications et commentaires de l'autre. Débloquer rétablit tout, anciens messages
+  compris.
+- **Confidentialité** : le blocage est privé. La personne bloquée n'est pas informée et ne
+  peut pas lire qui l'a bloquée ; un envoi refusé lui affiche le message d'erreur générique.
+  Les deux fonctions de contrôle sont dans le schéma `private`, non appelables en RPC —
+  sinon n'importe qui pourrait tester s'il a été bloqué.
+- **Vérifié en base** par dix-neuf contrôles joués avec chaque rôle (celui qui bloque, le
+  bloqué, un tiers, un visiteur non connecté), dans une transaction annulée. **Pas encore vu
+  sur téléphone** : il faut deux comptes.
+- **Limites connues** : pas de blocage depuis une publication ou un commentaire du fil (il
+  faut passer par un message de groupe ou une conversation) ; un disciple bloqué apparaît
+  encore dans « Retrouver mes condisciples » et dans la recherche de parrain, sans pouvoir
+  être contacté ; dans un groupe, le disciple bloqué continue de voir les messages de celui
+  qui l'a bloqué.
 
 ## Index des rapports par module
 

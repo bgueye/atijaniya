@@ -56,6 +56,12 @@ class MessagesRepository {
       final rowUserId = row['user_id'] as String;
       if (rowUserId != userId) otherUserIdByConversation[conversationId] = rowUserId;
     }
+    // Un disciple bloqué n'apparaît plus dans la liste (2026-10-11). La RLS
+    // ne renvoie que mes propres blocages ; elle masque déjà ses messages et
+    // refuse tout envoi, ce filtre évite seulement une conversation vide.
+    final blockedRows = await SupabaseConfig.client.from('user_blocks').select('blocked_id');
+    final blockedIds = blockedRows.map((row) => row['blocked_id'] as String).toSet();
+    otherUserIdByConversation.removeWhere((_, otherUserId) => blockedIds.contains(otherUserId));
     if (otherUserIdByConversation.isEmpty) return [];
 
     final names = await _fetchDisplayNames(otherUserIdByConversation.values.toSet());

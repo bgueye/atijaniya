@@ -7,6 +7,7 @@ import '../../../core/theme/app_colors.dart';
 import '../../../core/widgets/message_composer.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../moderation/domain/moderation_models.dart';
+import '../../moderation/presentation/block_user.dart';
 import '../../moderation/presentation/report_content_dialog.dart';
 import '../../profil/presentation/profile_providers.dart';
 import '../domain/message_models.dart';
@@ -19,9 +20,17 @@ import '../../../core/widgets/content_text.dart';
 /// (RLS `messages_participants_write`), garanti par construction : on
 /// n'arrive ici que via `MessagesRepository.findOrCreateConversationWith()`.
 class ConversationScreen extends ConsumerStatefulWidget {
-  const ConversationScreen({super.key, required this.conversationId, required this.otherDisplayName});
+  const ConversationScreen({
+    super.key,
+    required this.conversationId,
+    required this.otherUserId,
+    required this.otherDisplayName,
+  });
 
   final String conversationId;
+
+  /// L'autre participant — nécessaire pour le bloquer depuis cet écran.
+  final String otherUserId;
   final String otherDisplayName;
 
   @override
@@ -62,7 +71,25 @@ class _ConversationScreenState extends ConsumerState<ConversationScreen> {
     final messages = ref.watch(conversationMessagesProvider(widget.conversationId));
 
     return Scaffold(
-      appBar: AppBar(title: ContentText(widget.otherDisplayName)),
+      appBar: AppBar(
+        title: ContentText(widget.otherDisplayName),
+        actions: [
+          // Bloquer l'autre disciple (2026-10-11) : la conversation devient
+          // alors inutilisable et disparaît de la liste, on quitte l'écran.
+          PopupMenuButton<String>(
+            onSelected: (_) async {
+              final blocked = await confirmAndBlockUser(
+                context,
+                ref,
+                userId: widget.otherUserId,
+                displayName: widget.otherDisplayName,
+              );
+              if (blocked && context.mounted) Navigator.of(context).pop();
+            },
+            itemBuilder: (_) => [PopupMenuItem(value: 'block', child: Text(l10n.blockUserAction))],
+          ),
+        ],
+      ),
       body: Column(
         children: [
           Expanded(

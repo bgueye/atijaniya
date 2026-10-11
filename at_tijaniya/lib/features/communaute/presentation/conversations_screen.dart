@@ -94,6 +94,7 @@ class _ConversationTile extends StatelessWidget {
         MaterialPageRoute(
           builder: (_) => ConversationScreen(
             conversationId: conversation.id,
+            otherUserId: conversation.otherUserId,
             otherDisplayName: conversation.otherDisplayName ?? fallback,
           ),
         ),

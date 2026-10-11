@@ -1017,5 +1017,17 @@
   "moderationTypeMessage": "Message privé",
   "moderationReportMessageNotice": "Ce message, avec le nom de son auteur, sera transmis à la modération. Le reste de la discussion reste privé.",
   "moderationConfirmHideMessageTitle": "Masquer ce message ?",
-  "moderationConfirmHideMessageBody": "Le message sera retiré pour tous ses destinataires. Cette action est définitive."
+  "moderationConfirmHideMessageBody": "Le message sera retiré pour tous ses destinataires. Cette action est définitive.",
+  "blockUserAction": "Bloquer ce disciple",
+  "blockUserConfirmTitle": "Bloquer {name} ?",
+  "blockUserConfirmBody": "Vous ne recevrez plus ses messages et ne verrez plus ce qu'il écrit. Il ne pourra plus vous écrire et n'en sera pas informé. Pour le débloquer : Paramètres → Confidentialité → Disciples bloqués.",
+  "blockUserSuccess": "Disciple bloqué.",
+  "blockUserError": "Impossible de bloquer ce disciple.",
+  "blockUserFallbackName": "Disciple",
+  "blockedUsersTitle": "Disciples bloqués",
+  "blockedUsersSubtitle": "Voir et débloquer les disciples que vous avez bloqués",
+  "blockedUsersEmpty": "Vous n'avez bloqué personne.",
+  "blockedUsersLoadError": "Impossible de charger la liste.",
+  "unblockUserAction": "Débloquer",
+  "unblockUserError": "Impossible de débloquer ce disciple."
 }

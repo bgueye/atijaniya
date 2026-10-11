@@ -1016,5 +1016,17 @@
   "moderationTypeMessage": "رسالة خاصة",
   "moderationReportMessageNotice": "ستُرسَل هذه الرسالة مع اسم كاتبها إلى الإشراف. يبقى باقي المحادثة خاصًّا.",
   "moderationConfirmHideMessageTitle": "إخفاء هذه الرسالة؟",
-  "moderationConfirmHideMessageBody": "ستُزال الرسالة لدى جميع مستلميها. هذا الإجراء نهائي."
+  "moderationConfirmHideMessageBody": "ستُزال الرسالة لدى جميع مستلميها. هذا الإجراء نهائي.",
+  "blockUserAction": "حظر هذا المريد",
+  "blockUserConfirmTitle": "حظر {name}؟",
+  "blockUserConfirmBody": "لن تصلك رسائله ولن ترى ما يكتبه، ولن يتمكن من مراسلتك ولن يُخطَر بذلك. لإلغاء الحظر: الإعدادات ← الخصوصية ← المريدون المحظورون.",
+  "blockUserSuccess": "تم حظر المريد.",
+  "blockUserError": "تعذّر حظر هذا المريد.",
+  "blockUserFallbackName": "مريد",
+  "blockedUsersTitle": "المريدون المحظورون",
+  "blockedUsersSubtitle": "عرض المريدين الذين حظرتهم وإلغاء حظرهم",
+  "blockedUsersEmpty": "لم تحظر أحدًا.",
+  "blockedUsersLoadError": "تعذّر تحميل القائمة.",
+  "unblockUserAction": "إلغاء الحظر",
+  "unblockUserError": "تعذّر إلغاء حظر هذا المريد."
 }
