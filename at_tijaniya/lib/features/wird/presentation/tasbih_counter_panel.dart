@@ -372,7 +372,13 @@ class _Ring extends StatelessWidget {
                   fontFeatures: const [FontFeature.tabularFigures()],
                 ),
               ),
-              Text('/ $target', style: TextStyle(color: tasbihSecondaryText(), fontSize: math.max(14, size * 0.075))),
+              // Toujours de gauche à droite : en arabe, « / 100 » s'affichait
+              // « 100 / » sous le décompte.
+              Text(
+                '/ $target',
+                textDirection: TextDirection.ltr,
+                style: TextStyle(color: tasbihSecondaryText(), fontSize: math.max(14, size * 0.075)),
+              ),
               if (complete) ...[
                 const SizedBox(height: 4),
                 Icon(Icons.check_circle, color: AppColors.gold, size: size * 0.11),

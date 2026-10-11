@@ -474,7 +474,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get wirdFreeVoiceMode => 'الصوت';
 
   @override
-  String get wirdFreeUndo => 'تصحيح -1';
+  String get wirdFreeUndo => 'إنقاص 1';
 
   @override
   String get wirdFreeReset => 'إعادة تعيين';

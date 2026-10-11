@@ -229,9 +229,13 @@ class _Reading extends StatelessWidget {
                   style: AppTheme.sacredText(fontSize: 28, color: AppColors.gold),
                 ),
                 const SizedBox(height: 8),
+                // Translittération et notes sont écrites en caractères latins :
+                // toujours de gauche à droite, sinon l'interface en arabe
+                // rejette leur ponctuation finale en début de ligne.
                 Text(
                   usingAlternative ? alternative!.transliteration : pillar.transliteration,
                   textAlign: TextAlign.center,
+                  textDirection: TextDirection.ltr,
                   style: const TextStyle(
                     color: AppColors.parchment,
                     fontSize: 16,
@@ -248,6 +252,7 @@ class _Reading extends StatelessWidget {
                   Text(
                     pillar.note!,
                     textAlign: TextAlign.center,
+                    textDirection: TextDirection.ltr,
                     style: TextStyle(fontSize: 14, height: 1.4, color: tasbihSecondaryText()),
                   ),
                 ],
@@ -288,6 +293,7 @@ class _Reading extends StatelessWidget {
       Text(
         formula.intro,
         textAlign: TextAlign.center,
+        textDirection: TextDirection.ltr,
         style: TextStyle(fontSize: large ? 15 : 14, height: 1.4, color: tasbihSecondaryText()),
       ),
       const SizedBox(height: 6),
@@ -302,6 +308,7 @@ class _Reading extends StatelessWidget {
         Text(
           formula.transliteration!,
           textAlign: TextAlign.center,
+          textDirection: TextDirection.ltr,
           style: TextStyle(
             fontStyle: FontStyle.italic,
             fontSize: large ? 16 : 14,
