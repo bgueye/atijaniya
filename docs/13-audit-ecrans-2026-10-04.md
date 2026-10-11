@@ -127,10 +127,12 @@ Reste à faire, hors de portée d'une migration ou d'un changement de code :
   désormais un montant entier entre 100 et 5 000 000 F CFA.
 - **Reconstruire et réinstaller l'app** : les anciennes versions installées ne peuvent plus
   lire la lignée (`select *` refusé), ouvrir une conversation ni traiter un signalement.
-- **Attribuer leur zawiya aux mouqaddams confirmés** : aucun écran admin n'existe encore,
-  il faut appeler `admin_set_mouqaddam_zawiya(user_id, zawiya_id)`. À la reprise de
-  l'existant, un des deux mouqaddams confirmés avait une zawiya dans son profil (reprise) ;
-  l'autre n'en a pas et ne peut donc pas créer d'évènement.
+- ~~Attribuer leur zawiya aux mouqaddams confirmés~~ — **sans objet au 2026-10-11** : l'écran
+  admin existe (Profil → « Zawiyas des mouqaddams ») et le seul mouqaddam confirmé a sa
+  zawiya. Le second était un compte de test jamais confirmé ni connecté
+  (`claude.tijaniya.qa.test1`), validé à la main le 2026-08-06 ; supprimé le 2026-10-11 à la
+  demande du porteur de projet, la ligne du journal d'administration étant conservée,
+  détachée du compte. À refaire pour chaque nouveau mouqaddam confirmé.
 - **Protection contre les mots de passe compromis** (Supabase Auth, signalée par l'advisor
   de sécurité) : **non applicable sur l'offre gratuite** — le tableau de bord la refuse
   (« available on Pro Plans and up », constaté le 2026-10-08). À activer au passage en Pro,
@@ -323,10 +325,11 @@ réinitialisation du mot de passe, qui ne pouvait donc pas aboutir.
 
 Corrigé : schème `com.attijaniya.app` dans `SupabaseConfig`, le manifeste Android et
 `Info.plist`, avec un test qui interdit un schème invalide ou divergent.
-**À faire dans le tableau de bord Supabase** (Authentication → URL Configuration → Redirect
-URLs) : ajouter `com.attijaniya.app://login-callback`. Sans cela, Supabase ignore le lien et
-renvoie vers le « Site URL ». À valider ensuite sur téléphone : inscription d'un nouveau
-compte et réinitialisation d'un mot de passe, de l'e-mail jusqu'au retour dans l'app.
+`com.attijaniya.app://login-callback` est ajouté aux Redirect URLs du projet Supabase
+(Authentication → URL Configuration) — sans cela, Supabase ignore le lien et renvoie vers le
+« Site URL ». **Validé sur téléphone le 2026-10-11** par le porteur de projet :
+réinitialisation d'un mot de passe, de l'e-mail jusqu'au retour dans l'app. Reste à
+observer le même retour après l'inscription d'un nouveau compte.
 
 ## Index des rapports par module
 
