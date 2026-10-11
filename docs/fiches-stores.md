@@ -13,9 +13,11 @@ limites de chaque store ; recompter après toute modification.
   `docs/09-journal-implementation-frontend.md` § Sprint 2).
 - **Gratuite**, financée par les dons — aucun achat intégré, aucune publicité.
 - **URL de la politique de confidentialité** : https://claude.ai/code/artifact/f0eed457-0f53-4cb8-9e94-52604f6fe7ac
-  (Artifact publié le 2026-08-29, contenu identique à `docs/politique-de-confidentialite.md`
-  — **privé par défaut, à partager en public depuis le menu de partage de la page avant
-  toute soumission aux stores**, sans quoi le lien n'est accessible qu'au porteur de projet).
+  (Artifact publié le 2026-08-29, republié le 2026-10-08 avec le paragraphe « Localisation » ;
+  contenu identique à `docs/politique-de-confidentialite.md`. Partagé à « toute personne
+  disposant du lien » — **vérifier en navigation privée, avant soumission, que la page
+  affiche bien « 8 octobre 2026 »** ; sinon basculer le partage sur la dernière version
+  depuis le menu de partage de la page).
 
 ---
 
@@ -29,9 +31,9 @@ At-Tijaniya
 
 ### Sous-titre App Store (30 caractères max)
 ```
-Wirds, Khadara & communauté
+Wirds, Zawiyas & communauté
 ```
-(28 caractères)
+(27 caractères)
 
 ### Description courte Google Play (80 caractères max)
 ```
@@ -46,11 +48,12 @@ quotidienne et leur vie communautaire — en français et en arabe, gratuitement
 
 WIRDS
 Lazim, Wazifa et Hadratou-l-Jouma : texte arabe, translittération, traduction et lecture
-audio synchronisée. Un tasbih digital (tape manuelle ou reconnaissance vocale) suit votre
+audio synchronisée. Un tasbih digital (au toucher ou par reconnaissance vocale) suit votre
 progression pilier par pilier, avec historique et rappels programmés.
 
-KHADARA
-Calendrier des évènements et zawiyas, diffusions en direct et rediffusions.
+ZAWIYAS
+Annuaire des zawiyas, lieux saints et mosquées, calendrier des évènements, diffusions en
+direct et rediffusions.
 
 FIGURES
 Biographies des fondateurs et grandes familles religieuses de la Tariqa, silsila
@@ -80,7 +83,7 @@ tijaniyya,tijani,wird,wazifa,lazim,hadratou,khadara,zawiya,mouqaddam,islam,soufi
 
 ### Notes de version (exemple pour la première publication)
 ```
-Première publication d'At-Tijaniya. Wirds (Lazim, Wazifa, Hadratou-l-Jouma), Khadara,
+Première publication d'At-Tijaniya. Wirds (Lazim, Wazifa, Hadratou-l-Jouma), Zawiyas,
 Figures, Communauté et lignée spirituelle — en français et en arabe.
 ```
 
@@ -95,7 +98,7 @@ Figures, Communauté et lignée spirituelle — en français et en arabe.
 
 ### العنوان الفرعي (App Store)
 ```
-الأوراد والحضرة والجماعة
+الأوراد والزوايا والجماعة
 ```
 
 ### الوصف المختصر (Google Play)
@@ -113,8 +116,8 @@ Figures, Communauté et lignée spirituelle — en français et en arabe.
 صوتية متزامنة. سبحة رقمية (بالنقر أو بالتعرف الصوتي) تتابع تقدمكم ركنًا بعد ركن، مع سجل
 وتذكيرات مبرمجة.
 
-الحضرة
-تقويم المناسبات والزوايا، بث مباشر وإعادة بث.
+الزوايا
+دليل الزوايا والمزارات والمساجد، تقويم المناسبات، بث مباشر وإعادة بث.
 
 الأعلام
 سير مؤسسي الطريقة والعائلات الدينية الكبرى، السلسلة التاريخية، والأقوال المأثورة.
@@ -143,8 +146,14 @@ Figures, Communauté et lignée spirituelle — en français et en arabe.
   publique depuis le menu de partage avant soumission effective.
 - Comptes développeur Google Play (25 $ à vie) et Apple Developer Program (99 $/an) — pas
   encore mentionnés dans ce projet, à ouvrir par le porteur de projet.
-- ~~Captures d'écran Google Play (FR + AR)~~ — **fait (2026-08-29)** : 7 captures FR + 7
-  captures AR RTL dans `store-assets/screenshots/`. Les captures App Store nécessitent
-  un simulateur iOS, toujours indisponible dans cet environnement Windows.
+- ~~Captures d'écran Google Play (FR + AR)~~ — **refaites le 2026-10-11** sur téléphone,
+  version signée 1.0.0+2 : 8 captures FR + 8 captures AR RTL (1440 × 2777) dans
+  `store-assets/screenshots/` — accueil, guide d'un wird, Tasbih, Zawiyas, Figures, fiche
+  d'une figure, Communauté, Historique. **En arabe, ne publier que l'accueil, le Tasbih
+  et l'Historique** (`1-`, `3-` et `8-…-rtl.png`) : les autres écrans affichent surtout du
+  contenu qui n'existe qu'en français (décision du porteur de projet, 2026-10-11). Vidéo du parcours en français (50 s) dans
+  `store-assets/video/parcours-fr.mp4` : Google Play demande un lien YouTube, à mettre en
+  ligne par le porteur de projet. Les captures App Store nécessitent un simulateur iOS,
+  toujours indisponible dans cet environnement Windows.
 - Icône d'app haute résolution (1024×1024 pour les deux stores) — `assets/branding/`
   contient la rosace mais pas encore d'icône finalisée aux formats requis.

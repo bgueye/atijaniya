@@ -11,3 +11,6 @@ audio-sources/
 # sensibles renvoyés par la Management API (ex. jwt_secret, identifiants
 # SMTP) : ne jamais committer.
 supabase/.backups/
+
+# Vidéo de présentation pour les stores : gardée sur le disque, pas dans le dépôt.
+store-assets/video/
