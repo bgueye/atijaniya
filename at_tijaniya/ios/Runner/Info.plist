@@ -69,7 +69,7 @@
 			<string>Editor</string>
 			<key>CFBundleURLSchemes</key>
 			<array>
-				<string>com.attijaniya.at_tijaniya</string>
+				<string>com.attijaniya.app</string>
 			</array>
 		</dict>
 	</array>

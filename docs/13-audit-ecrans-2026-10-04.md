@@ -310,6 +310,24 @@ faute de traduction du contenu : biographies, zawiyas, évènements, « Comprend
 notes et traductions des wirds, quelques libellés d'administration (« Récitation de
 référence », nom du wird dans la gestion des récitations).
 
+### Lien de retour des e-mails d'authentification (2026-10-11)
+
+Signalé par le porteur de projet : après « Confirmer mon compte », le navigateur affichait
+`{"code":403,"error_code":"otp_expired","msg":"Email link is invalid or has expired"}`.
+Les journaux d'authentification montrent, pour un même clic : le compte est bien confirmé,
+puis le serveur échoue à construire la redirection vers l'app (erreur 500, « first path
+segment in URL cannot contain colon »), et la requête rejouée trouve le jeton déjà consommé
+(403). Cause : le lien de retour `com.attijaniya.at_tijaniya://login-callback` contient un
+tiret bas, interdit dans un schème d'URL (RFC 3986). Même échec constaté sur une demande de
+réinitialisation du mot de passe, qui ne pouvait donc pas aboutir.
+
+Corrigé : schème `com.attijaniya.app` dans `SupabaseConfig`, le manifeste Android et
+`Info.plist`, avec un test qui interdit un schème invalide ou divergent.
+**À faire dans le tableau de bord Supabase** (Authentication → URL Configuration → Redirect
+URLs) : ajouter `com.attijaniya.app://login-callback`. Sans cela, Supabase ignore le lien et
+renvoie vers le « Site URL ». À valider ensuite sur téléphone : inscription d'un nouveau
+compte et réinitialisation d'un mot de passe, de l'e-mail jusqu'au retour dans l'app.
+
 ## Index des rapports par module
 
 | Fichier | Écrans |

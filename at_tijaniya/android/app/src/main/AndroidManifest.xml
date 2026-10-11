@@ -63,7 +63,7 @@
                 <category android:name="android.intent.category.DEFAULT"/>
                 <category android:name="android.intent.category.BROWSABLE"/>
                 <data
-                    android:scheme="com.attijaniya.at_tijaniya"
+                    android:scheme="com.attijaniya.app"
                     android:host="login-callback"/>
             </intent-filter>
         </activity>

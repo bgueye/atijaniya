@@ -35,7 +35,18 @@ class SupabaseConfig {
   // AuthChangeEvent.passwordRecovery qui en résulte. Doit aussi être ajouté à
   // la liste blanche "Additional Redirect URLs" du projet Supabase, sans quoi
   // Supabase l'ignore silencieusement et retombe sur le Site URL.
-  static const String authCallbackUrl = 'com.attijaniya.at_tijaniya://login-callback';
+  //
+  // Le schème ne doit contenir que des lettres, des chiffres, « + », « - » et
+  // « . » (RFC 3986) : surtout pas de tiret bas. L'ancien lien reprenait
+  // l'identifiant de l'app, `com.attijaniya.at_tijaniya://…` ; le serveur
+  // d'authentification confirmait bien le compte, puis échouait à construire
+  // la redirection (« first path segment in URL cannot contain colon »), et le
+  // disciple voyait dans son navigateur « Email link is invalid or has
+  // expired » au lieu de revenir dans l'app. La réinitialisation du mot de
+  // passe, qui dépend de ce retour, ne pouvait pas aboutir (constaté dans les
+  // journaux Supabase le 2026-10-11).
+  static const String authCallbackScheme = 'com.attijaniya.app';
+  static const String authCallbackUrl = '$authCallbackScheme://login-callback';
 
   static Future<void> init() async {
     if (anonKey.isEmpty) {

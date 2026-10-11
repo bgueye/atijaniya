@@ -119,7 +119,7 @@ ci-dessous) :
 - **E-mails d'authentification en français + deep link (2026-08-24)** — les e-mails de
   confirmation d'inscription et de réinitialisation de mot de passe étaient en anglais et
   leur lien renvoyait vers `localhost` (Site URL resté au placeholder de création de
-  projet). Deep link natif ajouté (`com.attijaniya.at_tijaniya://login-callback`, Android +
+  projet). Deep link natif ajouté (`com.attijaniya.app://login-callback` depuis le 2026-10-11 — l'ancien `com.attijaniya.at_tijaniya://…` contenait un tiret bas, schème invalide que le serveur d'authentification ne savait pas lire, voir `docs/13`, Android +
   iOS), intercepté automatiquement par `supabase_flutter` ; nouvel écran
   `ResetPasswordScreen`. Templates (FR) et `site_url`/`uri_allow_list` poussés sur le
   projet live via `supabase/apply_auth_email_config.mjs` (Management API, PATCH ciblé sur
