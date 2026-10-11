@@ -12,6 +12,8 @@ import '../../khadara/presentation/khadara_providers.dart';
 import '../../khadara/presentation/live_stream_providers.dart';
 import '../../khadara/presentation/live_stream_screen.dart';
 import '../../khadara/presentation/start_live_stream_screen.dart';
+import '../../moderation/domain/moderation_models.dart';
+import '../../moderation/presentation/report_content_dialog.dart';
 import '../../profil/presentation/profile_providers.dart';
 import '../domain/group_errors.dart';
 import '../domain/group_models.dart';
@@ -567,6 +569,25 @@ class _GroupPostTileState extends ConsumerState<_GroupPostTile> {
                     child: Padding(
                       padding: const EdgeInsets.all(10),
                       child: Icon(Icons.delete_outline, size: 16, color: AppColors.bronze),
+                    ),
+                  ),
+                ),
+              ] else ...[
+                // Message d'un autre membre : signalable à la modération
+                // (2026-10-11), comme un commentaire du fil.
+                const Spacer(),
+                InkWell(
+                  onTap: () => showReportContentDialog(
+                    context,
+                    ref,
+                    contentType: ReportableContentType.groupPost,
+                    contentId: widget.post.id,
+                  ),
+                  child: Tooltip(
+                    message: l10n.moderationReportAction,
+                    child: Padding(
+                      padding: const EdgeInsets.all(10),
+                      child: Icon(Icons.flag_outlined, size: 16, color: AppColors.bronze),
                     ),
                   ),
                 ),

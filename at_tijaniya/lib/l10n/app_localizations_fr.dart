@@ -3061,4 +3061,21 @@ class AppLocalizationsFr extends AppLocalizations {
   String homeStreakWeeklySingular(Object count) {
     return '$count vendredi de suite';
   }
+
+  @override
+  String get moderationTypeGroupPost => 'Message de groupe';
+
+  @override
+  String get moderationTypeMessage => 'Message privé';
+
+  @override
+  String get moderationReportMessageNotice =>
+      'Ce message, avec le nom de son auteur, sera transmis à la modération. Le reste de la discussion reste privé.';
+
+  @override
+  String get moderationConfirmHideMessageTitle => 'Masquer ce message ?';
+
+  @override
+  String get moderationConfirmHideMessageBody =>
+      'Le message sera retiré pour tous ses destinataires. Cette action est définitive.';
 }

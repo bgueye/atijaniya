@@ -2955,4 +2955,21 @@ class AppLocalizationsAr extends AppLocalizations {
   String homeStreakWeeklySingular(Object count) {
     return '$count جمعة متتالية';
   }
+
+  @override
+  String get moderationTypeGroupPost => 'رسالة في مجموعة';
+
+  @override
+  String get moderationTypeMessage => 'رسالة خاصة';
+
+  @override
+  String get moderationReportMessageNotice =>
+      'ستُرسَل هذه الرسالة مع اسم كاتبها إلى الإشراف. يبقى باقي المحادثة خاصًّا.';
+
+  @override
+  String get moderationConfirmHideMessageTitle => 'إخفاء هذه الرسالة؟';
+
+  @override
+  String get moderationConfirmHideMessageBody =>
+      'ستُزال الرسالة لدى جميع مستلميها. هذا الإجراء نهائي.';
 }

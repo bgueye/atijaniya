@@ -11,6 +11,11 @@
 /// supprimer — ces colonnes sont filtrées au niveau RLS
 /// (`database/schema.sql`, section 11), donc aucun autre repository n'a
 /// besoin d'être modifié pour respecter le masquage.
+///
+/// Messages de groupe et messages privés (2026-10-11) : mêmes fonctions
+/// serveur, mais l'aperçu vient de la copie portée par le signalement
+/// (`content_snapshot`) — l'admin n'a aucun droit de lecture sur `messages`
+/// ni sur les groupes dont il n'est pas membre, et n'en reçoit pas.
 library;
 
 import '../../../core/supabase/supabase_config.dart';
@@ -58,6 +63,11 @@ class ModerationRepository {
     final commentIds =
         reports.where((r) => r.contentType == ReportableContentType.postComment).map((r) => r.contentId).toSet();
 
+    // Auteurs des messages signalés, pour l'afficher au-dessus de la copie.
+    final messageAuthorNames = await _fetchDisplayNames(
+      reports.map((r) => r.contentAuthorId).whereType<String>().toSet(),
+    );
+
     final streamPreviews = await _fetchStreamPreviews(streamIds);
     final requestPreviews = await _fetchLineageRequestPreviews(requestIds);
     final postPreviews = await _fetchTextPreviews('posts', postIds);
@@ -69,6 +79,9 @@ class ModerationRepository {
         ReportableContentType.lineageConnectionRequest => requestPreviews[report.contentId],
         ReportableContentType.post => postPreviews[report.contentId],
         ReportableContentType.postComment => commentPreviews[report.contentId],
+        ReportableContentType.groupPost ||
+        ReportableContentType.message =>
+          _messagePreview(report, messageAuthorNames),
       };
       return ReportWithPreview(report: report, preview: preview);
     }).toList();
@@ -86,6 +99,15 @@ class ModerationRepository {
   }
 
   static String _truncate(String text) => text.length <= 280 ? text : '${text.substring(0, 280)}…';
+
+  /// Aperçu d'un message signalé : le nom de son auteur, puis la copie du
+  /// texte. `null` si la copie manque (message supprimé avant le signalement).
+  static String? _messagePreview(ContentReport report, Map<String, String> authorNames) {
+    final text = report.contentSnapshot;
+    if (text == null) return null;
+    final author = authorNames[report.contentAuthorId];
+    return author == null ? _truncate(text) : '$author\n${_truncate(text)}';
+  }
 
   Future<Map<String, String>> _fetchStreamPreviews(Set<String> ids) async {
     if (ids.isEmpty) return {};

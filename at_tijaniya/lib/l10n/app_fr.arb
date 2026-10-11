@@ -1012,5 +1012,10 @@
   "wirdHistoryStreakDaySingular": "jour d'affilée",
   "wirdHistoryStreakFridaySingular": "vendredi d'affilée",
   "homeStreakDailySingular": "{count} jour de suite",
-  "homeStreakWeeklySingular": "{count} vendredi de suite"
+  "homeStreakWeeklySingular": "{count} vendredi de suite",
+  "moderationTypeGroupPost": "Message de groupe",
+  "moderationTypeMessage": "Message privé",
+  "moderationReportMessageNotice": "Ce message, avec le nom de son auteur, sera transmis à la modération. Le reste de la discussion reste privé.",
+  "moderationConfirmHideMessageTitle": "Masquer ce message ?",
+  "moderationConfirmHideMessageBody": "Le message sera retiré pour tous ses destinataires. Cette action est définitive."
 }

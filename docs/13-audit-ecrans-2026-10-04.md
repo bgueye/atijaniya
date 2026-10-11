@@ -143,8 +143,8 @@ Reste à faire, hors de portée d'une migration ou d'un changement de code :
   confirmé » dans les trois versions. Restent les formulaires de confidentialité des deux
   stores, à remplir par le porteur de projet (position non collectée : calcul sur
   l'appareil).
-- Messages de groupe et messages privés : signalement à traiter dans un sprint de
-  modération dédié (S61).
+- ~~Messages de groupe et messages privés : signalement (S61)~~ — **fait le 2026-10-11**,
+  voir « Signalement des messages » plus bas.
 - Une conversation de test n'a plus qu'un participant (l'autre compte a été supprimé) ;
   aucune conversation à plus de deux participants n'existe, donc aucun signe d'intrusion.
 
@@ -330,6 +330,34 @@ Corrigé : schème `com.attijaniya.app` dans `SupabaseConfig`, le manifeste Andr
 « Site URL ». **Validé sur téléphone le 2026-10-11** par le porteur de projet :
 réinitialisation d'un mot de passe, de l'e-mail jusqu'au retour dans l'app. Reste à
 observer le même retour après l'inscription d'un nouveau compte.
+
+### Signalement des messages de groupe et des messages privés (2026-10-11)
+
+Demande du porteur de projet ; termine le point S61. Migration
+`report_group_posts_and_messages` (appliquée sur le projet live),
+scénario de non-régression dans `database/tests/signalement_messages.sql`.
+
+- **Qui peut signaler** : un membre du groupe ou un participant à la conversation, pour un
+  message dont il n'est pas l'auteur. Bouton drapeau sur chaque message d'autrui.
+- **Ce que lit la modération** : uniquement le message signalé et le nom de son auteur. Le
+  serveur en fait une copie dans le signalement (`content_reports.content_snapshot`), que
+  le déclarant ne peut ni fournir ni modifier ; le dialogue de signalement le lui annonce.
+  **La RLS de `messages` et de `group_posts` n'est pas élargie** : un admin ne lit toujours
+  aucune conversation privée, ni aucun groupe dont il n'est pas membre.
+- **Durée de vie de la copie** : effacée dès que le signalement est traité ou classé ;
+  supprimée avec le compte de l'auteur.
+- **Effet de « Masquer »** : `hidden_at` sur le message, filtré par la RLS pour tous ses
+  destinataires. Jamais de suppression.
+- **Privilèges resserrés au passage** : un essai annulé a montré qu'un compte client pouvait
+  écrire lui-même `hidden_at`. `group_posts` et `messages` n'acceptent plus que les
+  colonnes que l'app écrit (texte d'un message de groupe à la modification ; aucun message
+  privé n'est modifiable).
+- **Vérifié en base** par vingt contrôles joués avec chaque rôle (tiers, auteur,
+  destinataire, admin), dans une transaction annulée. **Pas encore vu sur téléphone** : il
+  faut deux comptes dans un même groupe ou une même conversation.
+- **Reste hors périmètre** : bloquer un disciple (l'empêcher d'écrire à quelqu'un). Les
+  règles de Google Play sur les contenus d'utilisateurs le demandent pour les applications
+  de messagerie ; à trancher avant une publication ouverte au public.
 
 ## Index des rapports par module
 

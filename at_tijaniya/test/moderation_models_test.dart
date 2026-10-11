@@ -51,6 +51,45 @@ void main() {
     test('valeur inconnue lève une erreur', () {
       expect(() => reportableContentTypeFromDbValue('autre_chose'), throwsArgumentError);
     });
+
+    test('messages de groupe et messages privés portent les valeurs attendues par la base', () {
+      expect(reportableContentTypeToDbValue(ReportableContentType.groupPost), 'group_post');
+      expect(reportableContentTypeToDbValue(ReportableContentType.message), 'message');
+    });
+  });
+
+  group('signalement d\'un message', () {
+    test('lit la copie du message et son auteur, fournis par le serveur', () {
+      final report = ContentReport.fromRow({
+        'id': 'report-3',
+        'reporter_id': 'user-1',
+        'content_type': 'message',
+        'content_id': 'message-1',
+        'reason': null,
+        'status': 'pending',
+        'created_at': '2026-10-11T10:00:00Z',
+        'content_snapshot': 'texte du message signalé',
+        'content_author_id': 'user-2',
+      });
+      expect(report.contentType, ReportableContentType.message);
+      expect(report.contentSnapshot, 'texte du message signalé');
+      expect(report.contentAuthorId, 'user-2');
+    });
+
+    test('la copie est absente pour les autres contenus et une fois le signalement clos', () {
+      final report = ContentReport.fromRow({
+        'id': 'report-4',
+        'reporter_id': 'user-1',
+        'content_type': 'group_post',
+        'content_id': 'post-1',
+        'reason': null,
+        'status': 'resolved',
+        'created_at': '2026-10-11T10:00:00Z',
+        'content_snapshot': null,
+        'content_author_id': 'user-2',
+      });
+      expect(report.contentSnapshot, isNull);
+    });
   });
 
   group('classifyReportError', () {

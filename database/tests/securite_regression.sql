@@ -45,6 +45,16 @@ begin
   -- S09 : pas de signalement d'un contenu inexistant.
   begin insert into public.content_reports (reporter_id, content_type, content_id) values (a, 'post', gen_random_uuid()); r := r || 'FAILLE S09 signalement | ';
   exception when insufficient_privilege then r := r || 'ok S09 | '; end;
+  -- Signalement d'un message (2026-10-11) : ni message inexistant, ni copie
+  -- fournie par le client ; le scénario complet (tiers, auteur, lecture par
+  -- l'admin, masquage) est dans database/tests/signalement_messages.sql.
+  begin insert into public.content_reports (reporter_id, content_type, content_id) values (a, 'message', gen_random_uuid()); r := r || 'FAILLE signalement message inexistant | ';
+  exception when insufficient_privilege then r := r || 'ok message inexistant | '; end;
+  begin insert into public.content_reports (reporter_id, content_type, content_id, content_snapshot) values (a, 'group_post', gen_random_uuid(), 'x'); r := r || 'FAILLE copie forgée | ';
+  exception when insufficient_privilege then r := r || 'ok copie non falsifiable | '; end;
+  -- Les messages privés ne se réécrivent pas, et personne ne masque côté client.
+  begin update public.messages set hidden_at = now() where sender_id = a; r := r || 'FAILLE masquage client | ';
+  exception when insufficient_privilege then r := r || 'ok masquage réservé | '; end;
   -- S10 : pas de notification forgée.
   begin insert into public.notifications (user_id, type) values (a, 'content_report'); r := r || 'FAILLE S10 notification | ';
   exception when insufficient_privilege then r := r || 'ok S10 | '; end;

@@ -1011,5 +1011,10 @@
   "wirdHistoryStreakDaySingular": "يوم متتالٍ",
   "wirdHistoryStreakFridaySingular": "جمعة متتالية",
   "homeStreakDailySingular": "{count} يوم متتالٍ",
-  "homeStreakWeeklySingular": "{count} جمعة متتالية"
+  "homeStreakWeeklySingular": "{count} جمعة متتالية",
+  "moderationTypeGroupPost": "رسالة في مجموعة",
+  "moderationTypeMessage": "رسالة خاصة",
+  "moderationReportMessageNotice": "ستُرسَل هذه الرسالة مع اسم كاتبها إلى الإشراف. يبقى باقي المحادثة خاصًّا.",
+  "moderationConfirmHideMessageTitle": "إخفاء هذه الرسالة؟",
+  "moderationConfirmHideMessageBody": "ستُزال الرسالة لدى جميع مستلميها. هذا الإجراء نهائي."
 }

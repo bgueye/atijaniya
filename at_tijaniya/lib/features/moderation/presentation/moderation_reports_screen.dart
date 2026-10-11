@@ -85,6 +85,8 @@ class _ReportCardState extends ConsumerState<_ReportCard> {
       ReportableContentType.lineageConnectionRequest => l10n.moderationTypeLineageRequest,
       ReportableContentType.post => l10n.moderationTypePost,
       ReportableContentType.postComment => l10n.moderationTypePostComment,
+      ReportableContentType.groupPost => l10n.moderationTypeGroupPost,
+      ReportableContentType.message => l10n.moderationTypeMessage,
     };
   }
 
@@ -137,6 +139,9 @@ class _ReportCardState extends ConsumerState<_ReportCard> {
       ReportableContentType.post ||
       ReportableContentType.postComment =>
         (l10n.moderationConfirmHideContentTitle, l10n.moderationConfirmHideContentBody),
+      ReportableContentType.groupPost ||
+      ReportableContentType.message =>
+        (l10n.moderationConfirmHideMessageTitle, l10n.moderationConfirmHideMessageBody),
     };
     return showDialog<bool>(
       context: context,

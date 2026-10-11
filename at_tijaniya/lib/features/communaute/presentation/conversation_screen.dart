@@ -6,6 +6,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/widgets/message_composer.dart';
 import '../../../l10n/app_localizations.dart';
+import '../../moderation/domain/moderation_models.dart';
+import '../../moderation/presentation/report_content_dialog.dart';
 import '../../profil/presentation/profile_providers.dart';
 import '../domain/message_models.dart';
 import 'community_format.dart';
@@ -98,10 +100,21 @@ class _ConversationScreenState extends ConsumerState<ConversationScreen> {
                       itemCount: list.length,
                       itemBuilder: (context, i) {
                         final message = list[list.length - 1 - i];
+                        final isMine = message.senderId == myUserId;
                         return _MessageBubble(
                           key: ValueKey(message.id),
                           message: message,
-                          isMine: message.senderId == myUserId,
+                          isMine: isMine,
+                          // Seul un message reçu est signalable (2026-10-11).
+                          reportTooltip: l10n.moderationReportAction,
+                          onReport: isMine
+                              ? null
+                              : () => showReportContentDialog(
+                                    context,
+                                    ref,
+                                    contentType: ReportableContentType.message,
+                                    contentId: message.id,
+                                  ),
                         );
                       },
                     ),
@@ -123,10 +136,20 @@ class _ConversationScreenState extends ConsumerState<ConversationScreen> {
 }
 
 class _MessageBubble extends StatelessWidget {
-  const _MessageBubble({super.key, required this.message, required this.isMine});
+  const _MessageBubble({
+    super.key,
+    required this.message,
+    required this.isMine,
+    required this.reportTooltip,
+    this.onReport,
+  });
 
   final DirectMessage message;
   final bool isMine;
+  final String reportTooltip;
+
+  /// `null` pour ses propres messages : pas de bouton.
+  final VoidCallback? onReport;
 
   @override
   Widget build(BuildContext context) {
@@ -146,9 +169,25 @@ class _MessageBubble extends StatelessWidget {
           children: [
             ContentText(message.contentText, style: const TextStyle(color: AppColors.ink, fontSize: 15)),
             const SizedBox(height: 4),
-            ContentText(
-              formatCommunityDateTime(message.sentAt),
-              style: TextStyle(color: AppColors.bronze, fontSize: 10),
+            Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                ContentText(
+                  formatCommunityDateTime(message.sentAt),
+                  style: TextStyle(color: AppColors.bronze, fontSize: 10),
+                ),
+                if (onReport != null)
+                  InkWell(
+                    onTap: onReport,
+                    child: Tooltip(
+                      message: reportTooltip,
+                      child: Padding(
+                        padding: const EdgeInsets.all(10),
+                        child: Icon(Icons.flag_outlined, size: 16, color: AppColors.bronze),
+                      ),
+                    ),
+                  ),
+              ],
             ),
           ],
         ),

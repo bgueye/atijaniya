@@ -5636,6 +5636,36 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'{count} vendredi de suite'**
   String homeStreakWeeklySingular(Object count);
+
+  /// No description provided for @moderationTypeGroupPost.
+  ///
+  /// In fr, this message translates to:
+  /// **'Message de groupe'**
+  String get moderationTypeGroupPost;
+
+  /// No description provided for @moderationTypeMessage.
+  ///
+  /// In fr, this message translates to:
+  /// **'Message privé'**
+  String get moderationTypeMessage;
+
+  /// No description provided for @moderationReportMessageNotice.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ce message, avec le nom de son auteur, sera transmis à la modération. Le reste de la discussion reste privé.'**
+  String get moderationReportMessageNotice;
+
+  /// No description provided for @moderationConfirmHideMessageTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Masquer ce message ?'**
+  String get moderationConfirmHideMessageTitle;
+
+  /// No description provided for @moderationConfirmHideMessageBody.
+  ///
+  /// In fr, this message translates to:
+  /// **'Le message sera retiré pour tous ses destinataires. Cette action est définitive.'**
+  String get moderationConfirmHideMessageBody;
 }
 
 class _AppLocalizationsDelegate

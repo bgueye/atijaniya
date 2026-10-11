@@ -19,6 +19,11 @@ Future<void> showReportContentDialog(
   required String contentId,
 }) async {
   final l10n = AppLocalizations.of(context)!;
+  // Un message de groupe ou privé n'est lisible que de ses destinataires :
+  // le disciple doit savoir, avant d'envoyer, que ce message-là (et lui seul)
+  // sera transmis à la modération.
+  final sharesMessage =
+      contentType == ReportableContentType.groupPost || contentType == ReportableContentType.message;
 
   // `_ReportDialogContent` possède et détruit son propre contrôleur — ne pas
   // le créer/disposer ici. Le `Future` de `showDialog` se résout dès l'appel
@@ -32,7 +37,7 @@ Future<void> showReportContentDialog(
   // ne le détruit qu'au démontage réel du dialogue (après l'animation).
   final reasonText = await showDialog<String>(
     context: context,
-    builder: (dialogContext) => _ReportDialogContent(l10n: l10n),
+    builder: (dialogContext) => _ReportDialogContent(l10n: l10n, sharesMessage: sharesMessage),
   );
 
   if (reasonText == null || !context.mounted) return;
@@ -60,9 +65,10 @@ Future<void> showReportContentDialog(
 }
 
 class _ReportDialogContent extends StatefulWidget {
-  const _ReportDialogContent({required this.l10n});
+  const _ReportDialogContent({required this.l10n, required this.sharesMessage});
 
   final AppLocalizations l10n;
+  final bool sharesMessage;
 
   @override
   State<_ReportDialogContent> createState() => _ReportDialogContentState();
@@ -91,6 +97,10 @@ class _ReportDialogContentState extends State<_ReportDialogContent> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(l10n.moderationReportDialogBody),
+          if (widget.sharesMessage) ...[
+            const SizedBox(height: 8),
+            Text(l10n.moderationReportMessageNotice),
+          ],
           const SizedBox(height: 12),
           TextField(
             controller: _reasonController,

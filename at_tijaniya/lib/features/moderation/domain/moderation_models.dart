@@ -2,10 +2,16 @@
 /// générique pour les contenus signalables (docs/01 §6 : "modération
 /// a posteriori suffit", pas de rôle modérateur ni de modération automatisée).
 /// Publications et commentaires du fil ajoutés le 2026-10-04 (audit, S61) ;
-/// messages de groupe et messages privés restent hors périmètre.
+/// messages de groupe et messages privés le 2026-10-11.
+///
+/// Pour ces deux derniers, la modération ne lit ni le groupe ni la
+/// conversation : le serveur copie dans le signalement le texte du seul
+/// message visé ([ContentReport.contentSnapshot]) et l'efface dès que le
+/// signalement est clos — voir
+/// `database/migrations/2026-10-11_report_group_posts_and_messages.sql`.
 library;
 
-enum ReportableContentType { liveStream, lineageConnectionRequest, post, postComment }
+enum ReportableContentType { liveStream, lineageConnectionRequest, post, postComment, groupPost, message }
 
 String reportableContentTypeToDbValue(ReportableContentType type) {
   return switch (type) {
@@ -13,6 +19,8 @@ String reportableContentTypeToDbValue(ReportableContentType type) {
     ReportableContentType.lineageConnectionRequest => 'lineage_connection_request',
     ReportableContentType.post => 'post',
     ReportableContentType.postComment => 'post_comment',
+    ReportableContentType.groupPost => 'group_post',
+    ReportableContentType.message => 'message',
   };
 }
 
@@ -22,6 +30,8 @@ ReportableContentType reportableContentTypeFromDbValue(String value) {
     'lineage_connection_request' => ReportableContentType.lineageConnectionRequest,
     'post' => ReportableContentType.post,
     'post_comment' => ReportableContentType.postComment,
+    'group_post' => ReportableContentType.groupPost,
+    'message' => ReportableContentType.message,
     _ => throw ArgumentError('Type de contenu signalable inconnu : $value'),
   };
 }
@@ -41,6 +51,8 @@ class ContentReport {
     this.reason,
     required this.status,
     required this.createdAt,
+    this.contentSnapshot,
+    this.contentAuthorId,
   });
 
   final String id;
@@ -51,6 +63,15 @@ class ContentReport {
   final ReportStatus status;
   final DateTime createdAt;
 
+  /// Copie du message signalé, faite par le serveur au moment du signalement
+  /// — uniquement pour un message de groupe ou un message privé, que l'admin
+  /// ne peut pas lire autrement. `null` pour les autres types et une fois le
+  /// signalement clos.
+  final String? contentSnapshot;
+
+  /// Auteur du message signalé (mêmes types que [contentSnapshot]).
+  final String? contentAuthorId;
+
   factory ContentReport.fromRow(Map<String, dynamic> row) {
     return ContentReport(
       id: row['id'] as String,
@@ -60,6 +81,8 @@ class ContentReport {
       reason: row['reason'] as String?,
       status: _reportStatusFromDb(row['status'] as String),
       createdAt: DateTime.parse(row['created_at'] as String).toLocal(),
+      contentSnapshot: row['content_snapshot'] as String?,
+      contentAuthorId: row['content_author_id'] as String?,
     );
   }
 }
