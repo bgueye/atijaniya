@@ -15,13 +15,24 @@
 /// écrit depuis le client (CLAUDE.md).
 library;
 
-enum Foyer { tivaouane, kaolack, medinaBaye, autre }
+/// Foyers communs à la lignée du disciple et aux figures (contraintes
+/// `lineage_declarations_foyer_check` et `figures_foyer_check`). Omarienne,
+/// Aïn Madhi et Fès ajoutés le 2026-10-18 (migration
+/// `foyers_ain_madhi_fes_omarienne`) : 46 figures sur 70 étaient en `autre`.
+/// L'ordre de l'enum est celui des listes de choix et des filtres.
+enum Foyer { tivaouane, kaolack, medinaBaye, omarienne, ainMadhi, fes, autre }
 
+/// Toute valeur inconnue retombe sur [Foyer.autre] plutôt que de faire
+/// échouer la lecture : c'est ce qui a permis d'ajouter des foyers en base
+/// sans casser la version 1.0.0+2 déjà installée chez les testeurs.
 Foyer foyerFromString(String value) {
   return switch (value) {
     'tivaouane' => Foyer.tivaouane,
     'kaolack' => Foyer.kaolack,
     'medina_baye' => Foyer.medinaBaye,
+    'omarienne' => Foyer.omarienne,
+    'ain_madhi' => Foyer.ainMadhi,
+    'fes' => Foyer.fes,
     _ => Foyer.autre,
   };
 }
@@ -31,6 +42,9 @@ String foyerToDbValue(Foyer foyer) {
     Foyer.tivaouane => 'tivaouane',
     Foyer.kaolack => 'kaolack',
     Foyer.medinaBaye => 'medina_baye',
+    Foyer.omarienne => 'omarienne',
+    Foyer.ainMadhi => 'ain_madhi',
+    Foyer.fes => 'fes',
     Foyer.autre => 'autre',
   };
 }

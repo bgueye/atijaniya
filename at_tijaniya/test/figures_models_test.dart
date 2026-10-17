@@ -350,4 +350,36 @@ void main() {
       expect(groupSuccessions([], {}), isEmpty);
     });
   });
+
+  // Filtre par foyer de l'écran Figures (depuis le 2026-10-18).
+  group('filtre par foyer', () {
+    Figure figure(String id, String? foyer) => Figure.fromRow({
+          'id': id,
+          'name_ar': 'اسم',
+          'name_fr': 'Nom $id',
+          'category': 'family_lineage',
+          'foyer': foyer,
+          'bio_text': null,
+        });
+
+    final figures = [
+      figure('a', 'fes'),
+      figure('b', 'omarienne'),
+      figure('c', 'fes'),
+      figure('d', null),
+      figure('e', 'tivaouane'),
+    ];
+
+    test("ne propose que les foyers présents, dans l'ordre de l'enum", () {
+      expect(foyersPresentIn(figures), [Foyer.tivaouane, Foyer.omarienne, Foyer.fes]);
+    });
+
+    test('un foyer choisi ne garde que ses figures', () {
+      expect(filterFiguresByFoyer(figures, Foyer.fes).map((f) => f.id), ['a', 'c']);
+    });
+
+    test('sans foyer choisi, tout reste, y compris les fiches sans foyer', () {
+      expect(filterFiguresByFoyer(figures, null), hasLength(5));
+    });
+  });
 }

@@ -5,6 +5,8 @@ import 'package:google_fonts/google_fonts.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../l10n/app_localizations.dart';
+import '../../lineage/domain/lineage_models.dart' show Foyer;
+import '../../lineage/presentation/foyer_label.dart';
 import '../domain/figure_models.dart';
 import 'featured_figure_admin_screen.dart';
 import 'figure_detail_screen.dart';
@@ -29,11 +31,24 @@ import '../../../core/widgets/content_text.dart';
 /// `true` — seul chemin de l'app vers `FiguresReviewScreen` (relecture des
 /// brouillons avant publication). "Mouqaddam vérifié" n'accorde aucun droit
 /// ici, voir la note dans `figures_review_screen.dart`.
-class FiguresScreen extends ConsumerWidget {
+///
+/// Filtre par foyer en tête de liste depuis le 2026-10-18 : avant, le foyer
+/// d'une figure était saisi par l'admin mais invisible pour le disciple, et
+/// 46 fiches sur 70 étaient en « Autre ». Seuls les foyers présents dans la
+/// liste sont proposés.
+class FiguresScreen extends ConsumerStatefulWidget {
   const FiguresScreen({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<FiguresScreen> createState() => _FiguresScreenState();
+}
+
+class _FiguresScreenState extends ConsumerState<FiguresScreen> {
+  /// Foyer choisi ; `null` : tous.
+  Foyer? _foyer;
+
+  @override
+  Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     final figuresAsync = ref.watch(figuresProvider);
     final isAdmin = ref.watch(isAdminProvider);
@@ -92,17 +107,37 @@ class FiguresScreen extends ConsumerWidget {
                 ),
               ),
             ),
-            data: (figures) {
-              final founders = figures.where((f) => f.category == FigureCategory.founder).toList();
-              final families = figures.where((f) => f.category == FigureCategory.religiousFamily).toList();
-
-              if (founders.isEmpty && families.isEmpty) {
+            data: (allFigures) {
+              if (allFigures.isEmpty) {
                 return _EmptyState(title: l10n.figuresEmptyTitle, body: l10n.figuresEmptyBody);
               }
+              final foyers = foyersPresentIn(allFigures);
+              // Un foyer choisi qui n'existe plus dans la liste (fiche
+              // modifiée entre-temps) revient à « Tous » plutôt qu'à une
+              // liste vide sans puce sélectionnée.
+              final foyer = foyers.contains(_foyer) ? _foyer : null;
+              final figures = filterFiguresByFoyer(allFigures, foyer);
+              final founders = figures.where((f) => f.category == FigureCategory.founder).toList();
+              final families = figures.where((f) => f.category == FigureCategory.religiousFamily).toList();
 
               return ListView(
                 padding: const EdgeInsets.all(16),
                 children: [
+                  // Inutile de filtrer quand toutes les fiches ont le même
+                  // foyer (ou aucun).
+                  if (foyers.length > 1) ...[
+                    _FoyerFilter(
+                      foyers: foyers,
+                      selected: foyer,
+                      onSelected: (value) => setState(() => _foyer = value),
+                    ),
+                    const SizedBox(height: 4),
+                  ],
+                  if (figures.isEmpty)
+                    Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 32),
+                      child: Text(l10n.figuresNoneForFoyer, textAlign: TextAlign.center, style: TextStyle(color: AppColors.bronze)),
+                    ),
                   if (founders.isNotEmpty) ...[
                     _SectionHeader(title: l10n.figuresSectionFounders),
                     for (final figure in founders) _FigureTile(figure: figure),
@@ -117,6 +152,42 @@ class FiguresScreen extends ConsumerWidget {
             },
           ),
         ),
+      ],
+    );
+  }
+}
+
+/// Puces de foyer, sur plusieurs lignes au besoin : avec jusqu'à huit choix,
+/// une seule ligne (comme le filtre des zawiyas, qui n'en a que quatre)
+/// obligerait à réduire le texte ou à faire défiler, et un foyer caché hors
+/// de l'écran serait manqué.
+class _FoyerFilter extends StatelessWidget {
+  const _FoyerFilter({required this.foyers, required this.selected, required this.onSelected});
+
+  final List<Foyer> foyers;
+  final Foyer? selected;
+  final ValueChanged<Foyer?> onSelected;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    final options = <(Foyer?, String)>[
+      (null, l10n.figuresFoyerFilterAll),
+      for (final foyer in foyers) (foyer, foyerLabel(foyer, l10n)),
+    ];
+    return Wrap(
+      spacing: 6,
+      runSpacing: 6,
+      children: [
+        for (final (foyer, label) in options)
+          ChoiceChip(
+            label: Text(label),
+            selected: foyer == selected,
+            showCheckmark: false,
+            visualDensity: VisualDensity.compact,
+            materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+            onSelected: (_) => onSelected(foyer),
+          ),
       ],
     );
   }

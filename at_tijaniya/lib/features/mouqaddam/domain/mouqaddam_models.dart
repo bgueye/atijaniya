@@ -219,3 +219,37 @@ class IjazaChainLink {
     );
   }
 }
+
+/// Un maillon du complément manuel tel que son auteur le gère (table
+/// `mouqaddam_manual_chain_links`, lue directement par son propriétaire).
+/// Distinct d'[IjazaChainLink] : `get_ijaza_chain()` ne renvoie pas
+/// l'identifiant des maillons manuels, nécessaire pour en modifier ou en
+/// retirer un depuis « Ma silsila d'ijaza » (depuis le 2026-10-17).
+class ManualChainLink {
+  const ManualChainLink({
+    required this.id,
+    required this.orderIndex,
+    required this.nameText,
+    this.yearText,
+    required this.isUltimateSource,
+  });
+
+  final String id;
+
+  /// Place dans le complément, à partir de 1 ; sans trou, la base resserre
+  /// la numérotation quand un maillon est retiré.
+  final int orderIndex;
+  final String nameText;
+  final String? yearText;
+  final bool isUltimateSource;
+
+  factory ManualChainLink.fromRow(Map<String, dynamic> row) {
+    return ManualChainLink(
+      id: row['id'] as String,
+      orderIndex: row['order_index'] as int,
+      nameText: row['name_text'] as String,
+      yearText: row['year_text'] as String?,
+      isUltimateSource: row['is_ultimate_source'] as bool? ?? false,
+    );
+  }
+}

@@ -7,6 +7,11 @@ Document de travail à destination de Claude Code. Il rassemble les évolutions 
 - **Contraintes actuelles utiles :**
   - `figures.category` ∈ {`founder`, `family_lineage`}
   - `figures.foyer` ∈ {`tivaouane`, `kaolack`, `medina_baye`, `autre`}
+> **2026-10-18** : `figures.foyer` et `lineage_declarations.foyer` acceptent désormais aussi
+> `omarienne`, `ain_madhi` et `fes` (migration `foyers_ain_madhi_fes_omarienne`) ; 37 fiches
+> reclassées, 9 restent en `autre`. Voir `docs/09`. Reste ouvert le cas d'El Hadj Abdoulaye
+> Niasse (`medina_baye`, alors que ses khalifes de Léona sont en `kaolack`), point « Harmoniser »
+> plus bas.
   - `figure_zawiya_khalifas` : unique (`founder_figure_id`, `order_index`) **et** unique (`founder_figure_id`, `khalifa_figure_id`)
   - `historical_silsila_links` : un seul maître par figure (`figure_id` unique, posé volontairement le 2026-08-17)
   - `events.is_recurring` ne gère que la récurrence hebdomadaire (contrainte `events_recurrence_fields_consistency_check`)

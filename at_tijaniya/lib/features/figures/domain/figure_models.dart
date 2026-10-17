@@ -491,3 +491,18 @@ List<FigureWork>? _worksFrom(List<dynamic>? worksRows) {
       ),
   ];
 }
+
+/// Foyers effectivement présents parmi [figures], dans l'ordre de l'enum
+/// [Foyer] — le filtre de l'écran Figures ne propose jamais un foyer qui
+/// n'afficherait aucune fiche.
+List<Foyer> foyersPresentIn(List<Figure> figures) {
+  final present = figures.map((f) => f.foyer).whereType<Foyer>().toSet();
+  return Foyer.values.where(present.contains).toList();
+}
+
+/// Figures du foyer choisi ; [foyer] nul : toutes, y compris celles sans
+/// foyer renseigné (qui n'apparaissent sous aucun filtre).
+List<Figure> filterFiguresByFoyer(List<Figure> figures, Foyer? foyer) {
+  if (foyer == null) return figures;
+  return figures.where((f) => f.foyer == foyer).toList();
+}

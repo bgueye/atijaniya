@@ -1,0 +1,397 @@
+{
+  "locale": "fr",
+  "content_status": "brouillon",
+  "title": "Rattraper et réparer son wird",
+  "subtitle": "Lazim, Wazifa et Hadratou-l-Jouma : que faire après un oubli, une erreur ou une interruption.",
+  "ui": {
+    "which_wird": "Quel wird ?",
+    "what_happened": "Que s'est-il passé ?",
+    "empty": "Aucun cas dans les sources pour cette combinaison. Demandez à votre moqaddam.",
+    "read_all": "Tout lire",
+    "schedule": "Horaires",
+    "ask_moqaddam": "À demander à votre moqaddam",
+    "kinds": {
+      "manque": "Manqué ou oublié",
+      "erreur": "Erreur de nombre ou d'ordre",
+      "interruption": "Interruption",
+      "empechement": "Empêchement (maladie, voyage…)"
+    },
+    "card": {
+      "title": "Rattraper son wird",
+      "subtitle": "Oubli, erreur ou interruption"
+    }
+  },
+  "wirds": [
+    {
+      "id": "lazim",
+      "label": "Lazim",
+      "section_id": "s2",
+      "quick_answer": "Se rattrape",
+      "timing": [
+        {
+          "label": "Matin",
+          "text": "Préférable : après la prière du Soubh jusqu'à Duha al-A'la (environ le milieu de la matinée). Avec excuse : jusqu'à la prière du Maghreb. Entre le Fajr et le Soubh : interdit."
+        },
+        {
+          "label": "Soir",
+          "text": "Préférable : de l'Asr à l'Icha. Avec excuse : de l'Icha au Fajr."
+        },
+        {
+          "label": "Avancer",
+          "text": "Le matin peut être fait la nuit après l'Icha, en laissant le temps de lire environ cinq hizb (1 h 30). Il doit être fini avant l'appel du Fajr, sinon on le refait. Le soir ne s'avance que la nuit précédant le jour concerné, jamais avant l'Asr. Si l'on avance les deux la même nuit, le matin se fait avant le soir."
+        }
+      ],
+      "warning": "Mises en garde de Hajj Hassan Ba'qili. Fait avant son heure, le Lazim est nul. Fait dans le temps de nécessité sans contrainte, c'est une grande faute dans la Tariqa. Fait après ses heures, c'est un manque d'adab et une désobéissance à l'ordre du Cheikh."
+    },
+    {
+      "id": "wazifa",
+      "label": "Wazifa",
+      "section_id": "s3",
+      "quick_answer": "Se rattrape",
+      "timing": [
+        {
+          "label": "Temps",
+          "text": "Au moins une fois par jour et par nuit. Deux fois (matin et soir, aux heures du Lazim) est préférable. Faite une seule fois, elle va de l'Asr à l'Asr du lendemain, et jusqu'au Maghreb du lendemain avec une excuse valable."
+        }
+      ],
+      "warning": null
+    },
+    {
+      "id": "hadra",
+      "label": "Hadratou-l-Jouma",
+      "section_id": "s4",
+      "quick_answer": "Ne se rattrape pas",
+      "timing": [
+        {
+          "label": "Temps",
+          "text": "Le vendredi seulement, de l'Asr au Maghreb. Le meilleur moment est juste avant l'appel du Maghreb."
+        },
+        {
+          "label": "Nombre",
+          "text": "Entre 1 000 et 1 600 répétitions, selon l'engagement du disciple."
+        }
+      ],
+      "warning": null
+    }
+  ],
+  "sections": [
+    {
+      "id": "s1",
+      "number": "§1",
+      "title": "Principes communs de réparation",
+      "intro": "La réparation s'appelle le jabr. Elle se fait avec l'intention de réparer (niya jabr). Les sources la décrivent pour le wird en général.",
+      "timing": [],
+      "cases": [
+        {
+          "wird": "all",
+          "kind": "erreur",
+          "situation": "Doute sur le nombre de répétitions",
+          "action": "On construit sur le nombre le plus bas, celui dont on est sûr. À la fin, on répare avec l'intention de réparer par 100 fois « Astaghfirou-llah ».",
+          "source": "Ifadat al-Ahmadiya, citée par Zawiya.sn et Kibriyatoul Ahmar"
+        },
+        {
+          "wird": "all",
+          "kind": "erreur",
+          "situation": "Un pilier du wird est oublié ou placé trop tôt (par exemple la prière sur le Prophète avant l'istighfar)",
+          "action": "On reprend le pilier omis, on termine le wird dans l'ordre, puis on répare par 100 « Astaghfirou-llah ». Si c'est volontaire, le wird est nul et doit être refait.",
+          "source": "Zawiya.sn ; Tidjaniya.com (AR) ; Kibriyatoul Ahmar"
+        },
+        {
+          "wird": "all",
+          "kind": "erreur",
+          "situation": "Des répétitions en trop, par oubli",
+          "action": "100 « Astaghfirou-llah » avec l'intention de réparer. S'il manque aussi quelque chose, on le complète d'abord. Si l'ajout est volontaire, le wird est nul.",
+          "source": "Zawiya.sn ; Tidjaniya.com (AR)"
+        },
+        {
+          "wird": "all",
+          "kind": "erreur",
+          "situation": "Absence de présence du cœur (houdour)",
+          "action": "Après l'acte, on récite 3 fois « Djaouharatou-l-Kamel » avec l'intention de réparer, avec toute la présence possible.",
+          "source": "Kibriyatoul Ahmar ; Zawiya.sn"
+        },
+        {
+          "wird": "all",
+          "kind": "erreur",
+          "situation": "Doute ou oubli concernant la réparation elle-même",
+          "action": "On ne la recommence pas.",
+          "source": "Zawiya.sn ; Kibriyatoul Ahmar"
+        },
+        {
+          "wird": "all",
+          "kind": "erreur",
+          "situation": "Perles manquantes ou en trop sur le chapelet, nombre de jours connu",
+          "action": "Le rattrapage des jours concernés est nécessaire.",
+          "source": "Zawiya.sn"
+        },
+        {
+          "wird": "all",
+          "kind": "erreur",
+          "situation": "Perles manquantes ou en trop sur le chapelet, nombre de jours inconnu",
+          "action": "Si des perles manquaient : on rattrape seulement le Lazim de la dernière journée. Si des perles étaient en trop : 100 « Astaghfirou-llah » avec l'intention de réparer, pour toute la période. Certains prescrivent 600 « Astaghfirou-llah » et 3 « Djaouharatou-l-Kamel ».",
+          "source": "Hajj Hassan Ba'qili, Al-Ira'a, cité par Zawiya.sn"
+        },
+        {
+          "wird": "all",
+          "kind": "interruption",
+          "situation": "On arrive en cours de récitation collective",
+          "action": "On commence avec le groupe là où il en est. Quand le groupe a fini, on complète ce qu'on a manqué, dans l'ordre et sans pause. La répétition rejointe en cours de route n'est pas comptée.",
+          "source": "Tidjaniya.com (AR)"
+        },
+        {
+          "wird": "all",
+          "kind": "interruption",
+          "situation": "Parler pendant le wird",
+          "action": "C'est interdit, sauf nécessité, et alors par signes si possible. Exceptions : répondre à un parent, une épouse à son mari, un disciple à son moqaddam ou à son cheikh. Une condition non respectée invalide l'évocation, qu'il faut recommencer.",
+          "source": "Tidjaniya.com (EN) ; Tijani Flood"
+        },
+        {
+          "wird": "all",
+          "kind": "interruption",
+          "situation": "Perte des ablutions (ou du tayammum) en cours de route",
+          "action": "Le dhikr est annulé et on le reprend, car la pureté est une condition de validité.",
+          "source": "Tidjania.ma (Q.1, Q.5)"
+        },
+        {
+          "wird": "all",
+          "kind": "interruption",
+          "situation": "Sommeil, chute du chapelet",
+          "action": "Un sommeil profond annule les ablutions, donc le dhikr. Si l'on se réveille avec la chute du chapelet, rien n'est annulé et on construit sur ce dont on est sûr.",
+          "source": "Tidjania.ma (Q.15, Q.32)"
+        },
+        {
+          "wird": "all",
+          "kind": "interruption",
+          "situation": "On se lève par inattention",
+          "action": "Si c'est bref, on s'assoit et on continue. Si c'est long, on recommence.",
+          "source": "Tidjania.ma (Q.14)"
+        },
+        {
+          "wird": "all",
+          "kind": "interruption",
+          "situation": "L'imam se lève pour une prière obligatoire",
+          "action": "On repère le grain où l'on s'arrête, on prie avec l'imam, puis, après le salut final, on reprend à ce grain sans parler entre-temps. Les tarawih et les prières surérogatoires n'interrompent pas le wird.",
+          "source": "Kibriyatoul Ahmar ; Tidjania.ma (Q.40)"
+        },
+        {
+          "wird": "all",
+          "kind": "interruption",
+          "situation": "On se souvient en plein wird qu'on n'a pas fait une prière",
+          "action": "On termine en général le wird, puis on prie. Pour le Soubh ou l'Asr oubliés, on interrompt obligatoirement le wird pour prier d'abord.",
+          "source": "Tidjania.ma (Q.3)"
+        }
+      ],
+      "warning": null
+    },
+    {
+      "id": "s2",
+      "number": "§2",
+      "title": "Lazim",
+      "intro": "Le Lazim se fait le matin et le soir.",
+      "timing": [
+        {
+          "label": "Matin",
+          "text": "Préférable : après la prière du Soubh jusqu'à Duha al-A'la (environ le milieu de la matinée). Avec excuse : jusqu'à la prière du Maghreb. Entre le Fajr et le Soubh : interdit."
+        },
+        {
+          "label": "Soir",
+          "text": "Préférable : de l'Asr à l'Icha. Avec excuse : de l'Icha au Fajr."
+        },
+        {
+          "label": "Avancer",
+          "text": "Le matin peut être fait la nuit après l'Icha, en laissant le temps de lire environ cinq hizb (1 h 30). Il doit être fini avant l'appel du Fajr, sinon on le refait. Le soir ne s'avance que la nuit précédant le jour concerné, jamais avant l'Asr. Si l'on avance les deux la même nuit, le matin se fait avant le soir."
+        }
+      ],
+      "cases": [
+        {
+          "wird": "lazim",
+          "kind": "manque",
+          "situation": "Lazim oublié ou manqué",
+          "action": "Il se rattrape, comme une prière obligatoire manquée. Dans sa lettre aux disciples de Guemar, Seïdina Ahmed Tijani écrit que celui qui l'a dépassé à cause du travail, de la maladie ou d'une cause semblable le rattrape à n'importe quel moment de la nuit qui lui est possible. Le rattrapage s'impose parce que le Lazim est devenu obligatoire par l'engagement, comme un vœu.",
+          "source": "Tidjaniya.com ; Zawiya.sn (Q.69)"
+        },
+        {
+          "wird": "lazim",
+          "kind": "empechement",
+          "situation": "Femme en période de menstrues, malade trop faible pour le faire",
+          "action": "Pas de rattrapage. Un malade légèrement atteint n'est pas concerné. Seïdina Ahmed Tijani : le malade a le choix pour l'évocation de son wird, sauf s'il en est capable.",
+          "source": "Tidjaniya.com (FR)"
+        },
+        {
+          "wird": "lazim",
+          "kind": "manque",
+          "situation": "Matin avancé la nuit, et on découvre avant l'aube qu'on a oublié le soir de la veille",
+          "action": "On interrompt le matin, on fait le soir, puis le matin s'il reste du temps.",
+          "source": "Tidjaniya.com ; Tidjaniya.com (AR)"
+        },
+        {
+          "wird": "lazim",
+          "kind": "manque",
+          "situation": "On découvre après le Soubh qu'on a oublié le soir de la veille",
+          "action": "On termine d'abord le matin, puis on fait le soir.",
+          "source": "Tidjaniya.com"
+        },
+        {
+          "wird": "lazim",
+          "kind": "manque",
+          "situation": "Soir commencé après l'Asr, et on s'aperçoit qu'on n'a pas fait le matin",
+          "action": "On interrompt le soir, on fait le matin, puis on reprend le soir.",
+          "source": "Tidjaniya.com ; Tidjaniya.com (AR)"
+        },
+        {
+          "wird": "lazim",
+          "kind": "manque",
+          "situation": "Soir commencé après le Maghreb, et on s'aperçoit qu'on n'a pas fait le matin",
+          "action": "On termine le soir, puis on rattrape le matin.",
+          "source": "Tidjaniya.com (Cheikh Nadhifi)"
+        },
+        {
+          "wird": "lazim",
+          "kind": "interruption",
+          "situation": "L'aube se lève pendant un matin avancé",
+          "action": "On le termine, puis on le refait après le Soubh. Le premier compte alors comme surérogatoire.",
+          "source": "Tidjaniya.com ; Tidjaniya.com (AR)"
+        },
+        {
+          "wird": "lazim",
+          "kind": "interruption",
+          "situation": "Manger ou boire pendant le Lazim",
+          "action": "Cela invalide le Lazim, même pour une gorgée ou ce qui reste entre les dents. On le recommence.",
+          "source": "Tidjaniya.com (EN)"
+        },
+        {
+          "wird": "lazim",
+          "kind": "erreur",
+          "situation": "Une ou deux répétitions ratées (bâillement, toux)",
+          "action": "On les récite à voix basse, sans laisser de dette, puis on rejoint le groupe.",
+          "source": "Tidjania.ma (Q.36, Q.60)"
+        }
+      ],
+      "warning": "Mises en garde de Hajj Hassan Ba'qili. Fait avant son heure, le Lazim est nul. Fait dans le temps de nécessité sans contrainte, c'est une grande faute dans la Tariqa. Fait après ses heures, c'est un manque d'adab et une désobéissance à l'ordre du Cheikh."
+    },
+    {
+      "id": "s3",
+      "number": "§3",
+      "title": "Wazifa",
+      "intro": "La Wazifa est un wird quotidien. Les règles de rattrapage rejoignent celles du Lazim.",
+      "timing": [
+        {
+          "label": "Temps",
+          "text": "Au moins une fois par jour et par nuit. Deux fois (matin et soir, aux heures du Lazim) est préférable. Faite une seule fois, elle va de l'Asr à l'Asr du lendemain, et jusqu'au Maghreb du lendemain avec une excuse valable."
+        }
+      ],
+      "cases": [
+        {
+          "wird": "wazifa",
+          "kind": "manque",
+          "situation": "Wazifa oubliée ou manquée",
+          "action": "Elle se rattrape toujours, comme le Lazim, car elle est devenue obligatoire par l'engagement.",
+          "source": "Zawiya.sn (Sidi Taïeb Sefiani, Q.69) ; Tidjaniya.com (AR) ; Tidjania.ma (Q.52)"
+        },
+        {
+          "wird": "wazifa",
+          "kind": "empechement",
+          "situation": "Malade",
+          "action": "S'il guérit pendant le temps, il l'accomplit. S'il est incapable de réciter à cause de la maladie, elle tombe.",
+          "source": "Tidjania.ma (Q.57)"
+        },
+        {
+          "wird": "wazifa",
+          "kind": "interruption",
+          "situation": "Le vendredi, la Wazifa risque de faire manquer la Hadratou-l-Jouma",
+          "action": "On arrête la Wazifa, on fait la Hadratou-l-Jouma jusqu'au Maghreb, puis on termine la Wazifa seul après la prière, sans commencer les dhikr d'après-prière.",
+          "source": "Zawiya.sn (Cheikh Ahmed Tidjani Chinguitti, Q.70)"
+        },
+        {
+          "wird": "wazifa",
+          "kind": "erreur",
+          "situation": "Une autre prière sur le Prophète est récitée pendant la Wazifa",
+          "action": "La Wazifa est invalidée.",
+          "source": "Tidjaniya.com (EN), d'après Sidi 'Arabi ibn Sa'ih"
+        },
+        {
+          "wird": "wazifa",
+          "kind": "interruption",
+          "situation": "Manger ou boire beaucoup pendant la Wazifa",
+          "action": "Cela l'invalide si la quantité dépasse un peu.",
+          "source": "Tidjaniya.com (EN)"
+        },
+        {
+          "wird": "wazifa",
+          "kind": "empechement",
+          "situation": "Les conditions de la Djaouharatou-l-Kamel ne sont pas remplies (ablutions à l'eau, position assise, qibla)",
+          "action": "On récite 20 fois la Salatou-l-Fatih à la place des 12 Djaouharatou-l-Kamel. Le texte dit la même chose pour celui qui ne la connaît pas par cœur.",
+          "source": "Tidjaniya.com (EN, AR)"
+        },
+        {
+          "wird": "wazifa",
+          "kind": "empechement",
+          "situation": "Voyageur sur sa monture",
+          "action": "Il descend et récite la Djaouharatou-l-Kamel à pied, sur un sol pur, et s'assoit à la septième. Sinon, il la remplace par 20 Salatou-l-Fatih.",
+          "source": "Tidjaniya.com (AR)"
+        }
+      ],
+      "warning": null
+    },
+    {
+      "id": "s4",
+      "number": "§4",
+      "title": "Hadratou-l-Jouma",
+      "intro": "Les sources la nomment « Hailala » ou « 'Asrou ». Le temps passé, elle ne se rattrape pas.",
+      "timing": [
+        {
+          "label": "Temps",
+          "text": "Le vendredi seulement, de l'Asr au Maghreb. Le meilleur moment est juste avant l'appel du Maghreb."
+        },
+        {
+          "label": "Nombre",
+          "text": "Entre 1 000 et 1 600 répétitions, selon l'engagement du disciple."
+        }
+      ],
+      "cases": [
+        {
+          "wird": "hadra",
+          "kind": "manque",
+          "situation": "Le temps est passé",
+          "action": "Elle ne se rattrape pas, car ce temps béni lui est réservé.",
+          "source": "Zawiya.sn (Q.69) ; Tidjaniya.com (EN, AR) ; Tidjania.ma (Q.51)"
+        },
+        {
+          "wird": "hadra",
+          "kind": "manque",
+          "situation": "Oubli avec une excuse",
+          "action": "Pas de blâme.",
+          "source": "Tidjania.ma (Q.53)"
+        },
+        {
+          "wird": "hadra",
+          "kind": "manque",
+          "situation": "Négligence, sans excuse valable",
+          "action": "Seïdina Ahmed Tijani : le disciple a laissé passer un immense bien qu'il ne pourra pas rattraper.",
+          "source": "Zawiya.sn ; Tidjaniya.com (EN)"
+        },
+        {
+          "wird": "hadra",
+          "kind": "empechement",
+          "situation": "Malade",
+          "action": "S'il guérit pendant le temps, il l'accomplit. S'il est incapable de réciter à cause de la maladie, elle tombe.",
+          "source": "Tidjania.ma (Q.57)"
+        },
+        {
+          "wird": "hadra",
+          "kind": "empechement",
+          "situation": "Voyage un vendredi",
+          "action": "Si l'on espère arriver chez soi à temps, on la reporte. Si l'on craint que le temps passe, on la fait comme on peut.",
+          "source": "Tidjania.ma (Q.58)"
+        }
+      ],
+      "warning": null
+    }
+  ],
+  "ask_moqaddam": [
+    "Une longue série de jours manqués, et le délai pour les rattraper.",
+    "Une erreur volontaire dans un wird, et la façon de le reprendre.",
+    "Une Hadratou-l-Jouma interrompue en cours de route.",
+    "Les variantes de pratique selon les foyers."
+  ]
+}

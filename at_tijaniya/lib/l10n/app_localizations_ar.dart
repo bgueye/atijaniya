@@ -3011,4 +3011,170 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get unblockUserError => 'تعذّر إلغاء حظر هذا المريد.';
+
+  @override
+  String get wirdRepairCardTitle => 'تدارك الورد';
+
+  @override
+  String get wirdRepairCardSubtitle => 'نسيان أو خطأ أو انقطاع';
+
+  @override
+  String get wirdRepairTitle => 'تدارك الورد';
+
+  @override
+  String get wirdRepairIntro =>
+      'اللازم والوظيفة وحضرة الجمعة: ما يفعله المريد عند النسيان أو الخطأ أو الانقطاع.';
+
+  @override
+  String get wirdRepairWhichWird => 'أي ورد؟';
+
+  @override
+  String get wirdRepairWhatHappened => 'ماذا حدث؟';
+
+  @override
+  String get wirdRepairKindAll => 'الكل';
+
+  @override
+  String get wirdRepairKindManque => 'فات أو نُسي';
+
+  @override
+  String get wirdRepairKindErreur => 'خطأ في العدد أو الترتيب';
+
+  @override
+  String get wirdRepairKindInterruption => 'انقطاع';
+
+  @override
+  String get wirdRepairKindEmpechement => 'عذر (مرض، سفر…)';
+
+  @override
+  String get wirdRepairEmpty =>
+      'لا توجد حالة في المصادر لهذا الاختيار. اسأل مقدَّمك.';
+
+  @override
+  String get wirdRepairReadAll => 'قراءة الكل';
+
+  @override
+  String get wirdRepairBySituation => 'حسب الحالة';
+
+  @override
+  String get wirdRepairSchedule => 'الأوقات';
+
+  @override
+  String get wirdRepairAskMoqaddam => 'اسأل مقدَّمك';
+
+  @override
+  String get wirdRepairCommonRule => 'لكل الأوراد';
+
+  @override
+  String get wirdRepairCommonSection => 'قواعد الجبر المشتركة';
+
+  @override
+  String wirdRepairSource(String source) {
+    return 'المصدر: $source';
+  }
+
+  @override
+  String get wirdRepairDraftBanner =>
+      'مسودة في انتظار مراجعة المقدَّم المرجعي. لا يرى المريدون هذه الصفحة بعد.';
+
+  @override
+  String get wirdRepairLoadError => 'تعذّر تحميل المحتوى. تحقّق من اتصالك.';
+
+  @override
+  String get wirdRepairRetry => 'إعادة المحاولة';
+
+  @override
+  String get wirdRepairUnavailable => 'هذا المحتوى غير متاح بعد.';
+
+  @override
+  String get wirdRepairDraftTag => 'مسودة';
+
+  @override
+  String get lineageTooManyChangesError =>
+      'عدّلت نسبك الروحي مرات كثيرة اليوم. أعد المحاولة بعد 24 ساعة.';
+
+  @override
+  String get mouqaddamChainMyLinksTitle => 'الحلقات التي أدخلتها';
+
+  @override
+  String get mouqaddamChainLinkMenuTooltip => 'تعديل هذه الحلقة أو إزالتها';
+
+  @override
+  String get mouqaddamChainEditAction => 'تعديل';
+
+  @override
+  String get mouqaddamChainRemoveAction => 'إزالة';
+
+  @override
+  String get mouqaddamChainEditTitle => 'تعديل الحلقة';
+
+  @override
+  String get mouqaddamChainSaveButton => 'حفظ';
+
+  @override
+  String get mouqaddamChainUpdateSuccess => 'تم تعديل الحلقة.';
+
+  @override
+  String get mouqaddamChainUpdateError => 'تعذّر تعديل هذه الحلقة.';
+
+  @override
+  String get mouqaddamChainRemoveConfirmTitle => 'إزالة هذه الحلقة؟';
+
+  @override
+  String mouqaddamChainRemoveConfirmBody(String name) {
+    return 'ستُزال «$name» من سلسلتك، وتتقدّم الحلقات التي أُدخلت بعدها درجة واحدة.';
+  }
+
+  @override
+  String get mouqaddamChainRemoveSuccess => 'تمت إزالة الحلقة.';
+
+  @override
+  String get mouqaddamChainRemoveError => 'تعذّرت إزالة هذه الحلقة.';
+
+  @override
+  String get mouqaddamChainUltimateSourceTag => 'الشيخ أحمد التيجاني';
+
+  @override
+  String get lineageFoyerOmarienne => 'الأسرة العمرية';
+
+  @override
+  String get lineageFoyerAinMadhi => 'عين ماضي';
+
+  @override
+  String get lineageFoyerFes => 'فاس';
+
+  @override
+  String get figuresFoyerFilterAll => 'كل الفروع';
+
+  @override
+  String get figuresNoneForFoyer => 'لا توجد شخصيات لهذا الفرع.';
+
+  @override
+  String figureDetailFoyer(String foyer) {
+    return 'الفرع: $foyer';
+  }
+
+  @override
+  String get authCheckEmailTitle => 'تحقّق من بريدك الإلكتروني';
+
+  @override
+  String authCheckEmailBody(String email) {
+    return 'أرسلنا رابط تأكيد إلى $email. افتحه لتفعيل حسابك، ثم سجّل الدخول.';
+  }
+
+  @override
+  String get authCheckEmailSpamHint =>
+      'لم يصلك شيء؟ تحقّق أيضًا من مجلد الرسائل غير المرغوب فيها.';
+
+  @override
+  String get authGoToLogin => 'الانتقال إلى تسجيل الدخول';
+
+  @override
+  String get authResendConfirmation => 'إعادة إرسال الرسالة';
+
+  @override
+  String get authConfirmationResent => 'أُعيد إرسال رسالة التأكيد.';
+
+  @override
+  String get authChangeEmail => 'تعديل عنوان البريد الإلكتروني';
 }

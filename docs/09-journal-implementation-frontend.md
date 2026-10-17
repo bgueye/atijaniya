@@ -3216,3 +3216,150 @@ migration : la saisie se fait depuis l'app.
 
 `flutter analyze` propre et 225 tests au vert (3 nouveaux dans `khadara_models_test.dart`).
 **Pas encore validé sur téléphone.**
+
+## Rattraper son wird (2026-10-17)
+
+Demande du porteur de projet : une page « que faire après un oubli, une erreur ou une
+interruption » pour le Lazim, la Wazifa et la Hadratou-l-Jouma, ouverte depuis l'écran Wirds.
+Contenu fourni en deux fichiers (`docs/rattraper_wird_fr.json`, `_ar.json`), relu et corrigé
+avec lui avant insertion : horaires du Lazim du matin alignés sur `Lazim-Etapes-Detaillees.md`
+(Duha al-A'la, nécessité jusqu'au Maghreb), règle d'avance du soir reprise du document validé,
+six cas généraux (parler, ablutions, sommeil, se lever, imam, prière oubliée) passés de
+« Lazim » à « tous les wirds », « arrivée en cours de récitation collective » classée en
+interruption, « Hajj Hassan Ba'qili » partout. La fourchette 1 000 à 1 600 de la
+Hadratou-l-Jouma est gardée à sa demande (voir `docs/01` § 8).
+
+**Base.** Migration `2026-10-17_wird_repair.sql` (appliquée sous le nom `wird_repair`) : deux
+tables, `wird_repair_cases` (wird `all`/`lazim`/`wazifa`/`hadra`, type de situation, textes
+FR/AR, source) et `wird_repair_notes` (introduction, réponse rapide, horaires, mise en garde,
+questions pour le moqaddam). Tout naît en `brouillon` ; lecture du validé pour tous, du
+brouillon en plus pour l'admin ; aucune écriture depuis l'API, admin compris. Le contenu
+inséré a été comparé ligne à ligne (empreinte md5) aux JSON : 53 lignes identiques. Scénario
+`database/tests/rattraper_wird.sql`, 9 contrôles au vert (visiteur, disciple, admin), joué
+dans une transaction annulée. Les horaires et la mise en garde du Lazim, présents deux fois
+dans les JSON, ne sont stockés qu'une fois.
+
+**App.** `lib/features/wird/` : `domain/wird_repair_models.dart` (lecture des lignes et
+règles de sélection, dont « un wird montre ses cas et les règles communes »),
+`data/wird_repair_repository.dart` (filtre `valide` répété côté client pour un non-admin),
+`presentation/wird_repair_providers.dart`, `presentation/wird_repair_screen.dart`. Carte
+« Rattraper son wird » juste après les trois wirds, **masquée tant qu'il n'y a rien à
+montrer** : un disciple ne la voit qu'une fois le contenu validé, l'admin la voit dès le
+brouillon avec la mention « (Brouillon) ». Écran sur fond ivoire : choix du wird en trois
+onglets soulignés d'or, réponse rapide en grand (seule rosace de l'écran en filigrane),
+horaires en lignes libellé/texte (repliés par défaut), mise en garde en bandeau doré, filtre par type de
+situation, cas dans une seule surface, bloc « À demander à votre moqaddam ». Bouton « Tout
+lire » pour toutes les sections à la suite. Texte arabe en Amiri, français en Jost, titres en
+Cormorant ; libellés d'interface dans les `.arb`.
+
+**Écarts assumés.** Pas de formulaire de correction ni de bouton de validation dans l'app :
+corrections et passage à `valide` se font en SQL, comme les Conditions de la Tariqa à leurs
+débuts. Les noms des wirds viennent du guide validé (`wirds_content.dart`).
+
+**Revue visuelle sur émulateur (2026-10-17)**, en français et en arabe, avec un point
+d'entrée d'aperçu temporaire alimenté par les JSON (supprimé ensuite : le contenu étant en
+brouillon, seul un compte admin l'aurait vu). Trois défauts trouvés et corrigés : les
+horaires du Lazim, dépliés, occupaient plus d'un écran et repoussaient les cas — ils sont
+désormais **repliés par défaut** derrière une ligne « Horaires » (toujours dépliés en lecture
+complète) ; le bandeau de mise en garde laissait une ligne vide en arabe (`IntrinsicHeight`
+sous-estimait mal le texte Amiri, remplacé par une `BorderDirectional`) ; un cas court
+(« لا يعيده. ») se retrouvait centré dans sa carte au lieu d'être rangé sur le bord de lecture.
+
+`flutter analyze` propre, 303 tests au vert (21 nouveaux : `wird_repair_models_test.dart`,
+`wird_repair_screen_test.dart`). **Pas encore validé sur téléphone** (compte admin
+nécessaire tant que le contenu est en brouillon).
+
+## Lignée : message clair quand la limite de changements est atteinte (2026-10-17)
+
+Premier retour du test fermé. Après avoir supprimé puis ressaisi plusieurs fois sa lignée, le
+porteur de projet ne pouvait plus l'enregistrer : « Impossible d'enregistrer ces
+informations ». La base refusait à juste titre (trigger `limit_lineage_changes`, 5
+changements de foyer ou de nom de moqaddam par 24 heures, code `AT010`, audit S28), mais
+l'écran ramenait toute erreur au message générique. `classifyLineageSaveError`
+(`lineage/domain/lineage_errors.dart`, même modèle que `figure_errors.dart`) reconnaît ce
+code, et l'écran affiche « Vous avez modifié votre lignée trop souvent aujourd'hui.
+Réessayez dans 24 heures. » (et sa traduction arabe). Seul l'enregistrement est concerné :
+la suppression ne passe pas par ce trigger. 3 tests (`lineage_errors_test.dart`), 306 au vert.
+
+## Ma silsila d'ijaza : modifier ou retirer un maillon manuel (2026-10-17)
+
+Deuxième retour du test fermé : le porteur de projet ne pouvait ni corriger ni retirer un
+maillon de son complément manuel. Depuis la construction du statut mouqaddam (voir plus
+haut), `mouqaddam_manual_chain_links` n'acceptait que l'insertion — aucune policy `UPDATE`
+ni `DELETE`, donc aucun bouton.
+
+**Base.** Migration `2026-10-17_manual_chain_links_edit.sql` (appliquée sous le nom
+`manual_chain_links_edit`) : policy `manual_chain_links_owner_update` et privilège `UPDATE`
+limité à `name_text`, `year_text`, `is_ultimate_source` — ni le propriétaire ni
+`order_index` ne bougent. Retrait par `delete_my_manual_chain_link(p_link_id)` (erreur
+`AT030` si le maillon n'est pas à l'appelant), qui resserre la numérotation en deux temps à
+cause de la contrainte unique `(mouqaddam_user_id, order_index)` : `get_ijaza_chain()`
+déduit la profondeur d'un maillon manuel de `order_index`, un trou aurait laissé un trou
+dans la chaîne affichée et animée. Plus de suppression directe ouverte au client. Scénario
+`database/tests/silsila_maillons_manuels.sql`, 10 contrôles au vert (propriétaire, tiers,
+visiteur), joué dans une transaction annulée.
+
+**App.** `get_ijaza_chain()` ne renvoyant pas l'identifiant des maillons manuels, l'écran
+les relit directement (`fetchMyManualChainLinks`, `myManualChainLinksProvider`, modèle
+`ManualChainLink`). Nouvelle section « Maillons que vous avez saisis » sous la chaîne, au
+sommet de la chaîne seulement, chaque ligne avec un menu « Modifier » / « Retirer » : hors
+du bloc animé, pour ne pas gêner la révélation. Modifier rouvre le formulaire d'ajout
+prérempli ; la case « Cheikh Ahmed Tijani » n'est proposée que pour le dernier maillon.
+Retirer demande confirmation. `updateManualChainLink` vérifie qu'une ligne a bien été
+touchée, pour ne pas annoncer un succès que la RLS aurait silencieusement empêché.
+
+`flutter analyze` propre, 312 tests au vert (6 nouveaux, `ijaza_manual_links_test.dart`).
+**Pas encore validé sur téléphone.**
+
+## Trois nouveaux foyers et filtre par foyer dans l'écran Figures (2026-10-18)
+
+Demande du porteur de projet : 46 des 70 figures étaient en `autre`, qui ne distinguait plus
+rien. Il a retenu trois foyers, une liste commune aux figures et à « Ma lignée
+spirituelle », et un filtre dans l'écran Figures.
+
+**Base.** Migration `2026-10-18_foyers_ain_madhi_fes_omarienne.sql` (appliquée sous le nom
+`foyers_ain_madhi_fes_omarienne`) : `omarienne`, `ain_madhi` et `fes` ajoutés aux
+contraintes `figures_foyer_check` et `lineage_declarations_foyer_check`. 37 fiches
+reclassées d'après leurs zawiyas en base (`figure_zawiyas`) : 12 en famille omarienne
+(Zawiya Omarienne, Louga, Nioro, Ségou, Halwar), 12 en Aïn Madhi, 13 en Fès ; la migration
+vérifie ces effectifs et s'annule au moindre écart. Restent 9 fiches en `autre` : Cheikh
+Ahmed Tijani (origine de tous les foyers), Nguidjilone (3), Médina Gounass, Thiénaba, Tunis,
+Rabat, ash-Shinqiti. Aucune déclaration de lignée modifiée. `search_lineage_matches`
+inchangée : elle compare le foyer exactement, sauf pour `autre`.
+
+**App.** `Foyer` gagne `omarienne`, `ainMadhi`, `fes` (ordre de l'enum = ordre des choix).
+Le libellé, recopié dans `lineage_screen.dart` et `figure_form_screen.dart`, devient une
+fonction partagée `foyerLabel` (`lineage/presentation/foyer_label.dart`). Écran Figures :
+puces « Tous les foyers » + foyers présents dans la liste, sur plusieurs lignes au besoin
+(huit choix ne tiennent pas sur une seule) ; logique pure `foyersPresentIn` et
+`filterFiguresByFoyer` dans `figure_models.dart`. Fiche d'une figure : « Foyer : … » sous le
+nom, sauf pour « Autre ». Vu sur émulateur avec les vraies données : filtre « Famille
+omarienne » et fiche d'Ahmadou Tall corrects.
+
+**Compatibilité.** La version 1.0.0+2 range toute valeur inconnue dans « autre » : rien ne
+casse chez les testeurs, mais modifier une figure depuis cette version remettrait son foyer à
+`autre` — à faire avec la 1.0.0+3.
+
+`flutter analyze` propre, 315 tests au vert (3 nouveaux dans `figures_models_test.dart`, 3
+assertions dans `lineage_models_test.dart`).
+
+## Inscription : panneau « Vérifiez votre boîte mail » (2026-10-18)
+
+Retour du test fermé : après une inscription réussie, `AuthScreen` ajoutait un message
+au-dessus du bouton mais laissait le formulaire rempli et « Créer un compte » actif. Une
+deuxième tentative avec la même adresse ne donnait ni erreur ni nouvel e-mail (Supabase
+masque l'existence du compte), avec une autre adresse elle créait un second compte.
+
+Quand `signUp` revient sans session (confirmation par e-mail activée), l'adresse est gardée
+dans `_pendingConfirmationEmail` et l'onglet « Créer un compte » montre
+`SignupCheckEmailPanel` au lieu du formulaire : l'adresse utilisée, « Aller à la connexion »
+(onglet Connexion, adresse préremplie), « Renvoyer l'e-mail » (`auth.resend`, type
+`signup`, même lien de retour ; un renvoi trop rapproché tombe sur le message
+`rateLimited` existant) et « Modifier l'adresse e-mail » (retour au formulaire, adresse
+conservée). Le mot de passe saisi est effacé. Le panneau est un widget public piloté par
+callbacks, testé sans Supabase (`signup_check_email_panel_test.dart`, 4 tests). Vu sur
+émulateur en arabe par un aperçu temporaire (aucun compte réel créé) : adresse e-mail bien
+placée dans la phrase de droite à gauche.
+
+`flutter analyze` propre, 319 tests au vert. **Pas encore validé sur téléphone** avec une
+vraie inscription.

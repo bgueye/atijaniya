@@ -142,7 +142,9 @@ Reste à faire, hors de portée d'une migration ou d'un changement de code :
   — fait le 2026-10-08 : paragraphe « Localisation », date, et libellé « Parrainage
   confirmé » dans les trois versions. Restent les formulaires de confidentialité des deux
   stores, à remplir par le porteur de projet (position non collectée : calcul sur
-  l'appareil).
+  l'appareil). Google Play : l'app est en test fermé depuis le 2026-10-17 (voir « Test
+  fermé sur Google Play » plus bas) ; vérifier que la section « Sécurité des données »
+  remplie dans la Play Console correspond bien à la politique de confidentialité.
 - ~~Messages de groupe et messages privés : signalement (S61)~~ — **fait le 2026-10-11**,
   voir « Signalement des messages » plus bas.
 - Une conversation de test n'a plus qu'un participant (l'autre compte a été supprimé) ;
@@ -383,6 +385,54 @@ projet live), scénario dans `database/tests/blocage_disciple.sql`.
   encore dans « Retrouver mes condisciples » et dans la recherche de parrain, sans pouvoir
   être contacté ; dans un groupe, le disciple bloqué continue de voir les messages de celui
   qui l'a bloqué.
+
+## Test fermé sur Google Play (2026-10-17)
+
+L'app est publiée sur la piste de test fermé de la Play Console ; au 2026-10-17, des
+testeurs l'utilisent (version vraisemblablement `1.0.0+2`, à confirmer dans la Play
+Console). Contexte et conséquences pour le développement (numéro de build, compatibilité
+des migrations) : `docs/10`, section « Test fermé sur Google Play (2026-10-17) ».
+
+C'est l'occasion de valider ce qui demande plusieurs comptes et n'a été vérifié qu'en
+base :
+- signalement d'un message de groupe et d'un message privé (voir plus haut) ;
+- blocage d'un disciple, et déblocage depuis Paramètres → Confidentialité ;
+- réglage « Qui peut vous contacter » (par défaut, messagerie fermée entre membres d'un
+  groupe tant que le destinataire n'a pas choisi « Tout le monde ») ;
+- chemin « rejeter un signalement » dans l'écran de modération admin.
+
+Retours des testeurs : à consigner ici au fur et à mesure (date, écran, constat, statut),
+avec ceux du rapport de pré-lancement et d'Android vitals.
+
+- **2026-10-17 — Ma lignée spirituelle : enregistrement impossible après suppression** (porteur
+  de projet, version en ligne `1.0.0+2`). Ce n'était pas une panne : le garde-fou S28 (5
+  changements de foyer ou de nom de moqaddam par 24 heures, code `AT010`) avait été atteint
+  par ses essais de la journée — 7 refus dans les journaux de la base. Le défaut était dans
+  l'app, qui affichait « Impossible d'enregistrer ces informations » au lieu de dire qu'il
+  fallait attendre. **Corrigé le 2026-10-17** dans la future `1.0.0+3` : message dédié en
+  français et en arabe (`lineage/domain/lineage_errors.dart`, 3 tests). Compte du porteur de
+  projet débloqué à sa demande (ses 5 entrées du jour retirées de `lineage_change_log`). La
+  limite elle-même est conservée. Un second compte, non admin, avait aussi atteint la limite
+  le même jour ; il se débloque seul au bout de 24 heures.
+- **2026-10-17 — Ma silsila d'ijaza : impossible de retirer ou modifier un maillon** (porteur
+  de projet, version en ligne `1.0.0+2`). Pas une panne : les maillons manuels (au-delà de
+  l'app) n'acceptaient que l'ajout depuis leur création en août — choix de construction, pas
+  décision du porteur de projet. **Corrigé le 2026-10-17** : migration
+  `manual_chain_links_edit` (modification de ses propres maillons, nom, année et case
+  « Cheikh Ahmed Tijani » seulement ; retrait par `delete_my_manual_chain_link()`, qui
+  resserre la numérotation), scénario `database/tests/silsila_maillons_manuels.sql`, 10
+  contrôles au vert. Dans l'app, liste « Maillons que vous avez saisis » avec « Modifier » et
+  « Retirer », dans la future `1.0.0+3`. Constat au passage : les deux maillons ajoutés le
+  17/10 sur le compte du porteur de projet ont un nom de même longueur, possible doublon à
+  vérifier par lui.
+- **2026-10-18 — Création de compte : le formulaire reste affiché après l'inscription**
+  (retour de testeur). Le message « Compte créé. Vérifiez votre boîte mail… » s'ajoutait
+  au-dessus du bouton, mais le formulaire restait rempli et « Créer un compte » actif : on
+  pouvait recommencer. Avec la même adresse, Supabase ne renvoie ni erreur ni nouvel e-mail
+  (pour ne pas révéler qu'un compte existe). **Corrigé le 2026-10-18** dans la future
+  `1.0.0+3` : le formulaire laisse la place à un panneau « Vérifiez votre boîte mail »
+  (adresse utilisée, « Aller à la connexion » avec l'adresse préremplie, « Renvoyer
+  l'e-mail », « Modifier l'adresse e-mail ») ; le mot de passe saisi est effacé.
 
 ## Index des rapports par module
 

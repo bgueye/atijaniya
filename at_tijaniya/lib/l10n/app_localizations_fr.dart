@@ -3118,4 +3118,172 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get unblockUserError => 'Impossible de débloquer ce disciple.';
+
+  @override
+  String get wirdRepairCardTitle => 'Rattraper son wird';
+
+  @override
+  String get wirdRepairCardSubtitle => 'Oubli, erreur ou interruption';
+
+  @override
+  String get wirdRepairTitle => 'Rattraper son wird';
+
+  @override
+  String get wirdRepairIntro =>
+      'Lazim, Wazifa et Hadratou-l-Jouma : que faire après un oubli, une erreur ou une interruption.';
+
+  @override
+  String get wirdRepairWhichWird => 'Quel wird ?';
+
+  @override
+  String get wirdRepairWhatHappened => 'Que s\'est-il passé ?';
+
+  @override
+  String get wirdRepairKindAll => 'Tout';
+
+  @override
+  String get wirdRepairKindManque => 'Manqué ou oublié';
+
+  @override
+  String get wirdRepairKindErreur => 'Erreur de nombre ou d\'ordre';
+
+  @override
+  String get wirdRepairKindInterruption => 'Interruption';
+
+  @override
+  String get wirdRepairKindEmpechement => 'Empêchement (maladie, voyage…)';
+
+  @override
+  String get wirdRepairEmpty =>
+      'Aucun cas dans les sources pour cette combinaison. Demandez à votre moqaddam.';
+
+  @override
+  String get wirdRepairReadAll => 'Tout lire';
+
+  @override
+  String get wirdRepairBySituation => 'Par situation';
+
+  @override
+  String get wirdRepairSchedule => 'Horaires';
+
+  @override
+  String get wirdRepairAskMoqaddam => 'À demander à votre moqaddam';
+
+  @override
+  String get wirdRepairCommonRule => 'Vaut pour tous les wirds';
+
+  @override
+  String get wirdRepairCommonSection => 'Principes communs de réparation';
+
+  @override
+  String wirdRepairSource(String source) {
+    return 'Source : $source';
+  }
+
+  @override
+  String get wirdRepairDraftBanner =>
+      'Brouillon en attente de validation par le moqaddam référent. Les disciples ne voient pas encore cette page.';
+
+  @override
+  String get wirdRepairLoadError =>
+      'Impossible de charger le contenu. Vérifiez votre connexion.';
+
+  @override
+  String get wirdRepairRetry => 'Réessayer';
+
+  @override
+  String get wirdRepairUnavailable =>
+      'Ce contenu n\'est pas encore disponible.';
+
+  @override
+  String get wirdRepairDraftTag => 'Brouillon';
+
+  @override
+  String get lineageTooManyChangesError =>
+      'Vous avez modifié votre lignée trop souvent aujourd\'hui. Réessayez dans 24 heures.';
+
+  @override
+  String get mouqaddamChainMyLinksTitle => 'Maillons que vous avez saisis';
+
+  @override
+  String get mouqaddamChainLinkMenuTooltip => 'Modifier ou retirer ce maillon';
+
+  @override
+  String get mouqaddamChainEditAction => 'Modifier';
+
+  @override
+  String get mouqaddamChainRemoveAction => 'Retirer';
+
+  @override
+  String get mouqaddamChainEditTitle => 'Modifier le maillon';
+
+  @override
+  String get mouqaddamChainSaveButton => 'Enregistrer';
+
+  @override
+  String get mouqaddamChainUpdateSuccess => 'Maillon modifié.';
+
+  @override
+  String get mouqaddamChainUpdateError => 'Impossible de modifier ce maillon.';
+
+  @override
+  String get mouqaddamChainRemoveConfirmTitle => 'Retirer ce maillon ?';
+
+  @override
+  String mouqaddamChainRemoveConfirmBody(String name) {
+    return '« $name » sera retiré de votre silsila. Les maillons saisis après lui remonteront d\'un rang.';
+  }
+
+  @override
+  String get mouqaddamChainRemoveSuccess => 'Maillon retiré.';
+
+  @override
+  String get mouqaddamChainRemoveError => 'Impossible de retirer ce maillon.';
+
+  @override
+  String get mouqaddamChainUltimateSourceTag => 'Cheikh Ahmed Tijani';
+
+  @override
+  String get lineageFoyerOmarienne => 'Famille omarienne';
+
+  @override
+  String get lineageFoyerAinMadhi => 'Aïn Madhi';
+
+  @override
+  String get lineageFoyerFes => 'Fès';
+
+  @override
+  String get figuresFoyerFilterAll => 'Tous les foyers';
+
+  @override
+  String get figuresNoneForFoyer => 'Aucune figure pour ce foyer.';
+
+  @override
+  String figureDetailFoyer(String foyer) {
+    return 'Foyer : $foyer';
+  }
+
+  @override
+  String get authCheckEmailTitle => 'Vérifiez votre boîte mail';
+
+  @override
+  String authCheckEmailBody(String email) {
+    return 'Nous avons envoyé un lien de confirmation à $email. Ouvrez-le pour activer votre compte, puis connectez-vous.';
+  }
+
+  @override
+  String get authCheckEmailSpamHint =>
+      'Rien reçu ? Regardez aussi dans les courriers indésirables.';
+
+  @override
+  String get authGoToLogin => 'Aller à la connexion';
+
+  @override
+  String get authResendConfirmation => 'Renvoyer l\'e-mail';
+
+  @override
+  String get authConfirmationResent => 'E-mail de confirmation renvoyé.';
+
+  @override
+  String get authChangeEmail => 'Modifier l\'adresse e-mail';
 }

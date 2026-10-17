@@ -5738,6 +5738,312 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'Impossible de débloquer ce disciple.'**
   String get unblockUserError;
+
+  /// No description provided for @wirdRepairCardTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Rattraper son wird'**
+  String get wirdRepairCardTitle;
+
+  /// No description provided for @wirdRepairCardSubtitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Oubli, erreur ou interruption'**
+  String get wirdRepairCardSubtitle;
+
+  /// No description provided for @wirdRepairTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Rattraper son wird'**
+  String get wirdRepairTitle;
+
+  /// No description provided for @wirdRepairIntro.
+  ///
+  /// In fr, this message translates to:
+  /// **'Lazim, Wazifa et Hadratou-l-Jouma : que faire après un oubli, une erreur ou une interruption.'**
+  String get wirdRepairIntro;
+
+  /// No description provided for @wirdRepairWhichWird.
+  ///
+  /// In fr, this message translates to:
+  /// **'Quel wird ?'**
+  String get wirdRepairWhichWird;
+
+  /// No description provided for @wirdRepairWhatHappened.
+  ///
+  /// In fr, this message translates to:
+  /// **'Que s\'est-il passé ?'**
+  String get wirdRepairWhatHappened;
+
+  /// No description provided for @wirdRepairKindAll.
+  ///
+  /// In fr, this message translates to:
+  /// **'Tout'**
+  String get wirdRepairKindAll;
+
+  /// No description provided for @wirdRepairKindManque.
+  ///
+  /// In fr, this message translates to:
+  /// **'Manqué ou oublié'**
+  String get wirdRepairKindManque;
+
+  /// No description provided for @wirdRepairKindErreur.
+  ///
+  /// In fr, this message translates to:
+  /// **'Erreur de nombre ou d\'ordre'**
+  String get wirdRepairKindErreur;
+
+  /// No description provided for @wirdRepairKindInterruption.
+  ///
+  /// In fr, this message translates to:
+  /// **'Interruption'**
+  String get wirdRepairKindInterruption;
+
+  /// No description provided for @wirdRepairKindEmpechement.
+  ///
+  /// In fr, this message translates to:
+  /// **'Empêchement (maladie, voyage…)'**
+  String get wirdRepairKindEmpechement;
+
+  /// No description provided for @wirdRepairEmpty.
+  ///
+  /// In fr, this message translates to:
+  /// **'Aucun cas dans les sources pour cette combinaison. Demandez à votre moqaddam.'**
+  String get wirdRepairEmpty;
+
+  /// No description provided for @wirdRepairReadAll.
+  ///
+  /// In fr, this message translates to:
+  /// **'Tout lire'**
+  String get wirdRepairReadAll;
+
+  /// No description provided for @wirdRepairBySituation.
+  ///
+  /// In fr, this message translates to:
+  /// **'Par situation'**
+  String get wirdRepairBySituation;
+
+  /// No description provided for @wirdRepairSchedule.
+  ///
+  /// In fr, this message translates to:
+  /// **'Horaires'**
+  String get wirdRepairSchedule;
+
+  /// No description provided for @wirdRepairAskMoqaddam.
+  ///
+  /// In fr, this message translates to:
+  /// **'À demander à votre moqaddam'**
+  String get wirdRepairAskMoqaddam;
+
+  /// No description provided for @wirdRepairCommonRule.
+  ///
+  /// In fr, this message translates to:
+  /// **'Vaut pour tous les wirds'**
+  String get wirdRepairCommonRule;
+
+  /// No description provided for @wirdRepairCommonSection.
+  ///
+  /// In fr, this message translates to:
+  /// **'Principes communs de réparation'**
+  String get wirdRepairCommonSection;
+
+  /// No description provided for @wirdRepairSource.
+  ///
+  /// In fr, this message translates to:
+  /// **'Source : {source}'**
+  String wirdRepairSource(String source);
+
+  /// No description provided for @wirdRepairDraftBanner.
+  ///
+  /// In fr, this message translates to:
+  /// **'Brouillon en attente de validation par le moqaddam référent. Les disciples ne voient pas encore cette page.'**
+  String get wirdRepairDraftBanner;
+
+  /// No description provided for @wirdRepairLoadError.
+  ///
+  /// In fr, this message translates to:
+  /// **'Impossible de charger le contenu. Vérifiez votre connexion.'**
+  String get wirdRepairLoadError;
+
+  /// No description provided for @wirdRepairRetry.
+  ///
+  /// In fr, this message translates to:
+  /// **'Réessayer'**
+  String get wirdRepairRetry;
+
+  /// No description provided for @wirdRepairUnavailable.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ce contenu n\'est pas encore disponible.'**
+  String get wirdRepairUnavailable;
+
+  /// No description provided for @wirdRepairDraftTag.
+  ///
+  /// In fr, this message translates to:
+  /// **'Brouillon'**
+  String get wirdRepairDraftTag;
+
+  /// No description provided for @lineageTooManyChangesError.
+  ///
+  /// In fr, this message translates to:
+  /// **'Vous avez modifié votre lignée trop souvent aujourd\'hui. Réessayez dans 24 heures.'**
+  String get lineageTooManyChangesError;
+
+  /// No description provided for @mouqaddamChainMyLinksTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Maillons que vous avez saisis'**
+  String get mouqaddamChainMyLinksTitle;
+
+  /// No description provided for @mouqaddamChainLinkMenuTooltip.
+  ///
+  /// In fr, this message translates to:
+  /// **'Modifier ou retirer ce maillon'**
+  String get mouqaddamChainLinkMenuTooltip;
+
+  /// No description provided for @mouqaddamChainEditAction.
+  ///
+  /// In fr, this message translates to:
+  /// **'Modifier'**
+  String get mouqaddamChainEditAction;
+
+  /// No description provided for @mouqaddamChainRemoveAction.
+  ///
+  /// In fr, this message translates to:
+  /// **'Retirer'**
+  String get mouqaddamChainRemoveAction;
+
+  /// No description provided for @mouqaddamChainEditTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Modifier le maillon'**
+  String get mouqaddamChainEditTitle;
+
+  /// No description provided for @mouqaddamChainSaveButton.
+  ///
+  /// In fr, this message translates to:
+  /// **'Enregistrer'**
+  String get mouqaddamChainSaveButton;
+
+  /// No description provided for @mouqaddamChainUpdateSuccess.
+  ///
+  /// In fr, this message translates to:
+  /// **'Maillon modifié.'**
+  String get mouqaddamChainUpdateSuccess;
+
+  /// No description provided for @mouqaddamChainUpdateError.
+  ///
+  /// In fr, this message translates to:
+  /// **'Impossible de modifier ce maillon.'**
+  String get mouqaddamChainUpdateError;
+
+  /// No description provided for @mouqaddamChainRemoveConfirmTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Retirer ce maillon ?'**
+  String get mouqaddamChainRemoveConfirmTitle;
+
+  /// No description provided for @mouqaddamChainRemoveConfirmBody.
+  ///
+  /// In fr, this message translates to:
+  /// **'« {name} » sera retiré de votre silsila. Les maillons saisis après lui remonteront d\'un rang.'**
+  String mouqaddamChainRemoveConfirmBody(String name);
+
+  /// No description provided for @mouqaddamChainRemoveSuccess.
+  ///
+  /// In fr, this message translates to:
+  /// **'Maillon retiré.'**
+  String get mouqaddamChainRemoveSuccess;
+
+  /// No description provided for @mouqaddamChainRemoveError.
+  ///
+  /// In fr, this message translates to:
+  /// **'Impossible de retirer ce maillon.'**
+  String get mouqaddamChainRemoveError;
+
+  /// No description provided for @mouqaddamChainUltimateSourceTag.
+  ///
+  /// In fr, this message translates to:
+  /// **'Cheikh Ahmed Tijani'**
+  String get mouqaddamChainUltimateSourceTag;
+
+  /// No description provided for @lineageFoyerOmarienne.
+  ///
+  /// In fr, this message translates to:
+  /// **'Famille omarienne'**
+  String get lineageFoyerOmarienne;
+
+  /// No description provided for @lineageFoyerAinMadhi.
+  ///
+  /// In fr, this message translates to:
+  /// **'Aïn Madhi'**
+  String get lineageFoyerAinMadhi;
+
+  /// No description provided for @lineageFoyerFes.
+  ///
+  /// In fr, this message translates to:
+  /// **'Fès'**
+  String get lineageFoyerFes;
+
+  /// No description provided for @figuresFoyerFilterAll.
+  ///
+  /// In fr, this message translates to:
+  /// **'Tous les foyers'**
+  String get figuresFoyerFilterAll;
+
+  /// No description provided for @figuresNoneForFoyer.
+  ///
+  /// In fr, this message translates to:
+  /// **'Aucune figure pour ce foyer.'**
+  String get figuresNoneForFoyer;
+
+  /// No description provided for @figureDetailFoyer.
+  ///
+  /// In fr, this message translates to:
+  /// **'Foyer : {foyer}'**
+  String figureDetailFoyer(String foyer);
+
+  /// No description provided for @authCheckEmailTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Vérifiez votre boîte mail'**
+  String get authCheckEmailTitle;
+
+  /// No description provided for @authCheckEmailBody.
+  ///
+  /// In fr, this message translates to:
+  /// **'Nous avons envoyé un lien de confirmation à {email}. Ouvrez-le pour activer votre compte, puis connectez-vous.'**
+  String authCheckEmailBody(String email);
+
+  /// No description provided for @authCheckEmailSpamHint.
+  ///
+  /// In fr, this message translates to:
+  /// **'Rien reçu ? Regardez aussi dans les courriers indésirables.'**
+  String get authCheckEmailSpamHint;
+
+  /// No description provided for @authGoToLogin.
+  ///
+  /// In fr, this message translates to:
+  /// **'Aller à la connexion'**
+  String get authGoToLogin;
+
+  /// No description provided for @authResendConfirmation.
+  ///
+  /// In fr, this message translates to:
+  /// **'Renvoyer l\'e-mail'**
+  String get authResendConfirmation;
+
+  /// No description provided for @authConfirmationResent.
+  ///
+  /// In fr, this message translates to:
+  /// **'E-mail de confirmation renvoyé.'**
+  String get authConfirmationResent;
+
+  /// No description provided for @authChangeEmail.
+  ///
+  /// In fr, this message translates to:
+  /// **'Modifier l\'adresse e-mail'**
+  String get authChangeEmail;
 }
 
 class _AppLocalizationsDelegate

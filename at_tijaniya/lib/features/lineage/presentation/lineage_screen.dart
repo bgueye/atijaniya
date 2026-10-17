@@ -4,7 +4,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/text/numerals.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../l10n/app_localizations.dart';
+import '../domain/lineage_errors.dart';
 import '../domain/lineage_models.dart';
+import 'foyer_label.dart';
 import 'lineage_matches_screen.dart';
 import 'lineage_providers.dart';
 import '../../../core/widgets/content_text.dart';
@@ -90,8 +92,14 @@ class _LineageScreenState extends ConsumerState<LineageScreen> {
       ref.invalidate(lineageMatchesProvider);
       ref.invalidate(myConnectionRequestsProvider);
       if (mounted) Navigator.of(context).pop(true);
-    } catch (_) {
-      if (mounted) setState(() => _errorMessage = l10n.lineageSaveError);
+    } catch (error) {
+      // Le refus « trop de changements aujourd'hui » a son propre message :
+      // c'est le seul cas où le disciple peut agir, en attendant.
+      final message = switch (classifyLineageSaveError(error)) {
+        LineageSaveErrorKind.tooManyChanges => l10n.lineageTooManyChangesError,
+        LineageSaveErrorKind.generic => l10n.lineageSaveError,
+      };
+      if (mounted) setState(() => _errorMessage = message);
     } finally {
       if (mounted) setState(() => _saving = false);
     }
@@ -150,19 +158,6 @@ class _LineageScreenState extends ConsumerState<LineageScreen> {
       if (mounted) setState(() => _errorMessage = l10n.lineageSaveError);
     } finally {
       if (mounted) setState(() => _saving = false);
-    }
-  }
-
-  String _foyerLabel(Foyer foyer, AppLocalizations l10n) {
-    switch (foyer) {
-      case Foyer.tivaouane:
-        return l10n.lineageFoyerTivaouane;
-      case Foyer.kaolack:
-        return l10n.lineageFoyerKaolack;
-      case Foyer.medinaBaye:
-        return l10n.lineageFoyerMedinaBaye;
-      case Foyer.autre:
-        return l10n.lineageFoyerAutre;
     }
   }
 
@@ -250,7 +245,7 @@ class _LineageScreenState extends ConsumerState<LineageScreen> {
                         for (final foyer in Foyer.values)
                           DropdownMenuItem(
                               value: foyer,
-                              child: Text(_foyerLabel(foyer, l10n))),
+                              child: Text(foyerLabel(foyer, l10n))),
                       ],
                       onChanged: (value) =>
                           setState(() => _foyer = value ?? Foyer.tivaouane),

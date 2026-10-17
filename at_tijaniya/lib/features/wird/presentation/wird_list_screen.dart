@@ -10,6 +10,8 @@ import '../data/wirds_content.dart';
 import '../domain/wird_models.dart';
 import 'free_wird_screen.dart';
 import 'wird_detail_screen.dart';
+import 'wird_repair_providers.dart';
+import 'wird_repair_screen.dart';
 import 'wird_recitations_management_screen.dart';
 import 'wird_recitations_review_screen.dart';
 import '../../../core/widgets/directional_chevron.dart';
@@ -44,6 +46,9 @@ class WirdListScreen extends ConsumerWidget {
           _WirdCard(wird: wird),
           const SizedBox(height: 12),
         ],
+        // Juste après les trois wirds, qu'elle concerne : c'est là que le
+        // disciple qui vient de manquer le sien la cherchera.
+        const _WirdRepairCard(),
         _FreeWirdCard(l10n: l10n),
         const SizedBox(height: 12),
         _TariqaConditionsCard(l10n: l10n),
@@ -150,6 +155,43 @@ class _WirdCard extends StatelessWidget {
         trailing: DirectionalChevron(color: AppColors.bronze),
         onTap: () => Navigator.of(context).push(
           MaterialPageRoute(builder: (_) => WirdDetailScreen(wird: wird)),
+        ),
+      ),
+    );
+  }
+}
+
+/// Accès à « Rattraper son wird ». Affichée seulement s'il y a du contenu à
+/// montrer : pour un disciple, tant que le moqaddam référent n'a rien validé,
+/// la RLS ne renvoie rien et la carte n'existe pas — pas de page vide ni de
+/// « bientôt disponible ». L'admin la voit dès le brouillon, avec une mention
+/// qui le lui rappelle. Pendant le chargement ou en cas d'erreur réseau, elle
+/// reste masquée plutôt que d'occuper la place d'une carte inutilisable.
+class _WirdRepairCard extends ConsumerWidget {
+  const _WirdRepairCard();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
+    final content = ref.watch(wirdRepairContentProvider).valueOrNull;
+    if (content == null || content.isEmpty) return const SizedBox.shrink();
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 12),
+      child: Card(
+        child: ListTile(
+          contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+          leading: Icon(Icons.restore, color: AppColors.emerald),
+          title: Text(l10n.wirdRepairCardTitle, style: const TextStyle(fontWeight: FontWeight.w500)),
+          subtitle: Text(
+            content.hasDrafts
+                ? '${l10n.wirdRepairCardSubtitle} (${l10n.wirdRepairDraftTag})'
+                : l10n.wirdRepairCardSubtitle,
+            style: TextStyle(color: AppColors.bronze),
+          ),
+          trailing: DirectionalChevron(color: AppColors.bronze),
+          onTap: () => Navigator.of(context).push(
+            MaterialPageRoute(builder: (_) => const WirdRepairScreen()),
+          ),
         ),
       ),
     );

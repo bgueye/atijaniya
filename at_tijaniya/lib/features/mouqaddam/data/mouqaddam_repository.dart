@@ -130,10 +130,51 @@ class MouqaddamRepository {
     return {for (final row in rows as List) (row as Map<String, dynamic>)['user_id'] as String: row['visible'] as bool};
   }
 
+  /// Les maillons manuels saisis par le compte connecté, dans l'ordre —
+  /// avec leur identifiant, que `get_ijaza_chain()` ne fournit pas.
+  Future<List<ManualChainLink>> fetchMyManualChainLinks() async {
+    final userId = SupabaseConfig.client.auth.currentUser!.id;
+    final rows = await SupabaseConfig.client
+        .from('mouqaddam_manual_chain_links')
+        .select('id, order_index, name_text, year_text, is_ultimate_source')
+        .eq('mouqaddam_user_id', userId)
+        .order('order_index', ascending: true);
+    return rows.map(ManualChainLink.fromRow).toList();
+  }
+
+  /// Corrige un de ses maillons manuels — policy
+  /// `manual_chain_links_owner_update` (migration
+  /// `2026-10-17_manual_chain_links_edit.sql`) : propriétaire seulement, et
+  /// seules ces trois colonnes sont modifiables. Un `update` sur le maillon
+  /// d'un autre ne touche aucune ligne sans lever d'erreur : `.select()`
+  /// permet de le détecter et de ne pas annoncer un succès qui n'a pas eu lieu.
+  Future<void> updateManualChainLink(
+    String id, {
+    required String nameText,
+    String? yearText,
+    required bool isUltimateSource,
+  }) async {
+    final rows = await SupabaseConfig.client
+        .from('mouqaddam_manual_chain_links')
+        .update({'name_text': nameText, 'year_text': yearText, 'is_ultimate_source': isUltimateSource})
+        .eq('id', id)
+        .select('id');
+    if (rows.isEmpty) throw StateError('maillon introuvable ou non modifiable');
+  }
+
+  /// Retire un de ses maillons manuels. Passe par la fonction serveur
+  /// `delete_my_manual_chain_link()`, qui resserre aussi la numérotation des
+  /// maillons suivants (sans quoi la chaîne affichée aurait un trou) ; la
+  /// suppression directe n'est pas ouverte au client.
+  Future<void> deleteManualChainLink(String id) async {
+    await SupabaseConfig.client.rpc('delete_my_manual_chain_link', params: {'p_link_id': id});
+  }
+
   /// Ajoute le maillon suivant du complément manuel (au-delà de l'app),
   /// toujours à la suite des maillons déjà saisis par ce mouqaddam — RLS
-  /// `manual_chain_links_owner_write` : insertion uniquement, jamais de
-  /// modification ni de suppression une fois enregistré.
+  /// `manual_chain_links_owner_write`. Modifier ou retirer un maillon :
+  /// [updateManualChainLink] et [deleteManualChainLink] (depuis le
+  /// 2026-10-17 ; avant, un maillon enregistré l'était à vie).
   ///
   /// `isUltimateSource` : coché par l'utilisateur lui-même quand ce maillon
   /// est Cheikh Ahmed Tijani (option A, `docs/08-spec-animation-silsila.md`

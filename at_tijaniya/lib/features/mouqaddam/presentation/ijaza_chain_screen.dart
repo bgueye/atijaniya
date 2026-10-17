@@ -78,9 +78,13 @@ class IjazaChainScreen extends ConsumerWidget {
               // Un mouqaddam parrainé dans l'app qui en saisissait un voyait
               // « Maillon ajouté » sans que rien n'apparaisse jamais : on lui
               // explique plutôt d'où vient la suite de sa silsila.
-              if (_isChainRoot(chain, currentUserId))
-                _CompleteChainSection(l10n: l10n, chainCompleted: chain.isNotEmpty && chain.last.isUltimateSource)
-              else
+              if (_isChainRoot(chain, currentUserId)) ...[
+                // Hors du bloc animé : des menus sur les cartes de la chaîne
+                // gêneraient la révélation, et seuls les maillons manuels du
+                // sommet de la chaîne se modifient.
+                const _MyManualLinksSection(),
+                _CompleteChainSection(l10n: l10n, chainCompleted: chain.isNotEmpty && chain.last.isUltimateSource),
+              ] else
                 Text(
                   l10n.mouqaddamChainManualOwnedBySponsor,
                   textAlign: TextAlign.center,
@@ -515,6 +519,7 @@ class _CompleteChainSectionState extends ConsumerState<_CompleteChainSection> {
             isUltimateSource: _isUltimateSource,
           );
       ref.invalidate(myIjazaChainProvider);
+      ref.invalidate(myManualChainLinksProvider);
       _nameController.clear();
       _yearTextController.clear();
       setState(() => _isUltimateSource = false);
@@ -586,6 +591,240 @@ class _CompleteChainSectionState extends ConsumerState<_CompleteChainSection> {
           ),
         ),
       ),
+    );
+  }
+}
+
+/// Les maillons manuels saisis par le mouqaddam au sommet de sa chaîne, avec
+/// pour chacun « Modifier » et « Retirer » (depuis le 2026-10-17 — avant, un
+/// maillon mal saisi, faute de frappe ou doublon, restait à vie dans la
+/// silsila). Les maillons venus des parrainages acceptés n'y figurent pas :
+/// ils viennent du graphe de parrainage et ne se modifient pas ici.
+///
+/// Masquée tant qu'il n'y a rien à gérer, pendant le chargement ou en cas
+/// d'erreur : la chaîne au-dessus et le formulaire d'ajout restent utilisables.
+class _MyManualLinksSection extends ConsumerWidget {
+  const _MyManualLinksSection();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
+    final links = ref.watch(myManualChainLinksProvider).valueOrNull ?? const <ManualChainLink>[];
+    if (links.isEmpty) return const SizedBox.shrink();
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 16),
+      child: Card(
+        child: Padding(
+          padding: const EdgeInsetsDirectional.fromSTEB(16, 16, 4, 8),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Text(l10n.mouqaddamChainMyLinksTitle, style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 15)),
+              const SizedBox(height: 4),
+              for (final link in links)
+                _ManualLinkRow(link: link, isLast: link.orderIndex == links.last.orderIndex),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _ManualLinkRow extends ConsumerWidget {
+  const _ManualLinkRow({required this.link, required this.isLast});
+
+  final ManualChainLink link;
+
+  /// Seul le dernier maillon peut être marqué « Cheikh Ahmed Tijani » : rien
+  /// ne vient après l'origine de la tariqa.
+  final bool isLast;
+
+  void _refresh(WidgetRef ref) {
+    ref.invalidate(myIjazaChainProvider);
+    ref.invalidate(myManualChainLinksProvider);
+  }
+
+  void _showMessage(BuildContext context, String message) {
+    ScaffoldMessenger.of(context)
+      ..hideCurrentSnackBar()
+      ..showSnackBar(SnackBar(content: Text(message)));
+  }
+
+  Future<void> _edit(BuildContext context, WidgetRef ref) async {
+    final l10n = AppLocalizations.of(context)!;
+    // Lu avant tout `await` : la ligne peut être reconstruite pendant le
+    // dialogue.
+    final repository = ref.read(mouqaddamRepositoryProvider);
+    final result = await showDialog<_ManualLinkEdit>(
+      context: context,
+      builder: (_) => _EditManualLinkDialog(link: link, canBeUltimateSource: isLast),
+    );
+    if (result == null || !context.mounted) return;
+    try {
+      await repository.updateManualChainLink(
+        link.id,
+        nameText: result.nameText,
+        yearText: result.yearText,
+        isUltimateSource: result.isUltimateSource,
+      );
+      _refresh(ref);
+      if (context.mounted) _showMessage(context, l10n.mouqaddamChainUpdateSuccess);
+    } catch (_) {
+      if (context.mounted) showErrorSnackBar(context, l10n.mouqaddamChainUpdateError);
+    }
+  }
+
+  Future<void> _remove(BuildContext context, WidgetRef ref) async {
+    final l10n = AppLocalizations.of(context)!;
+    final repository = ref.read(mouqaddamRepositoryProvider);
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: Text(l10n.mouqaddamChainRemoveConfirmTitle),
+        content: Text(l10n.mouqaddamChainRemoveConfirmBody(link.nameText)),
+        actions: [
+          TextButton(onPressed: () => Navigator.of(dialogContext).pop(false), child: Text(l10n.profileCancel)),
+          TextButton(
+            onPressed: () => Navigator.of(dialogContext).pop(true),
+            child: Text(l10n.mouqaddamChainRemoveAction, style: const TextStyle(color: AppColors.danger)),
+          ),
+        ],
+      ),
+    );
+    if (confirmed != true || !context.mounted) return;
+    try {
+      await repository.deleteManualChainLink(link.id);
+      _refresh(ref);
+      if (context.mounted) _showMessage(context, l10n.mouqaddamChainRemoveSuccess);
+    } catch (_) {
+      if (context.mounted) showErrorSnackBar(context, l10n.mouqaddamChainRemoveError);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
+    final details = [
+      if (link.yearText != null && link.yearText!.isNotEmpty) link.yearText!,
+      if (link.isUltimateSource) l10n.mouqaddamChainUltimateSourceTag,
+    ];
+    return Row(
+      children: [
+        Expanded(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 8),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                ContentText(link.nameText, style: const TextStyle(fontSize: 15, color: AppColors.ink)),
+                for (final detail in details)
+                  ContentText(
+                    detail,
+                    style: TextStyle(fontSize: 12, color: AppColors.bronze, fontStyle: FontStyle.italic),
+                  ),
+              ],
+            ),
+          ),
+        ),
+        PopupMenuButton<String>(
+          tooltip: l10n.mouqaddamChainLinkMenuTooltip,
+          icon: Icon(Icons.more_vert, color: AppColors.bronze),
+          onSelected: (action) => action == 'edit' ? _edit(context, ref) : _remove(context, ref),
+          itemBuilder: (_) => [
+            PopupMenuItem(value: 'edit', child: Text(l10n.mouqaddamChainEditAction)),
+            PopupMenuItem(
+              value: 'remove',
+              child: Text(l10n.mouqaddamChainRemoveAction, style: const TextStyle(color: AppColors.danger)),
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+}
+
+/// Valeurs saisies dans [_EditManualLinkDialog] ; `null` si on annule.
+typedef _ManualLinkEdit = ({String nameText, String? yearText, bool isUltimateSource});
+
+/// Formulaire de modification d'un maillon manuel : mêmes champs que l'ajout
+/// (`_CompleteChainSection`), préremplis. La case « Cheikh Ahmed Tijani »
+/// n'apparaît que pour le dernier maillon.
+class _EditManualLinkDialog extends StatefulWidget {
+  const _EditManualLinkDialog({required this.link, required this.canBeUltimateSource});
+
+  final ManualChainLink link;
+  final bool canBeUltimateSource;
+
+  @override
+  State<_EditManualLinkDialog> createState() => _EditManualLinkDialogState();
+}
+
+class _EditManualLinkDialogState extends State<_EditManualLinkDialog> {
+  final _formKey = GlobalKey<FormState>();
+  late final _nameController = TextEditingController(text: widget.link.nameText);
+  late final _yearController = TextEditingController(text: widget.link.yearText ?? '');
+  late bool _isUltimateSource = widget.link.isUltimateSource;
+
+  @override
+  void dispose() {
+    _nameController.dispose();
+    _yearController.dispose();
+    super.dispose();
+  }
+
+  void _submit() {
+    if (!_formKey.currentState!.validate()) return;
+    final year = _yearController.text.trim();
+    Navigator.of(context).pop<_ManualLinkEdit>((
+      nameText: _nameController.text.trim(),
+      yearText: year.isEmpty ? null : year,
+      // Un maillon qui n'est pas le dernier ne porte jamais la marque.
+      isUltimateSource: widget.canBeUltimateSource && _isUltimateSource,
+    ));
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    return AlertDialog(
+      title: Text(l10n.mouqaddamChainEditTitle),
+      content: SingleChildScrollView(
+        child: Form(
+          key: _formKey,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              TextFormField(
+                controller: _nameController,
+                autofocus: true,
+                decoration: InputDecoration(labelText: l10n.mouqaddamChainNameFieldLabel),
+                validator: (value) => (value == null || value.trim().isEmpty) ? l10n.mouqaddamChainNameRequired : null,
+              ),
+              const SizedBox(height: 12),
+              TextFormField(
+                controller: _yearController,
+                decoration: InputDecoration(labelText: l10n.mouqaddamChainYearTextFieldLabel),
+              ),
+              if (widget.canBeUltimateSource) ...[
+                const SizedBox(height: 4),
+                CheckboxListTile(
+                  value: _isUltimateSource,
+                  onChanged: (value) => setState(() => _isUltimateSource = value ?? false),
+                  controlAffinity: ListTileControlAffinity.leading,
+                  contentPadding: EdgeInsets.zero,
+                  title: Text(l10n.mouqaddamChainUltimateSourceQuestion, style: const TextStyle(fontSize: 13)),
+                ),
+              ],
+            ],
+          ),
+        ),
+      ),
+      actions: [
+        TextButton(onPressed: () => Navigator.of(context).pop(), child: Text(l10n.profileCancel)),
+        FilledButton(onPressed: _submit, child: Text(l10n.mouqaddamChainSaveButton)),
+      ],
     );
   }
 }

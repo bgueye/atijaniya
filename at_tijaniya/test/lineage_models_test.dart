@@ -9,6 +9,10 @@ void main() {
       expect(foyerFromString('kaolack'), Foyer.kaolack);
       expect(foyerFromString('medina_baye'), Foyer.medinaBaye);
       expect(foyerFromString('autre'), Foyer.autre);
+      // Ajoutés le 2026-10-18 (migration foyers_ain_madhi_fes_omarienne).
+      expect(foyerFromString('omarienne'), Foyer.omarienne);
+      expect(foyerFromString('ain_madhi'), Foyer.ainMadhi);
+      expect(foyerFromString('fes'), Foyer.fes);
     });
 
     test('retombe sur autre pour une valeur inconnue', () {

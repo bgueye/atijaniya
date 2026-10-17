@@ -1,4 +1,4 @@
-# État d'avancement et sprints restants (analyse du 2026-08-29, complétée le 2026-10-01)
+# État d'avancement et sprints restants (analyse du 2026-08-29, complétée le 2026-10-01 et le 2026-10-17)
 
 Ce document fige un état des lieux complet de l'app à cette date, croisé entre le résumé
 haut niveau de `CLAUDE.md`, l'historique git (`git log`) et le détail du journal
@@ -63,6 +63,8 @@ bascule PayDunya en mode live et le solde du contenu religieux (biographies, cha
 khalifas). Sprint 6 (préparation stores) : brouillons livrés le 2026-08-24** (politique de
 confidentialité, fiches stores FR+AR, captures d'écran) — reste à finaliser avant soumission
 effective, voir "Depuis la dernière analyse (2026-08-24 → 2026-08-29)" ci-dessous.
+**Depuis le 2026-10-17, l'app est en test fermé sur Google Play** et des testeurs
+l'utilisent : voir "Test fermé sur Google Play (2026-10-17)" en fin de document.
 
 ## Depuis la dernière analyse (2026-08-18 → 2026-08-21)
 
@@ -405,6 +407,9 @@ plus propre que ce que certains documents affirment**, avec un écart de documen
   la politique de confidentialité confirmé (`ad6e546`).
 - **Reste** : finaliser et soumettre effectivement les fiches aux stores — les brouillons
   ne sont pas encore la version publiée.
+- **Avancement au 2026-10-17** : version Android publiée sur la piste de test fermé de la
+  Play Console, testeurs en cours (voir "Test fermé sur Google Play (2026-10-17)" en fin de
+  document). Restent la production Google Play et tout le volet App Store.
 
 ## Depuis la dernière analyse (2026-08-29 → 2026-09-27)
 
@@ -500,7 +505,8 @@ la succession par zawiya (§ 1.1), le type de lieu (§ 1.5) et le drapeau "date 
 Ordre recommandé pour la suite :
 catégories, puis statut des citations/œuvres, puis drapeau "date approximative" et glossaire ;
 le reste après le lancement. Le Sprint 6 (soumission aux stores) et la bascule PayDunya en
-mode live restent ouverts et inchangés.
+mode live restent ouverts et inchangés (mise à jour du 2026-10-17 : le Sprint 6 a avancé,
+l'app est en test fermé sur Google Play, voir la dernière section).
 
 ### Succession par zawiya, avec un rôle (2026-10-01)
 
@@ -570,3 +576,47 @@ porteur de projet, évènement par évènement (voir la liste du § 3 de `docs/1
 approximatif avec une précision, vérifier la mention dans la liste, sur la fiche et sur
 l'accueil, puis retirer le drapeau ; vérifier que l'interrupteur disparaît quand "Évènement
 récurrent" est activé.
+
+## Test fermé sur Google Play (2026-10-17)
+
+Le porteur de projet a publié l'app sur la **piste de test fermé** de la Google Play
+Console ; au 2026-10-17, des testeurs l'utilisent. La date exacte de publication n'a pas été
+relevée ici. La version envoyée est vraisemblablement la version signée `1.0.0+2` (celle de
+`at_tijaniya/pubspec.yaml` à cette date et celle validée sur le téléphone de test le
+2026-10-11) : à confirmer dans la Play Console.
+
+Conséquences pour la suite du développement :
+- **Numéro de build** : chaque nouvel envoi sur la Play Console doit augmenter le numéro
+  après le `+` dans `pubspec.yaml` (`1.0.0+3`, etc.), sinon il est refusé.
+- **Base live partagée avec de vrais testeurs** : toute migration (RLS, colonnes,
+  fonctions) doit rester compatible avec la version installée chez eux, ou être livrée en
+  même temps qu'une nouvelle version de l'app. Même vigilance qu'après l'audit du
+  2026-10-04, où les anciennes versions ne pouvaient plus lire la lignée.
+- **Retours des testeurs** : à consigner dans `docs/13` (section « Test fermé sur Google
+  Play ») au fur et à mesure, avec le rapport de pré-lancement et Android vitals
+  (plantages, ANR) de la Play Console.
+- **Accès à la production** : si le compte développeur est un compte personnel récent,
+  Google exige au moins 12 testeurs inscrits pendant 14 jours d'affilée avant de pouvoir
+  demander la production. Type de compte non vérifié ici.
+
+Restent ouverts : passage en production sur Google Play, tout le volet App Store (iOS), et
+la bascule PayDunya en mode live.
+
+## Rattraper son wird (2026-10-17)
+
+Nouvelle page du module Wirds, ajoutée pendant le test fermé : que faire après un oubli, une
+erreur ou une interruption du Lazim, de la Wazifa ou de la Hadratou-l-Jouma. Contenu dans
+Supabase (`wird_repair_cases`, `wird_repair_notes`), **entièrement en brouillon** : les
+testeurs ne voient ni la carte ni la page tant que le moqaddam référent n'a pas relu. La
+version qui contient l'écran peut donc partir sur la Play Console sans attendre cette
+relecture. Détail dans `docs/09` (« Rattraper son wird »).
+
+**Reste à faire :**
+- relecture par le moqaddam référent, puis passage à `valide` en SQL
+  (`update public.wird_repair_cases set content_status = 'valide';` et de même pour
+  `wird_repair_notes`) — visible chez tous les testeurs sans nouvelle version ;
+- trancher pendant cette relecture la fourchette « 1 000 à 1 600 » de la Hadratou-l-Jouma,
+  qui diffère du guide validé (1000), voir `docs/01` § 8 ;
+- valider l'écran sur téléphone (compte admin pour voir le brouillon), en français et en
+  arabe ;
+- envoyer la version `1.0.0+3` sur la piste de test fermé.

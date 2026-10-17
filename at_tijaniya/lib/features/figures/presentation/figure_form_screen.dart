@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../l10n/app_localizations.dart';
 import '../../lineage/domain/lineage_models.dart' show Foyer;
+import '../../lineage/presentation/foyer_label.dart';
 import '../domain/figure_models.dart';
 import 'figures_providers.dart';
 import '../../../core/text/numerals.dart';
@@ -116,19 +117,6 @@ class _FigureFormScreenState extends ConsumerState<FigureFormScreen> {
         : l10n.figureFormCategoryFamily;
   }
 
-  String _foyerLabel(Foyer foyer, AppLocalizations l10n) {
-    switch (foyer) {
-      case Foyer.tivaouane:
-        return l10n.lineageFoyerTivaouane;
-      case Foyer.kaolack:
-        return l10n.lineageFoyerKaolack;
-      case Foyer.medinaBaye:
-        return l10n.lineageFoyerMedinaBaye;
-      case Foyer.autre:
-        return l10n.lineageFoyerAutre;
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
@@ -190,7 +178,7 @@ class _FigureFormScreenState extends ConsumerState<FigureFormScreen> {
                         value: null, child: Text(l10n.figureFormFoyerNone)),
                     for (final foyer in Foyer.values)
                       DropdownMenuItem<Foyer?>(
-                          value: foyer, child: Text(_foyerLabel(foyer, l10n))),
+                          value: foyer, child: Text(foyerLabel(foyer, l10n))),
                   ],
                   onChanged: (value) => setState(() => _foyer = value),
                 ),

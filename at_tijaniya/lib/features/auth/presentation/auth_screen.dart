@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:supabase_flutter/supabase_flutter.dart' show OtpType;
 
 import '../../../core/supabase/supabase_config.dart';
 import '../../../core/theme/app_colors.dart';
@@ -42,7 +43,7 @@ class AuthScreen extends StatefulWidget {
   State<AuthScreen> createState() => _AuthScreenState();
 }
 
-enum _AuthAction { signIn, signUp, resetPassword }
+enum _AuthAction { signIn, signUp, resetPassword, resendConfirmation }
 
 class _AuthScreenState extends State<AuthScreen> {
   bool _isSignUp = false;
@@ -64,6 +65,16 @@ class _AuthScreenState extends State<AuthScreen> {
   _AuthAction? _loadingAction;
   String? _errorMessage;
   String? _infoMessage;
+
+  /// Adresse d'une inscription qui attend la confirmation par e-mail. Tant
+  /// qu'elle est renseignée, l'onglet « Créer un compte » montre
+  /// [SignupCheckEmailPanel] au lieu du formulaire. Avant le 2026-10-18, le
+  /// formulaire restait affiché et rempli sous un simple message, et rien
+  /// n'empêchait de recommencer — retour du test fermé. Avec la même adresse,
+  /// Supabase ne répond ni par une erreur (pour ne pas révéler qu'un compte
+  /// existe) ni par un nouvel e-mail : l'utilisateur croyait avoir recréé un
+  /// compte qu'il ne pouvait jamais confirmer.
+  String? _pendingConfirmationEmail;
 
   @override
   void dispose() {
@@ -130,14 +141,60 @@ class _AuthScreenState extends State<AuthScreen> {
         widget.onAuthenticated();
       } else {
         // Confirmation par e-mail activée : pas de session tant que le lien
-        // reçu par e-mail n'a pas été ouvert.
-        setState(() => _infoMessage = l10n.authCheckEmailToConfirm);
+        // reçu par e-mail n'a pas été ouvert. Le formulaire laisse la place
+        // au panneau « Vérifiez votre boîte mail » ; le mot de passe saisi
+        // n'a plus à rester à l'écran.
+        setState(() => _pendingConfirmationEmail = _signupEmailController.text.trim());
+        _signupPasswordController.clear();
       }
     } catch (error) {
       if (mounted) setState(() => _errorMessage = _messageFor(classifyAuthError(error), l10n));
     } finally {
       if (mounted) setState(() => _loadingAction = null);
     }
+  }
+
+  /// Renvoie l'e-mail de confirmation de l'inscription en attente. Supabase
+  /// limite la fréquence des envois : un renvoi trop rapproché revient en
+  /// erreur `rateLimited`, affichée par le message habituel.
+  Future<void> _resendConfirmation() async {
+    final l10n = AppLocalizations.of(context)!;
+    final email = _pendingConfirmationEmail;
+    if (email == null) return;
+    setState(() {
+      _loadingAction = _AuthAction.resendConfirmation;
+      _errorMessage = null;
+      _infoMessage = null;
+    });
+    try {
+      await SupabaseConfig.client.auth.resend(
+        type: OtpType.signup,
+        email: email,
+        emailRedirectTo: SupabaseConfig.authCallbackUrl,
+      );
+      if (mounted) setState(() => _infoMessage = l10n.authConfirmationResent);
+    } catch (error) {
+      if (mounted) setState(() => _errorMessage = _messageFor(classifyAuthError(error), l10n));
+    } finally {
+      if (mounted) setState(() => _loadingAction = null);
+    }
+  }
+
+  /// Passe à l'onglet Connexion avec l'adresse déjà saisie : c'est là que
+  /// l'utilisateur finit, une fois le lien de confirmation ouvert.
+  void _goToLoginAfterSignup() {
+    _loginEmailController.text = _pendingConfirmationEmail ?? '';
+    _switchTab(false);
+  }
+
+  /// Revient au formulaire d'inscription, adresse conservée, pour corriger
+  /// une faute de frappe.
+  void _editSignupEmail() {
+    setState(() {
+      _pendingConfirmationEmail = null;
+      _errorMessage = null;
+      _infoMessage = null;
+    });
   }
 
   Future<void> _resetPassword() async {
@@ -213,7 +270,20 @@ class _AuthScreenState extends State<AuthScreen> {
                 onChanged: _switchTab,
               ),
               const SizedBox(height: 24),
-              if (_isSignUp) _buildSignupPanel(l10n) else _buildLoginPanel(l10n),
+              if (_isSignUp && _pendingConfirmationEmail != null)
+                SignupCheckEmailPanel(
+                  email: _pendingConfirmationEmail!,
+                  resending: _loadingAction == _AuthAction.resendConfirmation,
+                  errorMessage: _errorMessage,
+                  infoMessage: _infoMessage,
+                  onGoToLogin: _goToLoginAfterSignup,
+                  onResend: _resendConfirmation,
+                  onEditEmail: _editSignupEmail,
+                )
+              else if (_isSignUp)
+                _buildSignupPanel(l10n)
+              else
+                _buildLoginPanel(l10n),
             ],
           ),
         ),
@@ -522,6 +592,81 @@ class _MessageBanner extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.only(bottom: 8),
       child: ContentText(text, style: TextStyle(color: isError ? AppColors.danger : AppColors.emerald)),
+    );
+  }
+}
+
+/// Ce qui remplace le formulaire d'inscription quand le compte attend la
+/// confirmation de son adresse : où le lien a été envoyé, et les trois suites
+/// possibles — se connecter une fois le lien ouvert, renvoyer l'e-mail, ou
+/// corriger l'adresse. Plus de bouton « Créer un compte » ici : c'est lui qui
+/// poussait à recommencer une inscription déjà faite.
+///
+/// Public pour être testé sans Supabase : toutes les actions sont des
+/// callbacks de [AuthScreen].
+class SignupCheckEmailPanel extends StatelessWidget {
+  const SignupCheckEmailPanel({
+    super.key,
+    required this.email,
+    required this.resending,
+    required this.onGoToLogin,
+    required this.onResend,
+    required this.onEditEmail,
+    this.errorMessage,
+    this.infoMessage,
+  });
+
+  final String email;
+
+  /// Renvoi en cours : les actions sont désactivées le temps de l'envoi.
+  final bool resending;
+  final String? errorMessage;
+  final String? infoMessage;
+  final VoidCallback onGoToLogin;
+  final VoidCallback onResend;
+  final VoidCallback onEditEmail;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        Center(
+          child: Container(
+            width: 64,
+            height: 64,
+            decoration: const BoxDecoration(color: AppColors.emeraldSoft, shape: BoxShape.circle),
+            child: Icon(Icons.mark_email_unread_outlined, color: AppColors.emerald, size: 30),
+          ),
+        ),
+        const SizedBox(height: 20),
+        _PanelTitle(title: l10n.authCheckEmailTitle, subtitle: l10n.authCheckEmailBody(email)),
+        const SizedBox(height: 8),
+        Text(l10n.authCheckEmailSpamHint, style: TextStyle(color: AppColors.bronze, fontSize: 12)),
+        const SizedBox(height: 24),
+        if (errorMessage != null) _MessageBanner(text: errorMessage!, isError: true),
+        if (infoMessage != null) _MessageBanner(text: infoMessage!, isError: false),
+        _PrimaryButton(label: l10n.authGoToLogin, loading: false, onPressed: resending ? null : onGoToLogin),
+        const SizedBox(height: 12),
+        OutlinedButton(
+          onPressed: resending ? null : onResend,
+          style: OutlinedButton.styleFrom(
+            padding: const EdgeInsets.symmetric(vertical: 14),
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+          ),
+          child: resending
+              ? const SizedBox(height: 18, width: 18, child: CircularProgressIndicator(strokeWidth: 2))
+              : Text(l10n.authResendConfirmation),
+        ),
+        const SizedBox(height: 4),
+        Center(
+          child: TextButton(
+            onPressed: resending ? null : onEditEmail,
+            child: Text(l10n.authChangeEmail),
+          ),
+        ),
+      ],
     );
   }
 }

@@ -14,6 +14,8 @@ import '../../khadara/presentation/event_detail_screen.dart';
 import '../../khadara/presentation/khadara_format.dart';
 import '../../khadara/presentation/khadara_providers.dart';
 import '../../khadara/presentation/zawiya_detail_screen.dart';
+import '../../lineage/domain/lineage_models.dart' show Foyer;
+import '../../lineage/presentation/foyer_label.dart';
 import '../../profil/presentation/profile_providers.dart';
 import '../domain/figure_errors.dart';
 import '../domain/figure_models.dart';
@@ -448,6 +450,17 @@ class _FigureHero extends StatelessWidget {
                         fontWeight: FontWeight.bold,
                         letterSpacing: 1.4),
                   ),
+                  // Foyer affiché depuis le 2026-10-18 (il n'était visible que
+                  // dans le formulaire admin). « Autre » n'apprend rien au
+                  // disciple : on ne l'affiche pas.
+                  if (figure.foyer != null && figure.foyer != Foyer.autre) ...[
+                    const SizedBox(height: 8),
+                    Text(
+                      AppLocalizations.of(context)!.figureDetailFoyer(foyerLabel(figure.foyer!, AppLocalizations.of(context)!)),
+                      textAlign: TextAlign.center,
+                      style: TextStyle(color: AppColors.gold, fontSize: 13, fontWeight: FontWeight.w500),
+                    ),
+                  ],
                 ],
               ),
             ),

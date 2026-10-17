@@ -50,3 +50,11 @@ final myIjazaChainProvider = FutureProvider<List<IjazaChainLink>>((ref) {
   ref.watch(currentUserIdProvider);
   return ref.watch(mouqaddamRepositoryProvider).fetchMyIjazaChain();
 });
+
+/// Les maillons manuels du compte connecté, avec leur identifiant — pour les
+/// modifier ou les retirer depuis « Ma silsila d'ijaza ». À invalider avec
+/// [myIjazaChainProvider] après chaque ajout, modification ou retrait.
+final myManualChainLinksProvider = FutureProvider.autoDispose<List<ManualChainLink>>((ref) {
+  ref.watch(currentUserIdProvider);
+  return ref.watch(mouqaddamRepositoryProvider).fetchMyManualChainLinks();
+});
