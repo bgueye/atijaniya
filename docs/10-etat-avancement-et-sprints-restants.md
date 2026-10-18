@@ -612,11 +612,10 @@ version qui contient l'écran peut donc partir sur la Play Console sans attendre
 relecture. Détail dans `docs/09` (« Rattraper son wird »).
 
 **Reste à faire :**
-- relecture par le moqaddam référent, puis passage à `valide` en SQL
-  (`update public.wird_repair_cases set content_status = 'valide';` et de même pour
-  `wird_repair_notes`) — visible chez tous les testeurs sans nouvelle version ;
-- trancher pendant cette relecture la fourchette « 1 000 à 1 600 » de la Hadratou-l-Jouma,
-  qui diffère du guide validé (1000), voir `docs/01` § 8 ;
+- ~~relecture par le moqaddam référent, puis passage à `valide`~~ : **validé et publié le
+  2026-10-18** (migration `2026-10-18_publish_wird_repair_and_benefits.sql`), visible chez
+  tous les testeurs de la `1.0.0+3` ; nombre de la Hadratou-l-Jouma gardé tel qu'en base
+  (« au moins 1 000… jusqu'à 1 600 »), le guide des wirds restant à 1000 ;
 - valider l'écran sur téléphone (compte admin pour voir le brouillon), en français et en
   arabe ;
 - envoyer la version `1.0.0+3` sur la piste de test fermé.
@@ -637,12 +636,12 @@ moqaddam référent n'a pas relu. Texte en français seulement, affiché tel que
 arabe. Détail dans `docs/09` (« Bienfaits de la Tijaniyya »).
 
 **Reste à faire :**
-- relecture par le moqaddam référent (avec l'annexe de travail du document), puis passage
-  à `valide` en SQL (`update public.tariqa_benefit_sections set content_status = 'valide';`
-  et de même pour `tariqa_benefit_cards`) — l'écran n'arrive chez les testeurs qu'avec la
+- ~~relecture par le moqaddam référent~~ : **validé et publié le 2026-10-18** (même
+  migration que « Rattraper son wird ») ; l'écran n'arrive chez les testeurs qu'avec la
   version qui le contient (`1.0.0+4` ou suivante) ;
-- avant publication, remplacer les références web restantes par des références imprimées
-  (demande de l'annexe du document) ;
+- remplacer les références web restantes (tidjaniya.com, forums…) par des références
+  imprimées, comme le demandait l'annexe du document : publié sans attendre, par décision
+  du porteur de projet ;
 - une version arabe du texte, si le porteur de projet en fournit une (colonnes `_ar`
   prévues) ;
 - valider l'écran sur téléphone (compte admin), en français et en arabe.
