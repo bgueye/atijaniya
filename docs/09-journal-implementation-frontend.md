@@ -3363,3 +3363,118 @@ placée dans la phrase de droite à gauche.
 
 `flutter analyze` propre, 319 tests au vert. **Pas encore validé sur téléphone** avec une
 vraie inscription.
+
+## Rattraper son wird, version 2 du contenu (2026-10-18)
+
+Le porteur de projet a remis `docs/Rattraper-son-wird.html`, une version reprise sur les livres
+(Jawâhir al-Ma'ânî éd. Kanûn, Munyat al-Murid, al-Durra al-Kharida t. 4, pages citées ; les
+PDF sont dans `docs/sources/`, exclu de git : volumineux et sous droits). Migration
+`2026-10-18_wird_repair_v2.sql` : tout le contenu précédent (jamais validé) est remplacé,
+39 cas et 19 notes, tous en brouillon. Le SQL est généré depuis le script de la page HTML,
+puis la base est comparée au fichier par empreinte md5 (identique). Aucun changement d'écran.
+
+Choix faits en reprenant le document, avec le porteur de projet :
+- les six règles générales que le document range sous le Lazim (parler, ablutions, sommeil,
+  se lever, l'imam se lève, prière oubliée) restent « tous les wirds », comme en version 1 ;
+  « le Lazim » y devient « le wird » ;
+- nombre de la Hadratou-l-Jouma : formulation de la version 2 (« au moins 1 000… jusqu'à
+  1 600 ; Jawâhir n'en fixe pas le nombre »), toujours à trancher avec le moqaddam ;
+- « Sidi Hassan Ba'qili » devient « Hajj Hassan Ba'qili », comme ailleurs dans le document ;
+- les renvois « (§1) » deviennent « (voir « Principes communs de réparation ») », nom de la
+  section dans l'écran, et les renvois à l'annexe sont retirés (l'annexe n'est pas dans
+  l'app) ; le tableau « En un coup d'œil » n'est pas repris (redondant avec la réponse rapide
+  et les horaires).
+
+Scénario `database/tests/rattraper_wird.sql` rejoué : 9 contrôles ok (39 cas, 19 notes).
+
+## Bienfaits de la Tijaniyya (2026-10-18)
+
+Nouvelle page, demandée avec la version 2 de « Rattraper son wird » :
+`docs/Bienfaits-Tijaniyya.html` (brouillon du porteur de projet). Carte d'accès dans l'écran
+Wirds, sous les Conditions de la Tariqa, masquée tant qu'il n'y a pas de contenu lisible
+(donc pour tout disciple tant que rien n'est validé) ; l'admin la voit avec « (Brouillon) ».
+
+**Base** (`2026-10-18_tariqa_benefits.sql`) : `tariqa_benefit_sections` (clé `slug`, numéro
+affiché, titre, introduction) et `tariqa_benefit_cards` (intertitre, titre, corps en blocs
+JSON, ligne des sources). Mêmes règles que `wird_repair_*` : brouillon par défaut, lecture du
+validé pour tous et du brouillon pour l'admin, aucune écriture par l'API. Colonnes `_ar`
+prévues mais vides : le texte n'existe qu'en français, affiché tel quel dans l'app en arabe
+(décision du porteur de projet). Le corps est extrait du HTML par un script qui refuse tout
+élément non reconnu et vérifie que rien ne se perd (23 citations, 61 étiquettes, 25 passages
+arabes en ligne) ; les liens web ne sont pas repris (seul leur texte), l'annexe de travail non
+plus. Le contenu a été inséré en quatre requêtes, puis comparé au fichier par empreinte md5
+(identique). Scénario `database/tests/bienfaits_tijaniyya.sql` : 9 contrôles ok.
+
+**Forme du texte** : blocs `p`, `quote` (citation arabe), `tr` (sa traduction), `cond`
+(condition), `list`, `table` ; balises en ligne `<b>`, `<ar>`, `<ev X>` (étiquette de
+solidité). Lecture dans `tariqa_benefits_models.dart` : une balise mal formée lève une
+erreur (testé), plutôt qu'un texte religieux affiché de travers.
+
+**Écran** (`tariqa_benefits_screen.dart`), conçu avec le skill de design dans la charte :
+fond ivoire, titre arabe du document en Amiri, une rosace en filigrane ; « L'essentiel » sur
+fond émeraude pâle ; légende des étiquettes repliée ; sommaire numéroté (les numéros sont
+ceux des chapitres du document) qui amène à la section ; la citation arabe en Amiri émeraude
+avec un filet d'or sur son bord droit, traduction en Cormorant italique juste dessous ;
+chaque condition dans une bande dorée (même dessin que la mise en garde de « Rattraper son
+wird ») ; étiquettes de solidité du plus sûr au moins sûr (plein émeraude, contour émeraude,
+fond doré, contour bronze) ; les tableaux du document refaits en blocs empilés pour un
+téléphone. Page construite d'un seul tenant (colonne, pas de liste paresseuse) pour que le
+sommaire atteigne une section pas encore affichée. Dans l'app en arabe : app bar et bandeau
+en arabe, une phrase « page en français seulement », puis le contenu de gauche à droite avec
+ses libellés (sommaire, légende) en français ; les citations restent de droite à gauche.
+
+Tests : `tariqa_benefits_models_test.dart` (balisage, blocs, assemblage, repli sur le
+français, lecture de tout le contenu réel copié dans `test/fixtures/`) et
+`tariqa_benefits_screen_test.dart` (carte, page complète, légende, sommaire, arabe).
+`flutter analyze` propre, 338 tests au vert. **Pas encore validé sur téléphone.**
+
+## Audit de présentation : Rattraper son wird et Bienfaits (2026-10-18)
+
+Demande du porteur de projet : audit complet des deux écrans avec le skill de design, pour
+en améliorer la présentation. Méthode : aperçu temporaire sur émulateur avec le contenu réel
+(compte admin simulé, brouillon visible), captures en français, en arabe et en texte agrandi
+à 130 %, confrontées à `design/design_tokens.yaml` et `docs/02`. Toutes les corrections
+proposées ont été retenues.
+
+**Commun aux deux écrans**
+- Contraste : le texte à lire (introductions, sources) passe du bronze, sous le seuil AA
+  (3,72:1 d'après les jetons), à l'encre ou à l'encre adoucie (72 %, au-dessus de 6:1) ;
+  les numéros (chapitres, sommaire, listes) passent de l'or (2,15:1) à l'émeraude, l'or
+  reste aux filets.
+- Zones de toucher d'au moins 48 dp (« Horaires », « Mise en garde », légende, sommaire).
+- Largeurs fixes (libellés des horaires, numéros du sommaire, puces) calculées avec la
+  taille de texte de l'utilisateur ; vérifié à 130 %, rien ne se coupe.
+- Plus d'italique sur les sources en arabe (Flutter penchait artificiellement l'Amiri).
+
+**Rattraper son wird**
+- Par situation, les cas du wird choisi viennent d'abord, puis les règles communes sous un
+  seul intertitre « Valables pour tous les wirds » (au lieu de 14 règles communes devant les
+  cas du Lazim et de la mention répétée sur chacune). `casesOnlyFor` prend un filtre par type.
+- La mise en garde passe dans la carte de réponse, repliable comme les horaires ; filtres
+  aux libellés courts (« Erreur », « Empêchement ») avec le nombre de cas, grisés à zéro.
+  Le premier cas apparaît désormais sur le premier écran.
+- « Ne se rattrape pas » se distingue de « Se rattrape » : pictogramme et encre au lieu de
+  l'émeraude (pas de rouge, réservé aux erreurs). Reconnu par `isNegativeAnswer`, lu sur le
+  texte français de la réponse validée.
+- Onglets avec le nom du wird dans l'autre langue en petit (charte : nom arabe et nom
+  français) ; « Tout lire » rappelle la réponse rapide sous chaque wird.
+
+**Bienfaits de la Tijaniyya**
+- Bouton flottant « Sommaire », qui apparaît une fois le sommaire sorti de l'écran et ouvre
+  une feuille avec L'essentiel et les sections ; flèche sur chaque ligne du sommaire.
+- Une citation arabe de plus de cinq mots prise dans une phrase française passe sur sa
+  propre ligne, avec le filet d'or des citations (les guillemets, et la parenthèse qui
+  l'entourait éventuellement, sont retirés de la mise en page ; le texte ne change pas).
+- Ligne des sources : une ligne par étiquette avec ses références ; l'étiquette prend au plus
+  45 % de la largeur (une première version à partage `flex` laissait la référence à
+  l'étroit). Au toucher, une étiquette affiche son sens.
+- Intertitres de groupe précédés d'un filet d'or.
+
+**Liste des wirds** : intertitre « Comprendre et rattraper » au-dessus de Rattraper son wird,
+Conditions de la Tariqa et Bienfaits, placés après le Wird libre.
+
+Tests : `wird_repair_models_test.dart` (filtre par type, réponse négative),
+`wird_repair_screen_test.dart` (ordre des cas, filtre vide, réponse dans « Tout lire »),
+`tariqa_benefits_screen_test.dart` (bouton et feuille du sommaire, citation sortie de la
+phrase, sources une par ligne). `flutter analyze` propre, 343 tests au vert. **Pas encore
+validé sur téléphone.**

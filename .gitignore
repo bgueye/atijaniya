@@ -14,3 +14,7 @@ supabase/.backups/
 
 # Vidéo de présentation pour les stores : gardée sur le disque, pas dans le dépôt.
 store-assets/video/
+
+# Ouvrages sources (PDF, scans) utilisés pour rédiger le contenu religieux :
+# volumineux et sous droits, gardés sur le disque, pas dans le dépôt.
+docs/sources/

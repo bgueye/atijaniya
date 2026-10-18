@@ -5790,7 +5790,7 @@ abstract class AppLocalizations {
   /// No description provided for @wirdRepairKindErreur.
   ///
   /// In fr, this message translates to:
-  /// **'Erreur de nombre ou d\'ordre'**
+  /// **'Erreur'**
   String get wirdRepairKindErreur;
 
   /// No description provided for @wirdRepairKindInterruption.
@@ -5802,7 +5802,7 @@ abstract class AppLocalizations {
   /// No description provided for @wirdRepairKindEmpechement.
   ///
   /// In fr, this message translates to:
-  /// **'Empêchement (maladie, voyage…)'**
+  /// **'Empêchement'**
   String get wirdRepairKindEmpechement;
 
   /// No description provided for @wirdRepairEmpty.
@@ -5834,12 +5834,6 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'À demander à votre moqaddam'**
   String get wirdRepairAskMoqaddam;
-
-  /// No description provided for @wirdRepairCommonRule.
-  ///
-  /// In fr, this message translates to:
-  /// **'Vaut pour tous les wirds'**
-  String get wirdRepairCommonRule;
 
   /// No description provided for @wirdRepairCommonSection.
   ///
@@ -6044,6 +6038,126 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'Modifier l\'adresse e-mail'**
   String get authChangeEmail;
+
+  /// No description provided for @tariqaBenefitsCardTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Bienfaits de la Tijaniyya'**
+  String get tariqaBenefitsCardTitle;
+
+  /// No description provided for @tariqaBenefitsCardSubtitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'La tariqa et ses wirds, avec leurs conditions'**
+  String get tariqaBenefitsCardSubtitle;
+
+  /// No description provided for @tariqaBenefitsTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Bienfaits de la Tijaniyya'**
+  String get tariqaBenefitsTitle;
+
+  /// No description provided for @tariqaBenefitsArabicTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'فضائل الطريقة التجانية وأورادها'**
+  String get tariqaBenefitsArabicTitle;
+
+  /// No description provided for @tariqaBenefitsIntro.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ce que disent Jawâhir al-Ma\'ânî et les moqaddams sur la tariqa, le Lazim, la Wazifa et la Hadratou-l-Jouma, avec la condition que les textes attachent à chaque bienfait.'**
+  String get tariqaBenefitsIntro;
+
+  /// No description provided for @tariqaBenefitsFrenchOnly.
+  ///
+  /// In fr, this message translates to:
+  /// **'Cette page n\'existe qu\'en français pour l\'instant.'**
+  String get tariqaBenefitsFrenchOnly;
+
+  /// No description provided for @tariqaBenefitsContents.
+  ///
+  /// In fr, this message translates to:
+  /// **'Sommaire'**
+  String get tariqaBenefitsContents;
+
+  /// No description provided for @tariqaBenefitsLegendTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Comment lire les étiquettes'**
+  String get tariqaBenefitsLegendTitle;
+
+  /// No description provided for @tariqaBenefitsBadgeRead.
+  ///
+  /// In fr, this message translates to:
+  /// **'Lu dans…'**
+  String get tariqaBenefitsBadgeRead;
+
+  /// No description provided for @tariqaBenefitsBadgeMultiple.
+  ///
+  /// In fr, this message translates to:
+  /// **'Plusieurs sources'**
+  String get tariqaBenefitsBadgeMultiple;
+
+  /// No description provided for @tariqaBenefitsBadgeSingle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Source unique'**
+  String get tariqaBenefitsBadgeSingle;
+
+  /// No description provided for @tariqaBenefitsBadgeSecondHand.
+  ///
+  /// In fr, this message translates to:
+  /// **'Seconde main'**
+  String get tariqaBenefitsBadgeSecondHand;
+
+  /// No description provided for @tariqaBenefitsLegendRead.
+  ///
+  /// In fr, this message translates to:
+  /// **'vérifié dans le texte du livre nommé'**
+  String get tariqaBenefitsLegendRead;
+
+  /// No description provided for @tariqaBenefitsLegendMultiple.
+  ///
+  /// In fr, this message translates to:
+  /// **'au moins deux relais concordants'**
+  String get tariqaBenefitsLegendMultiple;
+
+  /// No description provided for @tariqaBenefitsLegendSingle.
+  ///
+  /// In fr, this message translates to:
+  /// **'un seul relais'**
+  String get tariqaBenefitsLegendSingle;
+
+  /// No description provided for @tariqaBenefitsLegendSecondHand.
+  ///
+  /// In fr, this message translates to:
+  /// **'connu par un commentaire ou une traduction'**
+  String get tariqaBenefitsLegendSecondHand;
+
+  /// No description provided for @tariqaBenefitsSources.
+  ///
+  /// In fr, this message translates to:
+  /// **'Sources'**
+  String get tariqaBenefitsSources;
+
+  /// No description provided for @wirdRepairCommonGroup.
+  ///
+  /// In fr, this message translates to:
+  /// **'Valables pour tous les wirds'**
+  String get wirdRepairCommonGroup;
+
+  /// No description provided for @wirdRepairWarningLabel.
+  ///
+  /// In fr, this message translates to:
+  /// **'Mise en garde'**
+  String get wirdRepairWarningLabel;
+
+  /// No description provided for @wirdListUnderstandHeading.
+  ///
+  /// In fr, this message translates to:
+  /// **'Comprendre et rattraper'**
+  String get wirdListUnderstandHeading;
 }
 
 class _AppLocalizationsDelegate

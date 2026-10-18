@@ -1,0 +1,466 @@
+<title>Rattraper son wird</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Cormorant+Garamond:wght@500;600;700&family=Jost:wght@400;500;600&family=Noto+Naskh+Arabic:wght@400;500;600&display=swap">
+<style>
+  /* Layout: sticky language bar, one reading column (760px), at-a-glance table, then one block per wird made of situation / action rows. Palette and fonts follow the At-Tijaniya design tokens (zaytoune, parchment, gold). */
+  :root {
+    --bg: #F7F2E7;
+    --card: #FFFDF8;
+    --fg: #2B2620;
+    --muted: #6B5C43;
+    --line: #DED3BA;
+    --accent: #0F3D2E;
+    --accent-2: #1C6E4A;
+    --accent-soft: #E4EEE8;
+    --gold: #9A7424;
+    --gold-soft: #F1E6C9;
+    --font-display: "Cormorant Garamond", "Iowan Old Style", Georgia, serif;
+    --font-body: "Jost", system-ui, -apple-system, "Segoe UI", sans-serif;
+    --font-ar-title: "Amiri", "Noto Naskh Arabic", "Traditional Arabic", serif;
+    --font-ar-body: "Noto Naskh Arabic", "Amiri", "Segoe UI", Tahoma, sans-serif;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #0D1913; --card: #14241C; --fg: #EDE6D6; --muted: #B7A98B; --line: #2A3D33;
+      --accent: #8FD1B0; --accent-2: #6FBF98; --accent-soft: #1A3226; --gold: #D9B766; --gold-soft: #2E2812;
+      color-scheme: dark;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #0D1913; --card: #14241C; --fg: #EDE6D6; --muted: #B7A98B; --line: #2A3D33;
+    --accent: #8FD1B0; --accent-2: #6FBF98; --accent-soft: #1A3226; --gold: #D9B766; --gold-soft: #2E2812;
+    color-scheme: dark;
+  }
+
+  * { box-sizing: border-box; }
+  body {
+    background: var(--bg); color: var(--fg);
+    font-family: var(--font-body); font-size: 16px; line-height: 1.6;
+    padding-block: 0 56px;
+    padding-left: max(16px, env(safe-area-inset-left, 0px));
+    padding-right: max(16px, env(safe-area-inset-right, 0px));
+  }
+  .wrap { max-width: 780px; margin-inline: auto; }
+
+  /* language bar */
+  .bar {
+    position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5;
+    background: var(--bg); border-bottom: 1px solid var(--line);
+    margin-inline: calc(-1 * max(16px, env(safe-area-inset-left, 0px)));
+    padding: 10px max(16px, env(safe-area-inset-right, 0px)) 10px max(16px, env(safe-area-inset-left, 0px));
+  }
+  body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); background: var(--bg); z-index: 10; }
+  .bar-in { max-width: 780px; margin-inline: auto; display: flex; gap: 12px; align-items: center; justify-content: space-between; flex-wrap: wrap; }
+  .brand { font-size: 12px; letter-spacing: .14em; text-transform: uppercase; color: var(--muted); font-weight: 500; }
+  .seg { display: inline-flex; border: 1px solid var(--accent); border-radius: 999px; overflow: hidden; }
+  .seg button {
+    font: inherit; font-size: 14px; font-weight: 500; border: 0; background: transparent; color: var(--accent);
+    padding: 6px 18px; cursor: pointer; min-height: 36px;
+  }
+  .seg button[aria-pressed="true"] { background: var(--accent); color: var(--bg); }
+  .seg button:focus-visible, a:focus-visible { outline: 3px solid var(--gold); outline-offset: 2px; }
+  .seg .ar-lbl { font-family: var(--font-ar-body); font-size: 16px; }
+
+  /* hero */
+  header.hero { padding-block: 36px 8px; }
+  .hero h1 { font-family: var(--font-display); font-weight: 600; font-size: clamp(34px, 7vw, 52px); line-height: 1.08; color: var(--accent); margin: 0 0 10px; text-wrap: balance; }
+  .hero p.sub { margin: 0; font-size: 18px; color: var(--muted); max-width: 60ch; }
+  .status { margin-top: 22px; border: 1px solid var(--gold); background: var(--gold-soft); border-radius: 10px; padding: 14px 16px; }
+  .status b { display: block; font-size: 12px; letter-spacing: .12em; text-transform: uppercase; color: var(--gold); margin-bottom: 4px; }
+  .status span { font-size: 15px; }
+
+  .jump { display: flex; flex-wrap: wrap; gap: 8px; margin: 22px 0 6px; padding: 0; list-style: none; }
+  .jump a { display: inline-block; font-size: 14px; padding: 6px 12px; border: 1px solid var(--line); border-radius: 999px; color: var(--accent); text-decoration: none; background: var(--card); }
+  .jump a:hover { border-color: var(--accent); }
+
+  /* sections */
+  section.blk { padding-top: 44px; scroll-margin-top: 70px; }
+  h2.sec { display: flex; align-items: baseline; gap: 12px; font-family: var(--font-display); font-weight: 600; font-size: clamp(26px, 5vw, 34px); line-height: 1.15; color: var(--accent); margin: 0 0 10px; text-wrap: balance; }
+  h2.sec .n { font-size: 15px; font-family: var(--font-body); font-weight: 600; color: var(--gold); letter-spacing: .06em; flex-shrink: 0; }
+  p.intro { margin: 0 0 18px; color: var(--muted); max-width: 65ch; }
+
+  .tablewrap { overflow-x: auto; border: 1px solid var(--line); border-radius: 10px; background: var(--card); }
+  table.glance { border-collapse: collapse; width: 100%; min-width: 640px; font-size: 14.5px; }
+  .glance th, .glance td { padding: 12px 14px; vertical-align: top; text-align: start; border-bottom: 1px solid var(--line); }
+  .glance tr:last-child td, .glance tr:last-child th { border-bottom: 0; }
+  .glance thead th { font-family: var(--font-display); font-size: 19px; color: var(--accent); background: var(--accent-soft); font-weight: 600; }
+  .glance tbody th { font-weight: 600; color: var(--fg); width: 18%; }
+  .glance td strong { color: var(--accent-2); }
+  .glance .no { color: #A23B2A; font-weight: 600; }
+  :root[data-theme="dark"] .glance .no { color: #F0907F; }
+  @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .glance .no { color: #F0907F; } }
+
+  dl.timing { display: grid; grid-template-columns: max-content 1fr; gap: 6px 18px; margin: 0 0 22px; padding: 14px 16px; background: var(--accent-soft); border-radius: 10px; font-size: 15px; }
+  dl.timing dt { font-weight: 600; color: var(--accent); }
+  dl.timing dd { margin: 0; min-width: 0; }
+  @media (max-width: 520px) { dl.timing { grid-template-columns: 1fr; gap: 2px; } dl.timing dd { margin-bottom: 8px; } }
+
+  .cases { display: flex; flex-direction: column; border-top: 1px solid var(--line); }
+  .case { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 8fr); gap: 6px 28px; padding: 16px 0; border-bottom: 1px solid var(--line); }
+  .case .q { font-weight: 600; min-width: 0; }
+  .case .a { min-width: 0; }
+  .case .a p { margin: 0; }
+  .case .src { display: block; margin-top: 6px; font-size: 13px; color: var(--muted); }
+  @media (max-width: 640px) { .case { grid-template-columns: 1fr; } .case .q { color: var(--accent); } }
+
+  .warn { margin-top: 18px; padding: 14px 16px; border: 1px solid var(--line); border-radius: 10px; background: var(--card); font-size: 15px; }
+  .warn b { color: var(--accent); }
+
+  ul.ask { margin: 0; padding-inline-start: 22px; }
+  ul.ask li { margin-bottom: 8px; }
+
+  /* annex */
+  .annex { margin-top: 56px; border: 1px dashed var(--gold); border-radius: 12px; padding: 22px 20px 8px; background: var(--card); }
+  .annex h2.sec { font-size: 26px; }
+  .annex ol { padding-inline-start: 22px; margin: 0 0 18px; }
+  .annex li { margin-bottom: 10px; font-size: 15px; }
+  .annex h3 { font-family: var(--font-display); font-size: 21px; color: var(--accent); margin: 22px 0 8px; font-weight: 600; }
+  .sources { list-style: none; margin: 0 0 14px; padding: 0; }
+  .sources li { margin-bottom: 8px; font-size: 15px; overflow-wrap: anywhere; }
+  .sources a { color: var(--accent); }
+
+  /* Arabic */
+  [dir="rtl"] { font-family: var(--font-ar-body); font-size: 18px; line-height: 1.95; }
+  [dir="rtl"] .hero h1, [dir="rtl"] h2.sec, [dir="rtl"] .annex h3, [dir="rtl"] .glance thead th { font-family: var(--font-ar-title); font-weight: 700; letter-spacing: 0; }
+  [dir="rtl"] .hero h1 { font-size: clamp(34px, 7vw, 50px); line-height: 1.4; }
+  [dir="rtl"] h2.sec { font-size: clamp(26px, 5vw, 32px); line-height: 1.5; }
+  [dir="rtl"] .status b, [dir="rtl"] .brand { letter-spacing: 0; text-transform: none; font-size: 14px; }
+  [dir="rtl"] .glance { font-size: 16px; }
+  [dir="rtl"] .case .src { font-size: 14px; }
+  [dir="rtl"] .hero p.sub { font-size: 19px; }
+  [dir="rtl"] .jump a { font-size: 16px; }
+  [dir="rtl"] dl.timing { font-size: 17px; }
+  [dir="rtl"] .annex li, [dir="rtl"] .sources li { font-size: 16.5px; }
+  [dir="rtl"] .annex h3 { font-size: 24px; }
+  .ltr { direction: ltr; unicode-bidi: isolate; display: inline-block; }
+
+  @media (prefers-reduced-motion: no-preference) { html { scroll-behavior: smooth; } }
+</style>
+
+<div class="bar">
+  <div class="bar-in">
+    <span class="brand">At-Tijaniya · التجانية</span>
+    <div class="seg" role="group" aria-label="Langue / اللغة">
+      <button type="button" id="btn-fr" aria-pressed="true">Français</button>
+      <button type="button" id="btn-ar" aria-pressed="false" class="ar-lbl" lang="ar">العربية</button>
+    </div>
+  </div>
+</div>
+
+<div class="wrap">
+  <main id="fr" lang="fr"></main>
+  <main id="ar" lang="ar" dir="rtl" hidden></main>
+</div>
+
+<script>
+(function () {
+  var c = function (q, a, s) { return { q: q, a: a, s: s }; };
+
+  var SOURCES = [
+    { t: `Jawâhir al-Ma'ânî, édition critique de Muhammad al-Râdî Kanûn (PDF cheikh-skiredj.com) — جواهر المعاني، تحقيق محمد الراضي كنون`, u: `https://www.cheikh-skiredj.com` },
+    { t: `Al-Nazifi, al-Durra al-Kharîda Sharh al-Yâqûta al-Farîda, t. 4 — الدرة الخريدة، الجزء الرابع`, u: `https://archive.org/details/DURRAKHARIDA-4` },
+    { t: `Ibn Bâbâ al-'Alawî, Munyat al-Murîd — منية المريد`, u: `https://archive.org/details/AAskZad-0191562` },
+    { t: `Tidjaniya.com — Le temps d'accomplissement du Lazim`, u: `https://tidjaniya.com/fr/le-temps-d-accomplissement-du-lazim/` },
+    { t: `Cellule Zawiya Tijaniyya — Fiqh tidiane`, u: `https://zawiya.sn/fiqh-tidiane/` },
+    { t: `Dahiratoul Kibriyatoul Ahmar — Comment réparer une omission dans le wird tidjani ?`, u: `https://kibriyatoulahmar.webnode.fr/news/comment-reparer-une-omission-dans-le-wird-tidjani-/` },
+    { t: `Tidjaniya.com — فقه الطريقة التجانية`, u: `https://tidjaniya.com/ar/fiqh-tariqa-tidjaniya/` },
+    { t: `Tidjaniya.com — Tariqa Tidjaniya Fiqh`, u: `https://tidjaniya.com/en/tariqa-fiqh/` },
+    { t: `Tidjania.ma — الأجوبة الشافية عن بعض مسائل الطريقة التجانية`, u: `https://www.tidjania.ma/%D8%A7%D9%84%D8%A3%D8%AC%D9%88%D8%A8%D8%A9-%D8%A7%D9%84%D8%B4%D8%A7%D9%81%D9%8A%D8%A9-%D8%B9%D9%86-%D8%A8%D8%B9%D8%B6-%D9%85%D8%B3%D8%A7%D8%A6%D9%84-%D8%A7%D9%84%D8%B7%D8%B1%D9%8A%D9%82%D8%A9-%D8%A7/` },
+    { t: `Tijani Flood — The conditions of Tijani fiqh`, u: `https://npartee.wordpress.com/tijaniyyah/theconditionsoftijaniyafiqh/` }
+  ];
+
+  var FR = {
+    brand: `At-Tijaniya`,
+    title: `Rattraper et réparer son wird`,
+    sub: `Lazim, Wazifa et Hadratou-l-Jouma : que faire après un oubli, une erreur ou une interruption.`,
+    statusT: `Brouillon de travail`,
+    statusX: `Ce document s'appuie sur Jawâhir al-Ma'ânî, Munyat al-Murid et al-Durra al-Kharida de Cheikh al-Nazifi, complétés par des sources tidianes publiées en ligne. Il doit être relu et validé par un moqaddam référent avant toute diffusion. Ce n'est pas un avis religieux : en cas de doute, demandez à votre moqaddam.`,
+    glanceT: `En un coup d'œil`,
+    glanceHead: [``, `Lazim`, `Wazifa`, `Hadratou-l-Jouma`],
+    glance: [
+      [`Wird manqué ou oublié`, `<strong>Se rattrape, sans tarder</strong>`, `<strong>Se rattrape</strong>`, `<span class="no">Ne se rattrape pas</span> (avis retenu)`],
+      [`Temps préféré`, `Matin : de la prière du Soubh au zénith. Soir : de la prière de l'Asr à l'Icha.`, `Au moins une fois par jour et par nuit. Une seule fois : de l'Asr à l'Asr du lendemain.`, `Le vendredi seulement, de la prière de l'Asr au coucher du soleil.`],
+      [`Temps de nécessité (excuse valable)`, `Matin : du zénith au Maghreb (coucher du soleil). Soir : de l'Icha au Fajr.`, `Jusqu'au Maghreb du lendemain.`, `Aucun : elle doit se terminer au coucher du soleil.`],
+      [`Erreur ou oubli dans le nombre ou l'ordre`, `Réparation : 100 Astaghfirou-llah avec l'intention de réparer (§1).`, `Même réparation que le Lazim (§1).`, `Les conditions du Lazim s'appliquent (§1).`],
+      [`Interruption`, `Selon la cause (§2).`, `Selon la cause (§3).`, `Non traité par les sources (§5).`]
+    ],
+    sections: [
+      { id: `s1`, n: `§1`, nav: `Réparation (jabr)`, h: `Principes communs de réparation`,
+        intro: `La réparation s'appelle le jabr. Elle se fait par 100 « Astaghfirou-llah » avec l'intention de réparer (niya jabr). Elle vaut pour le Lazim et pour la Wazifa, et les conditions du Lazim s'appliquent aussi à la Hadratou-l-Jouma.`,
+        cases: [
+          c(`Doute sur le nombre de répétitions`, `On construit sur le nombre le plus bas, celui dont on est sûr. Une fois le wird terminé, on répare par 100 fois « Astaghfirou-llah » avec l'intention de réparer.`, `al-Durra al-Kharida, t. 4, p. 9 ; Munyat al-Murid ; al-Ifada, citée par Zawiya.sn`),
+          c(`Un pilier est oublié, ou deux piliers sont inversés (par exemple la Hailala avant la prière sur le Prophète ﷺ)`, `On fait ce qui manque, on refait la partie inversée à sa place (dans l'exemple, on refait la Hailala après la prière sur le Prophète ﷺ), puis on répare par 100 « Astaghfirou-llah ». Si l'inversion ou l'omission est volontaire, le wird est nul et doit être refait.`, `al-Durra al-Kharida, t. 4, p. 9 ; Zawiya.sn ; Tidjaniya.com (AR)`),
+          c(`Des répétitions en trop, par oubli`, `100 « Astaghfirou-llah » avec l'intention de réparer. S'il manque aussi quelque chose, on le complète d'abord. Si l'ajout est volontaire, c'est un manque d'adab ; les avis divergent sur sa nullité (voir l'annexe).`, `al-Durra al-Kharida, t. 4, p. 9 ; Zawiya.sn`),
+          c(`Absence de présence du cœur (houdour)`, `Après l'acte, on récite 3 fois « Djaouharatou-l-Kamel » avec l'intention de réparer, avec toute la présence possible. Al-Durra range aussi le défaut de présence parmi les manques que l'on répare dans la Wazifa.`, `Kibriyatoul Ahmar ; Zawiya.sn ; al-Durra al-Kharida, t. 4, p. 32`),
+          c(`Doute ou oubli concernant la réparation elle-même`, `On ne la recommence pas.`, `al-Durra al-Kharida, t. 4, p. 9 ; Zawiya.sn`),
+          c(`Perles manquantes ou en trop sur le chapelet, nombre de jours connu`, `Le rattrapage des jours concernés est nécessaire.`, `Zawiya.sn`),
+          c(`Perles manquantes ou en trop sur le chapelet, nombre de jours inconnu`, `Si des perles manquaient : on rattrape seulement le Lazim de la dernière journée. Si des perles étaient en trop : 100 « Astaghfirou-llah » avec l'intention de réparer, pour toute la période. Certains prescrivent 600 « Astaghfirou-llah » et 3 « Djaouharatou-l-Kamel ».`, `Hajj Hassan Ba'qili, Al-Ira'a, cité par Zawiya.sn`),
+          c(`On arrive en cours de récitation collective`, `On commence avec le groupe là où il en est. Si on le rejoint au milieu d'une répétition, on la termine avec lui sans la compter. Quand le groupe a fini les piliers, on rattrape aussitôt ce qu'on a manqué, dans l'ordre, avant les invocations.`, `al-Durra al-Kharida, t. 4, p. 34-35 ; Tidjaniya.com (AR)`)
+        ] },
+      { id: `s2`, n: `§2`, nav: `Lazim`, h: `Lazim`,
+        intro: `Le Lazim se fait le matin et le soir. Devenu obligatoire par l'engagement, comme un vœu, il se rattrape s'il est manqué.`,
+        timing: [
+          [`Matin`, `Temps préféré : après la prière du Soubh jusqu'au zénith. Temps de nécessité : du zénith au Maghreb, c'est-à-dire au coucher du soleil ; le wird y reste accompli à temps, mais on ne doit pas le retarder sans excuse. Récité après l'aube mais avant d'avoir prié le Soubh, il doit être refait.`],
+          [`Soir`, `Temps préféré : après la prière de l'Asr jusqu'à l'Icha. Temps de nécessité : de l'Icha au Fajr. Récité après l'entrée de l'Asr mais avant d'avoir prié l'Asr, il doit être refait.`],
+          [`Avancer`, `Le matin peut être fait la nuit, avec ou sans excuse, après l'Icha, en laissant le temps de lire environ cinq hizb ; la récompense y est multipliée. Le soir peut être récité la nuit précédente, avec le matin, si l'on prévoit un empêchement à son heure. L'avancer dans la journée, avant l'Asr, est admis par certains pour un voyageur après le Dhohr ; la Munya l'interdit.`]
+        ],
+        cases: [
+          c(`Lazim oublié ou manqué`, `Il se rattrape, et sans tarder : « فليقض عاجلاً ». Le rattrapage s'impose parce que le Lazim est devenu obligatoire par l'engagement, comme un vœu. Jawâhir : « Celui qui a délaissé le wird doit le rattraper. » Dans sa lettre aux disciples de Guemar, Seïdina Ahmed Tijani écrit que celui qui l'a dépassé à cause du travail, de la maladie ou d'une cause semblable le rattrape à n'importe quel moment de la nuit qui lui est possible.`, `Jawâhir al-Ma'ânî (éd. Kanûn), p. 255 ; al-Durra al-Kharida, t. 4, p. 10-11 ; Tidjaniya.com ; Zawiya.sn (Q.69)`),
+          c(`Femme en période de menstrues ou de lochies, malade alité trop faible`, `Elles et lui ont le choix de faire le wird ou non, et n'ont pas à le rattraper une fois purifiées ou guéri. Le malade concerné est celui qui ne peut le faire qu'avec une vraie peine ; un malade légèrement atteint n'est pas concerné.`, `al-Durra al-Kharida, t. 4, p. 15 ; Tidjaniya.com (FR)`),
+          c(`Matin avancé la nuit, et on découvre avant l'aube qu'on a oublié le soir de la veille`, `On interrompt le matin, on fait le soir, puis le matin s'il reste du temps.`, `al-Durra al-Kharida, t. 4, p. 20 ; Tidjaniya.com`),
+          c(`On découvre après le Soubh qu'on a oublié le soir de la veille`, `On termine d'abord le matin, puis on fait le soir : l'ordre n'est pas ici une condition.`, `al-Durra al-Kharida, t. 4, p. 20 ; Tidjaniya.com`),
+          c(`Soir commencé après l'Asr, et on s'aperçoit qu'on n'a pas fait le matin`, `On interrompt le soir, on fait le matin, puis on reprend le soir : les deux partagent ce temps, et l'ordre y est une condition.`, `al-Durra al-Kharida, t. 4, p. 20 ; Tidjaniya.com`),
+          c(`Soir commencé après le Maghreb, et on s'aperçoit qu'on n'a pas fait le matin`, `On termine le soir, puis on rattrape le matin.`, `al-Durra al-Kharida, t. 4, p. 20 ; Tidjaniya.com (Cheikh Nadhifi)`),
+          c(`L'aube se lève pendant un matin avancé`, `On le termine, puis on le refait après le Soubh ; le premier compte alors comme surérogatoire.`, `al-Durra al-Kharida, t. 4, p. 14 ; Tidjaniya.com`),
+          c(`Parler pendant le Lazim`, `C'est interdit, sauf nécessité, et alors par signes si possible. Exceptions : répondre à un parent, une épouse à son mari, un disciple à son moqaddam ou à son cheikh. Rendre le salut est obligatoire, par la parole ou par un geste ; répéter l'appel à la prière et bénir celui qui éternue sont recommandés.`, `al-Durra al-Kharida, t. 4, p. 24 ; Tidjaniya.com (EN) ; Tijani Flood`),
+          c(`Manger ou boire pendant le Lazim`, `On ne l'interrompt ni pour manger ni pour boire, même une bouchée. Si on le fait, on recommence. Certains auteurs tolèrent une petite collation sans recommencer (voir l'annexe).`, `al-Durra al-Kharida, t. 4, p. 20 ; Tidjaniya.com (EN)`),
+          c(`Perte des ablutions (ou du tayammum) en cours de route`, `Le dhikr est annulé et on le reprend, car la pureté est une condition de validité.`, `Tidjania.ma (Q.1, Q.5)`),
+          c(`Sommeil, chute du chapelet`, `Un sommeil profond annule les ablutions, donc le dhikr. Si l'on se réveille avec la chute du chapelet, rien n'est annulé et on construit sur ce dont on est sûr.`, `Tidjania.ma (Q.15, Q.32)`),
+          c(`On se lève par inattention`, `Si c'est bref, on s'assoit et on continue. Si c'est long, on recommence.`, `Tidjania.ma (Q.14)`),
+          c(`L'imam se lève pour une prière obligatoire`, `On compte avec soin où l'on s'arrête, on prie avec l'imam, puis, après le salut final, on reprend à cet endroit, sans parler entre-temps et avant les dhikr d'après la prière. Al-Durra rapporte cette règle d'al-Ifada comme sûre et transmise de façon constante. Les tarawih et les prières surérogatoires n'interrompent pas le Lazim.`, `al-Durra al-Kharida, t. 4, p. 19-20 ; Kibriyatoul Ahmar ; Tidjania.ma (Q.40)`),
+          c(`Les frères commencent la Wazifa pendant qu'on fait son Lazim`, `On n'interrompt pas son Lazim pour les rejoindre. Celui qui l'interrompt par ignorance a mal agi et doit le refaire.`, `al-Durra al-Kharida, t. 4, p. 19`),
+          c(`Le prêche du vendredi commence pendant le wird`, `On termine son wird. On ne l'interrompt que pour la prière.`, `al-Durra al-Kharida, t. 4, p. 20`),
+          c(`On se souvient en plein wird qu'on n'a pas fait une prière`, `On termine en général le wird, puis on prie. Pour le Soubh ou l'Asr oubliés, on interrompt obligatoirement le wird pour prier d'abord.`, `Tidjania.ma (Q.3)`),
+          c(`Une ou deux répétitions ratées (bâillement, toux)`, `On les récite à voix basse, sans laisser de dette, puis on rejoint le groupe.`, `Tidjania.ma (Q.36, Q.60)`)
+        ],
+        warn: `<b>Mises en garde de Sidi Hassan Ba'qili.</b> Fait avant son heure, le Lazim est nul. Fait dans le temps de nécessité sans contrainte, c'est une grande faute dans la Tariqa. Fait après ses heures, c'est un manque d'adab et une désobéissance à l'ordre du Cheikh.` },
+      { id: `s3`, n: `§3`, nav: `Wazifa`, h: `Wazifa`,
+        intro: `La Wazifa est obligatoire dans la tariqa. Une fois par jour suffit, le matin ou le soir ; deux fois est bien. Ses conditions de validité et de perfection sont celles du Lazim. Celui qui a des frères dans sa ville la récite avec eux en assemblée ; seul, il la récite seul.`,
+        timing: [
+          [`Temps`, `Au moins une fois par jour et par nuit. Deux fois (matin et soir, aux heures du Lazim) est préférable. Faite une seule fois, elle va de l'Asr à l'Asr du lendemain, et jusqu'au Maghreb du lendemain avec une excuse valable. La faire une seule fois la nuit suffit : c'était la pratique de l'entourage du Cheikh à Fès.`]
+        ],
+        cases: [
+          c(`Wazifa oubliée ou manquée`, `Elle se rattrape, comme le Lazim, car elle est devenue obligatoire par l'engagement. Jawâhir : « Celui qui a délaissé la Wazifa doit aussi la rattraper. »`, `Jawâhir al-Ma'ânî (éd. Kanûn), p. 255 ; Munyat al-Murid, p. 18 ; al-Durra al-Kharida, t. 4, p. 32, 35`),
+          c(`Excuse : maladie, menstrues, lochies`, `Pas de rattrapage si elle a été manquée pour l'une de ces excuses. Le rattrapage est recommandé si la maladie est légère. S'il guérit pendant le temps, le malade l'accomplit.`, `al-Durra al-Kharida, t. 4, p. 32 ; Tidjania.ma (Q.57)`),
+          c(`Erreur de nombre ou d'ordre, défaut de présence`, `Même réparation que pour le Lazim (§1).`, `al-Durra al-Kharida, t. 4, p. 32`),
+          c(`Le vendredi, la Wazifa risque de faire manquer la Hadratou-l-Jouma`, `On arrête la Wazifa, on fait la Hadratou-l-Jouma jusqu'au Maghreb, puis on termine la Wazifa seul après la prière, sans commencer les dhikr d'après-prière.`, `Zawiya.sn (Cheikh Ahmed Tidjani Chinguitti, Q.70)`),
+          c(`Une autre prière sur le Prophète ﷺ est récitée pendant la Wazifa`, `La Wazifa est invalidée.`, `Tidjaniya.com (EN), d'après Sidi 'Arabi ibn Sa'ih`),
+          c(`Manger ou boire pendant la Wazifa`, `Comme pour le Lazim : on ne l'interrompt pas pour cela.`, `al-Durra al-Kharida, t. 4, p. 20 ; Tidjaniya.com (EN)`),
+          c(`Les conditions de la Djaouharatou-l-Kamel ne sont pas remplies (ablutions à l'eau, lieu pur, position assise)`, `On récite 20 fois la Salatou-l-Fatih à la place des 12 Djaouharatou-l-Kamel. Jawâhir en donne la raison : elle ne se récite qu'avec la purification par l'eau, « car le Prophète ﷺ est présent lors de sa récitation ». Étendre un tissu propre et pur pour elle est recommandé. Le texte dit la même chose pour celui qui ne la connaît pas par cœur.`, `Jawâhir al-Ma'ânî (éd. Kanûn), p. 255-256 ; Munyat al-Murid, p. 17 ; al-Durra al-Kharida, t. 4, p. 36 ; Tidjaniya.com`),
+          c(`Voyageur sur sa monture`, `Il descend et récite la Djaouharatou-l-Kamel à pied, sur un sol pur, et s'assoit à la septième. Sinon, il la remplace par 20 Salatou-l-Fatih.`, `Munyat al-Murid, p. 17 ; Tidjaniya.com (AR)`)
+        ] },
+      { id: `s4`, n: `§4`, nav: `Hadratou-l-Jouma`, h: `Hadratou-l-Jouma`,
+        intro: `Jawâhir la compte parmi les wirds obligatoires de la tariqa, à faire en assemblée quand on a des frères dans sa ville, seul sinon. Ses conditions sont celles du Lazim. Le temps passé, elle ne se rattrape pas, selon l'avis retenu.`,
+        timing: [
+          [`Temps`, `Le vendredi seulement, après la prière de l'Asr, en terminant au coucher du soleil. Celui qui ne peut pas commencer juste après l'Asr la commence quand il reste environ une heure et demie avant le coucher du soleil.`],
+          [`Nombre`, `Au moins 1 000 répétitions, selon l'avis tenu pour correct ; la pratique va jusqu'à 1 600. Jawâhir n'en fixe pas le nombre.`]
+        ],
+        cases: [
+          c(`Le temps est passé`, `Elle ne se rattrape pas : son fruit est lié à l'heure exaucée de la fin du vendredi, qui ne revient pas. Sidi Muhammad Akansus jugeait au contraire préférable de la rattraper, parce qu'elle est devenue obligatoire par l'engagement.`, `al-Durra al-Kharida, t. 4, p. 106-107 ; Munyat al-Murid, p. 19 ; Zawiya.sn (Q.69) ; Tidjania.ma (Q.51)`),
+          c(`Oubli ou occupation nécessaire`, `Pas de blâme, mais on perd un bien immense : la présence du Prophète ﷺ avec ceux qui l'évoquent à cette heure.`, `al-Durra al-Kharida, t. 4, p. 107 ; Tidjania.ma (Q.53)`),
+          c(`Négligence, sans excuse valable`, `Seïdina Ahmed Tijani : le disciple a laissé passer un immense bien qu'il ne pourra pas rattraper.`, `Munyat al-Murid, p. 19 ; Zawiya.sn ; Tidjaniya.com (EN)`),
+          c(`On rejoint le groupe pendant la Hailala en croyant que c'est la Wazifa`, `Il faut refaire la Hailala, car l'intention, condition de validité, manquait.`, `al-Durra al-Kharida, t. 4, p. 106`),
+          c(`Malade`, `S'il guérit pendant le temps, il l'accomplit. S'il est incapable de réciter à cause de la maladie, elle tombe.`, `Tidjania.ma (Q.57)`),
+          c(`Voyage un vendredi`, `Si l'on espère arriver chez soi à temps, on la reporte. Si l'on craint que le temps passe, on la fait comme on peut.`, `Tidjania.ma (Q.58)`)
+        ] },
+      { id: `s5`, n: `§5`, nav: `Demander à son moqaddam`, h: `Ce que les sources ne tranchent pas`,
+        intro: `Ces situations ne sont pas réglées dans les sources consultées, ou les avis y divergent. Demandez à votre moqaddam.`,
+        list: [
+          `Une longue série de jours manqués : les sources demandent de rattraper sans tarder, sans préciser comment répartir un grand nombre de jours.`,
+          `Un ajout volontaire de répétitions : manque d'adab pour les uns, wird nul pour les autres.`,
+          `Une Hadratou-l-Jouma interrompue en cours de route.`,
+          `Rattraper ou non une Hadratou-l-Jouma manquée, puisqu'un avis le recommande.`,
+          `Les variantes de pratique selon les foyers.`
+        ] }
+    ],
+    annexT: `Annexe de travail`,
+    annexNote: `À retirer avant toute publication dans l'app.`,
+    annexH: `Points à faire valider`,
+    annex: [
+      `Les règles marquées Jawâhir, Munyat al-Murid et al-Durra al-Kharida ont été lues sur les pages de ces livres : Jawâhir dans l'édition critique Kanûn, la Munya et al-Durra t. 4 dans les PDF reçus (pagination imprimée). Les autres viennent de sites qui citent al-Ifada, al-Ira'a et la Bughya, non consultés directement.`,
+      `Ajout volontaire de répétitions (al-Durra, t. 4, p. 9) : selon Abou-l-Mawahib al-Sa'ihi, le wird est nul, par analogie avec la prière ; selon al-Nazifi, c'est un manque d'adab qui n'oblige pas à le refaire, car le wird n'est pas en tout point comme la prière. L'omission volontaire, elle, annule le wird.`,
+      `Fin du temps de nécessité du Lazim du matin : « coucher du soleil » (Tidjaniya.com FR) et « Maghreb » (EN, AR) disent la même chose ; al-Durra (t. 4, p. 10) : « إلى المغرب وهو غروب الشمس ».`,
+      `Exception du Lazim pour les menstrues et le malade : désormais vérifiée dans al-Durra (t. 4, p. 15), qui y ajoute les lochies. Pour la Wazifa, même règle (t. 4, p. 32).`,
+      `Matin avancé et aube levée pendant la récitation (al-Durra, t. 4, p. 14) : selon al-Ifada, on le termine et il compte ; selon Rimâh, il ne compte pas et doit être refait. Al-Durra retient de le terminer puis de le refaire après le Soubh, et qualifie cette conciliation de « bonne ».`,
+      `Manger pendant le wird (al-Durra, t. 4, p. 20) : un auteur cité tolère une petite collation sans recommencer ; Rimâh limiterait l'interdiction aux wirds non obligatoires ; al-Durra retient l'interdiction pour le Lazim, la Wazifa et la Hailala.`,
+      `Rattrapage de la Wazifa : al-Durra (t. 4, p. 35) signale que certaines copies de Jawâhir et certaines ijâzas ne l'imposaient pas ; c'est l'avis abandonné. L'auteur de Jawâhir a corrigé de sa main pour en faire une obligation, comme pour le Lazim.`,
+      `Hadratou-l-Jouma manquée (al-Durra, t. 4, p. 107) : Sidi Muhammad Akansus jugeait « juste » (الصواب) de la rattraper, contre l'avis retenu. Nombre : al-Durra tient « au moins mille » pour correct ; Jawâhir (p. 256) dit « sans limite ni nombre fixé » ; le module Wirds d'At-Tijaniya fixe 1 600. À aligner.`,
+      `Hadratou-l-Jouma et heure exaucée : al-Durra (t. 4, p. 106-107) lie expressément le temps de la Hailala à l'heure exaucée de la fin du vendredi.`,
+      `Wazifa et Hadratou-l-Jouma (Q.70) : le texte consulté écrit « 'Asrou ». Il est lu ici comme la Hadratou-l-Jouma.`,
+      `Retard à la Hadra (Q.72) : formulation ambiguë sur le complément jusqu'à mille, non reprise dans le corps du document.`,
+      `Les textes français et arabes sont des reformulations. Le texte arabe doit être relu par un arabisant avant diffusion.`
+    ],
+    srcH: `Sources consultées`
+  };
+
+  var AR = {
+    brand: `التجانية`,
+    title: `تدارك الورد وجبره`,
+    sub: `اللازم والوظيفة وحضرة الجمعة: ما يفعله المريد عند النسيان أو الخطأ أو الانقطاع.`,
+    statusT: `مسودة عمل`,
+    statusX: `تعتمد هذه الصفحة على جواهر المعاني ومنية المريد والدرة الخريدة للشيخ النظيفي، مع مصادر تجانية منشورة على الشبكة. يجب أن يراجعها مقدَّم مرجعي ويقرّها قبل أي نشر. وهي ليست فتوى، وعند الشك اسأل مقدَّمك.`,
+    glanceT: `نظرة سريعة`,
+    glanceHead: [``, `اللازم`, `الوظيفة`, `حضرة الجمعة`],
+    glance: [
+      [`فوات الورد أو نسيانه`, `<strong>يُقضى عاجلا</strong>`, `<strong>تُقضى</strong>`, `<span class="no">لا تُقضى</span> (على المعتمد)`],
+      [`الوقت المختار`, `الصباح: من بعد صلاة الصبح إلى الزوال. المساء: من بعد صلاة العصر إلى العشاء.`, `مرة واحدة على الأقل في اليوم والليلة. وإن قُرئت مرة واحدة فمن العصر إلى عصر اليوم التالي.`, `يوم الجمعة فقط، من بعد صلاة العصر إلى الغروب.`],
+      [`وقت الضرورة (عند العذر)`, `الصباح: من الزوال إلى المغرب، وهو غروب الشمس. المساء: من العشاء إلى الفجر.`, `إلى مغرب اليوم التالي.`, `لا ضروري لها، وتنتهي بالغروب.`],
+      [`الخطأ سهوا في العدد أو الترتيب`, `الجبر بمئة استغفار بنية الجبر (القسم ١).`, `الجبر نفسه كاللازم (القسم ١).`, `شروطها شروط الورد (القسم ١).`],
+      [`الانقطاع`, `بحسب السبب (القسم ٢).`, `بحسب السبب (القسم ٣).`, `لم تتناوله المصادر (القسم ٥).`]
+    ],
+    sections: [
+      { id: `s1`, n: `١`, nav: `الجبر`, h: `قواعد الجبر المشتركة`,
+        intro: `الجبر بمئة «أستغفر الله» بنية الجبر. ويكون في اللازم وفي الوظيفة، وشروط الورد جارية في حضرة الجمعة.`,
+        cases: [
+          c(`الشك في عدد الأذكار`, `يبني على الأقل لأنه المتيقَّن، ثم يستغفر الله مئة مرة بنية الجبر بعد تمام الورد: «وابن على اليقين إن شككتا واستغفرن مائة إن كملتا بنية الجبر».`, `الدرة الخريدة، ج٤، ص٩؛ منية المريد؛ الإفادة الأحمدية نقلا عن موقع الزاوية التجانية`),
+          c(`ركن نُسي أو قُدِّم على موضعه (كتقديم الهيللة على الصلاة على النبي ﷺ)`, `يأتي بما نقص، ويعيد المنكَّس في موضعه (فيعيد الهيللة بعد الصلاة في المثال)، ثم يجبره بمئة استغفار. فإن كان التنكيس أو النقص عمدا بطل الورد ووجبت إعادته.`, `الدرة الخريدة، ج٤، ص٩؛ موقع الزاوية التجانية؛ tidjaniya.com (ع)`),
+          c(`زيادة في العدد سهوا`, `يستغفر مئة مرة بنية الجبر. وإن كان معها نقص أتى بالناقص أولا. وإن كانت الزيادة عمدا فهي سوء أدب، واختُلف في بطلان الورد بها (انظر الملحق).`, `الدرة الخريدة، ج٤، ص٩؛ موقع الزاوية التجانية`),
+          c(`غياب الحضور`, `بعد الفراغ يقرأ ثلاث مرات «جوهرة الكمال» بنية الجبر، وبما أمكنه من الحضور. وعدّت الدرة خلوّ الوظيفة من حضور القلب من الخلل الذي يُجبر.`, `كبريات الأحمر؛ موقع الزاوية التجانية؛ الدرة الخريدة، ج٤، ص٣٢`),
+          c(`الشك أو السهو في الجبر نفسه`, `لا يجبره مرة ثانية.`, `الدرة الخريدة، ج٤، ص٩؛ موقع الزاوية التجانية`),
+          c(`نقص حبات السبحة أو زيادتها، مع العلم بعدد الأيام`, `القضاء عن الأيام المعنية لازم.`, `موقع الزاوية التجانية`),
+          c(`نقص حبات السبحة أو زيادتها، مع الجهل بعدد الأيام`, `إن كان نقصا قضى لازم آخر يوم فقط. وإن كانت زيادة استغفر مئة مرة بنية الجبر عن كل المدة. ويرى بعضهم ستمئة استغفار وثلاث مرات «جوهرة الكمال».`, `الحاج حسن بعقيلي، الإراءة، نقلا عن موقع الزاوية التجانية`),
+          c(`من جاء أثناء القراءة الجماعية (المسبوق)`, `يبدأ مع الجماعة فيما هم فيه. فإن أدركهم في أثناء مرة أكملها معهم ولم يحسبها. فإذا أتموا أركانها قضى ما فاته فورا مرتبا قبل الدعاء.`, `الدرة الخريدة، ج٤، ص٣٤-٣٥؛ tidjaniya.com (ع)`)
+        ] },
+      { id: `s2`, n: `٢`, nav: `اللازم`, h: `اللازم`,
+        intro: `اللازم صباحا ومساء. وقد صار واجبا بالالتزام كالنذر، فيُقضى إن فات.`,
+        timing: [
+          [`الصباح`, `المختار: من بعد صلاة الصبح إلى الزوال. والضروري من الزوال إلى المغرب، وهو غروب الشمس، والقراءة فيه أداء لا قضاء، ولا ينبغي إخراجه عن المختار إلا لعذر. ومن قرأه بعد طلوع الفجر وقبل أن يصلي الصبح أعاده.`],
+          [`المساء`, `المختار: من بعد صلاة العصر إلى العشاء. والضروري من العشاء إلى الفجر. ومن قرأه بعد دخول العصر وقبل أن يصليه أعاده.`],
+          [`التقديم`, `يجوز تقديم ورد الصباح ليلا مطلقا، لعذر أو لغيره، بعد العشاء بقدر قراءة خمسة أحزاب، لمكان التضعيف. ويجوز تقديم ورد المساء معه ليلا لعذر منتظر في وقته. وأجاز بعضهم تقديم ورد المساء في النهار للمسافر بعد الظهر، ومنعه صاحب المنية مطلقا.`]
+        ],
+        cases: [
+          c(`فوات اللازم أو نسيانه`, `يُقضى عاجلا: «ومن فاته في ذين فليقض عاجلا، فبالنذر صار من فروض أكيدة». وفي الجواهر: «ومن ترك الورد فعليه قضاؤه». وفي رسالة سيدنا أحمد التجاني إلى أهل قمار أن من فاته بسبب العمل أو المرض أو نحوه قضاه في أي وقت يمكنه من الليل.`, `جواهر المعاني (تحقيق كنون)، ص٢٥٥؛ الدرة الخريدة، ج٤، ص١٠-١١؛ tidjaniya.com؛ موقع الزاوية التجانية (س٦٩)`),
+          c(`الحائض والنفساء، والمريض الملازم للفراش`, `يُخيَّرون في أداء الورد، وليس عليهم القضاء بعد الطهر أو الصحة. والمريض المقصود هو الضعيف العاجز عن الورد إلا باقتحام مشقة، ولا يدخل فيه من كان مرضه خفيفا.`, `الدرة الخريدة، ج٤، ص١٥؛ tidjaniya.com (بالفرنسية)`),
+          c(`قدّم ورد الصباح ليلا ثم تذكر قبل الفجر أنه نسي مساء الأمس`, `يقطع ورد الصباح، ويأتي بورد المساء، ثم بورد الصباح إن اتسع الوقت.`, `الدرة الخريدة، ج٤، ص٢٠؛ tidjaniya.com`),
+          c(`تذكر بعد صلاة الصبح أنه نسي مساء الأمس`, `يتم ورد الصباح، ثم يقضي ورد المساء، لأن الترتيب هنا غير شرطي.`, `الدرة الخريدة، ج٤، ص٢٠؛ tidjaniya.com`),
+          c(`شرع في ورد المساء بعد العصر ثم تذكر أنه لم يقرأ ورد الصباح`, `يقطع ورد المساء ويأتي بورد الصباح، ثم بورد المساء، لأن الترتيب هنا شرطي لاشتراكهما في الوقت.`, `الدرة الخريدة، ج٤، ص٢٠؛ tidjaniya.com`),
+          c(`شرع في ورد المساء بعد المغرب ثم تذكر أنه لم يقرأ ورد الصباح`, `يتم ورد المساء، ثم يقضي ورد الصباح.`, `الدرة الخريدة، ج٤، ص٢٠؛ tidjaniya.com (الشيخ النظيفي)`),
+          c(`طلع الفجر أثناء ورد الصباح المقدَّم ليلا`, `يتمه، ثم يعيده بعد صلاة الصبح، ويكون الأول نفلا.`, `الدرة الخريدة، ج٤، ص١٤؛ tidjaniya.com`),
+          c(`الكلام أثناء اللازم`, `ممنوع إلا لضرورة، وبالإشارة إن أمكن. ويُستثنى جواب الوالدين، وجواب الزوجة لزوجها، وجواب المريد لمقدَّمه أو شيخه. ويجب ردّ السلام باللفظ أو بالإشارة، ويُندب حكاية الأذان وتشميت العاطس.`, `الدرة الخريدة، ج٤، ص٢٤؛ tidjaniya.com (بالإنجليزية)؛ Tijani Flood`),
+          c(`الأكل والشرب أثناء اللازم`, `لا يقطع ورده لطعام ولا شراب، ولو قليلا كلقمة، فإن فعل استأنف. وتساهل بعضهم في الخفيف دون استئناف (انظر الملحق).`, `الدرة الخريدة، ج٤، ص٢٠؛ tidjaniya.com (بالإنجليزية)`),
+          c(`انتقاض الوضوء أو التيمم أثناء الذكر`, `يبطل الذكر ويُستأنف العمل، لأن الطهارة شرط صحة.`, `الأجوبة الشافية (س١، س٥)`),
+          c(`النوم وسقوط السبحة`, `النوم الثقيل ينقض الوضوء فيبطل الذكر. وإن استيقظ مع سقوط السبحة فلا يبطل، ويبني على اليقين.`, `الأجوبة الشافية (س١٥، س٣٢)`),
+          c(`القيام ناسيا`, `إن كان قصيرا جلس وأكمل، وإن طال استأنف.`, `الأجوبة الشافية (س١٤)`),
+          c(`أقيمت الصلاة المفروضة وهو في ورده`, `يحصي عدد ما قرأ، ويصلي مع الإمام، ثم يبني بعد السلام على ما مضى قبل أذكار ما بعد الصلاة، ولا يستأنف. ونقلت الدرة هذا عن الإفادة وقالت إنه صحيح متواتر عن الشيخ. والتراويح والنوافل لا تقطع الورد اللازم.`, `الدرة الخريدة، ج٤، ص١٩-٢٠؛ كبريات الأحمر؛ الأجوبة الشافية (س٤٠)`),
+          c(`افتتح الإخوان الوظيفة وهو في ورده`, `لا يقطع ورده ليدخل معهم، فإن قطعه جهلا فقد أساء وليعده.`, `الدرة الخريدة، ج٤، ص١٩`),
+          c(`دخل الخطيب يوم الجمعة وهو في ورده`, `يتم ورده، ولا يقطعه للخطبة، وإنما يقطعه للصلاة.`, `الدرة الخريدة، ج٤، ص٢٠`),
+          c(`تذكر أثناء الورد أنه لم يصلِّ`, `يتم الورد عموما ثم يصلي. أما صلاة الصبح أو العصر المنسية فيقطع الورد وجوبا ليصليها أولا.`, `الأجوبة الشافية (س٣)`),
+          c(`فوات حبة أو حبتين (بتثاؤب أو سعال)`, `لا يتركها في ذمته، بل يأتي بها سرا ثم يلحق الجماعة.`, `الأجوبة الشافية (س٣٦، س٦٠)`)
+        ],
+        warn: `<b>تحذيرات الحاج حسن بعقيلي.</b> إذا قُرئ اللازم قبل وقته فهو باطل. وإذا قُرئ في وقت الضرورة بلا عذر فهو خطأ كبير في الطريقة. وإذا قُرئ بعد وقته فهو سوء أدب ومخالفة لأمر الشيخ.` },
+      { id: `s3`, n: `٣`, nav: `الوظيفة`, h: `الوظيفة`,
+        intro: `الوظيفة لازمة للطريقة، وتكفي في وقت واحد صباحا أو مساء، وإن تيسر الوقتان فحسن. وشروط صحتها وكمالها شروط الورد. ومن كان له إخوان في البلد قرأها معهم جماعة، ومن كان وحده قرأها وحده.`,
+        timing: [
+          [`الوقت`, `مرة واحدة على الأقل في اليوم والليلة، وقراءتها مرتين صباحا ومساء بمواقيت اللازم أفضل. وإن قُرئت مرة واحدة فوقتها من العصر إلى عصر اليوم التالي، وعند العذر إلى مغرب اليوم التالي. ومن اكتفى بمرة في الليل أجزأه، وعليه استمر عمل جيرة الشيخ بفاس.`]
+        ],
+        cases: [
+          c(`فوات الوظيفة أو نسيانها`, `تُقضى كاللازم، لأنها صارت واجبة بالالتزام. وفي الجواهر: «ومن ترك الوظيفة فالقضاء عليه أيضا».`, `جواهر المعاني (تحقيق كنون)، ص٢٥٥؛ منية المريد، ص١٨؛ الدرة الخريدة، ج٤، ص٣٢، ٣٥`),
+          c(`العذر: المرض والحيض والنفاس`, `لا قضاء إن فاتت لأحد هذه الأعذار، ويُستحب القضاء إن كان المرض خفيفا. وإن برئ المريض في وقتها أتى بها.`, `الدرة الخريدة، ج٤، ص٣٢؛ الأجوبة الشافية (س٥٧)`),
+          c(`الخطأ في العدد أو الترتيب، وخلوّها من الحضور`, `يُجبر كاللازم (القسم ١).`, `الدرة الخريدة، ج٤، ص٣٢`),
+          c(`يوم الجمعة، وخشي أن تُفوِّت الوظيفةُ حضرة الجمعة`, `يقطع الوظيفة، ويأتي بحضرة الجمعة إلى المغرب، ثم يتم الوظيفة منفردا بعد الصلاة دون أن يبدأ أذكار ما بعد الصلاة.`, `موقع الزاوية التجانية (الشيخ أحمد التجاني الشنقيطي، س٧٠)`),
+          c(`قراءة صلاة أخرى على النبي ﷺ أثناء الوظيفة`, `تبطل الوظيفة.`, `tidjaniya.com (بالإنجليزية)، عن سيدي العربي بن السائح`),
+          c(`الأكل أو الشرب أثناء الوظيفة`, `كاللازم: لا يقطعها لذلك.`, `الدرة الخريدة، ج٤، ص٢٠؛ tidjaniya.com (بالإنجليزية)`),
+          c(`فقدان شروط جوهرة الكمال (الطهارة المائية، طهارة المكان، الجلوس)`, `يقرأ عشرين صلاة الفاتح بدل الجوهرة. وفي الجواهر: «ولا تُقرأ جوهرة الكمال إلا بالطهارة المائية لا بالترابية، لأن النبي ﷺ يحضر عند قراءتها». ويُندب نشر إزار نظيف طاهر لها. وكذلك من لم يحفظ الجوهرة.`, `جواهر المعاني (تحقيق كنون)، ص٢٥٥-٢٥٦؛ منية المريد، ص١٧؛ الدرة الخريدة، ج٤، ص٣٦؛ tidjaniya.com`),
+          c(`المسافر على الدابة`, `ينزل ويقرأ الجوهرة راجلا على أرض طاهرة، ثم يجلس عند السابعة. فإن تعذر ذلك قرأ عشرين صلاة الفاتح.`, `منية المريد، ص١٧؛ tidjaniya.com (ع)`)
+        ] },
+      { id: `s4`, n: `٤`, nav: `حضرة الجمعة`, h: `حضرة الجمعة`,
+        intro: `عدّها صاحب الجواهر من الأوراد اللازمة للطريقة، تُذكر جماعة إن كان للمريد إخوان في البلد، ووحده إن لم يكن. وشروطها شروط الورد. وإذا فات وقتها فلا تُقضى على المعتمد.`,
+        timing: [
+          [`الوقت`, `يوم الجمعة فقط، بعد صلاة العصر، متصلة بالغروب. ومن لم يقدر على الابتداء بعد العصر أخّرها حتى يبقى بينه وبين الغروب نحو ساعة ونصف.`],
+          [`العدد`, `ألف فصاعدا على الصحيح، والعمل جار إلى ألف وستمائة. ولم يحدد صاحب الجواهر عددا: «من غير حد ولا حصر».`]
+        ],
+        cases: [
+          c(`فات الوقت`, `لا تُقضى، لفوات نكتتها وثمرتها، وهي ساعة الإجابة في آخر ساعة من يوم الجمعة. واستحسن سيدي محمد أكنسوس قضاءها لأنها صارت بالنذر مثل الورد والوظيفة.`, `الدرة الخريدة، ج٤، ص١٠٦-١٠٧؛ منية المريد، ص١٩؛ موقع الزاوية التجانية (س٦٩)؛ الأجوبة الشافية (س٥١)`),
+          c(`النسيان أو الاشتغال بضرورة`, `لا حرج عليه، لكن يفوته خير كثير: حضور سيد الوجود ﷺ مع الذاكرين في ذلك الوقت.`, `الدرة الخريدة، ج٤، ص١٠٧؛ الأجوبة الشافية (س٥٣)`),
+          c(`التفويت تهاونا بلا عذر`, `قال سيدنا أحمد التجاني إن المريد فاته خير عظيم لا يستطيع تداركه: «وتركها يفيت خيرا جما».`, `منية المريد، ص١٩؛ موقع الزاوية التجانية؛ tidjaniya.com (بالإنجليزية)`),
+          c(`دخل مع الإخوان في الهيللة وهو يظنها الوظيفة`, `يعيد الهيللة، لفقد النية وهي من شروط الصحة.`, `الدرة الخريدة، ج٤، ص١٠٦`),
+          c(`المريض`, `إن برئ في وقتها أتى بها. وإن عجز عن الذكر بسبب المرض سقطت عنه.`, `الأجوبة الشافية (س٥٧)`),
+          c(`السفر يوم الجمعة`, `إن رجا أن يدرك الوقت في منزله أخّرها، وإن خاف خروج الوقت ذكر بما أمكن.`, `الأجوبة الشافية (س٥٨)`)
+        ] },
+      { id: `s5`, n: `٥`, nav: `سؤال المقدَّم`, h: `ما لم تحسمه المصادر`,
+        intro: `هذه المسائل لم تُفصَّل في المصادر التي اطلعنا عليها، أو اختلفت فيها الأقوال. اسأل مقدَّمك.`,
+        list: [
+          `تراكم أيام فائتة كثيرة: تأمر المصادر بالقضاء عاجلا، ولم تبيّن كيفية توزيع أيام كثيرة.`,
+          `الزيادة العمدية في العدد: سوء أدب عند بعضهم، ومبطلة عند آخرين.`,
+          `انقطاع حضرة الجمعة في أثنائها.`,
+          `قضاء حضرة الجمعة الفائتة، إذ استحسنه بعضهم.`,
+          `اختلاف الممارسة بين الزوايا.`
+        ] }
+    ],
+    annexT: `ملحق عمل`,
+    annexNote: `يُحذف قبل أي نشر داخل التطبيق.`,
+    annexH: `نقاط تحتاج إلى مراجعة`,
+    annex: [
+      `الأحكام المعزوّة إلى جواهر المعاني ومنية المريد والدرة الخريدة قُرئت في صفحات هذه الكتب: الجواهر في تحقيق كنون، والمنية والدرة (ج٤) في النسخ المصوَّرة الواردة (بترقيم الطبعة). والباقي من مواقع تنقل عن الإفادة والإراءة والبغية، ولم نطلع عليها مباشرة.`,
+      `الزيادة عمدا (الدرة، ج٤، ص٩): عند أبي المواهب السائحي يبطل الورد قياسا على الصلاة، وعند النظيفي هي سوء أدب لا تُلزم الإعادة، لأن الورد ليس كالصلاة في كل شيء. أما النقص عمدا فمبطل.`,
+      `نهاية وقت الضرورة للازم الصباح: «غروب الشمس» و«المغرب» بمعنى واحد؛ وفي الدرة (ج٤، ص١٠): «إلى المغرب وهو غروب الشمس».`,
+      `استثناء الحائض والمريض: ثابت في الدرة (ج٤، ص١٥) مع النفساء، وكذلك في الوظيفة (ج٤، ص٣٢).`,
+      `طلوع الفجر أثناء ورد الصباح المقدَّم (الدرة، ج٤، ص١٤): في الإفادة يتمه ويعتد به، وفي الرماح يعيده؛ ووفّق بعضهم بأن يتمه ثم يعيده بعد الصبح، وقالت الدرة: «وهو توفيق حسن».`,
+      `الأكل أثناء الورد (الدرة، ج٤، ص٢٠): نُقل التساهل في الخفيف دون استئناف، وخصّ صاحب الرماح المنع بالورد المطلق، والمعتمد المنع في اللازم والوظيفة والهيللة.`,
+      `قضاء الوظيفة: ذكرت الدرة (ج٤، ص٣٥) أن في بعض نسخ الجواهر وبعض الإجازات عدم لزوم قضائها، وهو القول المرجوع عنه، وأن مؤلف الجواهر أصلح النسخة بيده بما هو صريح في لزوم القضاء كالورد.`,
+      `قضاء حضرة الجمعة (الدرة، ج٤، ص١٠٧): قال سيدي محمد أكنسوس: «والصواب قضاؤه»، خلافا للمعتمد. وفي العدد: الدرة «ألف فصاعدا»، والجواهر (ص٢٥٦) «من غير حد ولا حصر»، وقسم الأوراد في التطبيق يحدد ١٦٠٠. يجب التوحيد.`,
+      `ربطت الدرة (ج٤، ص١٠٦-١٠٧) وقت الهيللة صراحة بساعة الإجابة في آخر يوم الجمعة.`,
+      `الوظيفة وحضرة الجمعة (س٧٠): النص الذي اطلعنا عليه يكتب «العصرو»، وقد فُهم هنا بمعنى حضرة الجمعة.`,
+      `التأخر عن الحضرة (س٧٢): العبارة غير واضحة في الإكمال إلى ألف، ولم تُدرج في المتن.`,
+      `النصوص الفرنسية والعربية إعادة صياغة. يجب أن يراجع النص العربي مختص بالعربية قبل النشر.`
+    ],
+    srcH: `المصادر المطلع عليها`
+  };
+
+  function esc(s) { return s; }
+
+  function render(L, root) {
+    var h = '';
+    h += '<header class="hero"><h1>' + L.title + '</h1><p class="sub">' + L.sub + '</p>';
+    h += '<div class="status" role="note"><b>' + L.statusT + '</b><span>' + L.statusX + '</span></div>';
+    h += '<ul class="jump">';
+    L.sections.forEach(function (s) { h += '<li><a href="#' + root.id + '-' + s.id + '">' + s.nav + '</a></li>'; });
+    h += '<li><a href="#' + root.id + '-annex">' + L.annexT + '</a></li></ul></header>';
+
+    h += '<section class="blk"><h2 class="sec">' + L.glanceT + '</h2><div class="tablewrap"><table class="glance"><thead><tr>';
+    L.glanceHead.forEach(function (t) { h += '<th scope="col">' + t + '</th>'; });
+    h += '</tr></thead><tbody>';
+    L.glance.forEach(function (r) {
+      h += '<tr><th scope="row">' + r[0] + '</th><td>' + r[1] + '</td><td>' + r[2] + '</td><td>' + r[3] + '</td></tr>';
+    });
+    h += '</tbody></table></div></section>';
+
+    L.sections.forEach(function (s) {
+      h += '<section class="blk" id="' + root.id + '-' + s.id + '"><h2 class="sec"><span class="n">' + s.n + '</span>' + s.h + '</h2>';
+      h += '<p class="intro">' + s.intro + '</p>';
+      if (s.timing) {
+        h += '<dl class="timing">';
+        s.timing.forEach(function (t) { h += '<dt>' + t[0] + '</dt><dd>' + t[1] + '</dd>'; });
+        h += '</dl>';
+      }
+      if (s.cases) {
+        h += '<div class="cases">';
+        s.cases.forEach(function (k) {
+          h += '<div class="case"><div class="q">' + k.q + '</div><div class="a"><p>' + k.a + '</p><span class="src">' + k.s + '</span></div></div>';
+        });
+        h += '</div>';
+      }
+      if (s.warn) h += '<div class="warn">' + s.warn + '</div>';
+      if (s.list) {
+        h += '<ul class="ask">';
+        s.list.forEach(function (t) { h += '<li>' + t + '</li>'; });
+        h += '</ul>';
+      }
+      h += '</section>';
+    });
+
+    h += '<section class="blk" id="' + root.id + '-annex"><div class="annex"><h2 class="sec">' + L.annexT + '</h2><p class="intro">' + L.annexNote + '</p>';
+    h += '<h3>' + L.annexH + '</h3><ol>';
+    L.annex.forEach(function (t) { h += '<li>' + t + '</li>'; });
+    h += '</ol><h3>' + L.srcH + '</h3><ul class="sources">';
+    SOURCES.forEach(function (s) { h += '<li><a href="' + s.u + '" target="_blank" rel="noopener noreferrer">' + s.t + '</a></li>'; });
+    h += '</ul></div></section>';
+    root.innerHTML = h;
+  }
+
+  var frEl = document.getElementById('fr'), arEl = document.getElementById('ar');
+  var bFr = document.getElementById('btn-fr'), bAr = document.getElementById('btn-ar');
+  render(FR, frEl); render(AR, arEl);
+
+  function show(lang) {
+    var isAr = lang === 'ar';
+    frEl.hidden = isAr; arEl.hidden = !isAr;
+    bFr.setAttribute('aria-pressed', String(!isAr));
+    bAr.setAttribute('aria-pressed', String(isAr));
+    window.scrollTo(0, 0);
+  }
+  bFr.addEventListener('click', function () { show('fr'); });
+  bAr.addEventListener('click', function () { show('ar'); });
+  if (/^#ar/.test(location.hash)) show('ar');
+})();
+</script>

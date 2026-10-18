@@ -167,6 +167,29 @@ void main() {
       expect(build(draftStatus: 'brouillon').hasDrafts, isTrue);
     });
 
+    test('casesOnlyFor filtre aussi par type', () {
+      final content = build();
+      expect(content.casesOnlyFor(RepairWird.all, kind: RepairKind.erreur).map((c) => c.orderIndex), [1]);
+      expect(content.casesOnlyFor(RepairWird.lazim, kind: RepairKind.erreur), isEmpty);
+    });
+
+    test('la réponse négative se reconnaît à son texte français', () {
+      WirdRepairNote answer(String textFr) => WirdRepairNote(
+            id: 'n',
+            wird: RepairWird.hadra,
+            type: RepairNoteType.quickAnswer,
+            orderIndex: 1,
+            textFr: textFr,
+            textAr: 'نص',
+            isValid: true,
+          );
+      expect(answer('Ne se rattrape pas').isNegativeAnswer, isTrue);
+      expect(answer('Se rattrape, sans tarder').isNegativeAnswer, isFalse);
+      // Seule une réponse rapide peut être négative.
+      final intro = WirdRepairNote.fromRow(_noteRow(wird: 'hadra', type: 'intro'));
+      expect(intro.isNegativeAnswer, isFalse);
+    });
+
     test('sans cas, le contenu est vide même s\'il reste des notes', () {
       final content = WirdRepairContent(
         cases: const [],

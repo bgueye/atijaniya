@@ -3145,13 +3145,13 @@ class AppLocalizationsFr extends AppLocalizations {
   String get wirdRepairKindManque => 'Manqué ou oublié';
 
   @override
-  String get wirdRepairKindErreur => 'Erreur de nombre ou d\'ordre';
+  String get wirdRepairKindErreur => 'Erreur';
 
   @override
   String get wirdRepairKindInterruption => 'Interruption';
 
   @override
-  String get wirdRepairKindEmpechement => 'Empêchement (maladie, voyage…)';
+  String get wirdRepairKindEmpechement => 'Empêchement';
 
   @override
   String get wirdRepairEmpty =>
@@ -3168,9 +3168,6 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get wirdRepairAskMoqaddam => 'À demander à votre moqaddam';
-
-  @override
-  String get wirdRepairCommonRule => 'Vaut pour tous les wirds';
 
   @override
   String get wirdRepairCommonSection => 'Principes communs de réparation';
@@ -3286,4 +3283,68 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get authChangeEmail => 'Modifier l\'adresse e-mail';
+
+  @override
+  String get tariqaBenefitsCardTitle => 'Bienfaits de la Tijaniyya';
+
+  @override
+  String get tariqaBenefitsCardSubtitle =>
+      'La tariqa et ses wirds, avec leurs conditions';
+
+  @override
+  String get tariqaBenefitsTitle => 'Bienfaits de la Tijaniyya';
+
+  @override
+  String get tariqaBenefitsArabicTitle => 'فضائل الطريقة التجانية وأورادها';
+
+  @override
+  String get tariqaBenefitsIntro =>
+      'Ce que disent Jawâhir al-Ma\'ânî et les moqaddams sur la tariqa, le Lazim, la Wazifa et la Hadratou-l-Jouma, avec la condition que les textes attachent à chaque bienfait.';
+
+  @override
+  String get tariqaBenefitsFrenchOnly =>
+      'Cette page n\'existe qu\'en français pour l\'instant.';
+
+  @override
+  String get tariqaBenefitsContents => 'Sommaire';
+
+  @override
+  String get tariqaBenefitsLegendTitle => 'Comment lire les étiquettes';
+
+  @override
+  String get tariqaBenefitsBadgeRead => 'Lu dans…';
+
+  @override
+  String get tariqaBenefitsBadgeMultiple => 'Plusieurs sources';
+
+  @override
+  String get tariqaBenefitsBadgeSingle => 'Source unique';
+
+  @override
+  String get tariqaBenefitsBadgeSecondHand => 'Seconde main';
+
+  @override
+  String get tariqaBenefitsLegendRead => 'vérifié dans le texte du livre nommé';
+
+  @override
+  String get tariqaBenefitsLegendMultiple => 'au moins deux relais concordants';
+
+  @override
+  String get tariqaBenefitsLegendSingle => 'un seul relais';
+
+  @override
+  String get tariqaBenefitsLegendSecondHand =>
+      'connu par un commentaire ou une traduction';
+
+  @override
+  String get tariqaBenefitsSources => 'Sources';
+
+  @override
+  String get wirdRepairCommonGroup => 'Valables pour tous les wirds';
+
+  @override
+  String get wirdRepairWarningLabel => 'Mise en garde';
+
+  @override
+  String get wirdListUnderstandHeading => 'Comprendre et rattraper';
 }

@@ -13,6 +13,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'package:at_tijaniya/features/profil/presentation/profile_providers.dart';
+import 'package:at_tijaniya/features/tariqa_benefits/presentation/tariqa_benefits_providers.dart';
 import 'package:at_tijaniya/features/wird/domain/wird_repair_models.dart';
 import 'package:at_tijaniya/features/wird/presentation/wird_list_screen.dart';
 import 'package:at_tijaniya/features/wird/presentation/wird_repair_providers.dart';
@@ -24,6 +25,9 @@ Widget _wrap(Widget child, {required WirdRepairContent content, Locale locale = 
     overrides: [
       wirdRepairContentProvider.overrideWith((ref) async => content),
       isAdminProvider.overrideWithValue(false),
+      // La carte des Bienfaits lit aussi Supabase : sans contenu, elle reste
+      // masquée et ne gêne pas ces tests.
+      tariqaBenefitsRowsProvider.overrideWith((ref) async => (sections: <Map<String, dynamic>>[], cards: <Map<String, dynamic>>[])),
     ],
     child: MaterialApp(
       locale: locale,
@@ -100,14 +104,21 @@ void main() {
   });
 
   group('écran', () {
-    testWidgets('montre la réponse du Lazim, ses cas et les règles communes', (tester) async {
+    testWidgets('montre la réponse du Lazim, ses cas puis les règles communes', (tester) async {
       await tester.pumpWidget(_wrap(const WirdRepairScreen(), content: _content()));
       await tester.pumpAndSettle();
 
       expect(find.text('Se rattrape'), findsOneWidget);
       expect(find.text('Lazim oublié'), findsOneWidget);
-      expect(find.text('Doute sur le nombre'), findsOneWidget);
-      expect(find.text('Vaut pour tous les wirds'), findsOneWidget);
+      // Un seul intertitre pour les règles communes, placé après les cas du
+      // wird choisi (audit du 2026-10-18). La liste ne construit pas ce qui
+      // est hors écran : on descend jusqu'à elles.
+      await tester.scrollUntilVisible(find.text('Doute sur le nombre'), 200);
+      expect(find.text('Valables pour tous les wirds'), findsOneWidget);
+      expect(
+        tester.getTopLeft(find.text('Lazim oublié')).dy,
+        lessThan(tester.getTopLeft(find.text('Doute sur le nombre')).dy),
+      );
       expect(find.text('Le temps est passé'), findsNothing);
       expect(find.textContaining('Brouillon en attente'), findsNothing);
       // En bas de page : la liste ne construit pas ce qui est hors écran.
@@ -131,12 +142,16 @@ void main() {
       await tester.pumpWidget(_wrap(const WirdRepairScreen(), content: _content()));
       await tester.pumpAndSettle();
 
-      await tester.tap(find.text("Erreur de nombre ou d'ordre"));
+      await tester.tap(find.text('Erreur'));
       await tester.pumpAndSettle();
       expect(find.text('Doute sur le nombre'), findsOneWidget);
       expect(find.text('Lazim oublié'), findsNothing);
 
-      await tester.tap(find.text('Interruption'));
+      // « Manqué » sur le Lazim, puis la Wazifa, qui n'a aucun cas de ce type.
+      await tester.tap(find.text('Manqué ou oublié'));
+      await tester.pumpAndSettle();
+      expect(find.text('Lazim oublié'), findsOneWidget);
+      await tester.tap(find.text('Wazifa'));
       await tester.pumpAndSettle();
       expect(
         find.text('Aucun cas dans les sources pour cette combinaison. Demandez à votre moqaddam.'),
@@ -156,8 +171,10 @@ void main() {
       expect(find.text('Lazim oublié'), findsOneWidget);
       await tester.scrollUntilVisible(find.text('Le temps est passé'), 200);
       expect(find.text('Le temps est passé'), findsOneWidget);
-      // Chaque règle a sa section : pas de mention « tous les wirds ».
-      expect(find.text('Vaut pour tous les wirds'), findsNothing);
+      // Chaque règle a sa section : pas d'intertitre « tous les wirds ».
+      expect(find.text('Valables pour tous les wirds'), findsNothing);
+      // La réponse rapide est rappelée sous le nom du wird.
+      expect(find.text('Se rattrape'), findsOneWidget);
       expect(find.text('Par situation'), findsOneWidget);
     });
 

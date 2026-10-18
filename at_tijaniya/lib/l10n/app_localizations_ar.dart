@@ -3038,13 +3038,13 @@ class AppLocalizationsAr extends AppLocalizations {
   String get wirdRepairKindManque => 'فات أو نُسي';
 
   @override
-  String get wirdRepairKindErreur => 'خطأ في العدد أو الترتيب';
+  String get wirdRepairKindErreur => 'خطأ';
 
   @override
   String get wirdRepairKindInterruption => 'انقطاع';
 
   @override
-  String get wirdRepairKindEmpechement => 'عذر (مرض، سفر…)';
+  String get wirdRepairKindEmpechement => 'عذر';
 
   @override
   String get wirdRepairEmpty =>
@@ -3061,9 +3061,6 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get wirdRepairAskMoqaddam => 'اسأل مقدَّمك';
-
-  @override
-  String get wirdRepairCommonRule => 'لكل الأوراد';
 
   @override
   String get wirdRepairCommonSection => 'قواعد الجبر المشتركة';
@@ -3177,4 +3174,66 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get authChangeEmail => 'تعديل عنوان البريد الإلكتروني';
+
+  @override
+  String get tariqaBenefitsCardTitle => 'فضائل الطريقة التجانية';
+
+  @override
+  String get tariqaBenefitsCardSubtitle => 'الطريقة وأورادها، مع شروطها';
+
+  @override
+  String get tariqaBenefitsTitle => 'فضائل الطريقة التجانية';
+
+  @override
+  String get tariqaBenefitsArabicTitle => 'فضائل الطريقة التجانية وأورادها';
+
+  @override
+  String get tariqaBenefitsIntro =>
+      'ما تقوله جواهر المعاني والمقدَّمون عن الطريقة واللازم والوظيفة وحضرة الجمعة، مع الشرط الذي تقرنه النصوص بكل فضل.';
+
+  @override
+  String get tariqaBenefitsFrenchOnly =>
+      'هذه الصفحة متوفرة بالفرنسية فقط حاليا.';
+
+  @override
+  String get tariqaBenefitsContents => 'المحتويات';
+
+  @override
+  String get tariqaBenefitsLegendTitle => 'كيف تُقرأ الوسوم';
+
+  @override
+  String get tariqaBenefitsBadgeRead => 'مقروء في…';
+
+  @override
+  String get tariqaBenefitsBadgeMultiple => 'مصادر متعددة';
+
+  @override
+  String get tariqaBenefitsBadgeSingle => 'مصدر واحد';
+
+  @override
+  String get tariqaBenefitsBadgeSecondHand => 'بواسطة';
+
+  @override
+  String get tariqaBenefitsLegendRead => 'تُحقِّق منه في نص الكتاب المذكور';
+
+  @override
+  String get tariqaBenefitsLegendMultiple => 'ناقلان متوافقان على الأقل';
+
+  @override
+  String get tariqaBenefitsLegendSingle => 'ناقل واحد';
+
+  @override
+  String get tariqaBenefitsLegendSecondHand => 'معروف عن طريق شرح أو ترجمة';
+
+  @override
+  String get tariqaBenefitsSources => 'المصادر';
+
+  @override
+  String get wirdRepairCommonGroup => 'قواعد لكل الأوراد';
+
+  @override
+  String get wirdRepairWarningLabel => 'تحذير';
+
+  @override
+  String get wirdListUnderstandHeading => 'الفهم والتدارك';
 }

@@ -620,3 +620,29 @@ relecture. Détail dans `docs/09` (« Rattraper son wird »).
 - valider l'écran sur téléphone (compte admin pour voir le brouillon), en français et en
   arabe ;
 - envoyer la version `1.0.0+3` sur la piste de test fermé.
+
+**Version 2 du contenu (2026-10-18)** : remplacée en base à partir de
+`docs/Rattraper-son-wird.html` (migration `2026-10-18_wird_repair_v2.sql`) : 39 cas au lieu
+de 35, sources avec les pages de Jawâhir, de la Munya et d'al-Durra, Lazim du matin
+« jusqu'au zénith ». Toujours en brouillon ; aucune nouvelle version de l'app nécessaire.
+
+## Bienfaits de la Tijaniyya (2026-10-18)
+
+Nouvelle page, ouverte depuis une carte de l'écran Wirds (sous les Conditions de la
+Tariqa) : les bienfaits de la tariqa, du Lazim, de la Wazifa et de la Hadratou-l-Jouma,
+chacun avec la condition que les textes y attachent et l'étiquette de solidité de sa
+source. Contenu dans Supabase (`tariqa_benefit_sections`, `tariqa_benefit_cards`),
+**entièrement en brouillon** : carte et page invisibles pour les testeurs tant que le
+moqaddam référent n'a pas relu. Texte en français seulement, affiché tel quel dans l'app en
+arabe. Détail dans `docs/09` (« Bienfaits de la Tijaniyya »).
+
+**Reste à faire :**
+- relecture par le moqaddam référent (avec l'annexe de travail du document), puis passage
+  à `valide` en SQL (`update public.tariqa_benefit_sections set content_status = 'valide';`
+  et de même pour `tariqa_benefit_cards`) — l'écran n'arrive chez les testeurs qu'avec la
+  version qui le contient (`1.0.0+4` ou suivante) ;
+- avant publication, remplacer les références web restantes par des références imprimées
+  (demande de l'annexe du document) ;
+- une version arabe du texte, si le porteur de projet en fournit une (colonnes `_ar`
+  prévues) ;
+- valider l'écran sur téléphone (compte admin), en français et en arabe.

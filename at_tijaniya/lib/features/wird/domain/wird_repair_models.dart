@@ -124,6 +124,13 @@ class WirdRepairNote {
   String? labelFor(bool isArabic) => isArabic ? labelAr : labelFr;
   String textFor(bool isArabic) => isArabic ? textAr : textFr;
 
+  /// Réponse rapide négative (« Ne se rattrape pas ») : l'écran la dessine
+  /// autrement que « Se rattrape », pour qu'on ne confonde pas les deux d'un
+  /// coup d'œil (audit de présentation du 2026-10-18). Lue sur le texte
+  /// français, qui existe toujours, plutôt que sur le wird : c'est le contenu
+  /// validé qui décide de la réponse, pas l'app.
+  bool get isNegativeAnswer => type == RepairNoteType.quickAnswer && textFr.trimLeft().startsWith('Ne ');
+
   factory WirdRepairNote.fromRow(Map<String, dynamic> row) {
     return WirdRepairNote(
       id: row['id'] as String,
@@ -169,8 +176,11 @@ class WirdRepairContent {
   }
 
   /// Les cas rattachés exactement à [wird], sans les règles communes — pour
-  /// la lecture complète, section par section.
-  List<WirdRepairCase> casesOnlyFor(RepairWird wird) => cases.where((c) => c.wird == wird).toList();
+  /// la lecture complète, section par section, et pour la vue par situation,
+  /// qui montre d'abord les cas du wird choisi puis les règles communes.
+  /// [kind] nul : tous les types.
+  List<WirdRepairCase> casesOnlyFor(RepairWird wird, {RepairKind? kind}) =>
+      cases.where((c) => c.wird == wird && (kind == null || c.kind == kind)).toList();
 
   List<WirdRepairNote> notesFor(RepairWird wird, RepairNoteType type) {
     return notes.where((n) => n.wird == wird && n.type == type).toList();

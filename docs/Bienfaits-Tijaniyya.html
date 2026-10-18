@@ -1,0 +1,653 @@
+<title>Bienfaits de la Tijaniyya</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Cormorant+Garamond:wght@500;600;700&family=Jost:wght@400;500;600&display=swap">
+<style>
+  /* Layout: one reading column (780px). Hero + "l'essentiel", then six numbered sections made of benefit cards (claim, Arabic quote, condition, source, evidence pill), a summary table, sources, and a dashed working annex. Tokens follow the At-Tijaniya design system (zaytoune, parchment, gold). */
+  :root {
+    --bg: #F7F2E7; --card: #FFFDF8; --fg: #2B2620; --muted: #6B5C43; --line: #DED3BA;
+    --accent: #0F3D2E; --accent-2: #1C6E4A; --accent-soft: #E4EEE8; --gold: #9A7424; --gold-soft: #F1E6C9;
+    --amber: #8A5A10; --amber-soft: #F5E9D2; --slate: #4F5B66; --slate-soft: #E7EAEC;
+    --font-display: "Cormorant Garamond", "Iowan Old Style", Georgia, serif;
+    --font-body: "Jost", system-ui, -apple-system, "Segoe UI", sans-serif;
+    --font-ar: "Amiri", "Noto Naskh Arabic", "Traditional Arabic", serif;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #0D1913; --card: #14241C; --fg: #EDE6D6; --muted: #B7A98B; --line: #2A3D33;
+      --accent: #8FD1B0; --accent-2: #6FBF98; --accent-soft: #1A3226; --gold: #D9B766; --gold-soft: #2E2812;
+      --amber: #E2B66A; --amber-soft: #2E2410; --slate: #B4C0CA; --slate-soft: #1E2A30;
+      color-scheme: dark;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #0D1913; --card: #14241C; --fg: #EDE6D6; --muted: #B7A98B; --line: #2A3D33;
+    --accent: #8FD1B0; --accent-2: #6FBF98; --accent-soft: #1A3226; --gold: #D9B766; --gold-soft: #2E2812;
+    --amber: #E2B66A; --amber-soft: #2E2410; --slate: #B4C0CA; --slate-soft: #1E2A30;
+    color-scheme: dark;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; background: var(--bg); color: var(--fg);
+    font-family: var(--font-body); font-size: 16px; line-height: 1.65;
+    padding-block: 0 56px;
+    padding-left: max(16px, env(safe-area-inset-left, 0px));
+    padding-right: max(16px, env(safe-area-inset-right, 0px));
+  }
+  .wrap { max-width: 780px; margin-inline: auto; }
+  a { color: var(--accent); }
+  a:focus-visible { outline: 3px solid var(--gold); outline-offset: 2px; }
+
+  .bar { border-bottom: 1px solid var(--line); padding: 14px 0 10px; }
+  .brand { font-size: 12px; letter-spacing: .14em; text-transform: uppercase; color: var(--muted); font-weight: 500; }
+
+  header.hero { padding-block: 32px 4px; }
+  .hero h1 { font-family: var(--font-display); font-weight: 600; font-size: clamp(34px, 7vw, 50px); line-height: 1.08; color: var(--accent); margin: 0 0 10px; text-wrap: balance; }
+  .hero .ar-title { font-family: var(--font-ar); font-size: clamp(26px, 5vw, 34px); color: var(--gold); margin: 0 0 12px; line-height: 1.5; }
+  .hero p.sub { margin: 0; font-size: 18px; color: var(--muted); max-width: 62ch; }
+  .status { margin-top: 22px; border: 1px solid var(--gold); background: var(--gold-soft); border-radius: 10px; padding: 14px 16px; }
+  .status b { display: block; font-size: 12px; letter-spacing: .12em; text-transform: uppercase; color: var(--gold); margin-bottom: 4px; }
+  .status span { font-size: 15px; }
+
+  .essential { margin-top: 26px; background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 18px 20px 6px; }
+  .essential h2 { font-family: var(--font-display); font-size: 24px; color: var(--accent); margin: 0 0 8px; font-weight: 600; }
+  .essential ul { margin: 0 0 12px; padding-inline-start: 20px; }
+  .essential li { margin-bottom: 8px; }
+
+  .legend { display: flex; flex-wrap: wrap; gap: 8px 16px; margin: 18px 0 0; font-size: 14px; color: var(--muted); align-items: center; }
+  .ev { display: inline-block; font-size: 12px; font-weight: 600; letter-spacing: .02em; padding: 2px 10px; border-radius: 999px; white-space: nowrap; vertical-align: 1px; }
+  .ev-m { background: var(--accent-soft); color: var(--accent-2); }
+  .ev-u { background: var(--amber-soft); color: var(--amber); }
+  .ev-s { background: var(--slate-soft); color: var(--slate); }
+  .ev-v { background: var(--accent-2); color: var(--card); }
+
+  .jump { display: flex; flex-wrap: wrap; gap: 8px; margin: 22px 0 6px; padding: 0; list-style: none; }
+  .jump a { display: inline-block; font-size: 14px; padding: 6px 12px; border: 1px solid var(--line); border-radius: 999px; text-decoration: none; background: var(--card); }
+  .jump a:hover { border-color: var(--accent); }
+
+  section.blk { padding-top: 46px; scroll-margin-top: 16px; }
+  h2.sec { display: flex; align-items: baseline; gap: 12px; font-family: var(--font-display); font-weight: 600; font-size: clamp(26px, 5vw, 34px); line-height: 1.15; color: var(--accent); margin: 0 0 10px; text-wrap: balance; }
+  h2.sec .n { font-size: 15px; font-family: var(--font-body); font-weight: 600; color: var(--gold); letter-spacing: .06em; flex-shrink: 0; }
+  p.intro { margin: 0 0 18px; color: var(--muted); max-width: 66ch; }
+  h3.sub { font-family: var(--font-display); font-size: 22px; font-weight: 600; color: var(--accent); margin: 26px 0 10px; }
+
+  .card { background: var(--card); border: 1px solid var(--line); border-inline-start: 3px solid var(--gold); border-radius: 12px; padding: 16px 18px; margin-bottom: 12px; }
+  .card h4 { margin: 0 0 6px; font-size: 17px; font-weight: 600; color: var(--fg); line-height: 1.4; }
+  .card p { margin: 0 0 8px; }
+  .card p:last-child { margin-bottom: 0; }
+  .card .cond { font-size: 15px; background: var(--accent-soft); border-radius: 8px; padding: 8px 12px; margin: 10px 0 8px; }
+  .card .cond b { color: var(--accent); }
+  .card .meta { display: flex; flex-wrap: wrap; gap: 6px 10px; align-items: center; font-size: 13px; color: var(--muted); margin-top: 8px; }
+  .card .meta a { color: var(--muted); }
+  .card ol, .card ul { margin: 6px 0 8px; padding-inline-start: 22px; }
+  .card li { margin-bottom: 6px; }
+
+  blockquote.ar { font-family: var(--font-ar); font-size: 21px; line-height: 1.9; color: var(--accent); margin: 10px 0 4px; padding: 0; text-align: start; }
+  p.tr { font-style: italic; color: var(--fg); margin: 0 0 8px; }
+
+  .tablewrap { overflow-x: auto; border: 1px solid var(--line); border-radius: 10px; background: var(--card); }
+  table.t { border-collapse: collapse; width: 100%; min-width: 640px; font-size: 14.5px; }
+  .t th, .t td { padding: 11px 13px; vertical-align: top; text-align: start; border-bottom: 1px solid var(--line); }
+  .t tr:last-child td, .t tr:last-child th { border-bottom: 0; }
+  .t thead th { font-family: var(--font-display); font-size: 18px; color: var(--accent); background: var(--accent-soft); font-weight: 600; }
+  .t tbody th { font-weight: 600; width: 20%; }
+
+  .sources { list-style: none; margin: 0; padding: 0; }
+  .sources li { margin-bottom: 8px; font-size: 15px; overflow-wrap: anywhere; }
+
+  .annex { margin-top: 56px; border: 1px dashed var(--gold); border-radius: 12px; padding: 22px 20px 12px; background: var(--card); }
+  .annex h2.sec { font-size: 26px; }
+  .annex h3 { font-family: var(--font-display); font-size: 21px; color: var(--accent); margin: 24px 0 8px; font-weight: 600; }
+  .annex ul, .annex ol { padding-inline-start: 22px; margin: 0 0 14px; }
+  .annex li { margin-bottom: 8px; font-size: 15px; }
+  .annex p { font-size: 15px; }
+  .annex .ar-inline { font-family: var(--font-ar); font-size: 18px; }
+  .ar-in { font-family: var(--font-ar); font-size: 1.12em; unicode-bidi: isolate; }
+  .annex table.t { font-size: 13.5px; }
+
+  @media (max-width: 560px) {
+    .card { padding: 14px 14px; }
+    blockquote.ar { font-size: 19.5px; }
+  }
+  @media (prefers-reduced-motion: no-preference) { html { scroll-behavior: smooth; } }
+</style>
+
+<div class="wrap">
+<div class="bar"><span class="brand">At-Tijaniya · <span class="ar-in" lang="ar" dir="rtl">التجانية</span></span></div>
+
+<header class="hero">
+  <h1>Les bienfaits de la Tijaniyya et de ses wirds</h1>
+  <p class="ar-title" lang="ar" dir="rtl">فضائل الطريقة التجانية وأورادها</p>
+  <p class="sub">Ce que disent Jawâhir al-Ma'ânî et les moqaddams sur la tariqa, le Lazim, la Wazifa et la Hadratou-l-Jouma, avec la condition que les textes attachent à chaque bienfait.</p>
+  <div class="status"><b>Statut : brouillon</b><span>Contenu religieux à valider avant toute publication dans l'application. L'annexe de travail en fin de page doit être retirée avant publication.</span></div>
+</header>
+
+<div class="essential">
+  <h2>L'essentiel</h2>
+  <ul>
+    <li><b>Aucun bienfait n'est inconditionnel.</b> Les sources exigent l'autorisation (idhn) d'un moqaddam, l'exclusivité du wird, l'amour du Cheikh sans insulte ni hostilité jusqu'à la mort, la persévérance, le respect de la charia et, pour la Salat al-Fatih, l'adhésion confiante (taslîm).</li>
+    <li><b>La tariqa :</b> selon Jawâhir al-Ma'ânî, le Paradis sans jugement ni châtiment est promis à quiconque prend le wird du Cheikh, grâce étendue à ses parents, conjoints et enfants.</li>
+    <li><b>Le Lazim :</b> une Salat al-Fatih vaut d'abord six lectures du Coran, puis six mille fois tout dhikr et toute invocation. Les auteurs tijanis précisent qu'il s'agit d'une récompense, non d'un rang, et que la récitation du Coran passe avant.</li>
+    <li><b>La Wazifa :</b> la Jawharat al-Kamal vaut trois fois la glorification du monde et, dès sept récitations, l'esprit du Prophète ﷺ et des quatre califes est présent. Elle exige l'ablution à l'eau.</li>
+    <li><b>La Hadratou-l-Jouma :</b> obligatoire dans la tariqa et faite en assemblée selon Jawâhir ; selon Munyat al-Murid, le Prophète ﷺ y est présent, et la manquer fait perdre un bien immense qui ne se rattrape pas.</li>
+  </ul>
+</div>
+
+<div class="legend" aria-label="Légende">
+  <span><span class="ev ev-v">Lu dans…</span> vérifié dans le texte du livre nommé</span>
+  <span><span class="ev ev-m">Plusieurs sources</span> au moins deux relais concordants</span>
+  <span><span class="ev ev-u">Source unique</span> un seul relais</span>
+  <span><span class="ev ev-s">Seconde main</span> connu par un commentaire ou une traduction</span>
+</div>
+
+<nav aria-label="Sommaire">
+<ul class="jump">
+  <li><a href="#tariqa">1 · La tariqa</a></li>
+  <li><a href="#lazim">2 · Le Lazim</a></li>
+  <li><a href="#wazifa">3 · La Wazifa</a></li>
+  <li><a href="#hadra">4 · Hadratou-l-Jouma</a></li>
+  <li><a href="#fruits">5 · Fruits spirituels</a></li>
+  <li><a href="#conditions">6 · Conditions</a></li>
+  <li><a href="#recap">Récapitulatif</a></li>
+  <li><a href="#sources">Sources</a></li>
+</ul>
+</nav>
+
+<!-- 1 -->
+<section class="blk" id="tariqa">
+  <h2 class="sec"><span class="n">1</span>La tariqa : le Paradis sans jugement, étendu à la famille</h2>
+  <p class="intro">Le bienfait central de l'affiliation est une garantie que Cheikh Ahmed Tijani dit avoir reçue du Prophète ﷺ, rencontré à l'état de veille, en faveur de quiconque prend de lui le wird.</p>
+
+  <div class="card">
+    <h4>L'entrée au Paradis sans compte ni châtiment</h4>
+    <p>Le Cheikh rapporte avoir demandé au Prophète ﷺ, pour ceux qui ont pris de lui un dhikr, qu'ils soient à l'abri du châtiment de la mort jusqu'à l'entrée au Paradis, qu'ils y entrent sans compte ni châtiment dans le premier groupe, et qu'ils soient avec lui en 'Illiyyîn, auprès du Prophète ﷺ. La réponse fut :</p>
+    <blockquote class="ar" lang="ar" dir="rtl">ضَمِنْتُ لَهُمْ هَذَا كُلَّهُ ضَمَانَةً لَا تَنْقَطِعُ حَتَّى تُجَاوِرَنِي أَنْتَ وَهُمْ فِي عِلِّيِّينَ</blockquote>
+    <p class="tr">« Je leur garantis tout cela, d'une garantie qui ne s'interrompt pas, jusqu'à ce que toi et eux soyez mes voisins en 'Illiyyîn. »</p>
+    <p>Le Cheikh précise ensuite :</p>
+    <blockquote class="ar" lang="ar" dir="rtl">وَمَنْ أَخَذَ عَنِّي الوِرْدَ المَعْلُومَ الَّذِي هُوَ لَازِمٌ لِلطَّرِيقَةِ أَوْ عَمَّنْ أَذِنْتُهُ يَدْخُلُ الجَنَّةَ هُوَ وَوَالِدَاهُ وَأَزْوَاجُهُ وَذُرِّيَّتُهُ المُنْفَصِلَةُ عَنْهُ، لَا الحَفَدَةُ، بِلَا حِسَابٍ وَلَا عِقَابٍ</blockquote>
+    <p class="tr">« Celui qui a pris de moi le wird connu, obligatoire dans la tariqa, ou de celui que j'ai autorisé, entre au Paradis, lui, ses deux parents, ses épouses et sa descendance directe, non les petits-enfants, sans compte ni châtiment. »</p>
+    <p class="cond"><b>Conditions, dans le même passage :</b> « <span class="ar-in" lang="ar" dir="rtl">بِشَرْطِ أَنْ لَا يَصْدُرَ مِنْهُمْ سَبٌّ وَلَا بُغْضٌ وَلَا عَدَاوَةٌ، وَبِدَوَامِ مَحَبَّةِ الشَّيْخِ بِلَا انْقِطَاعٍ إِلَى المَمَاتِ، وَكَذَلِكَ مُدَاوَمَةُ الوِرْدِ إِلَى المَمَاتِ</span> » : qu'il n'émane d'eux ni insulte, ni haine, ni hostilité, que l'amour du Cheikh dure sans interruption jusqu'à la mort, et de même la persévérance dans le wird jusqu'à la mort. Le Prophète ﷺ ajoute que celui qui a reçu le wird par un intermédiaire autorisé « est comme s'il l'avait pris de toi directement ».</p>
+    <div class="meta"><span class="ev ev-v">Lu dans Jawâhir</span><a href="https://www.cheikh-skiredj.com">Jawâhir al-Ma'ânî, éd. critique M. al-Râdî Kanûn, p. 263, 267</a> · <a href="https://archive.org/details/jawahir-al-maani">éd. Ravane Mbaye, p. 1152-1154</a> · Munyat al-Murid, p. 10</div>
+  </div>
+
+  <div class="card">
+    <h4>Celui qui voit le Cheikh, le sert ou le nourrit</h4>
+    <p>Le Cheikh rapporte cette parole du Prophète ﷺ, reçue « à l'état de veille et non en rêve » :</p>
+    <blockquote class="ar" lang="ar" dir="rtl">أَنْتَ مِنَ الآمِنِينَ وَكُلُّ مَنْ رَآكَ مِنَ الآمِنِينَ إِنْ مَاتَ عَلَى الإِيمَانِ، وَكُلُّ مَنْ أَحْسَنَ إِلَيْكَ بِخِدْمَةٍ أَوْ غَيْرِهَا، وَكُلُّ مَنْ أَطْعَمَكَ يَدْخُلُونَ الجَنَّةَ بِلَا حِسَابٍ وَلَا عِقَابٍ</blockquote>
+    <p class="tr">« Tu es parmi ceux qui sont en sécurité, et quiconque t'a vu est parmi eux s'il meurt dans la foi ; quiconque t'a fait du bien, par un service ou autrement, et quiconque t'a nourri, entrent au Paradis sans compte ni châtiment. »</p>
+    <p class="cond"><b>Condition :</b> mourir dans la foi ; le Cheikh demande ensuite la même grâce pour quiconque l'aime « et ne lui devient pas hostile après cela ».</p>
+    <div class="meta"><span class="ev ev-v">Lu dans Jawâhir</span><a href="https://www.cheikh-skiredj.com">éd. Kanûn, p. 262</a></div>
+  </div>
+
+  <div class="card">
+    <h4>Celui qui aime le Cheikh</h4>
+    <p>Selon la parole du Prophète ﷺ que rapporte Cheikh Ahmed Tijani : « Quiconque t'aime est l'aimé du Prophète… et il ne mourra pas avant de devenir un saint. »</p>
+    <p>Le Cheikh annonce aussi, dans une « bonne nouvelle » qu'il a dictée :</p>
+    <blockquote class="ar" lang="ar" dir="rtl">أَبْشِرُوا إِنَّ كُلَّ مَنْ كَانَ فِي مَحَبَّتِنَا إِلَى أَنْ مَاتَ عَلَيْهَا، يُبْعَثُ مِنَ الآمِنِينَ عَلَى أَيِّ حَالَةٍ كَانَ، مَا لَمْ يَلْبَسْ حُلَّةَ الأَمَانِ مِنْ مَكْرِ اللَّهِ</blockquote>
+    <p class="tr">« Réjouissez-vous : quiconque est demeuré dans notre amour jusqu'à en mourir sera ressuscité parmi ceux qui sont en sécurité, quel que soit son état, tant qu'il n'a pas revêtu l'habit de celui qui se croit à l'abri du dessein de Dieu. »</p>
+    <p class="cond"><b>Condition :</b> persévérer dans cet amour jusqu'à la mort, sans se croire à l'abri du dessein de Dieu.</p>
+    <div class="meta"><span class="ev ev-v">Lu dans Jawâhir</span><a href="https://www.cheikh-skiredj.com">éd. Kanûn, p. 752</a> · <a href="https://archive.org/details/jawahir-al-maani">éd. Ravane Mbaye, p. 1152</a> · <a href="https://library.oapen.org/bitstream/handle/20.500.12657/40109/9781469660844.pdf">Z. Wright, Realizing Islam, p. 3-4</a></div>
+  </div>
+
+  <div class="card">
+    <h4>Ceux qui aiment le Cheikh et leurs familles</h4>
+    <p>Dans une lettre que Sidi 'Ali Harazim dit avoir recopiée « de sa main, lettre par lettre », le Cheikh demande au Prophète ﷺ une garantie pour un cercle large : quiconque l'aime sans lui être hostile, le prend pour maître ou reçoit de lui un dhikr, le visite, le sert, lui rend un service ou prie pour lui, avec leurs pères, mères, fils, filles, épouses et les parents de leurs épouses. Il demande pour eux : mourir dans la foi, la sécurité contre tout châtiment de la mort jusqu'au Paradis, le pardon de tous leurs péchés, l'acquittement de leurs torts envers autrui « des trésors de la grâce de Dieu, non de nos bonnes œuvres », l'exemption du jugement, l'ombre du Trône, un passage sur le Sirat « plus rapide qu'un clin d'œil », l'abreuvement au bassin du Prophète ﷺ, l'entrée au Paradis sans compte dans le premier groupe et une demeure en 'Illiyyîn.</p>
+    <blockquote class="ar" lang="ar" dir="rtl">كُلُّ مَا فِي هَذَا الكِتَابِ ضَمِنْتُهُ لَكَ ضَمَانَةً لَا تَتَخَلَّفُ عَنْكَ وَعَنْهُمْ أَبَدًا إِلَى أَنْ تَكُونَ أَنْتَ وَجَمِيعُ مَنْ ذَكَرْتَ فِي جِوَارِي فِي أَعْلَى عِلِّيِّينَ</blockquote>
+    <p class="tr">« Tout ce qui est dans cette lettre, je te le garantis d'une garantie qui ne fera jamais défaut, à toi et à eux, jusqu'à ce que toi et tous ceux que tu as nommés soyez mes voisins au plus haut de 'Illiyyîn. »</p>
+    <p class="cond"><b>Condition :</b> « <span class="ar-in" lang="ar" dir="rtl">وَأَمَّا مَنْ عَادَانِي أَوْ أَبْغَضَنِي فَلَا</span> », « quant à celui qui m'a été hostile ou m'a haï, non ». Al-Durra al-Kharida, résumant Rimâh, compte trente-neuf mérites, dont quatorze reviennent à tous ceux qui sont attachés au Cheikh par l'adhésion, la croyance, la vénération et l'amour, sans objection contre lui, en aimant et respectant les gens de sa voie ; les autres sont propres à ceux qui s'attachent à ses wirds.</p>
+    <div class="meta"><span class="ev ev-v">Lu dans Jawâhir</span><a href="https://www.cheikh-skiredj.com">éd. Kanûn, p. 263-265</a> · <span class="ev ev-v">Lu dans al-Durra</span> al-Durra al-Kharida, t. 4, p. 28</div>
+  </div>
+
+  <div class="card">
+    <h4>Le pardon des péchés, chapitre propre du Rimâh</h4>
+    <p>El Hadj Omar consacre au pardon le chapitre 37 de Rimâh :</p>
+    <blockquote class="ar" lang="ar" dir="rtl">في بيان جواز مغفرة الله تعالى لعبده جميع ذنوبه الماضية التي فعلها والمستقبلة التي سيفعلها</blockquote>
+    <p class="tr">« Exposé de la possibilité que Dieu pardonne à Son serviteur tous ses péchés, passés et à venir. »</p>
+    <p>Munyat al-Murid d'Ibn Baba al-'Alawi met ce pardon en vers, à propos de ceux qui prennent le wird : Dieu leur pardonne les grands et les petits péchés, et les torts envers autrui sont acquittés « des trésors du Glorieux », non des bonnes œuvres du disciple.</p>
+    <blockquote class="ar" lang="ar" dir="rtl">وَيَغْفِرُ اللَّهُ لَهُ الكَبَائِرَا · مِنْ ذَنْبِهِ وَيَغْفِرُ الصَّغَائِرَا</blockquote>
+    <div class="meta"><span class="ev ev-v">Lu dans la Munya</span> Munyat al-Murid, p. 10 · <span class="ev ev-s">Seconde main</span> Rimâh, t. 1, table des matières</div>
+  </div>
+
+  <div class="card">
+    <h4>Un engagement exclusif, sans contrainte</h4>
+    <p>Selon Jawâhir, c'est d'abord au Cheikh lui-même que le Prophète ﷺ a dit :</p>
+    <blockquote class="ar" lang="ar" dir="rtl">فَاتْرُكْ عَنْكَ جَمِيعَ مَا أَخَذْتَ مِنْ جَمِيعِ الطُّرُقِ ... الْزَمْ هَذِهِ الطَّرِيقَةَ مِنْ غَيْرِ خَلْوَةٍ وَلَا اعْتِزَالٍ عَنِ النَّاسِ</blockquote>
+    <p class="tr">« Laisse tout ce que tu as pris de toutes les voies… Attache-toi à cette voie sans retraite ni éloignement des gens », « sans gêne, sans contrainte et sans excès d'efforts ».</p>
+    <p>La même règle vaut pour le disciple : « Celui qui a pris notre wird et est entré dans notre tariqa ne visite aucun des saints vivants. » Il peut visiter les saints défunts en considérant qu'il les visite pour Dieu seul. Munyat al-Murid précise en note que la visite interdite est celle où l'on recherche le secours (madad) d'un saint ; autrement, elle ne l'est pas.</p>
+    <div class="meta"><span class="ev ev-v">Lu dans Jawâhir</span><a href="https://www.cheikh-skiredj.com">éd. Kanûn, p. 147, 255</a> · Munyat al-Murid, p. 12</div>
+  </div>
+</section>
+
+<!-- 2 -->
+<section class="blk" id="lazim">
+  <h2 class="sec"><span class="n">2</span>Le Lazim : pardon et Salat al-Fatih au mérite démultiplié</h2>
+  <p class="intro">Le Lazim est le wird quotidien obligatoire, récité matin et soir. Il compte cent Istighfar, cent Salat al-Fatih et cent Hailala, ses trois piliers (<span class="ar-in" lang="ar" dir="rtl">أركان الورد ثلاثة</span>). Rimâh consacre aux mérites des adhkâr obligatoires deux chapitres : l'un « de façon globale » (chap. 38), l'autre « en détail » (chap. 39).</p>
+
+  <div class="card">
+    <h4>Trois piliers, une progression</h4>
+    <p>Pour Cheikh Bashir al-Fallani al-Tijani, l'Istighfar purifie le disciple et le rend apte à entrer dans la Présence ; la prière sur le Prophète ﷺ est le moyen qui mène à la porte ; « Lâ ilâha illâ-llâh » est le pilier le plus grand. Cheikh Ibrahim Niasse en dit le fruit : « <span class="ar-in" lang="ar" dir="rtl">وَلَازِمَنْ أَذْكَارَ هَذَا الوِرْدِ · إِذًا لَعَمْرِي لِلْوُصُولِ تَهْدِي</span> », « attache-toi aux formules de ce wird : par ma vie, elles mènent à l'arrivée [auprès de Dieu] » (Rûh al-Adab, v. 68).</p>
+    <div class="meta"><span class="ev ev-v">Lu dans Rûh al-Adab</span> v. 68 · <span class="ev ev-u">Source unique</span> al-Fallani, auteur contemporain · <a href="https://tidjaniya.com/ar/%D9%85%D8%B5%D8%AF%D8%B1-%D8%A7%D9%84%D8%A3%D9%88%D8%B1%D8%A7%D8%AF-%D8%A7%D9%84%D8%AA%D8%AC%D8%A7%D9%86%D9%8A%D8%A9-%D9%85%D9%86-%D8%A7%D9%84%D9%83%D8%AA%D8%A7%D8%A8-%D9%88-%D8%A7%D9%84%D8%B3%D9%86/">al-Fallani, tidjaniya.com (ar)</a></div>
+  </div>
+
+  <h3 class="sub">L'Istighfar</h3>
+  <div class="card">
+    <h4>La purification qui ouvre la voie</h4>
+    <p>L'Istighfar est l'étape de purification qui précède toute approche de la Présence divine. Mohammed El Mansour El Mohieddine Tidjani enseigne que « personne n'échappe au péché, car il tombe sur les gens comme une pluie abondante », d'où la nécessité de multiplier les actes expiatoires.</p>
+    <div class="meta"><span class="ev ev-u">Source unique</span> pour chaque auteur · <a href="https://tidjaniya.com/en/?p=4266">tidjaniya.com, part 2</a></div>
+  </div>
+
+  <h3 class="sub">La Salat al-Fatih</h3>
+  <div class="card">
+    <h4>Une prière reçue, non composée</h4>
+    <p>Selon la tradition, la Salat al-Fatih n'est pas une composition de Sidi Muhammad al-Bakri :</p>
+    <blockquote class="ar" lang="ar" dir="rtl">لم تكن من تأليف البكري ولكنه توجه إلى الله مدة طويلة أن يمنحه صلاة على النبي صلى الله عليه وسلم فيها ثواب جميع الصلوات</blockquote>
+    <p class="tr">« Elle n'était pas de la composition d'al-Bakri ; mais il s'était tourné vers Dieu longtemps pour qu'Il lui accorde une prière sur le Prophète ﷺ renfermant la récompense de toutes les prières. »</p>
+    <blockquote class="ar" lang="ar" dir="rtl">فنزلت عليه مكتوبة بقلم القدرة في صحيفة من نور</blockquote>
+    <p class="tr">« Elle descendit sur lui, écrite par le Calame de la Puissance sur une page de lumière. »</p>
+    <div class="meta"><span class="ev ev-m">Plusieurs sources</span><a href="https://alchamel114.org/archive/index.php/t-29311.html">forum alchamel114</a> · <a href="https://tidjaniya.com/ar/salatoul-fatihi/">tidjaniya.com (ar)</a> · <a href="https://library.oapen.org/bitstream/handle/20.500.12657/40109/9781469660844.pdf">Wright 2020, p. 26-27</a></div>
+  </div>
+
+  <div class="card">
+    <h4>Un mérite révélé en deux temps</h4>
+    <p>D'après Jawâhir al-Ma'ânî, le Prophète ﷺ fit d'abord connaître au Cheikh :</p>
+    <blockquote class="ar" lang="ar" dir="rtl">فأخبرني أولاً بأن المرة الواحدة منها تعدل من القرآن ست مرات</blockquote>
+    <p class="tr">« Il m'informa d'abord qu'une seule récitation équivaut à six lectures du Coran. »</p>
+    <p>Puis, dans une seconde annonce, qu'une récitation équivaut à :</p>
+    <blockquote class="ar" lang="ar" dir="rtl">من كل تسبيح وقع في الكون ومن كل ذِكر أو دعاء كبير أو صغير ستة آلاف مرة … ومن القرآن ستة آلاف مرة لأنه من الأذكار</blockquote>
+    <p class="tr">« toute glorification survenue dans l'univers, tout dhikr et toute invocation, grande ou petite, six mille fois… et le Coran six mille fois, parce qu'il fait partie des adhkâr ».</p>
+    <p>Munyat al-Murid d'Ibn Baba al-'Alawi met cette seconde annonce en vers : « <span class="ar-in" lang="ar" dir="rtl">من كل تسبيح وذكر وقعا ... ستة آلاف ومن كل دعا</span> ».</p>
+    <div class="meta"><span class="ev ev-v">Lu dans Jawâhir</span><a href="https://www.cheikh-skiredj.com">éd. Kanûn, p. 271</a> · <a href="https://archive.org/details/jawahir-al-maani">éd. Ravane Mbaye, p. 371</a> · Munyat al-Murid, p. 19-20</div>
+  </div>
+
+  <div class="card">
+    <h4>Les autres mérites rapportés</h4>
+    <ul>
+      <li>Une seule récitation vaut <b>600 000 prières</b> : « de toute prière survenue dans le monde » selon une formulation, « des prières de tout ange, de tout humain et de tout djinn » selon une autre. <span class="ev ev-m">Plusieurs sources</span></li>
+      <li>D'après al-Jâmi' d'Ibn al-Mishri, repris en vers par Munyat al-Murid : celui qui la récite dix fois obtient ce que n'obtiendrait pas un saint de haut rang qui aurait vécu un million d'années (« <span class="ar-in" lang="ar" dir="rtl">مَنْ تَلَا مِنْ هَذِهِ الصَّلَاةِ عَشْرًا حَصَّلَا · مَا لَمْ يُحَصِّلْهُ وَلِيٌّ سَامِ قَدْرًا وَعَاشَ أَلْفَ أَلْفِ عَامِ</span> »). <span class="ev ev-v">Lu dans la Munya</span> p. 19</li>
+      <li>Parole prêtée au Prophète ﷺ : « <span class="ar-in" lang="ar" dir="rtl">ما صلى عليّ أحد بمثل صلاة الفاتح لما أغلق</span> », « nul n'a prié sur moi par une prière pareille à la Salat al-Fatih ». <span class="ev ev-u">Source unique</span></li>
+      <li>D'après Jawâhir : « <span class="ar-in" lang="ar" dir="rtl">وخاصية الفاتح لما أغلق أمر إلهي لا مدخل فيه للعقول</span> », « la propriété de la Fatih est une affaire divine où la raison n'a pas d'accès ». <span class="ev ev-u">Source unique</span></li>
+      <li>Selon le Cheikh, aucune adoration des djinns, des humains et des anges ne pèse autant que cette prière. <span class="ev ev-u">Source unique</span></li>
+    </ul>
+    <div class="meta"><a href="https://alchamel114.org/archive/index.php/t-29311.html">alchamel114</a> · <a href="https://tidjaniya.com/ar/salatoul-fatihi/">tidjaniya.com (ar)</a> · <a href="https://tidjaniya.com/fr/la-salatoul-fatihi/">tidjaniya.com (fr)</a></div>
+  </div>
+
+  <div class="card">
+    <h4>Ses fruits spirituels</h4>
+    <p>Selon les auteurs tijanis, la Salat al-Fatih efface les péchés et élève les stations spirituelles. Cheikh Ibrahim Niasse en fait la première des expiations : « <span class="ar-in" lang="ar" dir="rtl">وَدُمْ عَلَى مُكَفِّرَاتِ الذَّنْبِ · آكَدُهَا صَلَاةُ هَذَا القُطْبِ</span> », « persévère dans ce qui expie les fautes ; la plus sûre est la prière de ce Pôle » (Rûh al-Adab, v. 88). Dieu l'aurait accordée par miséricorde aux croyants des générations tardives. Le Pr Benabdallah en souligne le sens : elle montre le Prophète ﷺ comme « celui qui ouvre tout ce qui est caché et fermé ».</p>
+    <div class="meta"><span class="ev ev-m">Plusieurs sources</span><a href="https://fakhriowaisi.blogspot.com/2017/02/questions-and-answers-on-salat-al-fatih.html">F. Owaisi</a> · <a href="https://tidjaniya.com/fr/la-salatoul-fatihi/">tidjaniya.com (fr)</a> · <a href="https://abdelazizbenabdallah.org/Questions/questions_Tariqa_En.html">Benabdallah, Q4</a></div>
+  </div>
+
+  <div class="card">
+    <h4>Les quatre conditions de son mérite</h4>
+    <ol>
+      <li><b>L'autorisation (idhn) et la croyance en son origine.</b> Munyat al-Murid résume les deux conditions :
+        <blockquote class="ar" lang="ar" dir="rtl">وَفَضْلُهَا يَحْصُلُ مَعْ شَرْطَيْنِ · مِنْ ذَاكَ إِذْنُ الشَّيْخِ دُونَ مَيْنِ · ثُمَّ اعْتِقَادُ أَنَّهَا قَدْ بَرَزَتْ · مِنْ حَضْرَةِ الغَيْبِ</blockquote>
+        « Son mérite s'obtient à deux conditions : l'autorisation du Cheikh, sans faute, puis la croyance qu'elle est venue de la Présence de l'invisible. » Al-Durra al-Kharida d'al-Nazifi rapporte la parole du Cheikh : « <span class="ar-in" lang="ar" dir="rtl">وَلَا يَحْصُلُ هَذَا الفَضْلُ المَذْكُورُ إِلَّا بِالإِذْنِ مِنِّي مُشَافَهَةً أَوْ بِوَاسِطَةٍ</span> », « ce mérite n'est obtenu qu'avec mon autorisation, de vive voix ou par un intermédiaire », fût-ce par de nombreux intermédiaires au fil des siècles, et la croyance qu'elle « n'est pas une composition de Zayd ou de 'Amr » mais qu'elle est descendue « sur une page de lumière ». Al-Durra cite aussi al-Jâmi' : la seconde condition est de croire qu'elle est « de la parole de Dieu, à la manière des hadiths qudsî ». Elle explique enfin cette descente comme l'une des formes de l'inspiration (ilhâm) accordée aux saints, ce que tidjaniya.com rapporte aussi d'après al-Ifada al-Ahmadiyya (<span class="ar-in" lang="ar" dir="rtl">من الإلهام الجائز للأولياء</span>).</li>
+      <li><b>L'adhésion confiante (taslîm).</b> Jawâhir : « <span class="ar-in" lang="ar" dir="rtl">وَلَا يَحْصُلُ هَذَا الخَيْرُ المَذْكُورُ إِلَّا مَعَ التَّسْلِيمِ</span> », « ce bien n'est obtenu qu'avec le taslîm », et que celui qui veut en disputer s'en abstienne, car accumuler les arguments n'y sert à rien.</li>
+      <li><b>La priorité du Coran.</b> À qui dirait qu'il vaut alors mieux s'y consacrer plutôt qu'à tout autre dhikr, « même le Coran », Jawâhir répond :
+        <blockquote class="ar" lang="ar" dir="rtl">بَلْ تِلَاوَةُ القُرْآنِ أَوْلَى لِأَنَّهَا مَطْلُوبَةٌ شَرْعًا ... وَلِكَوْنِهِ أَسَاسَ الشَّرِيعَةِ ... فَلِهَذَا لَا يَحِلُّ لِقَارِئِهِ تَرْكُ تِلَاوَتِهِ، وَأَمَّا فَضْلُ الصَّلَاةِ الَّتِي نَحْنُ بِصَدَدِهَا فَإِنَّهَا مِنْ بَابِ التَّخْيِيرِ لَا شَيْءَ عَلَى مَنْ تَرَكَهَا</blockquote>
+        « La récitation du Coran passe avant, car la charia la demande… et il est le fondement de la charia… Il n'est donc pas permis à celui qui sait le lire d'en délaisser la récitation ; quant à cette prière, elle est laissée au choix, et rien n'est reproché à qui la délaisse. »</li>
+    </ol>
+    <div class="meta"><span class="ev ev-v">Lu dans al-Durra</span> t. 4, p. 218 · <span class="ev ev-v">Lu dans Jawâhir</span><a href="https://www.cheikh-skiredj.com">éd. Kanûn, p. 277-278</a> · <a href="https://archive.org/details/jawahir-al-maani">éd. Mbaye, p. 381</a> · <span class="ev ev-v">Lu dans la Munya</span> p. 20 · <span class="ev ev-u">Source unique</span> précision attribuée à l'Ifada, taslîm · <a href="https://tidjaniya.com/ar/salatoul-fatihi/">tidjaniya.com (ar)</a> · <a href="https://tidjaniya.com/en/salat-fatihi-quran/">tidjaniya.com (en)</a></div>
+  </div>
+
+  <div class="card">
+    <h4>La comparaison avec le Coran : récompense, non rang</h4>
+    <p>Les auteurs tijanis expliquent que la comparaison porte sur la récompense de chaque récitation, non sur le rang : la prééminence du Coran est « plus éclatante que le soleil ». Ils avancent des analogies tirées du hadith : la sourate Yâ-Sîn vaut dix lectures du Coran, une 'umra en Ramadan vaut un pèlerinage, sans que l'une remplace le Coran ni l'autre le Hajj. Pour Fakhruddin Owaisi al-Tijani, « tous les Tijanis tiennent le Coran pour la plus grande des paroles » ; il rappelle que Cheikh Ibrahim Niasse et Cheikh Hassan Cissé encourageaient le tafsîr et les khatms complets du Coran.</p>
+    <div class="meta"><span class="ev ev-m">Plusieurs sources</span><a href="https://tidjaniya.com/fr/la-salatoul-fatihi/">tidjaniya.com (fr)</a> · <a href="https://fakhriowaisi.blogspot.com/2017/02/regarding-holy-quran-and-salat-al-fatih.html">F. Owaisi</a></div>
+  </div>
+
+  <h3 class="sub">La Hailala</h3>
+  <div class="card">
+    <h4>Le meilleur des dhikr</h4>
+    <p>La tradition consultée s'appuie sur les hadiths généraux du tahlîl. Al-Fallani appelle « Lâ ilâha illâ-llâh » le meilleur dhikr, clé de l'entrée au Paradis et pilier le plus grand du wird.</p>
+    <div class="meta"><span class="ev ev-u">Source unique</span> auteur contemporain · <a href="https://tidjaniya.com/ar/%D9%85%D8%B5%D8%AF%D8%B1-%D8%A7%D9%84%D8%A3%D9%88%D8%B1%D8%A7%D8%AF-%D8%A7%D9%84%D8%AA%D8%AC%D8%A7%D9%86%D9%8A%D8%A9-%D9%85%D9%86-%D8%A7%D9%84%D9%83%D8%AA%D8%A7%D8%A8-%D9%88-%D8%A7%D9%84%D8%B3%D9%86/">al-Fallani</a></div>
+  </div>
+
+  <div class="card">
+    <h4>Pour que le Lazim soit valide</h4>
+    <p>Il se récite avec une autorisation reçue d'un moqaddam dont la chaîne remonte au Cheikh, en état de pureté rituelle (l'ablution à l'eau ou le tayammum suffisent), sans parler ni manger pendant la récitation. Jawâhir pose la règle du rattrapage : « <span class="ar-in" lang="ar" dir="rtl">وَمَنْ تَرَكَ الوِرْدَ فَعَلَيْهِ قَضَاؤُهُ، وَمَنْ تَرَكَ الوَظِيفَةَ فَالقَضَاءُ عَلَيْهِ أَيْضًا</span> », « celui qui a délaissé le wird doit le rattraper, et celui qui a délaissé la Wazifa doit aussi la rattraper ».</p>
+    <div class="meta"><span class="ev ev-v">Lu dans Jawâhir</span> rattrapage, <a href="https://www.cheikh-skiredj.com">éd. Kanûn, p. 255</a> · <span class="ev ev-m">Plusieurs sources</span> idhn, pureté · <a href="https://tidjaniya.com/en/tariqa-fiqh/">tidjaniya.com, Fiqh</a> · <a href="https://zawiya.sn/le-wird-tijane/le-wird-ou-lazim/">zawiya.sn</a></div>
+  </div>
+</section>
+
+<!-- 3 -->
+<section class="blk" id="wazifa">
+  <h2 class="sec"><span class="n">3</span>La Wazifa et les quatre mérites de la Jawharat al-Kamal</h2>
+  <p class="intro">La Wazifa compte trente Istighfar, cinquante Salat al-Fatih, cent Hailala et douze Jawharat al-Kamal. Jawâhir et Munyat al-Murid admettent aussi cent Istighfar sous toute formule ; la Munya précise que la Jawharat al-Kamal se récitait onze fois et qu'une douzième fut ajoutée du vivant du Cheikh. Selon Jawâhir, elle est obligatoire dans la tariqa, une fois suffit, le matin ou le soir, et les deux sont bien. Celui qui a des frères dans sa ville la récite avec eux en assemblée, « et c'est la condition de la Wazifa » ; seul, il la récite seul. Selon Ibn al-Sa'ih, auteur de la Bughya, y insérer une autre formule de prière sur le Prophète ﷺ l'invalide.</p>
+
+  <div class="card">
+    <h4>Effacer les fautes d'une Wazifa à l'autre</h4>
+    <p>Munyat al-Murid rapporte, comme enseignement connu du Cheikh, que la Wazifa expie ce qui se passe entre deux de ses récitations :</p>
+    <blockquote class="ar" lang="ar" dir="rtl">تَكْفِيرُهَا مَا بَيْنَ وَقْتَيْهَا اشْتَهَرْ · عَنْ شَيْخِنَا</blockquote>
+    <div class="meta"><span class="ev ev-v">Lu dans la Munya</span> Munyat al-Murid, p. 18 · <span class="ev ev-v">Lu dans Jawâhir</span> composition et règles, <a href="https://www.cheikh-skiredj.com">éd. Kanûn, p. 255</a></div>
+  </div>
+
+  <div class="card">
+    <h4>La Salat al-Fatih dans la Wazifa</h4>
+    <p>Le Cheikh l'aurait illustré ainsi : si cent mille communautés récitaient chacune cent mille prières sur le Prophète ﷺ par jour, leurs récompenses réunies « n'atteindraient pas la récompense d'une seule Salat al-Fatih ».</p>
+    <div class="meta"><span class="ev ev-u">Source unique</span><a href="https://tidjaniya.com/en/tariqa-fiqh/">tidjaniya.com, Fiqh</a></div>
+  </div>
+
+  <div class="card">
+    <h4>Les quatre mérites de la Jawharat al-Kamal</h4>
+    <p>Jawâhir les présente comme des propriétés (<span class="ar-in" lang="ar" dir="rtl">خواص</span>) que le Prophète ﷺ a fait connaître au Cheikh ; le quatrième est une parole du Cheikh lui-même.</p>
+    <p><b>1. La glorification du monde</b></p>
+    <blockquote class="ar" lang="ar" dir="rtl">المرة الواحدة منها تعدل تسبيح العالم ثلاث مرات</blockquote>
+    <p class="tr">« Une seule récitation équivaut à trois fois la glorification du monde entier. »</p>
+    <p><b>2. La présence du Prophète ﷺ et des quatre califes</b></p>
+    <blockquote class="ar" lang="ar" dir="rtl">من قرأها سبعا فأكثر يحضره روح النبي صلى الله عليه وسلم وأرواح الخلفاء الأربعة ما دام يذكرها</blockquote>
+    <p class="tr">« Celui qui la récite sept fois ou davantage, l'esprit du Prophète ﷺ et les esprits des quatre califes sont présents auprès de lui tant qu'il la récite. »</p>
+    <p><b>3. L'amour particulier du Prophète ﷺ et la mort en saint</b></p>
+    <blockquote class="ar" lang="ar" dir="rtl">من لازمها أزيد من سبع مرات يحبه النبي صلى الله عليه وسلم محبة خاصة ولا يموت حتى يكون من الأولياء</blockquote>
+    <p class="tr">« Celui qui s'y attache au-delà de sept fois, le Prophète ﷺ l'aime d'un amour particulier, et il ne meurt pas avant d'être compté parmi les saints. »</p>
+    <p><b>4. La vision du Prophète ﷺ</b></p>
+    <blockquote class="ar" lang="ar" dir="rtl">من داوم عليها سبعا عند النوم على طهارة كاملة وفراش طاهر يرى النبي صلى الله عليه وسلم</blockquote>
+    <p class="tr">« Celui qui la récite assidûment sept fois au coucher, en état de pureté complète et sur une couche pure, voit le Prophète ﷺ. »</p>
+    <div class="meta"><span class="ev ev-v">Lu dans Jawâhir</span><a href="https://www.cheikh-skiredj.com">éd. Kanûn, p. 915-916</a> · <a href="https://archive.org/details/jawahir-al-maani">éd. Mbaye, p. 1410</a> · Munyat al-Murid, p. 20 · <a href="https://www.tidjania.ma/%D8%AC%D9%84%D8%B3%D8%A9-%D9%85%D8%B9-%D8%AC%D9%88%D9%87%D8%B1%D8%A9-%D8%A7%D9%84%D9%83%D9%85%D8%A7%D9%84-%D8%A8%D8%B4%D8%B1%D8%AD-%D9%85%D9%88%D9%84%D8%A7%D9%86%D8%A7-%D8%A7%D9%84%D8%B4%D9%8A%D8%AE/">tidjania.ma</a> · <a href="http://alchamel114.org/archive/index.php/t-8471.html">alchamel114</a> · <a href="https://tidjaniya.com/en/?p=4400">tidjaniya.com, Djawharatul Kamal</a></div>
+  </div>
+
+  <div class="card">
+    <h4>Un commentaire du Cheikh lui-même</h4>
+    <p>Le Cheikh a laissé de cette formule un commentaire, al-Fuyûdât al-Rahmâniyya fî Sharh 'Ayn al-Rahma al-Rabbâniyya (<span class="ar-in" lang="ar" dir="rtl">الفيوضات الرحمانية</span>), reproduit dans Jawâhir al-Ma'ânî. La formule est aussi commentée par al-Ahsan al-Bu'aqili, El Hadj Omar, Sidi 'Ubayda et Muhammad Kanun. tidjaniya.com la décrit comme une formule « destinée à des gens particuliers et non au commun ».</p>
+    <div class="meta"><span class="ev ev-v">Lu dans Jawâhir</span> titre du commentaire, <a href="https://www.cheikh-skiredj.com">éd. Kanûn, p. 915</a> · <span class="ev ev-u">Source unique</span> gloses, usage<a href="https://www.tidjania.ma/%D8%AC%D9%84%D8%B3%D8%A9-%D9%85%D8%B9-%D8%AC%D9%88%D9%87%D8%B1%D8%A9-%D8%A7%D9%84%D9%83%D9%85%D8%A7%D9%84-%D8%A8%D8%B4%D8%B1%D8%AD-%D9%85%D9%88%D9%84%D8%A7%D9%86%D8%A7-%D8%A7%D9%84%D8%B4%D9%8A%D8%AE/">tidjania.ma</a> · <a href="https://tidjaniya.com/en/?p=4400">tidjaniya.com</a></div>
+  </div>
+
+  <div class="card">
+    <h4>Ses conditions et sa formule de remplacement</h4>
+    <blockquote class="ar" lang="ar" dir="rtl">لا تذكر إلا على طهارة مائية أي على وضوء وفي مساحة طاهرة</blockquote>
+    <p class="tr">« Elle ne se récite qu'en état de pureté par l'eau, c'est-à-dire avec l'ablution, et dans un espace pur. »</p>
+    <p>Jawâhir en donne la raison : « <span class="ar-in" lang="ar" dir="rtl">وَلَا تُقْرَأُ جَوْهَرَةُ الكَمَالِ إِلَّا بِالطَّهَارَةِ المَائِيَّةِ لَا بِالتُّرَابِيَّةِ، لِأَنَّ النَّبِيَّ ﷺ يَحْضُرُ عِنْدَ قِرَاءَتِهَا</span> », « elle ne se récite qu'avec la purification par l'eau, non par la terre, car le Prophète ﷺ est présent lors de sa récitation ». C'est la condition la mieux attestée de tout le corpus des wirds, enseignée aussi par Cheikh al-Nazifi et Cheikh Abu Bakr 'Atiq, et comptée par Rimâh parmi les conditions de la voie. Elle est propre à la Jawharat al-Kamal : le tayammum suffit pour les autres litanies. Munyat al-Murid demande aussi un lieu pur assez large pour le Prophète ﷺ et les quatre califes, et de ne pas la réciter sur une monture ; Cheikh al-Nazifi admet un lieu étroit s'il est entièrement pur.</p>
+    <p class="cond"><b>Si une condition manque :</b> « <span class="ar-in" lang="ar" dir="rtl">يقوم شيء مقامها وهو عشرون من صلاة الفاتح</span> », vingt Salat al-Fatih en tiennent lieu. En assemblée, celui qui remplace récite à voix basse.</p>
+    <p>Sans ces conditions, « celui qui ne la récite pas selon cette condition n'obtient que la récompense de l'invocation des mots » (<span class="ar-in" lang="ar" dir="rtl">فمن لم يذكرها بهذا الشرط لا ينال إلا ثواب ذكر الألفاظ</span>). Un auteur tijani précise que cette exigence « n'implique pas que la formule soit supérieure à la prière et au Coran : c'est une affaire de pure dévotion » (<span class="ar-in" lang="ar" dir="rtl">من الأمور التعبدية</span>), la prière et le Coran n'ayant, eux, aucun substitut.</p>
+    <div class="meta"><span class="ev ev-v">Lu dans Jawâhir</span> ablution à l'eau, <a href="https://www.cheikh-skiredj.com">éd. Kanûn, p. 255-256</a> · <span class="ev ev-v">Lu dans la Munya</span> lieu, remplacement, p. 17 · <span class="ev ev-u">Source unique</span> voix basse, « récompense des mots », « pure dévotion » · <a href="https://tidjaniya.com/en/wp-json/wp/v2/posts/4441">tidjaniya.com, Questions</a> · <a href="https://webpulaaku.site/defte/brenner/appendix3_membership_tijaniyya.html">Brenner, d'après Rimâh, cond. 13</a></div>
+  </div>
+</section>
+
+<!-- 4 -->
+<section class="blk" id="hadra">
+  <h2 class="sec"><span class="n">4</span>La Hadratou-l-Jouma : un « immense bienfait » qui ne se rattrape pas</h2>
+  <p class="intro">Elle a lieu le vendredi seulement, après la prière de 'Asr et jusqu'au Maghrib, au mieux juste avant l'appel du Maghrib. Jawâhir la compte parmi les wirds obligatoires de la tariqa :</p>
+  <blockquote class="ar" lang="ar" dir="rtl">وَمِنْ أَوْرَادِهِ اللَّازِمَةِ لِلطَّرِيقَةِ ذِكْرُ الهَيْلَلَةِ بَعْدَ صَلَاةِ عَصْرِ يَوْمِ الجُمُعَةِ مَعَ الجَمَاعَةِ ... وَهَذَا شَرْطٌ فِي الطَّرِيقَةِ مِنْ غَيْرِ حَدٍّ وَلَا حَصْرٍ</blockquote>
+  <p class="intro">« Parmi ses wirds obligatoires pour la tariqa : la Hailala après la prière de 'Asr du vendredi, en assemblée… c'est une condition de la tariqa, sans limite ni nombre fixé », sinon selon l'usage du pays ; seul, on la fait seul. La pratique répandue compte de mille à mille six cents « Lâ ilâha illâ-llâh », conclus par « Sayyidunâ Muhammadun Rasûlu-llâh 'alayhi salâmu-llâh » ; selon la Bughya, le minimum doit dépasser mille.</p>
+
+  <div class="card">
+    <h4>La présence du Prophète ﷺ et un bien immense</h4>
+    <p>Munyat al-Murid en résume le mérite :</p>
+    <blockquote class="ar" lang="ar" dir="rtl">وَتَرْكُهَا يُفِيتُ خَيْرًا جَمَّا · إِلَّا لِعُذْرٍ عَارِضٍ أَلَمَّا · يَكْفِيكَ فِي الفَضْلِ حُضُورُ المُصْطَفَى</blockquote>
+    <p class="tr">« La délaisser fait perdre un bien immense, sauf excuse survenue ; il te suffit, comme mérite, que l'Élu ﷺ y soit présent. »</p>
+    <p>La parole attribuée au Cheikh dit de même que celui qui la manque sans excuse « a perdu un immense bienfait qu'il ne pourra pas rattraper ». Elle ne se rattrape pas une fois le temps passé ; la Munya l'affirme « sans divergence à ma connaissance ». Sidi al-Tayyib al-Sufyani et Sidi Muhammad al-Hafiz al-Tijani en donnent la raison : ce dhikr n'est pas un engagement voué comme le Lazim et la Wazifa.</p>
+    <div class="meta"><span class="ev ev-v">Lu dans la Munya</span> p. 19 · <span class="ev ev-v">Lu dans Jawâhir</span> <a href="https://www.cheikh-skiredj.com">éd. Kanûn, p. 256</a> · <a href="https://tidjaniya.com/en/questions-regarding-friday-haylala/">tidjaniya.com, Friday Haylala</a></div>
+  </div>
+
+  <div class="card">
+    <h4>En assemblée, ou seul à défaut</h4>
+    <p>Comme la Wazifa, elle se fait en assemblée chaque fois que c'est possible, en rangs et à voix haute ; Rimâh compte cette réunion parmi les conditions de la voie. Le Pr Benabdallah admet qu'en l'absence de zawiya, on l'accomplisse seul. Selon Cheikh al-Nazifi, les femmes récitent chez elles, à voix basse. Une maladie sérieuse dispense de rejoindre le groupe ; on récite alors chez soi selon ses moyens.</p>
+    <div class="meta"><span class="ev ev-m">Plusieurs sources</span> caractère collectif · <span class="ev ev-u">Source unique</span> femmes, malades · <a href="https://abdelazizbenabdallah.org/Questions/questions_Tariqa_En.html">Benabdallah, Q31, Q142</a> · <a href="https://tidjaniya.com/en/questions-regarding-friday-haylala/">tidjaniya.com</a></div>
+  </div>
+</section>
+
+<!-- 5 -->
+<section class="blk" id="fruits">
+  <h2 class="sec"><span class="n">5</span>Les fruits spirituels selon les moqaddams</h2>
+  <p class="intro">Au-delà des récompenses promises, les commentateurs présentent les fruits de la voie comme une transformation intérieure. Les foyers les mettent en relief différemment, sans s'opposer.</p>
+
+  <div class="card">
+    <h4>L'adab : le Cheikh comme modèle et comme canal de la grâce</h4>
+    <p>Jawâhir al-Ma'ânî présente le fondateur comme le modèle de l'adab : humilité envers Dieu, envers le Messager ﷺ et envers tous les disciples, jointe à la patience. Sidi 'Ali Harazim demande au disciple d'être devant le cheikh « comme un mort entre les mains de son laveur ». Selon la Bughya d'Ibn al-Sa'ih, le moqaddam « doit être considéré simplement comme un substitut du Cheikh ».</p>
+    <p>Rimâh d'El Hadj Omar fait du maître un « père spirituel » et identifie le premier degré de l'adab avec l'application de la charia. Dans Rûh al-Adab (1342 H), Cheikh Ibrahim Niasse présente la tariqa comme « <span class="ar-in" lang="ar" dir="rtl">طَرِيقَ مَحْضِ الفَضْلِ وَالرِّضْوَانِ · أُسِّسَ بِالسُّنَّةِ وَالفُرْقَانِ</span> », « la voie de la grâce pure et de l'agrément, fondée sur la Sunna et le Coran » (v. 4), mais il en lie aussitôt le profit à la conduite :</p>
+    <blockquote class="ar" lang="ar" dir="rtl">فَلَسْتَ فِي أَخْذِ الطَّرِيقِ تَرْبَحُ · إِلَّا إِذَا كُنْتَ دَوَامًا تَصْلُحُ · مُكَمِّلًا شُرُوطَهُ المُقَرَّرَهْ · مُكَابِدًا آدَابَهُ المُعْتَبَرَهْ</blockquote>
+    <p class="tr">« Tu ne gagnes rien à prendre la voie, à moins d'être constamment vertueux, d'en accomplir les conditions établies et de t'astreindre à ses règles de conduite. » (v. 6-7)</p>
+    <p>Puis : « Cherche un maître éducateur, expérimenté, de bon conseil… Remets-lui ton âme et ne décide pas par toi-même » (v. 13-14), et « <span class="ar-in" lang="ar" dir="rtl">وَكُنْ مَعَ الشَّيْخِ دَوَامًا تَرْبَحُ … بِقَدْرِ مَا تُحِبُّهُ تَنَالُ إِمْدَادَهُ</span> », « sois toujours avec le cheikh, tu y gagneras… tu reçois son soutien à la mesure de ton amour pour lui » (v. 20-21). « L'adab, l'adab, ô cheminant : c'est la porte pour quiconque chemine » (v. 51).</p>
+    <div class="meta"><span class="ev ev-s">Seconde main</span> Harazim, Bughya, Rimâh · <span class="ev ev-v">Lu dans Rûh al-Adab</span> v. 4-21, 51 · <a href="https://traditionalhikma.com/wp-content/uploads/2020/06/Adab_with_an_Absent_Master_Sufis_and_Goo.pdf">M. Petrone, Brill 2016</a> · <a href="https://revistas.uma.es/index.php/claridades/article/download/3789/3524/12274">F. de Diego González 2016</a></div>
+  </div>
+
+  <div class="card">
+    <h4>L'amour du Prophète ﷺ, principe et fin de la voie</h4>
+    <p>Dès son fondateur, la tariqa fait du Prophète ﷺ « le principe et la fin » de la voie. Rimâh recommande de se représenter, pendant le dhikr, le fondateur ou de préférence le Prophète ﷺ, et de méditer le sens des formules. Dans son poème Sariman, Cheikh Ibrahim Niasse chante : « Mon amour pour lui me mène au Paradis, car il est ma nourriture et ma boisson. »</p>
+    <div class="meta"><span class="ev ev-m">Plusieurs sources</span><a href="https://revistas.ucm.es/index.php/ANQE/article/download/58713/52889/121061">de Diego González 2018</a> · <a href="https://webpulaaku.site/defte/brenner/appendix3_membership_tijaniyya.html">Brenner, cond. 22-23</a></div>
+  </div>
+
+  <div class="card">
+    <h4>La ma'rifa : lever les voiles</h4>
+    <p>Rimâh décrit un cheminement : sincérité absolue, compagnie des frères, direction de maîtres munis d'une ijâza, jusqu'à la levée des voiles entre le serviteur et la connaissance de son Seigneur. Dans Kâshif al-Ilbâs, Cheikh Ibrahim Niasse enseigne que l'expérience spirituelle « ne s'acquiert ni par la parole ni par les textes écrits » et « ne s'obtient qu'en servant (khidma) les hommes de distinction spirituelle ». Dans Rûh al-Adab : « <span class="ar-in" lang="ar" dir="rtl">مَنْ لَمْ يَنَلْ مَعْرِفَةَ الرَّحْمَانِ · أَعْمَارُهُ ضَاعَتْ مَدَى الأَزْمَانِ</span> », « celui qui n'a pas atteint la connaissance du Miséricordieux a perdu sa vie au fil du temps » (v. 77), et « <span class="ar-in" lang="ar" dir="rtl">لَا تَأْلُ جُهْدَكَ بِنَيْلِ العِرْفَانْ</span> », « ne relâche pas ton effort pour acquérir la ma'rifa » (v. 79).</p>
+    <div class="meta"><span class="ev ev-u">Source unique</span> résumé de Rimâh · <span class="ev ev-v">Lu dans Rûh al-Adab</span> v. 77-79 · <span class="ev ev-m">Plusieurs sources</span> Kâshif · <a href="https://lesoleil.sn/actualites/societe-fait-divers/religion/la-pierre-angulaire-de-la-pensee-del-hadj-oumar-tall/">Le Soleil</a> · <a href="https://www.themathesontrust.org/papers/islam/Wright-Kashif_Al-Ilbas_Of_Shaykh_Ibrahim.pdf">Wright 2010, p. 109-113</a></div>
+  </div>
+
+  <div class="card">
+    <h4>La fayda : la ma'rifa ouverte au grand nombre</h4>
+    <p>Cheikh Ibrahim Niasse a présenté sa mission comme la Fayda tijaniyya, l'effusion annoncée par Cheikh Ahmed Tijani : par l'éducation spirituelle (tarbiya), l'aspirant dépasse son ego et goûte la connaissance de Dieu. Il rattache ce fruit à la grâce divine et non au mérite : « Ne te fie à rien sinon à la grâce de notre Seigneur » ; « Prenez garde à vos ego » ; celui qui est parvenu « ne doit pas se croire chef ».</p>
+    <div class="meta"><span class="ev ev-m">Plusieurs sources</span><a href="https://www.themathesontrust.org/papers/islam/Wright-Kashif_Al-Ilbas_Of_Shaykh_Ibrahim.pdf">Wright 2010</a> · <a href="https://revistas.uma.es/index.php/claridades/article/download/3789/3524/12274">de Diego González 2016</a></div>
+  </div>
+
+  <div class="card">
+    <h4>La vie communautaire</h4>
+    <p>Rimâh demande de prier les cinq prières en groupe, de se réunir pour la Wazifa et la Hadratou-l-Jouma, de ne pas rompre avec les frères et de respecter tous les affiliés au Cheikh. Dans Kâshif al-Ilbâs, Cheikh Ibrahim Niasse reprend, d'après Rimâh, cette parole de Sidi 'Ali al-Khawwas : le dhikr en assemblée a plus d'effet pour lever les voiles, car Dieu a comparé les cœurs aux pierres, et la pierre ne se brise que par la force d'un groupe ; quant à la récompense, « chacun a celle de son propre dhikr et celle d'avoir entendu ses compagnons ». Niasse conclut : « Le but des gens de la voie est ce qui rassemble leurs cœurs sur Dieu. »</p>
+    <p>À Tivaouane, l'enseignement d'El Hadji Malick Sy est présenté comme « une articulation harmonieuse entre la charia et le soufisme tijânî », fondée sur « le Coran et la Sunna » : « La prière a été sa voie d'accès et le zikr sa monture. » En Mauritanie, chez les Idaw 'Ali, la tariqa introduite par Muhammad al-Hafiz al-'Alawi est devenue, selon l'historien William Johnson, une « foi nationale ».</p>
+    <div class="meta"><span class="ev ev-v">Lu dans Kâshif al-Ilbâs</span> p. 41 · <span class="ev ev-m">Plusieurs sources</span> Rimâh · <span class="ev ev-u">Source unique</span> Tivaouane, Mauritanie · <a href="https://webpulaaku.site/defte/brenner/appendix3_membership_tijaniyya.html">Brenner</a> · <a href="https://lesoleil.sn/actualites/societe-fait-divers/religion/un-attachement-a-lorthodoxie-sunnite/">Le Soleil</a> · <a href="https://ajis.org/index.php/ajiss/article/download/2815/2629/5380">W. Johnson</a></div>
+  </div>
+
+  <div class="card">
+    <h4>La garde du cœur</h4>
+    <p>Les enseignants contemporains de Fès et d'Europe insistent sur la garde du cœur contre l'orgueil et la jalousie, et sur la présence du cœur : « l'état de présence est l'âme de l'action » ; « le secret de la tariqa est dans la conviction ». Le Pr Benabdallah rappelle que le cheikh « n'est qu'un guide » et que « seul Dieu détient le pouvoir suprême ».</p>
+    <div class="meta"><span class="ev ev-u">Source unique</span> pour chaque enseignant · <a href="https://tidjaniya.com/en/?p=4266">tidjaniya.com, part 2</a> · <a href="https://abdelazizbenabdallah.org/Questions/questions_Tariqa_En.html">Benabdallah, Q2, Q24</a></div>
+  </div>
+</section>
+
+<!-- 6 -->
+<section class="blk" id="conditions">
+  <h2 class="sec"><span class="n">6</span>Les conditions communes</h2>
+  <p class="intro">La liste la plus systématique est celle des vingt-trois conditions de Rimâh (t. 1, p. 211-228), dont les vingt et une premières sont obligatoires et les deux dernières recommandées. Le fondateur rappelle que « le soufisme consiste à accomplir les commandements de Dieu » et que ce qu'on entend de lui doit être pesé « à la balance de la charia ».</p>
+  <div class="tablewrap">
+    <table class="t">
+      <thead><tr><th scope="col">Condition</th><th scope="col">Ce qu'en disent les sources</th></tr></thead>
+      <tbody>
+        <tr><th scope="row">Autorisation (idhn)</th><td>Recevoir le wird d'un moqaddam dûment autorisé, dont la chaîne remonte au Cheikh (Rimâh, cond. 1, 11, 16). Niasse : « Prenez la voie du Cheikh avec la permission de ses gens. »</td></tr>
+        <tr><th scope="row">Exclusivité du wird</th><td>Se libérer du wird de tout autre cheikh (Rimâh, cond. 2). Niasse : « <span class="ar-in" lang="ar" dir="rtl">وَيَسْتَحِيلُ جَمْعُهَا بِأُخْرَى</span> », il est impossible de la combiner avec une autre (Rûh al-Adab, v. 66).</td></tr>
+        <tr><th scope="row">Pas de secours d'autres saints</th><td>Ne pas visiter d'autres saints, vivants ou morts, pour rester lié à un seul cheikh (Rimâh, cond. 3). La visite des Prophètes, des Compagnons et des Tijanis reste permise.</td></tr>
+        <tr><th scope="row">Amour du Cheikh jusqu'à la mort</th><td>Aimer le Cheikh sans interruption, ainsi que son khalife et ses proches (Rimâh, cond. 5). C'est aussi la condition de la garantie familiale.</td></tr>
+        <tr><th scope="row">Ni insulte, ni haine</th><td>Ne jamais insulter ni haïr le Cheikh (Rimâh, cond. 7) ; éviter toute polémique (Jawâhir).</td></tr>
+        <tr><th scope="row">Persévérance</th><td>Maintenir le wird jusqu'à la mort, avec une ferme conviction, sans le négliger (Rimâh, cond. 8, 9, 15).</td></tr>
+        <tr><th scope="row">Charia et prières</th><td>Prier les cinq prières, si possible en groupe ; les obligations passent avant les litanies (Rimâh, cond. 4).</td></tr>
+        <tr><th scope="row">Ne pas se croire à l'abri</th><td>Ne pas compter sur l'intercession tout en persistant dans le péché (Rimâh, cond. 6).</td></tr>
+        <tr><th scope="row">Parents et frères</th><td>Bien traiter ses parents (Jawâhir) ; ne pas rompre avec les frères, respecter tous les affiliés (Rimâh, cond. 14, 17).</td></tr>
+        <tr><th scope="row">Pureté</th><td>Pureté rituelle pour les litanies, ablution à l'eau pour la Jawharat al-Kamal (Rimâh, cond. 13, 18-21).</td></tr>
+        <tr><th scope="row">Adhésion confiante</th><td>Pour la Salat al-Fatih, le mérite n'est obtenu « qu'avec le taslîm ».</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="card" style="margin-top:14px">
+    <h4>Quand une condition est rompue</h4>
+    <p>L'affiliation est rompue en quatre cas : suivre une autre voie, visiter des saints que le Cheikh n'a pas autorisés, abandonner les litanies obligatoires (Lazim, Wazifa, Hadratou-l-Jouma), ou manquer de respect envers le Cheikh. La réintégration passe par le repentir et le renouvellement de l'initiation auprès d'un moqaddam. Le Pr Benabdallah distingue les conditions essentielles des autres : si ces dernières font défaut, « l'initiation reste valide », mais le disciple doit s'efforcer de les acquérir.</p>
+    <div class="meta"><span class="ev ev-m">Plusieurs sources</span><a href="https://tidjaniya.com/en/?p=4263">tidjaniya.com, Conditions</a> · <a href="https://traditionalhikma.com/wp-content/uploads/2020/06/Adab_with_an_Absent_Master_Sufis_and_Goo.pdf">Petrone 2016</a> · <a href="https://abdelazizbenabdallah.org/Questions/questions_Tariqa_En.html">Benabdallah, Q5</a></div>
+  </div>
+</section>
+
+<!-- Récap -->
+<section class="blk" id="recap">
+  <h2 class="sec">Récapitulatif</h2>
+  <div class="tablewrap">
+    <table class="t">
+      <thead><tr><th scope="col">Pratique</th><th scope="col">Bienfait selon la tradition</th><th scope="col">Condition propre</th><th scope="col">Solidité</th></tr></thead>
+      <tbody>
+        <tr><th scope="row">Affiliation</th><td>Paradis sans compte ni châtiment, pour le disciple, ses parents, épouses et descendance directe ; voisinage du Prophète ﷺ en 'Illiyyîn</td><td>Ni insulte, ni haine, ni hostilité ; amour du Cheikh et wird gardés jusqu'à la mort</td><td><span class="ev ev-v">Lu dans Jawâhir</span></td></tr>
+        <tr><th scope="row">Amour du Cheikh</th><td>Aimé du Prophète ﷺ, mort en saint, ressuscité parmi ceux qui sont en sécurité</td><td>Persévérer jusqu'à la mort, ne pas se croire à l'abri du dessein de Dieu</td><td><span class="ev ev-v">Lu dans Jawâhir</span></td></tr>
+        <tr><th scope="row">Lazim</th><td>Pardon des grands et des petits péchés</td><td>Idhn, pureté, horaires, rattrapage</td><td><span class="ev ev-v">Lu dans la Munya</span></td></tr>
+        <tr><th scope="row">Istighfar</th><td>Purification avant la Présence</td><td>Celles du Lazim</td><td><span class="ev ev-u">Source unique</span></td></tr>
+        <tr><th scope="row">Salat al-Fatih</th><td>×6 le Coran, puis ×6000 tout dhikr ; 600 000 prières ; effacement des péchés</td><td>Idhn, croyance en son origine, taslîm, priorité du Coran</td><td><span class="ev ev-v">Lu dans Jawâhir</span></td></tr>
+        <tr><th scope="row">Hailala</th><td>Meilleur dhikr, pilier le plus grand</td><td>Celles du Lazim</td><td><span class="ev ev-u">Source unique</span></td></tr>
+        <tr><th scope="row">Jawharat al-Kamal</th><td>×3 la glorification du monde ; présence du Prophète ﷺ et des quatre califes dès sept ; amour particulier, mort en saint ; vision du Prophète ﷺ</td><td>Ablution à l'eau, lieu pur ; à défaut, vingt Salat al-Fatih</td><td><span class="ev ev-v">Lu dans Jawâhir</span></td></tr>
+        <tr><th scope="row">Wazifa</th><td>Expiation des fautes d'une Wazifa à l'autre ; cadre collectif de ces mérites</td><td>En assemblée si l'on a des frères, sans autre prière sur le Prophète ﷺ ; rattrapage</td><td><span class="ev ev-v">Lu dans la Munya</span></td></tr>
+        <tr><th scope="row">Hadratou-l-Jouma</th><td>Présence du Prophète ﷺ ; « bien immense » impossible à rattraper</td><td>Vendredi, de 'Asr au Maghrib, en assemblée ; nombre non fixé par Jawâhir</td><td><span class="ev ev-v">Lu dans la Munya</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- Sources -->
+<section class="blk" id="sources">
+  <h2 class="sec">Sources</h2>
+  <ul class="sources">
+    <li><a href="https://www.cheikh-skiredj.com">Jawâhir al-Ma'ânî wa Bulûgh al-Amânî, édition critique de Muhammad al-Râdî Kanûn (cheikh-skiredj.com)</a></li>
+    <li><a href="https://archive.org/details/AAskZad-0191562">Munyat al-Murid fî Âdâb wa Awrâd al-Tarîqa al-Tijâniyya, al-Tijânî b. Bâbâ al-'Alawî al-Shinqîtî</a></li>
+    <li><a href="https://archive.org/details/DURRAKHARIDA-4">al-Durra al-Kharîda Sharh al-Yâqûta al-Farîda, Muhammad b. 'Abd al-Wâhid al-Nazîfî, t. 4</a></li>
+    <li><a href="https://archive.org/details/kashef_ilbas">Kâshif al-Ilbâs 'an Faydat al-Khatm Abî al-'Abbâs, Cheikh Ibrahim Niasse</a></li>
+    <li><a href="https://archive.org/details/jawahir-al-maani">Jawâhir al-Ma'ânî, texte arabe vocalisé et traduction française de Ravane Mbaye, 2010</a></li>
+    <li><a href="https://archive.org/details/20230331_20230331_1643">Jawâhir al-Ma'ânî wa Bulûgh al-Amânî, texte arabe</a></li>
+    <li><a href="https://www.abdelazizbenabdallah.org/AB_SITE_DATA/AB_BOOKS/AB_BOOKS_FR/Tariqa_Jawaheer_al_maani.pdf">Jawâhir al-Ma'ânî, extrait traduit par le Pr Abdelaziz Benabdellah</a></li>
+    <li><a href="https://abdelazizbenabdallah.org/Questions/questions_Tariqa_En.html">Pr A. Benabdallah, Questions &amp; Answers sur la Tariqa</a></li>
+    <li><a href="https://tidjaniya.com/en/merits-and-blessings-of-the-tariqa-tidjaniya/">tidjaniya.com, Merits and blessings of the Tariqa Tidjaniya</a></li>
+    <li><a href="https://tidjaniya.com/ar/salatoul-fatihi/">tidjaniya.com (ar), Salatoul Fatihi</a> · <a href="https://tidjaniya.com/fr/la-salatoul-fatihi/">(fr)</a> · <a href="https://tidjaniya.com/en/salat-fatihi-quran/">(en) Salat Fatihi and the Quran</a></li>
+    <li><a href="https://tidjaniya.com/en/tariqa-fiqh/">tidjaniya.com, Tariqa Tidjaniya Fiqh</a></li>
+    <li><a href="https://tidjaniya.com/en/?p=4400">tidjaniya.com, Djawharatul Kamal</a> · <a href="https://tidjaniya.com/en/wp-json/wp/v2/posts/4441">Questions regarding Djawharatul Kamal</a></li>
+    <li><a href="https://tidjaniya.com/en/questions-regarding-friday-haylala/">tidjaniya.com, Questions regarding Friday Haylala</a></li>
+    <li><a href="https://tidjaniya.com/en/?p=4263">tidjaniya.com, Conditions</a> · <a href="https://tidjaniya.com/en/?p=4266">The spiritual journey via the straightest path, part 2</a></li>
+    <li><a href="https://tidjaniya.com/ar/cheminement-droit-tidjaniya-1/">tidjaniya.com (ar), Suluk al-manhaj al-qawim</a></li>
+    <li><a href="https://www.tidjania.ma/%D8%AC%D9%84%D8%B3%D8%A9-%D9%85%D8%B9-%D8%AC%D9%88%D9%87%D8%B1%D8%A9-%D8%A7%D9%84%D9%83%D9%85%D8%A7%D9%84-%D8%A8%D8%B4%D8%B1%D8%AD-%D9%85%D9%88%D9%84%D8%A7%D9%86%D8%A7-%D8%A7%D9%84%D8%B4%D9%8A%D8%AE/">tidjania.ma, <span class="ar-in" lang="ar" dir="rtl">جلسة مع جوهرة الكمال</span></a></li>
+    <li><a href="https://alchamel114.org/archive/index.php/t-29311.html">Forum alchamel114, Salat al-Fatih</a> · <a href="http://alchamel114.org/archive/index.php/t-8471.html">Jawharat al-Kamal</a></li>
+    <li><a href="https://zawiya.sn/le-wird-tijane/le-wird-ou-lazim/">zawiya.sn, Le wird ou Lazim</a></li>
+    <li><a href="https://library.oapen.org/bitstream/handle/20.500.12657/40109/9781469660844.pdf">Zachary Wright, Realizing Islam, UNC Press 2020</a></li>
+    <li><a href="https://www.themathesontrust.org/papers/islam/Wright-Kashif_Al-Ilbas_Of_Shaykh_Ibrahim.pdf">Zachary Wright, « The Kāshif al-Ilbās of Shaykh Ibrāhīm Niasse », Islamic Africa 1/1, 2010</a></li>
+    <li><a href="https://webpulaaku.site/defte/brenner/appendix3_membership_tijaniyya.html">Louis Brenner, West African Sufi, annexe 3 (les 23 conditions d'après Rimâh)</a></li>
+    <li><a href="https://traditionalhikma.com/wp-content/uploads/2020/06/Adab_with_an_Absent_Master_Sufis_and_Goo.pdf">Mustapha Petrone, « Ādāb with an Absent Master », Brill 2016</a></li>
+    <li><a href="https://revistas.uma.es/index.php/claridades/article/download/3789/3524/12274">Francisco de Diego González, Claridades 8, 2016</a> · <a href="https://revistas.ucm.es/index.php/ANQE/article/download/58713/52889/121061">Anaquel de Estudios Árabes 29, 2018</a></li>
+    <li><a href="https://lesoleil.sn/actualites/societe-fait-divers/religion/la-pierre-angulaire-de-la-pensee-del-hadj-oumar-tall/">Le Soleil, La pierre angulaire de la pensée d'El Hadj Oumar Tall</a> · <a href="https://lesoleil.sn/actualites/societe-fait-divers/religion/un-attachement-a-lorthodoxie-sunnite/">Un attachement à l'orthodoxie sunnite</a></li>
+    <li><a href="https://ajis.org/index.php/ajiss/article/download/2815/2629/5380">William Johnson, American Journal of Islam and Society</a></li>
+    <li><a href="https://fakhriowaisi.blogspot.com/2017/02/questions-and-answers-on-salat-al-fatih.html">Fakhruddin Owaisi al-Tijani, Questions and answers on Salat al-Fatih</a></li>
+    <li><a href="https://shamela.ws/book/433/171">Mawsu'at al-mafahim al-islamiyya, p. 169</a></li>
+  </ul>
+</section>
+
+<!-- ANNEXE -->
+<section class="annex" id="annexe">
+  <h2 class="sec">Annexe de travail <span class="n">à retirer avant publication</span></h2>
+
+  <h3>A. Limites de la recherche</h3>
+  <ul>
+    <li><b>Lus sur les pages du livre</b> (18 octobre 2026) : Jawâhir al-Ma'ânî, édition critique de Muhammad al-Râdî Kanûn établie sur manuscrits (PDF cheikh-skiredj.com, 961 p. ; la pagination imprimée = page du PDF jusqu'à p. 700 environ, puis page du PDF + 1) ; Munyat al-Murid (PDF de 32 p., pagination imprimée) ; Kâshif al-Ilbâs (PDF Shamela, page du PDF). Les citations arabes du corps de page marquées « Lu dans… » ont été recopiées depuis l'image de la page.</li>
+    <li><b>Lu en texte intégral</b> : Rûh al-Adab de Cheikh Ibrahim Niasse (fichier .doc, 121 vers, daté de 1342 H, v. 106) ; numérotation des vers établie sur ce fichier. Les vers 63-65 (le Cheikh « meilleur des maîtres », sa voie « meilleure de toutes par consensus ») ne sont pas repris dans le corps de page, par neutralité.</li>
+    <li><b>Lu par recherche plein texte (OCR)</b> : Jawâhir, éd. bilingue Ravane Mbaye (2010), pagination du scan archive.org.</li>
+    <li><b>Lu après reconnaissance de texte</b> : al-Durra al-Kharida d'al-Nazifi, t. 4 (scan de 254 p. ; texte reconnu puis citations vérifiées sur l'image de la page).</li>
+    <li><b>Reçus mais non exploités</b> : al-Jaysh al-Kafil (scan sans texte ; les promesses citées de ses p. 214-215 sont désormais vérifiées directement dans Jawâhir), al-Durra al-Kharida t. 1, œuvres de Sukayrij (fatwas, Zawâl al-Hayra).</li>
+    <li><b>Toujours non vérifiés directement</b> : al-Ifada al-Ahmadiyya, al-Jâmi', Rimâh et Bughyat al-Mustafid (introuvables en ligne ; al-Jâmi' et Rimâh sont cités par al-Durra).</li>
+    <li>Les autres citations passent par des relais : sites et forums tijanis, traductions, travaux universitaires.</li>
+    <li>La seconde annonce sur la Salat al-Fatih a été reconstituée à partir de fragments ; elle n'a jamais été vue d'un seul tenant.</li>
+    <li>Avant publication, remplacer les liens web du corps de page par des références imprimées (ouvrage, édition, tome, page).</li>
+  </ul>
+
+  <h3>B. Libellés obtenus uniquement par des sources hostiles à la tariqa</h3>
+  <p>Ces ouvrages de réfutation citent le texte tijani mot à mot avec la page, mais leur commentaire est polémique. Aucun de ces libellés n'est repris dans le corps de la page.</p>
+  <ul>
+    <li><b>Garantie, Jawâhir 1/96-98</b> (canal : Mawsu'at al-radd 'ala al-sufiyya) : pardon des péchés passés et futurs, Paradis « <span class="ar-in" lang="ar" dir="rtl">بلا حساب ولا عقاب في أول الزمرة الأولى</span> », mort dans la foi ; p. 98 : parents, épouses, descendance directe sans les petits-enfants ; condition : <span class="ar-inline" lang="ar" dir="rtl">بشرط ألا يصدر منهم سب ولا بغض ولا عداوة وبدوام محبة الشيخ بلا انقطاع إلى الممات</span>.</li>
+    <li><b>Garantie, Jawâhir 1/130-131</b>, présentée comme lettre du Cheikh (canal : Dorar, Mawsu'at al-firaq) : pères, mères, fils, filles, épouses ; « <span class="ar-in" lang="ar" dir="rtl">في جواري في عليين</span> ».</li>
+    <li><b>« <span class="ar-in" lang="ar" dir="rtl">وكل هذا واقع يقظة لا منامًا</span> »</b> (canal : al-Fikr al-sufi ; référence « 21/130-131 », coquille probable).</li>
+    <li><b>Jaysh al-Kafil, p. 214-215</b> : sécurité du châtiment de la mort au Paradis ; « <span class="ar-in" lang="ar" dir="rtl">ضمنت لك هذا ضمانًا لا ينقطع</span> ».</li>
+    <li><b>al-Ifada, p. 69</b> : présence du Cheikh avec ses compagnons à la mort et à l'interrogatoire ; intercession pour les gens de son époque.</li>
+    <li><b>Rimâh 2/421-425</b> : « <span class="ar-in" lang="ar" dir="rtl">كل من أخذ وردنا وداوم عليه إلى الممات يدخل الجنة بغير حساب ولا عقاب</span> » ; « <span class="ar-in" lang="ar" dir="rtl">محرر من النار</span> » ; « <span class="ar-in" lang="ar" dir="rtl">إن أصحابنا لا يدخلون المحشر مع الناس</span> ».</li>
+    <li><b>Bughya p. 273</b> : pardon des péchés majeurs et mineurs pour les gens du wird ; <b>p. 225</b> : nul saint ne reçoit de fayd sinon par l'intermédiaire du Cheikh.</li>
+    <li><b>Statut du Cheikh</b> (Rimâh 2/15-17, 143-145 ; Bughya 193-194) : Pôle caché, Sceau muhammadien, « mes pieds sur le cou de tout wali ».</li>
+    <li><b>Salat al-Fatih</b> : référence « Jawâhir 1:136 », graphie « <span class="ar-in" lang="ar" dir="rtl">ست آلاف</span> » ; Jawâhir p. 96 « <span class="ar-in" lang="ar" dir="rtl">لا تزنها عبادة جميع الجن والإنس والملائكة</span> » ; Rimâh p. 139 et Durra 4/128-129 sur la croyance qu'elle est parole de Dieu.</li>
+    <li><b>Texte de la Jawharat al-Kamal, Rimâh 1/224</b> : page qui classe ses mérites parmi les « <span class="ar-in" lang="ar" dir="rtl">فضائل مكذوبة</span> ».</li>
+  </ul>
+
+  <h3>C. Divergences entre sources</h3>
+  <ul>
+    <li><b>Six mille ou six cent mille (Salat al-Fatih, seconde annonce) : tranché.</b> L'édition critique Kanûn (p. 271) lit « <span class="ar-in" lang="ar" dir="rtl">وَمِنَ القُرْآنِ سِتَّةَ آلَافِ مَرَّةٍ، لِأَنَّهُ مِنَ الأَذْكَارِ</span> », sans aucune variante signalée dans l'apparat des manuscrits, comme le scan arabe de 2023 (p. 270) et la Munya (p. 19). La traduction de Ravane Mbaye (p. 371) porte « six cent mille » : erreur de traduction ou d'OCR.</li>
+    <li><b>Composition de la Wazifa :</b> Jawâhir (Kanûn p. 255) donne cent Istighfar « sous toute formule », cent ou cinquante Salat al-Fatih, deux cents ou cent Hailala et onze Jawharat al-Kamal (variante « une » dans deux manuscrits). La Munya (p. 18) donne trente Istighfar avec la formule « al-'Azîm… al-Hayy al-Qayyûm » ou cent, cinquante Fatih, cent Hailala, onze Jawhara plus une ajoutée du vivant du Cheikh. La page suit la pratique actuelle (30/50/100/12).</li>
+    <li><b>Espace pour la Jawharat al-Kamal :</b> la Munya (p. 17) demande un lieu pur assez large « avec le Prophète ﷺ et les quatre califes » ; le forum alchamel114 conteste cette lecture et al-Nazifi admet un lieu étroit. Les deux positions figurent dans le corps de page.</li>
+    <li><b>Nombre de la Hadratou-l-Jouma :</b> Jawâhir (Kanûn p. 256) dit « <span class="ar-in" lang="ar" dir="rtl">من غير حد ولا حصر</span> » (sans limite ni nombre fixé), « sinon selon l'usage du pays » ; la fourchette 1000-1600 vient des auteurs postérieurs.</li>
+    <li><b>Visite des saints :</b> Jawâhir (p. 255) interdit de visiter les saints vivants et admet la visite des défunts « pour Dieu » ; la Munya (p. 12, note) limite l'interdiction à la visite faite pour demander le madad. Rimâh (cond. 3, d'après Brenner) interdit la visite des saints vivants et morts.</li>
+    <li><b>Garantie contre le Feu de la Salat al-Fatih :</b> Jawâhir (Kanûn p. 271) rapporte d'après « l'auteur de la Warda » qu'al-Bakri aurait dit : « Celui qui la récite une fois et n'entre pas au Paradis, qu'il en saisisse l'auteur devant Dieu. » Non repris dans le corps de page.</li>
+    <li><b>Nuance de Jawâhir sur le Coran</b> (éd. Mbaye, p. 469-479) : selon le degré du récitant, la lecture du Coran est meilleure pour l'un, la prière sur le Prophète ﷺ plus utile pour l'autre, notamment pour qui lit le Coran sans en respecter les conditions. Le corps de page ne retient que la règle générale de la p. 381.</li>
+    <li><b>Garantie familiale, éd. Mbaye p. 1152-1154 :</b> « à part les petits-enfants issus des filles » (lecture OCR incertaine) ; autres passages de garantie p. 357-361 (pour « quiconque te donne à manger ») et p. 1196 (« parents, épouses, descendants » ; vision du Cheikh le vendredi ou le lundi).</li>
+    <li><b>« <span class="ar-in" lang="ar" dir="rtl">أبشروا… يبعث من الآمنين</span> » : trouvé</b> dans Jawâhir, éd. Kanûn p. 752 (« <span class="ar-in" lang="ar" dir="rtl">بشارة</span> »), suivi de la garantie familiale avec les conditions « <span class="ar-in" lang="ar" dir="rtl">بشرط الاعتقاد، وعدم نكث المحبة، وعدم الأمن من مكر الله</span> ».</li>
+    <li><b>Quatrième mérite de la Jawharat al-Kamal :</b> c'est une parole du Cheikh (« <span class="ar-in" lang="ar" dir="rtl">وقال الشيخ</span> »), non du Prophète ﷺ, et le texte arabe dit « <span class="ar-in" lang="ar" dir="rtl">يرى النبي</span> » sans préciser « en rêve » (Kanûn p. 916) ; la Munya (p. 20) dit « <span class="ar-in" lang="ar" dir="rtl">لدى منامه يرى النبي</span> ».</li>
+    <li><b>« Beaux-parents » : correction.</b> Ils figurent bien dans Jawâhir, mais dans la lettre du Cheikh (Kanûn p. 264 : « <span class="ar-in" lang="ar" dir="rtl">وأزواجهم ووالدي أزواجهم</span> »), qui concerne le cercle large de ceux qui l'aiment, le servent ou ont reçu de lui un dhikr. Le passage sur ceux qui prennent le wird (p. 267, 752) dit « <span class="ar-in" lang="ar" dir="rtl">والداه وأزواجه وذريته المنفصلة عنه لا الحفدة</span> », sans les beaux-parents. Les deux passages figurent désormais dans le corps de page.</li>
+    <li><b>Le Coran dans la seconde annonce :</b> al-Durra (t. 4, p. 228, citant al-Jâmi') rapporte une version de la seconde annonce sans « ومن القرآن » ; le disciple demande au Cheikh si le Coran y est inclus, et il répond « <span class="ar-in" lang="ar" dir="rtl">يحتمل دخوله فيها</span> » (« il est possible qu'il y soit inclus »), le disciple ajoutant « parce que c'est un dhikr ». Jawâhir (Kanûn p. 271) intègre « ومن القرآن ستة آلاف مرة لأنه من الأذكار » dans le texte même. Divergence de transmission à signaler à la validation.</li>
+    <li><b>Pagination d'al-Durra :</b> les relais citaient « Durra 4/128-129 » ; dans l'exemplaire reçu (PDF de 254 p., pagination imprimée = page du PDF + 1), ces pages traitent du samâ' et les conditions de la Salat al-Fatih sont p. 218.</li>
+    <li><b>Pagination de la garantie :</b> 1/96-98 ou 1/130-131 : deux éditions, ou deux passages distincts.</li>
+    <li><b>Famille couverte :</b> « parents, épouses, descendance directe » (1/98) ; « pères, mères, fils, filles, épouses » (1/130) ; « beaux-parents » seulement sur tidjaniya.com.</li>
+    <li><b>Bénéficiaires :</b> « quiconque a pris de moi un dhikr » (Jawâhir 1/96), « un wird » (Jaysh), « notre wird maintenu jusqu'à la mort » (Rimâh 2/422).</li>
+    <li><b>Objet des six mille :</b> les relais de Jawâhir nomment dhikr, invocation et Coran « parce qu'il fait partie des adhkâr » ; le vers de la Munya ne nomme pas le Coran ; les pages anglaise et française de tidjaniya.com simplifient en « six mille lectures du Coran ».</li>
+    <li><b>Condition de croyance :</b> « parole de Dieu comme les hadiths qudsî » (al-Jâmi', Bughya) et « inspiration des saints » (tidjaniya.com d'après l'Ifada) ne s'opposent pas chez al-Nazifi : al-Durra (t. 4, p. 218) cite les deux et range la descente de la prière parmi les formes de l'ilhâm des saints. Reste à vérifier la phrase exacte de l'Ifada.</li>
+    <li><b>Idhn de la Salat al-Fatih :</b> requis selon al-Jâmi' et tidjaniya.com ; « pas forcément nécessaire » selon Benabdallah (Q95). Distinction possible entre récitation dans le wird et dévotion libre, non énoncée.</li>
+    <li><b>Al-Bakri :</b> seul le Cheikh a reçu le mérite propre (tidjaniya.com/ar) ou aucune différence de mérite entre les versions (Owaisi).</li>
+    <li><b>Espace pour six personnes (Jawharat al-Kamal) :</b> imposé par la page fiqh de tidjaniya.com ; lieu étroit admis par al-Nazifi ; le forum alchamel114 y voit l'éloignement du souffle de toute impureté, non la place du Prophète ﷺ et des califes. Écarté du corps de page.</li>
+    <li><b>Nombre de Jawharat al-Kamal :</b> 12, ou « 11 ou 12 » (Brenner d'après Rimâh 1/229-230).</li>
+    <li><b>Hadratou-l-Jouma :</b> 1000, 1200 ou 1600 ; minimum « au-delà de mille » selon la Bughya.</li>
+    <li><b>Éditions de Jawâhir :</b> Beyrouth/Halabi 1963, Cissé 2011 (manuscrit de Kaolack), Kanun 2012 (quatre manuscrits de Harazim). Citer l'édition retenue.</li>
+  </ul>
+
+  <h3>D. Écarté du corps de page (source unique, sans référence primaire)</h3>
+  <ul>
+    <li>Salat al-Fatih : nuit = 500 récitations de jour ; multiplication à chaque répétition ; « sept ou huit degrés ». Les pages 369-403 de l'éd. Mbaye contiennent de nombreux calculs de multiplication (600 000, etc.) à examiner avant toute reprise.</li>
+    <li>Nom Suprême : Jawâhir (éd. Mbaye, p. 375) dit qu'« une seule formulation du Nom Sublime est six mille fois supérieure » à toute autre invocation. Ce mérite concerne le Nom Suprême, non la Salat al-Fatih, et ne relève pas des wirds de la page.</li>
+    <li>Garantie contre le Feu du Wird al-Juyub (alchamel114).</li>
+    <li>Règle des retardataires de la Hadra (al-Jakani) ; interruption de la Wazifa au profit de la Hailala (al-Shinqiti).</li>
+    <li>Usages de la Jawharat al-Kamal hors Wazifa (al-Ira'a).</li>
+    <li>« Insulter le Cheikh mène à la mécréance » ; « <span class="ar-in" lang="ar" dir="rtl">فقيرك فقيري وتلميذك تلميذي</span> » (tidjaniya.com, sans source).</li>
+    <li>Lien entre la Hadra et l'heure exaucée du vendredi : <b>trouvé</b> dans al-Durra al-Kharida (t. 4, p. 106-107), qui fait de l'heure exaucée de la fin du vendredi le fruit propre de la Hailala et la raison pour laquelle elle ne se rattrape pas. À ajouter au corps de page après validation.</li>
+  </ul>
+
+  <h3>E. Points non trouvés</h3>
+  <ul>
+    <li>Mérites propres des cent Istighfar et des cent Hailala du Lazim dans Jawâhir ; contenu des chapitres 37-39 de Rimâh.</li>
+    <li>Récompense propre de la Hadratou-l-Jouma et justification de la fourchette 1000-1600.</li>
+    <li>Variante « le Cheikh présent avec le Prophète ﷺ dès la septième Jawhara » : introuvable ; tous les relais nomment les quatre califes.</li>
+    <li>Le tissu propre étendu pour la Jawharat al-Kamal : <b>trouvé</b> dans al-Durra al-Kharida (t. 4, p. 36) : « <span class="ar-in" lang="ar" dir="rtl">لجوهرة الكمال يندب نشرنا إزارا نظيفا طاهرا</span> », recommandé, la pureté étant obligatoire et la propreté recommandée ; le premier usage s'est fait avec l'autorisation du Cheikh (p. 41).</li>
+    <li>Positions propres à Tivaouane, Médina Baye ou la tradition omarienne sur la Wazifa et la Hadra ; textes d'El Hadji Malick Sy, de Sukayrij, d'Ibn al-Mishri, de Cheikh Hamahoullah.</li>
+    <li>Source textuelle de l'annonce de la Fayda par Cheikh Ahmed Tijani.</li>
+  </ul>
+
+  <h3>F. Critiques externes et réponses tijanies (contexte, non publié)</h3>
+  <ul>
+    <li><b>Points contestés</b> (thèse de M. A. Hanif, Bayreuth 2018) : la comparaison de la Salat al-Fatih avec le Coran ; le statut du Cheikh (Sceau, rencontre à l'état de veille) ; les garanties de salut et l'exclusivité. Le fond du différend porte sur l'autorité : Coran et Sunna seuls, ou aussi la connaissance du Cheikh.</li>
+    <li><b>Critiques :</b> al-Bakka'i al-Kunti, Ibn Mayaba (Mushtaha al-Kharif al-Jani), al-Ifriqi, al-Hilali, Dakhil Allah ; au Nigeria, Gumi et l'Izala.</li>
+    <li><b>Réponses tijanies :</b> Muhammad al-Hafiz al-Misri (Radd akadhib al-muftarin, 1950), 'Umar Mas'ud, Ahmad b. al-Hadi al-Shinqiti, El Hadji Malick Sy (Ifham al-Munkir al-Jani), Sukayrij.</li>
+    <li><b>Trois lignes de réponse sur les six mille</b> (relayées par un seul auteur, à vérifier) : textuelle (corruption de l'imprimé ; hypothèse de Cheikh Hassan Cissé : « 6000 khatms » des Dalâ'il al-Khayrât) ; herméneutique (Fatih récitée avec présence du cœur contre Coran récité distraitement) ; juridique (une récompense plus grande n'implique pas la supériorité).</li>
+    <li><b>Doutes internes :</b> 'Umar Mas'ud aurait rejeté la revendication liée à la Salat al-Fatih dans un écrit interne ; Ibrahim Salih (Nigeria) aurait jugé non authentiques les copies imprimées de Jawâhir.</li>
+    <li><b>Regard universitaire :</b> Wright lit ces revendications dans le cadre du tahqîq du XVIIIᵉ siècle et réfute l'accusation de plagiat d'Abun-Nasr (environ 0,3 % du texte).</li>
+  </ul>
+
+  <h3>G. État de la vérification</h3>
+  <div class="tablewrap">
+    <table class="t">
+      <thead><tr><th scope="col">Passage</th><th scope="col">Statut</th><th scope="col">Référence</th></tr></thead>
+      <tbody>
+        <tr><td>Garantie : Paradis sans compte, famille, 'Illiyyîn, conditions</td><td>Vérifié</td><td>Jawâhir, éd. Kanûn p. 262-267, 752 ; Munya p. 10</td></tr>
+        <tr><td>« <span class="ar-in" lang="ar" dir="rtl">أبشروا… يبعث من الآمنين</span> »</td><td>Vérifié</td><td>Jawâhir, éd. Kanûn p. 752</td></tr>
+        <tr><td>×6 puis ×6000 ; « <span class="ar-in" lang="ar" dir="rtl">لأنه من الأذكار</span> »</td><td>Vérifié</td><td>Jawâhir, éd. Kanûn p. 271 ; Munya p. 19</td></tr>
+        <tr><td>Taslîm ; priorité du Coran</td><td>Vérifié</td><td>Jawâhir, éd. Kanûn p. 277-278</td></tr>
+        <tr><td>Deux conditions de la Fatih (idhn, origine) ; dix récitations</td><td>Vérifié</td><td>al-Durra t. 4, p. 218 ; Munya p. 19-20</td></tr>
+        <tr><td>Lettre du Cheikh : cercle large, beaux-parents, 14 mérites</td><td>Vérifié</td><td>Jawâhir, éd. Kanûn p. 263-265 ; al-Durra t. 4, p. 28</td></tr>
+        <tr><td>Quatre mérites de la Jawharat al-Kamal</td><td>Vérifié</td><td>Jawâhir, éd. Kanûn p. 915-916 ; Munya p. 20</td></tr>
+        <tr><td>Ablution à l'eau pour la Jawhara, et sa raison</td><td>Vérifié</td><td>Jawâhir, éd. Kanûn p. 255-256 ; Munya p. 17</td></tr>
+        <tr><td>Wazifa : obligation, une fois suffit, assemblée, rattrapage</td><td>Vérifié</td><td>Jawâhir, éd. Kanûn p. 255 ; Munya p. 18</td></tr>
+        <tr><td>Hadratou-l-Jouma : obligation, assemblée, pas de rattrapage, présence du Prophète ﷺ</td><td>Vérifié</td><td>Jawâhir, éd. Kanûn p. 256 ; Munya p. 19</td></tr>
+        <tr><td>Abandon des autres voies ; visite des saints</td><td>Vérifié</td><td>Jawâhir, éd. Kanûn p. 147, 255 ; Munya p. 12</td></tr>
+        <tr><td>Dhikr collectif selon Niasse</td><td>Vérifié</td><td>Kâshif al-Ilbâs, p. 41 du PDF</td></tr>
+        <tr><td>Vers de Rûh al-Adab (adab, amour du cheikh, ma'rifa, exclusivité, Salat al-Fatih)</td><td>Vérifié</td><td>Rûh al-Adab, v. 4-7, 13-14, 20-21, 51, 66, 68, 77-79, 88</td></tr>
+        <tr><td>Présence du Cheikh à la mort ; intercession</td><td>À vérifier</td><td>al-Ifada, p. 69</td></tr>
+        <tr><td>Pardon et mérites détaillés du Lazim ; 23 conditions</td><td>À vérifier</td><td>Rimâh 1, chap. 37-39 et p. 211-228</td></tr>
+        <tr><td>« Inspiration des saints », non parole éternelle</td><td>À vérifier</td><td>al-Ifada</td></tr>
+        <tr><td>Règle d'Ibn al-Sa'ih sur la Wazifa ; minimum de la Hadra</td><td>À vérifier</td><td>Bughyat al-Mustafid</td></tr>
+        <tr><td>600 000 prières ; « <span class="ar-in" lang="ar" dir="rtl">خاصية الفاتح</span> »</td><td>À localiser</td><td>Jawâhir, éd. Kanûn p. 271-276 environ</td></tr>
+        <tr><td>Conditions et mérites selon Tivaouane</td><td>À vérifier</td><td>Kifayat al-Raghibin ; Ifham al-Munkir al-Jani</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3>H. Éditions consultées et trouvées en ligne</h3>
+  <ul>
+    <li>Jawâhir al-Ma'ânî, édition critique de Muhammad al-Râdî Kanûn, PDF diffusé par <a href="https://www.cheikh-skiredj.com">cheikh-skiredj.com</a> (961 p.) : édition de référence retenue pour les citations arabes.</li>
+    <li>Jawâhir al-Ma'ânî, éd. bilingue Ravane Mbaye (2010) : <a href="https://archive.org/details/jawahir-al-maani">fiche</a> · <a href="https://archive.org/download/jawahir-al-maani/Jawahir%20Al%20Maani_text.pdf">PDF (19,8 Mo)</a></li>
+    <li>Jawâhir al-Ma'ânî, texte arabe (scan 2023, édition non précisée) : <a href="https://archive.org/details/20230331_20230331_1643">fiche</a> · <a href="https://archive.org/download/20230331_20230331_1643/%D8%AC%D9%88%D8%A7%D9%87%D8%B1%20%D8%A7%D9%84%D9%85%D8%B9%D8%A7%D9%86%D9%8A%20%D9%88%D8%A8%D9%84%D9%88%D8%BA%20%D8%A7%D9%84%D8%A3%D9%85%D8%A7%D9%86%D9%8A.pdf">PDF (10,9 Mo)</a></li>
+    <li>Munyat al-Murid (Ibn Baba al-'Alawi) : <a href="https://archive.org/details/AAskZad-0191562">fiche</a></li>
+    <li>al-Jaysh al-Kafil (Muhammad b. Muhammad al-Saghir al-Tishiti) : <a href="https://archive.org/details/jaysh_kafil">fiche</a></li>
+    <li>Kâshif al-Ilbâs (Cheikh Ibrahim Niasse) : <a href="https://archive.org/details/kashef_ilbas">fiche</a> (fichier de 0,4 Mo : vérifier qu'il est complet)</li>
+    <li>al-Durra al-Kharida (al-Nazifi), t. 1 à 4 : <a href="https://archive.org/details/durra_kharida_202405">t. 1</a> · <a href="https://archive.org/details/Durrah_Al_Kharidah">t. 2</a> · <a href="https://archive.org/details/durrakharida3">t. 3</a> · <a href="https://archive.org/details/DURRAKHARIDA-4">t. 4</a></li>
+    <li>Bibliothèque de Cheikh Ibrahim Niasse (dont al-Bayân wa-l-Tabyîn et Jawharat al-Adab, commentaire de Rûh al-Adab) : <a href="https://archive.org/details/aliihab544_gmail_20181222">fiche</a> ; Rûh al-Adab : <a href="https://archive.org/details/rouh_al_adab">fiche</a></li>
+    <li>Œuvres d'Ahmad Sukayrij : <a href="https://archive.org/details/aliihab544_gmail_20181223">fiche</a></li>
+    <li>Non trouvés en ligne : Rimâh (souvent imprimé en marge de Jawâhir), Bughyat al-Mustafid, al-Ifada al-Ahmadiyya, al-Jâmi'.</li>
+  </ul>
+</section>
+</div>

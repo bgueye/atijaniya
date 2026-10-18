@@ -5,6 +5,8 @@ import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../profil/presentation/profile_providers.dart';
+import '../../tariqa_benefits/presentation/tariqa_benefits_providers.dart';
+import '../../tariqa_benefits/presentation/tariqa_benefits_screen.dart';
 import '../../tariqa_conditions/presentation/tariqa_conditions_screen.dart';
 import '../data/wirds_content.dart';
 import '../domain/wird_models.dart';
@@ -46,12 +48,25 @@ class WirdListScreen extends ConsumerWidget {
           _WirdCard(wird: wird),
           const SizedBox(height: 12),
         ],
-        // Juste après les trois wirds, qu'elle concerne : c'est là que le
-        // disciple qui vient de manquer le sien la cherchera.
-        const _WirdRepairCard(),
         _FreeWirdCard(l10n: l10n),
-        const SizedBox(height: 12),
+        // Les pages pour comprendre et rattraper sa pratique, regroupées sous
+        // un intertitre : parmi les cartes de wird, elles ne se distinguaient
+        // pas (audit de présentation du 2026-10-18). « Rattraper son wird »
+        // en tête : c'est là que le disciple qui vient de manquer le sien la
+        // cherchera.
+        const SizedBox(height: 24),
+        Padding(
+          padding: const EdgeInsetsDirectional.only(start: 4, bottom: 10),
+          child: Text(
+            l10n.wirdListUnderstandHeading,
+            style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w600, color: AppColors.ink),
+          ),
+        ),
+        const _WirdRepairCard(),
         _TariqaConditionsCard(l10n: l10n),
+        // À côté des Conditions de la Tariqa : la page des Bienfaits rattache
+        // justement chaque bienfait à sa condition.
+        const _TariqaBenefitsCard(),
       ],
     );
   }
@@ -214,6 +229,42 @@ class _FreeWirdCard extends StatelessWidget {
         trailing: DirectionalChevron(color: AppColors.bronze),
         onTap: () => Navigator.of(context).push(
           MaterialPageRoute(builder: (_) => const FreeWirdScreen()),
+        ),
+      ),
+    );
+  }
+}
+
+/// Accès à « Bienfaits de la Tijaniyya ». Masquée tant qu'il n'y a rien à
+/// montrer : pour un disciple, tant que le moqaddam référent n'a pas validé
+/// le contenu ; l'admin, qui lit le brouillon, la voit avec la mention
+/// « Brouillon ».
+class _TariqaBenefitsCard extends ConsumerWidget {
+  const _TariqaBenefitsCard();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
+    final rows = ref.watch(tariqaBenefitsRowsProvider).valueOrNull;
+    if (rows == null || rows.sections.isEmpty) return const SizedBox.shrink();
+    final hasDrafts = [...rows.sections, ...rows.cards].any((row) => row['content_status'] != 'valide');
+    return Padding(
+      padding: const EdgeInsets.only(top: 12),
+      child: Card(
+        child: ListTile(
+          contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+          leading: Icon(Icons.spa_outlined, color: AppColors.emerald),
+          title: Text(l10n.tariqaBenefitsCardTitle, style: const TextStyle(fontWeight: FontWeight.w500)),
+          subtitle: Text(
+            hasDrafts
+                ? '${l10n.tariqaBenefitsCardSubtitle} (${l10n.wirdRepairDraftTag})'
+                : l10n.tariqaBenefitsCardSubtitle,
+            style: TextStyle(color: AppColors.bronze),
+          ),
+          trailing: DirectionalChevron(color: AppColors.bronze),
+          onTap: () => Navigator.of(context).push(
+            MaterialPageRoute(builder: (_) => const TariqaBenefitsScreen()),
+          ),
         ),
       ),
     );

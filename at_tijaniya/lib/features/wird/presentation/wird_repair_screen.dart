@@ -8,6 +8,7 @@ import '../../../core/theme/rosace_painter.dart';
 import '../../../core/widgets/content_text.dart';
 import '../../../l10n/app_localizations.dart';
 import '../data/wirds_content.dart';
+import '../domain/wird_models.dart';
 import '../domain/wird_repair_models.dart';
 import 'wird_display_name.dart';
 import 'wird_repair_providers.dart';
@@ -23,7 +24,10 @@ import 'wird_repair_providers.dart';
 /// Deux façons de lire, au choix de l'app bar :
 /// - **par situation** (par défaut) : le disciple choisit son wird, voit tout
 ///   de suite s'il se rattrape, puis filtre les cas par type de situation.
-///   C'est la question qu'il se pose en ouvrant la page ;
+///   C'est la question qu'il se pose en ouvrant la page. Les cas du wird
+///   choisi viennent d'abord, les règles communes ensuite sous un seul
+///   intertitre : avant l'audit de présentation du 2026-10-18, les 14 règles
+///   communes passaient devant, et « Lazim oublié » n'arrivait qu'après ;
 /// - **tout lire** : toutes les sections à la suite (principes communs, puis
 ///   chaque wird), pour qui veut apprendre les règles plutôt que résoudre un
 ///   cas précis.
@@ -80,7 +84,9 @@ class _WirdRepairScreenState extends ConsumerState<WirdRepairScreen> {
             padding: const EdgeInsets.fromLTRB(16, 8, 16, 32),
             children: [
               if (content.hasDrafts) ...[_DraftBanner(text: l10n.wirdRepairDraftBanner), const SizedBox(height: 16)],
-              ContentText(l10n.wirdRepairIntro, style: TextStyle(color: AppColors.bronze, fontSize: 14, height: 1.45)),
+              // Encre et non bronze : le bronze ne passe pas le contraste AA
+              // en texte courant (design_tokens.yaml, 3,72:1).
+              Text(l10n.wirdRepairIntro, style: _uiBody(size: 14)),
               const SizedBox(height: 20),
               if (_readAll) ..._buildReadAll(context, content) else ..._buildBySituation(context, content),
               const SizedBox(height: 28),
@@ -94,7 +100,8 @@ class _WirdRepairScreenState extends ConsumerState<WirdRepairScreen> {
 
   List<Widget> _buildBySituation(BuildContext context, WirdRepairContent content) {
     final l10n = AppLocalizations.of(context)!;
-    final cases = content.casesFor(_wird, kind: _kind);
+    final own = content.casesOnlyFor(_wird, kind: _kind);
+    final common = content.casesOnlyFor(RepairWird.all, kind: _kind);
     return [
       _Label(l10n.wirdRepairWhichWird),
       const SizedBox(height: 4),
@@ -109,18 +116,30 @@ class _WirdRepairScreenState extends ConsumerState<WirdRepairScreen> {
       const SizedBox(height: 28),
       _Label(l10n.wirdRepairWhatHappened),
       const SizedBox(height: 10),
-      _KindChips(selected: _kind, onSelected: (kind) => setState(() => _kind = kind)),
+      _KindChips(
+        selected: _kind,
+        // Nombre de cas par type, pour le wird choisi (ses cas et les règles
+        // communes) : le disciple voit d'avance où chercher.
+        countFor: (kind) => content.casesFor(_wird, kind: kind).length,
+        onSelected: (kind) => setState(() => _kind = kind),
+      ),
       const SizedBox(height: 16),
-      if (cases.isEmpty)
+      if (own.isEmpty && common.isEmpty)
         Padding(
           padding: const EdgeInsets.symmetric(vertical: 24),
-          child: Text(l10n.wirdRepairEmpty, textAlign: TextAlign.center, style: TextStyle(color: AppColors.bronze)),
+          child: Text(l10n.wirdRepairEmpty, textAlign: TextAlign.center, style: _uiBody(size: 14.5)),
         )
-      else
-        // Les règles communes sont signalées : sans cela, le disciple qui a
-        // choisi la Wazifa se demanderait pourquoi un cas parle du wird en
-        // général.
-        _CaseList(cases: cases, markCommon: true),
+      else ...[
+        if (own.isNotEmpty) _CaseList(cases: own),
+        if (common.isNotEmpty) ...[
+          if (own.isNotEmpty) const SizedBox(height: 24),
+          // Un seul intertitre pour toutes les règles communes, plutôt que la
+          // mention « Vaut pour tous les wirds » répétée sur chaque cas.
+          _GroupHeading(icon: Icons.all_inclusive, text: l10n.wirdRepairCommonGroup),
+          const SizedBox(height: 10),
+          _CaseList(cases: common),
+        ],
+      ],
     ];
   }
 
@@ -134,9 +153,16 @@ class _WirdRepairScreenState extends ConsumerState<WirdRepairScreen> {
       if (cases.isEmpty && intro == null) continue;
       if (widgets.isNotEmpty) widgets.add(const SizedBox(height: 32));
       widgets.add(_SectionTitle(wird == RepairWird.all ? l10n.wirdRepairCommonSection : _wirdName(context, wird)));
-      if (intro != null) {
+      // La réponse rapide sous le nom du wird : sans elle, la lecture
+      // complète ne disait plus d'emblée si le wird se rattrape.
+      final answer = content.noteFor(wird, RepairNoteType.quickAnswer);
+      if (answer != null) {
         widgets.add(const SizedBox(height: 6));
-        widgets.add(ContentText(intro.textFor(isArabic), style: _contentStyle(isArabic, color: AppColors.bronze)));
+        widgets.add(_QuickAnswer(note: answer, size: 20));
+      }
+      if (intro != null) {
+        widgets.add(const SizedBox(height: 8));
+        widgets.add(ContentText(intro.textFor(isArabic), style: _contentStyle(isArabic, size: 14.5)));
       }
       final timings = content.notesFor(wird, RepairNoteType.timing);
       if (timings.isNotEmpty) {
@@ -150,9 +176,7 @@ class _WirdRepairScreenState extends ConsumerState<WirdRepairScreen> {
       }
       if (cases.isNotEmpty) {
         widgets.add(const SizedBox(height: 16));
-        // Chaque section porte déjà son wird : pas besoin de marquer les
-        // règles communes, elles ont leur propre section.
-        widgets.add(_CaseList(cases: cases, markCommon: false));
+        widgets.add(_CaseList(cases: cases));
       }
     }
     return widgets;
@@ -161,17 +185,28 @@ class _WirdRepairScreenState extends ConsumerState<WirdRepairScreen> {
 
 bool _isArabic(BuildContext context) => Localizations.localeOf(context).languageCode == 'ar';
 
-/// Nom du wird tel que le guide validé le donne (`wirds_content.dart`), dans
-/// la langue de l'interface — jamais un nom réécrit ici.
-String _wirdName(BuildContext context, RepairWird wird) {
+Wird _validatedWird(RepairWird wird) {
   final id = switch (wird) {
     RepairWird.lazim => 'lazim',
     RepairWird.wazifa => 'wazifa',
     RepairWird.hadra => 'hadratou_jouma',
     RepairWird.all => throw ArgumentError('pas de nom de wird pour les règles communes'),
   };
-  return wirdDisplayName(context, validatedWirds.firstWhere((w) => w.id == id));
+  return validatedWirds.firstWhere((w) => w.id == id);
 }
+
+/// Nom du wird tel que le guide validé le donne (`wirds_content.dart`), dans
+/// la langue de l'interface — jamais un nom réécrit ici.
+String _wirdName(BuildContext context, RepairWird wird) => wirdDisplayName(context, _validatedWird(wird));
+
+/// Texte d'interface courant : Jost, en encre (contraste AA sur parchemin).
+TextStyle _uiBody({double size = 15, FontWeight? weight, Color? color}) =>
+    TextStyle(fontSize: size, height: 1.5, color: color ?? AppColors.ink, fontWeight: weight);
+
+/// Texte secondaire (sources) : encre adoucie plutôt que bronze. Le bronze
+/// tombe à 4,09:1 sur blanc cassé, sous le seuil AA ; l'encre à 72 % reste
+/// au-dessus de 6:1 tout en se lisant comme une note.
+Color get _secondaryInk => AppColors.ink.withValues(alpha: 0.72);
 
 /// Style du contenu religieux : Amiri en arabe (texte religieux, règle du
 /// design system), Jost en français, comme le reste du texte courant de
@@ -210,10 +245,43 @@ class _SectionTitle extends StatelessWidget {
   Widget build(BuildContext context) => ContentText(text, style: _titleStyle(_isArabic(context)));
 }
 
+/// Intertitre d'un groupe de cas, avec un filet d'or qui le sépare du groupe
+/// précédent.
+class _GroupHeading extends StatelessWidget {
+  const _GroupHeading({required this.icon, required this.text});
+
+  final IconData icon;
+  final String text;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        Divider(height: 1, color: AppColors.gold.withValues(alpha: 0.6)),
+        const SizedBox(height: 14),
+        Row(
+          children: [
+            Icon(icon, size: 20, color: AppColors.emerald),
+            const SizedBox(width: 8),
+            Expanded(
+              child: Text(text, style: _uiBody(size: 15.5, weight: FontWeight.w600, color: AppColors.emerald)),
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+}
+
 /// Choix du wird : trois onglets à parts égales, soulignés d'un filet d'or
 /// quand ils sont choisis. Plutôt qu'un `SegmentedButton`, dont les segments
 /// tronquaient « Hadratou-l-Jouma » sur un téléphone étroit : ici le nom peut
 /// passer sur deux lignes.
+///
+/// Sous le nom, l'autre langue en petit (nom arabe dans l'app en français, nom
+/// français dans l'app en arabe) : la charte présente un wird par ses deux
+/// noms (docs/02, « Carte wird »).
 class _WirdTabs extends StatelessWidget {
   const _WirdTabs({required this.selected, required this.onSelected});
 
@@ -228,50 +296,97 @@ class _WirdTabs extends StatelessWidget {
         border: Border(bottom: BorderSide(color: AppColors.bronze.withValues(alpha: 0.25))),
       ),
       child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           for (final wird in const [RepairWird.lazim, RepairWird.wazifa, RepairWird.hadra])
-            Expanded(
-              child: Semantics(
-                selected: wird == selected,
-                button: true,
-                child: InkWell(
-                  onTap: () => onSelected(wird),
-                  child: AnimatedContainer(
-                    duration: const Duration(milliseconds: 180),
-                    padding: const EdgeInsets.fromLTRB(4, 12, 4, 10),
-                    decoration: BoxDecoration(
-                      border: Border(
-                        bottom: BorderSide(color: wird == selected ? AppColors.gold : Colors.transparent, width: 2.5),
-                      ),
-                    ),
-                    child: Text(
-                      _wirdName(context, wird),
-                      textAlign: TextAlign.center,
-                      maxLines: 2,
-                      style: isArabic
-                          ? AppTheme.sacredText(
-                              fontSize: 17,
-                              color: wird == selected ? AppColors.emerald : AppColors.bronze,
-                            ).copyWith(height: 1.3, fontWeight: wird == selected ? FontWeight.w700 : FontWeight.w400)
-                          : TextStyle(
-                              fontSize: 15,
-                              color: wird == selected ? AppColors.emerald : AppColors.bronze,
-                              fontWeight: wird == selected ? FontWeight.w600 : FontWeight.w400,
-                            ),
-                    ),
-                  ),
-                ),
-              ),
-            ),
+            Expanded(child: _tab(context, wird, isArabic)),
         ],
       ),
+    );
+  }
+
+  Widget _tab(BuildContext context, RepairWird wird, bool isArabic) {
+    final isSelected = wird == selected;
+    final color = isSelected ? AppColors.emerald : AppColors.ink.withValues(alpha: 0.7);
+    final validated = _validatedWird(wird);
+    final other = isArabic ? validated.nameFrench : validated.nameArabic;
+    return Semantics(
+      selected: isSelected,
+      button: true,
+      child: InkWell(
+        onTap: () => onSelected(wird),
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 180),
+          constraints: const BoxConstraints(minHeight: 56),
+          padding: const EdgeInsets.fromLTRB(4, 10, 4, 8),
+          decoration: BoxDecoration(
+            border: Border(
+              bottom: BorderSide(color: isSelected ? AppColors.gold : Colors.transparent, width: 2.5),
+            ),
+          ),
+          child: Column(
+            children: [
+              Text(
+                _wirdName(context, wird),
+                textAlign: TextAlign.center,
+                maxLines: 2,
+                style: isArabic
+                    ? AppTheme.sacredText(fontSize: 17, color: color)
+                        .copyWith(height: 1.3, fontWeight: isSelected ? FontWeight.w700 : FontWeight.w400)
+                    : TextStyle(fontSize: 15, color: color, fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400),
+              ),
+              const SizedBox(height: 2),
+              // Le nom dans l'autre langue, en petit : repère, pas libellé.
+              ContentText(
+                other,
+                textAlign: TextAlign.center,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: isArabic
+                    ? TextStyle(fontSize: 12, color: color)
+                    : AppTheme.sacredText(fontSize: 14, color: color).copyWith(height: 1.4),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+/// La réponse rapide (« Se rattrape » / « Ne se rattrape pas »). La réponse
+/// négative a son propre pictogramme et l'encre au lieu de l'émeraude : les
+/// deux réponses avaient le même dessin, et on ne les distinguait qu'en
+/// lisant (audit du 2026-10-18). Pas de rouge : il est réservé aux erreurs
+/// et aux actions destructrices (charte).
+class _QuickAnswer extends StatelessWidget {
+  const _QuickAnswer({required this.note, this.size = 32});
+
+  final WirdRepairNote note;
+  final double size;
+
+  @override
+  Widget build(BuildContext context) {
+    final isArabic = _isArabic(context);
+    final negative = note.isNegativeAnswer;
+    final color = negative ? AppColors.ink : AppColors.emerald;
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        Icon(negative ? Icons.do_not_disturb_on_outlined : Icons.history, color: color, size: size * 0.8),
+        SizedBox(width: size * 0.3),
+        Expanded(child: ContentText(note.textFor(isArabic), style: _titleStyle(isArabic, size: size, color: color))),
+      ],
     );
   }
 }
 
 /// Ce qu'il faut savoir d'un wird avant d'entrer dans les cas : s'il se
 /// rattrape (en grand — c'est la réponse que le disciple cherche d'abord),
-/// son introduction, ses horaires et la mise en garde éventuelle.
+/// son introduction, puis ses horaires et la mise en garde éventuelle,
+/// repliés. La mise en garde était un bandeau de cinq lignes au-dessus des
+/// filtres : avec elle, le premier cas n'apparaissait qu'au deuxième écran
+/// (audit du 2026-10-18). La lecture complète, elle, la montre dépliée.
 class _WirdSummary extends StatelessWidget {
   const _WirdSummary({super.key, required this.wird, required this.content});
 
@@ -287,77 +402,82 @@ class _WirdSummary extends StatelessWidget {
     final timings = content.notesFor(wird, RepairNoteType.timing);
     final warning = content.noteFor(wird, RepairNoteType.warning);
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        Card(
-          margin: EdgeInsets.zero,
-          clipBehavior: Clip.antiAlias,
-          child: Stack(
-            children: [
-              // Seule rosace de l'écran, en filigrane (design_tokens.yaml :
-              // une occurrence par écran, faible opacité, jamais en motif).
-              PositionedDirectional(
-                top: -18,
-                end: -18,
-                child: IgnorePointer(
-                  child: Opacity(
-                    opacity: 0.12,
-                    child: SizedBox.square(
-                      dimension: 120,
-                      child: CustomPaint(painter: RosacePainter(color: AppColors.gold, strokeWidth: 1.2)),
+    return Card(
+      margin: EdgeInsets.zero,
+      clipBehavior: Clip.antiAlias,
+      child: Stack(
+        children: [
+          // Seule rosace de l'écran, en filigrane (design_tokens.yaml :
+          // une occurrence par écran, faible opacité, jamais en motif).
+          PositionedDirectional(
+            top: -18,
+            end: -18,
+            child: IgnorePointer(
+              child: Opacity(
+                opacity: 0.12,
+                child: SizedBox.square(
+                  dimension: 120,
+                  child: CustomPaint(painter: RosacePainter(color: AppColors.gold, strokeWidth: 1.2)),
+                ),
+              ),
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.fromLTRB(20, 20, 20, 10),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                if (answer != null) ...[
+                  _QuickAnswer(note: answer),
+                  const SizedBox(height: 10),
+                  Container(width: 36, height: 2, color: AppColors.gold),
+                  const SizedBox(height: 12),
+                ],
+                if (intro != null) ContentText(intro.textFor(isArabic), style: _contentStyle(isArabic, size: 14.5)),
+                if (timings.isNotEmpty || warning != null) const SizedBox(height: 6),
+                if (timings.isNotEmpty)
+                  _Collapsible(
+                    icon: Icons.schedule,
+                    color: AppColors.emerald,
+                    label: l10n.wirdRepairSchedule,
+                    child: _TimingTable(notes: timings),
+                  ),
+                if (warning != null)
+                  _Collapsible(
+                    icon: Icons.warning_amber_rounded,
+                    color: AppColors.ink,
+                    label: l10n.wirdRepairWarningLabel,
+                    child: Padding(
+                      padding: const EdgeInsets.only(top: 4, bottom: 8),
+                      child: _WarningBand(text: warning.textFor(isArabic)),
                     ),
                   ),
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.fromLTRB(20, 20, 20, 18),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    if (answer != null) ...[
-                      ContentText(
-                        answer.textFor(isArabic),
-                        style: _titleStyle(isArabic, size: 32, color: AppColors.emerald),
-                      ),
-                      const SizedBox(height: 10),
-                      Container(width: 36, height: 2, color: AppColors.gold),
-                      const SizedBox(height: 12),
-                    ],
-                    if (intro != null)
-                      ContentText(intro.textFor(isArabic), style: _contentStyle(isArabic, size: 14.5, color: AppColors.bronze)),
-                    if (timings.isNotEmpty) ...[
-                      const SizedBox(height: 8),
-                      _CollapsibleSchedule(label: l10n.wirdRepairSchedule, notes: timings),
-                    ],
-                  ],
-                ),
-              ),
-            ],
+              ],
+            ),
           ),
-        ),
-        if (warning != null) ...[const SizedBox(height: 12), _WarningBand(text: warning.textFor(isArabic))],
-      ],
+        ],
+      ),
     );
   }
 }
 
-/// Horaires repliés par défaut dans la vue par situation. Dépliés, ceux du
-/// Lazim occupaient plus d'un écran et repoussaient les cas — ce que le
-/// disciple vient chercher — loin en dessous (constaté sur émulateur le
-/// 2026-10-17). La réponse rapide et la mise en garde restent visibles ; la
-/// lecture complète, elle, montre toujours les horaires.
-class _CollapsibleSchedule extends StatefulWidget {
-  const _CollapsibleSchedule({required this.label, required this.notes});
+/// Ligne repliable (horaires, mise en garde). Repliée par défaut dans la vue
+/// par situation : dépliés, les horaires du Lazim occupaient plus d'un écran
+/// et repoussaient les cas loin en dessous (constaté sur émulateur le
+/// 2026-10-17). Zone de toucher d'au moins 48 dp de haut (accessibilité).
+class _Collapsible extends StatefulWidget {
+  const _Collapsible({required this.icon, required this.color, required this.label, required this.child});
 
+  final IconData icon;
+  final Color color;
   final String label;
-  final List<WirdRepairNote> notes;
+  final Widget child;
 
   @override
-  State<_CollapsibleSchedule> createState() => _CollapsibleScheduleState();
+  State<_Collapsible> createState() => _CollapsibleState();
 }
 
-class _CollapsibleScheduleState extends State<_CollapsibleSchedule> {
+class _CollapsibleState extends State<_Collapsible> {
   bool _open = false;
 
   @override
@@ -371,22 +491,22 @@ class _CollapsibleScheduleState extends State<_CollapsibleSchedule> {
           child: InkWell(
             borderRadius: BorderRadius.circular(8),
             onTap: () => setState(() => _open = !_open),
-            child: Padding(
-              padding: const EdgeInsets.symmetric(vertical: 8),
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(minHeight: 48),
               child: Row(
                 children: [
-                  Icon(Icons.schedule, size: 18, color: AppColors.emerald),
+                  Icon(widget.icon, size: 20, color: widget.color),
                   const SizedBox(width: 8),
                   Expanded(
                     child: Text(
                       widget.label,
-                      style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600, color: AppColors.emerald),
+                      style: TextStyle(fontSize: 14.5, fontWeight: FontWeight.w600, color: widget.color),
                     ),
                   ),
                   AnimatedRotation(
                     turns: _open ? 0.5 : 0,
                     duration: const Duration(milliseconds: 180),
-                    child: Icon(Icons.expand_more, color: AppColors.emerald),
+                    child: Icon(Icons.expand_more, color: widget.color),
                   ),
                 ],
               ),
@@ -396,7 +516,7 @@ class _CollapsibleScheduleState extends State<_CollapsibleSchedule> {
         AnimatedSize(
           duration: const Duration(milliseconds: 200),
           alignment: AlignmentDirectional.topStart,
-          child: _open ? _TimingTable(notes: widget.notes) : const SizedBox(width: double.infinity),
+          child: _open ? widget.child : const SizedBox(width: double.infinity),
         ),
       ],
     );
@@ -414,6 +534,9 @@ class _TimingTable extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isArabic = _isArabic(context);
+    // La colonne des libellés suit la taille de texte choisie par l'utilisateur
+    // (réglage Android) : à largeur fixe, « Avancer » se coupait en grand texte.
+    final labelWidth = MediaQuery.textScalerOf(context).scale(76);
     return Column(
       children: [
         for (var i = 0; i < notes.length; i++) ...[
@@ -424,7 +547,7 @@ class _TimingTable extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 SizedBox(
-                  width: 76,
+                  width: labelWidth,
                   child: ContentText(
                     notes[i].labelFor(isArabic) ?? '',
                     style: _contentStyle(isArabic, size: 14, weight: FontWeight.w600, color: AppColors.emerald),
@@ -471,10 +594,16 @@ class _WarningBand extends StatelessWidget {
   }
 }
 
+/// Filtres par type de situation, avec le nombre de cas de chacun pour le
+/// wird choisi. Libellés courts (« Erreur », « Empêchement ») : les
+/// libellés longs faisaient trois rangées de puces. Un type sans aucun cas
+/// reste visible mais grisé : le disciple voit qu'il n'y a rien plutôt que
+/// de chercher une puce disparue.
 class _KindChips extends StatelessWidget {
-  const _KindChips({required this.selected, required this.onSelected});
+  const _KindChips({required this.selected, required this.countFor, required this.onSelected});
 
   final RepairKind? selected;
+  final int Function(RepairKind? kind) countFor;
   final ValueChanged<RepairKind?> onSelected;
 
   @override
@@ -493,21 +622,42 @@ class _KindChips extends StatelessWidget {
       spacing: 8,
       runSpacing: 8,
       children: [
-        for (final (kind, label) in options)
-          ChoiceChip(
-            label: Text(label),
-            selected: kind == selected,
-            showCheckmark: false,
-            onSelected: (_) => onSelected(kind),
-            selectedColor: AppColors.emeraldSoft,
-            backgroundColor: AppColors.offWhite,
-            side: BorderSide(color: kind == selected ? AppColors.emerald : AppColors.bronze.withValues(alpha: 0.3)),
-            labelStyle: TextStyle(
-              color: kind == selected ? AppColors.emerald : AppColors.ink,
-              fontWeight: kind == selected ? FontWeight.w600 : FontWeight.w400,
+        for (final (kind, label) in options) _chip(kind, label, countFor(kind)),
+      ],
+    );
+  }
+
+  Widget _chip(RepairKind? kind, String label, int count) {
+    final isSelected = kind == selected;
+    final enabled = count > 0 || isSelected;
+    final textColor = isSelected ? AppColors.emerald : AppColors.ink;
+    return ChoiceChip(
+      label: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(label),
+          const SizedBox(width: 6),
+          Text(
+            '$count',
+            style: TextStyle(
+              fontSize: 12.5,
+              fontWeight: FontWeight.w600,
+              color: (isSelected ? AppColors.emerald : AppColors.ink).withValues(alpha: 0.65),
             ),
           ),
-      ],
+        ],
+      ),
+      selected: isSelected,
+      showCheckmark: false,
+      onSelected: enabled ? (_) => onSelected(kind) : null,
+      selectedColor: AppColors.emeraldSoft,
+      backgroundColor: AppColors.offWhite,
+      disabledColor: AppColors.parchment,
+      side: BorderSide(color: isSelected ? AppColors.emerald : AppColors.bronze.withValues(alpha: 0.3)),
+      labelStyle: TextStyle(
+        color: enabled ? textColor : AppColors.ink.withValues(alpha: 0.45),
+        fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
+      ),
     );
   }
 }
@@ -515,12 +665,9 @@ class _KindChips extends StatelessWidget {
 /// Les cas, dans une seule surface séparée par des filets plutôt qu'une pile
 /// de cartes : ils se lisent comme une liste continue de questions-réponses.
 class _CaseList extends StatelessWidget {
-  const _CaseList({required this.cases, required this.markCommon});
+  const _CaseList({required this.cases});
 
   final List<WirdRepairCase> cases;
-
-  /// Signaler les règles communes à tous les wirds (vue par situation).
-  final bool markCommon;
 
   @override
   Widget build(BuildContext context) {
@@ -534,7 +681,7 @@ class _CaseList extends StatelessWidget {
         children: [
           for (var i = 0; i < cases.length; i++) ...[
             if (i > 0) Divider(height: 1, indent: 16, endIndent: 16, color: AppColors.bronze.withValues(alpha: 0.18)),
-            _CaseTile(repairCase: cases[i], markCommon: markCommon),
+            _CaseTile(repairCase: cases[i]),
           ],
         ],
       ),
@@ -543,10 +690,9 @@ class _CaseList extends StatelessWidget {
 }
 
 class _CaseTile extends StatelessWidget {
-  const _CaseTile({required this.repairCase, required this.markCommon});
+  const _CaseTile({required this.repairCase});
 
   final WirdRepairCase repairCase;
-  final bool markCommon;
 
   @override
   Widget build(BuildContext context) {
@@ -558,13 +704,6 @@ class _CaseTile extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          if (markCommon && repairCase.wird == RepairWird.all) ...[
-            Text(
-              l10n.wirdRepairCommonRule,
-              style: TextStyle(fontSize: 12, fontWeight: FontWeight.w500, color: AppColors.emerald),
-            ),
-            const SizedBox(height: 4),
-          ],
           ContentText(repairCase.situationFor(isArabic), style: _contentStyle(isArabic, weight: FontWeight.w600)),
           const SizedBox(height: 6),
           ContentText(repairCase.actionFor(isArabic), style: _contentStyle(isArabic, size: 14.5)),
@@ -572,7 +711,14 @@ class _CaseTile extends StatelessWidget {
             const SizedBox(height: 8),
             ContentText(
               l10n.wirdRepairSource(source),
-              style: TextStyle(fontSize: 12, fontStyle: FontStyle.italic, color: AppColors.bronze, height: 1.4),
+              // Pas d'italique en arabe : l'écriture arabe n'en a pas, et
+              // Flutter penchait artificiellement l'Amiri.
+              style: TextStyle(
+                fontSize: isArabic ? 13 : 12.5,
+                fontStyle: isArabic ? FontStyle.normal : FontStyle.italic,
+                color: _secondaryInk,
+                height: 1.4,
+              ),
             ),
           ],
         ],
@@ -657,7 +803,7 @@ class _DraftBanner extends StatelessWidget {
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Icon(Icons.edit_note, color: AppColors.bronze, size: 20),
+            const Icon(Icons.edit_note, color: AppColors.ink, size: 20),
             const SizedBox(width: 10),
             Expanded(child: Text(text, style: const TextStyle(fontSize: 13, color: AppColors.ink, height: 1.4))),
           ],
@@ -684,7 +830,7 @@ class _Message extends StatelessWidget {
           children: [
             Icon(icon, color: AppColors.bronze, size: 32),
             const SizedBox(height: 12),
-            Text(text, textAlign: TextAlign.center, style: TextStyle(color: AppColors.bronze)),
+            Text(text, textAlign: TextAlign.center, style: _uiBody(size: 14.5)),
             if (action != null) ...[const SizedBox(height: 12), action!],
           ],
         ),
