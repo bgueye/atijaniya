@@ -235,7 +235,7 @@ class _DraftCardState extends ConsumerState<_DraftCard> {
           TextButton(
             onPressed: () => Navigator.of(context).pop(true),
             child: Text(l10n.wirdRecitationsReviewDelete,
-                style: TextStyle(color: AppColors.bronze)),
+                style: const TextStyle(color: AppColors.danger)),
           ),
         ],
       ),
@@ -307,17 +307,17 @@ class _DraftCardState extends ConsumerState<_DraftCard> {
                 padding: const EdgeInsets.only(bottom: 8),
                 child: ContentText(_previewError!,
                     style:
-                        TextStyle(color: AppColors.bronze, fontSize: 12)),
+                        const TextStyle(color: AppColors.danger, fontSize: 12)),
               ),
             Row(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
                 TextButton.icon(
                   onPressed: _busy ? null : () => _confirmAndDelete(context),
-                  icon: Icon(Icons.delete_outline,
-                      size: 18, color: AppColors.bronze),
+                  icon: const Icon(Icons.delete_outline,
+                      size: 18, color: AppColors.danger),
                   label: Text(widget.l10n.wirdRecitationsReviewDelete,
-                      style: TextStyle(color: AppColors.bronze)),
+                      style: const TextStyle(color: AppColors.danger)),
                 ),
                 const SizedBox(width: 8),
                 OutlinedButton.icon(

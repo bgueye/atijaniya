@@ -285,7 +285,7 @@ class _RecitationEntryTileState extends ConsumerState<_RecitationEntryTile> {
           TextButton(
             onPressed: () => Navigator.of(context).pop(true),
             child: Text(l10n.wirdRecitationsReviewDelete,
-                style: TextStyle(color: AppColors.bronze)),
+                style: const TextStyle(color: AppColors.danger)),
           ),
         ],
       ),
@@ -364,7 +364,7 @@ class _RecitationEntryTileState extends ConsumerState<_RecitationEntryTile> {
                   onPressed: _validating ? null : _validate,
                 ),
               IconButton(
-                icon: Icon(Icons.delete_outline, color: AppColors.bronze),
+                icon: const Icon(Icons.delete_outline, color: AppColors.danger),
                 tooltip: widget.l10n.wirdRecitationsReviewDelete,
                 onPressed: _confirmAndDelete,
               ),
@@ -375,7 +375,7 @@ class _RecitationEntryTileState extends ConsumerState<_RecitationEntryTile> {
           Padding(
             padding: const EdgeInsetsDirectional.only(start: 16, bottom: 8),
             child: ContentText(_previewError!,
-                style: TextStyle(color: AppColors.bronze, fontSize: 12)),
+                style: const TextStyle(color: AppColors.danger, fontSize: 12)),
           ),
       ],
     );
@@ -506,7 +506,7 @@ class _UploadRecitationSheetState
                 padding: const EdgeInsets.only(top: 8),
                 child: ContentText(_errorMessage!,
                     style:
-                        TextStyle(color: AppColors.bronze, fontSize: 12)),
+                        const TextStyle(color: AppColors.danger, fontSize: 12)),
               ),
             const SizedBox(height: 16),
             FilledButton(
