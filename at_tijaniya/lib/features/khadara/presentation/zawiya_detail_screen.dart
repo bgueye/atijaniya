@@ -182,6 +182,16 @@ class _ZawiyaDetailScreenState extends ConsumerState<ZawiyaDetailScreen> {
   }
 }
 
+/// Une information de la fiche (adresse, contact) : libellé traduit, puis
+/// la valeur dessous.
+///
+/// Avant l'audit Zawiyas du 2026-10-25 (P1), un `RichText` réunissait les
+/// deux sur une ligne : il n'appliquait pas la taille de texte choisie dans
+/// les réglages (`TextScaler.noScaling` par défaut) ni la police du thème,
+/// si bien qu'à 200 % l'adresse restait petite, en police système. Deux
+/// `Text` ordinaires héritent des deux ; la valeur, souvent en français, passe
+/// par `ContentText` pour son sens d'écriture, et le libellé n'a plus besoin
+/// d'une ponctuation « : » figée à la française.
 class _InfoRow extends StatelessWidget {
   const _InfoRow({required this.icon, required this.label, required this.text});
 
@@ -191,23 +201,24 @@ class _InfoRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Icon(icon, size: 18, color: AppColors.bronze),
-        const SizedBox(width: 8),
-        Expanded(
-          child: RichText(
-            text: TextSpan(
-              style: const TextStyle(color: AppColors.ink, fontSize: 14),
+    // Lu d'un seul tenant par TalkBack : « Adresse, Aïn Madhi… ».
+    return MergeSemantics(
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Icon(icon, size: 18, color: AppColors.bronze),
+          const SizedBox(width: 8),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                TextSpan(text: '$label : ', style: const TextStyle(fontWeight: FontWeight.w600)),
-                TextSpan(text: text),
+                Text(label, style: const TextStyle(color: AppColors.ink, fontSize: 14, fontWeight: FontWeight.w600)),
+                ContentText(text, style: const TextStyle(color: AppColors.ink, fontSize: 14)),
               ],
             ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 }
