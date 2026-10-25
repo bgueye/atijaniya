@@ -551,7 +551,7 @@ class _AudioPlayerBar extends StatelessWidget {
                   // s'affichait « durée / position » en arabe (passe sur
                   // émulateur du 2026-10-25). Même règle que « ×100 ».
                   Text(
-                    '${_formatDuration(position)} / ${_formatDuration(duration)}',
+                    '${formatPlaybackDuration(position)} / ${formatPlaybackDuration(duration)}',
                     textDirection: TextDirection.ltr,
                     style: TextStyle(color: AppColors.secondaryOnDark, fontSize: 11),
                   ),
@@ -578,12 +578,19 @@ class _AudioPlayerBar extends StatelessWidget {
       ),
     );
   }
+}
 
-  String _formatDuration(Duration d) {
+/// Position ou durée d'une récitation : « mm:ss », puis « h:mm:ss » à partir
+/// d'une heure. Les heures étaient ignorées : 1 h 05 s'affichait « 05:00 »
+/// (audit du 2026-10-25, P3-7).
+String formatPlaybackDuration(Duration d) {
+  final seconds = d.inSeconds.remainder(60).toString().padLeft(2, '0');
+  if (d.inHours > 0) {
     final minutes = d.inMinutes.remainder(60).toString().padLeft(2, '0');
-    final seconds = d.inSeconds.remainder(60).toString().padLeft(2, '0');
-    return '$minutes:$seconds';
+    return '${d.inHours}:$minutes:$seconds';
   }
+  final minutes = d.inMinutes.toString().padLeft(2, '0');
+  return '$minutes:$seconds';
 }
 
 class _ParagraphBlock extends StatelessWidget {

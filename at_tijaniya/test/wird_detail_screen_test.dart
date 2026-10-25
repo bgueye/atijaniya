@@ -73,6 +73,13 @@ Widget _wrap(Widget child, {required Locale locale, required bool offline}) {
 
 void main() {
   setUp(() => SharedPreferences.setMockInitialValues({}));
+
+  test('minutage du lecteur : minutes et secondes, puis heures au-delà d’une heure', () {
+    expect(formatPlaybackDuration(Duration.zero), '00:00');
+    expect(formatPlaybackDuration(const Duration(minutes: 2, seconds: 43)), '02:43');
+    expect(formatPlaybackDuration(const Duration(minutes: 59, seconds: 59)), '59:59');
+    expect(formatPlaybackDuration(const Duration(hours: 1, minutes: 5, seconds: 3)), '1:05:03');
+  });
   final lazim = validatedWirds.firstWhere((w) => w.id == 'lazim');
 
   testWidgets('la même erreur s’affiche à chaque toucher, pas seulement la première fois', (tester) async {
