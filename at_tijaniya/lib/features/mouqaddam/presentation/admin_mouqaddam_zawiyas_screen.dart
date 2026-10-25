@@ -57,57 +57,62 @@ class AdminMouqaddamZawiyasScreen extends ConsumerWidget {
 
     return Scaffold(
       appBar: AppBar(title: Text(l10n.adminMouqaddamZawiyasTitle)),
-      body: mouqaddams.when(
-        loading: () => Center(child: CircularProgressIndicator(color: AppColors.emerald)),
-        error: (error, stackTrace) => Center(
-          child: Padding(
-            padding: const EdgeInsets.all(24),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text(
-                  l10n.adminMouqaddamZawiyasLoadError,
-                  textAlign: TextAlign.center,
-                  style: TextStyle(color: AppColors.bronze),
-                ),
-                const SizedBox(height: 12),
-                OutlinedButton(
-                  onPressed: () => ref.invalidate(_managedMouqaddamsProvider),
-                  child: Text(l10n.homeRetry),
-                ),
-              ],
+      // `SafeArea` : sans elle, le bas de l'écran passait sous la barre de
+      // navigation Android (3 boutons) — même défaut que sur « Rattraper son
+      // wird », Conditions, Bienfaits, Paramètres et « Comprendre la Zawiya ».
+      body: SafeArea(
+        child: mouqaddams.when(
+          loading: () => Center(child: CircularProgressIndicator(color: AppColors.emerald)),
+          error: (error, stackTrace) => Center(
+            child: Padding(
+              padding: const EdgeInsets.all(24),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    l10n.adminMouqaddamZawiyasLoadError,
+                    textAlign: TextAlign.center,
+                    style: TextStyle(color: AppColors.bronze),
+                  ),
+                  const SizedBox(height: 12),
+                  OutlinedButton(
+                    onPressed: () => ref.invalidate(_managedMouqaddamsProvider),
+                    child: Text(l10n.homeRetry),
+                  ),
+                ],
+              ),
             ),
           ),
-        ),
-        data: (list) {
-          if (list.isEmpty) {
-            return Center(
-              child: Padding(
-                padding: const EdgeInsets.all(24),
-                child: Text(
-                  l10n.adminMouqaddamZawiyasEmpty,
-                  textAlign: TextAlign.center,
-                  style: TextStyle(color: AppColors.bronze),
+          data: (list) {
+            if (list.isEmpty) {
+              return Center(
+                child: Padding(
+                  padding: const EdgeInsets.all(24),
+                  child: Text(
+                    l10n.adminMouqaddamZawiyasEmpty,
+                    textAlign: TextAlign.center,
+                    style: TextStyle(color: AppColors.bronze),
+                  ),
                 ),
-              ),
+              );
+            }
+            return ListView(
+              padding: const EdgeInsets.all(16),
+              children: [
+                Text(l10n.adminMouqaddamZawiyasIntro, style: TextStyle(color: AppColors.bronze)),
+                const SizedBox(height: 16),
+                for (final mouqaddam in list)
+                  _MouqaddamCard(
+                    // `key` par compte : chaque carte garde son propre état
+                    // d'enregistrement quand la liste est rechargée.
+                    key: ValueKey(mouqaddam.userId),
+                    mouqaddam: mouqaddam,
+                    zawiyas: zawiyas.valueOrNull ?? const [],
+                  ),
+              ],
             );
-          }
-          return ListView(
-            padding: const EdgeInsets.all(16),
-            children: [
-              Text(l10n.adminMouqaddamZawiyasIntro, style: TextStyle(color: AppColors.bronze)),
-              const SizedBox(height: 16),
-              for (final mouqaddam in list)
-                _MouqaddamCard(
-                  // `key` par compte : chaque carte garde son propre état
-                  // d'enregistrement quand la liste est rechargée.
-                  key: ValueKey(mouqaddam.userId),
-                  mouqaddam: mouqaddam,
-                  zawiyas: zawiyas.valueOrNull ?? const [],
-                ),
-            ],
-          );
-        },
+          },
+        ),
       ),
     );
   }

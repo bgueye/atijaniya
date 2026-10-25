@@ -89,30 +89,35 @@ class _SilsilaSharePreviewScreenState extends State<_SilsilaSharePreviewScreen> 
         foregroundColor: AppColors.parchment,
         title: Text(l10n.mouqaddamChainShareButton),
       ),
-      body: Center(
-        child: Padding(
-          padding: const EdgeInsets.all(24),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              RepaintBoundary(
-                key: _repaintKey,
-                child: SilsilaShareCard(chain: widget.chain),
-              ),
-              const SizedBox(height: 24),
-              FilledButton.icon(
-                onPressed: _sharing ? null : _share,
-                icon: _sharing
-                    ? const SizedBox(
-                        width: 16,
-                        height: 16,
-                        child: CircularProgressIndicator(strokeWidth: 2, color: AppColors.zaytoune),
-                      )
-                    : const Icon(Icons.ios_share),
-                label: Text(l10n.mouqaddamChainShareCardAction),
-                style: FilledButton.styleFrom(backgroundColor: AppColors.gold, foregroundColor: AppColors.zaytoune),
-              ),
-            ],
+      // `SafeArea` : sans elle, le bas de l'écran passait sous la barre de
+      // navigation Android (3 boutons) — même défaut que sur « Rattraper son
+      // wird », Conditions, Bienfaits, Paramètres et « Comprendre la Zawiya ».
+      body: SafeArea(
+        child: Center(
+          child: Padding(
+            padding: const EdgeInsets.all(24),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                RepaintBoundary(
+                  key: _repaintKey,
+                  child: SilsilaShareCard(chain: widget.chain),
+                ),
+                const SizedBox(height: 24),
+                FilledButton.icon(
+                  onPressed: _sharing ? null : _share,
+                  icon: _sharing
+                      ? const SizedBox(
+                          width: 16,
+                          height: 16,
+                          child: CircularProgressIndicator(strokeWidth: 2, color: AppColors.zaytoune),
+                        )
+                      : const Icon(Icons.ios_share),
+                  label: Text(l10n.mouqaddamChainShareCardAction),
+                  style: FilledButton.styleFrom(backgroundColor: AppColors.gold, foregroundColor: AppColors.zaytoune),
+                ),
+              ],
+            ),
           ),
         ),
       ),

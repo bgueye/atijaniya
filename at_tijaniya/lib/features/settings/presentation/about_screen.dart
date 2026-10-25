@@ -27,48 +27,53 @@ class AboutScreen extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(title: Text(l10n.aboutScreenTitle)),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(20),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              l10n.aboutIntro,
-              style: const TextStyle(color: AppColors.ink, fontSize: 16, height: 1.4),
-            ),
-            const SizedBox(height: 28),
-            _AboutSection(
-              title: l10n.aboutIndependenceSectionTitle,
-              children: [
-                Text(l10n.aboutIndependenceBody1, style: _bodyStyle),
-                const SizedBox(height: 12),
-                Text(l10n.aboutIndependenceBody2, style: _bodyStyle),
-              ],
-            ),
-            _AboutSection(
-              title: l10n.aboutSponsorshipSectionTitle,
-              children: [
-                Text(l10n.aboutSponsorshipBody1, style: _bodyStyle),
-                const SizedBox(height: 12),
-                Text(
-                  l10n.aboutSponsorshipBodyBold,
-                  style: _bodyStyle.copyWith(fontWeight: FontWeight.w700),
-                ),
-                const SizedBox(height: 12),
-                Text(l10n.aboutSponsorshipBody2, style: _bodyStyle),
-              ],
-            ),
-            _AboutSection(
-              title: l10n.aboutNeutralitySectionTitle,
-              children: [Text(l10n.aboutNeutralityBody, style: _bodyStyle)],
-            ),
-            _AboutSection(
-              title: l10n.aboutContactSectionTitle,
-              children: [
-                SelectableText(l10n.aboutContactBody, style: _bodyStyle),
-              ],
-            ),
-          ],
+      // `SafeArea` : sans elle, le bas de l'écran passait sous la barre de
+      // navigation Android (3 boutons) — même défaut que sur « Rattraper son
+      // wird », Conditions, Bienfaits, Paramètres et « Comprendre la Zawiya ».
+      body: SafeArea(
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.all(20),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                l10n.aboutIntro,
+                style: const TextStyle(color: AppColors.ink, fontSize: 16, height: 1.4),
+              ),
+              const SizedBox(height: 28),
+              _AboutSection(
+                title: l10n.aboutIndependenceSectionTitle,
+                children: [
+                  Text(l10n.aboutIndependenceBody1, style: _bodyStyle),
+                  const SizedBox(height: 12),
+                  Text(l10n.aboutIndependenceBody2, style: _bodyStyle),
+                ],
+              ),
+              _AboutSection(
+                title: l10n.aboutSponsorshipSectionTitle,
+                children: [
+                  Text(l10n.aboutSponsorshipBody1, style: _bodyStyle),
+                  const SizedBox(height: 12),
+                  Text(
+                    l10n.aboutSponsorshipBodyBold,
+                    style: _bodyStyle.copyWith(fontWeight: FontWeight.w700),
+                  ),
+                  const SizedBox(height: 12),
+                  Text(l10n.aboutSponsorshipBody2, style: _bodyStyle),
+                ],
+              ),
+              _AboutSection(
+                title: l10n.aboutNeutralitySectionTitle,
+                children: [Text(l10n.aboutNeutralityBody, style: _bodyStyle)],
+              ),
+              _AboutSection(
+                title: l10n.aboutContactSectionTitle,
+                children: [
+                  SelectableText(l10n.aboutContactBody, style: _bodyStyle),
+                ],
+              ),
+            ],
+          ),
         ),
       ),
     );

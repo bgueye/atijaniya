@@ -58,25 +58,30 @@ class WirdRemindersScreen extends ConsumerWidget {
       appBar: AppBar(
         title: Text(l10n.wirdRemindersTitle(wirdName)),
       ),
-      body: state.loading
-          ? Center(child: CircularProgressIndicator(color: AppColors.emerald))
-          : ListView(
-              padding: const EdgeInsets.all(20),
-              children: [
-                _ScopeNote(l10n: l10n),
-                const SizedBox(height: 20),
-                for (final slot in slots) ...[
-                  _ReminderTile(
-                    slot: slot,
-                    l10n: l10n,
-                    setting: state.settings[slot.id] ?? WirdReminderSetting.defaultFor(slot),
-                    onToggle: (value) => controller.setEnabled(slot.id, value),
-                    onPickTime: (time) => controller.setTime(slot.id, time.hour, time.minute),
-                  ),
-                  const SizedBox(height: 12),
+      // `SafeArea` : sans elle, le bas de l'écran passait sous la barre de
+      // navigation Android (3 boutons) — même défaut que sur « Rattraper son
+      // wird », Conditions, Bienfaits, Paramètres et « Comprendre la Zawiya ».
+      body: SafeArea(
+        child: state.loading
+            ? Center(child: CircularProgressIndicator(color: AppColors.emerald))
+            : ListView(
+                padding: const EdgeInsets.all(20),
+                children: [
+                  _ScopeNote(l10n: l10n),
+                  const SizedBox(height: 20),
+                  for (final slot in slots) ...[
+                    _ReminderTile(
+                      slot: slot,
+                      l10n: l10n,
+                      setting: state.settings[slot.id] ?? WirdReminderSetting.defaultFor(slot),
+                      onToggle: (value) => controller.setEnabled(slot.id, value),
+                      onPickTime: (time) => controller.setTime(slot.id, time.hour, time.minute),
+                    ),
+                    const SizedBox(height: 12),
+                  ],
                 ],
-              ],
-            ),
+              ),
+      ),
     );
   }
 }

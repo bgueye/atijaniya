@@ -38,44 +38,49 @@ class LineageMatchesScreen extends ConsumerWidget {
 
     return Scaffold(
       appBar: AppBar(title: Text(l10n.lineageMatchesTitle)),
-      body: lineageAsync.when(
-        loading: () => Center(child: CircularProgressIndicator(color: AppColors.emerald)),
-        error: (error, stackTrace) => _ErrorState(
-          message: l10n.lineageMatchesLoadError,
-          onRetry: () => ref.invalidate(myLineageProvider),
-        ),
-        data: (lineage) {
-          if (lineage == null) {
-            return _EmptyState(
-              icon: Icons.auto_awesome_outlined,
-              title: l10n.lineageMatchesNoLineageTitle,
-              body: l10n.lineageMatchesNoLineageBody,
-              ctaLabel: l10n.lineageMatchesGoToLineageCta,
-              onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const LineageScreen())),
+      // `SafeArea` : sans elle, le bas de l'écran passait sous la barre de
+      // navigation Android (3 boutons) — même défaut que sur « Rattraper son
+      // wird », Conditions, Bienfaits, Paramètres et « Comprendre la Zawiya ».
+      body: SafeArea(
+        child: lineageAsync.when(
+          loading: () => Center(child: CircularProgressIndicator(color: AppColors.emerald)),
+          error: (error, stackTrace) => _ErrorState(
+            message: l10n.lineageMatchesLoadError,
+            onRetry: () => ref.invalidate(myLineageProvider),
+          ),
+          data: (lineage) {
+            if (lineage == null) {
+              return _EmptyState(
+                icon: Icons.auto_awesome_outlined,
+                title: l10n.lineageMatchesNoLineageTitle,
+                body: l10n.lineageMatchesNoLineageBody,
+                ctaLabel: l10n.lineageMatchesGoToLineageCta,
+                onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const LineageScreen())),
+              );
+            }
+            return privacyAsync.when(
+              loading: () => Center(child: CircularProgressIndicator(color: AppColors.emerald)),
+              error: (error, stackTrace) => _ErrorState(
+                message: l10n.lineageMatchesLoadError,
+                onRetry: () => ref.invalidate(myPrivacySettingsProvider),
+              ),
+              data: (privacy) {
+                if (!privacy.lineageVisible) {
+                  return _EmptyState(
+                    icon: Icons.visibility_off_outlined,
+                    title: l10n.lineageMatchesNotVisibleTitle,
+                    body: l10n.lineageMatchesNotVisibleBody,
+                    ctaLabel: l10n.lineageMatchesGoToPrivacyCta,
+                    onTap: () => Navigator.of(context).push(
+                      MaterialPageRoute(builder: (_) => const PrivacySettingsScreen()),
+                    ),
+                  );
+                }
+                return const _MatchesBody();
+              },
             );
-          }
-          return privacyAsync.when(
-            loading: () => Center(child: CircularProgressIndicator(color: AppColors.emerald)),
-            error: (error, stackTrace) => _ErrorState(
-              message: l10n.lineageMatchesLoadError,
-              onRetry: () => ref.invalidate(myPrivacySettingsProvider),
-            ),
-            data: (privacy) {
-              if (!privacy.lineageVisible) {
-                return _EmptyState(
-                  icon: Icons.visibility_off_outlined,
-                  title: l10n.lineageMatchesNotVisibleTitle,
-                  body: l10n.lineageMatchesNotVisibleBody,
-                  ctaLabel: l10n.lineageMatchesGoToPrivacyCta,
-                  onTap: () => Navigator.of(context).push(
-                    MaterialPageRoute(builder: (_) => const PrivacySettingsScreen()),
-                  ),
-                );
-              }
-              return const _MatchesBody();
-            },
-          );
-        },
+          },
+        ),
       ),
     );
   }

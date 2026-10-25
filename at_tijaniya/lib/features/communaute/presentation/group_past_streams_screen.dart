@@ -64,47 +64,52 @@ class GroupPastLiveStreamsScreen extends ConsumerWidget {
 
     return Scaffold(
       appBar: AppBar(title: Text(l10n.communityGroupsPastStreamsTitle)),
-      body: streamsAsync.when(
-        loading: () => Center(child: CircularProgressIndicator(color: AppColors.emerald)),
-        error: (error, stackTrace) => Center(
-          child: Text(l10n.communityGroupsPastStreamsLoadError, style: TextStyle(color: AppColors.bronze)),
-        ),
-        data: (streams) => streams.isEmpty
-            ? Center(
-                child: Padding(
-                  padding: const EdgeInsets.all(24),
-                  child: Text(
-                    l10n.communityGroupsPastStreamsEmpty,
-                    textAlign: TextAlign.center,
-                    style: TextStyle(color: AppColors.bronze),
-                  ),
-                ),
-              )
-            : ListView.separated(
-                padding: const EdgeInsets.all(16),
-                itemCount: streams.length,
-                separatorBuilder: (_, __) => const SizedBox(height: 8),
-                itemBuilder: (context, i) {
-                  final stream = streams[i];
-                  return Card(
-                    child: ListTile(
-                      leading: Icon(liveStreamSourceIcon(stream.sourceType), color: AppColors.bronze),
-                      title: Text(liveStreamSourceLabel(stream.sourceType, l10n)),
-                      subtitle: stream.endedAt != null ? ContentText(formatKhadaraDateTime(stream.endedAt!)) : null,
-                      trailing: canManage
-                          ? IconButton(
-                              icon: const Icon(Icons.delete_outline),
-                              tooltip: l10n.communityGroupsDeleteStreamTooltip,
-                              onPressed: () => _confirmDelete(context, ref, stream),
-                            )
-                          : null,
-                      onTap: () => Navigator.of(context).push(
-                        MaterialPageRoute(builder: (_) => LiveStreamScreen(stream: stream)),
-                      ),
+      // `SafeArea` : sans elle, le bas de l'écran passait sous la barre de
+      // navigation Android (3 boutons) — même défaut que sur « Rattraper son
+      // wird », Conditions, Bienfaits, Paramètres et « Comprendre la Zawiya ».
+      body: SafeArea(
+        child: streamsAsync.when(
+          loading: () => Center(child: CircularProgressIndicator(color: AppColors.emerald)),
+          error: (error, stackTrace) => Center(
+            child: Text(l10n.communityGroupsPastStreamsLoadError, style: TextStyle(color: AppColors.bronze)),
+          ),
+          data: (streams) => streams.isEmpty
+              ? Center(
+                  child: Padding(
+                    padding: const EdgeInsets.all(24),
+                    child: Text(
+                      l10n.communityGroupsPastStreamsEmpty,
+                      textAlign: TextAlign.center,
+                      style: TextStyle(color: AppColors.bronze),
                     ),
-                  );
-                },
-              ),
+                  ),
+                )
+              : ListView.separated(
+                  padding: const EdgeInsets.all(16),
+                  itemCount: streams.length,
+                  separatorBuilder: (_, __) => const SizedBox(height: 8),
+                  itemBuilder: (context, i) {
+                    final stream = streams[i];
+                    return Card(
+                      child: ListTile(
+                        leading: Icon(liveStreamSourceIcon(stream.sourceType), color: AppColors.bronze),
+                        title: Text(liveStreamSourceLabel(stream.sourceType, l10n)),
+                        subtitle: stream.endedAt != null ? ContentText(formatKhadaraDateTime(stream.endedAt!)) : null,
+                        trailing: canManage
+                            ? IconButton(
+                                icon: const Icon(Icons.delete_outline),
+                                tooltip: l10n.communityGroupsDeleteStreamTooltip,
+                                onPressed: () => _confirmDelete(context, ref, stream),
+                              )
+                            : null,
+                        onTap: () => Navigator.of(context).push(
+                          MaterialPageRoute(builder: (_) => LiveStreamScreen(stream: stream)),
+                        ),
+                      ),
+                    );
+                  },
+                ),
+        ),
       ),
     );
   }

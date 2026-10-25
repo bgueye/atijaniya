@@ -38,9 +38,14 @@ class WirdHistoryScreen extends ConsumerWidget {
       // Titre court : "Historique — Hadratou-l-Jouma" ne tenait pas sur une
       // ligne, le nom du wird est repris en tête du contenu.
       appBar: AppBar(title: Text(AppLocalizations.of(context)!.wirdHistoryHeading)),
-      body: state.loading || state.stats == null
-          ? Center(child: CircularProgressIndicator(color: AppColors.emerald))
-          : _HistoryBody(wird: wird, stats: state.stats!),
+      // `SafeArea` : sans elle, le bas de l'écran passait sous la barre de
+      // navigation Android (3 boutons) — même défaut que sur « Rattraper son
+      // wird », Conditions, Bienfaits, Paramètres et « Comprendre la Zawiya ».
+      body: SafeArea(
+        child: state.loading || state.stats == null
+            ? Center(child: CircularProgressIndicator(color: AppColors.emerald))
+            : _HistoryBody(wird: wird, stats: state.stats!),
+      ),
     );
   }
 }

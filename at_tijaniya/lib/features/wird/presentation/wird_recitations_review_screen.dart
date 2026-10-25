@@ -48,56 +48,61 @@ class WirdRecitationsReviewScreen extends ConsumerWidget {
           ),
         ],
       ),
-      body: draftsAsync.when(
-        loading: () => Center(
-            child: CircularProgressIndicator(color: AppColors.emerald)),
-        error: (error, stackTrace) => Center(
-          child: Padding(
-            padding: const EdgeInsets.all(24),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Icon(Icons.wifi_off, color: AppColors.bronze, size: 32),
-                const SizedBox(height: 12),
-                Text(
-                  l10n.wirdRecitationsReviewLoadError,
-                  textAlign: TextAlign.center,
-                  style: TextStyle(color: AppColors.bronze),
-                ),
-                const SizedBox(height: 12),
-                OutlinedButton(
-                  onPressed: () => ref.invalidate(draftWirdRecitationsProvider),
-                  child: Text(l10n.wirdRecitationsReviewRetry),
-                ),
-              ],
+      // `SafeArea` : sans elle, le bas de l'écran passait sous la barre de
+      // navigation Android (3 boutons) — même défaut que sur « Rattraper son
+      // wird », Conditions, Bienfaits, Paramètres et « Comprendre la Zawiya ».
+      body: SafeArea(
+        child: draftsAsync.when(
+          loading: () => Center(
+              child: CircularProgressIndicator(color: AppColors.emerald)),
+          error: (error, stackTrace) => Center(
+            child: Padding(
+              padding: const EdgeInsets.all(24),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(Icons.wifi_off, color: AppColors.bronze, size: 32),
+                  const SizedBox(height: 12),
+                  Text(
+                    l10n.wirdRecitationsReviewLoadError,
+                    textAlign: TextAlign.center,
+                    style: TextStyle(color: AppColors.bronze),
+                  ),
+                  const SizedBox(height: 12),
+                  OutlinedButton(
+                    onPressed: () => ref.invalidate(draftWirdRecitationsProvider),
+                    child: Text(l10n.wirdRecitationsReviewRetry),
+                  ),
+                ],
+              ),
             ),
           ),
-        ),
-        data: (drafts) {
-          if (drafts.isEmpty) {
-            return Center(
-              child: Padding(
-                padding: const EdgeInsets.all(24),
-                child: Text(
-                  l10n.wirdRecitationsReviewEmpty,
-                  textAlign: TextAlign.center,
-                  style: TextStyle(color: AppColors.bronze),
+          data: (drafts) {
+            if (drafts.isEmpty) {
+              return Center(
+                child: Padding(
+                  padding: const EdgeInsets.all(24),
+                  child: Text(
+                    l10n.wirdRecitationsReviewEmpty,
+                    textAlign: TextAlign.center,
+                    style: TextStyle(color: AppColors.bronze),
+                  ),
                 ),
-              ),
+              );
+            }
+            return ListView.separated(
+              padding: const EdgeInsets.all(16),
+              itemCount: drafts.length,
+              separatorBuilder: (_, __) => const SizedBox(height: 12),
+              itemBuilder: (context, i) =>
+                  // `key` par récitation : sans elle, après une validation ou
+                  // une suppression, la carte qui remontait à la même position
+                  // gardait le lecteur déjà chargé et rejouait le brouillon
+                  // précédent — l'admin pouvait valider un audio jamais écouté.
+                  _DraftCard(key: ValueKey(drafts[i].id), draft: drafts[i], l10n: l10n),
             );
-          }
-          return ListView.separated(
-            padding: const EdgeInsets.all(16),
-            itemCount: drafts.length,
-            separatorBuilder: (_, __) => const SizedBox(height: 12),
-            itemBuilder: (context, i) =>
-                // `key` par récitation : sans elle, après une validation ou
-                // une suppression, la carte qui remontait à la même position
-                // gardait le lecteur déjà chargé et rejouait le brouillon
-                // précédent — l'admin pouvait valider un audio jamais écouté.
-                _DraftCard(key: ValueKey(drafts[i].id), draft: drafts[i], l10n: l10n),
-          );
-        },
+          },
+        ),
       ),
     );
   }

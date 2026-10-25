@@ -104,74 +104,79 @@ class _ZawiyaDetailScreenState extends ConsumerState<ZawiyaDetailScreen> {
               ]
             : null,
       ),
-      body: ListView(
-        padding: const EdgeInsets.all(20),
-        children: [
-          Row(
-            children: [
-              Icon(zawiyaKindIcon(zawiya.kind), size: 18, color: AppColors.emerald),
-              const SizedBox(width: 8),
-              Text(
-                zawiyaKindLabel(zawiya.kind, l10n),
-                style: TextStyle(fontWeight: FontWeight.w600, fontSize: 13, color: AppColors.bronze),
+      // `SafeArea` : sans elle, le bas de l'écran passait sous la barre de
+      // navigation Android (3 boutons) — même défaut que sur « Rattraper son
+      // wird », Conditions, Bienfaits, Paramètres et « Comprendre la Zawiya ».
+      body: SafeArea(
+        child: ListView(
+          padding: const EdgeInsets.all(20),
+          children: [
+            Row(
+              children: [
+                Icon(zawiyaKindIcon(zawiya.kind), size: 18, color: AppColors.emerald),
+                const SizedBox(width: 8),
+                Text(
+                  zawiyaKindLabel(zawiya.kind, l10n),
+                  style: TextStyle(fontWeight: FontWeight.w600, fontSize: 13, color: AppColors.bronze),
+                ),
+              ],
+            ),
+            const SizedBox(height: 12),
+            if (zawiya.description != null) ...[
+              ContentText(
+                zawiya.description!,
+                style: const TextStyle(color: AppColors.ink, fontSize: 16, height: 1.4),
+              ),
+              const SizedBox(height: 16),
+            ],
+            if (zawiya.addressText != null) ...[
+              _InfoRow(icon: Icons.place_outlined, label: l10n.khadaraAddressLabel, text: zawiya.addressText!),
+              const SizedBox(height: 8),
+            ],
+            if (zawiya.contactInfo != null) ...[
+              _InfoRow(icon: Icons.call_outlined, label: l10n.khadaraContactLabel, text: zawiya.contactInfo!),
+              const SizedBox(height: 8),
+            ],
+            if (zawiya.hasLocation) ...[
+              const SizedBox(height: 12),
+              OutlinedButton.icon(
+                onPressed: () => openInMaps(context, latitude: zawiya.latitude!, longitude: zawiya.longitude!),
+                icon: const Icon(Icons.map_outlined),
+                label: Text(l10n.khadaraOpenInMaps),
               ),
             ],
-          ),
-          const SizedBox(height: 12),
-          if (zawiya.description != null) ...[
-            ContentText(
-              zawiya.description!,
-              style: const TextStyle(color: AppColors.ink, fontSize: 16, height: 1.4),
+            const SizedBox(height: 28),
+            Text(
+              l10n.khadaraUpcomingEventsAtZawiya,
+              style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 16, color: AppColors.ink),
             ),
-            const SizedBox(height: 16),
-          ],
-          if (zawiya.addressText != null) ...[
-            _InfoRow(icon: Icons.place_outlined, label: l10n.khadaraAddressLabel, text: zawiya.addressText!),
             const SizedBox(height: 8),
-          ],
-          if (zawiya.contactInfo != null) ...[
-            _InfoRow(icon: Icons.call_outlined, label: l10n.khadaraContactLabel, text: zawiya.contactInfo!),
-            const SizedBox(height: 8),
-          ],
-          if (zawiya.hasLocation) ...[
-            const SizedBox(height: 12),
-            OutlinedButton.icon(
-              onPressed: () => openInMaps(context, latitude: zawiya.latitude!, longitude: zawiya.longitude!),
-              icon: const Icon(Icons.map_outlined),
-              label: Text(l10n.khadaraOpenInMaps),
-            ),
-          ],
-          const SizedBox(height: 28),
-          Text(
-            l10n.khadaraUpcomingEventsAtZawiya,
-            style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 16, color: AppColors.ink),
-          ),
-          const SizedBox(height: 8),
-          upcoming.when(
-            loading: () => Padding(
-              padding: const EdgeInsets.symmetric(vertical: 16),
-              child: Center(child: CircularProgressIndicator(color: AppColors.emerald)),
-            ),
-            error: (err, st) => Text(l10n.khadaraLoadError, style: TextStyle(color: AppColors.bronze)),
-            data: (events) => events.isEmpty
-                ? Text(l10n.khadaraNoUpcomingEventsAtZawiya, style: TextStyle(color: AppColors.bronze))
-                : Column(
-                    children: [
-                      for (final event in events)
-                        Card(
-                          child: ListTile(
-                            leading: Icon(khadaraEventTypeIcon(event.type), color: AppColors.emerald),
-                            title: ContentText(event.title),
-                            subtitle: Text(formatKhadaraEventSchedule(event, l10n)),
-                            onTap: () => Navigator.of(context).push(
-                              MaterialPageRoute(builder: (_) => EventDetailScreen(event: event)),
+            upcoming.when(
+              loading: () => Padding(
+                padding: const EdgeInsets.symmetric(vertical: 16),
+                child: Center(child: CircularProgressIndicator(color: AppColors.emerald)),
+              ),
+              error: (err, st) => Text(l10n.khadaraLoadError, style: TextStyle(color: AppColors.bronze)),
+              data: (events) => events.isEmpty
+                  ? Text(l10n.khadaraNoUpcomingEventsAtZawiya, style: TextStyle(color: AppColors.bronze))
+                  : Column(
+                      children: [
+                        for (final event in events)
+                          Card(
+                            child: ListTile(
+                              leading: Icon(khadaraEventTypeIcon(event.type), color: AppColors.emerald),
+                              title: ContentText(event.title),
+                              subtitle: Text(formatKhadaraEventSchedule(event, l10n)),
+                              onTap: () => Navigator.of(context).push(
+                                MaterialPageRoute(builder: (_) => EventDetailScreen(event: event)),
+                              ),
                             ),
                           ),
-                        ),
-                    ],
-                  ),
-          ),
-        ],
+                      ],
+                    ),
+            ),
+          ],
+        ),
       ),
     );
   }

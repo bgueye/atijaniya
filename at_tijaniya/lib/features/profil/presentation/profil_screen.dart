@@ -49,7 +49,12 @@ class ProfilScreen extends ConsumerWidget {
 
     return Scaffold(
       appBar: AppBar(title: Text(l10n.profileTitle)),
-      body: userId == null ? _SignInRequired(l10n: l10n) : const _ProfileBody(),
+      // `SafeArea` : sans elle, le bas de l'écran passait sous la barre de
+      // navigation Android (3 boutons) — même défaut que sur « Rattraper son
+      // wird », Conditions, Bienfaits, Paramètres et « Comprendre la Zawiya ».
+      body: SafeArea(
+        child: userId == null ? _SignInRequired(l10n: l10n) : const _ProfileBody(),
+      ),
     );
   }
 }

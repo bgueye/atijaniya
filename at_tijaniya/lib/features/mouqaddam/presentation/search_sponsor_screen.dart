@@ -75,22 +75,27 @@ class _SearchSponsorScreenState extends ConsumerState<SearchSponsorScreen> {
 
     return Scaffold(
       appBar: AppBar(title: Text(l10n.mouqaddamSearchTitle)),
-      body: Column(
-        children: [
-          Padding(
-            padding: const EdgeInsets.all(16),
-            child: TextField(
-              controller: _queryController,
-              decoration: InputDecoration(
-                hintText: l10n.mouqaddamSearchFieldHint,
-                prefixIcon: const Icon(Icons.search),
+      // `SafeArea` : sans elle, le bas de l'écran passait sous la barre de
+      // navigation Android (3 boutons) — même défaut que sur « Rattraper son
+      // wird », Conditions, Bienfaits, Paramètres et « Comprendre la Zawiya ».
+      body: SafeArea(
+        child: Column(
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(16),
+              child: TextField(
+                controller: _queryController,
+                decoration: InputDecoration(
+                  hintText: l10n.mouqaddamSearchFieldHint,
+                  prefixIcon: const Icon(Icons.search),
+                ),
+                textInputAction: TextInputAction.search,
+                onSubmitted: (_) => _search(),
               ),
-              textInputAction: TextInputAction.search,
-              onSubmitted: (_) => _search(),
             ),
-          ),
-          Expanded(child: _buildBody(l10n)),
-        ],
+            Expanded(child: _buildBody(l10n)),
+          ],
+        ),
       ),
     );
   }

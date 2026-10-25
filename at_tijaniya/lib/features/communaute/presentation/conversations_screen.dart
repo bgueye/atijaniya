@@ -22,46 +22,51 @@ class ConversationsScreen extends ConsumerWidget {
 
     return Scaffold(
       appBar: AppBar(title: Text(l10n.communityConversationsTitle)),
-      body: conversations.when(
-        loading: () => Center(child: CircularProgressIndicator(color: AppColors.emerald)),
-        error: (error, stackTrace) => Center(
-          child: Padding(
-            padding: const EdgeInsets.all(24),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Icon(Icons.wifi_off, color: AppColors.bronze, size: 32),
-                const SizedBox(height: 12),
-                Text(
-                  l10n.communityConversationsLoadError,
-                  textAlign: TextAlign.center,
-                  style: TextStyle(color: AppColors.bronze),
-                ),
-                const SizedBox(height: 12),
-                OutlinedButton(
-                  onPressed: () => ref.invalidate(conversationsProvider),
-                  child: Text(l10n.communityConversationsRetry),
-                ),
-              ],
-            ),
-          ),
-        ),
-        data: (list) => list.isEmpty
-            ? Center(
-                child: Padding(
-                  padding: const EdgeInsets.all(24),
-                  child: Text(
-                    l10n.communityConversationsEmpty,
+      // `SafeArea` : sans elle, le bas de l'écran passait sous la barre de
+      // navigation Android (3 boutons) — même défaut que sur « Rattraper son
+      // wird », Conditions, Bienfaits, Paramètres et « Comprendre la Zawiya ».
+      body: SafeArea(
+        child: conversations.when(
+          loading: () => Center(child: CircularProgressIndicator(color: AppColors.emerald)),
+          error: (error, stackTrace) => Center(
+            child: Padding(
+              padding: const EdgeInsets.all(24),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(Icons.wifi_off, color: AppColors.bronze, size: 32),
+                  const SizedBox(height: 12),
+                  Text(
+                    l10n.communityConversationsLoadError,
                     textAlign: TextAlign.center,
                     style: TextStyle(color: AppColors.bronze),
                   ),
-                ),
-              )
-            : ListView.separated(
-                itemCount: list.length,
-                separatorBuilder: (_, __) => const Divider(height: 1),
-                itemBuilder: (context, i) => _ConversationTile(conversation: list[i], fallback: l10n.communityDefaultAuthor),
+                  const SizedBox(height: 12),
+                  OutlinedButton(
+                    onPressed: () => ref.invalidate(conversationsProvider),
+                    child: Text(l10n.communityConversationsRetry),
+                  ),
+                ],
               ),
+            ),
+          ),
+          data: (list) => list.isEmpty
+              ? Center(
+                  child: Padding(
+                    padding: const EdgeInsets.all(24),
+                    child: Text(
+                      l10n.communityConversationsEmpty,
+                      textAlign: TextAlign.center,
+                      style: TextStyle(color: AppColors.bronze),
+                    ),
+                  ),
+                )
+              : ListView.separated(
+                  itemCount: list.length,
+                  separatorBuilder: (_, __) => const Divider(height: 1),
+                  itemBuilder: (context, i) => _ConversationTile(conversation: list[i], fallback: l10n.communityDefaultAuthor),
+                ),
+        ),
       ),
     );
   }

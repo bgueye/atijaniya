@@ -38,52 +38,57 @@ class WirdRecitationsManagementScreen extends ConsumerWidget {
 
     return Scaffold(
       appBar: AppBar(title: Text(l10n.wirdRecitationsManageTitle)),
-      body: stepsAsync.when(
-        loading: () => Center(
-            child: CircularProgressIndicator(color: AppColors.emerald)),
-        error: (error, stackTrace) => Center(
-          child: Padding(
-            padding: const EdgeInsets.all(24),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Icon(Icons.wifi_off, color: AppColors.bronze, size: 32),
-                const SizedBox(height: 12),
-                Text(l10n.wirdRecitationsManageLoadError,
-                    textAlign: TextAlign.center,
-                    style: TextStyle(color: AppColors.bronze)),
-                const SizedBox(height: 12),
-                OutlinedButton(
-                  onPressed: () =>
-                      ref.invalidate(allWirdStepRecitationsProvider),
-                  child: Text(l10n.wirdRecitationsReviewRetry),
-                ),
-              ],
+      // `SafeArea` : sans elle, le bas de l'écran passait sous la barre de
+      // navigation Android (3 boutons) — même défaut que sur « Rattraper son
+      // wird », Conditions, Bienfaits, Paramètres et « Comprendre la Zawiya ».
+      body: SafeArea(
+        child: stepsAsync.when(
+          loading: () => Center(
+              child: CircularProgressIndicator(color: AppColors.emerald)),
+          error: (error, stackTrace) => Center(
+            child: Padding(
+              padding: const EdgeInsets.all(24),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(Icons.wifi_off, color: AppColors.bronze, size: 32),
+                  const SizedBox(height: 12),
+                  Text(l10n.wirdRecitationsManageLoadError,
+                      textAlign: TextAlign.center,
+                      style: TextStyle(color: AppColors.bronze)),
+                  const SizedBox(height: 12),
+                  OutlinedButton(
+                    onPressed: () =>
+                        ref.invalidate(allWirdStepRecitationsProvider),
+                    child: Text(l10n.wirdRecitationsReviewRetry),
+                  ),
+                ],
+              ),
             ),
           ),
-        ),
-        data: (stepsByWird) => ListView(
-          padding: const EdgeInsets.all(16),
-          children: [
-            for (final wird in validatedWirds) ...[
-              Padding(
-                padding: const EdgeInsets.only(top: 8, bottom: 8),
-                child: ContentText(wird.nameFrench,
-                    style: const TextStyle(
-                        fontWeight: FontWeight.w600, fontSize: 18)),
-              ),
-              for (final step
-                  in stepsByWird[wird.id] ?? const <WirdStepRecitations>[])
-                if (step.orderIndex - 1 < wird.pillars.length)
-                  _PillarCard(
-                    wird: wird,
-                    pillar: wird.pillars[step.orderIndex - 1],
-                    step: step,
-                    l10n: l10n,
-                  ),
-              const SizedBox(height: 8),
+          data: (stepsByWird) => ListView(
+            padding: const EdgeInsets.all(16),
+            children: [
+              for (final wird in validatedWirds) ...[
+                Padding(
+                  padding: const EdgeInsets.only(top: 8, bottom: 8),
+                  child: ContentText(wird.nameFrench,
+                      style: const TextStyle(
+                          fontWeight: FontWeight.w600, fontSize: 18)),
+                ),
+                for (final step
+                    in stepsByWird[wird.id] ?? const <WirdStepRecitations>[])
+                  if (step.orderIndex - 1 < wird.pillars.length)
+                    _PillarCard(
+                      wird: wird,
+                      pillar: wird.pillars[step.orderIndex - 1],
+                      step: step,
+                      l10n: l10n,
+                    ),
+                const SizedBox(height: 8),
+              ],
             ],
-          ],
+          ),
         ),
       ),
     );

@@ -29,42 +29,47 @@ class FiguresReviewScreen extends ConsumerWidget {
 
     return Scaffold(
       appBar: AppBar(title: Text(l10n.figuresReviewTitle)),
-      body: draftsAsync.when(
-        loading: () => Center(child: CircularProgressIndicator(color: AppColors.emerald)),
-        error: (error, stackTrace) => Center(
-          child: Padding(
-            padding: const EdgeInsets.all(24),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Icon(Icons.wifi_off, color: AppColors.bronze, size: 32),
-                const SizedBox(height: 12),
-                Text(l10n.figuresLoadError, textAlign: TextAlign.center, style: TextStyle(color: AppColors.bronze)),
-                const SizedBox(height: 12),
-                OutlinedButton(
-                  onPressed: () => ref.invalidate(draftFiguresProvider),
-                  child: Text(l10n.figuresRetry),
-                ),
-              ],
+      // `SafeArea` : sans elle, le bas de l'écran passait sous la barre de
+      // navigation Android (3 boutons) — même défaut que sur « Rattraper son
+      // wird », Conditions, Bienfaits, Paramètres et « Comprendre la Zawiya ».
+      body: SafeArea(
+        child: draftsAsync.when(
+          loading: () => Center(child: CircularProgressIndicator(color: AppColors.emerald)),
+          error: (error, stackTrace) => Center(
+            child: Padding(
+              padding: const EdgeInsets.all(24),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(Icons.wifi_off, color: AppColors.bronze, size: 32),
+                  const SizedBox(height: 12),
+                  Text(l10n.figuresLoadError, textAlign: TextAlign.center, style: TextStyle(color: AppColors.bronze)),
+                  const SizedBox(height: 12),
+                  OutlinedButton(
+                    onPressed: () => ref.invalidate(draftFiguresProvider),
+                    child: Text(l10n.figuresRetry),
+                  ),
+                ],
+              ),
             ),
           ),
-        ),
-        data: (drafts) {
-          if (drafts.isEmpty) {
-            return Center(
-              child: Padding(
-                padding: const EdgeInsets.all(24),
-                child: Text(l10n.figuresReviewEmpty, textAlign: TextAlign.center, style: TextStyle(color: AppColors.bronze)),
-              ),
+          data: (drafts) {
+            if (drafts.isEmpty) {
+              return Center(
+                child: Padding(
+                  padding: const EdgeInsets.all(24),
+                  child: Text(l10n.figuresReviewEmpty, textAlign: TextAlign.center, style: TextStyle(color: AppColors.bronze)),
+                ),
+              );
+            }
+            return ListView.separated(
+              padding: const EdgeInsets.all(16),
+              itemCount: drafts.length,
+              separatorBuilder: (_, __) => const SizedBox(height: 12),
+              itemBuilder: (context, i) => _DraftCard(figure: drafts[i], l10n: l10n),
             );
-          }
-          return ListView.separated(
-            padding: const EdgeInsets.all(16),
-            itemCount: drafts.length,
-            separatorBuilder: (_, __) => const SizedBox(height: 12),
-            itemBuilder: (context, i) => _DraftCard(figure: drafts[i], l10n: l10n),
-          );
-        },
+          },
+        ),
       ),
     );
   }

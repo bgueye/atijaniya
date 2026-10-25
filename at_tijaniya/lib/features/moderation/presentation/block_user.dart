@@ -100,54 +100,59 @@ class BlockedUsersScreen extends ConsumerWidget {
 
     return Scaffold(
       appBar: AppBar(title: Text(l10n.blockedUsersTitle)),
-      body: blocked.when(
-        loading: () => Center(child: CircularProgressIndicator(color: AppColors.emerald)),
-        error: (error, stackTrace) => Center(
-          child: Padding(
-            padding: const EdgeInsets.all(24),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text(l10n.blockedUsersLoadError, textAlign: TextAlign.center, style: TextStyle(color: AppColors.bronze)),
-                const SizedBox(height: 12),
-                OutlinedButton(
-                  onPressed: () => ref.invalidate(blockedUsersProvider),
-                  child: Text(l10n.homeRetry),
-                ),
-              ],
+      // `SafeArea` : sans elle, le bas de l'écran passait sous la barre de
+      // navigation Android (3 boutons) — même défaut que sur « Rattraper son
+      // wird », Conditions, Bienfaits, Paramètres et « Comprendre la Zawiya ».
+      body: SafeArea(
+        child: blocked.when(
+          loading: () => Center(child: CircularProgressIndicator(color: AppColors.emerald)),
+          error: (error, stackTrace) => Center(
+            child: Padding(
+              padding: const EdgeInsets.all(24),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(l10n.blockedUsersLoadError, textAlign: TextAlign.center, style: TextStyle(color: AppColors.bronze)),
+                  const SizedBox(height: 12),
+                  OutlinedButton(
+                    onPressed: () => ref.invalidate(blockedUsersProvider),
+                    child: Text(l10n.homeRetry),
+                  ),
+                ],
+              ),
             ),
           ),
-        ),
-        data: (users) {
-          if (users.isEmpty) {
-            return Center(
-              child: Padding(
-                padding: const EdgeInsets.all(24),
-                child: Text(l10n.blockedUsersEmpty, textAlign: TextAlign.center, style: TextStyle(color: AppColors.bronze)),
-              ),
-            );
-          }
-          return ListView.separated(
-            padding: const EdgeInsets.all(16),
-            itemCount: users.length,
-            separatorBuilder: (_, __) => const SizedBox(height: 8),
-            itemBuilder: (context, i) {
-              final user = users[i];
-              return Card(
-                child: ListTile(
-                  title: ContentText(
-                    user.displayName ?? l10n.blockUserFallbackName,
-                    style: const TextStyle(fontWeight: FontWeight.w600, color: AppColors.ink),
-                  ),
-                  trailing: TextButton(
-                    onPressed: () => _unblock(context, ref, user),
-                    child: Text(l10n.unblockUserAction),
-                  ),
+          data: (users) {
+            if (users.isEmpty) {
+              return Center(
+                child: Padding(
+                  padding: const EdgeInsets.all(24),
+                  child: Text(l10n.blockedUsersEmpty, textAlign: TextAlign.center, style: TextStyle(color: AppColors.bronze)),
                 ),
               );
-            },
-          );
-        },
+            }
+            return ListView.separated(
+              padding: const EdgeInsets.all(16),
+              itemCount: users.length,
+              separatorBuilder: (_, __) => const SizedBox(height: 8),
+              itemBuilder: (context, i) {
+                final user = users[i];
+                return Card(
+                  child: ListTile(
+                    title: ContentText(
+                      user.displayName ?? l10n.blockUserFallbackName,
+                      style: const TextStyle(fontWeight: FontWeight.w600, color: AppColors.ink),
+                    ),
+                    trailing: TextButton(
+                      onPressed: () => _unblock(context, ref, user),
+                      child: Text(l10n.unblockUserAction),
+                    ),
+                  ),
+                );
+              },
+            );
+          },
+        ),
       ),
     );
   }
