@@ -18,6 +18,7 @@ import 'package:at_tijaniya/features/wird/data/wird_recitation_asset_manifest.da
 import 'package:at_tijaniya/features/wird/data/wird_recitation_repository.dart';
 import 'package:at_tijaniya/features/wird/data/wirds_content.dart';
 import 'package:at_tijaniya/features/wird/domain/wird_recitation.dart';
+import 'package:at_tijaniya/features/wird/presentation/wird_audio_player_bar.dart';
 import 'package:at_tijaniya/features/wird/presentation/wird_detail_screen.dart';
 import 'package:at_tijaniya/features/wird/presentation/wird_pillar_audio_controller.dart';
 import 'package:at_tijaniya/l10n/app_localizations.dart';
