@@ -544,39 +544,3 @@ List<Figure> filterFiguresByFoyer(List<Figure> figures, Foyer? foyer) {
   if (foyer == null) return figures;
   return figures.where((f) => f.foyer == foyer).toList();
 }
-
-/// Coupure des puces du filtre par foyer en deux lignes (demande du porteur
-/// de projet du 2026-10-25 : deux lignes seulement, justifiées). Renvoie
-/// l'index de la première puce de la seconde ligne, ou `null` si les puces
-/// ne tiennent pas en deux lignes de [available] (texte agrandi, écran
-/// étroit) — l'écran revient alors à un retour à la ligne libre.
-///
-/// [widths] : largeur naturelle de chaque puce, dans l'ordre d'affichage,
-/// qui est conservé (« Tous les foyers » reste en tête). [spacing] : écart
-/// entre deux puces d'une même ligne. Parmi les coupures possibles, celle
-/// dont la ligne la plus longue est la plus courte : deux lignes de longueur
-/// voisine, que la justification étire alors d'autant, sans qu'une puce
-/// paraisse démesurée à côté des autres.
-int? splitFoyerChipsInTwoRows(List<double> widths, double available, {double spacing = 0}) {
-  double rowWidth(int start, int end) {
-    var total = spacing * (end - start - 1);
-    for (var i = start; i < end; i++) {
-      total += widths[i];
-    }
-    return total;
-  }
-
-  int? best;
-  var bestLongest = double.infinity;
-  for (var split = 1; split < widths.length; split++) {
-    final first = rowWidth(0, split);
-    final second = rowWidth(split, widths.length);
-    if (first > available || second > available) continue;
-    final longest = first > second ? first : second;
-    if (longest < bestLongest) {
-      bestLongest = longest;
-      best = split;
-    }
-  }
-  return best;
-}

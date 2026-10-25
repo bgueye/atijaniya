@@ -21,6 +21,7 @@ import 'zawiya_form_screen.dart';
 import '../../../core/widgets/directional_chevron.dart';
 import '../../../core/widgets/content_text.dart';
 import '../../../core/widgets/list_search_field.dart';
+import '../../../core/widgets/justified_choice_chips.dart';
 
 /// Module Khadara — calendrier des évènements et annuaire des zawiyas.
 /// Priorité P1 (docs/03-architecture-ecrans.md). Nom de code inchangé,
@@ -260,39 +261,20 @@ class _ZawiyasTabState extends ConsumerState<_ZawiyasTab> {
               clearTooltip: l10n.khadaraSearchClear,
             ),
           ),
-          // Les quatre puces tiennent toujours sur une seule ligne, centrée
-          // (demande du porteur de projet après essai sur téléphone le
-          // 2026-10-01 : une rangée défilante laissait "Mosquées" dépasser du
-          // bord, un `Wrap` la renvoyait seule sur une deuxième ligne).
-          // Puces compactes, sans coche (`showCheckmark: false`) pour que la
-          // sélection ne change pas leur largeur ; `FittedBox` en dernier
-          // recours réduit l'ensemble si la ligne reste trop large (petit
-          // écran, police agrandie) plutôt que de déborder.
+          // Les quatre puces sur une seule ligne (demande du porteur de projet
+          // après essai sur téléphone le 2026-10-01 : une rangée défilante
+          // laissait "Mosquées" dépasser du bord, un `Wrap` la renvoyait seule
+          // sur une deuxième ligne), désormais justifiée et à 48 dp : la
+          // densité compacte, le rognage de la zone tactile et un `FittedBox`
+          // la ramenaient à 33 dp, et rapetissaient les puces quand le texte
+          // était agrandi (audit Zawiyas du 2026-10-25, P2-7). Retour à la
+          // ligne si elle ne tient pas, plutôt que des puces réduites.
           Padding(
-            padding: const EdgeInsets.fromLTRB(12, 12, 12, 0),
-            child: SizedBox(
-              width: double.infinity,
-              child: FittedBox(
-                fit: BoxFit.scaleDown,
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    for (final (index, entry) in filterLabels.entries.indexed)
-                      Padding(
-                        padding: EdgeInsetsDirectional.only(start: index == 0 ? 0 : 6),
-                        child: ChoiceChip(
-                          label: ContentText(entry.value),
-                          selected: _kindFilter == entry.key,
-                          showCheckmark: false,
-                          visualDensity: VisualDensity.compact,
-                          materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                          labelPadding: const EdgeInsets.symmetric(horizontal: 2),
-                          onSelected: (_) => setState(() => _kindFilter = entry.key),
-                        ),
-                      ),
-                  ],
-                ),
-              ),
+            padding: const EdgeInsets.fromLTRB(16, 12, 16, 0),
+            child: JustifiedChoiceChips<ZawiyaKind?>(
+              options: [for (final entry in filterLabels.entries) (entry.key, entry.value)],
+              selected: _kindFilter,
+              onSelected: (kind) => setState(() => _kindFilter = kind),
             ),
           ),
           Expanded(

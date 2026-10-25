@@ -69,6 +69,40 @@ void main() {
     expect(find.text('Zawiya de Ségou (Mali)'), findsOneWidget);
   });
 
+  // Audit Zawiyas du 2026-10-25 (P2-7) : les puces de type faisaient 33 dp.
+  testWidgets("les cibles tactiles de l'annuaire atteignent 48 dp", (tester) async {
+    final semantics = tester.ensureSemantics();
+    await tester.pumpWidget(_wrap());
+    await tester.pumpAndSettle();
+    await expectLater(tester, meetsGuideline(androidTapTargetGuideline));
+    semantics.dispose();
+  });
+
+  testWidgets('les puces de type tiennent sur une ligne justifiée', (tester) async {
+    await tester.pumpWidget(_wrap());
+    await tester.pumpAndSettle();
+
+    final labels = find.descendant(of: find.byType(ChoiceChip), matching: find.byType(Text));
+    final rects = [for (final element in labels.evaluate()) tester.getRect(find.byWidget(element.widget))];
+    expect(rects.map((r) => r.top).toSet(), hasLength(1));
+    // Bords de la ligne : marge de 16, plus les 11 dp de la puce autour de
+    // son libellé ; tolérance d'un pixel (largeur arrondie).
+    expect(rects.map((r) => r.left).reduce((a, b) => a < b ? a : b), moreOrLessEquals(16 + 11, epsilon: 1));
+    expect(rects.map((r) => r.right).reduce((a, b) => a > b ? a : b), moreOrLessEquals(784 - 11, epsilon: 1));
+  });
+
+  testWidgets('texte très agrandi : les puces passent à la ligne, sans être réduites ni tronquées', (tester) async {
+    await tester.pumpWidget(_wrap(textScale: 3.0));
+    await tester.pumpAndSettle();
+
+    expect(tester.takeException(), isNull);
+    final tops = {
+      for (final element in find.byType(ChoiceChip).evaluate()) tester.getRect(find.byWidget(element.widget)).top,
+    };
+    expect(tops.length, greaterThan(1));
+    expect(find.text('Lieux saints'), findsOneWidget);
+  });
+
   testWidgets('la recherche se combine au filtre par type', (tester) async {
     await tester.pumpWidget(_wrap());
     await tester.pumpAndSettle();
