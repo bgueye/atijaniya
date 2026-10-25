@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/storage/image_source_sheet.dart';
@@ -218,89 +219,102 @@ class _FigureDetailScreenState extends ConsumerState<FigureDetailScreen> {
     // Hauteur de la barre de statut, mise à part : voir le bandeau ci-dessous.
     final topInset = MediaQuery.paddingOf(context).top;
 
-    return DefaultTabController(
-      length: 4,
-      child: Scaffold(
-        // `SafeArea(top: false, ...)` : sans ce SafeArea englobant, le
-        // contenu des onglets (ex. dernier paragraphe de "Biographie") peut se
-        // retrouver masqué sous la barre système Android (3 boutons/geste),
-        // même principe que les écrans de formulaire de l'app. Le haut est
-        // traité à part, par le bandeau ci-dessous.
-        body: SafeArea(
-          top: false,
-          child: Column(
-            children: [
-              // Bandeau fixe sous la barre de statut, de la couleur du haut du
-              // dégradé de `_FigureHero` : au repos il prolonge l'en-tête sans
-              // couture ; une fois l'en-tête parti en défilant, il empêche les
-              // onglets accrochés en haut de passer sous l'heure et les icônes
-              // système. Sans lui, l'en-tête devrait garder son propre
-              // `SafeArea` haut, qui défilerait avec lui.
-              Container(height: topInset, color: AppColors.zaytoune),
-              Expanded(
-                child: MediaQuery.removePadding(
-                  context: context,
-                  removeTop: true,
-                  // `NestedScrollView` (audit Figures du 2026-10-25, P1) :
-                  // l'en-tête défile désormais avec le contenu et seuls les
-                  // onglets restent accrochés en haut. Avec l'ancienne
-                  // `Column` fixe, l'en-tête et les onglets ne laissaient
-                  // qu'une ligne de biographie en paysage, et plus rien du
-                  // tout (débordement) en paysage avec le texte à 200 %.
-                  child: NestedScrollView(
-                    headerSliverBuilder: (context, innerBoxIsScrolled) => [
-                      SliverToBoxAdapter(
-                        child: _FigureHero(
-                          figure: figure,
-                          isAdmin: isAdmin,
-                          changingPortrait: _changingPortrait,
-                          onChangePortrait: _changePortrait,
-                          deleting: _deleting,
-                          onEdit: _editFigure,
-                          onDelete: _confirmDelete,
-                          editTooltip: l10n.figureEditTooltip,
-                          deleteTooltip: l10n.figureDeleteTooltip,
-                        ),
-                      ),
-                      // Dépublication : proposée à l'admin seulement pour une figure
-                      // actuellement publiée (présente dans la liste des figures
-                      // valides), jamais pour un brouillon ouvert depuis la review.
-                      if (isAdmin && (ref.watch(figuresProvider).valueOrNull?.any((f) => f.id == _figure.id) ?? false))
+    // Icônes claires dans la barre de statut, posée sur le vert de l'en-tête
+    // puis du bandeau : sans `AppBar` pour le décider, elle gardait les
+    // icônes sombres de l'écran précédent, presque invisibles sur le
+    // zaytoune (constaté sur émulateur le 2026-10-25). Seule la barre de
+    // statut est réglée : `SystemUiOverlayStyle.light` aurait aussi noirci la
+    // barre de navigation.
+    return AnnotatedRegion<SystemUiOverlayStyle>(
+      value: const SystemUiOverlayStyle(
+        statusBarIconBrightness: Brightness.light,
+        statusBarBrightness: Brightness.dark,
+      ),
+      child: DefaultTabController(
+        length: 4,
+        child: Scaffold(
+          // `SafeArea(top: false, ...)` : sans ce SafeArea englobant, le
+          // contenu des onglets (ex. dernier paragraphe de "Biographie") peut se
+          // retrouver masqué sous la barre système Android (3 boutons/geste),
+          // même principe que les écrans de formulaire de l'app. Le haut est
+          // traité à part, par le bandeau ci-dessous.
+          body: SafeArea(
+            top: false,
+            child: Column(
+              children: [
+                // Bandeau fixe sous la barre de statut, de la couleur du haut du
+                // dégradé de `_FigureHero` : au repos il prolonge l'en-tête sans
+                // couture ; une fois l'en-tête parti en défilant, il empêche les
+                // onglets accrochés en haut de passer sous l'heure et les icônes
+                // système. Sans lui, l'en-tête devrait garder son propre
+                // `SafeArea` haut, qui défilerait avec lui.
+                Container(height: topInset, color: AppColors.zaytoune),
+                Expanded(
+                  child: MediaQuery.removePadding(
+                    context: context,
+                    removeTop: true,
+                    // `NestedScrollView` (audit Figures du 2026-10-25, P1) :
+                    // l'en-tête défile désormais avec le contenu et seuls les
+                    // onglets restent accrochés en haut. Avec l'ancienne
+                    // `Column` fixe, l'en-tête et les onglets ne laissaient
+                    // qu'une ligne de biographie en paysage, et plus rien du
+                    // tout (débordement) en paysage avec le texte à 200 %.
+                    child: NestedScrollView(
+                      headerSliverBuilder: (context, innerBoxIsScrolled) => [
                         SliverToBoxAdapter(
-                          child: Align(
-                            alignment: AlignmentDirectional.centerEnd,
-                            child: TextButton.icon(
-                              onPressed: _deleting ? null : _confirmUnpublish,
-                              icon: const Icon(Icons.unpublished_outlined, size: 18),
-                              label: Text(l10n.figureUnpublishAction),
-                            ),
+                          child: _FigureHero(
+                            figure: figure,
+                            isAdmin: isAdmin,
+                            changingPortrait: _changingPortrait,
+                            onChangePortrait: _changePortrait,
+                            deleting: _deleting,
+                            onEdit: _editFigure,
+                            onDelete: _confirmDelete,
+                            editTooltip: l10n.figureEditTooltip,
+                            deleteTooltip: l10n.figureDeleteTooltip,
                           ),
                         ),
-                      // `SliverOverlapAbsorber` : une fois accrochée, la barre
-                      // d'onglets recouvre le haut de l'onglet ouvert. La
-                      // poignée transmet cette hauteur à chaque onglet
-                      // (`SliverOverlapInjector` dans `_TabScrollView`), qui
-                      // décale son contenu d'autant au lieu de le cacher.
-                      SliverOverlapAbsorber(
-                        handle: NestedScrollView.sliverOverlapAbsorberHandleFor(context),
-                        sliver: SliverPersistentHeader(
-                          pinned: true,
-                          delegate: _PinnedTabBarDelegate(tabBar),
+                        // Dépublication : proposée à l'admin seulement pour une figure
+                        // actuellement publiée (présente dans la liste des figures
+                        // valides), jamais pour un brouillon ouvert depuis la review.
+                        if (isAdmin &&
+                            (ref.watch(figuresProvider).valueOrNull?.any((f) => f.id == _figure.id) ?? false))
+                          SliverToBoxAdapter(
+                            child: Align(
+                              alignment: AlignmentDirectional.centerEnd,
+                              child: TextButton.icon(
+                                onPressed: _deleting ? null : _confirmUnpublish,
+                                icon: const Icon(Icons.unpublished_outlined, size: 18),
+                                label: Text(l10n.figureUnpublishAction),
+                              ),
+                            ),
+                          ),
+                        // `SliverOverlapAbsorber` : une fois accrochée, la barre
+                        // d'onglets recouvre le haut de l'onglet ouvert. La
+                        // poignée transmet cette hauteur à chaque onglet
+                        // (`SliverOverlapInjector` dans `_TabScrollView`), qui
+                        // décale son contenu d'autant au lieu de le cacher.
+                        SliverOverlapAbsorber(
+                          handle: NestedScrollView.sliverOverlapAbsorberHandleFor(context),
+                          sliver: SliverPersistentHeader(
+                            pinned: true,
+                            delegate: _PinnedTabBarDelegate(tabBar),
+                          ),
                         ),
-                      ),
-                    ],
-                    body: TabBarView(
-                      children: [
-                        _BiographyTab(figure: figure),
-                        _SilsilaTab(figure: figure, isAdmin: isAdmin),
-                        _CitationsTab(figure: figure, isAdmin: isAdmin, onContentChanged: _refreshFigureContent),
-                        _ZawiyaTab(figure: figure, isAdmin: isAdmin),
                       ],
+                      body: TabBarView(
+                        children: [
+                          _BiographyTab(figure: figure),
+                          _SilsilaTab(figure: figure, isAdmin: isAdmin),
+                          _CitationsTab(figure: figure, isAdmin: isAdmin, onContentChanged: _refreshFigureContent),
+                          _ZawiyaTab(figure: figure, isAdmin: isAdmin),
+                        ],
+                      ),
                     ),
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),

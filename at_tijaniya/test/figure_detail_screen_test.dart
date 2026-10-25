@@ -7,6 +7,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart' show SystemUiOverlayStyle;
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -292,6 +293,26 @@ void main() {
     await tester.pumpWidget(_wrap(const FigureDetailScreen(figure: figure)));
     await tester.pumpAndSettle();
     expect(find.text("Cette biographie n'existe qu'en français pour l'instant."), findsNothing);
+  });
+
+  // Constaté sur émulateur le 2026-10-25 : icônes sombres de la barre de
+  // statut sur le vert de l'en-tête. La fiche demande des icônes claires,
+  // sans toucher à la barre de navigation.
+  testWidgets('FigureDetailScreen demande des icônes claires dans la barre de statut', (tester) async {
+    const figure = Figure(
+      id: 'test-figure-status-bar',
+      nameArabic: 'اسم تجريبي',
+      nameFrench: 'Figure test',
+      category: FigureCategory.founder,
+    );
+    await tester.pumpWidget(_wrap(const FigureDetailScreen(figure: figure)));
+    await tester.pumpAndSettle();
+
+    final region = tester.widget<AnnotatedRegion<SystemUiOverlayStyle>>(
+      find.byType(AnnotatedRegion<SystemUiOverlayStyle>).first,
+    );
+    expect(region.value.statusBarIconBrightness, Brightness.light);
+    expect(region.value.systemNavigationBarColor, isNull);
   });
 
   testWidgets('FigureDetailScreen indique une biographie en attente quand absente', (tester) async {
