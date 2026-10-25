@@ -134,6 +134,17 @@ void main() {
     expect(find.byIcon(Icons.person_outline), findsOneWidget);
   });
 
+  // Audit Figures du 2026-10-25 (P2-6) : les puces de foyer ne faisaient
+  // que 34 dp de haut. Toutes les cibles de l'écran doivent atteindre 48 dp.
+  testWidgets('les cibles tactiles de la liste atteignent 48 dp', (tester) async {
+    final semantics = tester.ensureSemantics();
+    await tester.pumpWidget(_wrap());
+    await tester.pumpAndSettle();
+
+    await expectLater(tester, meetsGuideline(androidTapTargetGuideline));
+    semantics.dispose();
+  });
+
   testWidgets('la recherche se combine au filtre par foyer', (tester) async {
     await tester.pumpWidget(_wrap());
     await tester.pumpAndSettle();

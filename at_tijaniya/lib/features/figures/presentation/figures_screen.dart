@@ -250,8 +250,10 @@ class _FoyerFilter extends StatelessWidget {
             labelStyle: foyer == selected ? null : TextStyle(color: AppColors.secondaryInk),
             selected: foyer == selected,
             showCheckmark: false,
-            visualDensity: VisualDensity.compact,
-            materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+            // Ni `visualDensity: compact` ni `materialTapTargetSize:
+            // shrinkWrap` : chacun rognait la zone tactile, qui ne faisait
+            // que 34 dp (40 avec la seule densité compacte). Elle retrouve
+            // ses 48 dp (audit Figures du 2026-10-25, P2-6).
             onSelected: (_) => onSelected(foyer),
           ),
       ],
