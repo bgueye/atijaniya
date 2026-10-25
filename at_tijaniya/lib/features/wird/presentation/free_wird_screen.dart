@@ -114,8 +114,8 @@ class _SetupFormState extends State<_SetupForm> {
             style: const TextStyle(color: AppColors.parchment),
             decoration: InputDecoration(
               labelText: l10n.wirdFreeLabelFieldLabel,
-              labelStyle: TextStyle(color: AppColors.bronze),
-              enabledBorder: UnderlineInputBorder(borderSide: BorderSide(color: AppColors.bronze)),
+              labelStyle: TextStyle(color: AppColors.secondaryOnDark),
+              enabledBorder: UnderlineInputBorder(borderSide: BorderSide(color: AppColors.secondaryOnDark)),
               focusedBorder: const UnderlineInputBorder(borderSide: BorderSide(color: AppColors.goldOnDark)),
             ),
           ),
@@ -143,8 +143,8 @@ class _SetupFormState extends State<_SetupForm> {
             onChanged: (_) => setState(() => _error = null),
             decoration: InputDecoration(
               hintText: '100',
-              hintStyle: TextStyle(color: AppColors.bronze),
-              enabledBorder: UnderlineInputBorder(borderSide: BorderSide(color: AppColors.bronze)),
+              hintStyle: TextStyle(color: AppColors.secondaryOnDark),
+              enabledBorder: UnderlineInputBorder(borderSide: BorderSide(color: AppColors.secondaryOnDark)),
               focusedBorder: const UnderlineInputBorder(borderSide: BorderSide(color: AppColors.goldOnDark)),
               errorText: _error,
             ),
@@ -316,7 +316,7 @@ class _CompletedView extends StatelessWidget {
             Text(
               l10n.wirdFreeCompletedBody,
               textAlign: TextAlign.center,
-              style: TextStyle(color: AppColors.bronze),
+              style: TextStyle(color: AppColors.secondaryOnDark),
             ),
             const SizedBox(height: 24),
             ElevatedButton(

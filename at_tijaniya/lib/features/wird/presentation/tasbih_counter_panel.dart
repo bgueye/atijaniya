@@ -9,12 +9,6 @@ import 'tasbih_beads_ring.dart';
 import 'voice_error_message.dart';
 import '../../../core/widgets/content_text.dart';
 
-/// Texte secondaire sur fond zaytoune. Le bronze de la charte y tombait à
-/// environ 3:1 de contraste (notes de pilier, "/ 100", "Toucher pour
-/// compter" à peine lisibles, revue de design du 2026-10-06) : on atténue
-/// plutôt le parchemin, qui reste nettement au-dessus du seuil AA.
-Color tasbihSecondaryText() => AppColors.parchment.withValues(alpha: 0.74);
-
 /// Mise en page commune du Tasbih d'un wird et du Wird libre : une zone de
 /// lecture en haut, qui défile seule si le texte est long, et le compteur en
 /// bas, toujours au même endroit et à la même hauteur.
@@ -205,7 +199,7 @@ class TasbihCounterPanel extends StatelessWidget {
         alignment: Alignment.topCenter,
         child: Padding(
           padding: EdgeInsets.only(top: compact ? 2 : 6),
-          child: Text(l10n.wirdFreeTapToCount, style: TextStyle(color: tasbihSecondaryText(), fontSize: 14)),
+          child: Text(l10n.wirdFreeTapToCount, style: TextStyle(color: AppColors.secondaryOnDark, fontSize: 14)),
         ),
       );
     }
@@ -225,7 +219,7 @@ class TasbihCounterPanel extends StatelessWidget {
             textAlign: TextAlign.center,
             maxLines: compact ? 1 : 2,
             overflow: TextOverflow.ellipsis,
-            style: TextStyle(color: failed ? AppColors.goldOnDark : tasbihSecondaryText(), fontSize: 13, height: 1.25),
+            style: TextStyle(color: failed ? AppColors.goldOnDark : AppColors.secondaryOnDark, fontSize: 13, height: 1.25),
           ),
           if (canListen) ...[
             SizedBox(height: compact ? 2 : 6),
@@ -290,7 +284,7 @@ class TasbihCounterPanel extends StatelessWidget {
             ContentText(
               completeHint!,
               textAlign: TextAlign.center,
-              style: TextStyle(color: tasbihSecondaryText(), fontSize: 13),
+              style: TextStyle(color: AppColors.secondaryOnDark, fontSize: 13),
             ),
             const SizedBox(height: 10),
           ],
@@ -378,7 +372,7 @@ class _Ring extends StatelessWidget {
               Text(
                 '/ $target',
                 textDirection: TextDirection.ltr,
-                style: TextStyle(color: tasbihSecondaryText(), fontSize: math.max(14, size * 0.075)),
+                style: TextStyle(color: AppColors.secondaryOnDark, fontSize: math.max(14, size * 0.075)),
               ),
               if (complete) ...[
                 const SizedBox(height: 4),

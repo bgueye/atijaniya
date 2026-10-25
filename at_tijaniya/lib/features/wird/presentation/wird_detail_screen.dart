@@ -488,7 +488,7 @@ class _AudioPlayerBar extends StatelessWidget {
                   iconSize: 34,
                   icon: Icon(
                     state.isPlaying ? Icons.pause_circle_filled : Icons.play_circle_fill,
-                    color: hasAnyAudio ? AppColors.goldOnDark : AppColors.bronze,
+                    color: hasAnyAudio ? AppColors.goldOnDark : AppColors.secondaryOnDark,
                   ),
                   onPressed: controller.togglePlayPause,
                 ),
@@ -503,7 +503,7 @@ class _AudioPlayerBar extends StatelessWidget {
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                     style: TextStyle(
-                      color: hasAnyAudio ? AppColors.parchment : AppColors.bronze,
+                      color: hasAnyAudio ? AppColors.parchment : AppColors.secondaryOnDark,
                       fontStyle: hasAnyAudio ? FontStyle.normal : FontStyle.italic,
                       fontSize: 13,
                     ),
@@ -512,7 +512,7 @@ class _AudioPlayerBar extends StatelessWidget {
                 if (activeIndex != null)
                   ContentText(
                     '${_formatDuration(position)} / ${_formatDuration(duration)}',
-                    style: TextStyle(color: AppColors.bronze, fontSize: 11),
+                    style: TextStyle(color: AppColors.secondaryOnDark, fontSize: 11),
                   ),
               ],
             ),

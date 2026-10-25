@@ -44,6 +44,12 @@ class AppColors {
   /// (audit du 2026-10-25, design_tokens.yaml § gold_on_dark).
   static const goldOnDark = _goldStandard;
 
+  /// Texte secondaire des fonds sombres (zaytoune) : parchemin atténué,
+  /// 6,7:1 sur zaytoune. Le bronze y tombe à 2,92:1 (1,18:1 en mode
+  /// renforcé) — jamais de bronze pour du texte sur fond sombre (revue de
+  /// design du 2026-10-06, audit du 2026-10-25).
+  static final secondaryOnDark = parchment.withValues(alpha: 0.74);
+
   /// Fonds doux d'accent, badges
   static const goldSoft = Color(0xFFF1E6C9);
 

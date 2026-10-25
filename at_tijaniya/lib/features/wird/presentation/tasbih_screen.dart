@@ -164,7 +164,7 @@ class _PillarProgress extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 8),
-          ContentText(label, style: TextStyle(color: tasbihSecondaryText(), fontSize: 13, fontWeight: FontWeight.w500)),
+          ContentText(label, style: TextStyle(color: AppColors.secondaryOnDark, fontSize: 13, fontWeight: FontWeight.w500)),
         ],
       ),
     );
@@ -254,7 +254,7 @@ class _Reading extends StatelessWidget {
                     pillar.note!,
                     textAlign: TextAlign.center,
                     textDirection: TextDirection.ltr,
-                    style: TextStyle(fontSize: 14, height: 1.4, color: tasbihSecondaryText()),
+                    style: TextStyle(fontSize: 14, height: 1.4, color: AppColors.secondaryOnDark),
                   ),
                 ],
                 if (alternative != null) ...[
@@ -295,7 +295,7 @@ class _Reading extends StatelessWidget {
         formula.intro,
         textAlign: TextAlign.center,
         textDirection: TextDirection.ltr,
-        style: TextStyle(fontSize: large ? 15 : 14, height: 1.4, color: tasbihSecondaryText()),
+        style: TextStyle(fontSize: large ? 15 : 14, height: 1.4, color: AppColors.secondaryOnDark),
       ),
       const SizedBox(height: 6),
       Text(
@@ -314,7 +314,7 @@ class _Reading extends StatelessWidget {
             fontStyle: FontStyle.italic,
             fontSize: large ? 16 : 14,
             height: 1.45,
-            color: large ? AppColors.parchment : tasbihSecondaryText(),
+            color: large ? AppColors.parchment : AppColors.secondaryOnDark,
           ),
         ),
       ],
@@ -346,7 +346,7 @@ class _WirdCompletedView extends StatelessWidget {
             Text(
               AppLocalizations.of(context)!.wirdTasbihCompletedBody,
               textAlign: TextAlign.center,
-              style: TextStyle(color: AppColors.bronze),
+              style: TextStyle(color: AppColors.secondaryOnDark),
             ),
             const SizedBox(height: 24),
             ElevatedButton(
@@ -404,7 +404,7 @@ class _DonationNudgeState extends State<_DonationNudge> {
             const SizedBox(width: 6),
             Text(
               AppLocalizations.of(context)!.wirdTasbihDonationNudge,
-              style: TextStyle(color: AppColors.bronze, fontSize: 12, decoration: TextDecoration.underline, decorationColor: AppColors.bronze),
+              style: TextStyle(color: AppColors.secondaryOnDark, fontSize: 12, decoration: TextDecoration.underline, decorationColor: AppColors.secondaryOnDark),
             ),
           ],
         ),
