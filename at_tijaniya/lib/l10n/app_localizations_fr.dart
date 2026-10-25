@@ -2794,6 +2794,9 @@ class AppLocalizationsFr extends AppLocalizations {
   String get figureUnpublishSuccess => 'Figure repassée en brouillon.';
 
   @override
+  String get figureUnavailable => 'Cette fiche n\'est plus disponible.';
+
+  @override
   String get figureUnpublishError => 'Impossible de dépublier cette figure.';
 
   @override

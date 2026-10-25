@@ -4,12 +4,16 @@
 // note explicite quand la biographie est absente — avec une figure factice,
 // locale au test (pas de contenu religieux réel dans ce fichier).
 
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:supabase_flutter/supabase_flutter.dart' show PostgrestException;
 
 import 'package:at_tijaniya/core/theme/app_colors.dart';
+import 'package:at_tijaniya/features/figures/data/figures_repository.dart';
 import 'package:at_tijaniya/features/figures/domain/figure_models.dart';
 import 'package:at_tijaniya/features/figures/presentation/figure_detail_screen.dart';
 import 'package:at_tijaniya/features/figures/presentation/figures_providers.dart';
@@ -345,4 +349,104 @@ void main() {
     expect(find.text('actuel'), findsOneWidget);
     expect(find.text('Liste incomplète : des noms manquent ici.'), findsOneWidget);
   });
+
+  // Audit Figures du 2026-10-25 (P2-7) : toucher un maillon dont la fiche
+  // n'est pas en mémoire la recharge. Si elle a disparu, un message le dit ;
+  // un double toucher pendant le chargement n'ouvre qu'une fiche.
+  group('lien vers la fiche d\'un maillon', () {
+    const current = Figure(
+      id: 'test-current',
+      nameArabic: 'اسم تجريبي',
+      nameFrench: 'Figure consultée',
+      category: FigureCategory.religiousFamily,
+    );
+    const target = Figure(
+      id: 'test-target',
+      nameArabic: 'الهدف',
+      nameFrench: 'Maillon cible',
+      category: FigureCategory.religiousFamily,
+    );
+    const succession = ZawiyaSuccession(
+      zawiyaId: 'z1',
+      zawiyaName: 'Zawiya de test',
+      role: SuccessionRole.khalife,
+      founderFigureId: 'test-founder',
+      links: [
+        FigureKhalifaLink(
+          id: 'l1',
+          founderFigureId: 'test-founder',
+          zawiyaId: 'z1',
+          role: SuccessionRole.khalife,
+          khalifaFigureId: 'test-target',
+          khalifaNameAr: 'الهدف',
+          khalifaNameFr: 'Maillon cible',
+          khalifaCategory: FigureCategory.religiousFamily,
+          orderIndex: 1,
+        ),
+      ],
+    );
+
+    Future<void> openZawiyaTab(WidgetTester tester, _FakeFiguresRepository repository) async {
+      await tester.pumpWidget(_wrap(
+        const FigureDetailScreen(figure: current),
+        overrides: [
+          // Liste vide : la fiche du maillon n'est pas en mémoire, elle
+          // passe donc par `fetchFigureById`.
+          figuresProvider.overrideWith((ref) async => const []),
+          figuresRepositoryProvider.overrideWithValue(repository),
+          linkedEventsForFigureProvider('test-current').overrideWith((ref) async => []),
+          linkedZawiyasForFigureProvider('test-current').overrideWith((ref) async => []),
+          successionsForFigureProvider('test-current').overrideWith((ref) async => [succession]),
+        ],
+      ));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Zawiya'));
+      await tester.pumpAndSettle();
+      await tester.scrollUntilVisible(find.text('Maillon cible'), 200, scrollable: find.byType(Scrollable).last);
+    }
+
+    testWidgets('fiche disparue entre-temps : message, aucune navigation', (tester) async {
+      final repository = _FakeFiguresRepository(
+        (_) async => throw const PostgrestException(message: 'no rows', code: 'PGRST116'),
+      );
+      await openZawiyaTab(tester, repository);
+
+      await tester.tap(find.text('Maillon cible'));
+      await tester.pumpAndSettle();
+
+      expect(find.text("Cette fiche n'est plus disponible."), findsOneWidget);
+      expect(find.byType(FigureDetailScreen), findsOneWidget);
+    });
+
+    testWidgets('double toucher pendant le chargement : une seule fiche ouverte', (tester) async {
+      final pending = Completer<Figure>();
+      final repository = _FakeFiguresRepository((_) => pending.future);
+      await openZawiyaTab(tester, repository);
+
+      await tester.tap(find.text('Maillon cible'));
+      await tester.pump();
+      await tester.tap(find.text('Maillon cible'));
+      await tester.pump();
+      pending.complete(target);
+      await tester.pumpAndSettle();
+
+      expect(repository.calls, 1);
+      expect(find.byType(FigureDetailScreen, skipOffstage: false), findsNWidgets(2));
+    });
+  });
+}
+
+/// Dépôt factice : seul `fetchFigureById` sert ici ; [onFetch] décide de sa
+/// réponse et [calls] compte les appels.
+class _FakeFiguresRepository extends FiguresRepository {
+  _FakeFiguresRepository(this.onFetch);
+
+  final Future<Figure> Function(String id) onFetch;
+  int calls = 0;
+
+  @override
+  Future<Figure> fetchFigureById(String id) {
+    calls++;
+    return onFetch(id);
+  }
 }

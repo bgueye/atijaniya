@@ -5480,6 +5480,12 @@ abstract class AppLocalizations {
   /// **'Figure repassée en brouillon.'**
   String get figureUnpublishSuccess;
 
+  /// No description provided for @figureUnavailable.
+  ///
+  /// In fr, this message translates to:
+  /// **'Cette fiche n\'est plus disponible.'**
+  String get figureUnavailable;
+
   /// No description provided for @figureUnpublishError.
   ///
   /// In fr, this message translates to:

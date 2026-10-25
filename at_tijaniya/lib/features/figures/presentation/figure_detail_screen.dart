@@ -1907,7 +1907,7 @@ class _FounderNode extends StatelessWidget {
 /// donc on la cherche d'abord dans `figuresProvider` déjà chargé, sinon on la
 /// recharge via `fetchFigureById` (cas d'un khalife encore en brouillon, pas
 /// dans la liste publique, visible seulement par un admin).
-class _KhalifaNode extends ConsumerWidget {
+class _KhalifaNode extends ConsumerStatefulWidget {
   const _KhalifaNode({
     required this.link,
     required this.isCurrent,
@@ -1922,26 +1922,58 @@ class _KhalifaNode extends ConsumerWidget {
   final VoidCallback onEdit;
   final VoidCallback onRemove;
 
-  Future<void> _openKhalifaDetail(BuildContext context, WidgetRef ref) async {
-    Figure? figure;
-    for (final candidate in ref.read(figuresProvider).valueOrNull ?? const <Figure>[]) {
-      if (candidate.id == link.khalifaFigureId) {
-        figure = candidate;
-        break;
+  @override
+  ConsumerState<_KhalifaNode> createState() => _KhalifaNodeState();
+}
+
+class _KhalifaNodeState extends ConsumerState<_KhalifaNode> {
+  /// Vrai du toucher jusqu'à la fermeture de la fiche ouverte : un second
+  /// toucher (double toucher, ou pendant le chargement ou l'animation
+  /// d'ouverture) ouvrait une seconde fiche (audit Figures du 2026-10-25,
+  /// P2-7).
+  bool _opening = false;
+
+  Future<void> _openKhalifaDetail() async {
+    if (_opening) return;
+    final l10n = AppLocalizations.of(context)!;
+    setState(() => _opening = true);
+    try {
+      Figure? figure;
+      for (final candidate in ref.read(figuresProvider).valueOrNull ?? const <Figure>[]) {
+        if (candidate.id == widget.link.khalifaFigureId) {
+          figure = candidate;
+          break;
+        }
       }
-    }
-    figure ??= await ref.read(figuresRepositoryProvider).fetchFigureById(link.khalifaFigureId);
-    if (context.mounted) {
-      Navigator.of(context).push(MaterialPageRoute(builder: (_) => FigureDetailScreen(figure: figure!)));
+      // Rechargement sans filet jusqu'ici : une fiche supprimée ou
+      // dépubliée depuis le chargement (`.single()` sans ligne), ou une
+      // coupure réseau, faisait échouer le toucher en silence.
+      try {
+        figure ??= await ref.read(figuresRepositoryProvider).fetchFigureById(widget.link.khalifaFigureId);
+      } catch (error) {
+        if (mounted) {
+          showErrorSnackBar(context, isFigureUnavailableError(error) ? l10n.figureUnavailable : l10n.figuresLoadError);
+        }
+        return;
+      }
+      if (!mounted) return;
+      await Navigator.of(context).push(MaterialPageRoute(builder: (_) => FigureDetailScreen(figure: figure!)));
+    } finally {
+      if (mounted) setState(() => _opening = false);
     }
   }
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
+    final link = widget.link;
+    final isCurrent = widget.isCurrent;
+    final isAdmin = widget.isAdmin;
+    final onEdit = widget.onEdit;
+    final onRemove = widget.onRemove;
     return InkWell(
       borderRadius: BorderRadius.circular(12),
-      onTap: isCurrent ? null : () => _openKhalifaDetail(context, ref),
+      onTap: isCurrent ? null : _openKhalifaDetail,
       child: Container(
         width: double.infinity,
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),

@@ -988,6 +988,7 @@
   "figureUnpublishConfirmTitle": "Retirer cette figure de la publication ?",
   "figureUnpublishConfirmBody": "Elle ne sera plus visible des disciples et reviendra dans « Contenu à valider ». Rien n'est supprimé.",
   "figureUnpublishSuccess": "Figure repassée en brouillon.",
+  "figureUnavailable": "Cette fiche n'est plus disponible.",
   "figureUnpublishError": "Impossible de dépublier cette figure.",
   "a11yTogglePasswordVisibility": "Afficher ou masquer le mot de passe",
   "a11yRemove": "Retirer",

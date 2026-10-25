@@ -4,6 +4,20 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:at_tijaniya/features/figures/domain/figure_errors.dart';
 
 void main() {
+  // Audit Figures du 2026-10-25 (P2-7) : fiche disparue (`.single()` sans
+  // ligne) distinguée d'une coupure réseau.
+  group('isFigureUnavailableError', () {
+    test('PGRST116 (aucune ligne) -> fiche indisponible', () {
+      const error = PostgrestException(message: 'JSON object requested, multiple (or no) rows returned', code: 'PGRST116');
+      expect(isFigureUnavailableError(error), isTrue);
+    });
+
+    test('autre erreur Postgrest ou réseau -> pas « indisponible »', () {
+      expect(isFigureUnavailableError(const PostgrestException(message: 'permission denied', code: '42501')), isFalse);
+      expect(isFigureUnavailableError(Exception('SocketException')), isFalse);
+    });
+  });
+
   group('classifyFigureDeleteError', () {
     test('code 23503 -> blockedBySilsila', () {
       const error = PostgrestException(message: 'violates foreign key constraint', code: '23503');

@@ -17,6 +17,14 @@ enum FigureDeleteErrorKind { blockedBySilsila, blockedByKhalifaChain, generic }
 ///   référence comme maillon parent de sa silsila.
 /// - `figure_zawiya_khalifas.khalifa_figure_id`, même choix volontaire :
 ///   elle est encore listée comme khalife dans une chaîne de succession.
+/// Vrai quand une fiche demandée par son identifiant n'existe plus pour ce
+/// compte : `.single()` sans ligne renvoie le code PostgREST `PGRST116`,
+/// soit parce qu'elle a été supprimée, soit parce qu'elle est repassée en
+/// brouillon (la RLS la masque alors à un disciple). Faux pour une coupure
+/// réseau ou toute autre erreur, qui appelle un autre message (audit Figures
+/// du 2026-10-25, P2-7).
+bool isFigureUnavailableError(Object error) => error is PostgrestException && error.code == 'PGRST116';
+
 FigureDeleteErrorKind classifyFigureDeleteError(Object error) {
   if (error is PostgrestException && error.code == '23503') {
     if (error.message.contains('figure_zawiya_khalifas')) {
