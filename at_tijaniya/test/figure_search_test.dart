@@ -42,6 +42,27 @@ void main() {
     });
   });
 
+  group('sortFiguresByArabicName', () {
+    test("ordre alphabétique arabe, article « ال » de tête ignoré, hamza ramenée à alif", () {
+      final sorted = sortFiguresByArabicName([
+        _figure('ta', 'T', 'الطيب السفياني'), // ط
+        _figure('ba', 'B', 'بابكر سي'), // ب
+        _figure('alif', 'A', 'إبراهيم الرياحي'), // ا (hamza)
+        _figure('mim', 'M', 'محمد بن المشري'), // م
+        _figure('ayn', 'E', 'العربي بن السائح'), // ع, article ignoré
+      ]);
+      expect(sorted.map((f) => f.id), ['alif', 'ba', 'ta', 'ayn', 'mim']);
+    });
+
+    test('nom arabe identique : le nom français départage', () {
+      final sorted = sortFiguresByArabicName([
+        _figure('2', 'Sidi Taïeb Soufiani (mokaddem)', 'الطيب السفياني'),
+        _figure('1', 'Sidi Taïeb Soufiani (compagnon)', 'الطيب السفياني'),
+      ]);
+      expect(sorted.map((f) => f.id), ['1', '2']);
+    });
+  });
+
   group('searchFigures', () {
     test('saisie vide : toute la liste, dans le même ordre', () {
       expect(_ids(''), _figures.map((f) => f.id).toList());

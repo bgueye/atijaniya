@@ -37,6 +37,21 @@ List<Figure> searchFigures(List<Figure> figures, String query) {
   return figures.where((figure) => _matches(figure, queryWords)).toList();
 }
 
+/// [figures] triées sur leur nom arabe, pour la liste en interface arabe
+/// (audit Figures du 2026-10-25, P2-8 ; la base les renvoie triées sur le nom
+/// français). Clé de tri : le nom normalisé ([normalizeArabicName]), dont
+/// l'ordre des lettres Unicode suit alors l'ordre alphabétique arabe, sans
+/// l'article « ال » du premier mot, comme dans un dictionnaire (« الطيب »
+/// se range au ط). À clé égale, le nom français départage, pour un ordre
+/// stable.
+List<Figure> sortFiguresByArabicName(List<Figure> figures) {
+  String key(Figure figure) => _withoutArabicArticle(normalizeArabicName(figure.nameArabic));
+  return [...figures]..sort((a, b) {
+      final byArabic = key(a).compareTo(key(b));
+      return byArabic != 0 ? byArabic : a.nameFrench.compareTo(b.nameFrench);
+    });
+}
+
 /// Texte latin normalisé : minuscules, accents retirés, apostrophes
 /// supprimées (« M'hammed » → « mhammed »), toute autre ponctuation
 /// (tirets, guillemets, parenthèses) changée en espace.

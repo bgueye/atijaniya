@@ -145,6 +145,36 @@ void main() {
     semantics.dispose();
   });
 
+  // Audit Figures du 2026-10-25 (P2-8) : en arabe, nom arabe en titre et tri
+  // sur le nom arabe. « الاسم الثالث » précède « الاسم الثاني » en arabe,
+  // alors que leurs noms français se rangent dans l'ordre inverse.
+  testWidgets('en arabe : nom arabe en titre, tri sur le nom arabe', (tester) async {
+    await tester.pumpWidget(_wrap(locale: const Locale('ar')));
+    await tester.pumpAndSettle();
+
+    final third = tester.getTopLeft(find.text('الاسم الثالث')).dy;
+    final second = tester.getTopLeft(find.text('الاسم الثاني')).dy;
+    expect(third, lessThan(second));
+
+    final arabicTitle = tester.widget<Text>(find.text('الاسم الثاني'));
+    expect(arabicTitle.style?.fontSize, 18);
+    expect(arabicTitle.maxLines, 2);
+    // Le nom arabe passe avant le nom français dans la carte.
+    expect(
+      tester.getTopLeft(find.text('الاسم الثاني')).dy,
+      lessThan(tester.getTopLeft(find.text('Cheikh Ahmed Tidiane Niasse')).dy),
+    );
+
+    // En français, rien ne change : tri et titre sur le nom français.
+    await tester.pumpWidget(_wrap());
+    await tester.pumpAndSettle();
+    expect(
+      tester.getTopLeft(find.text('Cheikh Ahmed Tidiane Niasse')).dy,
+      lessThan(tester.getTopLeft(find.text('Thierno Omar Diop')).dy),
+    );
+    expect(tester.widget<Text>(find.text('الاسم الثاني')).style?.fontSize, 16);
+  });
+
   testWidgets('la recherche se combine au filtre par foyer', (tester) async {
     await tester.pumpWidget(_wrap());
     await tester.pumpAndSettle();

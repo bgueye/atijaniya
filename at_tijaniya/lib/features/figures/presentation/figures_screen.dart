@@ -132,7 +132,12 @@ class _FiguresScreenState extends ConsumerState<FiguresScreen> {
               // liste vide sans puce sélectionnée.
               final foyer = foyers.contains(_foyer) ? _foyer : null;
               final query = _searchController.text.trim();
-              final figures = searchFigures(filterFiguresByFoyer(allFigures, foyer), query);
+              final matching = searchFigures(filterFiguresByFoyer(allFigures, foyer), query);
+              // En arabe, tri sur le nom arabe, qui sert aussi de titre aux
+              // cartes (voir `_FigureTile`) ; la base trie sur le nom
+              // français (audit Figures du 2026-10-25, P2-8).
+              final isArabic = Localizations.localeOf(context).languageCode == 'ar';
+              final figures = isArabic ? sortFiguresByArabicName(matching) : matching;
               final founders = figures.where((f) => f.category == FigureCategory.founder).toList();
               final families = figures.where((f) => f.category == FigureCategory.religiousFamily).toList();
 
@@ -310,7 +315,7 @@ class _SectionHeader extends StatelessWidget {
 }
 
 /// Carte figure — portrait + nom FR + nom AR uniquement (le résumé reste sur
-/// `FigureDetailScreen`). Chaque nom tient sur sa propre ligne avec ellipsis :
+/// `FigureDetailScreen`), le nom de la langue de l'interface en titre. Chaque nom tient sur sa propre ligne avec ellipsis :
 /// contrairement à l'ancien `ListTile` (titre + sous-titre + nom arabe en
 /// `trailing` sans largeur contrainte), un nom long ne peut plus déborder ni
 /// écraser le reste de la carte. Nom FR en Cormorant Garamond — police dédiée
@@ -323,8 +328,41 @@ class _FigureTile extends StatelessWidget {
 
   static final _placeholder = Icon(Icons.person_outline, color: AppColors.emerald);
 
+  /// Nom français : en titre (encre, 18 pt) ou en second (émeraude, 16 pt).
+  /// 2 lignes en titre plutôt qu'1 : un nom tronqué à 1 ligne masquait
+  /// parfois l'épithète qui différencie deux figures proches (ex. deux
+  /// "Cheikh Ahmed Tidiane Sy") — constaté à l'audit design pré-publication
+  /// Play Store, alors que des cartes similaires (Khadara) passaient déjà à
+  /// la ligne sans souci.
+  Widget _frenchName({required bool title}) {
+    return ContentText(
+      figure.nameFrench,
+      maxLines: title ? 2 : 1,
+      overflow: TextOverflow.ellipsis,
+      style: GoogleFonts.cormorantGaramond(
+        fontWeight: FontWeight.w600,
+        fontSize: title ? 18 : 16,
+        color: title ? AppColors.ink : AppColors.emerald,
+      ),
+    );
+  }
+
+  /// Nom arabe, en Amiri (noms propres arabes, `design_tokens.yaml`) : en
+  /// titre (encre, 18 pt, 2 lignes) ou en second (émeraude, 16 pt).
+  Widget _arabicName({required bool title}) {
+    return Text(
+      figure.nameArabic,
+      maxLines: title ? 2 : 1,
+      overflow: TextOverflow.ellipsis,
+      textAlign: TextAlign.right,
+      textDirection: TextDirection.rtl,
+      style: AppTheme.sacredText(fontSize: title ? 18 : 16, color: title ? AppColors.ink : AppColors.emerald),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
+    final isArabic = Localizations.localeOf(context).languageCode == 'ar';
     return Card(
       child: InkWell(
         borderRadius: BorderRadius.circular(16),
@@ -369,33 +407,13 @@ class _FigureTile extends StatelessWidget {
                   // aligner le texte dedans.
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   mainAxisSize: MainAxisSize.min,
-                  children: [
-                    ContentText(
-                      figure.nameFrench,
-                      // 2 lignes plutôt qu'1 : un nom tronqué à 1 ligne
-                      // masquait parfois l'épithète qui différencie deux
-                      // figures proches (ex. deux "Cheikh Ahmed Tidiane Sy")
-                      // — constaté à l'audit design pré-publication Play
-                      // Store, alors que des cartes similaires (Khadara)
-                      // passaient déjà à la ligne sans souci.
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                      style: GoogleFonts.cormorantGaramond(
-                        fontWeight: FontWeight.w600,
-                        fontSize: 18,
-                        color: AppColors.ink,
-                      ),
-                    ),
-                    const SizedBox(height: 3),
-                    Text(
-                      figure.nameArabic,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      textAlign: TextAlign.right,
-                      textDirection: TextDirection.rtl,
-                      style: AppTheme.sacredText(fontSize: 16, color: AppColors.emerald),
-                    ),
-                  ],
+                  // En arabe, le nom arabe devient le titre et le nom
+                  // français passe en second, comme dans la liste des wirds
+                  // (audit Figures du 2026-10-25, P2-8). Le titre garde
+                  // 2 lignes, le second nom 1.
+                  children: isArabic
+                      ? [_arabicName(title: true), const SizedBox(height: 3), _frenchName(title: false)]
+                      : [_frenchName(title: true), const SizedBox(height: 3), _arabicName(title: false)],
                 ),
               ),
               const SizedBox(width: 8),
