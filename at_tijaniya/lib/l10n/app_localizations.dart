@@ -6206,6 +6206,12 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'Récitations audio indisponibles — vérifiez votre connexion.'**
   String get wirdAudioLoadFailed;
+
+  /// No description provided for @wirdReminderScheduleFailed.
+  ///
+  /// In fr, this message translates to:
+  /// **'Impossible de programmer le rappel. Réessayez.'**
+  String get wirdReminderScheduleFailed;
 }
 
 class _AppLocalizationsDelegate

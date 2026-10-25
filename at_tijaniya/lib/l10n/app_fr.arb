@@ -1115,5 +1115,6 @@
   "wirdAudioPillarDownload": "Télécharger et écouter ce pilier",
   "wirdAudioPillarRetry": "Réessayer le téléchargement",
   "wirdRecitationsValidateError": "Validation impossible — vérifiez votre connexion.",
-  "wirdAudioLoadFailed": "Récitations audio indisponibles — vérifiez votre connexion."
+  "wirdAudioLoadFailed": "Récitations audio indisponibles — vérifiez votre connexion.",
+  "wirdReminderScheduleFailed": "Impossible de programmer le rappel. Réessayez."
 }

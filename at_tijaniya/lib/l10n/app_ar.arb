@@ -1106,5 +1106,6 @@
   "wirdAudioPillarDownload": "تنزيل هذا الركن والاستماع إليه",
   "wirdAudioPillarRetry": "إعادة محاولة التنزيل",
   "wirdRecitationsValidateError": "تعذّر التحقق — تحقّق من اتصالك.",
-  "wirdAudioLoadFailed": "تعذّر تحميل التلاوات الصوتية — تحقّق من اتصالك."
+  "wirdAudioLoadFailed": "تعذّر تحميل التلاوات الصوتية — تحقّق من اتصالك.",
+  "wirdReminderScheduleFailed": "تعذّرت جدولة التذكير. أعد المحاولة."
 }

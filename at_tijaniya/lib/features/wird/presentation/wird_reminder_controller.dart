@@ -51,7 +51,11 @@ final wirdReminderControllerProvider =
 );
 
 class WirdReminderController extends StateNotifier<WirdReminderState> {
-  WirdReminderController({required this.wird, required this.locale}) : super(const WirdReminderState()) {
+  /// [notifications] n'est passé que par les tests, avec un faux service ;
+  /// l'app utilise toujours `WirdNotificationService.instance`.
+  WirdReminderController({required this.wird, required this.locale, WirdNotificationService? notifications})
+      : _notifications = notifications ?? WirdNotificationService.instance,
+        super(const WirdReminderState()) {
     _load();
   }
 
@@ -60,6 +64,7 @@ class WirdReminderController extends StateNotifier<WirdReminderState> {
   /// Langue du texte des notifications programmées par ce contrôleur.
   final Locale locale;
   final WirdReminderStore _store = const WirdReminderStore();
+  final WirdNotificationService _notifications;
 
   List<WirdReminderSlot> get slots => wirdReminderSlots[wird.id] ?? const [];
 
@@ -76,14 +81,27 @@ class WirdReminderController extends StateNotifier<WirdReminderState> {
     for (final slot in slots) {
       final setting = settings[slot.id];
       if (setting != null && setting.enabled) {
-        await _scheduleSlot(slot, setting);
+        try {
+          await _scheduleSlot(slot, setting);
+        } catch (_) {
+          // Le réglage reste affiché activé (il l'est, et sera reprogrammé à
+          // la prochaine ouverture) ; le disciple est prévenu que l'alarme
+          // n'a pas pu être posée cette fois.
+          if (mounted) state = state.copyWith(errorMessage: wirdMsgReminderScheduleFailed);
+        }
       }
     }
   }
 
   Future<void> setEnabled(String slotId, bool enabled) async {
     if (enabled) {
-      final granted = await WirdNotificationService.instance.requestPermission();
+      final bool granted;
+      try {
+        granted = await _notifications.requestPermission();
+      } catch (_) {
+        state = state.copyWith(errorMessage: wirdMsgReminderScheduleFailed);
+        return;
+      }
       if (!granted) {
         state = state.copyWith(
           errorMessage: wirdMsgReminderPermissionDenied,
@@ -109,15 +127,28 @@ class WirdReminderController extends StateNotifier<WirdReminderState> {
     await _applyAndPersist(slot, current.copyWith(hour: hour, minute: minute));
   }
 
+  /// Programme (ou annule) le rappel, puis enregistre le réglage. Si la
+  /// programmation échoue, l'interrupteur et l'heure reviennent à leur valeur
+  /// précédente et un message le dit : avant, le réglage était enregistré
+  /// « activé » sans aucune alarme posée, ni message (audits du 2026-10-04 et
+  /// du 2026-10-25, P2-4).
   Future<void> _applyAndPersist(WirdReminderSlot slot, WirdReminderSetting setting) async {
-    final updated = {...state.settings, slot.id: setting};
+    final previous = state.settings;
+    final updated = {...previous, slot.id: setting};
+    // Affiché tout de suite : l'interrupteur suit le doigt pendant la
+    // programmation.
     state = state.copyWith(settings: updated, clearError: true);
+    try {
+      await _scheduleSlot(slot, setting);
+    } catch (_) {
+      if (mounted) state = state.copyWith(settings: previous, errorMessage: wirdMsgReminderScheduleFailed);
+      return;
+    }
     await _store.save(wird.id, updated.values.toList());
-    await _scheduleSlot(slot, setting);
   }
 
   Future<void> _scheduleSlot(WirdReminderSlot slot, WirdReminderSetting setting) {
-    return WirdNotificationService.instance.scheduleReminder(
+    return _notifications.scheduleReminder(
       slot: slot,
       setting: setting,
       title: locale.languageCode == 'ar' ? wird.nameArabic : wird.nameFrench,

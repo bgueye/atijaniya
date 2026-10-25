@@ -3261,4 +3261,8 @@ class AppLocalizationsAr extends AppLocalizations {
   @override
   String get wirdAudioLoadFailed =>
       'تعذّر تحميل التلاوات الصوتية — تحقّق من اتصالك.';
+
+  @override
+  String get wirdReminderScheduleFailed =>
+      'تعذّرت جدولة التذكير. أعد المحاولة.';
 }
