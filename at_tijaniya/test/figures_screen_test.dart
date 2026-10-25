@@ -101,7 +101,7 @@ void main() {
     final unselected = tester.widget<ChoiceChip>(find.widgetWithText(ChoiceChip, 'Fès'));
     expect(unselected.labelStyle?.color, AppColors.secondaryInk);
     final selected = tester.widget<ChoiceChip>(find.widgetWithText(ChoiceChip, 'Tous les foyers'));
-    expect(selected.labelStyle, isNull);
+    expect(selected.labelStyle?.color, AppColors.ink);
   });
 
   // Audit Figures du 2026-10-25 (P2-5) : un portrait introuvable laisse
@@ -203,6 +203,62 @@ void main() {
 
     expect(calls, 2);
     expect(find.text('Thierno Omar Diop'), findsNothing);
+  });
+
+  // Demande du porteur de projet du 2026-10-25 : filtre par foyer sur deux
+  // lignes seulement, justifiées — chaque ligne va d'un bord à l'autre.
+  testWidgets('les puces de foyer tiennent sur deux lignes justifiées', (tester) async {
+    await tester.pumpWidget(_wrap());
+    await tester.pumpAndSettle();
+
+    // Boîtes des libellés, et non de la `ChoiceChip` : celle-ci comprend la
+    // zone tactile, qui s'étire même quand la puce dessinée ne le fait pas
+    // (défaut d'une première version, invisible avec ce critère).
+    final labels = find.descendant(of: find.byType(ChoiceChip), matching: find.byType(Text));
+    final rows = <double, List<Rect>>{};
+    for (final element in labels.evaluate()) {
+      final rect = tester.getRect(find.byWidget(element.widget));
+      rows.putIfAbsent(rect.top, () => []).add(rect);
+    }
+    expect(rows, hasLength(2));
+    // Même bord gauche et même bord droit pour les deux lignes : celui de la
+    // liste (marge de 16 sur la surface de test de 800 de large), plus les
+    // 11 dp de la puce autour de son libellé (marge 6, 4 autour du libellé,
+    // bordure 1). Tolérance d'un pixel : largeur de libellé arrondie.
+    for (final row in rows.values) {
+      final left = row.map((r) => r.left).reduce((a, b) => a < b ? a : b);
+      final right = row.map((r) => r.right).reduce((a, b) => a > b ? a : b);
+      expect(left, moreOrLessEquals(16 + 11, epsilon: 1));
+      expect(right, moreOrLessEquals(784 - 11, epsilon: 1));
+    }
+  });
+
+  testWidgets('texte très agrandi : les puces reviennent à la ligne librement', (tester) async {
+    await tester.pumpWidget(ProviderScope(
+      overrides: [
+        isAdminProvider.overrideWithValue(false),
+        figuresProvider.overrideWith((ref) async => _figures),
+      ],
+      child: MaterialApp(
+        localizationsDelegates: AppLocalizations.localizationsDelegates,
+        supportedLocales: AppLocalizations.supportedLocales,
+        locale: const Locale('fr'),
+        builder: (context, child) => MediaQuery(
+          data: MediaQuery.of(context).copyWith(textScaler: const TextScaler.linear(3)),
+          child: child!,
+        ),
+        home: const Scaffold(body: FiguresScreen()),
+      ),
+    ));
+    await tester.pumpAndSettle();
+
+    expect(tester.takeException(), isNull);
+    final tops = {
+      for (final element in find.byType(ChoiceChip).evaluate()) tester.getRect(find.byWidget(element.widget)).top
+    };
+    expect(tops.length, greaterThan(2));
+    // Aucun libellé tronqué : chaque nom de foyer reste entier.
+    expect(find.text('Famille omarienne'), findsOneWidget);
   });
 
   testWidgets('la recherche se combine au filtre par foyer', (tester) async {

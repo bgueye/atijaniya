@@ -428,4 +428,26 @@ void main() {
       expect(filterFiguresByFoyer(figures, null), hasLength(5));
     });
   });
+
+  // Filtre par foyer sur deux lignes justifiées (2026-10-25).
+  group('splitFoyerChipsInTwoRows', () {
+    test("coupe là où les deux lignes ont la longueur la plus voisine, dans l'ordre", () {
+      // Lignes possibles : 100 | 340, 160 | 280, 260 | 180 (meilleure : 260),
+      // 300 | 140.
+      expect(splitFoyerChipsInTwoRows([100, 60, 100, 40, 140], 400), 3);
+    });
+
+    test("tient compte de l'écart entre deux puces", () {
+      // Sans écart, 100 | 100+100 tient dans 200 (à égalité avec
+      // 100+100 | 100, la première coupure est gardée) ; avec 10 d'écart,
+      // la ligne de deux puces fait 210 dans les deux cas.
+      expect(splitFoyerChipsInTwoRows([100, 100, 100], 200), 1);
+      expect(splitFoyerChipsInTwoRows([100, 100, 100], 200, spacing: 10), isNull);
+    });
+
+    test('null quand aucune coupure ne tient en deux lignes, ou avec moins de deux puces', () {
+      expect(splitFoyerChipsInTwoRows([300, 300, 300], 500), isNull);
+      expect(splitFoyerChipsInTwoRows([120], 500), isNull);
+    });
+  });
 }

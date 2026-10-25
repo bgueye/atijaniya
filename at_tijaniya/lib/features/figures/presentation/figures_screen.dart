@@ -235,16 +235,30 @@ class _SearchField extends StatelessWidget {
   }
 }
 
-/// Puces de foyer, sur plusieurs lignes au besoin : avec jusqu'à huit choix,
-/// une seule ligne (comme le filtre des zawiyas, qui n'en a que quatre)
-/// obligerait à réduire le texte ou à faire défiler, et un foyer caché hors
-/// de l'écran serait manqué.
+/// Puces de foyer, sur deux lignes justifiées (demande du porteur de projet
+/// du 2026-10-25 ; trois lignes en drapeau auparavant) : avec jusqu'à huit
+/// choix, une seule ligne (comme le filtre des zawiyas, qui n'en a que
+/// quatre) obligerait à réduire le texte ou à faire défiler, et un foyer
+/// caché hors de l'écran serait manqué. Retour à la ligne libre si deux
+/// lignes ne suffisent pas (voir [splitFoyerChipsInTwoRows]).
 class _FoyerFilter extends StatelessWidget {
   const _FoyerFilter({required this.foyers, required this.selected, required this.onSelected});
 
   final List<Foyer> foyers;
   final Foyer? selected;
   final ValueChanged<Foyer?> onSelected;
+
+  /// Écart entre deux puces, en largeur comme entre les deux lignes.
+  static const _spacing = 6.0;
+
+  /// Marges horizontales de la puce, resserrées pour que les huit choix
+  /// actuels tiennent sur deux lignes d'un téléphone (411 dp).
+  static const _padding = EdgeInsets.symmetric(horizontal: 6, vertical: 8);
+  static const _labelPadding = EdgeInsets.symmetric(horizontal: 4);
+
+  /// Ce que la puce ajoute autour de son texte : marges et bordure (1 dp de
+  /// chaque côté). Mesuré en test : 22 dp, quel que soit le libellé.
+  static final _chrome = _padding.horizontal + _labelPadding.horizontal + 2;
 
   @override
   Widget build(BuildContext context) {
@@ -253,27 +267,94 @@ class _FoyerFilter extends StatelessWidget {
       (null, l10n.figuresFoyerFilterAll),
       for (final foyer in foyers) (foyer, foyerLabel(foyer, l10n)),
     ];
-    return Wrap(
-      spacing: 6,
-      runSpacing: 6,
-      children: [
-        for (final (foyer, label) in options)
-          ChoiceChip(
-            label: Text(label),
-            // Puce non sélectionnée : le thème y met `onSurfaceVariant`, le
-            // bronze (3,72:1 sur parchemin, sous le seuil AA) ; `secondaryInk`
-            // le remplace ici (audit Figures du 2026-10-25, P2-4). La puce
-            // choisie garde la couleur du thème.
-            labelStyle: foyer == selected ? null : TextStyle(color: AppColors.secondaryInk),
-            selected: foyer == selected,
-            showCheckmark: false,
-            // Ni `visualDensity: compact` ni `materialTapTargetSize:
-            // shrinkWrap` : chacun rognait la zone tactile, qui ne faisait
-            // que 34 dp (40 avec la seule densité compacte). Elle retrouve
-            // ses 48 dp (audit Figures du 2026-10-25, P2-6).
-            onSelected: (_) => onSelected(foyer),
-          ),
-      ],
+    final baseStyle = Theme.of(context).textTheme.labelLarge ?? const TextStyle(fontSize: 14);
+    // Puce non sélectionnée : `secondaryInk` et non le bronze du thème
+    // (`onSurfaceVariant`, 3,72:1 sur parchemin, sous le seuil AA ; audit
+    // Figures du 2026-10-25, P2-4). Puce choisie : l'encre, couleur du thème
+    // sur son fond `goldSoft`. Styles explicites dans les deux cas, pour
+    // mesurer le texte exactement comme il sera affiché.
+    TextStyle styleFor(bool isSelected) =>
+        baseStyle.copyWith(color: isSelected ? AppColors.ink : AppColors.secondaryInk);
+
+    // [labelWidth] : largeur imposée au libellé, centré dedans, pour étirer
+    // la puce dessinée. Une largeur donnée à la seule `ChoiceChip` ne
+    // l'étire pas : seule sa zone tactile s'élargit, la puce visible reste à
+    // sa taille et se centre (constaté sur émulateur).
+    Widget chip(Foyer? foyer, String label, {double? labelWidth}) => ChoiceChip(
+          label: labelWidth == null
+              ? Text(label, maxLines: 1)
+              : SizedBox(width: labelWidth, child: Text(label, maxLines: 1, textAlign: TextAlign.center)),
+          labelStyle: styleFor(foyer == selected),
+          padding: _padding,
+          labelPadding: _labelPadding,
+          selected: foyer == selected,
+          showCheckmark: false,
+          // Ni `visualDensity: compact` ni `materialTapTargetSize:
+          // shrinkWrap` : chacun rognait la zone tactile, qui ne faisait
+          // que 34 dp (40 avec la seule densité compacte). Elle retrouve
+          // ses 48 dp (audit Figures du 2026-10-25, P2-6).
+          onSelected: (_) => onSelected(foyer),
+        );
+
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        // Largeur naturelle de chaque puce : son texte, mesuré avec le style
+        // et la taille de texte réels (réglage d'accessibilité compris),
+        // plus ce que la puce ajoute autour.
+        final textScaler = MediaQuery.textScalerOf(context);
+        final direction = Directionality.of(context);
+        final widths = [
+          for (final (foyer, label) in options)
+            () {
+              final painter = TextPainter(
+                text: TextSpan(text: label, style: styleFor(foyer == selected)),
+                textDirection: direction,
+                textScaler: textScaler,
+                maxLines: 1,
+              )..layout();
+              final width = painter.width.ceilToDouble() + _chrome;
+              painter.dispose();
+              return width;
+            }(),
+        ];
+        final split = splitFoyerChipsInTwoRows(widths, constraints.maxWidth, spacing: _spacing);
+
+        // Repli : ne tient pas en deux lignes (texte agrandi, écran étroit).
+        // Retour à la ligne libre plutôt que des noms de foyer tronqués.
+        if (split == null) {
+          return Wrap(
+            spacing: _spacing,
+            runSpacing: _spacing,
+            children: [for (final (foyer, label) in options) chip(foyer, label)],
+          );
+        }
+
+        // Deux lignes justifiées : chacune occupe toute la largeur, chaque
+        // puce s'élargissant en proportion de sa largeur naturelle (la puce
+        // centre son libellé dans la largeur qu'on lui donne).
+        Widget row(int start, int end) => Row(
+              children: [
+                for (var i = start; i < end; i++) ...[
+                  if (i != start) const SizedBox(width: _spacing),
+                  Expanded(
+                    flex: (widths[i] * 10).round(),
+                    // Arrondi à l'inférieur : un libellé d'une fraction de
+                    // pixel trop large ferait déborder la ligne.
+                    child: LayoutBuilder(
+                      builder: (context, cell) => chip(
+                        options[i].$1,
+                        options[i].$2,
+                        labelWidth: (cell.maxWidth - _chrome).floorToDouble(),
+                      ),
+                    ),
+                  ),
+                ],
+              ],
+            );
+        return Column(
+          children: [row(0, split), const SizedBox(height: _spacing), row(split, options.length)],
+        );
+      },
     );
   }
 }
