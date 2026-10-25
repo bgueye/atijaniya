@@ -142,6 +142,48 @@ void main() {
     semantics.dispose();
   });
 
+  // Audit Figures du 2026-10-25 (P3-2) : un échec de chargement des zawiyas
+  // ou des évènements liés propose « Réessayer », qui relance la requête.
+  testWidgets('onglet Zawiya : « Réessayer » relance le chargement en échec', (tester) async {
+    const figure = Figure(
+      id: 'test-figure-retry',
+      nameArabic: 'اسم تجريبي',
+      nameFrench: 'Figure à recharger',
+      category: FigureCategory.founder,
+    );
+    var zawiyaCalls = 0;
+    var eventCalls = 0;
+    await tester.pumpWidget(_wrap(
+      const FigureDetailScreen(figure: figure),
+      overrides: [
+        linkedZawiyasForFigureProvider('test-figure-retry').overrideWith((ref) async {
+          zawiyaCalls++;
+          if (zawiyaCalls == 1) throw Exception('hors ligne');
+          return [];
+        }),
+        linkedEventsForFigureProvider('test-figure-retry').overrideWith((ref) async {
+          eventCalls++;
+          if (eventCalls == 1) throw Exception('hors ligne');
+          return [];
+        }),
+        successionsForFigureProvider('test-figure-retry').overrideWith((ref) async => []),
+      ],
+    ));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Zawiya'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Réessayer'), findsNWidgets(2));
+    await tester.tap(find.text('Réessayer').first);
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Réessayer'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Réessayer'), findsNothing);
+    expect(zawiyaCalls, 2);
+    expect(eventCalls, 2);
+  });
+
   // Audit Figures du 2026-10-25 (P2-3) : en interface arabe, la biographie
   // française se range sur le début de ses lignes (à gauche) et l'onglet
   // précise qu'elle n'existe qu'en français. Rien de tel en français.

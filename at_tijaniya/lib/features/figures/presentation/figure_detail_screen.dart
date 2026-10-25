@@ -1457,7 +1457,10 @@ class _ZawiyaTabState extends ConsumerState<_ZawiyaTab> {
             padding: const EdgeInsets.symmetric(vertical: 16),
             child: CircularProgressIndicator(color: AppColors.emerald),
           )),
-          error: (error, stackTrace) => Text(l10n.khadaraLoadError, style: TextStyle(color: AppColors.secondaryInk)),
+          error: (error, stackTrace) => _SectionLoadError(
+            message: l10n.khadaraLoadError,
+            onRetry: () => ref.invalidate(linkedZawiyasForFigureProvider(widget.figure.id)),
+          ),
           data: (zawiyas) => zawiyas.isEmpty
               ? EmptyNotice(text: l10n.figureZawiyasPending)
               : Column(
@@ -1491,7 +1494,10 @@ class _ZawiyaTabState extends ConsumerState<_ZawiyaTab> {
             padding: const EdgeInsets.symmetric(vertical: 16),
             child: CircularProgressIndicator(color: AppColors.emerald),
           )),
-          error: (error, stackTrace) => Text(l10n.khadaraLoadError, style: TextStyle(color: AppColors.secondaryInk)),
+          error: (error, stackTrace) => _SectionLoadError(
+            message: l10n.khadaraLoadError,
+            onRetry: () => ref.invalidate(linkedEventsForFigureProvider(widget.figure.id)),
+          ),
           data: (events) => events.isEmpty
               ? Text(l10n.figureZiyarasPending, style: TextStyle(color: AppColors.secondaryInk))
               : Column(
@@ -1525,16 +1531,9 @@ class _ZawiyaTabState extends ConsumerState<_ZawiyaTab> {
             padding: const EdgeInsets.symmetric(vertical: 16),
             child: CircularProgressIndicator(color: AppColors.emerald),
           )),
-          error: (error, stackTrace) => Column(
-            children: [
-              Text(l10n.figureKhalifaChainLoadError,
-                  textAlign: TextAlign.center, style: TextStyle(color: AppColors.secondaryInk)),
-              const SizedBox(height: 12),
-              OutlinedButton(
-                onPressed: () => ref.invalidate(successionsForFigureProvider(widget.figure.id)),
-                child: Text(l10n.figuresRetry),
-              ),
-            ],
+          error: (error, stackTrace) => _SectionLoadError(
+            message: l10n.figureKhalifaChainLoadError,
+            onRetry: () => ref.invalidate(successionsForFigureProvider(widget.figure.id)),
           ),
           data: (successions) => successions.isEmpty
               ? Text(l10n.figureKhalifaChainPending, style: TextStyle(color: AppColors.secondaryInk))
@@ -1567,6 +1566,28 @@ class _ZawiyaTabState extends ConsumerState<_ZawiyaTab> {
 /// d'un coup d'œil sur la fiche d'un khalife. Un maillon marqué
 /// `followsGap` est précédé d'une mention "liste incomplète" à la place du
 /// simple connecteur.
+/// Échec de chargement d'une section de l'onglet Zawiya, avec « Réessayer ».
+/// Zawiyas rattachées et évènements liés n'affichaient qu'un texte, sans
+/// moyen de relancer le chargement, contrairement aux successions (audit
+/// Figures du 2026-10-25, P3-2) ; les trois sections partagent ce bloc.
+class _SectionLoadError extends StatelessWidget {
+  const _SectionLoadError({required this.message, required this.onRetry});
+
+  final String message;
+  final VoidCallback onRetry;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        Text(message, textAlign: TextAlign.center, style: TextStyle(color: AppColors.secondaryInk)),
+        const SizedBox(height: 12),
+        OutlinedButton(onPressed: onRetry, child: Text(AppLocalizations.of(context)!.figuresRetry)),
+      ],
+    );
+  }
+}
+
 class _SuccessionBlock extends StatelessWidget {
   const _SuccessionBlock({
     required this.succession,
