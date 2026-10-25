@@ -56,6 +56,21 @@ const _zawiya = Zawiya(
 );
 
 void main() {
+  // Audit Zawiyas du 2026-10-25 (P2-3) : un lieu sans coordonnées mais avec
+  // une adresse a son bouton Maps (recherche par l'adresse) ; sans l'une ni
+  // l'autre, aucun bouton.
+  testWidgets('bouton Maps avec une adresse seule, aucun sans adresse ni coordonnées', (tester) async {
+    const addressOnly = Zawiya(id: 'z4', name: 'Lieu sans coordonnées', addressText: 'Village de test, Sénégal');
+    await tester.pumpWidget(_wrap(const ZawiyaDetailScreen(zawiya: addressOnly)));
+    await tester.pumpAndSettle();
+    expect(find.text('Ouvrir dans Maps'), findsOneWidget);
+
+    await tester.pumpWidget(const SizedBox());
+    await tester.pumpWidget(_wrap(const ZawiyaDetailScreen(zawiya: Zawiya(id: 'z5', name: 'Lieu sans adresse'))));
+    await tester.pumpAndSettle();
+    expect(find.text('Ouvrir dans Maps'), findsNothing);
+  });
+
   // Audit Zawiyas du 2026-10-25 (P2-2) : coordonnées approximatives
   // signalées près du bouton Maps, et seulement dans ce cas.
   testWidgets('signale un emplacement approximatif près du bouton Maps', (tester) async {

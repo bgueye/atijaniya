@@ -137,11 +137,15 @@ class _ZawiyaDetailScreenState extends ConsumerState<ZawiyaDetailScreen> {
               _InfoRow(icon: Icons.call_outlined, label: l10n.khadaraContactLabel, text: zawiya.contactInfo!),
               const SizedBox(height: 8),
             ],
-            if (zawiya.hasLocation) ...[
+            // Bouton Maps avec des coordonnées, ou à défaut l'adresse (recherche
+            // texte, comme pour un évènement) : 6 lieux sur 34 n'ont pas de
+            // coordonnées mais tous ont une adresse, et n'avaient aucun bouton
+            // (audit Zawiyas du 2026-10-25, P2-3).
+            if (zawiya.hasLocation || zawiya.addressText != null) ...[
               const SizedBox(height: 12),
               // Juste au-dessus du bouton : c'est en suivant l'itinéraire que
               // l'approximation compte (audit Zawiyas du 2026-10-25, P2-2).
-              if (zawiya.coordinatesApproximate) ...[
+              if (zawiya.hasLocation && zawiya.coordinatesApproximate) ...[
                 Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -158,7 +162,12 @@ class _ZawiyaDetailScreenState extends ConsumerState<ZawiyaDetailScreen> {
                 const SizedBox(height: 8),
               ],
               OutlinedButton.icon(
-                onPressed: () => openInMaps(context, latitude: zawiya.latitude!, longitude: zawiya.longitude!),
+                onPressed: () => openInMaps(
+                  context,
+                  latitude: zawiya.latitude,
+                  longitude: zawiya.longitude,
+                  addressText: zawiya.addressText,
+                ),
                 icon: const Icon(Icons.map_outlined),
                 label: Text(l10n.khadaraOpenInMaps),
               ),
