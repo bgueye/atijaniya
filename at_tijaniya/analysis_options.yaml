@@ -5,3 +5,11 @@ linter:
     prefer_const_constructors: true
     prefer_const_literals_to_create_immutables: true
     avoid_print: true
+
+# Largeur de ligne de `dart format`. Le code de l'app est écrit autour de
+# 120 caractères ; à la valeur par défaut (80), `dart format` aurait reformaté
+# la plupart des fichiers et le contrôle ne servait à rien (audit du
+# 2026-10-25, P3-1). Pas de reformatage en masse : les fichiers existants
+# s'alignent au fil des modifications.
+formatter:
+  page_width: 120
