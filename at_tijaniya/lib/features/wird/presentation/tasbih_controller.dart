@@ -70,8 +70,10 @@ final tasbihControllerProvider =
 );
 
 class TasbihController extends StateNotifier<TasbihState> with WidgetsBindingObserver {
-  TasbihController({required this.wird})
-      : super(TasbihState(session: TasbihSession.initial(wird.id))) {
+  /// [voice] n'est passé que par les tests, avec un faux moteur vocal.
+  TasbihController({required this.wird, TasbihVoiceService? voice})
+      : _voice = voice ?? TasbihVoiceService(),
+        super(TasbihState(session: TasbihSession.initial(wird.id))) {
     WidgetsBinding.instance.addObserver(this);
     _load();
   }
@@ -88,7 +90,7 @@ class TasbihController extends StateNotifier<TasbihState> with WidgetsBindingObs
   final Wird wird;
   final TasbihSessionStore _store = const TasbihSessionStore();
   final WirdCompletionStore _completionStore = const WirdCompletionStore();
-  final TasbihVoiceService _voice = TasbihVoiceService();
+  final TasbihVoiceService _voice;
 
   /// `true` tant que le disciple n'a pas explicitement arrêté l'écoute et
   /// que le pilier courant n'est pas terminé : permet de relancer l'écoute
@@ -299,11 +301,14 @@ class TasbihController extends StateNotifier<TasbihState> with WidgetsBindingObs
       onStatus: _onVoiceStatus,
       onError: _onVoiceError,
     );
+    // L'écran a pu être quitté pendant la demande de permission.
+    if (!mounted) return;
     if (!ready) {
-      state = state.copyWith(
-        voiceSupported: false,
-        voiceError: voiceErrorMicUnavailable,
-      );
+      // Message affiché, mais le bouton reste là : un nouveau toucher refait
+      // la demande (le moteur n'est pas retenu comme prêt après un refus).
+      // Avant, `voiceSupported: false` cachait le bouton jusqu'à la sortie de
+      // l'écran (audits du 2026-10-04 et du 2026-10-25, P2-5).
+      state = state.copyWith(voiceError: voiceErrorMicUnavailable);
       return;
     }
     _voiceLoopActive = true;
@@ -345,6 +350,13 @@ class TasbihController extends StateNotifier<TasbihState> with WidgetsBindingObs
   /// l'écoute"/"Mettre en pause".
   void _onVoiceError(String error) {
     if (!mounted) return;
+    // Une session sans parole (le disciple marque une pause) n'est pas une
+    // panne : sans message ni décompte, la boucle relance l'écoute. Trois
+    // pauses de suite coupaient la voix avec « problème répété » (P2-5).
+    if (isSilenceVoiceError(error)) {
+      state = state.copyWith(isListening: false);
+      return;
+    }
     _consecutiveVoiceErrors++;
     if (_consecutiveVoiceErrors >= _maxConsecutiveVoiceErrors) {
       _stopVoiceLoop();
@@ -358,7 +370,10 @@ class TasbihController extends StateNotifier<TasbihState> with WidgetsBindingObs
 
   void _onVoiceStatus(String status) {
     if (!mounted) return;
-    state = state.copyWith(isListening: status == 'listening');
+    final listening = status == 'listening';
+    // L'écoute a repris : une erreur passagère précédente ne doit plus
+    // s'afficher à la place de « À l'écoute » (P2-5).
+    state = state.copyWith(isListening: listening, clearVoiceError: listening);
     final sessionEnded = status == 'notListening' || status == 'done';
     if (sessionEnded && _voiceLoopActive && !isPillarComplete && !_restartScheduled) {
       _restartScheduled = true;
