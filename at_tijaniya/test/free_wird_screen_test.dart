@@ -163,6 +163,13 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.text('0'), findsOneWidget);
     expect(find.text('Compteur remis à zéro.'), findsOneWidget);
+    // Le message ne recouvre pas les commandes du compteur.
+    expect(
+      // La carte du message (son `Material`), pas le `SnackBar` entier, dont
+      // le rectangle inclut la marge.
+      tester.getRect(find.descendant(of: find.byType(SnackBar), matching: find.byType(Material)).first).bottom,
+      lessThanOrEqualTo(tester.getRect(find.text('Réinitialiser')).top),
+    );
 
     // Le disciple continue de réciter avant de remarquer l'erreur.
     for (var i = 0; i < 2; i++) {

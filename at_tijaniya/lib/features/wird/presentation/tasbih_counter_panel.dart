@@ -501,6 +501,11 @@ void showCounterResetSnackBar(BuildContext context, {required VoidCallback onUnd
     ..showSnackBar(SnackBar(
       backgroundColor: AppColors.parchment,
       duration: const Duration(seconds: 6),
+      // Flottant, au-dessus de la rangée « Corriger / mode / Réinitialiser »
+      // (68 dp de haut au plus) : posé en bas, il la recouvrait pendant
+      // 6 s (passe sur émulateur du 2026-10-25, P3-10).
+      behavior: SnackBarBehavior.floating,
+      margin: const EdgeInsets.fromLTRB(16, 0, 16, 76),
       content: Text(l10n.wirdCounterResetDone, style: const TextStyle(color: AppColors.ink)),
       action: SnackBarAction(
         label: l10n.wirdCounterResetUndo,
