@@ -1001,6 +1001,12 @@ class AppLocalizationsAr extends AppLocalizations {
       'تم رفض الوصول إلى الموقع. فعّله من إعدادات الجهاز للعثور على أقرب مناسبة.';
 
   @override
+  String get khadaraLocationOpenSettings => 'فتح الإعدادات';
+
+  @override
+  String get khadaraLocationEnableService => 'تفعيل تحديد الموقع';
+
+  @override
   String get khadaraLiveTab => 'البث المباشر';
 
   @override

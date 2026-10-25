@@ -1008,6 +1008,12 @@ class AppLocalizationsFr extends AppLocalizations {
       'L\'accès à la position a été refusé. Autorisez-le dans les réglages de l\'appareil pour trouver l\'évènement le plus proche.';
 
   @override
+  String get khadaraLocationOpenSettings => 'Ouvrir les réglages';
+
+  @override
+  String get khadaraLocationEnableService => 'Activer la localisation';
+
+  @override
   String get khadaraLiveTab => 'Directs';
 
   @override

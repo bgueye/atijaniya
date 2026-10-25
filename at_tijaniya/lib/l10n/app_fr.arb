@@ -385,6 +385,8 @@
   "khadaraNearbyRecurringEmpty": "Aucun évènement récurrent avec une zawiya géolocalisée n'a été trouvé.",
   "khadaraLocationServiceDisabled": "La localisation est désactivée sur cet appareil. Activez-la pour trouver l'évènement le plus proche.",
   "khadaraLocationPermissionDenied": "L'accès à la position a été refusé. Autorisez-le dans les réglages de l'appareil pour trouver l'évènement le plus proche.",
+  "khadaraLocationOpenSettings": "Ouvrir les réglages",
+  "khadaraLocationEnableService": "Activer la localisation",
 
   "khadaraLiveTab": "Directs",
   "khadaraLiveNowSection": "En direct maintenant",

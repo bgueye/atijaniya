@@ -26,8 +26,6 @@ class NearbyRecurringEventsScreen extends ConsumerStatefulWidget {
 }
 
 class _NearbyRecurringEventsScreenState extends ConsumerState<NearbyRecurringEventsScreen> {
-  static const _locationService = LocationService();
-
   bool _loading = true;
   LocationFailure? _failure;
   List<NearbyRecurringEvent>? _results;
@@ -44,7 +42,7 @@ class _NearbyRecurringEventsScreenState extends ConsumerState<NearbyRecurringEve
       _failure = null;
     });
 
-    final locationResult = await _locationService.getCurrentPosition();
+    final locationResult = await ref.read(locationServiceProvider).getCurrentPosition();
     if (!mounted) return;
     if (!locationResult.isSuccess) {
       setState(() {
@@ -84,6 +82,7 @@ class _NearbyRecurringEventsScreenState extends ConsumerState<NearbyRecurringEve
       case LocationFailure.serviceDisabled:
         return l10n.khadaraLocationServiceDisabled;
       case LocationFailure.permissionDenied:
+      case LocationFailure.permissionDeniedForever:
         return l10n.khadaraLocationPermissionDenied;
       case LocationFailure.unknown:
         return l10n.khadaraLoadError;
@@ -114,6 +113,23 @@ class _NearbyRecurringEventsScreenState extends ConsumerState<NearbyRecurringEve
               const SizedBox(height: 12),
               Text(_failureMessage(_failure!, l10n), textAlign: TextAlign.center, style: TextStyle(color: AppColors.secondaryInk)),
               const SizedBox(height: 12),
+              // Refus définitif ou localisation coupée : le système ne
+              // redemandera pas, « Réessayer » seul échouait indéfiniment. Un
+              // bouton mène aux réglages concernés ; « Réessayer » reste pour
+              // le retour (audit Zawiyas du 2026-10-25, P2-8).
+              if (_failure == LocationFailure.permissionDeniedForever) ...[
+                ElevatedButton(
+                  onPressed: () => ref.read(locationServiceProvider).openAppSettings(),
+                  child: Text(l10n.khadaraLocationOpenSettings),
+                ),
+                const SizedBox(height: 8),
+              ] else if (_failure == LocationFailure.serviceDisabled) ...[
+                ElevatedButton(
+                  onPressed: () => ref.read(locationServiceProvider).openLocationSettings(),
+                  child: Text(l10n.khadaraLocationEnableService),
+                ),
+                const SizedBox(height: 8),
+              ],
               OutlinedButton(onPressed: _search, child: Text(l10n.khadaraRetry)),
             ],
           ),

@@ -2012,6 +2012,18 @@ abstract class AppLocalizations {
   /// **'L\'accès à la position a été refusé. Autorisez-le dans les réglages de l\'appareil pour trouver l\'évènement le plus proche.'**
   String get khadaraLocationPermissionDenied;
 
+  /// No description provided for @khadaraLocationOpenSettings.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ouvrir les réglages'**
+  String get khadaraLocationOpenSettings;
+
+  /// No description provided for @khadaraLocationEnableService.
+  ///
+  /// In fr, this message translates to:
+  /// **'Activer la localisation'**
+  String get khadaraLocationEnableService;
+
   /// No description provided for @khadaraLiveTab.
   ///
   /// In fr, this message translates to:

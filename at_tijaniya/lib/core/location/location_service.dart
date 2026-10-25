@@ -7,9 +7,14 @@
 /// précision GPS fine.
 library;
 
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:geolocator/geolocator.dart';
 
-enum LocationFailure { serviceDisabled, permissionDenied, unknown }
+/// [permissionDeniedForever] distingué de [permissionDenied] depuis l'audit
+/// Zawiyas du 2026-10-25 (P2-8) : après un refus définitif, le système ne
+/// redemande plus, et « Réessayer » échouait indéfiniment ; seul le passage
+/// par les réglages de l'app débloque la situation.
+enum LocationFailure { serviceDisabled, permissionDenied, permissionDeniedForever, unknown }
 
 class LocationResult {
   const LocationResult({this.position, this.failure});
@@ -19,6 +24,11 @@ class LocationResult {
 
   bool get isSuccess => position != null;
 }
+
+/// Fournisseur du service, remplaçable dans les tests (refus, service coupé,
+/// réglages) : l'écran l'instanciait en dur, ce qui rendait ces cas
+/// intestables.
+final locationServiceProvider = Provider<LocationService>((ref) => const LocationService());
 
 class LocationService {
   const LocationService();
@@ -38,7 +48,10 @@ class LocationService {
       // un échec propre plutôt qu'une exception non rattrapée.
       return const LocationResult(failure: LocationFailure.unknown);
     }
-    if (permission == LocationPermission.denied || permission == LocationPermission.deniedForever) {
+    if (permission == LocationPermission.deniedForever) {
+      return const LocationResult(failure: LocationFailure.permissionDeniedForever);
+    }
+    if (permission == LocationPermission.denied) {
       return const LocationResult(failure: LocationFailure.permissionDenied);
     }
     try {
@@ -52,6 +65,25 @@ class LocationService {
       return LocationResult(position: position);
     } catch (_) {
       return const LocationResult(failure: LocationFailure.unknown);
+    }
+  }
+
+  /// Réglages de l'app (autorisation de localisation), après un refus
+  /// définitif. `false` si le système ne les a pas ouverts.
+  Future<bool> openAppSettings() async {
+    try {
+      return await Geolocator.openAppSettings();
+    } catch (_) {
+      return false;
+    }
+  }
+
+  /// Réglages de localisation de l'appareil, quand le service est coupé.
+  Future<bool> openLocationSettings() async {
+    try {
+      return await Geolocator.openLocationSettings();
+    } catch (_) {
+      return false;
     }
   }
 }

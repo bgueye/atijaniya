@@ -382,6 +382,8 @@
   "khadaraNearbyRecurringEmpty": "لم يتم العثور على أي مناسبة متكررة مرتبطة بزاوية محددة الموقع.",
   "khadaraLocationServiceDisabled": "تحديد الموقع معطّل على هذا الجهاز. فعّله للعثور على أقرب مناسبة.",
   "khadaraLocationPermissionDenied": "تم رفض الوصول إلى الموقع. فعّله من إعدادات الجهاز للعثور على أقرب مناسبة.",
+  "khadaraLocationOpenSettings": "فتح الإعدادات",
+  "khadaraLocationEnableService": "تفعيل تحديد الموقع",
 
   "khadaraLiveTab": "البث المباشر",
   "khadaraLiveNowSection": "مباشر الآن",
