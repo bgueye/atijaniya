@@ -29,15 +29,26 @@ final wirdPillarAudioProvider =
 );
 
 class WirdPillarAudioController extends StateNotifier<Map<int, PillarAudioState>> {
-  WirdPillarAudioController({required this.wird}) : super(const {}) {
+  /// [repository], [downloadStore] et [assetManifest] ne sont passés que par
+  /// les tests (`test/wird_audio_controller_test.dart`), pour simuler le
+  /// réseau et le disque ; l'app utilise toujours les implémentations réelles.
+  WirdPillarAudioController({
+    required this.wird,
+    WirdRecitationRepository? repository,
+    WirdRecitationDownloadStore? downloadStore,
+    WirdRecitationAssetManifest? assetManifest,
+  })  : _repository = repository ?? const WirdRecitationRepository(),
+        _downloadStore = downloadStore ?? const WirdRecitationDownloadStore(),
+        _assetManifest = assetManifest ?? const WirdRecitationAssetManifest(),
+        super(const {}) {
     _loadRecitations();
   }
 
   final Wird wird;
-  final WirdRecitationRepository _repository = const WirdRecitationRepository();
-  final WirdRecitationDownloadStore _downloadStore = const WirdRecitationDownloadStore();
+  final WirdRecitationRepository _repository;
+  final WirdRecitationDownloadStore _downloadStore;
   final WirdRecitationVersionStore _versionStore = const WirdRecitationVersionStore();
-  final WirdRecitationAssetManifest _assetManifest = const WirdRecitationAssetManifest();
+  final WirdRecitationAssetManifest _assetManifest;
 
   /// Garde contre les téléchargements concurrents du même pilier (double-tap
   /// sur play, ou `playNext`/`playPrevious` déclenchés vite l'un après

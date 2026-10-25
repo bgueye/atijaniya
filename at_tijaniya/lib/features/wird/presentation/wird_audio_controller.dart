@@ -69,7 +69,11 @@ final wirdAudioControllerProvider =
 );
 
 class WirdAudioController extends StateNotifier<WirdAudioState> {
-  WirdAudioController({required this.ref, required this.wird}) : super(const WirdAudioState()) {
+  /// [service] n'est passé que par les tests, avec un faux lecteur ; l'app
+  /// utilise toujours `just_audio` (`WirdAudioPlayerService`).
+  WirdAudioController({required this.ref, required this.wird, WirdAudioPlayerService? service})
+      : _service = service ?? WirdAudioPlayerService(),
+        super(const WirdAudioState()) {
     _positionSub = _service.positionStream.listen((p) {
       state = state.copyWith(position: p);
     });
@@ -81,7 +85,7 @@ class WirdAudioController extends StateNotifier<WirdAudioState> {
 
   final Ref ref;
   final Wird wird;
-  final WirdAudioPlayerService _service = WirdAudioPlayerService();
+  final WirdAudioPlayerService _service;
 
   late final StreamSubscription<Duration> _positionSub;
   late final StreamSubscription<Duration?> _durationSub;
@@ -118,14 +122,19 @@ class WirdAudioController extends StateNotifier<WirdAudioState> {
       clearDuration: true,
     );
     final localPath = await ref.read(wirdPillarAudioProvider(wird).notifier).ensureDownloaded(index);
+    // Le disciple a pu choisir un autre pilier pendant le téléchargement :
+    // charger celui-ci maintenant remplacerait la piste en cours alors que
+    // l'écran met l'autre pilier en évidence (audit du 2026-10-25, P2-1).
+    if (!mounted || state.activePillarIndex != index) return;
     if (localPath == null) {
       final downloadError = ref.read(wirdPillarAudioProvider(wird))[index]?.errorMessage;
       state = state.copyWith(errorMessage: downloadError ?? wirdMsgAudioPlayFailed);
       return;
     }
-    if (!mounted) return;
     try {
       await _service.load(localPath);
+      // Même garde : le chargement du fichier est lui aussi asynchrone.
+      if (!mounted || state.activePillarIndex != index) return;
       await _service.play();
     } catch (_) {
       state = state.copyWith(errorMessage: wirdMsgAudioPlayFailed);
