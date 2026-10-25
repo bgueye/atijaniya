@@ -97,6 +97,14 @@ void main() {
     await expectLater(tester, meetsGuideline(androidTapTargetGuideline));
     await expectLater(tester, meetsGuideline(labeledTapTargetGuideline));
 
+    // Pastilles agrandies en hauteur, pas en largeur : les quatre tiennent
+    // sur une ligne (une première version les étirait sur toute la largeur).
+    final pill = tester.getSize(find.widgetWithText(InkWell, '33'));
+    expect(pill.height, greaterThanOrEqualTo(48));
+    expect(pill.width, lessThan(120));
+    expect(tester.getTopLeft(find.widgetWithText(InkWell, '1000')).dy,
+        tester.getTopLeft(find.widgetWithText(InkWell, '33')).dy);
+
     // Le champ porte le libellé affiché au-dessus des pastilles, pas seulement
     // son indication « 100 ».
     expect(

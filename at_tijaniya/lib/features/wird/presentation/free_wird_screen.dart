@@ -198,18 +198,23 @@ class _QuickTargetPill extends StatelessWidget {
     return ConstrainedBox(
       constraints: const BoxConstraints(minHeight: 48, minWidth: 48),
       child: Container(
-        alignment: Alignment.center,
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
         decoration: BoxDecoration(
           color: selected ? AppColors.goldOnDark : AppColors.parchment.withValues(alpha: 0.12),
           borderRadius: BorderRadius.circular(24),
           border: Border.all(color: AppColors.bronze.withValues(alpha: 0.4)),
         ),
-        child: ContentText(
-          '$value',
-          style: TextStyle(
-            color: selected ? AppColors.ink : AppColors.parchment,
-            fontWeight: FontWeight.w500,
+        // `widthFactor: 1` : centre le nombre dans les 48 dp de haut sans
+        // étirer la pastille. Un `alignment` sur le `Container` lui faisait
+        // prendre toute la largeur du `Wrap` (vu sur émulateur le 2026-10-25).
+        child: Center(
+          widthFactor: 1,
+          child: ContentText(
+            '$value',
+            style: TextStyle(
+              color: selected ? AppColors.ink : AppColors.parchment,
+              fontWeight: FontWeight.w500,
+            ),
           ),
         ),
       ),
