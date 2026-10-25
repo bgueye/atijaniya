@@ -517,7 +517,11 @@ class _FigureHero extends StatelessWidget {
                                 bottom: -2,
                                 child: Container(
                                   padding: const EdgeInsets.all(4),
-                                  decoration: BoxDecoration(color: AppColors.gold, shape: BoxShape.circle),
+                                  // `goldOnDark` et non `gold` : en contraste
+                                  // renforcé, l'or assombri ne détachait plus
+                                  // le crayon zaytoune, sur l'en-tête vert
+                                  // (constaté sur émulateur le 2026-10-25).
+                                  decoration: const BoxDecoration(color: AppColors.goldOnDark, shape: BoxShape.circle),
                                   child: const Icon(Icons.edit, size: 14, color: AppColors.zaytoune),
                                 ),
                               ),
