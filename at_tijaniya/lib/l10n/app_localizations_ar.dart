@@ -3242,4 +3242,16 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get wirdCounterResetUndo => 'تراجع';
+
+  @override
+  String get wirdAudioPillarPlay => 'الاستماع إلى هذا الركن';
+
+  @override
+  String get wirdAudioPillarPause => 'إيقاف مؤقت';
+
+  @override
+  String get wirdAudioPillarDownload => 'تنزيل هذا الركن والاستماع إليه';
+
+  @override
+  String get wirdAudioPillarRetry => 'إعادة محاولة التنزيل';
 }

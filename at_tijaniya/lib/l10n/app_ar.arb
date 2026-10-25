@@ -1100,5 +1100,9 @@
   "wirdRepairWarningLabel": "تحذير",
   "wirdListUnderstandHeading": "الفهم والتدارك",
   "wirdCounterResetDone": "أُعيد العدّاد إلى الصفر.",
-  "wirdCounterResetUndo": "تراجع"
+  "wirdCounterResetUndo": "تراجع",
+  "wirdAudioPillarPlay": "الاستماع إلى هذا الركن",
+  "wirdAudioPillarPause": "إيقاف مؤقت",
+  "wirdAudioPillarDownload": "تنزيل هذا الركن والاستماع إليه",
+  "wirdAudioPillarRetry": "إعادة محاولة التنزيل"
 }

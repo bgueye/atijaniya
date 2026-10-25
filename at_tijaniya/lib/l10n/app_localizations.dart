@@ -6170,6 +6170,30 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'Annuler'**
   String get wirdCounterResetUndo;
+
+  /// No description provided for @wirdAudioPillarPlay.
+  ///
+  /// In fr, this message translates to:
+  /// **'Écouter ce pilier'**
+  String get wirdAudioPillarPlay;
+
+  /// No description provided for @wirdAudioPillarPause.
+  ///
+  /// In fr, this message translates to:
+  /// **'Mettre en pause'**
+  String get wirdAudioPillarPause;
+
+  /// No description provided for @wirdAudioPillarDownload.
+  ///
+  /// In fr, this message translates to:
+  /// **'Télécharger et écouter ce pilier'**
+  String get wirdAudioPillarDownload;
+
+  /// No description provided for @wirdAudioPillarRetry.
+  ///
+  /// In fr, this message translates to:
+  /// **'Réessayer le téléchargement'**
+  String get wirdAudioPillarRetry;
 }
 
 class _AppLocalizationsDelegate

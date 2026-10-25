@@ -375,6 +375,12 @@ class _ClosingFormulaBlock extends StatelessWidget {
 /// désactivé tant qu'aucune récitation validée n'existe pour ce pilier ;
 /// une icône de téléchargement quand elle existe mais n'est pas encore sur
 /// l'appareil (docs/decision-gestion-audio-wirds.md §4).
+///
+/// `IconButton` de 48 × 48 avec `tooltip` : la version précédente (un
+/// `InkWell` nu autour d'une icône de 22 à 26 px) n'avait ni libellé pour
+/// TalkBack, qui annonçait seulement « bouton », ni la zone tactile minimale
+/// d'Android (audits du 2026-10-04 et du 2026-10-25). Chaque état a son
+/// propre libellé : écouter, mettre en pause, télécharger, réessayer.
 class _AudioPillarButton extends StatelessWidget {
   const _AudioPillarButton({
     required this.availability,
@@ -388,43 +394,55 @@ class _AudioPillarButton extends StatelessWidget {
   final bool isBuffering;
   final VoidCallback onPressed;
 
+  static const _size = BoxConstraints.tightFor(width: 48, height: 48);
+
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     if (availability == PillarAudioAvailability.noRecitation) {
-      return Padding(
-        padding: const EdgeInsets.only(top: 2),
-        child: Icon(Icons.music_off, color: AppColors.bronze, size: 22),
-      );
-    }
-    if (availability == PillarAudioAvailability.error) {
-      return InkWell(
-        borderRadius: BorderRadius.circular(20),
-        onTap: onPressed,
-        child: Padding(
-          padding: const EdgeInsets.only(top: 2),
-          child: Icon(Icons.error_outline, color: AppColors.bronze, size: 22),
+      // Pas d'action possible : une simple image annoncée, même encombrement
+      // que le bouton pour que le texte du pilier ne se décale pas.
+      return Semantics(
+        // Nœud propre : sans lui, le libellé se fondait dans celui du texte
+        // du pilier voisin.
+        container: true,
+        label: l10n.wirdAudioPillarUnavailable,
+        child: ConstrainedBox(
+          constraints: _size,
+          child: Center(child: Icon(Icons.music_off, color: AppColors.bronze, size: 22)),
         ),
       );
     }
-    return InkWell(
-      borderRadius: BorderRadius.circular(20),
-      onTap: onPressed,
-      child: Padding(
-        padding: const EdgeInsets.only(top: 2),
-        child: isBuffering
-            ? SizedBox(
-                width: 22,
-                height: 22,
-                child: CircularProgressIndicator(strokeWidth: 2, color: AppColors.emerald),
-              )
-            : availability == PillarAudioAvailability.notDownloaded
-                ? Icon(Icons.download_for_offline_outlined, color: AppColors.emerald, size: 26)
-                : Icon(
-                    isPlaying ? Icons.pause_circle_filled : Icons.play_circle_fill,
-                    color: AppColors.emerald,
-                    size: 26,
-                  ),
-      ),
+
+    final String tooltip;
+    final Widget icon;
+    if (availability == PillarAudioAvailability.error) {
+      tooltip = l10n.wirdAudioPillarRetry;
+      icon = Icon(Icons.error_outline, color: AppColors.bronze, size: 22);
+    } else if (isBuffering) {
+      tooltip = l10n.wirdAudioDownloading;
+      icon = SizedBox(
+        width: 22,
+        height: 22,
+        child: CircularProgressIndicator(strokeWidth: 2, color: AppColors.emerald),
+      );
+    } else if (availability == PillarAudioAvailability.notDownloaded) {
+      tooltip = l10n.wirdAudioPillarDownload;
+      icon = Icon(Icons.download_for_offline_outlined, color: AppColors.emerald, size: 26);
+    } else {
+      tooltip = isPlaying ? l10n.wirdAudioPillarPause : l10n.wirdAudioPillarPlay;
+      icon = Icon(
+        isPlaying ? Icons.pause_circle_filled : Icons.play_circle_fill,
+        color: AppColors.emerald,
+        size: 26,
+      );
+    }
+    return IconButton(
+      tooltip: tooltip,
+      padding: EdgeInsets.zero,
+      constraints: _size,
+      icon: icon,
+      onPressed: onPressed,
     );
   }
 }

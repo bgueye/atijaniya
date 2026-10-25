@@ -3353,4 +3353,16 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get wirdCounterResetUndo => 'Annuler';
+
+  @override
+  String get wirdAudioPillarPlay => 'Écouter ce pilier';
+
+  @override
+  String get wirdAudioPillarPause => 'Mettre en pause';
+
+  @override
+  String get wirdAudioPillarDownload => 'Télécharger et écouter ce pilier';
+
+  @override
+  String get wirdAudioPillarRetry => 'Réessayer le téléchargement';
 }

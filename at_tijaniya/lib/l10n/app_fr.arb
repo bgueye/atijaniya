@@ -1109,5 +1109,9 @@
   "wirdRepairWarningLabel": "Mise en garde",
   "wirdListUnderstandHeading": "Comprendre et rattraper",
   "wirdCounterResetDone": "Compteur remis à zéro.",
-  "wirdCounterResetUndo": "Annuler"
+  "wirdCounterResetUndo": "Annuler",
+  "wirdAudioPillarPlay": "Écouter ce pilier",
+  "wirdAudioPillarPause": "Mettre en pause",
+  "wirdAudioPillarDownload": "Télécharger et écouter ce pilier",
+  "wirdAudioPillarRetry": "Réessayer le téléchargement"
 }
