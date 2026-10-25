@@ -694,6 +694,14 @@ class AppLocalizationsAr extends AppLocalizations {
   String get khadaraOpenInMaps => 'فتح في الخرائط';
 
   @override
+  String get khadaraApproximateLocation => 'موقع تقريبي: قد تبعد العلامة بضعة كيلومترات عن المكان.';
+
+  @override
+  String khadaraApproximateDistance(String distance) {
+    return 'حوالي $distance';
+  }
+
+  @override
   String get khadaraEventTypeZiyara => 'زيارة';
 
   @override
@@ -904,6 +912,9 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get zawiyaFormLongitudeLabel => 'خط الطول (اختياري)';
+
+  @override
+  String get zawiyaFormCoordinatesApproximate => 'إحداثيات تقريبية';
 
   @override
   String get zawiyaFormCoordinateInvalid => 'يجب أن يكون رقمًا صالحًا.';

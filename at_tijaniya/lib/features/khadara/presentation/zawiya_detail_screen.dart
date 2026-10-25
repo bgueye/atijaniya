@@ -139,6 +139,24 @@ class _ZawiyaDetailScreenState extends ConsumerState<ZawiyaDetailScreen> {
             ],
             if (zawiya.hasLocation) ...[
               const SizedBox(height: 12),
+              // Juste au-dessus du bouton : c'est en suivant l'itinéraire que
+              // l'approximation compte (audit Zawiyas du 2026-10-25, P2-2).
+              if (zawiya.coordinatesApproximate) ...[
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Icon(Icons.info_outline, size: 18, color: AppColors.bronze),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: Text(
+                        l10n.khadaraApproximateLocation,
+                        style: TextStyle(color: AppColors.secondaryInk, fontSize: 13),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 8),
+              ],
               OutlinedButton.icon(
                 onPressed: () => openInMaps(context, latitude: zawiya.latitude!, longitude: zawiya.longitude!),
                 icon: const Icon(Icons.map_outlined),

@@ -26,6 +26,7 @@ class KhadaraRepository {
     double? longitude,
     String? addressText,
     String? contactInfo,
+    bool coordinatesApproximate = false,
   }) async {
     final row = await SupabaseConfig.client
         .from('zawiyas')
@@ -37,6 +38,7 @@ class KhadaraRepository {
           'longitude': longitude,
           'address_text': addressText,
           'contact_info': contactInfo,
+          'coordinates_approximate': coordinatesApproximate,
         })
         .select()
         .single();
@@ -52,6 +54,7 @@ class KhadaraRepository {
     double? longitude,
     String? addressText,
     String? contactInfo,
+    bool coordinatesApproximate = false,
   }) async {
     final row = await SupabaseConfig.client
         .from('zawiyas')
@@ -63,6 +66,7 @@ class KhadaraRepository {
           'longitude': longitude,
           'address_text': addressText,
           'contact_info': contactInfo,
+          'coordinates_approximate': coordinatesApproximate,
         })
         .eq('id', id)
         .select()

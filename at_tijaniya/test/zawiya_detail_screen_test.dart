@@ -56,6 +56,23 @@ const _zawiya = Zawiya(
 );
 
 void main() {
+  // Audit Zawiyas du 2026-10-25 (P2-2) : coordonnées approximatives
+  // signalées près du bouton Maps, et seulement dans ce cas.
+  testWidgets('signale un emplacement approximatif près du bouton Maps', (tester) async {
+    const approximate = Zawiya(id: 'z2', name: 'Lieu approximatif', latitude: 1, longitude: 2, coordinatesApproximate: true);
+    await tester.pumpWidget(_wrap(const ZawiyaDetailScreen(zawiya: approximate)));
+    await tester.pumpAndSettle();
+    expect(find.textContaining('Emplacement approximatif'), findsOneWidget);
+    expect(find.text('Ouvrir dans Maps'), findsOneWidget);
+
+    // Écran vidé entre les deux : l'état de la fiche garde le lieu reçu à
+    // sa création (dans l'app, chaque fiche est une nouvelle route).
+    await tester.pumpWidget(const SizedBox());
+    await tester.pumpWidget(_wrap(const ZawiyaDetailScreen(zawiya: _zawiya)));
+    await tester.pumpAndSettle();
+    expect(find.textContaining('Emplacement approximatif'), findsNothing);
+  });
+
   // Audit Zawiyas du 2026-10-25 (P1) : l'adresse et le contact passaient par
   // un `RichText`, qui ignorait la taille de texte des réglages.
   testWidgets('l\'adresse et le contact suivent la taille du texte', (tester) async {

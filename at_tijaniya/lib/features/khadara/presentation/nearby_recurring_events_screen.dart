@@ -143,7 +143,9 @@ class _NearbyRecurringEventsScreenState extends ConsumerState<NearbyRecurringEve
             isThreeLine: true,
             subtitle: Text(
               '${formatKhadaraEventSchedule(result.event, l10n)}\n'
-              '${result.zawiya.name} · ${formatKhadaraDistance(result.distanceKm)}',
+              // « environ 12 km » quand les coordonnées du lieu sont
+              // approximatives (audit Zawiyas du 2026-10-25, P2-2).
+              '${result.zawiya.name} · ${result.zawiya.coordinatesApproximate ? l10n.khadaraApproximateDistance(formatKhadaraDistance(result.distanceKm)) : formatKhadaraDistance(result.distanceKm)}',
             ),
             trailing: IconButton(
               icon: const Icon(Icons.map_outlined),

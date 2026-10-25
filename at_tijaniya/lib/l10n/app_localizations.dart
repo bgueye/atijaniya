@@ -1424,6 +1424,18 @@ abstract class AppLocalizations {
   /// **'Ouvrir dans Maps'**
   String get khadaraOpenInMaps;
 
+  /// No description provided for @khadaraApproximateLocation.
+  ///
+  /// In fr, this message translates to:
+  /// **'Emplacement approximatif : l\'épingle peut se trouver à quelques kilomètres du lieu.'**
+  String get khadaraApproximateLocation;
+
+  /// No description provided for @khadaraApproximateDistance.
+  ///
+  /// In fr, this message translates to:
+  /// **'environ {distance}'**
+  String khadaraApproximateDistance(String distance);
+
   /// No description provided for @khadaraEventTypeZiyara.
   ///
   /// In fr, this message translates to:
@@ -1831,6 +1843,12 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'Longitude (optionnel)'**
   String get zawiyaFormLongitudeLabel;
+
+  /// No description provided for @zawiyaFormCoordinatesApproximate.
+  ///
+  /// In fr, this message translates to:
+  /// **'Coordonnées approximatives'**
+  String get zawiyaFormCoordinatesApproximate;
 
   /// No description provided for @zawiyaFormCoordinateInvalid.
   ///

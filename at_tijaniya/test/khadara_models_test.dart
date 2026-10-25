@@ -24,6 +24,14 @@ void main() {
       final zawiya = Zawiya.fromRow({'id': 'z2', 'name': 'Zawiya Minimale'});
       expect(zawiya.description, isNull);
       expect(zawiya.hasLocation, isFalse);
+      // Colonne absente (version antérieure de la base) : non approximatif.
+      expect(zawiya.coordinatesApproximate, isFalse);
+    });
+
+    // Audit Zawiyas du 2026-10-25 (P2-2).
+    test('lit coordinates_approximate', () {
+      final zawiya = Zawiya.fromRow({'id': 'z3', 'name': 'Zawiya', 'coordinates_approximate': true});
+      expect(zawiya.coordinatesApproximate, isTrue);
     });
   });
 

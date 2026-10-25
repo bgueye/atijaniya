@@ -67,6 +67,7 @@ class Zawiya {
     this.longitude,
     this.addressText,
     this.contactInfo,
+    this.coordinatesApproximate = false,
   });
 
   final String id;
@@ -77,6 +78,12 @@ class Zawiya {
   final double? longitude;
   final String? addressText;
   final String? contactInfo;
+
+  /// `zawiyas.coordinates_approximate` : coordonnées connues à quelques
+  /// kilomètres près (21 lieux sur 34 au 2026-10-26). La fiche le signale près
+  /// du bouton Maps, la recherche par proximité devant la distance (audit
+  /// Zawiyas du 2026-10-25, P2-2). Faux si la colonne manque.
+  final bool coordinatesApproximate;
 
   bool get hasLocation => latitude != null && longitude != null;
 
@@ -90,6 +97,7 @@ class Zawiya {
       longitude: (row['longitude'] as num?)?.toDouble(),
       addressText: row['address_text'] as String?,
       contactInfo: row['contact_info'] as String?,
+      coordinatesApproximate: row['coordinates_approximate'] as bool? ?? false,
     );
   }
 }

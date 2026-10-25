@@ -697,6 +697,15 @@ class AppLocalizationsFr extends AppLocalizations {
   String get khadaraOpenInMaps => 'Ouvrir dans Maps';
 
   @override
+  String get khadaraApproximateLocation =>
+      'Emplacement approximatif : l\'épingle peut se trouver à quelques kilomètres du lieu.';
+
+  @override
+  String khadaraApproximateDistance(String distance) {
+    return 'environ $distance';
+  }
+
+  @override
   String get khadaraEventTypeZiyara => 'Ziyara';
 
   @override
@@ -908,6 +917,9 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get zawiyaFormLongitudeLabel => 'Longitude (optionnel)';
+
+  @override
+  String get zawiyaFormCoordinatesApproximate => 'Coordonnées approximatives';
 
   @override
   String get zawiyaFormCoordinateInvalid => 'Doit être un nombre valide.';

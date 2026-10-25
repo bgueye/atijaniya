@@ -34,6 +34,9 @@ class _ZawiyaFormScreenState extends ConsumerState<ZawiyaFormScreen> {
   final _longitudeController = TextEditingController();
 
   ZawiyaKind _kind = ZawiyaKind.zawiya;
+
+  /// `zawiyas.coordinates_approximate` (audit Zawiyas du 2026-10-25, P2-2).
+  bool _coordinatesApproximate = false;
   bool _saving = false;
   String? _errorMessage;
 
@@ -49,6 +52,7 @@ class _ZawiyaFormScreenState extends ConsumerState<ZawiyaFormScreen> {
       _contactController.text = zawiya.contactInfo ?? '';
       _latitudeController.text = zawiya.latitude?.toString() ?? '';
       _longitudeController.text = zawiya.longitude?.toString() ?? '';
+      _coordinatesApproximate = zawiya.coordinatesApproximate;
     }
   }
 
@@ -105,6 +109,7 @@ class _ZawiyaFormScreenState extends ConsumerState<ZawiyaFormScreen> {
           longitude: _parseOptionalDouble(_longitudeController.text),
           addressText: addressText.isEmpty ? null : addressText,
           contactInfo: contactText.isEmpty ? null : contactText,
+          coordinatesApproximate: _coordinatesApproximate,
         );
       } else {
         saved = await repo.updateZawiya(
@@ -116,6 +121,7 @@ class _ZawiyaFormScreenState extends ConsumerState<ZawiyaFormScreen> {
           longitude: _parseOptionalDouble(_longitudeController.text),
           addressText: addressText.isEmpty ? null : addressText,
           contactInfo: contactText.isEmpty ? null : contactText,
+          coordinatesApproximate: _coordinatesApproximate,
         );
       }
       ref.invalidate(zawiyasProvider);
@@ -211,6 +217,15 @@ class _ZawiyaFormScreenState extends ConsumerState<ZawiyaFormScreen> {
                       ),
                     ),
                   ],
+                ),
+                // Coordonnées connues à quelques kilomètres près : signalé
+                // dans la fiche et devant les distances (P2-2).
+                CheckboxListTile(
+                  contentPadding: EdgeInsets.zero,
+                  controlAffinity: ListTileControlAffinity.leading,
+                  value: _coordinatesApproximate,
+                  onChanged: (value) => setState(() => _coordinatesApproximate = value ?? false),
+                  title: Text(l10n.zawiyaFormCoordinatesApproximate),
                 ),
                 if (_errorMessage != null) ...[
                   const SizedBox(height: 16),
