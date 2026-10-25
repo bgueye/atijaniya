@@ -271,6 +271,7 @@
   "khadaraLoadError": "Impossible de charger les données.",
   "khadaraRetry": "Réessayer",
   "khadaraOpenInMaps": "Ouvrir dans Maps",
+  "khadaraOpenInMapsError": "Impossible d'ouvrir l'application de plans.",
   "khadaraApproximateLocation": "Emplacement approximatif : l'épingle peut se trouver à quelques kilomètres du lieu.",
   "khadaraApproximateDistance": "environ {distance}",
   "@khadaraApproximateDistance": {"placeholders": {"distance": {"type": "String"}}},

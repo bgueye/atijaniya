@@ -4,6 +4,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart' show RenderParagraph;
+import 'package:flutter/services.dart' show MethodChannel, PlatformException;
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -70,6 +71,29 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.text('Ouvrir dans Maps'), findsNothing);
   });
+
+  // Audit Zawiyas du 2026-10-25 (P2-4) : échec d'ouverture de Maps géré, avec
+  // un message traduit — que la plateforme lève (ce qui n'était pas
+  // rattrapé) ou réponde que rien n'a pu ouvrir le lien.
+  for (final (label, Object? Function() reply) in <(String, Object? Function())>[
+    ('la plateforme lève', () => throw PlatformException(code: 'ACTIVITY_NOT_FOUND')),
+    ('rien ne sait ouvrir le lien', () => false),
+  ]) {
+    testWidgets("échec d'ouverture de Maps ($label) : message en arabe, sans exception", (tester) async {
+      const channel = MethodChannel('plugins.flutter.io/url_launcher');
+      tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(channel, (call) async => reply());
+      addTearDown(() => tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(channel, null));
+
+      await tester.pumpWidget(_wrap(const ZawiyaDetailScreen(zawiya: _zawiya), locale: const Locale('ar')));
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.text('فتح في الخرائط'));
+      await tester.pumpAndSettle();
+
+      expect(tester.takeException(), isNull);
+      expect(find.text('تعذّر فتح تطبيق الخرائط.'), findsOneWidget);
+    });
+  }
 
   // Audit Zawiyas du 2026-10-25 (P2-2) : coordonnées approximatives
   // signalées près du bouton Maps, et seulement dans ce cas.

@@ -697,6 +697,9 @@ class AppLocalizationsFr extends AppLocalizations {
   String get khadaraOpenInMaps => 'Ouvrir dans Maps';
 
   @override
+  String get khadaraOpenInMapsError => 'Impossible d\'ouvrir l\'application de plans.';
+
+  @override
   String get khadaraApproximateLocation =>
       'Emplacement approximatif : l\'épingle peut se trouver à quelques kilomètres du lieu.';
 

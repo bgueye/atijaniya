@@ -271,6 +271,7 @@
   "khadaraLoadError": "تعذّر تحميل البيانات.",
   "khadaraRetry": "إعادة المحاولة",
   "khadaraOpenInMaps": "فتح في الخرائط",
+  "khadaraOpenInMapsError": "تعذّر فتح تطبيق الخرائط.",
   "khadaraApproximateLocation": "موقع تقريبي: قد تبعد العلامة بضعة كيلومترات عن المكان.",
   "khadaraApproximateDistance": "حوالي {distance}",
   "khadaraEventTypeZiyara": "زيارة",

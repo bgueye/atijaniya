@@ -694,6 +694,9 @@ class AppLocalizationsAr extends AppLocalizations {
   String get khadaraOpenInMaps => 'فتح في الخرائط';
 
   @override
+  String get khadaraOpenInMapsError => 'تعذّر فتح تطبيق الخرائط.';
+
+  @override
   String get khadaraApproximateLocation => 'موقع تقريبي: قد تبعد العلامة بضعة كيلومترات عن المكان.';
 
   @override

@@ -1424,6 +1424,12 @@ abstract class AppLocalizations {
   /// **'Ouvrir dans Maps'**
   String get khadaraOpenInMaps;
 
+  /// No description provided for @khadaraOpenInMapsError.
+  ///
+  /// In fr, this message translates to:
+  /// **'Impossible d\'ouvrir l\'application de plans.'**
+  String get khadaraOpenInMapsError;
+
   /// No description provided for @khadaraApproximateLocation.
   ///
   /// In fr, this message translates to:
