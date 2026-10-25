@@ -172,9 +172,8 @@ class _FigureKhalifaFormScreenState extends ConsumerState<FigureKhalifaFormScree
             final usedKhalifaIds = {
               for (final link in succession?.links ?? const <FigureKhalifaLink>[]) link.khalifaFigureId,
             };
-            final candidates = figures
-                .where((f) => f.id != widget.founderFigureId && !usedKhalifaIds.contains(f.id))
-                .toList();
+            final candidates =
+                figures.where((f) => f.id != widget.founderFigureId && !usedKhalifaIds.contains(f.id)).toList();
 
             return SingleChildScrollView(
               padding: const EdgeInsets.all(20),

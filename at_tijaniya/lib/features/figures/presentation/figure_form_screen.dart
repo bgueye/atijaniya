@@ -85,8 +85,7 @@ class _FigureFormScreenState extends ConsumerState<FigureFormScreen> {
           nameFrench: _nameFrenchController.text.trim(),
           category: _category,
           foyer: _foyer,
-          birthYearHijri:
-              birthYearText.isEmpty ? null : parseLocalizedInt(birthYearText)!,
+          birthYearHijri: birthYearText.isEmpty ? null : parseLocalizedInt(birthYearText)!,
           bioText: bioText.isEmpty ? null : bioText,
         );
       } else {
@@ -96,8 +95,7 @@ class _FigureFormScreenState extends ConsumerState<FigureFormScreen> {
           nameFrench: _nameFrenchController.text.trim(),
           category: _category,
           foyer: _foyer,
-          birthYearHijri:
-              birthYearText.isEmpty ? null : parseLocalizedInt(birthYearText)!,
+          birthYearHijri: birthYearText.isEmpty ? null : parseLocalizedInt(birthYearText)!,
           bioText: bioText.isEmpty ? null : bioText,
         );
       }
@@ -112,9 +110,7 @@ class _FigureFormScreenState extends ConsumerState<FigureFormScreen> {
   }
 
   String _categoryLabel(FigureCategory category, AppLocalizations l10n) {
-    return category == FigureCategory.founder
-        ? l10n.figureFormCategoryFounder
-        : l10n.figureFormCategoryFamily;
+    return category == FigureCategory.founder ? l10n.figureFormCategoryFounder : l10n.figureFormCategoryFamily;
   }
 
   @override
@@ -123,9 +119,7 @@ class _FigureFormScreenState extends ConsumerState<FigureFormScreen> {
     final isEdit = widget.figure != null;
 
     return Scaffold(
-      appBar: AppBar(
-          title: Text(
-              isEdit ? l10n.figureFormEditTitle : l10n.figureFormCreateTitle)),
+      appBar: AppBar(title: Text(isEdit ? l10n.figureFormEditTitle : l10n.figureFormCreateTitle)),
       // `SafeArea` : évite que le bouton Enregistrer se retrouve masqué sous
       // la barre de navigation Android (3 boutons).
       body: SafeArea(
@@ -139,61 +133,47 @@ class _FigureFormScreenState extends ConsumerState<FigureFormScreen> {
                 TextFormField(
                   controller: _nameArabicController,
                   textDirection: TextDirection.rtl,
-                  decoration: InputDecoration(
-                      labelText: l10n.figureFormNameArabicLabel),
-                  validator: (value) => (value == null || value.trim().isEmpty)
-                      ? l10n.figureFormNameArabicRequired
-                      : null,
+                  decoration: InputDecoration(labelText: l10n.figureFormNameArabicLabel),
+                  validator: (value) =>
+                      (value == null || value.trim().isEmpty) ? l10n.figureFormNameArabicRequired : null,
                 ),
                 const SizedBox(height: 16),
                 TextFormField(
                   controller: _nameFrenchController,
-                  decoration: InputDecoration(
-                      labelText: l10n.figureFormNameFrenchLabel),
-                  validator: (value) => (value == null || value.trim().isEmpty)
-                      ? l10n.figureFormNameFrenchRequired
-                      : null,
+                  decoration: InputDecoration(labelText: l10n.figureFormNameFrenchLabel),
+                  validator: (value) =>
+                      (value == null || value.trim().isEmpty) ? l10n.figureFormNameFrenchRequired : null,
                 ),
                 const SizedBox(height: 16),
                 DropdownButtonFormField<FigureCategory>(
                   initialValue: _category,
-                  decoration:
-                      InputDecoration(labelText: l10n.figureFormCategoryLabel),
+                  decoration: InputDecoration(labelText: l10n.figureFormCategoryLabel),
                   items: [
                     for (final category in FigureCategory.values)
-                      DropdownMenuItem(
-                          value: category,
-                          child: Text(_categoryLabel(category, l10n))),
+                      DropdownMenuItem(value: category, child: Text(_categoryLabel(category, l10n))),
                   ],
-                  onChanged: (value) => setState(() =>
-                      _category = value ?? FigureCategory.religiousFamily),
+                  onChanged: (value) => setState(() => _category = value ?? FigureCategory.religiousFamily),
                 ),
                 const SizedBox(height: 16),
                 DropdownButtonFormField<Foyer?>(
                   initialValue: _foyer,
-                  decoration:
-                      InputDecoration(labelText: l10n.figureFormFoyerLabel),
+                  decoration: InputDecoration(labelText: l10n.figureFormFoyerLabel),
                   items: [
-                    DropdownMenuItem<Foyer?>(
-                        value: null, child: Text(l10n.figureFormFoyerNone)),
+                    DropdownMenuItem<Foyer?>(value: null, child: Text(l10n.figureFormFoyerNone)),
                     for (final foyer in Foyer.values)
-                      DropdownMenuItem<Foyer?>(
-                          value: foyer, child: Text(foyerLabel(foyer, l10n))),
+                      DropdownMenuItem<Foyer?>(value: foyer, child: Text(foyerLabel(foyer, l10n))),
                   ],
                   onChanged: (value) => setState(() => _foyer = value),
                 ),
                 const SizedBox(height: 16),
                 TextFormField(
                   controller: _birthYearController,
-                  decoration: InputDecoration(
-                      labelText: l10n.figureFormBirthYearHijriLabel),
+                  decoration: InputDecoration(labelText: l10n.figureFormBirthYearHijriLabel),
                   keyboardType: TextInputType.number,
                   validator: (value) {
                     final trimmed = value?.trim() ?? '';
                     if (trimmed.isEmpty) return null;
-                    return parseLocalizedInt(trimmed) == null
-                        ? l10n.figureFormBirthYearHijriInvalid
-                        : null;
+                    return parseLocalizedInt(trimmed) == null ? l10n.figureFormBirthYearHijriInvalid : null;
                   },
                 ),
                 const SizedBox(height: 16),
@@ -209,8 +189,7 @@ class _FigureFormScreenState extends ConsumerState<FigureFormScreen> {
                 ),
                 if (_errorMessage != null) ...[
                   const SizedBox(height: 16),
-                  ContentText(_errorMessage!,
-                      style: const TextStyle(color: AppColors.danger)),
+                  ContentText(_errorMessage!, style: const TextStyle(color: AppColors.danger)),
                 ],
                 const SizedBox(height: 24),
                 ElevatedButton(
@@ -222,8 +201,7 @@ class _FigureFormScreenState extends ConsumerState<FigureFormScreen> {
                       ? SizedBox(
                           height: 18,
                           width: 18,
-                          child: CircularProgressIndicator(
-                              strokeWidth: 2, color: AppColors.emerald),
+                          child: CircularProgressIndicator(strokeWidth: 2, color: AppColors.emerald),
                         )
                       : Text(l10n.figureFormSave),
                 ),

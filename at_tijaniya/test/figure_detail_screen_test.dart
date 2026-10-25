@@ -61,7 +61,8 @@ Widget _wrap(
 }
 
 void main() {
-  testWidgets('FigureDetailScreen affiche la biographie, les citations et l\'évènement Ziyara lié quand présents', (tester) async {
+  testWidgets('FigureDetailScreen affiche la biographie, les citations et l\'évènement Ziyara lié quand présents',
+      (tester) async {
     const figure = Figure(
       id: 'test-figure',
       nameArabic: 'اسم تجريبي',
@@ -212,7 +213,9 @@ void main() {
     await tester.pumpWidget(_wrap(
       const FigureDetailScreen(figure: figure),
       isAdmin: true,
-      overrides: [figuresProvider.overrideWith((ref) async => const [figure])],
+      overrides: [
+        figuresProvider.overrideWith((ref) async => const [figure])
+      ],
     ));
     await tester.pumpAndSettle();
 
@@ -268,8 +271,7 @@ void main() {
   // Audit Figures du 2026-10-25 (P2-3) : en interface arabe, la biographie
   // française se range sur le début de ses lignes (à gauche) et l'onglet
   // précise qu'elle n'existe qu'en français. Rien de tel en français.
-  testWidgets('FigureDetailScreen en arabe : biographie française rangée à gauche, avec la mention',
-      (tester) async {
+  testWidgets('FigureDetailScreen en arabe : biographie française rangée à gauche, avec la mention', (tester) async {
     const figure = Figure(
       id: 'test-figure-ar',
       nameArabic: 'اسم تجريبي',
@@ -323,8 +325,9 @@ void main() {
       category: FigureCategory.founder,
       biography: [
         for (var i = 1; i <= 12; i++)
-          FigureBiographyParagraph(translation: 'Paragraphe de test numéro $i, assez long pour occuper '
-              'plusieurs lignes de la fiche une fois le texte agrandi.'),
+          FigureBiographyParagraph(
+              translation: 'Paragraphe de test numéro $i, assez long pour occuper '
+                  'plusieurs lignes de la fiche une fois le texte agrandi.'),
       ],
     );
 

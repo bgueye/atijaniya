@@ -348,11 +348,14 @@ void main() {
         [
           linkRow(id: 'l3', founder: 'f1', khalifa: 'k3', zawiya: 'zB', zawiyaName: 'Zawiya B', order: 1),
           linkRow(id: 'l2', founder: 'f1', khalifa: 'k2', zawiya: 'zA', zawiyaName: 'Zawiya A', order: 2, gap: true),
-          linkRow(id: 'l1', founder: 'f1', khalifa: 'k1', zawiya: 'zA', zawiyaName: 'Zawiya A', order: 1, period: '1900'),
+          linkRow(
+              id: 'l1', founder: 'f1', khalifa: 'k1', zawiya: 'zA', zawiyaName: 'Zawiya A', order: 1, period: '1900'),
           linkRow(
               id: 'l4', founder: 'f1', khalifa: 'k1', zawiya: 'zA', zawiyaName: 'Zawiya A', role: 'mokaddem', order: 1),
         ],
-        {for (final id in ['f1', 'k1', 'k2', 'k3']) id: figureRow(id)},
+        {
+          for (final id in ['f1', 'k1', 'k2', 'k3']) id: figureRow(id)
+        },
       );
 
       expect(successions.map((s) => '${s.zawiyaName}/${s.role.name}'),

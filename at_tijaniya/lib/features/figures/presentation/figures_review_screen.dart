@@ -43,7 +43,8 @@ class FiguresReviewScreen extends ConsumerWidget {
                 children: [
                   Icon(Icons.wifi_off, color: AppColors.bronze, size: 32),
                   const SizedBox(height: 12),
-                  Text(l10n.figuresLoadError, textAlign: TextAlign.center, style: TextStyle(color: AppColors.secondaryInk)),
+                  Text(l10n.figuresLoadError,
+                      textAlign: TextAlign.center, style: TextStyle(color: AppColors.secondaryInk)),
                   const SizedBox(height: 12),
                   OutlinedButton(
                     onPressed: () => ref.invalidate(draftFiguresProvider),
@@ -58,7 +59,8 @@ class FiguresReviewScreen extends ConsumerWidget {
               return Center(
                 child: Padding(
                   padding: const EdgeInsets.all(24),
-                  child: Text(l10n.figuresReviewEmpty, textAlign: TextAlign.center, style: TextStyle(color: AppColors.secondaryInk)),
+                  child: Text(l10n.figuresReviewEmpty,
+                      textAlign: TextAlign.center, style: TextStyle(color: AppColors.secondaryInk)),
                 ),
               );
             }

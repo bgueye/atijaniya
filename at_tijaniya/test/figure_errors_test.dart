@@ -8,7 +8,8 @@ void main() {
   // ligne) distinguée d'une coupure réseau.
   group('isFigureUnavailableError', () {
     test('PGRST116 (aucune ligne) -> fiche indisponible', () {
-      const error = PostgrestException(message: 'JSON object requested, multiple (or no) rows returned', code: 'PGRST116');
+      const error =
+          PostgrestException(message: 'JSON object requested, multiple (or no) rows returned', code: 'PGRST116');
       expect(isFigureUnavailableError(error), isTrue);
     });
 

@@ -242,13 +242,9 @@ class FiguresRepository {
   /// `figure_events_read_all` : lisible en mode invité comme le reste de
   /// Khadara.
   Future<List<KhadaraEvent>> fetchLinkedEvents(String figureId) async {
-    final rows = await SupabaseConfig.client
-        .from('figure_events')
-        .select('events(*, zawiyas(name))')
-        .eq('figure_id', figureId);
-    return rows
-        .map((row) => KhadaraEvent.fromRow(row['events'] as Map<String, dynamic>))
-        .toList()
+    final rows =
+        await SupabaseConfig.client.from('figure_events').select('events(*, zawiyas(name))').eq('figure_id', figureId);
+    return rows.map((row) => KhadaraEvent.fromRow(row['events'] as Map<String, dynamic>)).toList()
       ..sort((a, b) => a.startsAt.compareTo(b.startsAt));
   }
 
@@ -260,10 +256,7 @@ class FiguresRepository {
   /// RLS `figure_events_admin_delete` — table de jonction pure (clé
   /// composite), rien d'autre à supprimer en cascade derrière ce lien.
   Future<void> unlinkEvent({required String figureId, required String eventId}) async {
-    await SupabaseConfig.client
-        .from('figure_events')
-        .delete()
-        .match({'figure_id': figureId, 'event_id': eventId});
+    await SupabaseConfig.client.from('figure_events').delete().match({'figure_id': figureId, 'event_id': eventId});
   }
 
   /// Silsila historique (généalogie spirituelle) depuis le fondateur
@@ -324,10 +317,7 @@ class FiguresRepository {
   /// `FigureDetailScreen`. RLS `figure_zawiyas_read_all` : lisible en mode
   /// invité, même logique que `fetchLinkedEvents`.
   Future<List<Zawiya>> fetchLinkedZawiyas(String figureId) async {
-    final rows = await SupabaseConfig.client
-        .from('figure_zawiyas')
-        .select('zawiyas(*)')
-        .eq('figure_id', figureId);
+    final rows = await SupabaseConfig.client.from('figure_zawiyas').select('zawiyas(*)').eq('figure_id', figureId);
     return rows.map((row) => Zawiya.fromRow(row['zawiyas'] as Map<String, dynamic>)).toList();
   }
 

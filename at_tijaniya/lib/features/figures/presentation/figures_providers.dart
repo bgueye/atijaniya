@@ -28,7 +28,8 @@ final draftFiguresProvider = FutureProvider<List<Figure>>((ref) {
 /// `.autoDispose` (Sprint 4, audit perf) : consultée depuis un écran de
 /// détail poussé/dépilé, sans raison de garder une entrée en cache par
 /// figure visitée pour le reste de la session.
-final historicalSilsilaChainProvider = FutureProvider.autoDispose.family<List<HistoricalSilsilaLink>, String>((ref, figureId) {
+final historicalSilsilaChainProvider =
+    FutureProvider.autoDispose.family<List<HistoricalSilsilaLink>, String>((ref, figureId) {
   return ref.watch(figuresRepositoryProvider).fetchHistoricalSilsilaChain(figureId);
 });
 

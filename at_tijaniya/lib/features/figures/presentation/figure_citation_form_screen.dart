@@ -18,19 +18,16 @@ import '../../../core/widgets/content_text.dart';
 /// `citation == null` → création ; sinon édition, préremplie depuis l'objet
 /// déjà en mémoire.
 class FigureCitationFormScreen extends ConsumerStatefulWidget {
-  const FigureCitationFormScreen(
-      {super.key, required this.figureId, this.citation});
+  const FigureCitationFormScreen({super.key, required this.figureId, this.citation});
 
   final String figureId;
   final FigureCitation? citation;
 
   @override
-  ConsumerState<FigureCitationFormScreen> createState() =>
-      _FigureCitationFormScreenState();
+  ConsumerState<FigureCitationFormScreen> createState() => _FigureCitationFormScreenState();
 }
 
-class _FigureCitationFormScreenState
-    extends ConsumerState<FigureCitationFormScreen> {
+class _FigureCitationFormScreenState extends ConsumerState<FigureCitationFormScreen> {
   final _formKey = GlobalKey<FormState>();
   final _arabicController = TextEditingController();
   final _frenchController = TextEditingController();
@@ -104,10 +101,7 @@ class _FigureCitationFormScreenState
     final isEdit = widget.citation != null;
 
     return Scaffold(
-      appBar: AppBar(
-          title: Text(isEdit
-              ? l10n.figureCitationFormEditTitle
-              : l10n.figureCitationFormCreateTitle)),
+      appBar: AppBar(title: Text(isEdit ? l10n.figureCitationFormEditTitle : l10n.figureCitationFormCreateTitle)),
       // `SafeArea` : sans elle, le bouton Enregistrer peut se retrouver
       // masqué sous la barre de navigation Android (3 boutons) — le même
       // défaut que celui corrigé sur le bottom sheet d'upload audio des
@@ -122,36 +116,29 @@ class _FigureCitationFormScreenState
               children: [
                 TextFormField(
                   controller: _arabicController,
-                  decoration: InputDecoration(
-                      labelText: l10n.figureCitationFormArabicLabel),
+                  decoration: InputDecoration(labelText: l10n.figureCitationFormArabicLabel),
                   textDirection: TextDirection.rtl,
                   maxLines: 3,
                 ),
                 const SizedBox(height: 16),
                 TextFormField(
                   controller: _frenchController,
-                  decoration: InputDecoration(
-                      labelText: l10n.figureCitationFormFrenchLabel),
+                  decoration: InputDecoration(labelText: l10n.figureCitationFormFrenchLabel),
                   maxLines: 3,
-                  validator: (value) =>
-                      (value == null || value.trim().isEmpty) &&
-                              _arabicController.text.trim().isEmpty
-                          ? l10n.figureCitationFormTextRequired
-                          : null,
+                  validator: (value) => (value == null || value.trim().isEmpty) && _arabicController.text.trim().isEmpty
+                      ? l10n.figureCitationFormTextRequired
+                      : null,
                 ),
                 const SizedBox(height: 16),
                 TextFormField(
                   controller: _sourceController,
-                  decoration: InputDecoration(
-                      labelText: l10n.figureCitationFormSourceLabel),
-                  validator: (value) => (value == null || value.trim().isEmpty)
-                      ? l10n.figureCitationFormSourceRequired
-                      : null,
+                  decoration: InputDecoration(labelText: l10n.figureCitationFormSourceLabel),
+                  validator: (value) =>
+                      (value == null || value.trim().isEmpty) ? l10n.figureCitationFormSourceRequired : null,
                 ),
                 if (_errorMessage != null) ...[
                   const SizedBox(height: 16),
-                  ContentText(_errorMessage!,
-                      style: const TextStyle(color: AppColors.danger)),
+                  ContentText(_errorMessage!, style: const TextStyle(color: AppColors.danger)),
                 ],
                 const SizedBox(height: 24),
                 ElevatedButton(
@@ -163,8 +150,7 @@ class _FigureCitationFormScreenState
                       ? SizedBox(
                           height: 18,
                           width: 18,
-                          child: CircularProgressIndicator(
-                              strokeWidth: 2, color: AppColors.emerald),
+                          child: CircularProgressIndicator(strokeWidth: 2, color: AppColors.emerald),
                         )
                       : Text(l10n.figureCitationFormSave),
                 ),

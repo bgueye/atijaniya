@@ -62,8 +62,7 @@ Figure? pickFigureOfTheWeek(
 
   // Arrondi sur les heures : une semaine contenant un changement d'heure
   // dure 167 ou 169 h, et `inDays ~/ 7` perdait alors une semaine entière.
-  final weeksSinceEpoch =
-      (weekStartFor(now ?? DateTime.now()).difference(_rotationEpoch).inHours / (7 * 24)).round();
+  final weeksSinceEpoch = (weekStartFor(now ?? DateTime.now()).difference(_rotationEpoch).inHours / (7 * 24)).round();
   return eligible[weeksSinceEpoch % eligible.length];
 }
 

@@ -42,8 +42,6 @@ class FigurePortrait extends StatelessWidget {
       cacheWidth: (size * MediaQuery.devicePixelRatioOf(context)).round(),
       errorBuilder: (context, error, stackTrace) => Center(child: errorPlaceholder),
     );
-    return circle
-        ? ClipOval(child: image)
-        : ClipRRect(borderRadius: BorderRadius.circular(borderRadius), child: image);
+    return circle ? ClipOval(child: image) : ClipRRect(borderRadius: BorderRadius.circular(borderRadius), child: image);
   }
 }
