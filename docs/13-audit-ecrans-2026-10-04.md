@@ -434,6 +434,31 @@ avec ceux du rapport de pré-lancement et d'Android vitals.
   (adresse utilisée, « Aller à la connexion » avec l'adresse préremplie, « Renvoyer
   l'e-mail », « Modifier l'adresse e-mail ») ; le mot de passe saisi est effacé.
 
+## Audit de l'onglet Figures (2026-10-25)
+
+Second passage sur le module Figures, après `audit-2026-10-04/08-figures.md` : rapport
+`docs/audits/2026-10-25-figures.md`, où chaque constat porte son statut. Détail de ce qui a
+été fait : `docs/09`, section « Audit de l'onglet Figures et ses suites (2026-10-25) ».
+
+- **Sécurité et confidentialité (P1)** : `get_historical_silsila_chain` affichait les
+  maillons en brouillon à tout visiteur, y compris à `anon` par appel direct. Corrigé en
+  base le 2026-10-25 (`SECURITY INVOKER`, la chaîne s'arrête au premier maillon non publié
+  pour un non-admin) ; s'applique à toutes les versions installées, y compris chez les
+  testeurs. Aucun brouillon n'existait en base : rien n'a fuité.
+- **Lisibilité et accessibilité** : fiche lisible en paysage à 200 %, contrastes sur fond
+  vert, intertitres annoncés, cibles de 48 dp, biographie française en interface arabe,
+  recherche par nom, liste en arabe. Tous corrigés le 2026-10-25.
+- **Trouvé sur émulateur, hors du rapport** : police Cormorant jamais appliquée à six titres
+  de l'app (`AppFonts.titlesFr` en `fontFamily`), icônes de la barre de statut sombres sur la
+  fiche ; corrigés. Le bronze du texte secondaire est retiré du thème de toute l'app.
+
+**Reste à faire** :
+- validation sur téléphone (français et arabe, paysage, texte agrandi, contraste renforcé,
+  TalkBack) ;
+- environ 140 textes en bronze posés directement dans les écrans des autres modules
+  (37 fichiers), à reprendre écran par écran ;
+- pagination de la liste des figures au-delà d'environ 150 fiches (reportée).
+
 ## Index des rapports par module
 
 | Fichier | Écrans |

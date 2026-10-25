@@ -3478,3 +3478,69 @@ Tests : `wird_repair_models_test.dart` (filtre par type, réponse négative),
 `tariqa_benefits_screen_test.dart` (bouton et feuille du sommaire, citation sortie de la
 phrase, sources une par ligne). `flutter analyze` propre, 343 tests au vert. **Pas encore
 validé sur téléphone.**
+
+## Audit de l'onglet Figures et ses suites (2026-10-25)
+
+Rapport : `docs/audits/2026-10-25-figures.md` (revue de code, UI/UX et accessibilité ; chaque
+constat y porte son statut). Tous les constats P1, P2 et P3 sont traités, un commit par
+constat, `flutter analyze` et `flutter test` après chacun ; passe sur émulateur ensuite.
+Décisions du porteur de projet prises en cours de route : silsila « masquer et arrêter »,
+liste en arabe comme l'onglet Wird, exception à `ContentText` pour la biographie en arabe,
+recherche dans les noms seulement, maillons en brouillon visibles de l'admin et marqués.
+
+**Base (projet live, s'applique à toutes les versions installées)**
+- `get_historical_silsila_chain` passe en `SECURITY INVOKER` avec un filtre explicite et un
+  `search_path` vide : pour un disciple, la chaîne s'arrête au premier maillon non publié ;
+  l'admin voit tout. Migration `database/migrations/2026-10-25_silsila_hide_unpublished_links.sql`,
+  vérifiée dans une transaction annulée (brouillon inséré au milieu de la chaîne de
+  8 maillons). L'advisor de sécurité ne signale plus la fonction.
+
+**Fiche d'une figure**
+- `NestedScrollView` : l'en-tête défile, les onglets restent accrochés en haut
+  (`SliverOverlapAbsorber`/`SliverOverlapInjector`) ; en paysage avec le texte à 200 %, la
+  biographie se lit au lieu d'être masquée. Bandeau zaytoune fixe sous la barre de statut,
+  icônes de la barre de statut claires (`AnnotatedRegion`). Le bouton retour de l'en-tête
+  défile avec lui.
+- Intertitres de biographie séparés du texte (`FigureBiographyParagraph.heading`, 301 des
+  526 sections en base), annoncés comme titres ; résumé de la review admin sans intertitre.
+- Biographie française en interface arabe : rangée à gauche (`ContentText(alignToContent:)`,
+  réservé aux paragraphes de lecture) et mention « en français uniquement ».
+- Contrastes : foyer en `goldSoft`, « Fondateur » et pastille du portrait en `goldOnDark`,
+  texte secondaire en `secondaryInk`.
+- Maillons : la silsila ouvre les fiches comme les successions (mixin `_OpensFigureDetail`,
+  garde contre le double toucher, message si la fiche a disparu) ; « Brouillon » sur les
+  maillons non publiés vus par l'admin ; « Réessayer » dans l'onglet Zawiya.
+- Portrait : `FigurePortrait`, icône de repli si l'image est introuvable ; bouton nommé
+  « Changer le portrait » pour l'admin.
+
+**Liste des figures**
+- Recherche par nom, française et arabe, tolérante aux translittérations
+  (`figure_search.dart`, réglée sur les 71 noms en base), combinée au filtre par foyer.
+- En arabe : nom arabe en titre, tri alphabétique arabe.
+- Filtre par foyer sur deux lignes justifiées (`splitFoyerChipsInTwoRows`), retour à la
+  ligne libre si deux lignes ne suffisent pas ; puces de 48 dp ; tirer pour actualiser.
+
+**Toute l'app**
+- Police Cormorant enfin appliquée : `AppFonts.titlesFr` en `fontFamily` ne correspondait à
+  aucune police chargée par `google_fonts` (six textes en Jost : en-tête et intertitres de
+  la fiche, œuvre, nœud fondateur, carte « Figure de la semaine », carte de partage de la
+  silsila). Nouveau `AppTheme.titleText` ; `test/font_family_usage_test.dart` refuse
+  désormais tout `fontFamily` qui nomme une police de la charte.
+- Thème : `onSurfaceVariant` et les libellés non sélectionnés de la barre du bas passent du
+  bronze à l'encre secondaire (parchemin atténué sur le thème immersif). `secondaryInk`
+  devient dynamique (bronze renforcé en contraste renforcé) ; `secondary_ink` et
+  `secondary_on_dark` entrent dans `design_tokens.yaml`.
+- Formatage `dart format` (120) du module Figures.
+
+**Vérifié sur émulateur** (compte admin, français et arabe, paysage et texte à 200 %,
+contraste renforcé) : défilement de l'en-tête et onglets accrochés, recherche, filtre sur
+deux lignes, intertitres en Cormorant, biographie en arabe, tri arabe, navigation depuis la
+silsila, double toucher, tirer pour actualiser, barre de statut, carte « Figure de la
+semaine ». **Non vérifié à l'écran** : étiquette « Brouillon » (aucun brouillon en base),
+« Réessayer » (réseau coupé), libellé du portrait sous TalkBack, carte de partage de la
+silsila ; couverts par les tests.
+
+**Reste ouvert** : environ 140 textes posés en bronze directement dans les écrans des autres
+modules (37 fichiers, ex. sous-titres de la liste des wirds, adresses des zawiyas), à
+reprendre écran par écran selon le fond ; pagination de la liste au-delà d'environ
+150 fiches (P3-4, reporté). Tests : 417 au vert. **Pas encore validé sur téléphone.**
