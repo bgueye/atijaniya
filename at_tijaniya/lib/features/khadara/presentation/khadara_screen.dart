@@ -60,7 +60,10 @@ class KhadaraScreen extends StatelessWidget {
                 child: TabBar(
                   isScrollable: false,
                   labelColor: AppColors.emerald,
-                  unselectedLabelColor: AppColors.bronze,
+                  // Encre secondaire, pas le bronze (3,72:1 sur parchemin, sous
+                  // le seuil AA) ; de même pour les messages d'erreur et d'état
+                  // vide plus bas (audit Zawiyas du 2026-10-25, P2-6).
+                  unselectedLabelColor: AppColors.secondaryInk,
                   indicatorColor: AppColors.emerald,
                   labelPadding: const EdgeInsets.symmetric(horizontal: 4),
                   tabs: [
@@ -463,7 +466,7 @@ class _AsyncSection<T> extends StatelessWidget {
             children: [
               Icon(Icons.wifi_off, color: AppColors.bronze, size: 32),
               const SizedBox(height: 12),
-              Text(l10n.khadaraLoadError, textAlign: TextAlign.center, style: TextStyle(color: AppColors.bronze)),
+              Text(l10n.khadaraLoadError, textAlign: TextAlign.center, style: TextStyle(color: AppColors.secondaryInk)),
               const SizedBox(height: 12),
               OutlinedButton(onPressed: onRetry, child: Text(l10n.khadaraRetry)),
             ],
@@ -474,7 +477,7 @@ class _AsyncSection<T> extends StatelessWidget {
           ? Center(
               child: Padding(
                 padding: const EdgeInsets.all(24),
-                child: ContentText(emptyMessage, textAlign: TextAlign.center, style: TextStyle(color: AppColors.bronze)),
+                child: ContentText(emptyMessage, textAlign: TextAlign.center, style: TextStyle(color: AppColors.secondaryInk)),
               ),
             )
           : ListView.builder(

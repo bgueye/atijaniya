@@ -7,6 +7,7 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 
+import 'package:at_tijaniya/core/theme/app_colors.dart';
 import 'package:at_tijaniya/features/khadara/domain/khadara_models.dart';
 import 'package:at_tijaniya/features/khadara/presentation/khadara_providers.dart';
 import 'package:at_tijaniya/features/khadara/presentation/khadara_screen.dart';
@@ -60,6 +61,8 @@ void main() {
     await tester.enterText(find.byType(TextField), 'introuvable');
     await tester.pump();
     expect(find.text('Aucun lieu ne correspond à « introuvable ».'), findsOneWidget);
+    // Texte d'état en encre secondaire, pas en bronze (P2-6).
+    expect(tester.widget<Text>(find.text('Aucun lieu ne correspond à « introuvable ».')).style?.color, AppColors.secondaryInk);
 
     await tester.tap(find.byTooltip('Effacer la recherche'));
     await tester.pump();

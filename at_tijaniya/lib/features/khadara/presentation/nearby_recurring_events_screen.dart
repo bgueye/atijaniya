@@ -112,7 +112,7 @@ class _NearbyRecurringEventsScreenState extends ConsumerState<NearbyRecurringEve
             children: [
               Icon(Icons.location_off_outlined, color: AppColors.bronze, size: 32),
               const SizedBox(height: 12),
-              Text(_failureMessage(_failure!, l10n), textAlign: TextAlign.center, style: TextStyle(color: AppColors.bronze)),
+              Text(_failureMessage(_failure!, l10n), textAlign: TextAlign.center, style: TextStyle(color: AppColors.secondaryInk)),
               const SizedBox(height: 12),
               OutlinedButton(onPressed: _search, child: Text(l10n.khadaraRetry)),
             ],
@@ -126,7 +126,7 @@ class _NearbyRecurringEventsScreenState extends ConsumerState<NearbyRecurringEve
       return Center(
         child: Padding(
           padding: const EdgeInsets.all(24),
-          child: Text(l10n.khadaraNearbyRecurringEmpty, textAlign: TextAlign.center, style: TextStyle(color: AppColors.bronze)),
+          child: Text(l10n.khadaraNearbyRecurringEmpty, textAlign: TextAlign.center, style: TextStyle(color: AppColors.secondaryInk)),
         ),
       );
     }

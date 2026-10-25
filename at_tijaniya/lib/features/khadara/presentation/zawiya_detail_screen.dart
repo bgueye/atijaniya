@@ -130,7 +130,7 @@ class _ZawiyaDetailScreenState extends ConsumerState<ZawiyaDetailScreen> {
                 const SizedBox(width: 8),
                 Text(
                   zawiyaKindLabel(zawiya.kind, l10n),
-                  style: TextStyle(fontWeight: FontWeight.w600, fontSize: 13, color: AppColors.bronze),
+                  style: TextStyle(fontWeight: FontWeight.w600, fontSize: 13, color: AppColors.secondaryInk),
                 ),
               ],
             ),
@@ -196,9 +196,9 @@ class _ZawiyaDetailScreenState extends ConsumerState<ZawiyaDetailScreen> {
                 padding: const EdgeInsets.symmetric(vertical: 16),
                 child: Center(child: CircularProgressIndicator(color: AppColors.emerald)),
               ),
-              error: (err, st) => Text(l10n.khadaraLoadError, style: TextStyle(color: AppColors.bronze)),
+              error: (err, st) => Text(l10n.khadaraLoadError, style: TextStyle(color: AppColors.secondaryInk)),
               data: (events) => events.isEmpty
-                  ? Text(l10n.khadaraNoUpcomingEventsAtZawiya, style: TextStyle(color: AppColors.bronze))
+                  ? Text(l10n.khadaraNoUpcomingEventsAtZawiya, style: TextStyle(color: AppColors.secondaryInk))
                   : Column(
                       children: [
                         for (final event in events)
