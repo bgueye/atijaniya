@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/theme/app_colors.dart';
+import '../../../core/theme/app_theme.dart';
 import '../../../l10n/app_localizations.dart';
 import '../domain/khadara_errors.dart';
 import '../domain/khadara_models.dart';
@@ -81,8 +82,9 @@ class _ZawiyaDetailScreenState extends ConsumerState<ZawiyaDetailScreen> {
     final upcoming = ref.watch(eventsForZawiyaProvider(zawiya.id));
 
     return Scaffold(
+      // Pas de titre dans la barre : le nom est en tête de la fiche, en
+      // entier (voir plus bas).
       appBar: AppBar(
-        title: ContentText(zawiya.name),
         actions: canManage
             ? [
                 IconButton(
@@ -111,6 +113,17 @@ class _ZawiyaDetailScreenState extends ConsumerState<ZawiyaDetailScreen> {
         child: ListView(
           padding: const EdgeInsets.all(20),
           children: [
+            // Nom du lieu en titre de la fiche, sur autant de lignes qu'il le
+            // faut. Il n'était que dans la barre de titre, sur une ligne :
+            // « Zawiya Tijaniyya d'El Maghrabilin, Le Caire (Égypte) » ne
+            // tenait pas, et à 200 % même « Zawiya d'Aïn Madhi » était coupé,
+            // sans aucun moyen de lire la suite (audit Zawiyas du 2026-10-25,
+            // P2-5). Cormorant, police des titres et des noms de la charte.
+            Semantics(
+              header: true,
+              child: ContentText(zawiya.name, style: AppTheme.titleText(fontSize: 26, color: AppColors.ink)),
+            ),
+            const SizedBox(height: 8),
             Row(
               children: [
                 Icon(zawiyaKindIcon(zawiya.kind), size: 18, color: AppColors.emerald),

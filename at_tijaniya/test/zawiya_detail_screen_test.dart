@@ -57,6 +57,23 @@ const _zawiya = Zawiya(
 );
 
 void main() {
+  // Audit Zawiyas du 2026-10-25 (P2-5) : le nom n'était que dans la barre de
+  // titre, coupé sur une ligne. Il est en tête de la fiche, en entier, et
+  // annoncé comme titre.
+  testWidgets('le nom long du lieu est lisible en entier et annoncé comme titre', (tester) async {
+    final semantics = tester.ensureSemantics();
+    const longName = "Zawiya Tijaniyya d'El Maghrabilin, Le Caire (Égypte)";
+    await tester.pumpWidget(_wrap(const ZawiyaDetailScreen(zawiya: Zawiya(id: 'z6', name: longName)), textScale: 2.0));
+    await tester.pumpAndSettle();
+
+    expect(tester.takeException(), isNull);
+    final name = tester.widget<Text>(find.text(longName));
+    expect(name.maxLines, isNull);
+    expect(name.overflow, isNot(TextOverflow.ellipsis));
+    expect(tester.getSemantics(find.text(longName)), isSemantics(label: longName, isHeader: true));
+    semantics.dispose();
+  });
+
   // Audit Zawiyas du 2026-10-25 (P2-3) : un lieu sans coordonnées mais avec
   // une adresse a son bouton Maps (recherche par l'adresse) ; sans l'une ni
   // l'autre, aucun bouton.
