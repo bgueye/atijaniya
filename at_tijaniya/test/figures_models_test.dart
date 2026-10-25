@@ -24,8 +24,33 @@ void main() {
       expect(figure.id, 'f1');
       expect(figure.category, FigureCategory.founder);
       expect(figure.biography, hasLength(2));
-      expect(figure.biography![0].translation, contains('PREMIÈRE SECTION'));
-      expect(figure.summary, figure.biography![0].translation);
+      // Intertitre séparé du texte (audit Figures du 2026-10-25, P2-2).
+      expect(figure.biography![0].heading, 'PREMIÈRE SECTION');
+      expect(figure.biography![0].translation, 'Texte de la première section.');
+      // Le résumé de la review admin reste la première section brute.
+      expect(figure.summary, 'PREMIÈRE SECTION\nTexte de la première section.');
+    });
+
+    test('repère les intertitres en majuscules, seuls ou suivis du texte', () {
+      final figure = Figure.fromRow({
+        'id': 'f-headings',
+        'name_ar': 'اسم',
+        'name_fr': 'Nom',
+        'category': 'founder',
+        'bio_text': 'NAISSANCE ET JEUNESSE\n\n'
+            'Il naît en 1850 dans un village.\n\n'
+            "L'ÂGE D'OR DE LA ZAWIYA\nUn texte suit le titre.\nSur deux lignes.\n\n"
+            'UN PARAGRAPHE ORDINAIRE QUI COMMENCE PAR DES MAJUSCULES puis continue en minuscules.',
+      });
+      final biography = figure.biography!;
+      expect(biography, hasLength(4));
+      expect(biography[0].heading, 'NAISSANCE ET JEUNESSE');
+      expect(biography[0].translation, isEmpty);
+      expect(biography[1].heading, isNull);
+      expect(biography[1].translation, 'Il naît en 1850 dans un village.');
+      expect(biography[2].heading, "L'ÂGE D'OR DE LA ZAWIYA");
+      expect(biography[2].translation, 'Un texte suit le titre.\nSur deux lignes.');
+      expect(biography[3].heading, isNull);
     });
 
     test('catégorie "family_lineage" devient religiousFamily', () {
@@ -52,7 +77,8 @@ void main() {
             'exemple.com',
       });
       expect(figure.biography, hasLength(1));
-      expect(figure.biography!.single.translation, contains('BIOGRAPHIE'));
+      expect(figure.biography!.single.heading, 'BIOGRAPHIE');
+      expect(figure.biography!.single.translation, 'Texte biographique.');
     });
 
     test('parse les citations embarquées (figure_quotes)', () {
@@ -199,6 +225,20 @@ void main() {
         'birth_year_hijri': 1150,
       });
       expect(figure.birthYearHijri, 1150);
+    });
+  });
+
+  group('isBiographyHeading', () {
+    test('accepte un titre en majuscules, accents et apostrophes compris', () {
+      expect(isBiographyHeading('LA QUÊTE DU SAVOIR'), isTrue);
+      expect(isBiographyHeading("ONCLE D'EL HADJ ABDOULAYE NIASSE ET GRAND ÉRUDIT DE THIAMÈNE WALO"), isTrue);
+    });
+
+    test('refuse une date, une phrase en minuscules ou une ligne trop longue', () {
+      expect(isBiographyHeading('1843'), isFalse);
+      expect(isBiographyHeading('Naissance et jeunesse'), isFalse);
+      expect(isBiographyHeading('A'), isFalse);
+      expect(isBiographyHeading('TITRE ' * 20), isFalse);
     });
   });
 

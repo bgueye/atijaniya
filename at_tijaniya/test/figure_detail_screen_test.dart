@@ -99,6 +99,37 @@ void main() {
     expect(find.text('Évènement de test lié'), findsOneWidget);
   });
 
+  // Audit Figures du 2026-10-25 (P2-2) : l'intertitre d'une biographie
+  // s'affiche en titre et se laisse atteindre comme tel par un lecteur
+  // d'écran ; une section faite d'un titre seul n'ajoute pas de texte vide.
+  testWidgets('FigureDetailScreen annonce les intertitres de la biographie comme titres', (tester) async {
+    final semantics = tester.ensureSemantics();
+    const figure = Figure(
+      id: 'test-figure-headings',
+      nameArabic: 'اسم تجريبي',
+      nameFrench: 'Figure à intertitres',
+      category: FigureCategory.founder,
+      biography: [
+        FigureBiographyParagraph(heading: 'PREMIER TITRE DE TEST', translation: ''),
+        FigureBiographyParagraph(translation: 'Texte sous le premier titre.'),
+      ],
+    );
+
+    await tester.pumpWidget(_wrap(const FigureDetailScreen(figure: figure)));
+    await tester.pumpAndSettle();
+
+    expect(find.text('PREMIER TITRE DE TEST'), findsOneWidget);
+    expect(
+      tester.getSemantics(find.text('PREMIER TITRE DE TEST')),
+      matchesSemantics(label: 'PREMIER TITRE DE TEST', isHeader: true),
+    );
+    expect(
+      tester.getSemantics(find.text('Texte sous le premier titre.')),
+      isSemantics(label: 'Texte sous le premier titre.', isHeader: false),
+    );
+    semantics.dispose();
+  });
+
   testWidgets('FigureDetailScreen indique une biographie en attente quand absente', (tester) async {
     const figure = Figure(
       id: 'test-figure-2',

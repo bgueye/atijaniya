@@ -19,10 +19,18 @@ enum FigureCategory { founder, religiousFamily }
 /// Un paragraphe de biographie (arabe optionnel + traduction), même forme que
 /// `WirdParagraph` pour rester cohérent avec le module Wirds.
 class FigureBiographyParagraph {
-  const FigureBiographyParagraph({this.arabic, this.transliteration, required this.translation});
+  const FigureBiographyParagraph({this.heading, this.arabic, this.transliteration, required this.translation});
 
+  /// Intertitre de la section (« NAISSANCE ET JEUNESSE »), repéré par
+  /// [_biographyFrom] : 301 des 526 sections en base commencent par un tel
+  /// titre en majuscules (audit Figures du 2026-10-25, P2-2). `null` pour un
+  /// paragraphe ordinaire.
+  final String? heading;
   final String? arabic;
   final String? transliteration;
+
+  /// Texte de la section, sans son intertitre. Vide pour une section faite
+  /// d'un titre seul (209 en base), qui annonce les paragraphes suivants.
   final String translation;
 }
 
@@ -454,7 +462,29 @@ List<FigureBiographyParagraph>? _biographyFrom(String? bioText) {
   if (bioText == null || bioText.trim().isEmpty) return null;
   final sections = _biographySections(bioText);
   if (sections.isEmpty) return null;
-  return [for (final section in sections) FigureBiographyParagraph(translation: section)];
+  return [for (final section in sections) _paragraphFrom(section)];
+}
+
+/// Sépare l'intertitre éventuel d'une section : sa première ligne, si elle
+/// est entièrement en majuscules. Avant, ces titres s'affichaient dans le
+/// style du texte courant, seules les majuscules les distinguant, et un
+/// lecteur d'écran ne pouvait pas sauter de l'un à l'autre.
+FigureBiographyParagraph _paragraphFrom(String section) {
+  final newline = section.indexOf('\n');
+  final firstLine = (newline == -1 ? section : section.substring(0, newline)).trim();
+  if (!isBiographyHeading(firstLine)) return FigureBiographyParagraph(translation: section);
+  final rest = newline == -1 ? '' : section.substring(newline + 1).trim();
+  return FigureBiographyParagraph(heading: firstLine, translation: rest);
+}
+
+/// Vrai pour une ligne de titre : aucune minuscule, au moins deux lettres
+/// majuscules qui se suivent (une date ou un sigle isolé n'en est pas un),
+/// et 80 caractères au plus — le plus long titre en base en fait 65, une
+/// phrase entière en majuscules serait plus longue.
+bool isBiographyHeading(String line) {
+  if (line.isEmpty || line.length > 80) return false;
+  if (line != line.toUpperCase() || line == line.toLowerCase()) return false;
+  return RegExp(r'[A-ZÀ-ÖØ-Ý]{2}').hasMatch(line);
 }
 
 String? _summaryFrom(String? bioText) {

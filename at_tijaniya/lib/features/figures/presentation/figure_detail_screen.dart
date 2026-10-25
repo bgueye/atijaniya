@@ -1106,9 +1106,14 @@ class _SectionTitle extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ContentText(title,
-        style: const TextStyle(
-            fontWeight: FontWeight.w600, fontSize: 16, color: AppColors.ink));
+    // `header: true` : annoncé comme titre par les lecteurs d'écran (audit
+    // Figures du 2026-10-25, P2-2).
+    return Semantics(
+      header: true,
+      child: ContentText(title,
+          style: const TextStyle(
+              fontWeight: FontWeight.w600, fontSize: 16, color: AppColors.ink)),
+    );
   }
 }
 
@@ -1406,7 +1411,7 @@ class _ZawiyaTabState extends ConsumerState<_ZawiyaTab> {
 
     return _TabScrollView(
       children: [
-        Text(l10n.figureZawiyasSectionTitle, style: _sectionTitleStyle),
+        Semantics(header: true, child: Text(l10n.figureZawiyasSectionTitle, style: _sectionTitleStyle)),
         const SizedBox(height: 12),
         if (widget.isAdmin) ...[
           OutlinedButton.icon(
@@ -1440,7 +1445,7 @@ class _ZawiyaTabState extends ConsumerState<_ZawiyaTab> {
 
         const Divider(height: 40),
 
-        Text(l10n.figureZawiyaEventsSectionTitle, style: _sectionTitleStyle),
+        Semantics(header: true, child: Text(l10n.figureZawiyaEventsSectionTitle, style: _sectionTitleStyle)),
         const SizedBox(height: 12),
         if (widget.isAdmin) ...[
           OutlinedButton.icon(
@@ -1474,7 +1479,7 @@ class _ZawiyaTabState extends ConsumerState<_ZawiyaTab> {
 
         const Divider(height: 40),
 
-        Text(l10n.figureKhalifaChainSectionTitle, style: _sectionTitleStyle),
+        Semantics(header: true, child: Text(l10n.figureKhalifaChainSectionTitle, style: _sectionTitleStyle)),
         const SizedBox(height: 12),
         if (widget.isAdmin) ...[
           OutlinedButton.icon(
@@ -1978,13 +1983,35 @@ class _BiographyParagraph extends StatelessWidget {
 
   final FigureBiographyParagraph paragraph;
 
+  /// Intertitre d'une biographie (audit Figures du 2026-10-25, P2-2) :
+  /// Cormorant Garamond, police des titres français de la charte
+  /// (`design_tokens.yaml` § titles_fr, « H1, H2 »), en émeraude pour se
+  /// détacher de l'encre du texte courant.
+  static final _headingStyle = TextStyle(
+      fontFamily: AppFonts.titlesFr,
+      fontWeight: FontWeight.w600,
+      fontSize: 18,
+      letterSpacing: 0.4,
+      color: AppColors.emerald);
+
   @override
   Widget build(BuildContext context) {
+    final heading = paragraph.heading;
     return Padding(
       padding: const EdgeInsets.only(bottom: 14),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
+          if (heading != null) ...[
+            // `header: true` : TalkBack et VoiceOver peuvent sauter d'un
+            // intertitre à l'autre, dans des biographies qui dépassent
+            // parfois 8 000 caractères.
+            Padding(
+              padding: const EdgeInsets.only(top: 8),
+              child: Semantics(header: true, child: ContentText(heading, style: _headingStyle)),
+            ),
+            if (paragraph.translation.isNotEmpty) const SizedBox(height: 6),
+          ],
           if (paragraph.arabic != null) ...[
             Text(
               paragraph.arabic!,
@@ -2004,8 +2031,9 @@ class _BiographyParagraph extends StatelessWidget {
             ),
             const SizedBox(height: 4),
           ],
-          ContentText(paragraph.translation,
-              style: const TextStyle(color: AppColors.ink, fontSize: 16)),
+          if (paragraph.translation.isNotEmpty)
+            ContentText(paragraph.translation,
+                style: const TextStyle(color: AppColors.ink, fontSize: 16)),
         ],
       ),
     );

@@ -288,9 +288,14 @@ class _SectionHeader extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 12),
-      child: ContentText(
-        title,
-        style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 16, color: AppColors.ink),
+      // `header: true` : annoncé comme titre par les lecteurs d'écran (audit
+      // Figures du 2026-10-25, P2-2).
+      child: Semantics(
+        header: true,
+        child: ContentText(
+          title,
+          style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 16, color: AppColors.ink),
+        ),
       ),
     );
   }
