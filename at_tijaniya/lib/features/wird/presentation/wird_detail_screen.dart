@@ -327,15 +327,22 @@ class _PillarCard extends StatelessWidget {
             const SizedBox(height: 8),
             Theme(
               data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
-              child: ExpansionTile(
-                tilePadding: EdgeInsets.zero,
-                title: Text(
-                  AppLocalizations.of(context)!.wirdDetailFullText,
-                  style: TextStyle(fontSize: 13, color: AppColors.emerald, fontWeight: FontWeight.w500),
+              // `Material` transparent : sans lui, l'effet de toucher de la
+              // ligne se peignait sous le fond blanc de la carte, donc
+              // invisible, et Flutter le signalait à chaque reconstruction en
+              // débogage (passe sur émulateur du 2026-10-25, P3-9).
+              child: Material(
+                type: MaterialType.transparency,
+                child: ExpansionTile(
+                  tilePadding: EdgeInsets.zero,
+                  title: Text(
+                    AppLocalizations.of(context)!.wirdDetailFullText,
+                    style: TextStyle(fontSize: 13, color: AppColors.emerald, fontWeight: FontWeight.w500),
+                  ),
+                  children: [
+                    for (final p in pillar.fullText!) _ParagraphBlock(paragraph: p),
+                  ],
                 ),
-                children: [
-                  for (final p in pillar.fullText!) _ParagraphBlock(paragraph: p),
-                ],
               ),
             ),
           ],

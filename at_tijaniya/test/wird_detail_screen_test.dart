@@ -82,6 +82,27 @@ void main() {
   });
   final lazim = validatedWirds.firstWhere((w) => w.id == 'lazim');
 
+  testWidgets('« Texte intégral » s’affiche et se déplie sans alerte de Flutter', (tester) async {
+    final l10n = lookupAppLocalizations(const Locale('fr'));
+    final wazifa = validatedWirds.firstWhere((w) => w.id == 'wazifa');
+    await tester.pumpWidget(_wrap(WirdDetailScreen(wird: wazifa), locale: const Locale('fr'), offline: false));
+    await tester.pumpAndSettle();
+
+    // `first` seulement une fois visible : la liste ne construit pas encore
+    // cette carte, hors de l'écran.
+    await tester.scrollUntilVisible(find.text(l10n.wirdDetailFullText), 300,
+        scrollable: find.byType(Scrollable).first);
+    final fullText = find.text(l10n.wirdDetailFullText).first;
+    await tester.pumpAndSettle();
+    // Une alerte de mise en page levée pendant la construction ferait
+    // échouer le test ici.
+    expect(tester.takeException(), isNull);
+
+    await tester.tap(fullText);
+    await tester.pumpAndSettle();
+    expect(tester.takeException(), isNull);
+  });
+
   testWidgets('la même erreur s’affiche à chaque toucher, pas seulement la première fois', (tester) async {
     final l10n = lookupAppLocalizations(const Locale('fr'));
     await tester.pumpWidget(_wrap(WirdDetailScreen(wird: lazim), locale: const Locale('fr'), offline: false));
