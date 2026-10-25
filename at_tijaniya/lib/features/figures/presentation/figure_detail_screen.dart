@@ -529,18 +529,14 @@ class _FigureHero extends StatelessWidget {
                   ContentText(
                     figure.nameFrench.toUpperCase(),
                     textAlign: TextAlign.center,
-                    // `AppFonts.titlesFr` (CormorantGaramond) — même police que
-                    // le titre d'une œuvre plus bas dans cet écran ; ce
-                    // sous-titre en tombait sur la police par défaut (Jost),
-                    // alors que `design_tokens.yaml` réserve CormorantGaramond
-                    // aux "noms de figures" (constaté à l'audit design
-                    // pré-publication Play Store).
-                    style: const TextStyle(
-                        fontFamily: AppFonts.titlesFr,
-                        color: _subtitleColor,
-                        fontSize: 12,
-                        fontWeight: FontWeight.bold,
-                        letterSpacing: 1.4),
+                    // Cormorant Garamond (`AppTheme.titleText`) — même police
+                    // que le titre d'une œuvre plus bas dans cet écran :
+                    // `design_tokens.yaml` la réserve aux "noms de figures"
+                    // (audit design pré-publication Play Store). Le premier
+                    // correctif, par `fontFamily`, ne s'appliquait pas : voir
+                    // `AppTheme.titleText`.
+                    style: AppTheme.titleText(
+                        color: _subtitleColor, fontSize: 12, fontWeight: FontWeight.bold, letterSpacing: 1.4),
                   ),
                   // Foyer affiché depuis le 2026-10-18 (il n'était visible que
                   // dans le formulaire admin). « Autre » n'apprend rien au
@@ -1169,12 +1165,7 @@ class _WorkCard extends StatelessWidget {
               Expanded(
                 child: ContentText(
                   work.title,
-                  style: const TextStyle(
-                    fontFamily: AppFonts.titlesFr,
-                    fontSize: 17,
-                    fontWeight: FontWeight.w600,
-                    color: AppColors.zaytoune,
-                  ),
+                  style: AppTheme.titleText(fontSize: 17, color: AppColors.zaytoune),
                 ),
               ),
               if (isAdmin) _AdminItemActions(busy: busy, onEdit: onEdit, onDelete: onDelete),
@@ -1891,13 +1882,13 @@ class _FounderNode extends StatelessWidget {
             style: AppTheme.sacredText(fontSize: 18, color: AppColors.goldSoft),
           ),
           const SizedBox(height: 2),
-          // `AppFonts.titlesFr` : même correctif que le sous-titre de l'en-tête
-          // de cet écran (`_FigureHeader`) — même gap constaté à l'audit
-          // design pré-publication Play Store.
+          // Cormorant Garamond (`AppTheme.titleText`) : même correctif que le
+          // sous-titre de l'en-tête de cet écran — même écart constaté à
+          // l'audit design pré-publication Play Store.
           ContentText(
             nameFrench,
             textAlign: TextAlign.center,
-            style: const TextStyle(fontFamily: AppFonts.titlesFr, fontSize: 12, color: AppColors.parchment),
+            style: AppTheme.titleText(fontSize: 12, fontWeight: FontWeight.normal, color: AppColors.parchment),
           ),
           const SizedBox(height: 2),
           // `goldOnDark` : même raison que `_SilsilaNode` (fond zaytoune).
@@ -2046,12 +2037,7 @@ class _BiographyParagraph extends StatelessWidget {
   /// Cormorant Garamond, police des titres français de la charte
   /// (`design_tokens.yaml` § titles_fr, « H1, H2 »), en émeraude pour se
   /// détacher de l'encre du texte courant.
-  static final _headingStyle = TextStyle(
-      fontFamily: AppFonts.titlesFr,
-      fontWeight: FontWeight.w600,
-      fontSize: 18,
-      letterSpacing: 0.4,
-      color: AppColors.emerald);
+  static final _headingStyle = AppTheme.titleText(fontSize: 18, letterSpacing: 0.4, color: AppColors.emerald);
 
   @override
   Widget build(BuildContext context) {

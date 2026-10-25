@@ -758,8 +758,9 @@ class _FeaturedFigureCard extends StatelessWidget {
                     children: [
                       ContentText(
                         figure.nameFrench,
-                        style: const TextStyle(
-                          fontFamily: AppFonts.titlesFr,
+                        // Cormorant Garamond : voir `AppTheme.titleText`
+                        // (le `fontFamily` d'avant n'était jamais appliqué).
+                        style: AppTheme.titleText(
                           fontWeight: FontWeight.w700,
                           fontSize: 26,
                           height: 1.05,

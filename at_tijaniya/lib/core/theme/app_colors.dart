@@ -85,6 +85,12 @@ class AppColors {
   static const offWhite = Color(0xFFFFFDF8);
 }
 
+/// Noms des trois familles de la charte, pour mémoire. Les polices sont
+/// chargées par `google_fonts`, qui les enregistre sous ses propres noms :
+/// ne jamais écrire `fontFamily: AppFonts.…` (le texte tomberait sans bruit
+/// sur la police par défaut), mais passer par `AppTheme.titleText`,
+/// `AppTheme.sacredText` ou le thème (Jost). Garde-fou :
+/// `test/font_family_usage_test.dart`.
 class AppFonts {
   AppFonts._();
 

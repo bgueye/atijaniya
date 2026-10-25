@@ -173,7 +173,9 @@ class SilsilaShareCard extends StatelessWidget {
                 Text(
                   l10n.mouqaddamChainTitle,
                   textAlign: TextAlign.center,
-                  style: const TextStyle(fontFamily: AppFonts.titlesFr, fontSize: 19, color: Colors.white),
+                  // Cormorant Garamond : voir `AppTheme.titleText` (le
+                  // `fontFamily` d'avant n'était jamais appliqué).
+                  style: AppTheme.titleText(fontSize: 19, fontWeight: FontWeight.normal, color: Colors.white),
                 ),
                 const SizedBox(height: 22),
                 Expanded(

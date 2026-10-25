@@ -161,4 +161,32 @@ class AppTheme {
   static TextStyle sacredText({double fontSize = 20, Color? color}) {
     return GoogleFonts.amiri(fontSize: fontSize, color: color, height: 1.8);
   }
+
+  /// Style des titres français et des noms de figures (Cormorant Garamond,
+  /// `design_tokens.yaml` § titles_fr). Jamais en texte courant.
+  ///
+  /// Passe par `google_fonts`, comme [sacredText] : ce paquet enregistre ses
+  /// polices sous ses propres noms de famille, et un simple
+  /// `fontFamily: 'CormorantGaramond'` (`AppFonts.titlesFr`) ne correspondait
+  /// à aucune police chargée — Flutter retombait sans bruit sur la police par
+  /// défaut. Six textes censés être en Cormorant (nom français de l'en-tête
+  /// d'une figure, intertitres de biographie, titre d'une œuvre, nœud
+  /// fondateur, carte « Figure de la semaine », carte de partage de la
+  /// silsila) s'affichaient ainsi en Jost, constaté sur émulateur le
+  /// 2026-10-25.
+  static TextStyle titleText({
+    double fontSize = 18,
+    Color? color,
+    FontWeight fontWeight = FontWeight.w600,
+    double? letterSpacing,
+    double? height,
+  }) {
+    return GoogleFonts.cormorantGaramond(
+      fontSize: fontSize,
+      color: color,
+      fontWeight: fontWeight,
+      letterSpacing: letterSpacing,
+      height: height,
+    );
+  }
 }
