@@ -3033,6 +3033,17 @@ class AppLocalizationsAr extends AppLocalizations {
   String get figuresNoneForFoyer => 'لا توجد شخصيات لهذا الفرع.';
 
   @override
+  String get figuresSearchHint => 'ابحث عن شخصية باسمها';
+
+  @override
+  String get figuresSearchClear => 'مسح البحث';
+
+  @override
+  String figuresSearchNoResult(String query) {
+    return 'لا توجد شخصية تطابق «$query».';
+  }
+
+  @override
   String figureDetailFoyer(String foyer) {
     return 'الفرع: $foyer';
   }

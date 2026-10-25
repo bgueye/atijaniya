@@ -5984,6 +5984,24 @@ abstract class AppLocalizations {
   /// **'Aucune figure pour ce foyer.'**
   String get figuresNoneForFoyer;
 
+  /// No description provided for @figuresSearchHint.
+  ///
+  /// In fr, this message translates to:
+  /// **'Rechercher une figure par son nom'**
+  String get figuresSearchHint;
+
+  /// No description provided for @figuresSearchClear.
+  ///
+  /// In fr, this message translates to:
+  /// **'Effacer la recherche'**
+  String get figuresSearchClear;
+
+  /// No description provided for @figuresSearchNoResult.
+  ///
+  /// In fr, this message translates to:
+  /// **'Aucune figure ne correspond à « {query} ».'**
+  String figuresSearchNoResult(String query);
+
   /// No description provided for @figureDetailFoyer.
   ///
   /// In fr, this message translates to:

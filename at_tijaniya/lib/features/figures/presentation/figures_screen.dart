@@ -8,6 +8,7 @@ import '../../../l10n/app_localizations.dart';
 import '../../lineage/domain/lineage_models.dart' show Foyer;
 import '../../lineage/presentation/foyer_label.dart';
 import '../domain/figure_models.dart';
+import '../domain/figure_search.dart';
 import 'featured_figure_admin_screen.dart';
 import 'figure_detail_screen.dart';
 import 'figure_form_screen.dart';
@@ -36,6 +37,11 @@ import '../../../core/widgets/content_text.dart';
 /// d'une figure était saisi par l'admin mais invisible pour le disciple, et
 /// 46 fiches sur 70 étaient en « Autre ». Seuls les foyers présents dans la
 /// liste sont proposés.
+///
+/// Recherche par nom au-dessus du filtre depuis l'audit Figures du
+/// 2026-10-25 (P2-1) : il fallait douze défilements pour atteindre certaines
+/// fiches. Elle se combine au foyer choisi ; la logique (normalisation,
+/// variantes de translittération) est dans `figure_search.dart`.
 class FiguresScreen extends ConsumerStatefulWidget {
   const FiguresScreen({super.key});
 
@@ -46,6 +52,14 @@ class FiguresScreen extends ConsumerStatefulWidget {
 class _FiguresScreenState extends ConsumerState<FiguresScreen> {
   /// Foyer choisi ; `null` : tous.
   Foyer? _foyer;
+
+  final _searchController = TextEditingController();
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -116,13 +130,19 @@ class _FiguresScreenState extends ConsumerState<FiguresScreen> {
               // modifiée entre-temps) revient à « Tous » plutôt qu'à une
               // liste vide sans puce sélectionnée.
               final foyer = foyers.contains(_foyer) ? _foyer : null;
-              final figures = filterFiguresByFoyer(allFigures, foyer);
+              final query = _searchController.text.trim();
+              final figures = searchFigures(filterFiguresByFoyer(allFigures, foyer), query);
               final founders = figures.where((f) => f.category == FigureCategory.founder).toList();
               final families = figures.where((f) => f.category == FigureCategory.religiousFamily).toList();
 
               return ListView(
                 padding: const EdgeInsets.all(16),
                 children: [
+                  _SearchField(
+                    controller: _searchController,
+                    onChanged: () => setState(() {}),
+                  ),
+                  const SizedBox(height: 12),
                   // Inutile de filtrer quand toutes les fiches ont le même
                   // foyer (ou aucun).
                   if (foyers.length > 1) ...[
@@ -136,7 +156,13 @@ class _FiguresScreenState extends ConsumerState<FiguresScreen> {
                   if (figures.isEmpty)
                     Padding(
                       padding: const EdgeInsets.symmetric(vertical: 32),
-                      child: Text(l10n.figuresNoneForFoyer, textAlign: TextAlign.center, style: TextStyle(color: AppColors.bronze)),
+                      // Une recherche sans résultat le dit, avec la saisie,
+                      // plutôt que de laisser croire que le foyer est vide.
+                      child: Text(
+                        query.isNotEmpty ? l10n.figuresSearchNoResult(query) : l10n.figuresNoneForFoyer,
+                        textAlign: TextAlign.center,
+                        style: TextStyle(color: AppColors.bronze),
+                      ),
                     ),
                   if (founders.isNotEmpty) ...[
                     _SectionHeader(title: l10n.figuresSectionFounders),
@@ -153,6 +179,40 @@ class _FiguresScreenState extends ConsumerState<FiguresScreen> {
           ),
         ),
       ],
+    );
+  }
+}
+
+/// Champ de recherche par nom, avec un bouton pour l'effacer dès qu'il
+/// contient du texte. [onChanged] reconstruit la liste à chaque frappe : les
+/// figures sont en mémoire, aucune requête n'est envoyée.
+class _SearchField extends StatelessWidget {
+  const _SearchField({required this.controller, required this.onChanged});
+
+  final TextEditingController controller;
+  final VoidCallback onChanged;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    return TextField(
+      controller: controller,
+      onChanged: (_) => onChanged(),
+      textInputAction: TextInputAction.search,
+      decoration: InputDecoration(
+        hintText: l10n.figuresSearchHint,
+        prefixIcon: const Icon(Icons.search),
+        suffixIcon: controller.text.isEmpty
+            ? null
+            : IconButton(
+                icon: const Icon(Icons.close),
+                tooltip: l10n.figuresSearchClear,
+                onPressed: () {
+                  controller.clear();
+                  onChanged();
+                },
+              ),
+      ),
     );
   }
 }

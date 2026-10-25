@@ -3066,6 +3066,17 @@ class AppLocalizationsFr extends AppLocalizations {
   String get figuresNoneForFoyer => 'Aucune figure pour ce foyer.';
 
   @override
+  String get figuresSearchHint => 'Rechercher une figure par son nom';
+
+  @override
+  String get figuresSearchClear => 'Effacer la recherche';
+
+  @override
+  String figuresSearchNoResult(String query) {
+    return 'Aucune figure ne correspond à « $query ».';
+  }
+
+  @override
   String figureDetailFoyer(String foyer) {
     return 'Foyer : $foyer';
   }
