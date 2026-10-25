@@ -6194,6 +6194,12 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'Réessayer le téléchargement'**
   String get wirdAudioPillarRetry;
+
+  /// No description provided for @wirdRecitationsValidateError.
+  ///
+  /// In fr, this message translates to:
+  /// **'Validation impossible — vérifiez votre connexion.'**
+  String get wirdRecitationsValidateError;
 }
 
 class _AppLocalizationsDelegate

@@ -3254,4 +3254,7 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get wirdAudioPillarRetry => 'إعادة محاولة التنزيل';
+
+  @override
+  String get wirdRecitationsValidateError => 'تعذّر التحقق — تحقّق من اتصالك.';
 }

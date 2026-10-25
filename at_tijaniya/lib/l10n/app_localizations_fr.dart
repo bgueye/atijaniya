@@ -3365,4 +3365,8 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get wirdAudioPillarRetry => 'Réessayer le téléchargement';
+
+  @override
+  String get wirdRecitationsValidateError =>
+      'Validation impossible — vérifiez votre connexion.';
 }

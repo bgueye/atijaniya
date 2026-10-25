@@ -1104,5 +1104,6 @@
   "wirdAudioPillarPlay": "الاستماع إلى هذا الركن",
   "wirdAudioPillarPause": "إيقاف مؤقت",
   "wirdAudioPillarDownload": "تنزيل هذا الركن والاستماع إليه",
-  "wirdAudioPillarRetry": "إعادة محاولة التنزيل"
+  "wirdAudioPillarRetry": "إعادة محاولة التنزيل",
+  "wirdRecitationsValidateError": "تعذّر التحقق — تحقّق من اتصالك."
 }

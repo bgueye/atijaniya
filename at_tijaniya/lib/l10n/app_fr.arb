@@ -1113,5 +1113,6 @@
   "wirdAudioPillarPlay": "Écouter ce pilier",
   "wirdAudioPillarPause": "Mettre en pause",
   "wirdAudioPillarDownload": "Télécharger et écouter ce pilier",
-  "wirdAudioPillarRetry": "Réessayer le téléchargement"
+  "wirdAudioPillarRetry": "Réessayer le téléchargement",
+  "wirdRecitationsValidateError": "Validation impossible — vérifiez votre connexion."
 }

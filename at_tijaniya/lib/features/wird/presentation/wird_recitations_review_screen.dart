@@ -23,6 +23,7 @@ import '../../../l10n/app_localizations.dart';
 import '../domain/wird_recitation.dart';
 import 'wird_recitation_providers.dart';
 import 'wird_recitations_management_screen.dart';
+import '../../../core/widgets/app_snackbar.dart';
 import '../../../core/widgets/content_text.dart';
 
 class WirdRecitationsReviewScreen extends ConsumerWidget {
@@ -117,6 +118,10 @@ class _DraftCardState extends ConsumerState<_DraftCard> {
   bool _isLoadingPreview = false;
   String? _previewError;
 
+  /// Validation en cours : les deux boutons sont désactivés pour éviter un
+  /// double envoi.
+  bool _busy = false;
+
   @override
   void dispose() {
     _previewPlayer.dispose();
@@ -189,16 +194,26 @@ class _DraftCardState extends ConsumerState<_DraftCard> {
     );
     if (confirmed != true || !context.mounted) return;
 
-    await ref
-        .read(wirdRecitationRepositoryProvider)
-        .validateRecitation(widget.draft.id);
-    ref.invalidate(draftWirdRecitationsProvider);
-
-    if (!context.mounted) return;
-    ScaffoldMessenger.of(context)
-      ..hideCurrentSnackBar()
-      ..showSnackBar(
-          SnackBar(content: Text(l10n.wirdRecitationsReviewSuccess)));
+    // Sans `try`, une erreur réseau devenait une exception non gérée : aucun
+    // message, et l'admin pouvait croire la récitation publiée (audits du
+    // 2026-10-04 et du 2026-10-25).
+    setState(() => _busy = true);
+    try {
+      await ref
+          .read(wirdRecitationRepositoryProvider)
+          .validateRecitation(widget.draft.id);
+      ref.invalidate(draftWirdRecitationsProvider);
+      if (!context.mounted) return;
+      ScaffoldMessenger.of(context)
+        ..hideCurrentSnackBar()
+        ..showSnackBar(
+            SnackBar(content: Text(l10n.wirdRecitationsReviewSuccess)));
+    } catch (_) {
+      if (!context.mounted) return;
+      showErrorSnackBar(context, l10n.wirdRecitationsValidateError);
+    } finally {
+      if (mounted) setState(() => _busy = false);
+    }
   }
 
   Future<void> _confirmAndDelete(BuildContext context) async {
@@ -293,7 +308,7 @@ class _DraftCardState extends ConsumerState<_DraftCard> {
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
                 TextButton.icon(
-                  onPressed: () => _confirmAndDelete(context),
+                  onPressed: _busy ? null : () => _confirmAndDelete(context),
                   icon: Icon(Icons.delete_outline,
                       size: 18, color: AppColors.bronze),
                   label: Text(widget.l10n.wirdRecitationsReviewDelete,
@@ -301,7 +316,7 @@ class _DraftCardState extends ConsumerState<_DraftCard> {
                 ),
                 const SizedBox(width: 8),
                 OutlinedButton.icon(
-                  onPressed: () => _confirmAndValidate(context),
+                  onPressed: _busy ? null : () => _confirmAndValidate(context),
                   icon: const Icon(Icons.check_circle_outline, size: 18),
                   label: Text(widget.l10n.wirdRecitationsReviewValidate),
                 ),

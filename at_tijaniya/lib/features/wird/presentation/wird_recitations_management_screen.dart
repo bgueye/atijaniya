@@ -25,6 +25,7 @@ import '../data/wirds_content.dart';
 import '../domain/wird_models.dart';
 import '../domain/wird_recitation.dart';
 import 'wird_recitation_providers.dart';
+import '../../../core/widgets/app_snackbar.dart';
 import '../../../core/widgets/content_text.dart';
 
 class WirdRecitationsManagementScreen extends ConsumerWidget {
@@ -165,6 +166,9 @@ class _RecitationEntryTileState extends ConsumerState<_RecitationEntryTile> {
   bool _isLoadingPreview = false;
   String? _previewError;
 
+  /// Validation en cours : bouton désactivé pour éviter un double envoi.
+  bool _validating = false;
+
   @override
   void dispose() {
     _previewPlayer.dispose();
@@ -214,11 +218,48 @@ class _RecitationEntryTileState extends ConsumerState<_RecitationEntryTile> {
     }
   }
 
+  /// Publie la récitation aux disciples. Même confirmation que l'écran de
+  /// review : ici, un seul toucher sur ✓ remplaçait l'audio entendu par tous,
+  /// et une erreur réseau passait sans message (audits du 2026-10-04 et du
+  /// 2026-10-25).
   Future<void> _validate() async {
-    await ref
-        .read(wirdRecitationRepositoryProvider)
-        .validateRecitation(widget.entry.id);
-    ref.invalidate(allWirdStepRecitationsProvider);
+    final l10n = widget.l10n;
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(l10n.wirdRecitationsReviewConfirmTitle),
+        content: Text(l10n.wirdRecitationsReviewConfirmBody),
+        actions: [
+          TextButton(
+              onPressed: () => Navigator.of(context).pop(false),
+              child: Text(l10n.wirdRecitationsReviewCancel)),
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(true),
+            child: Text(l10n.wirdRecitationsReviewConfirmAction,
+                style: TextStyle(color: AppColors.emerald)),
+          ),
+        ],
+      ),
+    );
+    if (confirmed != true || !mounted) return;
+
+    setState(() => _validating = true);
+    try {
+      await ref
+          .read(wirdRecitationRepositoryProvider)
+          .validateRecitation(widget.entry.id);
+      ref.invalidate(allWirdStepRecitationsProvider);
+      if (!mounted) return;
+      ScaffoldMessenger.of(context)
+        ..hideCurrentSnackBar()
+        ..showSnackBar(
+            SnackBar(content: Text(l10n.wirdRecitationsReviewSuccess)));
+    } catch (_) {
+      if (!mounted) return;
+      showErrorSnackBar(context, l10n.wirdRecitationsValidateError);
+    } finally {
+      if (mounted) setState(() => _validating = false);
+    }
   }
 
   Future<void> _confirmAndDelete() async {
@@ -315,7 +356,7 @@ class _RecitationEntryTileState extends ConsumerState<_RecitationEntryTile> {
                   icon: Icon(Icons.check_circle_outline,
                       color: AppColors.emerald),
                   tooltip: widget.l10n.wirdRecitationsManageValidate,
-                  onPressed: _validate,
+                  onPressed: _validating ? null : _validate,
                 ),
               IconButton(
                 icon: Icon(Icons.delete_outline, color: AppColors.bronze),
