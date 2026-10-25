@@ -418,6 +418,48 @@ void main() {
       expect(find.byType(FigureDetailScreen), findsOneWidget);
     });
 
+    // Audit Figures du 2026-10-25 (P3-1) : la silsila mène aussi aux fiches,
+    // sauf pour la figure consultée.
+    testWidgets('silsila : toucher un maillon ouvre sa fiche, pas celui de la figure consultée', (tester) async {
+      await tester.pumpWidget(_wrap(
+        const FigureDetailScreen(figure: current),
+        overrides: [
+          // Dépôt factice : `figuresProvider`, que rien n'écoute sur cette
+          // fiche, se lit encore « en chargement » au moment du toucher.
+          figuresRepositoryProvider.overrideWithValue(_FakeFiguresRepository((_) async => target)),
+          historicalSilsilaChainProvider('test-current').overrideWith((ref) async => const [
+                HistoricalSilsilaLink(
+                  figureId: 'test-target',
+                  nameAr: 'الهدف',
+                  nameFr: 'Maillon cible',
+                  category: FigureCategory.religiousFamily,
+                  orderIndex: 0,
+                ),
+                HistoricalSilsilaLink(
+                  figureId: 'test-current',
+                  nameAr: 'اسم تجريبي',
+                  nameFr: 'Figure consultée',
+                  category: FigureCategory.religiousFamily,
+                  orderIndex: 1,
+                ),
+              ]),
+        ],
+      ));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Silsila'));
+      await tester.pumpAndSettle();
+
+      // La figure consultée : aucun effet.
+      await tester.tap(find.text('Figure consultée').last);
+      await tester.pumpAndSettle();
+      expect(find.byType(FigureDetailScreen), findsOneWidget);
+
+      await tester.tap(find.text('Maillon cible'));
+      await tester.pumpAndSettle();
+      expect(find.byType(FigureDetailScreen, skipOffstage: false), findsNWidgets(2));
+      expect(find.text('MAILLON CIBLE'), findsOneWidget);
+    });
+
     testWidgets('double toucher pendant le chargement : une seule fiche ouverte', (tester) async {
       final pending = Completer<Figure>();
       final repository = _FakeFiguresRepository((_) => pending.future);

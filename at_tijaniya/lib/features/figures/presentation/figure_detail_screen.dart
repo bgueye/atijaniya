@@ -849,7 +849,10 @@ class _SilsilaConnector extends StatelessWidget {
 /// Cheikh Ahmed Tijani dans les données actuelles — voir la migration
 /// `add_historical_silsila_chain_data_and_function`), bordure dorée pour la
 /// figure actuellement consultée.
-class _SilsilaNode extends StatelessWidget {
+///
+/// Toucher → fiche du maillon, comme pour une succession (audit Figures du
+/// 2026-10-25, P3-1) ; sans effet sur la figure consultée.
+class _SilsilaNode extends ConsumerStatefulWidget {
   const _SilsilaNode(
       {required this.link, required this.isSelf, required this.founderLabel});
 
@@ -858,16 +861,36 @@ class _SilsilaNode extends StatelessWidget {
   final String founderLabel;
 
   @override
+  ConsumerState<_SilsilaNode> createState() => _SilsilaNodeState();
+}
+
+class _SilsilaNodeState extends ConsumerState<_SilsilaNode> with _OpensFigureDetail<_SilsilaNode> {
+  @override
   Widget build(BuildContext context) {
+    final link = widget.link;
+    final isSelf = widget.isSelf;
+    final founderLabel = widget.founderLabel;
     final isRoot = link.orderIndex == 0;
+    // `Material` coloré sous l'`InkWell` (et non un `Container` coloré
+    // au-dessus) : l'effet de toucher reste visible sur le fond du nœud.
+    return Material(
+      color: isRoot ? AppColors.zaytoune : AppColors.offWhite,
+      clipBehavior: Clip.antiAlias,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12),
+        side: isSelf ? BorderSide(color: AppColors.gold, width: 2) : BorderSide.none,
+      ),
+      child: InkWell(
+        onTap: isSelf ? null : () => openFigureDetail(link.figureId),
+        child: _nodeContent(link, isRoot, founderLabel),
+      ),
+    );
+  }
+
+  Widget _nodeContent(HistoricalSilsilaLink link, bool isRoot, String founderLabel) {
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-      decoration: BoxDecoration(
-        color: isRoot ? AppColors.zaytoune : AppColors.offWhite,
-        borderRadius: BorderRadius.circular(12),
-        border: isSelf ? Border.all(color: AppColors.gold, width: 2) : null,
-      ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
@@ -1926,21 +1949,26 @@ class _KhalifaNode extends ConsumerStatefulWidget {
   ConsumerState<_KhalifaNode> createState() => _KhalifaNodeState();
 }
 
-class _KhalifaNodeState extends ConsumerState<_KhalifaNode> {
+/// Ouverture de la fiche d'une figure connue seulement par son identifiant
+/// (maillon de succession ou de silsila), partagée par `_KhalifaNode` et
+/// `_SilsilaNode`. La figure est cherchée d'abord dans `figuresProvider`
+/// déjà chargé, sinon rechargée par `fetchFigureById` (cas d'un maillon en
+/// brouillon, visible seulement par un admin).
+mixin _OpensFigureDetail<T extends ConsumerStatefulWidget> on ConsumerState<T> {
   /// Vrai du toucher jusqu'à la fermeture de la fiche ouverte : un second
   /// toucher (double toucher, ou pendant le chargement ou l'animation
   /// d'ouverture) ouvrait une seconde fiche (audit Figures du 2026-10-25,
   /// P2-7).
   bool _opening = false;
 
-  Future<void> _openKhalifaDetail() async {
+  Future<void> openFigureDetail(String figureId) async {
     if (_opening) return;
     final l10n = AppLocalizations.of(context)!;
     setState(() => _opening = true);
     try {
       Figure? figure;
       for (final candidate in ref.read(figuresProvider).valueOrNull ?? const <Figure>[]) {
-        if (candidate.id == widget.link.khalifaFigureId) {
+        if (candidate.id == figureId) {
           figure = candidate;
           break;
         }
@@ -1949,7 +1977,7 @@ class _KhalifaNodeState extends ConsumerState<_KhalifaNode> {
       // dépubliée depuis le chargement (`.single()` sans ligne), ou une
       // coupure réseau, faisait échouer le toucher en silence.
       try {
-        figure ??= await ref.read(figuresRepositoryProvider).fetchFigureById(widget.link.khalifaFigureId);
+        figure ??= await ref.read(figuresRepositoryProvider).fetchFigureById(figureId);
       } catch (error) {
         if (mounted) {
           showErrorSnackBar(context, isFigureUnavailableError(error) ? l10n.figureUnavailable : l10n.figuresLoadError);
@@ -1962,7 +1990,9 @@ class _KhalifaNodeState extends ConsumerState<_KhalifaNode> {
       if (mounted) setState(() => _opening = false);
     }
   }
+}
 
+class _KhalifaNodeState extends ConsumerState<_KhalifaNode> with _OpensFigureDetail<_KhalifaNode> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
@@ -1973,7 +2003,7 @@ class _KhalifaNodeState extends ConsumerState<_KhalifaNode> {
     final onRemove = widget.onRemove;
     return InkWell(
       borderRadius: BorderRadius.circular(12),
-      onTap: isCurrent ? null : _openKhalifaDetail,
+      onTap: isCurrent ? null : () => openFigureDetail(link.khalifaFigureId),
       child: Container(
         width: double.infinity,
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
