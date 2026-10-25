@@ -97,7 +97,13 @@ class WirdAudioController extends StateNotifier<WirdAudioState> {
   /// besoin, docs/decision-gestion-audio-wirds.md §4), ou reprend/suspend la
   /// piste en cours si c'est déjà celle-là.
   Future<void> playPillar(int index) async {
-    if (index == state.activePillarIndex) {
+    // Reprise/pause seulement si la piste de ce pilier est bien sur
+    // l'appareil. Après un téléchargement en échec, le pilier restait
+    // « actif » : le toucher de nouveau basculait lecture/pause sur un lecteur
+    // sans piste (ou sur celle du pilier précédent) au lieu de retenter le
+    // téléchargement (audits du 2026-10-04 et du 2026-10-25).
+    if (index == state.activePillarIndex &&
+        _pillarAudio[index]?.availability == PillarAudioAvailability.downloaded) {
       await togglePlayPause();
       return;
     }
