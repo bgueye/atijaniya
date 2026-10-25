@@ -67,6 +67,10 @@ class _WirdDetailScreenState extends ConsumerState<WirdDetailScreen> {
         ScaffoldMessenger.of(context)
           ..hideCurrentSnackBar()
           ..showSnackBar(SnackBar(content: Text(wirdMessage(AppLocalizations.of(context)!, next.errorMessage!))));
+        // Message consommé : la même erreur pourra s'afficher de nouveau.
+        // Différé, pour ne pas modifier l'état pendant sa notification.
+        final controller = ref.read(wirdAudioControllerProvider(wird).notifier);
+        Future.microtask(controller.clearError);
       }
     });
 

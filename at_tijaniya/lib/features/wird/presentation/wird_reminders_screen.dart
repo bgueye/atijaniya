@@ -50,6 +50,8 @@ class WirdRemindersScreen extends ConsumerWidget {
         ScaffoldMessenger.of(context)
           ..hideCurrentSnackBar()
           ..showSnackBar(SnackBar(content: Text(wirdMessage(AppLocalizations.of(context)!, next.errorMessage!))));
+        // Message consommé, voir `wird_detail_screen.dart`.
+        Future.microtask(controller.clearError);
       }
     });
 

@@ -96,6 +96,13 @@ class WirdReminderController extends StateNotifier<WirdReminderState> {
     await _applyAndPersist(slot, current.copyWith(enabled: enabled));
   }
 
+  /// Efface le message d'erreur une fois affiché — voir
+  /// `WirdAudioController.clearError` : un second refus de la permission
+  /// n'était plus signalé.
+  void clearError() {
+    if (mounted && state.errorMessage != null) state = state.copyWith(clearError: true);
+  }
+
   Future<void> setTime(String slotId, int hour, int minute) async {
     final slot = slots.firstWhere((s) => s.id == slotId);
     final current = state.settings[slotId] ?? WirdReminderSetting.defaultFor(slot);

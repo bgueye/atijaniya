@@ -75,6 +75,23 @@ void main() {
   setUp(() => SharedPreferences.setMockInitialValues({}));
   final lazim = validatedWirds.firstWhere((w) => w.id == 'lazim');
 
+  testWidgets('la même erreur s’affiche à chaque toucher, pas seulement la première fois', (tester) async {
+    final l10n = lookupAppLocalizations(const Locale('fr'));
+    await tester.pumpWidget(_wrap(WirdDetailScreen(wird: lazim), locale: const Locale('fr'), offline: false));
+    await tester.pumpAndSettle();
+
+    for (var attempt = 1; attempt <= 2; attempt++) {
+      await tester.tap(find.byTooltip(l10n.a11yPlayPause));
+      await tester.pump();
+      expect(find.text(l10n.wirdAudioWirdUnavailable), findsOneWidget, reason: 'toucher n° $attempt');
+      // Retire le message avant le toucher suivant : le second ne peut alors
+      // venir que d'une nouvelle annonce de l'erreur.
+      ScaffoldMessenger.of(tester.element(find.byType(Scaffold).first)).removeCurrentSnackBar();
+      await tester.pumpAndSettle();
+      expect(find.text(l10n.wirdAudioWirdUnavailable), findsNothing);
+    }
+  });
+
   for (final locale in const [Locale('fr'), Locale('ar')]) {
     final l10n = lookupAppLocalizations(locale);
 

@@ -185,6 +185,14 @@ class WirdAudioController extends StateNotifier<WirdAudioState> {
     }
   }
 
+  /// Efface le message d'erreur une fois affiché : sans cela, la même erreur
+  /// posée une seconde fois (deux touchers sur « Lire » sans récitation)
+  /// ne changeait pas l'état et n'était plus affichée (audit du 2026-10-25,
+  /// P2-3).
+  void clearError() {
+    if (mounted && state.errorMessage != null) state = state.copyWith(clearError: true);
+  }
+
   Future<void> seek(Duration position) => _service.seek(position);
 
   Future<void> playNext() => _jumpRelative(1);
