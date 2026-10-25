@@ -946,6 +946,17 @@ class AppLocalizationsFr extends AppLocalizations {
   String get khadaraNoPlacesForFilter => 'Aucun lieu de ce type pour le moment.';
 
   @override
+  String get khadaraSearchHint => 'Rechercher un lieu, une ville, un pays';
+
+  @override
+  String get khadaraSearchClear => 'Effacer la recherche';
+
+  @override
+  String khadaraSearchNoResult(String query) {
+    return 'Aucun lieu ne correspond à « $query ».';
+  }
+
+  @override
   String get khadaraUnderstandingTooltip => 'Comprendre la Zawiya';
 
   @override

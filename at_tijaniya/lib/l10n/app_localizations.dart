@@ -1904,6 +1904,24 @@ abstract class AppLocalizations {
   /// **'Aucun lieu de ce type pour le moment.'**
   String get khadaraNoPlacesForFilter;
 
+  /// No description provided for @khadaraSearchHint.
+  ///
+  /// In fr, this message translates to:
+  /// **'Rechercher un lieu, une ville, un pays'**
+  String get khadaraSearchHint;
+
+  /// No description provided for @khadaraSearchClear.
+  ///
+  /// In fr, this message translates to:
+  /// **'Effacer la recherche'**
+  String get khadaraSearchClear;
+
+  /// No description provided for @khadaraSearchNoResult.
+  ///
+  /// In fr, this message translates to:
+  /// **'Aucun lieu ne correspond à « {query} ».'**
+  String khadaraSearchNoResult(String query);
+
   /// No description provided for @khadaraUnderstandingTooltip.
   ///
   /// In fr, this message translates to:

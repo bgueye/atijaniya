@@ -7,6 +7,7 @@ import '../../../core/widgets/empty_notice.dart';
 import '../../../core/url/safe_url.dart';
 import '../../../l10n/app_localizations.dart';
 import '../domain/khadara_models.dart';
+import '../domain/zawiya_search.dart';
 import 'event_detail_screen.dart';
 import 'event_form_screen.dart';
 import 'khadara_format.dart';
@@ -19,6 +20,7 @@ import 'zawiya_detail_screen.dart';
 import 'zawiya_form_screen.dart';
 import '../../../core/widgets/directional_chevron.dart';
 import '../../../core/widgets/content_text.dart';
+import '../../../core/widgets/list_search_field.dart';
 
 /// Module Khadara — calendrier des évènements et annuaire des zawiyas.
 /// Priorité P1 (docs/03-architecture-ecrans.md). Nom de code inchangé,
@@ -207,12 +209,23 @@ class _ZawiyasTabState extends ConsumerState<_ZawiyasTab> {
   /// `null` = tous les types.
   ZawiyaKind? _kindFilter;
 
+  /// Recherche dans les noms et les adresses (audit Zawiyas du 2026-10-25,
+  /// P2-1), combinée au filtre par type ; voir `zawiya_search.dart`.
+  final _searchController = TextEditingController();
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     final kindFilter = _kindFilter;
+    final query = _searchController.text.trim();
     final zawiyas = ref.watch(zawiyasProvider).whenData(
-          (all) => kindFilter == null ? all : all.where((z) => z.kind == kindFilter).toList(),
+          (all) => searchZawiyas(kindFilter == null ? all : all.where((z) => z.kind == kindFilter).toList(), query),
         );
     final canManage = ref.watch(canManageZawiyasProvider);
     final filterLabels = <ZawiyaKind?, String>{
@@ -235,6 +248,15 @@ class _ZawiyasTabState extends ConsumerState<_ZawiyasTab> {
           : null,
       body: Column(
         children: [
+          Padding(
+            padding: const EdgeInsets.fromLTRB(16, 12, 16, 0),
+            child: ListSearchField(
+              controller: _searchController,
+              onChanged: () => setState(() {}),
+              hint: l10n.khadaraSearchHint,
+              clearTooltip: l10n.khadaraSearchClear,
+            ),
+          ),
           // Les quatre puces tiennent toujours sur une seule ligne, centrée
           // (demande du porteur de projet après essai sur téléphone le
           // 2026-10-01 : une rangée défilante laissait "Mosquées" dépasser du
@@ -273,7 +295,13 @@ class _ZawiyasTabState extends ConsumerState<_ZawiyasTab> {
           Expanded(
             child: _AsyncSection<Zawiya>(
               value: zawiyas,
-              emptyMessage: kindFilter == null ? l10n.khadaraNoZawiyas : l10n.khadaraNoPlacesForFilter,
+              // Une recherche sans résultat le dit, avec la saisie, plutôt que
+              // de laisser croire que l'annuaire ou le type est vide.
+              emptyMessage: query.isNotEmpty
+                  ? l10n.khadaraSearchNoResult(query)
+                  : kindFilter == null
+                      ? l10n.khadaraNoZawiyas
+                      : l10n.khadaraNoPlacesForFilter,
               onRetry: () => ref.invalidate(zawiyasProvider),
               padding: const EdgeInsets.fromLTRB(16, 12, 16, 88),
               itemBuilder: (context, zawiya) {

@@ -942,6 +942,17 @@ class AppLocalizationsAr extends AppLocalizations {
   String get khadaraNoPlacesForFilter => 'لا يوجد مكان من هذا النوع حاليًا.';
 
   @override
+  String get khadaraSearchHint => 'ابحث عن مكان أو مدينة أو بلد';
+
+  @override
+  String get khadaraSearchClear => 'مسح البحث';
+
+  @override
+  String khadaraSearchNoResult(String query) {
+    return 'لا يوجد مكان يطابق «$query».';
+  }
+
+  @override
   String get khadaraUnderstandingTooltip => 'فهم الزاوية';
 
   @override

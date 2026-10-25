@@ -18,6 +18,7 @@ import 'figures_review_screen.dart';
 import '../../profil/presentation/profile_providers.dart';
 import '../../../core/widgets/directional_chevron.dart';
 import '../../../core/widgets/content_text.dart';
+import '../../../core/widgets/list_search_field.dart';
 
 /// Liste des figures — fondateurs et familles religieuses. Priorité P1
 /// (docs/03-architecture-ecrans.md).
@@ -155,9 +156,11 @@ class _FiguresScreenState extends ConsumerState<FiguresScreen> {
                   physics: const AlwaysScrollableScrollPhysics(),
                   padding: const EdgeInsets.all(16),
                   children: [
-                    _SearchField(
+                    ListSearchField(
                       controller: _searchController,
                       onChanged: () => setState(() {}),
+                      hint: l10n.figuresSearchHint,
+                      clearTooltip: l10n.figuresSearchClear,
                     ),
                     const SizedBox(height: 12),
                     // Inutile de filtrer quand toutes les fiches ont le même
@@ -197,40 +200,6 @@ class _FiguresScreenState extends ConsumerState<FiguresScreen> {
           ),
         ),
       ],
-    );
-  }
-}
-
-/// Champ de recherche par nom, avec un bouton pour l'effacer dès qu'il
-/// contient du texte. [onChanged] reconstruit la liste à chaque frappe : les
-/// figures sont en mémoire, aucune requête n'est envoyée.
-class _SearchField extends StatelessWidget {
-  const _SearchField({required this.controller, required this.onChanged});
-
-  final TextEditingController controller;
-  final VoidCallback onChanged;
-
-  @override
-  Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
-    return TextField(
-      controller: controller,
-      onChanged: (_) => onChanged(),
-      textInputAction: TextInputAction.search,
-      decoration: InputDecoration(
-        hintText: l10n.figuresSearchHint,
-        prefixIcon: const Icon(Icons.search),
-        suffixIcon: controller.text.isEmpty
-            ? null
-            : IconButton(
-                icon: const Icon(Icons.close),
-                tooltip: l10n.figuresSearchClear,
-                onPressed: () {
-                  controller.clear();
-                  onChanged();
-                },
-              ),
-      ),
     );
   }
 }
