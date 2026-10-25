@@ -553,7 +553,12 @@ class _FigureHero extends StatelessWidget {
                     Text(
                       AppLocalizations.of(context)!.figureDetailFoyer(foyerLabel(figure.foyer!, AppLocalizations.of(context)!)),
                       textAlign: TextAlign.center,
-                      style: TextStyle(color: AppColors.gold, fontSize: 13, fontWeight: FontWeight.w500),
+                      // `goldSoft`, comme le nom arabe au-dessus (audit
+                      // Figures du 2026-10-25) : ce texte tombe sur le bas
+                      // émeraude du dégradé, où l'or standard ne donne que
+                      // 2,59:1 (2,03:1 en mode renforcé) ; `goldSoft` y
+                      // atteint 5,00:1 et ne varie pas avec le mode renforcé.
+                      style: const TextStyle(color: AppColors.goldSoft, fontSize: 13, fontWeight: FontWeight.w500),
                     ),
                   ],
                 ],
@@ -877,10 +882,12 @@ class _SilsilaNode extends StatelessWidget {
           ),
           if (isRoot) ...[
             const SizedBox(height: 2),
+            // `goldOnDark` : nœud racine sur zaytoune, où l'or renforcé
+            // tombait à 2,41:1 (audit Figures du 2026-10-25).
             ContentText(founderLabel,
-                style: TextStyle(
+                style: const TextStyle(
                     fontSize: 10,
-                    color: AppColors.gold,
+                    color: AppColors.goldOnDark,
                     fontWeight: FontWeight.w600)),
           ],
         ],
@@ -1870,7 +1877,9 @@ class _FounderNode extends StatelessWidget {
             style: const TextStyle(fontFamily: AppFonts.titlesFr, fontSize: 12, color: AppColors.parchment),
           ),
           const SizedBox(height: 2),
-          ContentText(founderLabel, style: TextStyle(fontSize: 10, color: AppColors.gold, fontWeight: FontWeight.w600)),
+          // `goldOnDark` : même raison que `_SilsilaNode` (fond zaytoune).
+          ContentText(founderLabel,
+              style: const TextStyle(fontSize: 10, color: AppColors.goldOnDark, fontWeight: FontWeight.w600)),
         ],
       ),
     );

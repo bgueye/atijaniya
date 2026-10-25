@@ -9,10 +9,12 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 
+import 'package:at_tijaniya/core/theme/app_colors.dart';
 import 'package:at_tijaniya/features/figures/domain/figure_models.dart';
 import 'package:at_tijaniya/features/figures/presentation/figure_detail_screen.dart';
 import 'package:at_tijaniya/features/figures/presentation/figures_providers.dart';
 import 'package:at_tijaniya/features/khadara/domain/khadara_models.dart';
+import 'package:at_tijaniya/features/lineage/domain/lineage_models.dart' show Foyer;
 import 'package:at_tijaniya/features/profil/presentation/profile_providers.dart';
 import 'package:at_tijaniya/l10n/app_localizations.dart';
 
@@ -158,6 +160,52 @@ void main() {
     // ... et le premier paragraphe commence sous eux, pas dessous : c'est le
     // rôle du `SliverOverlapInjector`.
     expect(tester.getRect(firstParagraph).top, greaterThanOrEqualTo(tabBarRect.bottom));
+  });
+
+  // Audit Figures du 2026-10-25 (P1) : en mode renforcé, l'or assombri
+  // (pensé pour les fonds clairs) tombait à 2,03:1 sur le bas émeraude de
+  // l'en-tête et à 2,41:1 sur zaytoune. Le foyer passe à `goldSoft`, la
+  // mention « Fondateur » à `goldOnDark`, deux couleurs fixes.
+  testWidgets('FigureDetailScreen garde le foyer et « Fondateur » lisibles sur fond vert en mode renforcé',
+      (tester) async {
+    AppColors.setHighContrast(true);
+    addTearDown(() => AppColors.setHighContrast(false));
+
+    const figure = Figure(
+      id: 'test-figure-contrast',
+      nameArabic: 'اسم تجريبي',
+      nameFrench: 'Figure contrastée',
+      category: FigureCategory.founder,
+      foyer: Foyer.fes,
+    );
+    const succession = ZawiyaSuccession(
+      zawiyaId: 'z1',
+      zawiyaName: 'Zawiya de test',
+      role: SuccessionRole.khalife,
+      founderFigureId: 'test-figure-contrast',
+      founderNameAr: 'المؤسس التجريبي',
+      founderNameFr: 'Fondateur de test',
+      links: [],
+    );
+
+    await tester.pumpWidget(_wrap(
+      const FigureDetailScreen(figure: figure),
+      overrides: [
+        linkedEventsForFigureProvider('test-figure-contrast').overrideWith((ref) async => []),
+        linkedZawiyasForFigureProvider('test-figure-contrast').overrideWith((ref) async => []),
+        successionsForFigureProvider('test-figure-contrast').overrideWith((ref) async => [succession]),
+      ],
+    ));
+    await tester.pumpAndSettle();
+
+    Color? colorOf(Finder finder) => tester.widget<Text>(finder).style?.color;
+
+    expect(colorOf(find.textContaining('Foyer : ')), AppColors.goldSoft);
+
+    await tester.tap(find.text('Zawiya'));
+    await tester.pumpAndSettle();
+    await tester.scrollUntilVisible(find.text('Fondateur'), 200, scrollable: find.byType(Scrollable).last);
+    expect(colorOf(find.text('Fondateur')), AppColors.goldOnDark);
   });
 
   // Succession rangée par zawiya + rôle (migration
