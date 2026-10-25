@@ -445,6 +445,7 @@
   "figureCitationsSectionTitle": "أقوال",
   "figureZawiyaSectionTitle": "الزاوية",
   "figureBiographyPending": "السيرة قيد التحقق من صحتها.",
+  "figureBiographyFrenchOnly": "هذه السيرة متوفرة بالفرنسية فقط حاليا.",
   "figureSilsilaPending": "السلسلة التاريخية لهذه الشخصية غير متوفرة بعد.",
   "figureSilsilaLoadError": "تعذّر تحميل السلسلة التاريخية.",
   "figureSilsilaFounderLabel": "مؤسس الطريقة",

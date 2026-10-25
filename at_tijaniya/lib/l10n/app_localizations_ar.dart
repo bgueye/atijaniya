@@ -1183,6 +1183,9 @@ class AppLocalizationsAr extends AppLocalizations {
   String get figureBiographyPending => 'السيرة قيد التحقق من صحتها.';
 
   @override
+  String get figureBiographyFrenchOnly => 'هذه السيرة متوفرة بالفرنسية فقط حاليا.';
+
+  @override
   String get figureSilsilaPending => 'السلسلة التاريخية لهذه الشخصية غير متوفرة بعد.';
 
   @override

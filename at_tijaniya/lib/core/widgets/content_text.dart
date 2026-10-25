@@ -41,12 +41,16 @@ bool _isLeftToRightLetter(int rune) =>
 /// une liste en arabe, seul l'ordre de ses caractères est corrigé.
 ///
 /// À utiliser pour tout texte qui n'est pas un libellé traduit (`l10n`).
+///
+/// Exception, sur demande seulement ([alignToContent]) : un long texte de
+/// lecture s'aligne sur le début de son propre sens d'écriture.
 class ContentText extends StatelessWidget {
   const ContentText(
     this.data, {
     super.key,
     this.style,
     this.textAlign,
+    this.alignToContent = false,
     this.maxLines,
     this.overflow,
     this.softWrap,
@@ -60,6 +64,15 @@ class ContentText extends StatelessWidget {
   final String data;
   final TextStyle? style;
   final TextAlign? textAlign;
+
+  /// Vrai : « début » et « fin » suivent le sens du contenu, pas celui de
+  /// l'interface. Réservé aux paragraphes de lecture longs, biographies et
+  /// citations : de longs paragraphes français rangés à droite dans
+  /// l'interface en arabe laissaient un bord gauche en dents de scie, pénible
+  /// à lire (audit Figures du 2026-10-25, P2-3 ; exception validée par le
+  /// porteur de projet le même jour). Un nom, un titre ou une ligne de liste
+  /// garde l'alignement de l'interface, pour rester rangé avec ses voisins.
+  final bool alignToContent;
   final int? maxLines;
   final TextOverflow? overflow;
   final bool? softWrap;
@@ -78,7 +91,7 @@ class ContentText extends StatelessWidget {
     // diffère de celui de l'interface, on les fige sur le côté que l'interface
     // aurait choisi, pour ne pas faire sauter le texte de l'autre côté.
     var align = textAlign;
-    if (direction != ambient) {
+    if (direction != ambient && !alignToContent) {
       final requested = textAlign ?? DefaultTextStyle.of(context).textAlign ?? TextAlign.start;
       final ambientRtl = ambient == TextDirection.rtl;
       if (requested == TextAlign.start) {

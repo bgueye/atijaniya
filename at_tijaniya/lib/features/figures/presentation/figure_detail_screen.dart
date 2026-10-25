@@ -642,8 +642,19 @@ class _BiographyTab extends StatelessWidget {
     if (biography == null || biography.isEmpty) {
       return _PendingTab(message: l10n.figureBiographyPending);
     }
+    // Les biographies n'existent qu'en français : l'interface en arabe le
+    // dit en tête d'onglet, comme « Bienfaits de la Tijaniyya » (audit
+    // Figures du 2026-10-25, P2-3). Seulement si le texte est bien latin,
+    // pour ne rien affirmer de faux le jour où une biographie arabe existera.
+    final first = biography.first;
+    final showFrenchOnly = Directionality.of(context) == TextDirection.rtl &&
+        contentDirection(first.heading ?? first.translation) == TextDirection.ltr;
     return _TabScrollView(
       children: [
+        if (showFrenchOnly) ...[
+          Text(l10n.figureBiographyFrenchOnly, style: TextStyle(color: AppColors.secondaryInk, fontSize: 13.5)),
+          const SizedBox(height: 12),
+        ],
         for (final paragraph in biography)
           _BiographyParagraph(paragraph: paragraph)
       ],
@@ -2008,7 +2019,12 @@ class _BiographyParagraph extends StatelessWidget {
             // parfois 8 000 caractères.
             Padding(
               padding: const EdgeInsets.only(top: 8),
-              child: Semantics(header: true, child: ContentText(heading, style: _headingStyle)),
+              // `alignToContent` (ici et plus bas) : dans l'interface en
+              // arabe, la biographie française se range à gauche, sur le
+              // début de ses lignes, et non à droite comme les libellés
+              // (audit Figures du 2026-10-25, P2-3). Le titre suit son
+              // paragraphe.
+              child: Semantics(header: true, child: ContentText(heading, alignToContent: true, style: _headingStyle)),
             ),
             if (paragraph.translation.isNotEmpty) const SizedBox(height: 6),
           ],
@@ -2024,6 +2040,7 @@ class _BiographyParagraph extends StatelessWidget {
           if (paragraph.transliteration != null) ...[
             ContentText(
               paragraph.transliteration!,
+              alignToContent: true,
               style: TextStyle(
                   fontStyle: FontStyle.italic,
                   fontSize: 15,
@@ -2033,6 +2050,7 @@ class _BiographyParagraph extends StatelessWidget {
           ],
           if (paragraph.translation.isNotEmpty)
             ContentText(paragraph.translation,
+                alignToContent: true,
                 style: const TextStyle(color: AppColors.ink, fontSize: 16)),
         ],
       ),
@@ -2081,9 +2099,13 @@ class _CitationCard extends StatelessWidget {
             ),
             const SizedBox(height: 6),
           ],
+          // `alignToContent` : même exception que les paragraphes de
+          // biographie (audit Figures du 2026-10-25, P2-3), source comprise
+          // pour qu'elle reste rangée sous sa citation.
           if (citation.transliteration != null) ...[
             ContentText(
               citation.transliteration!,
+              alignToContent: true,
               style: TextStyle(
                   fontStyle: FontStyle.italic,
                   fontSize: 15,
@@ -2095,11 +2117,13 @@ class _CitationCard extends StatelessWidget {
           // le répète pas à la place de la traduction.
           if (citation.french != null || citation.arabic == null) ...[
             ContentText(citation.translation,
+                alignToContent: true,
                 style: const TextStyle(color: AppColors.ink, fontSize: 16)),
             const SizedBox(height: 8),
           ],
           ContentText(
             '— ${citation.source}',
+            alignToContent: true,
             style: TextStyle(
                 color: AppColors.bronze,
                 fontSize: 12,

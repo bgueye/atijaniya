@@ -1191,6 +1191,9 @@ class AppLocalizationsFr extends AppLocalizations {
   String get figureBiographyPending => 'Biographie en attente de validation.';
 
   @override
+  String get figureBiographyFrenchOnly => 'Cette biographie n\'existe qu\'en français pour l\'instant.';
+
+  @override
   String get figureSilsilaPending => 'La silsila historique de cette figure n\'est pas encore disponible.';
 
   @override

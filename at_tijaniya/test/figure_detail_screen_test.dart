@@ -27,7 +27,12 @@ import 'package:at_tijaniya/l10n/app_localizations.dart';
 // et qui appelleraient sinon FiguresRepository (réseau) sans surcharge —
 // aucun des quatre n'a de rapport avec ce que ce fichier vérifie (rendu de
 // la biographie/citations/évènement lié).
-Widget _wrap(Widget child, {List<Override> overrides = const [], double textScale = 1.0}) {
+Widget _wrap(
+  Widget child, {
+  List<Override> overrides = const [],
+  double textScale = 1.0,
+  Locale locale = const Locale('fr'),
+}) {
   return ProviderScope(
     overrides: [isAdminProvider.overrideWithValue(false), ...overrides],
     child: MaterialApp(
@@ -37,7 +42,7 @@ Widget _wrap(Widget child, {List<Override> overrides = const [], double textScal
         data: MediaQuery.of(context).copyWith(textScaler: TextScaler.linear(textScale)),
         child: child!,
       ),
-      locale: const Locale('fr'),
+      locale: locale,
       supportedLocales: const [Locale('fr'), Locale('ar')],
       localizationsDelegates: const [
         AppLocalizations.delegate,
@@ -128,6 +133,33 @@ void main() {
       isSemantics(label: 'Texte sous le premier titre.', isHeader: false),
     );
     semantics.dispose();
+  });
+
+  // Audit Figures du 2026-10-25 (P2-3) : en interface arabe, la biographie
+  // française se range sur le début de ses lignes (à gauche) et l'onglet
+  // précise qu'elle n'existe qu'en français. Rien de tel en français.
+  testWidgets('FigureDetailScreen en arabe : biographie française rangée à gauche, avec la mention',
+      (tester) async {
+    const figure = Figure(
+      id: 'test-figure-ar',
+      nameArabic: 'اسم تجريبي',
+      nameFrench: 'Figure en arabe',
+      category: FigureCategory.founder,
+      biography: [FigureBiographyParagraph(translation: 'Paragraphe biographique de test.')],
+    );
+
+    await tester.pumpWidget(_wrap(const FigureDetailScreen(figure: figure), locale: const Locale('ar')));
+    await tester.pumpAndSettle();
+
+    expect(find.text('هذه السيرة متوفرة بالفرنسية فقط حاليا.'), findsOneWidget);
+    final paragraph = tester.widget<Text>(find.text('Paragraphe biographique de test.'));
+    expect(paragraph.textDirection, TextDirection.ltr);
+    // Pas d'alignement forcé à droite : le texte suit son propre début.
+    expect(paragraph.textAlign, isNull);
+
+    await tester.pumpWidget(_wrap(const FigureDetailScreen(figure: figure)));
+    await tester.pumpAndSettle();
+    expect(find.text("Cette biographie n'existe qu'en français pour l'instant."), findsNothing);
   });
 
   testWidgets('FigureDetailScreen indique une biographie en attente quand absente', (tester) async {

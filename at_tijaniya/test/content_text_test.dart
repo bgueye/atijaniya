@@ -4,6 +4,7 @@
 // ligne n'est retourné qu'une seule fois.
 
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart' show RenderParagraph;
 import 'package:flutter_test/flutter_test.dart';
 
 import 'package:at_tijaniya/core/widgets/content_text.dart';
@@ -54,6 +55,24 @@ void main() {
       final text = tester.widget<Text>(find.byType(Text));
       expect(text.textDirection, TextDirection.ltr);
       expect(text.textAlign, isNull);
+    });
+
+    // Audit Figures du 2026-10-25 (P2-3) : exception réservée aux longs
+    // paragraphes de lecture (biographies, citations).
+    testWidgets("alignToContent : un paragraphe français dans l'interface en arabe se range à gauche", (tester) async {
+      await tester.pumpWidget(
+        _wrap(
+          TextDirection.rtl,
+          const SizedBox(width: 400, child: ContentText('Paragraphe de biographie.', alignToContent: true)),
+        ),
+      );
+      final text = tester.widget<Text>(find.byType(Text));
+      expect(text.textDirection, TextDirection.ltr);
+      // Ni gauche ni droite forcée : « début » du texte, donc la gauche
+      // pour un texte de gauche à droite.
+      expect(text.textAlign, isNull);
+      final paragraph = tester.renderObject<RenderParagraph>(find.byType(RichText));
+      expect(paragraph.getOffsetForCaret(const TextPosition(offset: 0), Rect.zero).dx, lessThan(1));
     });
 
     testWidgets('un alignement centré demandé est respecté', (tester) async {

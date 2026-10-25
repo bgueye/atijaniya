@@ -2378,6 +2378,12 @@ abstract class AppLocalizations {
   /// **'Biographie en attente de validation.'**
   String get figureBiographyPending;
 
+  /// No description provided for @figureBiographyFrenchOnly.
+  ///
+  /// In fr, this message translates to:
+  /// **'Cette biographie n\'existe qu\'en français pour l\'instant.'**
+  String get figureBiographyFrenchOnly;
+
   /// No description provided for @figureSilsilaPending.
   ///
   /// In fr, this message translates to:

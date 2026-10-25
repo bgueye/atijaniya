@@ -446,6 +446,7 @@
   "figureCitationsSectionTitle": "Citations",
   "figureZawiyaSectionTitle": "Zawiya",
   "figureBiographyPending": "Biographie en attente de validation.",
+  "figureBiographyFrenchOnly": "Cette biographie n'existe qu'en français pour l'instant.",
   "figureSilsilaPending": "La silsila historique de cette figure n'est pas encore disponible.",
   "figureSilsilaLoadError": "Impossible de charger la silsila historique.",
   "figureSilsilaFounderLabel": "Fondateur de la tarikha",
