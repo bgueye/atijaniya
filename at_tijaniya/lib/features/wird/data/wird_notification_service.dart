@@ -6,12 +6,11 @@
 /// : peut déclencher avec quelques minutes de retard sur Android en Doze,
 /// mais évite de demander la permission `SCHEDULE_EXACT_ALARM`, disproportionnée
 /// pour un simple rappel de pratique. Les alarmes programmées via AlarmManager
-/// ne survivent pas à un redémarrage de l'appareil, et cette version de
-/// `flutter_local_notifications` ne déclare pas de récepteur de boot pour
-/// les reprogrammer automatiquement ; `WirdReminderController` reprogramme
-/// donc les rappels actifs du wird concerné à chaque fois que son écran de
-/// rappels ou son guide est ouvert (voir `WirdReminderController._load()`)
-/// en mitigation partielle.
+/// ne survivent pas à un redémarrage de l'appareil : le récepteur de
+/// redémarrage du plugin (`ScheduledNotificationBootReceiver`), déclaré dans
+/// `AndroidManifest.xml` depuis le 2026-10-05, les reprogramme. En plus,
+/// `WirdReminderController` reprogramme les rappels actifs d'un wird à chaque
+/// ouverture de son écran de rappels (voir `WirdReminderController._load()`).
 library;
 
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
@@ -63,15 +62,36 @@ class WirdNotificationService {
     return true;
   }
 
-  /// Dérive un identifiant de notification stable et déterministe à partir
-  /// de l'identifiant du créneau — évite de maintenir une table séparée.
-  int _notificationId(String slotId) => slotId.hashCode & 0x7fffffff;
+  /// Identifiant de notification de chaque créneau, fixé une fois pour
+  /// toutes. Il était dérivé de `String.hashCode`, dont la valeur n'est pas
+  /// garantie d'une version de Dart à l'autre : après une mise à jour, un
+  /// rappel posé par l'ancienne version aurait pu ne plus être annulé, et
+  /// arriver en double (audit du 2026-10-25, P3-3). Ne jamais renuméroter un
+  /// créneau existant.
+  static const _notificationIds = {
+    'lazim_morning': 1101,
+    'lazim_evening': 1102,
+    'wazifa_daily': 1201,
+    'hadratou_jouma_weekly': 1301,
+  };
 
+  int _notificationId(String slotId) => _notificationIds[slotId] ?? _legacyNotificationId(slotId);
+
+  /// Ancien identifiant, encore annulé à chaque programmation : les rappels
+  /// posés avant le passage aux identifiants fixes ne doivent pas rester en
+  /// plus des nouveaux.
+  int _legacyNotificationId(String slotId) => slotId.hashCode & 0x7fffffff;
+
+  /// [channelName] et [channelDescription] : nom et description du canal,
+  /// affichés dans les réglages de notification d'Android, dans la langue de
+  /// l'app (ils étaient en français en dur).
   Future<void> scheduleReminder({
     required WirdReminderSlot slot,
     required WirdReminderSetting setting,
     required String title,
     required String body,
+    required String channelName,
+    required String channelDescription,
   }) async {
     await cancel(slot.id);
     if (!setting.enabled) return;
@@ -82,15 +102,15 @@ class WirdNotificationService {
       title,
       body,
       scheduled,
-      const NotificationDetails(
+      NotificationDetails(
         android: AndroidNotificationDetails(
           'wird_reminders',
-          'Rappels des Wirds',
-          channelDescription: 'Rappels programmés pour la pratique des wirds.',
+          channelName,
+          channelDescription: channelDescription,
           importance: Importance.high,
           priority: Priority.high,
         ),
-        iOS: DarwinNotificationDetails(),
+        iOS: const DarwinNotificationDetails(),
       ),
       androidScheduleMode: AndroidScheduleMode.inexactAllowWhileIdle,
       uiLocalNotificationDateInterpretation: UILocalNotificationDateInterpretation.absoluteTime,
@@ -99,7 +119,11 @@ class WirdNotificationService {
     );
   }
 
-  Future<void> cancel(String slotId) => _plugin.cancel(_notificationId(slotId));
+  Future<void> cancel(String slotId) async {
+    await _plugin.cancel(_notificationId(slotId));
+    final legacy = _legacyNotificationId(slotId);
+    if (legacy != _notificationId(slotId)) await _plugin.cancel(legacy);
+  }
 
   tz.TZDateTime _nextInstance(int hour, int minute, ReminderFrequency frequency) {
     final now = tz.TZDateTime.now(tz.local);

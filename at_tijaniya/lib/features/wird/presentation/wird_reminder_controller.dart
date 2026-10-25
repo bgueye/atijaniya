@@ -148,11 +148,14 @@ class WirdReminderController extends StateNotifier<WirdReminderState> {
   }
 
   Future<void> _scheduleSlot(WirdReminderSlot slot, WirdReminderSetting setting) {
+    final l10n = lookupAppLocalizations(locale);
     return _notifications.scheduleReminder(
       slot: slot,
       setting: setting,
       title: locale.languageCode == 'ar' ? wird.nameArabic : wird.nameFrench,
-      body: lookupAppLocalizations(locale).wirdReminderNotificationBody,
+      body: l10n.wirdReminderNotificationBody,
+      channelName: l10n.wirdReminderChannelName,
+      channelDescription: l10n.wirdReminderChannelDescription,
     );
   }
 }

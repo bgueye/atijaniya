@@ -29,6 +29,8 @@ class _FakeNotifications implements WirdNotificationService {
     required WirdReminderSetting setting,
     required String title,
     required String body,
+    required String channelName,
+    required String channelDescription,
   }) async {
     if (failScheduling) throw Exception('zonedSchedule a échoué');
     if (setting.enabled) scheduled.add(slot.id);

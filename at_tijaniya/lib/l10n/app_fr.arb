@@ -1116,5 +1116,7 @@
   "wirdAudioPillarRetry": "Réessayer le téléchargement",
   "wirdRecitationsValidateError": "Validation impossible — vérifiez votre connexion.",
   "wirdAudioLoadFailed": "Récitations audio indisponibles — vérifiez votre connexion.",
-  "wirdReminderScheduleFailed": "Impossible de programmer le rappel. Réessayez."
+  "wirdReminderScheduleFailed": "Impossible de programmer le rappel. Réessayez.",
+  "wirdReminderChannelName": "Rappels des wirds",
+  "wirdReminderChannelDescription": "Rappels programmés pour la pratique des wirds."
 }

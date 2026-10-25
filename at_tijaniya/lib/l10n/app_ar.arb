@@ -1107,5 +1107,7 @@
   "wirdAudioPillarRetry": "إعادة محاولة التنزيل",
   "wirdRecitationsValidateError": "تعذّر التحقق — تحقّق من اتصالك.",
   "wirdAudioLoadFailed": "تعذّر تحميل التلاوات الصوتية — تحقّق من اتصالك.",
-  "wirdReminderScheduleFailed": "تعذّرت جدولة التذكير. أعد المحاولة."
+  "wirdReminderScheduleFailed": "تعذّرت جدولة التذكير. أعد المحاولة.",
+  "wirdReminderChannelName": "تذكيرات الأوراد",
+  "wirdReminderChannelDescription": "تذكيرات مجدولة لأداء الأوراد."
 }

@@ -15,8 +15,7 @@ class AppLocalizationsFr extends AppLocalizations {
   String get languageChoiceTitle => 'Choisissez votre langue';
 
   @override
-  String get languageChoiceSubtitle =>
-      'Vous pourrez la changer à tout moment dans les paramètres.';
+  String get languageChoiceSubtitle => 'Vous pourrez la changer à tout moment dans les paramètres.';
 
   @override
   String get languageFrench => 'Français';
@@ -79,8 +78,7 @@ class AppLocalizationsFr extends AppLocalizations {
   String get onboardingCommunityTitle => 'Une communauté de disciples';
 
   @override
-  String get onboardingCommunityBody =>
-      'Retrouvez votre entourage spirituel et suivez l\'actualité de votre zawiya.';
+  String get onboardingCommunityBody => 'Retrouvez votre entourage spirituel et suivez l\'actualité de votre zawiya.';
 
   @override
   String get authTabLogin => 'Connexion';
@@ -98,8 +96,7 @@ class AppLocalizationsFr extends AppLocalizations {
   String get authSignupTitle => 'Créer un compte';
 
   @override
-  String get authSignupSubtitle =>
-      'Rejoignez la communauté et commencez à réciter vos wirds.';
+  String get authSignupSubtitle => 'Rejoignez la communauté et commencez à réciter vos wirds.';
 
   @override
   String get authFullNameLabel => 'Nom complet';
@@ -123,8 +120,7 @@ class AppLocalizationsFr extends AppLocalizations {
   String get authForgotPassword => 'Mot de passe oublié ?';
 
   @override
-  String get authResetPasswordSent =>
-      'E-mail de réinitialisation envoyé. Vérifiez votre boîte mail.';
+  String get authResetPasswordSent => 'E-mail de réinitialisation envoyé. Vérifiez votre boîte mail.';
 
   @override
   String get authSignInAction => 'Se connecter';
@@ -145,32 +141,25 @@ class AppLocalizationsFr extends AppLocalizations {
   String get authPasswordRequired => 'Le mot de passe est obligatoire.';
 
   @override
-  String get authPasswordTooShort =>
-      'Le mot de passe doit contenir au moins 6 caractères.';
+  String get authPasswordTooShort => 'Le mot de passe doit contenir au moins 6 caractères.';
 
   @override
-  String get authPasswordTooShortSignup =>
-      'Le mot de passe doit contenir au moins 8 caractères.';
+  String get authPasswordTooShortSignup => 'Le mot de passe doit contenir au moins 8 caractères.';
 
   @override
-  String get authInvalidCredentials =>
-      'Adresse e-mail ou mot de passe incorrect.';
+  String get authInvalidCredentials => 'Adresse e-mail ou mot de passe incorrect.';
 
   @override
-  String get authEmailAlreadyRegistered =>
-      'Un compte existe déjà avec cette adresse e-mail.';
+  String get authEmailAlreadyRegistered => 'Un compte existe déjà avec cette adresse e-mail.';
 
   @override
-  String get authWeakPassword =>
-      'Mot de passe trop faible. Utilisez au moins 6 caractères.';
+  String get authWeakPassword => 'Mot de passe trop faible. Utilisez au moins 6 caractères.';
 
   @override
-  String get authEmailNotConfirmed =>
-      'Confirmez votre e-mail avant de vous connecter (lien envoyé à votre adresse).';
+  String get authEmailNotConfirmed => 'Confirmez votre e-mail avant de vous connecter (lien envoyé à votre adresse).';
 
   @override
-  String get authRateLimited =>
-      'Trop de tentatives. Réessayez dans quelques instants.';
+  String get authRateLimited => 'Trop de tentatives. Réessayez dans quelques instants.';
 
   @override
   String get authGenericError => 'Une erreur est survenue. Réessayez.';
@@ -198,8 +187,7 @@ class AppLocalizationsFr extends AppLocalizations {
   String get resetPasswordTitle => 'Nouveau mot de passe';
 
   @override
-  String get resetPasswordSubtitle =>
-      'Choisissez un nouveau mot de passe pour votre compte At-Tijaniya.';
+  String get resetPasswordSubtitle => 'Choisissez un nouveau mot de passe pour votre compte At-Tijaniya.';
 
   @override
   String get resetPasswordConfirmLabel => 'Confirmer le mot de passe';
@@ -211,8 +199,7 @@ class AppLocalizationsFr extends AppLocalizations {
   String get resetPasswordSubmit => 'Enregistrer le mot de passe';
 
   @override
-  String get resetPasswordError =>
-      'Impossible d\'enregistrer le nouveau mot de passe. Réessayez.';
+  String get resetPasswordError => 'Impossible d\'enregistrer le nouveau mot de passe. Réessayez.';
 
   @override
   String get navHome => 'Accueil';
@@ -236,8 +223,7 @@ class AppLocalizationsFr extends AppLocalizations {
   String get homeGreetingPrefix => 'Salam,';
 
   @override
-  String homeDateLine(String weekday, int day, String month, int year,
-      int hijriDay, String hijriMonth, int hijriYear) {
+  String homeDateLine(String weekday, int day, String month, int year, int hijriDay, String hijriMonth, int hijriYear) {
     return '$weekday $day $month $year · $hijriDay $hijriMonth $hijriYear';
   }
 
@@ -344,8 +330,7 @@ class AppLocalizationsFr extends AppLocalizations {
   String get homeStatusAllDone => 'Tous les wirds du jour sont accomplis';
 
   @override
-  String get homeStatusNoneDone =>
-      'Aucun wird accompli aujourd\'hui pour l\'instant';
+  String get homeStatusNoneDone => 'Aucun wird accompli aujourd\'hui pour l\'instant';
 
   @override
   String homeStatusPartial(int done, int total) {
@@ -466,8 +451,7 @@ class AppLocalizationsFr extends AppLocalizations {
   String get wirdFreeTargetFieldLabel => 'Nombre de répétitions';
 
   @override
-  String get wirdFreeTargetRequired =>
-      'Indiquez un nombre de répétitions supérieur à 0.';
+  String get wirdFreeTargetRequired => 'Indiquez un nombre de répétitions supérieur à 0.';
 
   @override
   String get wirdFreeStartButton => 'Commencer';
@@ -491,15 +475,13 @@ class AppLocalizationsFr extends AppLocalizations {
   String get wirdFreeTapToCount => 'Toucher pour compter';
 
   @override
-  String get wirdFreeListeningActive =>
-      'À l\'écoute — récitez, une pause de silence = +1';
+  String get wirdFreeListeningActive => 'À l\'écoute — récitez, une pause de silence = +1';
 
   @override
   String get wirdFreeListeningPaused => 'Micro en pause';
 
   @override
-  String get wirdFreeVoiceUnavailable =>
-      'Reconnaissance vocale indisponible sur cet appareil.';
+  String get wirdFreeVoiceUnavailable => 'Reconnaissance vocale indisponible sur cet appareil.';
 
   @override
   String get wirdFreeStartListening => 'Démarrer l\'écoute';
@@ -511,8 +493,7 @@ class AppLocalizationsFr extends AppLocalizations {
   String get wirdFreeCompletedTitle => 'Compteur terminé';
 
   @override
-  String get wirdFreeCompletedBody =>
-      'Vous avez atteint l\'objectif de répétitions fixé.';
+  String get wirdFreeCompletedBody => 'Vous avez atteint l\'objectif de répétitions fixé.';
 
   @override
   String get wirdFreeNewCounterButton => 'Nouveau compteur';
@@ -524,12 +505,10 @@ class AppLocalizationsFr extends AppLocalizations {
   String get wirdRecitationsReviewTitle => 'Récitations à valider';
 
   @override
-  String get wirdRecitationsReviewEmpty =>
-      'Aucune récitation en attente de validation.';
+  String get wirdRecitationsReviewEmpty => 'Aucune récitation en attente de validation.';
 
   @override
-  String get wirdRecitationsReviewLoadError =>
-      'Impossible de charger les récitations en attente.';
+  String get wirdRecitationsReviewLoadError => 'Impossible de charger les récitations en attente.';
 
   @override
   String get wirdRecitationsReviewRetry => 'Réessayer';
@@ -541,8 +520,7 @@ class AppLocalizationsFr extends AppLocalizations {
   String get wirdRecitationsReviewConfirmTitle => 'Valider cette récitation ?';
 
   @override
-  String get wirdRecitationsReviewConfirmBody =>
-      'Elle deviendra audible par tous les disciples dans l\'app.';
+  String get wirdRecitationsReviewConfirmBody => 'Elle deviendra audible par tous les disciples dans l\'app.';
 
   @override
   String get wirdRecitationsReviewConfirmAction => 'Valider';
@@ -554,45 +532,37 @@ class AppLocalizationsFr extends AppLocalizations {
   String get wirdRecitationsReviewSuccess => 'Récitation validée et publiée.';
 
   @override
-  String get wirdRecitationsReviewPreviewError =>
-      'Lecture impossible — vérifiez votre connexion.';
+  String get wirdRecitationsReviewPreviewError => 'Lecture impossible — vérifiez votre connexion.';
 
   @override
   String get wirdRecitationsReviewDelete => 'Supprimer';
 
   @override
-  String get wirdRecitationsReviewDeleteConfirmTitle =>
-      'Supprimer ce brouillon ?';
+  String get wirdRecitationsReviewDeleteConfirmTitle => 'Supprimer ce brouillon ?';
 
   @override
-  String get wirdRecitationsReviewDeleteConfirmBody =>
-      'Cette action est définitive.';
+  String get wirdRecitationsReviewDeleteConfirmBody => 'Cette action est définitive.';
 
   @override
-  String get wirdRecitationsReviewDeleteError =>
-      'Suppression impossible — vérifiez votre connexion.';
+  String get wirdRecitationsReviewDeleteError => 'Suppression impossible — vérifiez votre connexion.';
 
   @override
   String get wirdRecitationsReviewDeleteSuccess => 'Brouillon supprimé.';
 
   @override
-  String get wirdRecitationsReviewManageButton =>
-      'Gérer tous les enregistrements';
+  String get wirdRecitationsReviewManageButton => 'Gérer tous les enregistrements';
 
   @override
   String get wirdRecitationsManageTitle => 'Gestion des récitations audio';
 
   @override
-  String get wirdRecitationsManageCardSubtitle =>
-      'Ajouter ou supprimer un audio de pilier';
+  String get wirdRecitationsManageCardSubtitle => 'Ajouter ou supprimer un audio de pilier';
 
   @override
-  String get wirdRecitationsManageLoadError =>
-      'Impossible de charger les récitations.';
+  String get wirdRecitationsManageLoadError => 'Impossible de charger les récitations.';
 
   @override
-  String get wirdRecitationsManageEmpty =>
-      'Aucun enregistrement pour ce pilier.';
+  String get wirdRecitationsManageEmpty => 'Aucun enregistrement pour ce pilier.';
 
   @override
   String get wirdRecitationsManageStatusDraft => 'Brouillon';
@@ -604,20 +574,17 @@ class AppLocalizationsFr extends AppLocalizations {
   String get wirdRecitationsManageAddButton => 'Ajouter un enregistrement';
 
   @override
-  String get wirdRecitationsManageDeleteConfirmTitle =>
-      'Supprimer cet enregistrement ?';
+  String get wirdRecitationsManageDeleteConfirmTitle => 'Supprimer cet enregistrement ?';
 
   @override
-  String get wirdRecitationsManageDeleteConfirmBodyDraft =>
-      'Ce brouillon sera définitivement supprimé.';
+  String get wirdRecitationsManageDeleteConfirmBodyDraft => 'Ce brouillon sera définitivement supprimé.';
 
   @override
   String get wirdRecitationsManageDeleteConfirmBodyLive =>
       'Cet audio est actuellement celui entendu par les disciples — il deviendra indisponible pour ce pilier jusqu\'à validation d\'un nouvel enregistrement.';
 
   @override
-  String get wirdRecitationsManageDeleteError =>
-      'Suppression impossible — vérifiez votre connexion.';
+  String get wirdRecitationsManageDeleteError => 'Suppression impossible — vérifiez votre connexion.';
 
   @override
   String get wirdRecitationsManageDeleteSuccess => 'Enregistrement supprimé.';
@@ -634,19 +601,16 @@ class AppLocalizationsFr extends AppLocalizations {
   }
 
   @override
-  String get wirdRecitationsManageUploadHint =>
-      'Format recommandé : AAC, mono, 64 kbit/s.';
+  String get wirdRecitationsManageUploadHint => 'Format recommandé : AAC, mono, 64 kbit/s.';
 
   @override
   String get wirdRecitationsManageUploadSubmit => 'Téléverser';
 
   @override
-  String get wirdRecitationsManageUploadError =>
-      'Téléversement impossible — réessayez.';
+  String get wirdRecitationsManageUploadError => 'Téléversement impossible — réessayez.';
 
   @override
-  String get wirdRecitationsManageUploadSuccess =>
-      'Enregistrement ajouté (brouillon).';
+  String get wirdRecitationsManageUploadSuccess => 'Enregistrement ajouté (brouillon).';
 
   @override
   String get wirdRecitationsManageValidate => 'Valider';
@@ -655,8 +619,7 @@ class AppLocalizationsFr extends AppLocalizations {
   String get tariqaConditionsCardTitle => 'Conditions de la Tariqa';
 
   @override
-  String get tariqaConditionsCardSubtitle =>
-      'Les 23 conditions du wird et de l\'affiliation';
+  String get tariqaConditionsCardSubtitle => 'Les 23 conditions du wird et de l\'affiliation';
 
   @override
   String get tariqaConditionsTitle => 'Conditions de la Tariqa';
@@ -671,27 +634,22 @@ class AppLocalizationsFr extends AppLocalizations {
   String get tariqaConditionsEmptyTitle => 'Contenu en cours de compilation';
 
   @override
-  String get tariqaConditionsEmptyBody =>
-      'Ce contenu sera publié une fois validé.';
+  String get tariqaConditionsEmptyBody => 'Ce contenu sera publié une fois validé.';
 
   @override
   String get tariqaConditionsCategoryValiditeTalqin => 'Validité du talqîn';
 
   @override
-  String get tariqaConditionsCategoryCompagnonnage =>
-      'Compagnonnage envers le Cheikh';
+  String get tariqaConditionsCategoryCompagnonnage => 'Compagnonnage envers le Cheikh';
 
   @override
-  String get tariqaConditionsCategoryConditionsGenerales =>
-      'Conditions générales';
+  String get tariqaConditionsCategoryConditionsGenerales => 'Conditions générales';
 
   @override
-  String get tariqaConditionsCategoryValiditeRecitation =>
-      'Validité de la récitation';
+  String get tariqaConditionsCategoryValiditeRecitation => 'Validité de la récitation';
 
   @override
-  String get tariqaConditionsCategoryConditionsComplementaires =>
-      'Conditions complémentaires';
+  String get tariqaConditionsCategoryConditionsComplementaires => 'Conditions complémentaires';
 
   @override
   String get tariqaConditionEditTitle => 'Modifier la condition';
@@ -703,8 +661,7 @@ class AppLocalizationsFr extends AppLocalizations {
   String get tariqaConditionFormTextFrLabel => 'Texte (français)';
 
   @override
-  String get tariqaConditionFormTextFrRequired =>
-      'Le texte en français est requis.';
+  String get tariqaConditionFormTextFrRequired => 'Le texte en français est requis.';
 
   @override
   String get tariqaConditionFormTextArLabel => 'Texte (arabe)';
@@ -716,8 +673,7 @@ class AppLocalizationsFr extends AppLocalizations {
   String get tariqaConditionFormSave => 'Enregistrer';
 
   @override
-  String get tariqaConditionFormSaveError =>
-      'Impossible d\'enregistrer la modification.';
+  String get tariqaConditionFormSaveError => 'Impossible d\'enregistrer la modification.';
 
   @override
   String get khadaraEventsTab => 'Évènements';
@@ -789,15 +745,13 @@ class AppLocalizationsFr extends AppLocalizations {
   String get eventFormApproximateDateSwitchLabel => 'Date approximative';
 
   @override
-  String get eventFormApproximateDateSwitchHint =>
-      'La date exacte n\'est pas encore annoncée.';
+  String get eventFormApproximateDateSwitchHint => 'La date exacte n\'est pas encore annoncée.';
 
   @override
   String get eventFormDateNoteLabel => 'Précision sur la date (optionnel)';
 
   @override
-  String get eventFormDateNoteHint =>
-      'Ex. 12 Rabi\' al-awwal, selon l\'observation de la lune.';
+  String get eventFormDateNoteHint => 'Ex. 12 Rabi\' al-awwal, selon l\'observation de la lune.';
 
   @override
   String get khadaraCreateEventButton => 'Créer un évènement';
@@ -823,8 +777,7 @@ class AppLocalizationsFr extends AppLocalizations {
       'Impossible de supprimer cet évènement : un direct y est encore rattaché.';
 
   @override
-  String get khadaraDeleteEventError =>
-      'Impossible de supprimer cet évènement.';
+  String get khadaraDeleteEventError => 'Impossible de supprimer cet évènement.';
 
   @override
   String get eventFormCreateTitle => 'Nouvel évènement';
@@ -857,8 +810,7 @@ class AppLocalizationsFr extends AppLocalizations {
   String get eventFormEndsAtLabel => 'Date et heure de fin (optionnel)';
 
   @override
-  String get eventFormEndsAtInvalid =>
-      'La date de fin doit être postérieure à la date de début.';
+  String get eventFormEndsAtInvalid => 'La date de fin doit être postérieure à la date de début.';
 
   @override
   String get eventFormImageLabel => 'Image de couverture';
@@ -885,8 +837,7 @@ class AppLocalizationsFr extends AppLocalizations {
   String get eventFormPickDate => 'Choisir une date';
 
   @override
-  String get eventFormRecurrenceUntilInvalid =>
-      'La date de fin de récurrence doit être dans le futur.';
+  String get eventFormRecurrenceUntilInvalid => 'La date de fin de récurrence doit être dans le futur.';
 
   @override
   String get eventFormSave => 'Enregistrer';
@@ -898,8 +849,7 @@ class AppLocalizationsFr extends AppLocalizations {
   String get khadaraUpcomingEventsAtZawiya => 'Prochains évènements';
 
   @override
-  String get khadaraNoUpcomingEventsAtZawiya =>
-      'Aucun évènement à venir dans cette zawiya.';
+  String get khadaraNoUpcomingEventsAtZawiya => 'Aucun évènement à venir dans cette zawiya.';
 
   @override
   String get khadaraAddressLabel => 'Adresse';
@@ -930,8 +880,7 @@ class AppLocalizationsFr extends AppLocalizations {
       'Impossible de supprimer cette zawiya : elle est encore utilisée (disciples rattachés, évènements, publications ou groupes).';
 
   @override
-  String get khadaraDeleteZawiyaError =>
-      'Impossible de supprimer cette zawiya.';
+  String get khadaraDeleteZawiyaError => 'Impossible de supprimer cette zawiya.';
 
   @override
   String get zawiyaFormCreateTitle => 'Nouvelle zawiya';
@@ -994,8 +943,7 @@ class AppLocalizationsFr extends AppLocalizations {
   String get khadaraFilterMosques => 'Mosquées';
 
   @override
-  String get khadaraNoPlacesForFilter =>
-      'Aucun lieu de ce type pour le moment.';
+  String get khadaraNoPlacesForFilter => 'Aucun lieu de ce type pour le moment.';
 
   @override
   String get khadaraUnderstandingTooltip => 'Comprendre la Zawiya';
@@ -1004,16 +952,13 @@ class AppLocalizationsFr extends AppLocalizations {
   String get khadaraUnderstandingTitle => 'Comprendre la Zawiya';
 
   @override
-  String get khadaraUnderstandingEmptyTitle =>
-      'Contenu en cours de compilation';
+  String get khadaraUnderstandingEmptyTitle => 'Contenu en cours de compilation';
 
   @override
-  String get khadaraUnderstandingEmptyBody =>
-      'Ce contenu pédagogique sera publié une fois validé.';
+  String get khadaraUnderstandingEmptyBody => 'Ce contenu pédagogique sera publié une fois validé.';
 
   @override
-  String get khadaraUnderstandingCta =>
-      'En attendant, découvrir le calendrier et les zawiyas';
+  String get khadaraUnderstandingCta => 'En attendant, découvrir le calendrier et les zawiyas';
 
   @override
   String get khadaraUnderstandingDraftBanner =>
@@ -1026,8 +971,7 @@ class AppLocalizationsFr extends AppLocalizations {
   String get khadaraNearbyRecurringTitle => 'La Hadra la plus proche';
 
   @override
-  String get khadaraNearbyRecurringEmpty =>
-      'Aucun évènement récurrent avec une zawiya géolocalisée n\'a été trouvé.';
+  String get khadaraNearbyRecurringEmpty => 'Aucun évènement récurrent avec une zawiya géolocalisée n\'a été trouvé.';
 
   @override
   String get khadaraLocationServiceDisabled =>
@@ -1081,8 +1025,7 @@ class AppLocalizationsFr extends AppLocalizations {
   String get khadaraSourceNative => 'Natif (diffuser depuis l\'app)';
 
   @override
-  String get khadaraSourceNativeUnavailable =>
-      'Nécessite un prestataire de streaming, pas encore disponible.';
+  String get khadaraSourceNativeUnavailable => 'Nécessite un prestataire de streaming, pas encore disponible.';
 
   @override
   String get khadaraExternalUrlLabel => 'Lien du direct';
@@ -1106,8 +1049,7 @@ class AppLocalizationsFr extends AppLocalizations {
   String get khadaraEndLiveConfirmTitle => 'Terminer ce direct ?';
 
   @override
-  String get khadaraEndLiveConfirmBody =>
-      'Les disciples ne pourront plus le rejoindre.';
+  String get khadaraEndLiveConfirmBody => 'Les disciples ne pourront plus le rejoindre.';
 
   @override
   String get khadaraEndLiveConfirmAction => 'Terminer';
@@ -1119,8 +1061,7 @@ class AppLocalizationsFr extends AppLocalizations {
   String get khadaraChatHint => 'Écrire un message…';
 
   @override
-  String get khadaraChatSignInToWrite =>
-      'Connectez-vous pour écrire dans le chat.';
+  String get khadaraChatSignInToWrite => 'Connectez-vous pour écrire dans le chat.';
 
   @override
   String get khadaraChatEmpty => 'Aucun message pour le moment.';
@@ -1154,8 +1095,7 @@ class AppLocalizationsFr extends AppLocalizations {
   String get khadaraAddReplaySuccess => 'Rediffusion ajoutée.';
 
   @override
-  String get khadaraAddReplayError =>
-      'Impossible d\'ajouter cette rediffusion.';
+  String get khadaraAddReplayError => 'Impossible d\'ajouter cette rediffusion.';
 
   @override
   String get figuresSectionFounders => 'Fondateurs';
@@ -1196,8 +1136,7 @@ class AppLocalizationsFr extends AppLocalizations {
   String get featuredFigureAdminClear => 'Retirer';
 
   @override
-  String get featuredFigureAdminNoPin =>
-      'Aucune figure épinglée — la rotation automatique choisira.';
+  String get featuredFigureAdminNoPin => 'Aucune figure épinglée — la rotation automatique choisira.';
 
   @override
   String get featuredFigureAdminNoEligible =>
@@ -1210,8 +1149,7 @@ class AppLocalizationsFr extends AppLocalizations {
   String get featuredFigureAdminPinCta => 'Épingler pour cette semaine';
 
   @override
-  String get featuredFigureAdminSaveError =>
-      'Une erreur est survenue. Réessayez.';
+  String get featuredFigureAdminSaveError => 'Une erreur est survenue. Réessayez.';
 
   @override
   String get figuresReviewTitle => 'Figures à valider';
@@ -1226,8 +1164,7 @@ class AppLocalizationsFr extends AppLocalizations {
   String get figuresReviewConfirmTitle => 'Valider cette biographie ?';
 
   @override
-  String get figuresReviewConfirmBody =>
-      'Elle deviendra visible par tous les disciples dans l\'app.';
+  String get figuresReviewConfirmBody => 'Elle deviendra visible par tous les disciples dans l\'app.';
 
   @override
   String get figuresReviewConfirmAction => 'Valider';
@@ -1254,12 +1191,10 @@ class AppLocalizationsFr extends AppLocalizations {
   String get figureBiographyPending => 'Biographie en attente de validation.';
 
   @override
-  String get figureSilsilaPending =>
-      'La silsila historique de cette figure n\'est pas encore disponible.';
+  String get figureSilsilaPending => 'La silsila historique de cette figure n\'est pas encore disponible.';
 
   @override
-  String get figureSilsilaLoadError =>
-      'Impossible de charger la silsila historique.';
+  String get figureSilsilaLoadError => 'Impossible de charger la silsila historique.';
 
   @override
   String get figureSilsilaFounderLabel => 'Fondateur de la tarikha';
@@ -1274,8 +1209,7 @@ class AppLocalizationsFr extends AppLocalizations {
   String get figureSilsilaRemoveButton => 'Retirer de la silsila';
 
   @override
-  String get figureSilsilaRemoveConfirmTitle =>
-      'Retirer cette figure de la silsila ?';
+  String get figureSilsilaRemoveConfirmTitle => 'Retirer cette figure de la silsila ?';
 
   @override
   String get figureSilsilaRemoveConfirmBody =>
@@ -1301,8 +1235,7 @@ class AppLocalizationsFr extends AppLocalizations {
   String get figureSilsilaFormParentLabel => 'Figure parente';
 
   @override
-  String get figureSilsilaFormParentNone =>
-      'Aucune — racine de la chaîne (fondateur)';
+  String get figureSilsilaFormParentNone => 'Aucune — racine de la chaîne (fondateur)';
 
   @override
   String get figureSilsilaFormOrderLabel => 'Rang dans la chaîne';
@@ -1315,26 +1248,22 @@ class AppLocalizationsFr extends AppLocalizations {
   String get figureSilsilaFormOrderRequired => 'Le rang est requis.';
 
   @override
-  String get figureSilsilaFormOrderInvalid =>
-      'Le rang doit être un nombre entier.';
+  String get figureSilsilaFormOrderInvalid => 'Le rang doit être un nombre entier.';
 
   @override
   String get figureSilsilaFormSave => 'Enregistrer';
 
   @override
-  String get figureSilsilaFormSaveError =>
-      'Impossible d\'enregistrer cette position.';
+  String get figureSilsilaFormSaveError => 'Impossible d\'enregistrer cette position.';
 
   @override
-  String get figureCitationsEmpty =>
-      'Aucune citation renseignée pour le moment.';
+  String get figureCitationsEmpty => 'Aucune citation renseignée pour le moment.';
 
   @override
   String get figureWorksSectionTitle => 'Œuvres';
 
   @override
-  String get figureZiyarasPending =>
-      'Aucune ziyara associée n\'est encore renseignée.';
+  String get figureZiyarasPending => 'Aucune ziyara associée n\'est encore renseignée.';
 
   @override
   String get figureZiyarasAddButton => 'Lier un évènement';
@@ -1346,15 +1275,13 @@ class AppLocalizationsFr extends AppLocalizations {
   String get figureZiyarasLinkPickerTitle => 'Choisir un évènement';
 
   @override
-  String get figureZiyarasLinkPickerEmpty =>
-      'Aucun évènement disponible à lier.';
+  String get figureZiyarasLinkPickerEmpty => 'Aucun évènement disponible à lier.';
 
   @override
   String get figureZiyarasUnlinkConfirmTitle => 'Délier cet évènement ?';
 
   @override
-  String get figureZiyarasUnlinkConfirmBody =>
-      'L\'évènement ne sera plus associé à cette figure.';
+  String get figureZiyarasUnlinkConfirmBody => 'L\'évènement ne sera plus associé à cette figure.';
 
   @override
   String get figureZiyarasUnlinkConfirmAction => 'Délier';
@@ -1366,8 +1293,7 @@ class AppLocalizationsFr extends AppLocalizations {
   String get figureZawiyasSectionTitle => 'Zawiyas rattachées';
 
   @override
-  String get figureZawiyasPending =>
-      'Aucune zawiya rattachée n\'est encore renseignée.';
+  String get figureZawiyasPending => 'Aucune zawiya rattachée n\'est encore renseignée.';
 
   @override
   String get figureZawiyasAddButton => 'Lier une zawiya';
@@ -1385,8 +1311,7 @@ class AppLocalizationsFr extends AppLocalizations {
   String get figureZawiyasUnlinkConfirmTitle => 'Délier cette zawiya ?';
 
   @override
-  String get figureZawiyasUnlinkConfirmBody =>
-      'La zawiya ne sera plus associée à cette figure.';
+  String get figureZawiyasUnlinkConfirmBody => 'La zawiya ne sera plus associée à cette figure.';
 
   @override
   String get figureZawiyasUnlinkConfirmAction => 'Délier';
@@ -1404,12 +1329,10 @@ class AppLocalizationsFr extends AppLocalizations {
   String get figureKhalifaFounderLabel => 'Fondateur';
 
   @override
-  String get figureKhalifaChainPending =>
-      'Aucune succession n\'est encore renseignée pour cette figure.';
+  String get figureKhalifaChainPending => 'Aucune succession n\'est encore renseignée pour cette figure.';
 
   @override
-  String get figureKhalifaChainLoadError =>
-      'Impossible de charger la succession.';
+  String get figureKhalifaChainLoadError => 'Impossible de charger la succession.';
 
   @override
   String get figureKhalifaAddButton => 'Ajouter à la succession';
@@ -1421,8 +1344,7 @@ class AppLocalizationsFr extends AppLocalizations {
   String get figureKhalifaRemoveButton => 'Retirer';
 
   @override
-  String get figureKhalifaRemoveConfirmTitle =>
-      'Retirer ce maillon de la succession ?';
+  String get figureKhalifaRemoveConfirmTitle => 'Retirer ce maillon de la succession ?';
 
   @override
   String get figureKhalifaRemoveConfirmBody => 'Cette action est définitive.';
@@ -1456,22 +1378,19 @@ class AppLocalizationsFr extends AppLocalizations {
   String get figureKhalifaFormOrderRequired => 'Le rang est requis.';
 
   @override
-  String get figureKhalifaFormOrderInvalid =>
-      'Le rang doit être un nombre entier.';
+  String get figureKhalifaFormOrderInvalid => 'Le rang doit être un nombre entier.';
 
   @override
   String get figureKhalifaFormPeriodLabel => 'Période (optionnel)';
 
   @override
-  String get figureKhalifaFormPeriodHint =>
-      'Texte libre, ex. 1902-1922 ou vers 1950.';
+  String get figureKhalifaFormPeriodHint => 'Texte libre, ex. 1902-1922 ou vers 1950.';
 
   @override
   String get figureKhalifaFormSave => 'Enregistrer';
 
   @override
-  String get figureKhalifaFormSaveError =>
-      'Impossible d\'enregistrer ce maillon.';
+  String get figureKhalifaFormSaveError => 'Impossible d\'enregistrer ce maillon.';
 
   @override
   String get figureSuccessionRoleKhalife => 'Khalifes';
@@ -1486,8 +1405,7 @@ class AppLocalizationsFr extends AppLocalizations {
   String get figureSuccessionNewButton => 'Démarrer une succession';
 
   @override
-  String get figureSuccessionGapNotice =>
-      'Liste incomplète : des noms manquent ici.';
+  String get figureSuccessionGapNotice => 'Liste incomplète : des noms manquent ici.';
 
   @override
   String get figureSuccessionFormZawiyaLabel => 'Zawiya';
@@ -1496,15 +1414,13 @@ class AppLocalizationsFr extends AppLocalizations {
   String get figureSuccessionFormZawiyaNone => 'Choisir une zawiya';
 
   @override
-  String get figureSuccessionFormZawiyaEmpty =>
-      'Rattachez d\'abord une zawiya à cette figure.';
+  String get figureSuccessionFormZawiyaEmpty => 'Rattachez d\'abord une zawiya à cette figure.';
 
   @override
   String get figureSuccessionFormRoleLabel => 'Rôle';
 
   @override
-  String get figureSuccessionFormGapLabel =>
-      'Des noms manquent avant ce maillon';
+  String get figureSuccessionFormGapLabel => 'Des noms manquent avant ce maillon';
 
   @override
   String get figuresCreateButton => 'Créer une figure';
@@ -1555,8 +1471,7 @@ class AppLocalizationsFr extends AppLocalizations {
   String get figureCitationDeleteConfirmAction => 'Supprimer';
 
   @override
-  String get figureCitationDeleteError =>
-      'Impossible de supprimer cette citation.';
+  String get figureCitationDeleteError => 'Impossible de supprimer cette citation.';
 
   @override
   String get figureCitationFormCreateTitle => 'Nouvelle citation';
@@ -1571,8 +1486,7 @@ class AppLocalizationsFr extends AppLocalizations {
   String get figureCitationFormFrenchLabel => 'Traduction française';
 
   @override
-  String get figureCitationFormTextRequired =>
-      'Renseignez au moins le texte arabe ou la traduction.';
+  String get figureCitationFormTextRequired => 'Renseignez au moins le texte arabe ou la traduction.';
 
   @override
   String get figureCitationFormSourceLabel => 'Source';
@@ -1584,8 +1498,7 @@ class AppLocalizationsFr extends AppLocalizations {
   String get figureCitationFormSave => 'Enregistrer';
 
   @override
-  String get figureCitationFormSaveError =>
-      'Impossible d\'enregistrer cette citation.';
+  String get figureCitationFormSaveError => 'Impossible d\'enregistrer cette citation.';
 
   @override
   String get figureWorksAddButton => 'Ajouter une œuvre';
@@ -1627,8 +1540,7 @@ class AppLocalizationsFr extends AppLocalizations {
   String get figureWorkFormSave => 'Enregistrer';
 
   @override
-  String get figureWorkFormSaveError =>
-      'Impossible d\'enregistrer cette œuvre.';
+  String get figureWorkFormSaveError => 'Impossible d\'enregistrer cette œuvre.';
 
   @override
   String get figureFormCreateTitle => 'Nouvelle figure';
@@ -1646,8 +1558,7 @@ class AppLocalizationsFr extends AppLocalizations {
   String get figureFormNameFrenchLabel => 'Nom (français)';
 
   @override
-  String get figureFormNameFrenchRequired =>
-      'Le nom en français est obligatoire.';
+  String get figureFormNameFrenchRequired => 'Le nom en français est obligatoire.';
 
   @override
   String get figureFormCategoryLabel => 'Catégorie';
@@ -1665,12 +1576,10 @@ class AppLocalizationsFr extends AppLocalizations {
   String get figureFormFoyerNone => '—';
 
   @override
-  String get figureFormBirthYearHijriLabel =>
-      'Année de naissance (hégirienne, optionnel)';
+  String get figureFormBirthYearHijriLabel => 'Année de naissance (hégirienne, optionnel)';
 
   @override
-  String get figureFormBirthYearHijriInvalid =>
-      'Doit être un nombre entier valide.';
+  String get figureFormBirthYearHijriInvalid => 'Doit être un nombre entier valide.';
 
   @override
   String get figureFormBioTextLabel => 'Biographie';
@@ -1698,8 +1607,7 @@ class AppLocalizationsFr extends AppLocalizations {
   String get communityDefaultAuthor => 'Disciple';
 
   @override
-  String get communitySignInToInteract =>
-      'Connectez-vous pour aimer ou commenter une publication.';
+  String get communitySignInToInteract => 'Connectez-vous pour aimer ou commenter une publication.';
 
   @override
   String get communityCommentsTitle => 'Commentaires';
@@ -1726,19 +1634,16 @@ class AppLocalizationsFr extends AppLocalizations {
   String get communityCreatePostContentLabel => 'Votre message';
 
   @override
-  String get communityCreatePostContentRequired =>
-      'Le message est obligatoire.';
+  String get communityCreatePostContentRequired => 'Le message est obligatoire.';
 
   @override
   String get communityCreatePostSubmit => 'Publier';
 
   @override
-  String get communityCreatePostZawiyaNote =>
-      'Publié au nom de votre zawiya de rattachement.';
+  String get communityCreatePostZawiyaNote => 'Publié au nom de votre zawiya de rattachement.';
 
   @override
-  String get communityCreatePostSignInRequired =>
-      'Connectez-vous pour publier.';
+  String get communityCreatePostSignInRequired => 'Connectez-vous pour publier.';
 
   @override
   String get communityCreatePostNeedsZawiya =>
@@ -1784,8 +1689,7 @@ class AppLocalizationsFr extends AppLocalizations {
   String get communityGroupsCreateSubmit => 'Créer';
 
   @override
-  String get communityGroupsSignInToCreate =>
-      'Connectez-vous pour créer un groupe.';
+  String get communityGroupsSignInToCreate => 'Connectez-vous pour créer un groupe.';
 
   @override
   String get communityGroupsJoin => 'Rejoindre le groupe';
@@ -1804,26 +1708,22 @@ class AppLocalizationsFr extends AppLocalizations {
   String get communityGroupsLeaveConfirmAction => 'Quitter';
 
   @override
-  String get communityGroupsSignInToJoin =>
-      'Connectez-vous pour rejoindre un groupe.';
+  String get communityGroupsSignInToJoin => 'Connectez-vous pour rejoindre un groupe.';
 
   @override
   String get communityGroupsNotMemberTitle => 'Rejoignez ce groupe';
 
   @override
-  String get communityGroupsNotMemberBody =>
-      'Les discussions d\'un groupe ne sont visibles que pour ses membres.';
+  String get communityGroupsNotMemberBody => 'Les discussions d\'un groupe ne sont visibles que pour ses membres.';
 
   @override
-  String get communityGroupsPostsEmpty =>
-      'Aucune discussion pour le moment. Soyez le premier à écrire !';
+  String get communityGroupsPostsEmpty => 'Aucune discussion pour le moment. Soyez le premier à écrire !';
 
   @override
   String get communityGroupsPostHint => 'Écrire un message...';
 
   @override
-  String get communityGroupsLoadPostsError =>
-      'Impossible de charger les discussions.';
+  String get communityGroupsLoadPostsError => 'Impossible de charger les discussions.';
 
   @override
   String get communityGroupsEditTooltip => 'Modifier';
@@ -1864,12 +1764,10 @@ class AppLocalizationsFr extends AppLocalizations {
   String get communityGroupsPastStreamsTitle => 'Directs passés';
 
   @override
-  String get communityGroupsPastStreamsEmpty =>
-      'Aucun direct passé pour ce groupe.';
+  String get communityGroupsPastStreamsEmpty => 'Aucun direct passé pour ce groupe.';
 
   @override
-  String get communityGroupsPastStreamsLoadError =>
-      'Impossible de charger les directs passés.';
+  String get communityGroupsPastStreamsLoadError => 'Impossible de charger les directs passés.';
 
   @override
   String get communityGroupsDeleteStreamTooltip => 'Supprimer';
@@ -1885,8 +1783,7 @@ class AppLocalizationsFr extends AppLocalizations {
   String get communityGroupsDeleteStreamConfirmAction => 'Supprimer';
 
   @override
-  String get communityGroupsDeleteStreamError =>
-      'Impossible de supprimer ce direct.';
+  String get communityGroupsDeleteStreamError => 'Impossible de supprimer ce direct.';
 
   @override
   String get communityGroupsEditPostTooltip => 'Modifier';
@@ -1898,15 +1795,13 @@ class AppLocalizationsFr extends AppLocalizations {
   String get communityGroupsEditPostContentLabel => 'Votre message';
 
   @override
-  String get communityGroupsEditPostContentRequired =>
-      'Le message est obligatoire.';
+  String get communityGroupsEditPostContentRequired => 'Le message est obligatoire.';
 
   @override
   String get communityGroupsEditPostSubmit => 'Enregistrer';
 
   @override
-  String get communityGroupsEditPostError =>
-      'Impossible de modifier ce message.';
+  String get communityGroupsEditPostError => 'Impossible de modifier ce message.';
 
   @override
   String get communityGroupsDeletePostTooltip => 'Supprimer';
@@ -1915,15 +1810,13 @@ class AppLocalizationsFr extends AppLocalizations {
   String get communityGroupsDeletePostConfirmTitle => 'Supprimer ce message ?';
 
   @override
-  String get communityGroupsDeletePostConfirmBody =>
-      'Cette action est définitive.';
+  String get communityGroupsDeletePostConfirmBody => 'Cette action est définitive.';
 
   @override
   String get communityGroupsDeletePostConfirmAction => 'Supprimer';
 
   @override
-  String get communityGroupsDeletePostError =>
-      'Impossible de supprimer ce message.';
+  String get communityGroupsDeletePostError => 'Impossible de supprimer ce message.';
 
   @override
   String get communityMessagesTooltip => 'Messages';
@@ -1932,19 +1825,16 @@ class AppLocalizationsFr extends AppLocalizations {
   String get communityConversationsTitle => 'Conversations';
 
   @override
-  String get communityConversationsEmpty =>
-      'Aucune conversation pour le moment.';
+  String get communityConversationsEmpty => 'Aucune conversation pour le moment.';
 
   @override
-  String get communityConversationsLoadError =>
-      'Impossible de charger les conversations.';
+  String get communityConversationsLoadError => 'Impossible de charger les conversations.';
 
   @override
   String get communityConversationsRetry => 'Réessayer';
 
   @override
-  String get communityConversationsNoMessages =>
-      'Aucun message pour le moment. Écrivez le premier !';
+  String get communityConversationsNoMessages => 'Aucun message pour le moment. Écrivez le premier !';
 
   @override
   String get communitySendMessageButton => 'Envoyer un message';
@@ -1962,8 +1852,7 @@ class AppLocalizationsFr extends AppLocalizations {
   String get communityDeletePostConfirmAction => 'Supprimer';
 
   @override
-  String get communityDeletePostError =>
-      'Impossible de supprimer cette publication.';
+  String get communityDeletePostError => 'Impossible de supprimer cette publication.';
 
   @override
   String get communityEditPostTooltip => 'Modifier';
@@ -1981,8 +1870,7 @@ class AppLocalizationsFr extends AppLocalizations {
   String get communityEditPostSubmit => 'Enregistrer';
 
   @override
-  String get communityEditPostError =>
-      'Impossible de modifier cette publication.';
+  String get communityEditPostError => 'Impossible de modifier cette publication.';
 
   @override
   String get communityDeleteCommentTooltip => 'Supprimer le commentaire';
@@ -1991,15 +1879,13 @@ class AppLocalizationsFr extends AppLocalizations {
   String get communityDeleteCommentConfirmTitle => 'Supprimer ce commentaire ?';
 
   @override
-  String get communityDeleteCommentConfirmBody =>
-      'Cette action est définitive.';
+  String get communityDeleteCommentConfirmBody => 'Cette action est définitive.';
 
   @override
   String get communityDeleteCommentConfirmAction => 'Supprimer';
 
   @override
-  String get communityDeleteCommentError =>
-      'Impossible de supprimer ce commentaire.';
+  String get communityDeleteCommentError => 'Impossible de supprimer ce commentaire.';
 
   @override
   String get profileTitle => 'Mon profil';
@@ -2014,8 +1900,7 @@ class AppLocalizationsFr extends AppLocalizations {
   String get profileSignOut => 'Se déconnecter';
 
   @override
-  String get profileSignInRequired =>
-      'Connectez-vous pour accéder à votre profil.';
+  String get profileSignInRequired => 'Connectez-vous pour accéder à votre profil.';
 
   @override
   String get profileLoadError => 'Impossible de charger votre profil.';
@@ -2054,15 +1939,13 @@ class AppLocalizationsFr extends AppLocalizations {
   String get profileSave => 'Enregistrer';
 
   @override
-  String get profileUpdateError =>
-      'Impossible d\'enregistrer les modifications.';
+  String get profileUpdateError => 'Impossible d\'enregistrer les modifications.';
 
   @override
   String get profileSignOutConfirmTitle => 'Se déconnecter ?';
 
   @override
-  String get profileSignOutConfirmBody =>
-      'Vous devrez vous reconnecter pour retrouver votre communauté.';
+  String get profileSignOutConfirmBody => 'Vous devrez vous reconnecter pour retrouver votre communauté.';
 
   @override
   String get profileSignOutConfirmAction => 'Se déconnecter';
@@ -2071,16 +1954,14 @@ class AppLocalizationsFr extends AppLocalizations {
   String get profileDeleteAccount => 'Supprimer mon compte';
 
   @override
-  String get profileDeleteAccountConfirmTitle =>
-      'Supprimer définitivement votre compte ?';
+  String get profileDeleteAccountConfirmTitle => 'Supprimer définitivement votre compte ?';
 
   @override
   String get profileDeleteAccountConfirmBody =>
       'Cette action est irréversible. Votre profil, vos wirds enregistrés, votre lignée spirituelle et vos messages seront supprimés. Vos publications et évènements créés seront conservés, mais ne seront plus associés à votre compte.';
 
   @override
-  String get profileDeleteAccountConfirmInstruction =>
-      'Tapez SUPPRIMER pour confirmer.';
+  String get profileDeleteAccountConfirmInstruction => 'Tapez SUPPRIMER pour confirmer.';
 
   @override
   String get profileDeleteAccountConfirmWord => 'SUPPRIMER';
@@ -2089,8 +1970,7 @@ class AppLocalizationsFr extends AppLocalizations {
   String get profileDeleteAccountConfirmAction => 'Supprimer mon compte';
 
   @override
-  String get profileDeleteAccountError =>
-      'Impossible de supprimer votre compte pour le moment. Réessayez plus tard.';
+  String get profileDeleteAccountError => 'Impossible de supprimer votre compte pour le moment. Réessayez plus tard.';
 
   @override
   String get profileCancel => 'Annuler';
@@ -2127,8 +2007,7 @@ class AppLocalizationsFr extends AppLocalizations {
   String get lineageMoqaddamNameLabel => 'Nom du moqaddam';
 
   @override
-  String get lineageMoqaddamNameRequired =>
-      'Le nom du moqaddam est obligatoire.';
+  String get lineageMoqaddamNameRequired => 'Le nom du moqaddam est obligatoire.';
 
   @override
   String get lineageYearLabel => 'Année de transmission (optionnel)';
@@ -2155,8 +2034,7 @@ class AppLocalizationsFr extends AppLocalizations {
   String get lineageDeleteConfirmTitle => 'Supprimer ces informations ?';
 
   @override
-  String get lineageDeleteConfirmBody =>
-      'Votre lignée spirituelle sera définitivement supprimée.';
+  String get lineageDeleteConfirmBody => 'Votre lignée spirituelle sera définitivement supprimée.';
 
   @override
   String get lineageDeleteConfirmAction => 'Supprimer';
@@ -2165,8 +2043,7 @@ class AppLocalizationsFr extends AppLocalizations {
   String get lineageDeleteSuccess => 'Lignée spirituelle supprimée.';
 
   @override
-  String get lineageLoadError =>
-      'Impossible de charger votre lignée spirituelle.';
+  String get lineageLoadError => 'Impossible de charger votre lignée spirituelle.';
 
   @override
   String get lineageRetry => 'Réessayer';
@@ -2178,8 +2055,7 @@ class AppLocalizationsFr extends AppLocalizations {
   String get lineageMatchesTitle => 'Retrouver mes condisciples';
 
   @override
-  String get lineageMatchesLoadError =>
-      'Impossible de charger ces informations.';
+  String get lineageMatchesLoadError => 'Impossible de charger ces informations.';
 
   @override
   String get lineageMatchesRetry => 'Réessayer';
@@ -2224,8 +2100,7 @@ class AppLocalizationsFr extends AppLocalizations {
   String get lineageMatchesDecline => 'Refuser';
 
   @override
-  String get lineageMatchesRespondError =>
-      'Impossible de répondre à cette demande.';
+  String get lineageMatchesRespondError => 'Impossible de répondre à cette demande.';
 
   @override
   String get lineageMatchesConnectButton => 'Se mettre en relation';
@@ -2271,15 +2146,13 @@ class AppLocalizationsFr extends AppLocalizations {
   String get mouqaddamChangeSponsorButton => 'Changer de parrain';
 
   @override
-  String get mouqaddamNoSponsorChosen =>
-      'Aucun parrain choisi pour l\'instant.';
+  String get mouqaddamNoSponsorChosen => 'Aucun parrain choisi pour l\'instant.';
 
   @override
   String get mouqaddamSelectedSponsorLabel => 'Parrain choisi';
 
   @override
-  String get mouqaddamYearFieldLabel =>
-      'Année de transmission de l\'ijaza (optionnel)';
+  String get mouqaddamYearFieldLabel => 'Année de transmission de l\'ijaza (optionnel)';
 
   @override
   String get mouqaddamYearInvalid => 'Année invalide (entre 1200 et 2100).';
@@ -2288,8 +2161,7 @@ class AppLocalizationsFr extends AppLocalizations {
   String get mouqaddamSubmitButton => 'Envoyer la demande';
 
   @override
-  String get mouqaddamSponsorRequiredError =>
-      'Choisissez un parrain avant d\'envoyer la demande.';
+  String get mouqaddamSponsorRequiredError => 'Choisissez un parrain avant d\'envoyer la demande.';
 
   @override
   String get mouqaddamSubmitError => 'Impossible d\'envoyer la demande.';
@@ -2307,8 +2179,7 @@ class AppLocalizationsFr extends AppLocalizations {
   String get mouqaddamPendingCancelConfirmTitle => 'Annuler cette demande ?';
 
   @override
-  String get mouqaddamPendingCancelConfirmBody =>
-      'Vous pourrez en soumettre une nouvelle à tout moment.';
+  String get mouqaddamPendingCancelConfirmBody => 'Vous pourrez en soumettre une nouvelle à tout moment.';
 
   @override
   String get mouqaddamPendingCancelConfirmAction => 'Annuler la demande';
@@ -2317,8 +2188,7 @@ class AppLocalizationsFr extends AppLocalizations {
   String get mouqaddamCancelError => 'Impossible d\'annuler la demande.';
 
   @override
-  String get mouqaddamRejectedNote =>
-      'Votre dernière demande a été refusée. Vous pouvez en soumettre une nouvelle.';
+  String get mouqaddamRejectedNote => 'Votre dernière demande a été refusée. Vous pouvez en soumettre une nouvelle.';
 
   @override
   String get mouqaddamSearchTitle => 'Rechercher un parrain';
@@ -2327,8 +2197,7 @@ class AppLocalizationsFr extends AppLocalizations {
   String get mouqaddamSearchFieldHint => 'Rechercher par nom...';
 
   @override
-  String get mouqaddamSearchEmpty =>
-      'Aucun mouqaddam disponible comme parrain pour le moment.';
+  String get mouqaddamSearchEmpty => 'Aucun mouqaddam disponible comme parrain pour le moment.';
 
   @override
   String get mouqaddamSearchNoResults => 'Aucun résultat pour cette recherche.';
@@ -2340,12 +2209,10 @@ class AppLocalizationsFr extends AppLocalizations {
   String get mouqaddamRequestsTitle => 'Demandes de parrainage';
 
   @override
-  String get mouqaddamRequestsEmpty =>
-      'Aucune demande de parrainage en attente.';
+  String get mouqaddamRequestsEmpty => 'Aucune demande de parrainage en attente.';
 
   @override
-  String get mouqaddamRequestsLoadError =>
-      'Impossible de charger les demandes.';
+  String get mouqaddamRequestsLoadError => 'Impossible de charger les demandes.';
 
   @override
   String get mouqaddamRequestsYearLabel => 'Année d\'ijaza indiquée';
@@ -2360,15 +2227,13 @@ class AppLocalizationsFr extends AppLocalizations {
   String get mouqaddamRequestsAcceptConfirmTitle => 'Accepter cette demande ?';
 
   @override
-  String get mouqaddamRequestsAcceptConfirmBody =>
-      'Le parrainage sera confirmé pour ce disciple.';
+  String get mouqaddamRequestsAcceptConfirmBody => 'Le parrainage sera confirmé pour ce disciple.';
 
   @override
   String get mouqaddamRequestsRejectConfirmTitle => 'Refuser cette demande ?';
 
   @override
-  String get mouqaddamRequestsRejectConfirmBody =>
-      'Le disciple pourra soumettre une nouvelle demande à tout moment.';
+  String get mouqaddamRequestsRejectConfirmBody => 'Le disciple pourra soumettre une nouvelle demande à tout moment.';
 
   @override
   String get mouqaddamRequestsConfirmAction => 'Confirmer';
@@ -2389,15 +2254,13 @@ class AppLocalizationsFr extends AppLocalizations {
   String get mouqaddamChainLoadError => 'Impossible de charger votre silsila.';
 
   @override
-  String get mouqaddamChainEmpty =>
-      'Votre silsila n\'est pas encore disponible.';
+  String get mouqaddamChainEmpty => 'Votre silsila n\'est pas encore disponible.';
 
   @override
   String get mouqaddamChainYouLabel => 'Vous';
 
   @override
-  String get mouqaddamChainCompleteTitle =>
-      'Compléter la chaîne au-delà de l\'app';
+  String get mouqaddamChainCompleteTitle => 'Compléter la chaîne au-delà de l\'app';
 
   @override
   String get mouqaddamChainCompleteBody =>
@@ -2410,8 +2273,7 @@ class AppLocalizationsFr extends AppLocalizations {
   String get mouqaddamChainNameRequired => 'Le nom est obligatoire.';
 
   @override
-  String get mouqaddamChainYearTextFieldLabel =>
-      'Date approximative (optionnel)';
+  String get mouqaddamChainYearTextFieldLabel => 'Date approximative (optionnel)';
 
   @override
   String get mouqaddamChainAddButton => 'Ajouter ce maillon';
@@ -2440,15 +2302,13 @@ class AppLocalizationsFr extends AppLocalizations {
   String get mouqaddamChainShareCardLockedNode => 'Maillon privé';
 
   @override
-  String get mouqaddamChainShareCardFooter =>
-      'Reconstruite via At-Tijaniya — retrouvez votre lignée spirituelle';
+  String get mouqaddamChainShareCardFooter => 'Reconstruite via At-Tijaniya — retrouvez votre lignée spirituelle';
 
   @override
   String get mouqaddamChainShareCardAction => 'Partager l\'image';
 
   @override
-  String get mouqaddamChainShareError =>
-      'Impossible de générer l\'image à partager.';
+  String get mouqaddamChainShareError => 'Impossible de générer l\'image à partager.';
 
   @override
   String get mouqaddamChainShareCardClose => 'Fermer';
@@ -2477,8 +2337,7 @@ class AppLocalizationsFr extends AppLocalizations {
   String get settingsDonationSection => 'Faire un don';
 
   @override
-  String get settingsDonationTileSubtitle =>
-      'At-Tijaniya reste gratuite grâce à vous.';
+  String get settingsDonationTileSubtitle => 'At-Tijaniya reste gratuite grâce à vous.';
 
   @override
   String get settingsAccessibilitySection => 'Accessibilité';
@@ -2487,8 +2346,7 @@ class AppLocalizationsFr extends AppLocalizations {
   String get settingsHighContrastTitle => 'Contraste renforcé';
 
   @override
-  String get settingsHighContrastSubtitle =>
-      'Texte et bordures plus marqués, plus faciles à lire.';
+  String get settingsHighContrastSubtitle => 'Texte et bordures plus marqués, plus faciles à lire.';
 
   @override
   String get settingsAboutSection => 'À propos';
@@ -2504,8 +2362,7 @@ class AppLocalizationsFr extends AppLocalizations {
       'At-Tijaniya (التجانية) est un outil communautaire indépendant, conçu par et pour les disciples de la Tijaniyya : pratique quotidienne des wirds, suivi des khadara, découverte des figures et des foyers de la tarîqa, et mise en lien entre disciples.';
 
   @override
-  String get aboutIndependenceSectionTitle =>
-      'Une application indépendante, pas une autorité religieuse';
+  String get aboutIndependenceSectionTitle => 'Une application indépendante, pas une autorité religieuse';
 
   @override
   String get aboutIndependenceBody1 =>
@@ -2516,16 +2373,14 @@ class AppLocalizationsFr extends AppLocalizations {
       'Le contenu religieux présenté dans l\'application (wirds, biographies, enseignements) est compilé à partir de sources reconnues, puis relu par des moqaddamines référents avant publication. Cette relecture est un travail de vérification éditoriale — elle ne constitue pas une déclaration d\'autorité doctrinale, et ne se substitue à aucun enseignement reçu directement d\'un moqaddam.';
 
   @override
-  String get aboutSponsorshipSectionTitle =>
-      'Le statut « Parrainage confirmé »';
+  String get aboutSponsorshipSectionTitle => 'Le statut « Parrainage confirmé »';
 
   @override
   String get aboutSponsorshipBody1 =>
       'Le badge affiché sur certains profils atteste qu\'un parrainage a été confirmé entre deux utilisateurs de l\'application, selon un mécanisme propre à At-Tijaniya.';
 
   @override
-  String get aboutSponsorshipBodyBold =>
-      'Ce n\'est pas une reconnaissance ou une habilitation religieuse officielle.';
+  String get aboutSponsorshipBodyBold => 'Ce n\'est pas une reconnaissance ou une habilitation religieuse officielle.';
 
   @override
   String get aboutSponsorshipBody2 =>
@@ -2549,31 +2404,25 @@ class AppLocalizationsFr extends AppLocalizations {
   String get privacyTitle => 'Confidentialité';
 
   @override
-  String get privacyLineageVisibleLabel =>
-      'Visibilité de ma lignée spirituelle';
+  String get privacyLineageVisibleLabel => 'Visibilité de ma lignée spirituelle';
 
   @override
-  String get privacyLineageVisibleDescription =>
-      'Vous rendre visible aux disciples de votre moqaddam.';
+  String get privacyLineageVisibleDescription => 'Vous rendre visible aux disciples de votre moqaddam.';
 
   @override
-  String get privacyMouqaddamVisibleLabel =>
-      'Visibilité de mon statut Mouqaddam';
+  String get privacyMouqaddamVisibleLabel => 'Visibilité de mon statut Mouqaddam';
 
   @override
-  String get privacyMouqaddamVisibleDescription =>
-      'Rendre visible votre statut et votre silsila d\'ijaza.';
+  String get privacyMouqaddamVisibleDescription => 'Rendre visible votre statut et votre silsila d\'ijaza.';
 
   @override
   String get privacyAvailableAsSponsorLabel => 'Disponible comme parrain';
 
   @override
-  String get privacyAvailableAsSponsorDescription =>
-      'Être trouvable par des candidats mouqaddam cherchant un parrain.';
+  String get privacyAvailableAsSponsorDescription => 'Être trouvable par des candidats mouqaddam cherchant un parrain.';
 
   @override
-  String get privacyMouqaddamGatedDescription =>
-      'Disponible une fois votre parrainage confirmé.';
+  String get privacyMouqaddamGatedDescription => 'Disponible une fois votre parrainage confirmé.';
 
   @override
   String get privacyWhoCanContactLabel => 'Qui peut vous contacter';
@@ -2582,12 +2431,10 @@ class AppLocalizationsFr extends AppLocalizations {
   String get privacyWhoCanContactEveryone => 'Tout le monde';
 
   @override
-  String get privacyWhoCanContactMatchesOnly =>
-      'Uniquement les correspondances';
+  String get privacyWhoCanContactMatchesOnly => 'Uniquement les correspondances';
 
   @override
-  String get privacyLoadError =>
-      'Impossible de charger vos réglages de confidentialité.';
+  String get privacyLoadError => 'Impossible de charger vos réglages de confidentialité.';
 
   @override
   String get privacyRetry => 'Réessayer';
@@ -2608,19 +2455,16 @@ class AppLocalizationsFr extends AppLocalizations {
   String get donationCustomAmountHint => 'Autre montant…';
 
   @override
-  String get donationAmountInvalid =>
-      'Merci de choisir ou saisir un montant entier entre 100 et 5 000 000 F CFA.';
+  String get donationAmountInvalid => 'Merci de choisir ou saisir un montant entier entre 100 et 5 000 000 F CFA.';
 
   @override
   String get donationSubmitButton => 'Faire un don';
 
   @override
-  String get donationSubmitError =>
-      'Impossible d\'enregistrer votre don pour le moment.';
+  String get donationSubmitError => 'Impossible d\'enregistrer votre don pour le moment.';
 
   @override
-  String get donationOpenCheckoutError =>
-      'Impossible d\'ouvrir la page de paiement — réessayez.';
+  String get donationOpenCheckoutError => 'Impossible d\'ouvrir la page de paiement — réessayez.';
 
   @override
   String get donationRecordedTitle => 'Merci pour votre soutien';
@@ -2639,8 +2483,7 @@ class AppLocalizationsFr extends AppLocalizations {
   String get moderationReportDialogTitle => 'Signaler ce contenu';
 
   @override
-  String get moderationReportDialogBody =>
-      'Un administrateur examinera votre signalement.';
+  String get moderationReportDialogBody => 'Un administrateur examinera votre signalement.';
 
   @override
   String get moderationReportReasonLabel => 'Raison (optionnel)';
@@ -2652,8 +2495,7 @@ class AppLocalizationsFr extends AppLocalizations {
   String get moderationReportSuccess => 'Signalement envoyé, merci.';
 
   @override
-  String get moderationReportAlreadyReported =>
-      'Vous avez déjà signalé ce contenu.';
+  String get moderationReportAlreadyReported => 'Vous avez déjà signalé ce contenu.';
 
   @override
   String get moderationReportError => 'Impossible d\'envoyer le signalement.';
@@ -2701,8 +2543,7 @@ class AppLocalizationsFr extends AppLocalizations {
       'Le direct sera terminé et retiré de l\'application pour tous les disciples. Cette action est définitive.';
 
   @override
-  String get moderationConfirmBlockRequestTitle =>
-      'Bloquer cette mise en relation ?';
+  String get moderationConfirmBlockRequestTitle => 'Bloquer cette mise en relation ?';
 
   @override
   String get moderationConfirmBlockRequestBody =>
@@ -2724,8 +2565,7 @@ class AppLocalizationsFr extends AppLocalizations {
   String get notificationsEmpty => 'Aucune notification pour l\'instant.';
 
   @override
-  String get notificationsLoadError =>
-      'Impossible de charger les notifications.';
+  String get notificationsLoadError => 'Impossible de charger les notifications.';
 
   @override
   String get notificationStreamLiveTitle => 'Un direct vient de commencer';
@@ -2737,20 +2577,16 @@ class AppLocalizationsFr extends AppLocalizations {
   String get notificationContentReportTitle => 'Nouveau signalement';
 
   @override
-  String get notificationContentReportBody =>
-      'Un contenu a été signalé, à examiner.';
+  String get notificationContentReportBody => 'Un contenu a été signalé, à examiner.';
 
   @override
-  String get notificationStreamUnavailable =>
-      'Ce direct n\'est plus disponible.';
+  String get notificationStreamUnavailable => 'Ce direct n\'est plus disponible.';
 
   @override
-  String get communityContactRestricted =>
-      'Ce disciple n\'accepte que les messages de ses correspondances.';
+  String get communityContactRestricted => 'Ce disciple n\'accepte que les messages de ses correspondances.';
 
   @override
-  String get communityStartConversationError =>
-      'Impossible d\'ouvrir la conversation. Réessayez.';
+  String get communityStartConversationError => 'Impossible d\'ouvrir la conversation. Réessayez.';
 
   @override
   String get moderationTypePost => 'Publication du fil';
@@ -2766,12 +2602,10 @@ class AppLocalizationsFr extends AppLocalizations {
       'Le contenu sera retiré de l\'application pour tous les disciples. Cette action est définitive.';
 
   @override
-  String get khadaraExternalUrlInvalid =>
-      'Entrez un lien complet commençant par https:// ou http://.';
+  String get khadaraExternalUrlInvalid => 'Entrez un lien complet commençant par https:// ou http://.';
 
   @override
-  String get mouqaddamSearchPrompt =>
-      'Saisissez au moins deux lettres du nom du mouqaddam que vous cherchez.';
+  String get mouqaddamSearchPrompt => 'Saisissez au moins deux lettres du nom du mouqaddam que vous cherchez.';
 
   @override
   String get resetPasswordCancel => 'Annuler et revenir à la connexion';
@@ -2790,20 +2624,17 @@ class AppLocalizationsFr extends AppLocalizations {
   String get wirdFreeAbandonConfirmTitle => 'Abandonner ce compteur ?';
 
   @override
-  String get wirdFreeAbandonConfirmBody =>
-      'Le décompte en cours sera effacé et vous pourrez en paramétrer un nouveau.';
+  String get wirdFreeAbandonConfirmBody => 'Le décompte en cours sera effacé et vous pourrez en paramétrer un nouveau.';
 
   @override
-  String get wirdVoiceMicUnavailable =>
-      'Micro indisponible ou autorisation refusée. Utilisez le mode « Au toucher ».';
+  String get wirdVoiceMicUnavailable => 'Micro indisponible ou autorisation refusée. Utilisez le mode « Au toucher ».';
 
   @override
   String get wirdVoiceRepeatedFailure =>
       'La reconnaissance vocale rencontre un problème répété sur cet appareil. Utilisez le mode « Au toucher ».';
 
   @override
-  String get wirdVoiceTemporaryError =>
-      'L\'écoute s\'est interrompue un instant, elle reprend.';
+  String get wirdVoiceTemporaryError => 'L\'écoute s\'est interrompue un instant, elle reprend.';
 
   @override
   String wirdTasbihTitle(Object wird) {
@@ -2841,8 +2672,7 @@ class AppLocalizationsFr extends AppLocalizations {
   String get wirdTasbihBackToGuide => 'Retour au guide';
 
   @override
-  String get wirdTasbihDonationNudge =>
-      'At-Tijaniya reste gratuite grâce à vous — faire un don';
+  String get wirdTasbihDonationNudge => 'At-Tijaniya reste gratuite grâce à vous — faire un don';
 
   @override
   String get wirdHistoryStreakFridays => 'vendredis d\'affilée';
@@ -2857,12 +2687,10 @@ class AppLocalizationsFr extends AppLocalizations {
   String get wirdHistoryTotalDaily => 'Récitations complètes au total';
 
   @override
-  String get communityMessageSendError =>
-      'Le message n\'a pas pu être envoyé. Réessayez.';
+  String get communityMessageSendError => 'Le message n\'a pas pu être envoyé. Réessayez.';
 
   @override
-  String get communityMessagesLoadError =>
-      'Impossible de charger les messages.';
+  String get communityMessagesLoadError => 'Impossible de charger les messages.';
 
   @override
   String get adminMouqaddamZawiyasTitle => 'Zawiyas des mouqaddams';
@@ -2878,39 +2706,31 @@ class AppLocalizationsFr extends AppLocalizations {
   String get adminMouqaddamZawiyasNone => 'Aucune';
 
   @override
-  String get adminMouqaddamZawiyasEmpty =>
-      'Aucun mouqaddam au parrainage confirmé pour le moment.';
+  String get adminMouqaddamZawiyasEmpty => 'Aucun mouqaddam au parrainage confirmé pour le moment.';
 
   @override
-  String get adminMouqaddamZawiyasLoadError =>
-      'Impossible de charger la liste.';
+  String get adminMouqaddamZawiyasLoadError => 'Impossible de charger la liste.';
 
   @override
   String get adminMouqaddamZawiyasSaved => 'Attribution enregistrée.';
 
   @override
-  String get adminMouqaddamZawiyasSaveError =>
-      'Impossible d\'enregistrer l\'attribution.';
+  String get adminMouqaddamZawiyasSaveError => 'Impossible d\'enregistrer l\'attribution.';
 
   @override
-  String get wirdAudioPillarUnavailable =>
-      'Récitation audio pas encore disponible pour ce pilier.';
+  String get wirdAudioPillarUnavailable => 'Récitation audio pas encore disponible pour ce pilier.';
 
   @override
-  String get wirdAudioWirdUnavailable =>
-      'Récitations audio pas encore disponibles pour ce wird.';
+  String get wirdAudioWirdUnavailable => 'Récitations audio pas encore disponibles pour ce wird.';
 
   @override
-  String get wirdAudioPlayFailed =>
-      'Impossible de lire cette récitation pour le moment.';
+  String get wirdAudioPlayFailed => 'Impossible de lire cette récitation pour le moment.';
 
   @override
-  String get wirdAudioStorageFull =>
-      'Espace de stockage insuffisant sur l\'appareil.';
+  String get wirdAudioStorageFull => 'Espace de stockage insuffisant sur l\'appareil.';
 
   @override
-  String get wirdAudioDownloadFailed =>
-      'Téléchargement impossible. Vérifiez votre connexion.';
+  String get wirdAudioDownloadFailed => 'Téléchargement impossible. Vérifiez votre connexion.';
 
   @override
   String get wirdAudioDownloading => 'Téléchargement en cours…';
@@ -2926,8 +2746,7 @@ class AppLocalizationsFr extends AppLocalizations {
       'Autorisez les notifications dans les réglages du téléphone pour activer ce rappel.';
 
   @override
-  String get wirdReminderNotificationBody =>
-      'Rappel — prenez un moment pour réciter votre wird.';
+  String get wirdReminderNotificationBody => 'Rappel — prenez un moment pour réciter votre wird.';
 
   @override
   String get wirdDetailHistoryTooltip => 'Historique';
@@ -2948,8 +2767,7 @@ class AppLocalizationsFr extends AppLocalizations {
   String get wirdDetailFullText => 'Texte intégral';
 
   @override
-  String get figuresReviewError =>
-      'La publication a échoué. Vérifiez votre connexion et réessayez.';
+  String get figuresReviewError => 'La publication a échoué. Vérifiez votre connexion et réessayez.';
 
   @override
   String get figureKhalifaFormOtherFounder =>
@@ -2963,8 +2781,7 @@ class AppLocalizationsFr extends AppLocalizations {
   String get figureUnpublishAction => 'Repasser en brouillon';
 
   @override
-  String get figureUnpublishConfirmTitle =>
-      'Retirer cette figure de la publication ?';
+  String get figureUnpublishConfirmTitle => 'Retirer cette figure de la publication ?';
 
   @override
   String get figureUnpublishConfirmBody =>
@@ -2977,8 +2794,7 @@ class AppLocalizationsFr extends AppLocalizations {
   String get figureUnpublishError => 'Impossible de dépublier cette figure.';
 
   @override
-  String get a11yTogglePasswordVisibility =>
-      'Afficher ou masquer le mot de passe';
+  String get a11yTogglePasswordVisibility => 'Afficher ou masquer le mot de passe';
 
   @override
   String get a11yRemove => 'Retirer';
@@ -3011,12 +2827,10 @@ class AppLocalizationsFr extends AppLocalizations {
   String get wirdHistoryHeading => 'Historique';
 
   @override
-  String get wirdHistoryEmptyTitle =>
-      'Aucune récitation enregistrée pour l\'instant';
+  String get wirdHistoryEmptyTitle => 'Aucune récitation enregistrée pour l\'instant';
 
   @override
-  String get wirdHistoryEmptyHint =>
-      'Terminez le wird au Tasbih pour qu\'il soit marqué ici.';
+  String get wirdHistoryEmptyHint => 'Terminez le wird au Tasbih pour qu\'il soit marqué ici.';
 
   @override
   String get wirdHistoryDaysPractised => 'Jours pratiqués';
@@ -3104,8 +2918,7 @@ class AppLocalizationsFr extends AppLocalizations {
   String get blockedUsersTitle => 'Disciples bloqués';
 
   @override
-  String get blockedUsersSubtitle =>
-      'Voir et débloquer les disciples que vous avez bloqués';
+  String get blockedUsersSubtitle => 'Voir et débloquer les disciples que vous avez bloqués';
 
   @override
   String get blockedUsersEmpty => 'Vous n\'avez bloqué personne.';
@@ -3154,8 +2967,7 @@ class AppLocalizationsFr extends AppLocalizations {
   String get wirdRepairKindEmpechement => 'Empêchement';
 
   @override
-  String get wirdRepairEmpty =>
-      'Aucun cas dans les sources pour cette combinaison. Demandez à votre moqaddam.';
+  String get wirdRepairEmpty => 'Aucun cas dans les sources pour cette combinaison. Demandez à votre moqaddam.';
 
   @override
   String get wirdRepairReadAll => 'Tout lire';
@@ -3182,15 +2994,13 @@ class AppLocalizationsFr extends AppLocalizations {
       'Brouillon en attente de validation par le moqaddam référent. Les disciples ne voient pas encore cette page.';
 
   @override
-  String get wirdRepairLoadError =>
-      'Impossible de charger le contenu. Vérifiez votre connexion.';
+  String get wirdRepairLoadError => 'Impossible de charger le contenu. Vérifiez votre connexion.';
 
   @override
   String get wirdRepairRetry => 'Réessayer';
 
   @override
-  String get wirdRepairUnavailable =>
-      'Ce contenu n\'est pas encore disponible.';
+  String get wirdRepairUnavailable => 'Ce contenu n\'est pas encore disponible.';
 
   @override
   String get wirdRepairDraftTag => 'Brouillon';
@@ -3269,8 +3079,7 @@ class AppLocalizationsFr extends AppLocalizations {
   }
 
   @override
-  String get authCheckEmailSpamHint =>
-      'Rien reçu ? Regardez aussi dans les courriers indésirables.';
+  String get authCheckEmailSpamHint => 'Rien reçu ? Regardez aussi dans les courriers indésirables.';
 
   @override
   String get authGoToLogin => 'Aller à la connexion';
@@ -3288,8 +3097,7 @@ class AppLocalizationsFr extends AppLocalizations {
   String get tariqaBenefitsCardTitle => 'Bienfaits de la Tijaniyya';
 
   @override
-  String get tariqaBenefitsCardSubtitle =>
-      'La tariqa et ses wirds, avec leurs conditions';
+  String get tariqaBenefitsCardSubtitle => 'La tariqa et ses wirds, avec leurs conditions';
 
   @override
   String get tariqaBenefitsTitle => 'Bienfaits de la Tijaniyya';
@@ -3302,8 +3110,7 @@ class AppLocalizationsFr extends AppLocalizations {
       'Ce que disent Jawâhir al-Ma\'ânî et les moqaddams sur la tariqa, le Lazim, la Wazifa et la Hadratou-l-Jouma, avec la condition que les textes attachent à chaque bienfait.';
 
   @override
-  String get tariqaBenefitsFrenchOnly =>
-      'Cette page n\'existe qu\'en français pour l\'instant.';
+  String get tariqaBenefitsFrenchOnly => 'Cette page n\'existe qu\'en français pour l\'instant.';
 
   @override
   String get tariqaBenefitsContents => 'Sommaire';
@@ -3333,8 +3140,7 @@ class AppLocalizationsFr extends AppLocalizations {
   String get tariqaBenefitsLegendSingle => 'un seul relais';
 
   @override
-  String get tariqaBenefitsLegendSecondHand =>
-      'connu par un commentaire ou une traduction';
+  String get tariqaBenefitsLegendSecondHand => 'connu par un commentaire ou une traduction';
 
   @override
   String get tariqaBenefitsSources => 'Sources';
@@ -3367,14 +3173,17 @@ class AppLocalizationsFr extends AppLocalizations {
   String get wirdAudioPillarRetry => 'Réessayer le téléchargement';
 
   @override
-  String get wirdRecitationsValidateError =>
-      'Validation impossible — vérifiez votre connexion.';
+  String get wirdRecitationsValidateError => 'Validation impossible — vérifiez votre connexion.';
 
   @override
-  String get wirdAudioLoadFailed =>
-      'Récitations audio indisponibles — vérifiez votre connexion.';
+  String get wirdAudioLoadFailed => 'Récitations audio indisponibles — vérifiez votre connexion.';
 
   @override
-  String get wirdReminderScheduleFailed =>
-      'Impossible de programmer le rappel. Réessayez.';
+  String get wirdReminderScheduleFailed => 'Impossible de programmer le rappel. Réessayez.';
+
+  @override
+  String get wirdReminderChannelName => 'Rappels des wirds';
+
+  @override
+  String get wirdReminderChannelDescription => 'Rappels programmés pour la pratique des wirds.';
 }
