@@ -21,6 +21,7 @@ import '../domain/figure_errors.dart';
 import '../domain/figure_models.dart';
 import 'figure_citation_form_screen.dart';
 import 'figure_form_screen.dart';
+import 'figure_portrait.dart';
 import 'figure_khalifa_form_screen.dart';
 import 'figure_silsila_form_screen.dart';
 import 'figure_work_form_screen.dart';
@@ -414,6 +415,8 @@ class _FigureHero extends StatelessWidget {
   /// les variantes décoratives ponctuelles de la maquette).
   static const _subtitleColor = Color(0xFFCFE0D6);
 
+  static const _portraitPlaceholder = Icon(Icons.person_outline, color: AppColors.parchment, size: 32);
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -467,28 +470,17 @@ class _FigureHero extends StatelessWidget {
                             decoration: BoxDecoration(
                               shape: BoxShape.circle,
                               color: AppColors.parchment.withValues(alpha: 0.2),
-                              // alignment: topCenter plutôt que le centrage par défaut —
-                              // le sujet d'un portrait est presque toujours dans le
-                              // haut de la photo, un centrage strict coupe souvent le
-                              // visage sur une photo au format portrait.
-                              // `ResizeImage` — voir la même note dans
-                              // figures_screen.dart (cadre de 72px ici).
-                              image: figure.portraitUrl != null
-                                  ? DecorationImage(
-                                      image: ResizeImage(
-                                        NetworkImage(figure.portraitUrl!),
-                                        width: (72 * MediaQuery.of(context).devicePixelRatio).round(),
-                                        height: (72 * MediaQuery.of(context).devicePixelRatio).round(),
-                                      ),
-                                      fit: BoxFit.cover,
-                                      alignment: Alignment.topCenter,
-                                    )
-                                  : null,
                             ),
+                            // Portrait introuvable ou absent : même icône (voir
+                            // `FigurePortrait`, audit Figures du 2026-10-25, P2-5).
                             child: figure.portraitUrl == null
-                                ? const Icon(Icons.person_outline,
-                                    color: AppColors.parchment, size: 32)
-                                : null,
+                                ? _portraitPlaceholder
+                                : FigurePortrait(
+                                    url: figure.portraitUrl!,
+                                    size: 72,
+                                    circle: true,
+                                    errorPlaceholder: _portraitPlaceholder,
+                                  ),
                           ),
                           if (changingPortrait)
                             const Positioned.fill(

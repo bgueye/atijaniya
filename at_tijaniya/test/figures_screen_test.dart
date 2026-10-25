@@ -104,6 +104,36 @@ void main() {
     expect(selected.labelStyle, isNull);
   });
 
+  // Audit Figures du 2026-10-25 (P2-5) : un portrait introuvable laisse
+  // place à l'icône de repli, au lieu d'une case vide. Dans `flutter test`,
+  // toute image réseau échoue (HTTP 400), comme une URL qui ne répond plus.
+  testWidgets('un portrait introuvable est remplacé par l\'icône de repli', (tester) async {
+    await tester.pumpWidget(ProviderScope(
+      overrides: [
+        isAdminProvider.overrideWithValue(false),
+        figuresProvider.overrideWith((ref) async => const [
+              Figure(
+                id: 'p',
+                nameArabic: 'اسم',
+                nameFrench: 'Figure au portrait cassé',
+                category: FigureCategory.founder,
+                portraitUrl: 'https://exemple.invalid/portrait.jpg',
+              ),
+            ]),
+      ],
+      child: const MaterialApp(
+        localizationsDelegates: AppLocalizations.localizationsDelegates,
+        supportedLocales: AppLocalizations.supportedLocales,
+        locale: Locale('fr'),
+        home: Scaffold(body: FiguresScreen()),
+      ),
+    ));
+    await tester.pumpAndSettle();
+
+    expect(find.byType(Image), findsOneWidget);
+    expect(find.byIcon(Icons.person_outline), findsOneWidget);
+  });
+
   testWidgets('la recherche se combine au filtre par foyer', (tester) async {
     await tester.pumpWidget(_wrap());
     await tester.pumpAndSettle();
