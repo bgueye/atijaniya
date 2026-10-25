@@ -27,8 +27,8 @@ void main() {
       // Intertitre séparé du texte (audit Figures du 2026-10-25, P2-2).
       expect(figure.biography![0].heading, 'PREMIÈRE SECTION');
       expect(figure.biography![0].translation, 'Texte de la première section.');
-      // Le résumé de la review admin reste la première section brute.
-      expect(figure.summary, 'PREMIÈRE SECTION\nTexte de la première section.');
+      // Résumé de la review admin : le texte, sans l'intertitre (P3-6).
+      expect(figure.summary, 'Texte de la première section.');
     });
 
     test('repère les intertitres en majuscules, seuls ou suivis du texte', () {
@@ -51,6 +51,9 @@ void main() {
       expect(biography[2].heading, "L'ÂGE D'OR DE LA ZAWIYA");
       expect(biography[2].translation, 'Un texte suit le titre.\nSur deux lignes.');
       expect(biography[3].heading, isNull);
+      // Première section réduite à un titre (50 fiches sur 71 en base) : le
+      // résumé prend le premier vrai texte (audit Figures du 2026-10-25, P3-6).
+      expect(figure.summary, 'Il naît en 1850 dans un village.');
     });
 
     test('catégorie "family_lineage" devient religiousFamily', () {

@@ -487,10 +487,18 @@ bool isBiographyHeading(String line) {
   return RegExp(r'[A-ZÀ-ÖØ-Ý]{2}').hasMatch(line);
 }
 
+/// Aperçu de la biographie (sous-titre de l'écran de review admin) : le texte
+/// de la première section qui en a un, sans son intertitre. Avant, c'était la
+/// première section brute, soit un titre seul pour 50 fiches sur 71
+/// (« NAISSANCE ET ORIGINES »), qui n'apprenait rien (audit Figures du
+/// 2026-10-25, P3-6). `null` si aucune section n'a de texte.
 String? _summaryFrom(String? bioText) {
   if (bioText == null) return null;
-  final sections = _biographySections(bioText);
-  return sections.isEmpty ? null : sections.first;
+  for (final section in _biographySections(bioText)) {
+    final text = _paragraphFrom(section).translation;
+    if (text.isNotEmpty) return text;
+  }
+  return null;
 }
 
 List<FigureCitation>? _citationsFrom(List<dynamic>? quotesRows) {
