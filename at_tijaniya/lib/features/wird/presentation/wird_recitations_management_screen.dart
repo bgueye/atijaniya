@@ -414,7 +414,8 @@ class _UploadRecitationSheetState
 
   Future<void> _pickFile() async {
     final file = await _picker.pickAudioFile();
-    if (file == null) return;
+    // Feuille refermée pendant le choix du fichier (P3-2).
+    if (file == null || !mounted) return;
     setState(() {
       _pickedFile = file;
       _pickedFileName = file.name;

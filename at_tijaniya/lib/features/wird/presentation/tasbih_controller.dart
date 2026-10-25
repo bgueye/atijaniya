@@ -180,6 +180,9 @@ class TasbihController extends StateNotifier<TasbihState> with WidgetsBindingObs
 
   Future<void> _load() async {
     final saved = await _store.load(wird.id);
+    // Écran quitté pendant la lecture du stockage (`.autoDispose`) : écrire
+    // l'état lèverait une `StateError` (audit du 2026-10-25, P3-2).
+    if (!mounted) return;
     if (saved != null && saved.pillarIndex < wird.pillars.length) {
       state = state.copyWith(session: saved, loadingSession: false);
     } else {

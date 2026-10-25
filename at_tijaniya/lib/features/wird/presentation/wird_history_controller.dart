@@ -36,7 +36,16 @@ class WirdHistoryController extends StateNotifier<WirdHistoryState> {
   final WirdCompletionStore _store = const WirdCompletionStore();
 
   Future<void> _load() async {
-    final dates = await _store.load(wird.id);
+    List<DateTime> dates;
+    try {
+      dates = await _store.load(wird.id);
+    } catch (_) {
+      // Date enregistrée illisible : un historique vide plutôt qu'un
+      // chargement sans fin (audits du 2026-10-04 et du 2026-10-25, P3-2).
+      dates = const [];
+    }
+    // Écran quitté pendant la lecture (`.autoDispose`).
+    if (!mounted) return;
     final stats = computeWirdProgressStats(frequency: wird.frequency, completionDates: dates);
     state = state.copyWith(loading: false, stats: stats);
   }

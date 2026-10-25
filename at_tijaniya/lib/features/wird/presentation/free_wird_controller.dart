@@ -113,6 +113,8 @@ class FreeWirdController extends StateNotifier<FreeWirdState> with WidgetsBindin
 
   Future<void> _load() async {
     final saved = await _store.load();
+    // Voir `TasbihController._load`.
+    if (!mounted) return;
     state = state.copyWith(session: saved, loading: false);
   }
 
