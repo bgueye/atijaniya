@@ -63,9 +63,19 @@ class WirdAudioState {
   }
 }
 
+// `.autoDispose` : quitter le guide arrête la lecture et libère le lecteur
+// (`dispose()`). Gardé en vie, il continuait de jouer hors du guide, sans
+// aucun moyen de l'arrêter ailleurs — décision du porteur de projet du
+// 2026-10-25, en attendant une vraie lecture en arrière-plan
+// (`just_audio_background`, docs/decision-gestion-audio-wirds.md §5).
 final wirdAudioControllerProvider =
-    StateNotifierProvider.family<WirdAudioController, WirdAudioState, Wird>(
-  (ref, wird) => WirdAudioController(ref: ref, wird: wird),
+    StateNotifierProvider.autoDispose.family<WirdAudioController, WirdAudioState, Wird>(
+  (ref, wird) {
+    // Garde la disponibilité des piliers en vie aussi longtemps que le
+    // lecteur, qui ne fait que la lire (`ref.read`).
+    ref.listen(wirdPillarAudioProvider(wird), (_, __) {});
+    return WirdAudioController(ref: ref, wird: wird);
+  },
 );
 
 class WirdAudioController extends StateNotifier<WirdAudioState> {
@@ -97,10 +107,26 @@ class WirdAudioController extends StateNotifier<WirdAudioState> {
 
   bool get hasAnyAudio => _pillarAudio.values.any((s) => s.recitation != null);
 
+  bool get _metadataLoadFailed =>
+      _pillarAudio.values.any((s) => s.availability == PillarAudioAvailability.loadFailed);
+
+  /// Redemande la liste des récitations après un échec hors ligne. `false`,
+  /// avec un message, si elle reste inaccessible.
+  Future<bool> _reloadMetadata() async {
+    await ref.read(wirdPillarAudioProvider(wird).notifier).reload();
+    if (!mounted) return false;
+    if (_metadataLoadFailed) {
+      state = state.copyWith(errorMessage: wirdMsgAudioLoadFailed);
+      return false;
+    }
+    return true;
+  }
+
   /// Démarre la lecture du pilier [index] (téléchargeant sa récitation au
   /// besoin, docs/decision-gestion-audio-wirds.md §4), ou reprend/suspend la
   /// piste en cours si c'est déjà celle-là.
   Future<void> playPillar(int index) async {
+    if (_metadataLoadFailed && !await _reloadMetadata()) return;
     // Reprise/pause seulement si la piste de ce pilier est bien sur
     // l'appareil. Après un téléchargement en échec, le pilier restait
     // « actif » : le toucher de nouveau basculait lecture/pause sur un lecteur
@@ -143,6 +169,7 @@ class WirdAudioController extends StateNotifier<WirdAudioState> {
 
   Future<void> togglePlayPause() async {
     if (state.activePillarIndex == null) {
+      if (_metadataLoadFailed && !await _reloadMetadata()) return;
       final firstWithAudio = _firstIndexWithAudio();
       if (firstWithAudio == -1) {
         state = state.copyWith(errorMessage: wirdMsgWirdAudioUnavailable);

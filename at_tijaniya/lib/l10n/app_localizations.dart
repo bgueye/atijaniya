@@ -6200,6 +6200,12 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'Validation impossible — vérifiez votre connexion.'**
   String get wirdRecitationsValidateError;
+
+  /// No description provided for @wirdAudioLoadFailed.
+  ///
+  /// In fr, this message translates to:
+  /// **'Récitations audio indisponibles — vérifiez votre connexion.'**
+  String get wirdAudioLoadFailed;
 }
 
 class _AppLocalizationsDelegate

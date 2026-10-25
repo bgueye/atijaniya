@@ -23,8 +23,11 @@ import '../domain/wird_models.dart';
 import '../domain/wird_recitation.dart';
 import 'wird_messages.dart';
 
+// `.autoDispose` : libéré en quittant le guide, puis rechargé à la prochaine
+// ouverture. Gardé en vie, il ne redemandait jamais une liste de récitations
+// manquée hors ligne (audit du 2026-10-25, P2-2).
 final wirdPillarAudioProvider =
-    StateNotifierProvider.family<WirdPillarAudioController, Map<int, PillarAudioState>, Wird>(
+    StateNotifierProvider.autoDispose.family<WirdPillarAudioController, Map<int, PillarAudioState>, Wird>(
   (ref, wird) => WirdPillarAudioController(wird: wird),
 );
 
@@ -119,12 +122,21 @@ class WirdPillarAudioController extends StateNotifier<Map<int, PillarAudioState>
       }
       if (mounted) state = next;
     } catch (_) {
-      // Erreur réseau au chargement des métadonnées : les piliers restent
-      // dans leur état par défaut ("bientôt disponible" côté écran), pas de
-      // blocage de l'écran — la récitation reste consultable dès que la
-      // connexion revient (l'écran ne fait pas de requête en boucle).
+      // Erreur réseau au chargement des métadonnées : on ne sait pas s'il
+      // existe des récitations. Les piliers passent en `loadFailed` — et non
+      // plus « bientôt disponible », ce qui était faux — et un toucher sur
+      // lecture redemande la liste ([reload]), sans requête en boucle.
+      if (mounted) {
+        state = {
+          for (var i = 0; i < wird.pillars.length; i++)
+            i: const PillarAudioState(availability: PillarAudioAvailability.loadFailed),
+        };
+      }
     }
   }
+
+  /// Redemande la liste des récitations, après un échec hors ligne.
+  Future<void> reload() => _loadRecitations();
 
   /// Télécharge (si nécessaire) la récitation du pilier [index], puis
   /// renvoie son chemin local. `null` si ce pilier n'a pas de récitation

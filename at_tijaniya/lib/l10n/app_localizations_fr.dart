@@ -3369,4 +3369,8 @@ class AppLocalizationsFr extends AppLocalizations {
   @override
   String get wirdRecitationsValidateError =>
       'Validation impossible — vérifiez votre connexion.';
+
+  @override
+  String get wirdAudioLoadFailed =>
+      'Récitations audio indisponibles — vérifiez votre connexion.';
 }

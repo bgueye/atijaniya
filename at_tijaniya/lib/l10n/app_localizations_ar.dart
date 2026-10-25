@@ -3257,4 +3257,8 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get wirdRecitationsValidateError => 'تعذّر التحقق — تحقّق من اتصالك.';
+
+  @override
+  String get wirdAudioLoadFailed =>
+      'تعذّر تحميل التلاوات الصوتية — تحقّق من اتصالك.';
 }

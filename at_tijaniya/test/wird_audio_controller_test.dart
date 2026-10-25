@@ -19,6 +19,7 @@ import 'package:at_tijaniya/features/wird/data/wird_recitation_repository.dart';
 import 'package:at_tijaniya/features/wird/data/wirds_content.dart';
 import 'package:at_tijaniya/features/wird/domain/wird_recitation.dart';
 import 'package:at_tijaniya/features/wird/presentation/wird_audio_controller.dart';
+import 'package:at_tijaniya/features/wird/presentation/wird_messages.dart';
 import 'package:at_tijaniya/features/wird/presentation/wird_pillar_audio_controller.dart';
 
 /// Dépôt Supabase simulé : récitations fixées par le test, téléchargements
@@ -78,6 +79,7 @@ class _EmptyManifest implements WirdRecitationAssetManifest {
 /// Lecteur simulé : retient les fichiers chargés, dans l'ordre.
 class _FakePlayer implements WirdAudioPlayerService {
   final loaded = <String>[];
+  bool disposed = false;
   final _position = StreamController<Duration>.broadcast();
   final _duration = StreamController<Duration?>.broadcast();
   final _playerState = StreamController<PlayerState>.broadcast();
@@ -100,7 +102,7 @@ class _FakePlayer implements WirdAudioPlayerService {
   @override
   Future<void> stop() async {}
   @override
-  Future<void> dispose() async {}
+  Future<void> dispose() async => disposed = true;
 }
 
 /// Laisse passer les micro-tâches en attente (chargement des métadonnées,
@@ -141,11 +143,17 @@ void main() {
     addTearDown(container.dispose);
   });
 
+  /// Écoutes ouvertes par [openGuide], comme le fait l'écran du guide ;
+  /// les fermer revient à quitter le guide.
+  late List<ProviderSubscription<Object?>> guideSubscriptions;
+
   /// Ouvre le « guide » : les deux contrôleurs restent écoutés, comme par
   /// l'écran, et les métadonnées sont chargées.
   Future<WirdAudioController> openGuide() async {
-    container.listen(wirdPillarAudioProvider(wird), (_, __) {});
-    container.listen(wirdAudioControllerProvider(wird), (_, __) {});
+    guideSubscriptions = [
+      container.listen(wirdPillarAudioProvider(wird), (_, __) {}),
+      container.listen(wirdAudioControllerProvider(wird), (_, __) {}),
+    ];
     await _settle();
     return container.read(wirdAudioControllerProvider(wird).notifier);
   }
@@ -191,5 +199,43 @@ void main() {
 
     expect(player.loaded, [File('cache/b.m4a').path], reason: 'A ne doit pas remplacer B');
     expect(container.read(wirdAudioControllerProvider(wird)).activePillarIndex, 1);
+  });
+
+  test('liste des récitations manquée hors ligne : état distinct, puis nouvel essai au toucher', () async {
+    repository.metadataError = const SocketException('hors ligne');
+    final audio = await openGuide();
+
+    // Ni « bientôt disponible » (aucune récitation) ni pilier jouable.
+    expect(availabilityOf(0), PillarAudioAvailability.loadFailed);
+
+    // Toujours hors ligne : le toucher redemande la liste et le dit.
+    await audio.togglePlayPause();
+    await _settle();
+    expect(container.read(wirdAudioControllerProvider(wird)).errorMessage, wirdMsgAudioLoadFailed);
+
+    // Connexion revenue : le même toucher recharge la liste et lit le pilier.
+    repository.metadataError = null;
+    repository.recitations = {0: _recitation('a.m4a')};
+    store.files.add('a.m4a');
+    await audio.playPillar(0);
+    await _settle();
+    expect(availabilityOf(0), PillarAudioAvailability.downloaded);
+    expect(player.loaded, [File('cache/a.m4a').path]);
+  });
+
+  test('quitter le guide arrête la lecture et libère le lecteur', () async {
+    repository.recitations = {0: _recitation('a.m4a')};
+    store.files.add('a.m4a');
+    final audio = await openGuide();
+    await audio.playPillar(0);
+    await _settle();
+    expect(player.loaded, isNotEmpty);
+
+    for (final subscription in guideSubscriptions) {
+      subscription.close();
+    }
+    await _settle();
+
+    expect(player.disposed, isTrue);
   });
 }

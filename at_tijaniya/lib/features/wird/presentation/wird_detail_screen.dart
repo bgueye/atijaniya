@@ -74,6 +74,7 @@ class _WirdDetailScreenState extends ConsumerState<WirdDetailScreen> {
     final audioController = ref.read(wirdAudioControllerProvider(wird).notifier);
     final pillarAudio = ref.watch(wirdPillarAudioProvider(wird));
     final hasAnyAudio = pillarAudio.values.any((s) => s.recitation != null);
+    final audioLoadFailed = pillarAudio.values.any((s) => s.availability == PillarAudioAvailability.loadFailed);
 
     // Le titre d'AppBar (et tout autre widget qui lit Theme.of(context))
     // doit passer par le thème immersif : sans ce wrapper, le titre hérite
@@ -120,6 +121,7 @@ class _WirdDetailScreenState extends ConsumerState<WirdDetailScreen> {
         state: audioState,
         controller: audioController,
         hasAnyAudio: hasAnyAudio,
+        audioLoadFailed: audioLoadFailed,
         activePillarAvailability: audioState.activePillarIndex != null
             ? pillarAudio[audioState.activePillarIndex]?.availability
             : null,
@@ -419,7 +421,9 @@ class _AudioPillarButton extends StatelessWidget {
 
     final String tooltip;
     final Widget icon;
-    if (availability == PillarAudioAvailability.error) {
+    // `loadFailed` : la liste des récitations n'a pas pu être chargée ; même
+    // geste qu'après un téléchargement en échec, retenter.
+    if (availability == PillarAudioAvailability.error || availability == PillarAudioAvailability.loadFailed) {
       tooltip = l10n.wirdAudioPillarRetry;
       icon = Icon(Icons.error_outline, color: AppColors.bronze, size: 22);
     } else if (isBuffering) {
@@ -459,6 +463,7 @@ class _AudioPlayerBar extends StatelessWidget {
     required this.state,
     required this.controller,
     required this.hasAnyAudio,
+    required this.audioLoadFailed,
     required this.activePillarAvailability,
   });
 
@@ -466,6 +471,10 @@ class _AudioPlayerBar extends StatelessWidget {
   final WirdAudioState state;
   final WirdAudioController controller;
   final bool hasAnyAudio;
+
+  /// Liste des récitations non chargée (hors ligne) : la barre le dit, au
+  /// lieu de « bientôt disponible ». Le bouton de lecture la redemande.
+  final bool audioLoadFailed;
 
   /// Disponibilité du pilier en cours (`state.activePillarIndex`), `null`
   /// si aucun pilier actif. Sert uniquement à afficher "Téléchargement en
@@ -481,7 +490,9 @@ class _AudioPlayerBar extends StatelessWidget {
         ? (isDownloading ? AppLocalizations.of(context)!.wirdAudioDownloading : wird.pillars[activeIndex].transliteration)
         : hasAnyAudio
             ? AppLocalizations.of(context)!.wirdAudioPlayLabel
-            : AppLocalizations.of(context)!.wirdAudioSoonLabel;
+            : audioLoadFailed
+                ? AppLocalizations.of(context)!.wirdAudioLoadFailed
+                : AppLocalizations.of(context)!.wirdAudioSoonLabel;
     final position = state.position;
     final duration = state.duration ?? Duration.zero;
     final progress = duration.inMilliseconds == 0

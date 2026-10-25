@@ -11,6 +11,7 @@ const wirdMsgAudioPlayFailed = 'audio_play_failed';
 const wirdMsgAudioStorageFull = 'audio_storage_full';
 const wirdMsgAudioDownloadFailed = 'audio_download_failed';
 const wirdMsgReminderPermissionDenied = 'reminder_permission_denied';
+const wirdMsgAudioLoadFailed = 'audio_load_failed';
 
 String wirdMessage(AppLocalizations l10n, String code) {
   return switch (code) {
@@ -19,6 +20,7 @@ String wirdMessage(AppLocalizations l10n, String code) {
     wirdMsgAudioStorageFull => l10n.wirdAudioStorageFull,
     wirdMsgAudioDownloadFailed => l10n.wirdAudioDownloadFailed,
     wirdMsgReminderPermissionDenied => l10n.wirdReminderPermissionDenied,
+    wirdMsgAudioLoadFailed => l10n.wirdAudioLoadFailed,
     _ => l10n.wirdAudioPlayFailed,
   };
 }

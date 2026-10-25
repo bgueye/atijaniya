@@ -166,6 +166,11 @@ class WirdStepRecitations {
 enum PillarAudioAvailability {
   /// Aucune récitation validée pour ce pilier — état "bientôt disponible".
   noRecitation,
+
+  /// Liste des récitations non chargée (hors ligne à l'ouverture du guide) :
+  /// on ne sait pas s'il en existe une. Distinct de [noRecitation], qui
+  /// affichait à tort « bientôt disponible » (audit du 2026-10-25, P2-2).
+  loadFailed,
   notDownloaded,
   downloading,
   downloaded,
