@@ -80,7 +80,12 @@ class AppTheme {
         surfaceContainer: isLight ? AppColors.offWhite : AppColors.emerald.withValues(alpha: 0.12),
         surfaceContainerHigh: isLight ? AppColors.goldSoft : AppColors.emerald.withValues(alpha: 0.20),
         surfaceContainerHighest: isLight ? AppColors.goldSoft : AppColors.emerald.withValues(alpha: 0.28),
-        onSurfaceVariant: AppColors.bronze,
+        // Texte secondaire des composants Material (sous-titre de
+        // `ListTile`, indication et icônes d'un champ, libellé de puce...) :
+        // encre secondaire sur fond clair, parchemin atténué sur zaytoune.
+        // C'était le bronze : 3,72:1 sur parchemin, 2,92:1 sur zaytoune, sous
+        // le seuil AA (audit Figures du 2026-10-25, P2-4, étendu à l'app).
+        onSurfaceVariant: isLight ? AppColors.secondaryInk : AppColors.secondaryOnDark,
         // Un bronze plus foncé seul ne suffit pas si le trait reste
         // translucide à 20-40% (il se redilue visuellement dans la
         // surface, voir design_tokens.yaml § high_contrast_mode) : l'alpha
@@ -148,7 +153,9 @@ class AppTheme {
       bottomNavigationBarTheme: BottomNavigationBarThemeData(
         backgroundColor: AppColors.offWhite,
         selectedItemColor: AppColors.emerald,
-        unselectedItemColor: AppColors.bronze,
+        // Libellés des onglets non sélectionnés (12 px) : encre secondaire,
+        // pas le bronze (4,09:1 sur blanc cassé, sous le seuil AA).
+        unselectedItemColor: AppColors.secondaryInk,
         selectedLabelStyle: GoogleFonts.jost(fontSize: 12, fontWeight: FontWeight.w500),
         unselectedLabelStyle: GoogleFonts.jost(fontSize: 12),
         type: BottomNavigationBarType.fixed,

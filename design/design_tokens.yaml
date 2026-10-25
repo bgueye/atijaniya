@@ -27,7 +27,14 @@ colors:
     usage: "Texte principal"
   bronze:
     hex: "#8C7A5B"
-    usage: "Texte secondaire, bordures, légendes"
+    usage: "Bordures, icônes, filets. Plus pour du texte à lire depuis le 2026-10-25 : 3,72:1 sur parchemin, 4,09:1 sur off_white, sous le seuil AA — voir secondary_ink."
+  secondary_ink:
+    value: "ink à 72 % d'opacité (#66625C rendu sur off_white)"
+    high_contrast: "bronze_high_contrast (#4A3F2E)"
+    usage: "Texte secondaire à lire sur fond clair : translittérations, sources, sous-titres, libellés non sélectionnés, onSurfaceVariant du thème. 5,96:1 sur off_white ; 10,12:1 en mode renforcé (AppColors.secondaryInk)."
+  secondary_on_dark:
+    value: "parchment à 74 % d'opacité"
+    usage: "Texte secondaire sur fond zaytoune (6,7:1), fixe dans les deux modes ; onSurfaceVariant du thème immersif (AppColors.secondaryOnDark)."
   off_white:
     hex: "#FFFDF8"
     usage: "Cartes, surfaces sur fond ivoire"

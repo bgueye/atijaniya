@@ -55,7 +55,13 @@ class AppColors {
   /// tombe à 4,09:1, sous le seuil AA. D'abord adoptée par « Rattraper son
   /// wird » et « Bienfaits » (audit du 2026-10-18), partagée depuis l'audit
   /// du 2026-10-25. Le bronze reste pour les légendes et les bordures.
-  static final secondaryInk = ink.withValues(alpha: 0.72);
+  ///
+  /// En mode renforcé : le bronze renforcé (10,12:1), comme le texte en
+  /// bronze avant son remplacement. Une encre fixe à 72 % aurait fait
+  /// perdre du contraste aux personnes qui ont justement activé ce mode
+  /// (design_tokens.yaml § secondary_ink).
+  static Color get secondaryInk => _highContrast ? _bronzeHighContrast : _secondaryInkStandard;
+  static final _secondaryInkStandard = ink.withValues(alpha: 0.72);
 
   /// Fonds doux d'accent, badges
   static const goldSoft = Color(0xFFF1E6C9);
