@@ -491,14 +491,18 @@ class _FigureHero extends StatelessWidget {
                                     ),
                             ),
                             if (changingPortrait)
-                              const Positioned.fill(
+                              // Voile zaytoune et indicateur `goldOnDark`, les
+                            // couleurs des fonds sombres de la charte, plutôt
+                            // que `Colors.black45`/`Colors.white` en dur (audit
+                            // Figures du 2026-10-25, P3-8).
+                            Positioned.fill(
                                 child: CircleAvatar(
-                                  backgroundColor: Colors.black45,
-                                  child: SizedBox(
+                                  backgroundColor: AppColors.zaytoune.withValues(alpha: 0.7),
+                                  child: const SizedBox(
                                     width: 20,
                                     height: 20,
                                     child: CircularProgressIndicator(
-                                        strokeWidth: 2, color: Colors.white),
+                                        strokeWidth: 2, color: AppColors.goldOnDark),
                                   ),
                                 ),
                               )

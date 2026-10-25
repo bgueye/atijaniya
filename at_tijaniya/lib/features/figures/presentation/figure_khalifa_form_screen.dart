@@ -290,10 +290,13 @@ class _FigureKhalifaFormScreenState extends ConsumerState<FigureKhalifaFormScree
                     ElevatedButton(
                       onPressed: _saving ? null : _submit,
                       child: _saving
-                          ? const SizedBox(
+                          // Émeraude : le bouton est désactivé pendant l'enregistrement, et
+                          // son fond gris clair rendait l'indicateur blanc invisible (audit
+                          // Figures du 2026-10-25, P3-8).
+                          ? SizedBox(
                               height: 18,
                               width: 18,
-                              child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
+                              child: CircularProgressIndicator(strokeWidth: 2, color: AppColors.emerald),
                             )
                           : Text(l10n.figureKhalifaFormSave),
                     ),
