@@ -44,25 +44,30 @@ class TariqaBenefitsScreen extends ConsumerWidget {
 
     return Scaffold(
       appBar: AppBar(title: Text(l10n.tariqaBenefitsTitle)),
-      body: rowsAsync.when(
-        loading: () => Center(child: CircularProgressIndicator(color: AppColors.emerald)),
-        error: (error, stackTrace) => _Message(
-          icon: Icons.wifi_off,
-          text: l10n.wirdRepairLoadError,
-          action: OutlinedButton(
-            onPressed: () => ref.invalidate(tariqaBenefitsRowsProvider),
-            child: Text(l10n.wirdRepairRetry),
+      // `SafeArea` : sans elle, la fin de la page passait sous la barre de
+      // navigation Android (3 boutons) — même défaut déjà corrigé sur
+      // `FigureFormScreen`, `AboutScreen` et « Comprendre la Zawiya ».
+      body: SafeArea(
+        child: rowsAsync.when(
+          loading: () => Center(child: CircularProgressIndicator(color: AppColors.emerald)),
+          error: (error, stackTrace) => _Message(
+            icon: Icons.wifi_off,
+            text: l10n.wirdRepairLoadError,
+            action: OutlinedButton(
+              onPressed: () => ref.invalidate(tariqaBenefitsRowsProvider),
+              child: Text(l10n.wirdRepairRetry),
+            ),
           ),
+          data: (rows) {
+            final content = TariqaBenefitsContent.fromRows(
+              sectionRows: rows.sections,
+              cardRows: rows.cards,
+              isArabic: isArabicUi,
+            );
+            if (content.isEmpty) return _Message(icon: Icons.hourglass_empty, text: l10n.wirdRepairUnavailable);
+            return TariqaBenefitsBody(content: content, showFrenchOnlyNote: isArabicUi && !content.isArabicText);
+          },
         ),
-        data: (rows) {
-          final content = TariqaBenefitsContent.fromRows(
-            sectionRows: rows.sections,
-            cardRows: rows.cards,
-            isArabic: isArabicUi,
-          );
-          if (content.isEmpty) return _Message(icon: Icons.hourglass_empty, text: l10n.wirdRepairUnavailable);
-          return TariqaBenefitsBody(content: content, showFrenchOnlyNote: isArabicUi && !content.isArabicText);
-        },
       ),
     );
   }

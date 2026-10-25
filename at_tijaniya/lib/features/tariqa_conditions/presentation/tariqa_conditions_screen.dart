@@ -31,45 +31,50 @@ class TariqaConditionsScreen extends ConsumerWidget {
 
     return Scaffold(
       appBar: AppBar(title: Text(l10n.tariqaConditionsTitle)),
-      body: conditionsAsync.when(
-        loading: () => Center(child: CircularProgressIndicator(color: AppColors.emerald)),
-        error: (error, stackTrace) => Center(
-          child: Padding(
-            padding: const EdgeInsets.all(24),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Icon(Icons.wifi_off, color: AppColors.bronze, size: 32),
-                const SizedBox(height: 12),
-                Text(l10n.tariqaConditionsLoadError, textAlign: TextAlign.center, style: TextStyle(color: AppColors.bronze)),
-                const SizedBox(height: 12),
-                OutlinedButton(
-                  onPressed: () => ref.invalidate(tariqaConditionsProvider),
-                  child: Text(l10n.tariqaConditionsRetry),
-                ),
-              ],
+      // `SafeArea` : sans elle, la fin de la page passait sous la barre de
+      // navigation Android (3 boutons) — même défaut déjà corrigé sur
+      // `FigureFormScreen`, `AboutScreen` et « Comprendre la Zawiya ».
+      body: SafeArea(
+        child: conditionsAsync.when(
+          loading: () => Center(child: CircularProgressIndicator(color: AppColors.emerald)),
+          error: (error, stackTrace) => Center(
+            child: Padding(
+              padding: const EdgeInsets.all(24),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(Icons.wifi_off, color: AppColors.bronze, size: 32),
+                  const SizedBox(height: 12),
+                  Text(l10n.tariqaConditionsLoadError, textAlign: TextAlign.center, style: TextStyle(color: AppColors.bronze)),
+                  const SizedBox(height: 12),
+                  OutlinedButton(
+                    onPressed: () => ref.invalidate(tariqaConditionsProvider),
+                    child: Text(l10n.tariqaConditionsRetry),
+                  ),
+                ],
+              ),
             ),
           ),
-        ),
-        data: (conditions) {
-          if (conditions.isEmpty) {
-            return _EmptyState(title: l10n.tariqaConditionsEmptyTitle, body: l10n.tariqaConditionsEmptyBody);
-          }
+          data: (conditions) {
+            if (conditions.isEmpty) {
+              return _EmptyState(title: l10n.tariqaConditionsEmptyTitle, body: l10n.tariqaConditionsEmptyBody);
+            }
 
-          return ListView(
-            padding: const EdgeInsets.all(16),
-            children: [
-              for (final category in TariqaConditionCategory.values) ...[
-                if (conditions.any((c) => c.category == category)) ...[
-                  _SectionHeader(title: _categoryLabel(l10n, category)),
-                  for (final condition in conditions.where((c) => c.category == category))
-                    _ConditionTile(condition: condition, isAdmin: isAdmin),
-                  const SizedBox(height: 16),
+            return ListView(
+              padding: const EdgeInsets.all(16),
+              children: [
+                for (final category in TariqaConditionCategory.values) ...[
+                  if (conditions.any((c) => c.category == category)) ...[
+                    _SectionHeader(title: _categoryLabel(l10n, category)),
+                    for (final condition in conditions.where((c) => c.category == category))
+                      _ConditionTile(condition: condition, isAdmin: isAdmin),
+                    const SizedBox(height: 16),
+                  ],
                 ],
               ],
-            ],
-          );
-        },
+            );
+          },
+        ),
       ),
     );
   }

@@ -66,34 +66,39 @@ class _WirdRepairScreenState extends ConsumerState<WirdRepairScreen> {
             ),
         ],
       ),
-      body: contentAsync.when(
-        loading: () => Center(child: CircularProgressIndicator(color: AppColors.emerald)),
-        error: (error, stackTrace) => _Message(
-          icon: Icons.wifi_off,
-          text: l10n.wirdRepairLoadError,
-          action: OutlinedButton(
-            onPressed: () => ref.invalidate(wirdRepairContentProvider),
-            child: Text(l10n.wirdRepairRetry),
+      // `SafeArea` : sans elle, la fin de la page passait sous la barre de
+      // navigation Android (3 boutons) — même défaut déjà corrigé sur
+      // `FigureFormScreen`, `AboutScreen` et « Comprendre la Zawiya ».
+      body: SafeArea(
+        child: contentAsync.when(
+          loading: () => Center(child: CircularProgressIndicator(color: AppColors.emerald)),
+          error: (error, stackTrace) => _Message(
+            icon: Icons.wifi_off,
+            text: l10n.wirdRepairLoadError,
+            action: OutlinedButton(
+              onPressed: () => ref.invalidate(wirdRepairContentProvider),
+              child: Text(l10n.wirdRepairRetry),
+            ),
           ),
+          data: (content) {
+            // Arrivé ici sans contenu (lien ouvert juste avant une dépublication,
+            // par exemple) : on le dit, sans rien inventer.
+            if (content.isEmpty) return _Message(icon: Icons.hourglass_empty, text: l10n.wirdRepairUnavailable);
+            return ListView(
+              padding: const EdgeInsets.fromLTRB(16, 8, 16, 32),
+              children: [
+                if (content.hasDrafts) ...[_DraftBanner(text: l10n.wirdRepairDraftBanner), const SizedBox(height: 16)],
+                // Encre et non bronze : le bronze ne passe pas le contraste AA
+                // en texte courant (design_tokens.yaml, 3,72:1).
+                Text(l10n.wirdRepairIntro, style: _uiBody(size: 14)),
+                const SizedBox(height: 20),
+                if (_readAll) ..._buildReadAll(context, content) else ..._buildBySituation(context, content),
+                const SizedBox(height: 28),
+                _AskMoqaddamPanel(notes: content.notesFor(RepairWird.all, RepairNoteType.askMoqaddam)),
+              ],
+            );
+          },
         ),
-        data: (content) {
-          // Arrivé ici sans contenu (lien ouvert juste avant une dépublication,
-          // par exemple) : on le dit, sans rien inventer.
-          if (content.isEmpty) return _Message(icon: Icons.hourglass_empty, text: l10n.wirdRepairUnavailable);
-          return ListView(
-            padding: const EdgeInsets.fromLTRB(16, 8, 16, 32),
-            children: [
-              if (content.hasDrafts) ...[_DraftBanner(text: l10n.wirdRepairDraftBanner), const SizedBox(height: 16)],
-              // Encre et non bronze : le bronze ne passe pas le contraste AA
-              // en texte courant (design_tokens.yaml, 3,72:1).
-              Text(l10n.wirdRepairIntro, style: _uiBody(size: 14)),
-              const SizedBox(height: 20),
-              if (_readAll) ..._buildReadAll(context, content) else ..._buildBySituation(context, content),
-              const SizedBox(height: 28),
-              _AskMoqaddamPanel(notes: content.notesFor(RepairWird.all, RepairNoteType.askMoqaddam)),
-            ],
-          );
-        },
       ),
     );
   }
