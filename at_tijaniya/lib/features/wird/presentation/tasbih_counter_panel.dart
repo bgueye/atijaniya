@@ -154,6 +154,11 @@ class TasbihCounterPanel extends StatelessWidget {
               button: onZoneTap != null,
               label: voice ? null : l10n.wirdFreeTapToCount,
               value: '$count / $target',
+              // En mode voix, le disciple ne touche pas l'écran : sans région
+              // annoncée, un lecteur d'écran ne lui disait jamais où il en
+              // était (audit du 2026-10-25, P3-5). Pas en mode manuel, où
+              // chaque toucher serait doublé d'une annonce.
+              liveRegion: voice,
               child: GestureDetector(
                 behavior: HitTestBehavior.opaque,
                 onTap: onZoneTap,

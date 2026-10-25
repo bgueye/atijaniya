@@ -124,6 +124,24 @@ void main() {
     handle.dispose();
   });
 
+  testWidgets('en mode voix, le compte est annoncé au lecteur d’écran à chaque changement', (tester) async {
+    final handle = tester.ensureSemantics();
+    await tester.pumpWidget(_wrap(const FreeWirdScreen()));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('33'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Commencer'));
+    await tester.pumpAndSettle();
+
+    Finder zone() => find.byWidgetPredicate((w) => w is Semantics && w.properties.value == '0 / 33');
+    expect(tester.getSemantics(zone()), isSemantics(isLiveRegion: false));
+
+    await tester.tap(find.byTooltip('Voix'));
+    await tester.pumpAndSettle();
+    expect(tester.getSemantics(zone()), isSemantics(isLiveRegion: true));
+    handle.dispose();
+  });
+
   testWidgets('« Annuler » après « Réinitialiser » rétablit le compte, sans perdre les répétitions comptées depuis',
       (tester) async {
     await tester.pumpWidget(_wrap(const FreeWirdScreen()));
