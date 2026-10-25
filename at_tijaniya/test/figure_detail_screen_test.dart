@@ -35,10 +35,11 @@ Widget _wrap(
   Widget child, {
   List<Override> overrides = const [],
   double textScale = 1.0,
+  bool isAdmin = false,
   Locale locale = const Locale('fr'),
 }) {
   return ProviderScope(
-    overrides: [isAdminProvider.overrideWithValue(false), ...overrides],
+    overrides: [isAdminProvider.overrideWithValue(isAdmin), ...overrides],
     child: MaterialApp(
       // Taille du texte imposée par le test (réglage d'accessibilité du
       // téléphone) — 1.0 par défaut, comme les tests existants.
@@ -140,6 +141,62 @@ void main() {
       isSemantics(label: 'Texte sous le premier titre.', isHeader: false),
     );
     semantics.dispose();
+  });
+
+  // Audit Figures du 2026-10-25 (P3-5) : l'admin voit les maillons en
+  // brouillon d'une succession, marqués « Brouillon » (un disciple ne les
+  // reçoit pas : la RLS les filtre).
+  testWidgets('succession vue par l\'admin : seul le maillon en brouillon est marqué', (tester) async {
+    const figure = Figure(
+      id: 'test-founder-admin',
+      nameArabic: 'اسم تجريبي',
+      nameFrench: 'Fondateur publié',
+      category: FigureCategory.founder,
+    );
+    const published = Figure(
+      id: 'test-published',
+      nameArabic: 'منشور',
+      nameFrench: 'Maillon publié',
+      category: FigureCategory.religiousFamily,
+    );
+    FigureKhalifaLink link(String id, String figureId, String nameFr, int order) => FigureKhalifaLink(
+          id: id,
+          founderFigureId: 'test-founder-admin',
+          zawiyaId: 'z1',
+          role: SuccessionRole.khalife,
+          khalifaFigureId: figureId,
+          khalifaNameAr: 'اسم',
+          khalifaNameFr: nameFr,
+          khalifaCategory: FigureCategory.religiousFamily,
+          orderIndex: order,
+        );
+    final succession = ZawiyaSuccession(
+      zawiyaId: 'z1',
+      zawiyaName: 'Zawiya de test',
+      role: SuccessionRole.khalife,
+      founderFigureId: 'test-founder-admin',
+      links: [link('l1', 'test-published', 'Maillon publié', 1), link('l2', 'test-draft', 'Maillon en brouillon', 2)],
+    );
+
+    await tester.pumpWidget(_wrap(
+      const FigureDetailScreen(figure: figure),
+      isAdmin: true,
+      overrides: [
+        // Fiches `valide` seulement : « test-draft » n'y est pas.
+        figuresProvider.overrideWith((ref) async => const [figure, published]),
+        linkedEventsForFigureProvider('test-founder-admin').overrideWith((ref) async => []),
+        linkedZawiyasForFigureProvider('test-founder-admin').overrideWith((ref) async => []),
+        successionsForFigureProvider('test-founder-admin').overrideWith((ref) async => [succession]),
+      ],
+    ));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Zawiya'));
+    await tester.pumpAndSettle();
+    await tester.scrollUntilVisible(find.text('Maillon en brouillon'), 200, scrollable: find.byType(Scrollable).last);
+
+    expect(find.text('Brouillon'), findsOneWidget);
+    final tag = tester.getTopLeft(find.text('Brouillon')).dy;
+    expect(tag, greaterThan(tester.getTopLeft(find.text('Maillon en brouillon')).dy));
   });
 
   // Audit Figures du 2026-10-25 (P3-2) : un échec de chargement des zawiyas

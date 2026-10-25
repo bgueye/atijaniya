@@ -920,7 +920,52 @@ class _SilsilaNodeState extends ConsumerState<_SilsilaNode> with _OpensFigureDet
                     color: AppColors.goldOnDark,
                     fontWeight: FontWeight.w600)),
           ],
+          if (_isDraftSeenByAdmin(ref, link.figureId)) const _DraftTag(),
         ],
+      ),
+    );
+  }
+}
+
+/// Vrai pour un maillon encore en brouillon, vu par un admin : lui seul le
+/// reçoit (RLS et `get_historical_silsila_chain`), les disciples non. Décision
+/// du porteur de projet du 2026-10-25 (audit Figures, P3-5) : l'admin voit
+/// toute la chaîne, mais doit savoir ce qui manque aux disciples. Repéré par
+/// l'absence du maillon dans `figuresProvider`, qui ne contient que les
+/// fiches `valide` — sans requête, la liste étant déjà chargée pour l'admin
+/// (bouton « Repasser en brouillon »). Pendant son chargement, rien n'est
+/// marqué.
+bool _isDraftSeenByAdmin(WidgetRef ref, String figureId) {
+  if (!ref.watch(isAdminProvider)) return false;
+  final published = ref.watch(figuresProvider).valueOrNull;
+  return published != null && !published.any((figure) => figure.id == figureId);
+}
+
+/// Étiquette « Brouillon » d'un maillon non publié (voir
+/// [_isDraftSeenByAdmin]) ; fond `goldSoft` et encre, lisible sur le nœud
+/// clair comme sur la racine zaytoune.
+class _DraftTag extends StatelessWidget {
+  const _DraftTag();
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(top: 6),
+      child: Center(
+        child: DecoratedBox(
+          decoration: BoxDecoration(
+            color: AppColors.goldSoft,
+            borderRadius: BorderRadius.circular(8),
+            border: Border.all(color: AppColors.bronze.withValues(alpha: 0.5)),
+          ),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+            child: Text(
+              AppLocalizations.of(context)!.figureDraftTag,
+              style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w600, color: AppColors.ink),
+            ),
+          ),
+        ),
       ),
     );
   }
@@ -2048,6 +2093,7 @@ class _KhalifaNodeState extends ConsumerState<_KhalifaNode> with _OpensFigureDet
               const SizedBox(height: 2),
               ContentText(link.periodText!, style: TextStyle(fontSize: 11, color: AppColors.secondaryInk)),
             ],
+            if (_isDraftSeenByAdmin(ref, link.khalifaFigureId)) const _DraftTag(),
             if (isAdmin) ...[
               const SizedBox(height: 4),
               Row(

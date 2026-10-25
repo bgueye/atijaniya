@@ -7,9 +7,17 @@
 /// validation). Un disciple connecté avec un compte admin verrait donc les
 /// brouillons si l'app ne filtrait que sur la RLS — d'où le filtre explicite
 /// `content_status = 'valide'` ci-dessous, appliqué côté client en plus de
-/// la RLS (défense en profondeur) : l'app ne doit JAMAIS afficher de
+/// la RLS (défense en profondeur) : la liste des figures n'affiche jamais de
 /// biographie non validée, y compris à un compte admin. Voir la règle
 /// "contenu religieux" en tête de `figure_models.dart`.
+///
+/// Exception assumée (décision du porteur de projet du 2026-10-25, audit
+/// Figures P3-5) : sur la fiche d'une figure publiée, l'admin voit aussi les
+/// maillons en brouillon de la silsila et des successions, chacun marqué
+/// « Brouillon », pour savoir ce qui manque aux disciples. Ni
+/// `fetchFigureById` ni `fetchSuccessionsForFigure` ne filtrent donc le
+/// statut : la RLS les réserve à l'admin. Toucher un tel maillon ouvre sa
+/// fiche en brouillon, comme depuis l'écran « Contenu à valider ».
 library;
 
 import '../../../core/supabase/supabase_config.dart';

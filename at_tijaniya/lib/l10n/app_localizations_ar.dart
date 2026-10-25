@@ -2768,6 +2768,9 @@ class AppLocalizationsAr extends AppLocalizations {
   String get figureUnavailable => 'هذه الشخصية لم تعد متاحة.';
 
   @override
+  String get figureDraftTag => 'مسودة';
+
+  @override
   String get figureUnpublishError => 'تعذّر سحب هذه الشخصية من النشر.';
 
   @override

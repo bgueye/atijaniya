@@ -5486,6 +5486,12 @@ abstract class AppLocalizations {
   /// **'Cette fiche n\'est plus disponible.'**
   String get figureUnavailable;
 
+  /// No description provided for @figureDraftTag.
+  ///
+  /// In fr, this message translates to:
+  /// **'Brouillon'**
+  String get figureDraftTag;
+
   /// No description provided for @figureUnpublishError.
   ///
   /// In fr, this message translates to:
