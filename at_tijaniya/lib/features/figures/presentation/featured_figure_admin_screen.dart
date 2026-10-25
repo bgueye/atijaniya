@@ -99,7 +99,7 @@ class _FeaturedFigureAdminScreenState extends ConsumerState<FeaturedFigureAdminS
         child: figuresAsync.when(
           loading: () => Center(child: CircularProgressIndicator(color: AppColors.emerald)),
           error: (error, stackTrace) => Center(
-            child: Text(l10n.figuresLoadError, style: TextStyle(color: AppColors.bronze)),
+            child: Text(l10n.figuresLoadError, style: TextStyle(color: AppColors.secondaryInk)),
           ),
           data: (figures) {
             final eligible = eligibleForRotation(figures);
@@ -117,7 +117,7 @@ class _FeaturedFigureAdminScreenState extends ConsumerState<FeaturedFigureAdminS
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  Text(l10n.featuredFigureAdminIntro, style: TextStyle(color: AppColors.bronze, fontSize: 13)),
+                  Text(l10n.featuredFigureAdminIntro, style: TextStyle(color: AppColors.secondaryInk, fontSize: 13)),
                   const SizedBox(height: 20),
                   Builder(builder: (context) {
                     // Aucun retournement manuel : `Row` inverse l'ordre des
@@ -159,10 +159,10 @@ class _FeaturedFigureAdminScreenState extends ConsumerState<FeaturedFigureAdminS
                       ),
                     )
                   else
-                    Text(l10n.featuredFigureAdminNoPin, style: TextStyle(color: AppColors.bronze, fontSize: 13)),
+                    Text(l10n.featuredFigureAdminNoPin, style: TextStyle(color: AppColors.secondaryInk, fontSize: 13)),
                   const SizedBox(height: 20),
                   if (eligible.isEmpty)
-                    Text(l10n.featuredFigureAdminNoEligible, style: TextStyle(color: AppColors.bronze))
+                    Text(l10n.featuredFigureAdminNoEligible, style: TextStyle(color: AppColors.secondaryInk))
                   else ...[
                     DropdownButtonFormField<String>(
                       initialValue: _selectedFigureId,

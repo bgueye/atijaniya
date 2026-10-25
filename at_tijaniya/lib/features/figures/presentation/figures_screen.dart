@@ -111,7 +111,7 @@ class _FiguresScreenState extends ConsumerState<FiguresScreen> {
                   children: [
                     Icon(Icons.wifi_off, color: AppColors.bronze, size: 32),
                     const SizedBox(height: 12),
-                    Text(l10n.figuresLoadError, textAlign: TextAlign.center, style: TextStyle(color: AppColors.bronze)),
+                    Text(l10n.figuresLoadError, textAlign: TextAlign.center, style: TextStyle(color: AppColors.secondaryInk)),
                     const SizedBox(height: 12),
                     OutlinedButton(
                       onPressed: () => ref.invalidate(figuresProvider),
@@ -161,7 +161,7 @@ class _FiguresScreenState extends ConsumerState<FiguresScreen> {
                       child: Text(
                         query.isNotEmpty ? l10n.figuresSearchNoResult(query) : l10n.figuresNoneForFoyer,
                         textAlign: TextAlign.center,
-                        style: TextStyle(color: AppColors.bronze),
+                        style: TextStyle(color: AppColors.secondaryInk),
                       ),
                     ),
                   if (founders.isNotEmpty) ...[
@@ -242,6 +242,11 @@ class _FoyerFilter extends StatelessWidget {
         for (final (foyer, label) in options)
           ChoiceChip(
             label: Text(label),
+            // Puce non sélectionnée : le thème y met `onSurfaceVariant`, le
+            // bronze (3,72:1 sur parchemin, sous le seuil AA) ; `secondaryInk`
+            // le remplace ici (audit Figures du 2026-10-25, P2-4). La puce
+            // choisie garde la couleur du thème.
+            labelStyle: foyer == selected ? null : TextStyle(color: AppColors.secondaryInk),
             selected: foyer == selected,
             showCheckmark: false,
             visualDensity: VisualDensity.compact,
@@ -271,7 +276,7 @@ class _EmptyState extends StatelessWidget {
             const SizedBox(height: 16),
             ContentText(title, style: Theme.of(context).textTheme.headlineSmall, textAlign: TextAlign.center),
             const SizedBox(height: 8),
-            ContentText(body, textAlign: TextAlign.center, style: TextStyle(color: AppColors.bronze)),
+            ContentText(body, textAlign: TextAlign.center, style: TextStyle(color: AppColors.secondaryInk)),
           ],
         ),
       ),

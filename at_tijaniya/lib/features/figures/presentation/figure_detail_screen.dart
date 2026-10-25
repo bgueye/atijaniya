@@ -201,7 +201,11 @@ class _FigureDetailScreenState extends ConsumerState<FigureDetailScreen> {
       // `khadara_screen.dart`.
       isScrollable: true,
       labelColor: AppColors.emerald,
-      unselectedLabelColor: AppColors.bronze,
+      // `secondaryInk` ici comme pour tout texte secondaire de ce module :
+      // le bronze ne donne que 4,09:1 sur blanc cassé, sous le seuil AA ; il
+      // reste pour les icônes et les bordures (audit Figures du 2026-10-25,
+      // P2-4).
+      unselectedLabelColor: AppColors.secondaryInk,
       indicatorColor: AppColors.gold,
       indicatorWeight: 2,
       labelStyle: const TextStyle(fontWeight: FontWeight.w700, fontSize: 14),
@@ -622,7 +626,7 @@ class _PendingTab extends StatelessWidget {
             const SizedBox(height: 12),
             ContentText(message,
                 textAlign: TextAlign.center,
-                style: TextStyle(color: AppColors.bronze, fontSize: 15)),
+                style: TextStyle(color: AppColors.secondaryInk, fontSize: 15)),
           ],
         ),
       ),
@@ -769,7 +773,7 @@ class _SilsilaTabState extends ConsumerState<_SilsilaTab> {
               Text(
                 l10n.figureSilsilaLoadError,
                 textAlign: TextAlign.center,
-                style: TextStyle(color: AppColors.bronze),
+                style: TextStyle(color: AppColors.secondaryInk),
               ),
               const SizedBox(height: 12),
               OutlinedButton(
@@ -818,7 +822,7 @@ class _SilsilaTabState extends ConsumerState<_SilsilaTab> {
             ],
             if (chain.isEmpty)
               Text(l10n.figureSilsilaPending,
-                  style: TextStyle(color: AppColors.bronze))
+                  style: TextStyle(color: AppColors.secondaryInk))
             else
               for (var i = 0; i < chain.length; i++) ...[
                 _SilsilaNode(
@@ -889,7 +893,7 @@ class _SilsilaNode extends StatelessWidget {
             textAlign: TextAlign.center,
             style: TextStyle(
                 fontSize: 12,
-                color: isRoot ? AppColors.parchment : AppColors.bronze),
+                color: isRoot ? AppColors.parchment : AppColors.secondaryInk),
           ),
           if (isRoot) ...[
             const SizedBox(height: 2),
@@ -1082,7 +1086,7 @@ class _CitationsTabState extends ConsumerState<_CitationsTab> {
         ],
         if (!hasCitations && !hasWorks)
           Text(l10n.figureCitationsEmpty,
-              style: TextStyle(color: AppColors.bronze)),
+              style: TextStyle(color: AppColors.secondaryInk)),
         if (hasCitations)
           for (final citation in citations)
             _CitationCard(
@@ -1438,7 +1442,7 @@ class _ZawiyaTabState extends ConsumerState<_ZawiyaTab> {
             padding: const EdgeInsets.symmetric(vertical: 16),
             child: CircularProgressIndicator(color: AppColors.emerald),
           )),
-          error: (error, stackTrace) => Text(l10n.khadaraLoadError, style: TextStyle(color: AppColors.bronze)),
+          error: (error, stackTrace) => Text(l10n.khadaraLoadError, style: TextStyle(color: AppColors.secondaryInk)),
           data: (zawiyas) => zawiyas.isEmpty
               ? EmptyNotice(text: l10n.figureZawiyasPending)
               : Column(
@@ -1472,9 +1476,9 @@ class _ZawiyaTabState extends ConsumerState<_ZawiyaTab> {
             padding: const EdgeInsets.symmetric(vertical: 16),
             child: CircularProgressIndicator(color: AppColors.emerald),
           )),
-          error: (error, stackTrace) => Text(l10n.khadaraLoadError, style: TextStyle(color: AppColors.bronze)),
+          error: (error, stackTrace) => Text(l10n.khadaraLoadError, style: TextStyle(color: AppColors.secondaryInk)),
           data: (events) => events.isEmpty
-              ? Text(l10n.figureZiyarasPending, style: TextStyle(color: AppColors.bronze))
+              ? Text(l10n.figureZiyarasPending, style: TextStyle(color: AppColors.secondaryInk))
               : Column(
                   children: [
                     for (final event in events)
@@ -1509,7 +1513,7 @@ class _ZawiyaTabState extends ConsumerState<_ZawiyaTab> {
           error: (error, stackTrace) => Column(
             children: [
               Text(l10n.figureKhalifaChainLoadError,
-                  textAlign: TextAlign.center, style: TextStyle(color: AppColors.bronze)),
+                  textAlign: TextAlign.center, style: TextStyle(color: AppColors.secondaryInk)),
               const SizedBox(height: 12),
               OutlinedButton(
                 onPressed: () => ref.invalidate(successionsForFigureProvider(widget.figure.id)),
@@ -1518,7 +1522,7 @@ class _ZawiyaTabState extends ConsumerState<_ZawiyaTab> {
             ],
           ),
           data: (successions) => successions.isEmpty
-              ? Text(l10n.figureKhalifaChainPending, style: TextStyle(color: AppColors.bronze))
+              ? Text(l10n.figureKhalifaChainPending, style: TextStyle(color: AppColors.secondaryInk))
               : Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
@@ -1584,7 +1588,7 @@ class _SuccessionBlock extends StatelessWidget {
         ContentText(
           succession.zawiyaName,
           textAlign: TextAlign.center,
-          style: TextStyle(fontSize: 12, color: AppColors.bronze),
+          style: TextStyle(fontSize: 12, color: AppColors.secondaryInk),
         ),
         const SizedBox(height: 12),
         if (hasFounder)
@@ -1637,7 +1641,7 @@ class _SuccessionGapNotice extends StatelessWidget {
             child: ContentText(
               text,
               textAlign: TextAlign.center,
-              style: TextStyle(fontSize: 12, fontStyle: FontStyle.italic, color: AppColors.bronze),
+              style: TextStyle(fontSize: 12, fontStyle: FontStyle.italic, color: AppColors.secondaryInk),
             ),
           ),
         ],
@@ -1727,7 +1731,7 @@ class _EventLinkPickerSheet extends ConsumerWidget {
                   child: CircularProgressIndicator(color: AppColors.emerald),
                 )),
                 error: (error, stackTrace) => Text(l10n.khadaraLoadError,
-                    style: TextStyle(color: AppColors.bronze)),
+                    style: TextStyle(color: AppColors.secondaryInk)),
                 data: (events) {
                   final selectable = events
                       .where((e) => !excludedEventIds.contains(e.id))
@@ -1736,7 +1740,7 @@ class _EventLinkPickerSheet extends ConsumerWidget {
                     return Padding(
                       padding: const EdgeInsets.symmetric(vertical: 16),
                       child: Text(l10n.figureZiyarasLinkPickerEmpty,
-                          style: TextStyle(color: AppColors.bronze)),
+                          style: TextStyle(color: AppColors.secondaryInk)),
                     );
                   }
                   return ListView(
@@ -1826,13 +1830,13 @@ class _ZawiyaLinkPickerSheet extends ConsumerWidget {
                   padding: const EdgeInsets.symmetric(vertical: 24),
                   child: CircularProgressIndicator(color: AppColors.emerald),
                 )),
-                error: (error, stackTrace) => Text(l10n.khadaraLoadError, style: TextStyle(color: AppColors.bronze)),
+                error: (error, stackTrace) => Text(l10n.khadaraLoadError, style: TextStyle(color: AppColors.secondaryInk)),
                 data: (zawiyas) {
                   final selectable = zawiyas.where((z) => !excludedZawiyaIds.contains(z.id)).toList();
                   if (selectable.isEmpty) {
                     return Padding(
                       padding: const EdgeInsets.symmetric(vertical: 16),
-                      child: Text(l10n.figureZawiyasPickerEmpty, style: TextStyle(color: AppColors.bronze)),
+                      child: Text(l10n.figureZawiyasPickerEmpty, style: TextStyle(color: AppColors.secondaryInk)),
                     );
                   }
                   return ListView(
@@ -1964,10 +1968,10 @@ class _KhalifaNode extends ConsumerWidget {
               style: AppTheme.sacredText(fontSize: 15, color: AppColors.zaytoune),
             ),
             const SizedBox(height: 2),
-            ContentText(link.khalifaNameFr, textAlign: TextAlign.center, style: TextStyle(fontSize: 12, color: AppColors.bronze)),
+            ContentText(link.khalifaNameFr, textAlign: TextAlign.center, style: TextStyle(fontSize: 12, color: AppColors.secondaryInk)),
             if (link.periodText != null) ...[
               const SizedBox(height: 2),
-              ContentText(link.periodText!, style: TextStyle(fontSize: 11, color: AppColors.bronze)),
+              ContentText(link.periodText!, style: TextStyle(fontSize: 11, color: AppColors.secondaryInk)),
             ],
             if (isAdmin) ...[
               const SizedBox(height: 4),
@@ -2044,7 +2048,7 @@ class _BiographyParagraph extends StatelessWidget {
               style: TextStyle(
                   fontStyle: FontStyle.italic,
                   fontSize: 15,
-                  color: AppColors.bronze),
+                  color: AppColors.secondaryInk),
             ),
             const SizedBox(height: 4),
           ],
@@ -2109,7 +2113,7 @@ class _CitationCard extends StatelessWidget {
               style: TextStyle(
                   fontStyle: FontStyle.italic,
                   fontSize: 15,
-                  color: AppColors.bronze),
+                  color: AppColors.secondaryInk),
             ),
             const SizedBox(height: 4),
           ],
@@ -2125,7 +2129,7 @@ class _CitationCard extends StatelessWidget {
             '— ${citation.source}',
             alignToContent: true,
             style: TextStyle(
-                color: AppColors.bronze,
+                color: AppColors.secondaryInk,
                 fontSize: 12,
                 fontStyle: FontStyle.italic),
           ),

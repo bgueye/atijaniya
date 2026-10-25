@@ -7,6 +7,7 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 
+import 'package:at_tijaniya/core/theme/app_colors.dart';
 import 'package:at_tijaniya/features/figures/domain/figure_models.dart';
 import 'package:at_tijaniya/features/figures/presentation/figures_providers.dart';
 import 'package:at_tijaniya/features/figures/presentation/figures_screen.dart';
@@ -89,6 +90,18 @@ void main() {
     await tester.pump();
     expect(find.text('Aucune figure ne correspond à « introuvable ».'), findsOneWidget);
     expect(find.text('Aucune figure pour ce foyer.'), findsNothing);
+  });
+
+  // Audit Figures du 2026-10-25 (P2-4) : libellé d'une puce non choisie en
+  // encre secondaire, pas en bronze (3,72:1 sur parchemin).
+  testWidgets('les puces de foyer non choisies sont écrites en encre secondaire', (tester) async {
+    await tester.pumpWidget(_wrap());
+    await tester.pumpAndSettle();
+
+    final unselected = tester.widget<ChoiceChip>(find.widgetWithText(ChoiceChip, 'Fès'));
+    expect(unselected.labelStyle?.color, AppColors.secondaryInk);
+    final selected = tester.widget<ChoiceChip>(find.widgetWithText(ChoiceChip, 'Tous les foyers'));
+    expect(selected.labelStyle, isNull);
   });
 
   testWidgets('la recherche se combine au filtre par foyer', (tester) async {

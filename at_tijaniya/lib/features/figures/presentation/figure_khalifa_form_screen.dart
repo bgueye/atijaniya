@@ -166,7 +166,7 @@ class _FigureKhalifaFormScreenState extends ConsumerState<FigureKhalifaFormScree
         child: figuresAsync.when(
           loading: () => Center(child: CircularProgressIndicator(color: AppColors.emerald)),
           error: (error, stackTrace) => Center(
-            child: Text(l10n.figuresLoadError, style: TextStyle(color: AppColors.bronze)),
+            child: Text(l10n.figuresLoadError, style: TextStyle(color: AppColors.secondaryInk)),
           ),
           data: (figures) {
             final usedKhalifaIds = {

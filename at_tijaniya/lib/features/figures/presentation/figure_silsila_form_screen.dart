@@ -107,7 +107,7 @@ class _FigureSilsilaFormScreenState extends ConsumerState<FigureSilsilaFormScree
         child: figuresAsync.when(
           loading: () => Center(child: CircularProgressIndicator(color: AppColors.emerald)),
           error: (error, stackTrace) => Center(
-            child: Text(l10n.figuresLoadError, style: TextStyle(color: AppColors.bronze)),
+            child: Text(l10n.figuresLoadError, style: TextStyle(color: AppColors.secondaryInk)),
           ),
           data: (figures) {
             final allLinks = linksAsync.valueOrNull ?? const <FigureSilsilaLink>[];
@@ -120,7 +120,7 @@ class _FigureSilsilaFormScreenState extends ConsumerState<FigureSilsilaFormScree
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    Text(l10n.figureSilsilaFormIntro, style: TextStyle(color: AppColors.bronze, fontSize: 13)),
+                    Text(l10n.figureSilsilaFormIntro, style: TextStyle(color: AppColors.secondaryInk, fontSize: 13)),
                     const SizedBox(height: 20),
                     DropdownButtonFormField<String?>(
                       initialValue: _parentFigureId,

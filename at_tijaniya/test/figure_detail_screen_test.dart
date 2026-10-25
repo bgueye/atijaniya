@@ -97,6 +97,9 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.text('Citation de test.'), findsOneWidget);
     expect(find.text('— Source de test'), findsOneWidget);
+    // Texte secondaire en encre secondaire, pas en bronze (audit Figures du
+    // 2026-10-25, P2-4).
+    expect(tester.widget<Text>(find.text('— Source de test')).style?.color, AppColors.secondaryInk);
 
     // Onglet "Zawiya" (ex-"Ziyaras") — sous-section "Évènements liés".
     await tester.tap(find.text('Zawiya'));
