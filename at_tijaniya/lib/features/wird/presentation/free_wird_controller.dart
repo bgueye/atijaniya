@@ -148,6 +148,27 @@ class FreeWirdController extends StateNotifier<FreeWirdState> with WidgetsBindin
     await _store.save(next);
   }
 
+  /// Annule une réinitialisation faite par erreur — même principe que
+  /// `TasbihController.restoreCount` : les répétitions comptées depuis
+  /// s'ajoutent au compte rétabli. Ignoré si le compteur a été abandonné ou
+  /// remplacé entre-temps (autre nom ou autre cible).
+  Future<void> restoreCount({
+    required String label,
+    required int target,
+    required int previousCount,
+  }) async {
+    final session = state.session;
+    if (session == null || state.completed || session.label != label || session.target != target) return;
+    final restored = (previousCount + session.currentCount).clamp(0, target);
+    final next = session.copyWith(currentCount: restored);
+    state = state.copyWith(session: next);
+    await _store.save(next);
+    if (restored >= target) {
+      _stopVoiceLoop();
+      playWirdCounterCompleteFeedback();
+    }
+  }
+
   /// Termine le compteur libre une fois la cible atteinte. Pas d'historique
   /// à conserver (contrairement aux wirds validés) : le store est vidé.
   Future<void> finish() async {

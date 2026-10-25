@@ -3236,4 +3236,10 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get wirdListUnderstandHeading => 'الفهم والتدارك';
+
+  @override
+  String get wirdCounterResetDone => 'أُعيد العدّاد إلى الصفر.';
+
+  @override
+  String get wirdCounterResetUndo => 'تراجع';
 }

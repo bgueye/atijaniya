@@ -264,7 +264,17 @@ class _CounterBody extends StatelessWidget {
             controller.increment();
           },
           onUndo: controller.undo,
-          onReset: controller.resetCount,
+          onReset: () {
+            controller.resetCount();
+            showCounterResetSnackBar(
+              context,
+              onUndo: () => controller.restoreCount(
+                label: session.label,
+                target: session.target,
+                previousCount: session.currentCount,
+              ),
+            );
+          },
           isListening: state.isListening,
           voiceSupported: state.voiceSupported,
           voiceError: state.voiceError,

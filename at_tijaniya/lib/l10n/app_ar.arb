@@ -1098,5 +1098,7 @@
   "tariqaBenefitsSources": "المصادر",
   "wirdRepairCommonGroup": "قواعد لكل الأوراد",
   "wirdRepairWarningLabel": "تحذير",
-  "wirdListUnderstandHeading": "الفهم والتدارك"
+  "wirdListUnderstandHeading": "الفهم والتدارك",
+  "wirdCounterResetDone": "أُعيد العدّاد إلى الصفر.",
+  "wirdCounterResetUndo": "تراجع"
 }

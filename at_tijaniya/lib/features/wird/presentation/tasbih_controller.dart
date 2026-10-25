@@ -231,6 +231,38 @@ class TasbihController extends StateNotifier<TasbihState> with WidgetsBindingObs
     await _store.save(next);
   }
 
+  /// Annule une réinitialisation faite par erreur (« Annuler » du message
+  /// affiché après « Réinitialiser ») : « Réinitialiser » est juste sous la
+  /// zone de comptage, un toucher de travers effaçait jusqu'à 1 000
+  /// répétitions sans retour possible (audit du 2026-10-25).
+  ///
+  /// Les répétitions comptées depuis la remise à zéro s'ajoutent au compte
+  /// rétabli : le disciple qui a continué de réciter ne les perd pas. Rien
+  /// n'est fait si le pilier ou le choix de l'alternative a changé entre-temps
+  /// — le compte rétabli ne correspondrait plus au texte affiché.
+  Future<void> restoreCount({
+    required int pillarIndex,
+    required bool useAlternative,
+    required int previousCount,
+  }) async {
+    final session = state.session;
+    if (state.wirdCompleted ||
+        session.pillarIndex != pillarIndex ||
+        session.useAlternative != useAlternative) {
+      return;
+    }
+    final restored = (previousCount + session.currentCount).clamp(0, targetCount);
+    final next = session.copyWith(currentCount: restored);
+    state = state.copyWith(session: next);
+    await _store.save(next);
+    if (restored >= targetCount) {
+      // Même fin de pilier qu'un dernier toucher (voir [increment]).
+      _stopVoiceLoop();
+      playWirdCounterCompleteFeedback();
+      _scheduleAutoAdvance();
+    }
+  }
+
   /// Passe au pilier suivant, ou termine le wird si c'était le dernier.
   Future<void> nextPillar() async {
     _cancelAutoAdvance();

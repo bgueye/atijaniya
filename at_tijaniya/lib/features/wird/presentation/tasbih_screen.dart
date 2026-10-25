@@ -100,7 +100,21 @@ class _TasbihBody extends StatelessWidget {
                 controller.increment();
               },
               onUndo: controller.undo,
-              onReset: controller.resetPillar,
+              onReset: () {
+                // Relevé avant la remise à zéro, pour que « Annuler » rétablisse
+                // le compte de ce pilier-là (voir `TasbihController.restoreCount`).
+                final pillarIndex = state.session.pillarIndex;
+                final useAlternative = state.session.useAlternative;
+                controller.resetPillar();
+                showCounterResetSnackBar(
+                  context,
+                  onUndo: () => controller.restoreCount(
+                    pillarIndex: pillarIndex,
+                    useAlternative: useAlternative,
+                    previousCount: count,
+                  ),
+                );
+              },
               isListening: state.isListening,
               voiceSupported: state.voiceSupported,
               voiceError: state.voiceError,

@@ -6158,6 +6158,18 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'Comprendre et rattraper'**
   String get wirdListUnderstandHeading;
+
+  /// No description provided for @wirdCounterResetDone.
+  ///
+  /// In fr, this message translates to:
+  /// **'Compteur remis à zéro.'**
+  String get wirdCounterResetDone;
+
+  /// No description provided for @wirdCounterResetUndo.
+  ///
+  /// In fr, this message translates to:
+  /// **'Annuler'**
+  String get wirdCounterResetUndo;
 }
 
 class _AppLocalizationsDelegate

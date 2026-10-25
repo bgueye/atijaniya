@@ -3347,4 +3347,10 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get wirdListUnderstandHeading => 'Comprendre et rattraper';
+
+  @override
+  String get wirdCounterResetDone => 'Compteur remis à zéro.';
+
+  @override
+  String get wirdCounterResetUndo => 'Annuler';
 }

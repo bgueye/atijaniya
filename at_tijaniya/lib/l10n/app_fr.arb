@@ -1107,5 +1107,7 @@
   "tariqaBenefitsSources": "Sources",
   "wirdRepairCommonGroup": "Valables pour tous les wirds",
   "wirdRepairWarningLabel": "Mise en garde",
-  "wirdListUnderstandHeading": "Comprendre et rattraper"
+  "wirdListUnderstandHeading": "Comprendre et rattraper",
+  "wirdCounterResetDone": "Compteur remis à zéro.",
+  "wirdCounterResetUndo": "Annuler"
 }

@@ -87,4 +87,37 @@ void main() {
     expect(find.text('Commencer'), findsOneWidget);
     expect(find.text('/ 33'), findsNothing);
   });
+
+  testWidgets('« Annuler » après « Réinitialiser » rétablit le compte, sans perdre les répétitions comptées depuis',
+      (tester) async {
+    await tester.pumpWidget(_wrap(const FreeWirdScreen()));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('33'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Commencer'));
+    await tester.pumpAndSettle();
+
+    for (var i = 0; i < 5; i++) {
+      await tester.tap(find.text('Toucher pour compter'));
+      await tester.pump();
+    }
+    expect(find.text('5'), findsOneWidget);
+
+    // Toucher de travers sur « Réinitialiser » : remise à zéro immédiate,
+    // avec un message qui propose d'annuler.
+    await tester.tap(find.text('Réinitialiser'));
+    await tester.pumpAndSettle();
+    expect(find.text('0'), findsOneWidget);
+    expect(find.text('Compteur remis à zéro.'), findsOneWidget);
+
+    // Le disciple continue de réciter avant de remarquer l'erreur.
+    for (var i = 0; i < 2; i++) {
+      await tester.tap(find.text('Toucher pour compter'));
+      await tester.pump();
+    }
+
+    await tester.tap(find.text('Annuler'));
+    await tester.pumpAndSettle();
+    expect(find.text('7'), findsOneWidget);
+  });
 }

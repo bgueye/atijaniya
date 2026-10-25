@@ -480,3 +480,27 @@ class _ModeToggle extends StatelessWidget {
     );
   }
 }
+
+/// Message affiché après « Réinitialiser », avec « Annuler » pour rétablir le
+/// compte (Tasbih d'un wird et Wird libre). Plutôt qu'une confirmation avant
+/// chaque remise à zéro : le geste voulu reste immédiat, seul le geste
+/// accidentel se rattrape (audit du 2026-10-25).
+///
+/// Couleurs explicites : sur le thème immersif, le `SnackBar` prend un fond
+/// parchemin et une action en or, illisible sur ce fond (2,15:1) ; l'émeraude
+/// y atteint 5,57:1.
+void showCounterResetSnackBar(BuildContext context, {required VoidCallback onUndo}) {
+  final l10n = AppLocalizations.of(context)!;
+  ScaffoldMessenger.of(context)
+    ..hideCurrentSnackBar()
+    ..showSnackBar(SnackBar(
+      backgroundColor: AppColors.parchment,
+      duration: const Duration(seconds: 6),
+      content: Text(l10n.wirdCounterResetDone, style: const TextStyle(color: AppColors.ink)),
+      action: SnackBarAction(
+        label: l10n.wirdCounterResetUndo,
+        textColor: AppColors.emerald,
+        onPressed: onUndo,
+      ),
+    ));
+}
