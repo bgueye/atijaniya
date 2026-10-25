@@ -268,7 +268,10 @@ class _PillarCard extends StatelessWidget {
             pillar.transliteration,
             style: TextStyle(
               fontStyle: FontStyle.italic,
-              color: AppColors.bronze,
+              // Encre atténuée plutôt que bronze (4,09:1 sur blanc cassé,
+              // sous l'AA) : la translittération se lit, ce n'est pas une
+              // légende (audit du 2026-10-25, P2-6).
+              color: AppColors.secondaryInk,
               fontSize: 15,
             ),
           ),
@@ -281,7 +284,7 @@ class _PillarCard extends StatelessWidget {
             const SizedBox(height: 10),
             ContentText(
               pillar.note!,
-              style: TextStyle(fontSize: 12, color: AppColors.bronze),
+              style: TextStyle(fontSize: 12, color: AppColors.secondaryInk),
             ),
           ],
           if (pillar.closingFormulas != null)
@@ -351,7 +354,7 @@ class _ClosingFormulaBlock extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        ContentText(formula.intro, style: TextStyle(fontSize: 12, color: AppColors.bronze)),
+        ContentText(formula.intro, style: TextStyle(fontSize: 12, color: AppColors.secondaryInk)),
         const SizedBox(height: 4),
         Text(
           formula.arabic,
@@ -363,7 +366,7 @@ class _ClosingFormulaBlock extends StatelessWidget {
           const SizedBox(height: 2),
           ContentText(
             formula.transliteration!,
-            style: TextStyle(fontStyle: FontStyle.italic, fontSize: 12, color: AppColors.bronze),
+            style: TextStyle(fontStyle: FontStyle.italic, fontSize: 12, color: AppColors.secondaryInk),
           ),
         ],
       ],
@@ -589,7 +592,7 @@ class _ParagraphBlock extends StatelessWidget {
           const SizedBox(height: 6),
           ContentText(
             paragraph.transliteration,
-            style: TextStyle(fontStyle: FontStyle.italic, fontSize: 15, color: AppColors.bronze),
+            style: TextStyle(fontStyle: FontStyle.italic, fontSize: 15, color: AppColors.secondaryInk),
           ),
           const SizedBox(height: 4),
           ContentText(paragraph.translation, style: const TextStyle(fontSize: 16, color: AppColors.ink)),

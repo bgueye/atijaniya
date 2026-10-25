@@ -277,9 +277,8 @@ class _ContentLocalizations extends InheritedWidget {
 TextStyle _body({double size = 15, FontWeight? weight, Color? color}) =>
     TextStyle(fontSize: size, height: 1.55, color: color ?? AppColors.ink, fontWeight: weight);
 
-/// Texte secondaire (introductions, sources) : encre adoucie, qui se lit
-/// comme une note tout en restant au-dessus de 6:1 de contraste.
-Color get _secondaryInk => AppColors.ink.withValues(alpha: 0.72);
+/// Texte secondaire (introductions, sources) : voir [AppColors.secondaryInk].
+Color get _secondaryInk => AppColors.secondaryInk;
 
 /// Titres de section et intertitres : Cormorant, la police de titre de la
 /// charte en français.

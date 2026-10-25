@@ -208,10 +208,9 @@ String _wirdName(BuildContext context, RepairWird wird) => wirdDisplayName(conte
 TextStyle _uiBody({double size = 15, FontWeight? weight, Color? color}) =>
     TextStyle(fontSize: size, height: 1.5, color: color ?? AppColors.ink, fontWeight: weight);
 
-/// Texte secondaire (sources) : encre adoucie plutôt que bronze. Le bronze
-/// tombe à 4,09:1 sur blanc cassé, sous le seuil AA ; l'encre à 72 % reste
-/// au-dessus de 6:1 tout en se lisant comme une note.
-Color get _secondaryInk => AppColors.ink.withValues(alpha: 0.72);
+/// Texte secondaire (sources) : encre adoucie plutôt que bronze, voir
+/// [AppColors.secondaryInk].
+Color get _secondaryInk => AppColors.secondaryInk;
 
 /// Style du contenu religieux : Amiri en arabe (texte religieux, règle du
 /// design system), Jost en français, comme le reste du texte courant de

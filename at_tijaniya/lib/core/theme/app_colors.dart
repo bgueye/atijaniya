@@ -50,6 +50,13 @@ class AppColors {
   /// design du 2026-10-06, audit du 2026-10-25).
   static final secondaryOnDark = parchment.withValues(alpha: 0.74);
 
+  /// Texte secondaire à lire sur fond clair (translittérations, notes,
+  /// sources) : encre à 72 %, soit 5,96:1 sur blanc cassé, quand le bronze
+  /// tombe à 4,09:1, sous le seuil AA. D'abord adoptée par « Rattraper son
+  /// wird » et « Bienfaits » (audit du 2026-10-18), partagée depuis l'audit
+  /// du 2026-10-25. Le bronze reste pour les légendes et les bordures.
+  static final secondaryInk = ink.withValues(alpha: 0.72);
+
   /// Fonds doux d'accent, badges
   static const goldSoft = Color(0xFFF1E6C9);
 
