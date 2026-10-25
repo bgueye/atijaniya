@@ -192,90 +192,183 @@ class _FigureDetailScreenState extends ConsumerState<FigureDetailScreen> {
     final figure = _figure;
     final isAdmin = ref.watch(isAdminProvider);
 
+    final tabBar = TabBar(
+      // `isScrollable: true` : à largeur fixe (défaut), "Biographie"
+      // — le plus long des 4 libellés — se faisait couper à droite
+      // (la barre d'onglets n'a pas la hauteur nécessaire pour
+      // passer le texte à la ligne) — constaté lors d'un test
+      // manuel sur téléphone (2026-09-27), même correctif que
+      // `khadara_screen.dart`.
+      isScrollable: true,
+      labelColor: AppColors.emerald,
+      unselectedLabelColor: AppColors.bronze,
+      indicatorColor: AppColors.gold,
+      indicatorWeight: 2,
+      labelStyle: const TextStyle(fontWeight: FontWeight.w700, fontSize: 14),
+      unselectedLabelStyle: const TextStyle(fontWeight: FontWeight.w500, fontSize: 14),
+      tabs: [
+        Tab(text: l10n.figureBiographySectionTitle),
+        Tab(text: l10n.figureTabSilsila),
+        Tab(text: l10n.figureCitationsSectionTitle),
+        Tab(text: l10n.figureZawiyaSectionTitle),
+      ],
+    );
+
+    // Hauteur de la barre de statut, mise à part : voir le bandeau ci-dessous.
+    final topInset = MediaQuery.paddingOf(context).top;
+
     return DefaultTabController(
       length: 4,
       child: Scaffold(
-        // `SafeArea(top: false, ...)` : le haut est déjà géré par `_FigureHero`
-        // (SafeArea interne, bottom: false) — sans ce SafeArea englobant, le
+        // `SafeArea(top: false, ...)` : sans ce SafeArea englobant, le
         // contenu des onglets (ex. dernier paragraphe de "Biographie") peut se
         // retrouver masqué sous la barre système Android (3 boutons/geste),
-        // même principe que les écrans de formulaire de l'app.
+        // même principe que les écrans de formulaire de l'app. Le haut est
+        // traité à part, par le bandeau ci-dessous.
         body: SafeArea(
           top: false,
           child: Column(
             children: [
-              _FigureHero(
-                figure: figure,
-                isAdmin: isAdmin,
-                changingPortrait: _changingPortrait,
-                onChangePortrait: _changePortrait,
-                deleting: _deleting,
-                onEdit: _editFigure,
-                onDelete: _confirmDelete,
-                editTooltip: l10n.figureEditTooltip,
-                deleteTooltip: l10n.figureDeleteTooltip,
-              ),
-              // Dépublication : proposée à l'admin seulement pour une figure
-              // actuellement publiée (présente dans la liste des figures
-              // valides), jamais pour un brouillon ouvert depuis la review.
-              if (isAdmin &&
-                  (ref.watch(figuresProvider).valueOrNull?.any((f) => f.id == _figure.id) ?? false))
-                Align(
-                  alignment: AlignmentDirectional.centerEnd,
-                  child: TextButton.icon(
-                    onPressed: _deleting ? null : _confirmUnpublish,
-                    icon: const Icon(Icons.unpublished_outlined, size: 18),
-                    label: Text(l10n.figureUnpublishAction),
-                  ),
-                ),
-              DecoratedBox(
-                decoration: BoxDecoration(
-                  color: AppColors.offWhite,
-                  border: Border(
-                      bottom: BorderSide(
-                          color: AppColors.bronze.withValues(alpha: 0.2))),
-                ),
-                child: TabBar(
-                  // `isScrollable: true` : à largeur fixe (défaut), "Biographie"
-                  // — le plus long des 4 libellés — se faisait couper à droite
-                  // (la barre d'onglets n'a pas la hauteur nécessaire pour
-                  // passer le texte à la ligne) — constaté lors d'un test
-                  // manuel sur téléphone (2026-09-27), même correctif que
-                  // `khadara_screen.dart`.
-                  isScrollable: true,
-                  labelColor: AppColors.emerald,
-                  unselectedLabelColor: AppColors.bronze,
-                  indicatorColor: AppColors.gold,
-                  indicatorWeight: 2,
-                  labelStyle: const TextStyle(
-                      fontWeight: FontWeight.w700, fontSize: 14),
-                  unselectedLabelStyle: const TextStyle(
-                      fontWeight: FontWeight.w500, fontSize: 14),
-                  tabs: [
-                    Tab(text: l10n.figureBiographySectionTitle),
-                    Tab(text: l10n.figureTabSilsila),
-                    Tab(text: l10n.figureCitationsSectionTitle),
-                    Tab(text: l10n.figureZawiyaSectionTitle),
-                  ],
-                ),
-              ),
+              // Bandeau fixe sous la barre de statut, de la couleur du haut du
+              // dégradé de `_FigureHero` : au repos il prolonge l'en-tête sans
+              // couture ; une fois l'en-tête parti en défilant, il empêche les
+              // onglets accrochés en haut de passer sous l'heure et les icônes
+              // système. Sans lui, l'en-tête devrait garder son propre
+              // `SafeArea` haut, qui défilerait avec lui.
+              Container(height: topInset, color: AppColors.zaytoune),
               Expanded(
-                child: TabBarView(
-                  children: [
-                    _BiographyTab(figure: figure),
-                    _SilsilaTab(figure: figure, isAdmin: isAdmin),
-                    _CitationsTab(
-                        figure: figure,
-                        isAdmin: isAdmin,
-                        onContentChanged: _refreshFigureContent),
-                    _ZawiyaTab(figure: figure, isAdmin: isAdmin),
-                  ],
+                child: MediaQuery.removePadding(
+                  context: context,
+                  removeTop: true,
+                  // `NestedScrollView` (audit Figures du 2026-10-25, P1) :
+                  // l'en-tête défile désormais avec le contenu et seuls les
+                  // onglets restent accrochés en haut. Avec l'ancienne
+                  // `Column` fixe, l'en-tête et les onglets ne laissaient
+                  // qu'une ligne de biographie en paysage, et plus rien du
+                  // tout (débordement) en paysage avec le texte à 200 %.
+                  child: NestedScrollView(
+                    headerSliverBuilder: (context, innerBoxIsScrolled) => [
+                      SliverToBoxAdapter(
+                        child: _FigureHero(
+                          figure: figure,
+                          isAdmin: isAdmin,
+                          changingPortrait: _changingPortrait,
+                          onChangePortrait: _changePortrait,
+                          deleting: _deleting,
+                          onEdit: _editFigure,
+                          onDelete: _confirmDelete,
+                          editTooltip: l10n.figureEditTooltip,
+                          deleteTooltip: l10n.figureDeleteTooltip,
+                        ),
+                      ),
+                      // Dépublication : proposée à l'admin seulement pour une figure
+                      // actuellement publiée (présente dans la liste des figures
+                      // valides), jamais pour un brouillon ouvert depuis la review.
+                      if (isAdmin &&
+                          (ref.watch(figuresProvider).valueOrNull?.any((f) => f.id == _figure.id) ?? false))
+                        SliverToBoxAdapter(
+                          child: Align(
+                            alignment: AlignmentDirectional.centerEnd,
+                            child: TextButton.icon(
+                              onPressed: _deleting ? null : _confirmUnpublish,
+                              icon: const Icon(Icons.unpublished_outlined, size: 18),
+                              label: Text(l10n.figureUnpublishAction),
+                            ),
+                          ),
+                        ),
+                      // `SliverOverlapAbsorber` : une fois accrochée, la barre
+                      // d'onglets recouvre le haut de l'onglet ouvert. La
+                      // poignée transmet cette hauteur à chaque onglet
+                      // (`SliverOverlapInjector` dans `_TabScrollView`), qui
+                      // décale son contenu d'autant au lieu de le cacher.
+                      SliverOverlapAbsorber(
+                        handle: NestedScrollView.sliverOverlapAbsorberHandleFor(context),
+                        sliver: SliverPersistentHeader(
+                          pinned: true,
+                          delegate: _PinnedTabBarDelegate(tabBar),
+                        ),
+                      ),
+                    ],
+                    body: TabBarView(
+                      children: [
+                        _BiographyTab(figure: figure),
+                        _SilsilaTab(figure: figure, isAdmin: isAdmin),
+                        _CitationsTab(figure: figure, isAdmin: isAdmin, onContentChanged: _refreshFigureContent),
+                        _ZawiyaTab(figure: figure, isAdmin: isAdmin),
+                      ],
+                    ),
+                  ),
                 ),
               ),
             ],
           ),
         ),
       ),
+    );
+  }
+}
+
+/// Barre d'onglets accrochée en haut de la fiche (`SliverPersistentHeader`
+/// épinglé) : hauteur fixe, celle de la `TabBar`. Le fond opaque est
+/// nécessaire, le contenu de l'onglet défilant juste dessous.
+class _PinnedTabBarDelegate extends SliverPersistentHeaderDelegate {
+  _PinnedTabBarDelegate(this.tabBar);
+
+  final TabBar tabBar;
+
+  @override
+  double get minExtent => tabBar.preferredSize.height;
+
+  @override
+  double get maxExtent => tabBar.preferredSize.height;
+
+  @override
+  Widget build(BuildContext context, double shrinkOffset, bool overlapsContent) {
+    return DecoratedBox(
+      decoration: BoxDecoration(
+        color: AppColors.offWhite,
+        border: Border(bottom: BorderSide(color: AppColors.bronze.withValues(alpha: 0.2))),
+      ),
+      child: tabBar,
+    );
+  }
+
+  // La `TabBar` est recréée à chaque `build` de l'écran (libellés traduits) :
+  // reconstruire dès qu'elle change, ce qui reste peu coûteux.
+  @override
+  bool shouldRebuild(_PinnedTabBarDelegate oldDelegate) => oldDelegate.tabBar != tabBar;
+}
+
+/// Contenu défilant d'un onglet, dans le `body` du `NestedScrollView` de la
+/// fiche. Remplace les `ListView` des onglets pour deux raisons :
+/// - `SliverOverlapInjector` décale le contenu de la hauteur de la barre
+///   d'onglets accrochée, qui sinon en masquerait le haut ;
+/// - [_TabScrollView.fill] rend défilable un contenu court centré (états
+///   « en attente », chargement, erreur) : avec le texte à 200 % en paysage,
+///   un simple `Center` débordait de la hauteur restante.
+/// Sans contrôleur, la vue reprend celui que fournit le `NestedScrollView`,
+/// qui coordonne le défilement de l'en-tête et de l'onglet.
+class _TabScrollView extends StatelessWidget {
+  const _TabScrollView({required this.children}) : fill = null;
+
+  const _TabScrollView.fill(Widget this.fill) : children = const [];
+
+  final List<Widget> children;
+  final Widget? fill;
+
+  @override
+  Widget build(BuildContext context) {
+    return CustomScrollView(
+      slivers: [
+        SliverOverlapInjector(handle: NestedScrollView.sliverOverlapAbsorberHandleFor(context)),
+        if (fill != null)
+          SliverFillRemaining(hasScrollBody: false, child: fill!)
+        else
+          SliverPadding(
+            padding: const EdgeInsets.all(20),
+            sliver: SliverList(delegate: SliverChildListDelegate(children)),
+          ),
+      ],
     );
   }
 }
@@ -332,12 +425,14 @@ class _FigureHero extends StatelessWidget {
           colors: [AppColors.zaytoune, AppColors.emerald],
         ),
       ),
+      // `SafeArea` : ne sert plus qu'aux marges latérales (encoche en
+      // paysage) — la barre de statut est prise en charge par le bandeau
+      // fixe de `FigureDetailScreen`, qui retire le padding haut.
       child: SafeArea(
         bottom: false,
-        // Hauteur laissée libre (pas de `SizedBox` à hauteur fixe) : une
-        // valeur fixe s'additionnerait à l'espacement déjà ajouté par
-        // `SafeArea` pour la barre de statut, rendant l'en-tête plus haut
-        // que prévu. Le padding vertical ci-dessous fixe la hauteur perçue.
+        // Hauteur laissée libre (pas de `SizedBox` à hauteur fixe) : le
+        // padding vertical ci-dessous fixe la hauteur perçue, et le contenu
+        // grandit avec la taille du texte.
         child: Stack(
           alignment: Alignment.center,
           children: [
@@ -511,7 +606,7 @@ class _PendingTab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Center(
+    return _TabScrollView.fill(Center(
       child: Padding(
         padding: const EdgeInsets.all(32),
         child: Column(
@@ -526,7 +621,7 @@ class _PendingTab extends StatelessWidget {
           ],
         ),
       ),
-    );
+    ));
   }
 }
 
@@ -542,8 +637,7 @@ class _BiographyTab extends StatelessWidget {
     if (biography == null || biography.isEmpty) {
       return _PendingTab(message: l10n.figureBiographyPending);
     }
-    return ListView(
-      padding: const EdgeInsets.all(20),
+    return _TabScrollView(
       children: [
         for (final paragraph in biography)
           _BiographyParagraph(paragraph: paragraph)
@@ -646,9 +740,9 @@ class _SilsilaTabState extends ConsumerState<_SilsilaTab> {
     }
 
     return chainAsync.when(
-      loading: () => Center(
-          child: CircularProgressIndicator(color: AppColors.emerald)),
-      error: (error, stackTrace) => Center(
+      loading: () => _TabScrollView.fill(Center(
+          child: CircularProgressIndicator(color: AppColors.emerald))),
+      error: (error, stackTrace) => _TabScrollView.fill(Center(
         child: Padding(
           padding: const EdgeInsets.all(24),
           child: Column(
@@ -670,13 +764,12 @@ class _SilsilaTabState extends ConsumerState<_SilsilaTab> {
             ],
           ),
         ),
-      ),
+      )),
       data: (chain) {
         if (chain.isEmpty && !widget.isAdmin) {
           return _PendingTab(message: l10n.figureSilsilaPending);
         }
-        return ListView(
-          padding: const EdgeInsets.all(20),
+        return _TabScrollView(
           children: [
             if (widget.isAdmin) ...[
               Wrap(
@@ -948,8 +1041,7 @@ class _CitationsTabState extends ConsumerState<_CitationsTab> {
       return _PendingTab(message: l10n.figureCitationsEmpty);
     }
 
-    return ListView(
-      padding: const EdgeInsets.all(20),
+    return _TabScrollView(
       children: [
         if (widget.isAdmin) ...[
           Wrap(
@@ -1305,8 +1397,7 @@ class _ZawiyaTabState extends ConsumerState<_ZawiyaTab> {
     final eventsAsync = ref.watch(linkedEventsForFigureProvider(widget.figure.id));
     final successionsAsync = ref.watch(successionsForFigureProvider(widget.figure.id));
 
-    return ListView(
-      padding: const EdgeInsets.all(20),
+    return _TabScrollView(
       children: [
         Text(l10n.figureZawiyasSectionTitle, style: _sectionTitleStyle),
         const SizedBox(height: 12),

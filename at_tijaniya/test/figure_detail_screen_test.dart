@@ -25,10 +25,16 @@ import 'package:at_tijaniya/l10n/app_localizations.dart';
 // et qui appelleraient sinon FiguresRepository (réseau) sans surcharge —
 // aucun des quatre n'a de rapport avec ce que ce fichier vérifie (rendu de
 // la biographie/citations/évènement lié).
-Widget _wrap(Widget child, {List<Override> overrides = const []}) {
+Widget _wrap(Widget child, {List<Override> overrides = const [], double textScale = 1.0}) {
   return ProviderScope(
     overrides: [isAdminProvider.overrideWithValue(false), ...overrides],
     child: MaterialApp(
+      // Taille du texte imposée par le test (réglage d'accessibilité du
+      // téléphone) — 1.0 par défaut, comme les tests existants.
+      builder: (context, child) => MediaQuery(
+        data: MediaQuery.of(context).copyWith(textScaler: TextScaler.linear(textScale)),
+        child: child!,
+      ),
       locale: const Locale('fr'),
       supportedLocales: const [Locale('fr'), Locale('ar')],
       localizationsDelegates: const [
@@ -103,6 +109,55 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text('Biographie en attente de validation.'), findsOneWidget);
+  });
+
+  // Audit Figures du 2026-10-25 (P1) : en paysage avec le texte à 200 %,
+  // l'en-tête fixe de l'ancienne mise en page débordait et ne laissait voir
+  // aucune ligne de biographie. Surface 891 × 411 dp (téléphone 1080p en
+  // paysage). L'en-tête doit pouvoir défiler hors de l'écran, les onglets
+  // rester accrochés en haut, et la biographie apparaître dessous.
+  testWidgets('FigureDetailScreen reste lisible en paysage avec le texte à 200 %', (tester) async {
+    tester.view.physicalSize = const Size(2340, 1080);
+    tester.view.devicePixelRatio = 2.625;
+    addTearDown(tester.view.reset);
+
+    final figure = Figure(
+      id: 'test-figure-landscape',
+      nameArabic: 'اسم تجريبي',
+      nameFrench: 'Figure en paysage',
+      category: FigureCategory.founder,
+      biography: [
+        for (var i = 1; i <= 12; i++)
+          FigureBiographyParagraph(translation: 'Paragraphe de test numéro $i, assez long pour occuper '
+              'plusieurs lignes de la fiche une fois le texte agrandi.'),
+      ],
+    );
+
+    await tester.pumpWidget(_wrap(FigureDetailScreen(figure: figure), textScale: 2.0));
+    await tester.pumpAndSettle();
+    expect(tester.takeException(), isNull);
+
+    final firstParagraph = find.textContaining('Paragraphe de test numéro 1,');
+    // Dès l'ouverture, avec l'en-tête encore affiché, le début de la
+    // biographie est visible.
+    expect(firstParagraph.hitTestable(), findsOneWidget);
+
+    // En-tête entièrement défilé, onglet encore en haut de son contenu.
+    // Contrôleur externe plutôt qu'un glisser, qui peut lancer un défilement
+    // inertiel et rendre la position finale imprévisible.
+    final nested = tester.state<NestedScrollViewState>(find.byType(NestedScrollView));
+    nested.outerController.jumpTo(nested.outerController.position.maxScrollExtent);
+    await tester.pumpAndSettle();
+    expect(tester.takeException(), isNull);
+
+    // Le nom n'est plus à l'écran, les onglets sont accrochés en haut
+    // (bandeau de barre de statut nul dans le test)...
+    expect(find.text('FIGURE EN PAYSAGE').hitTestable(), findsNothing);
+    final tabBarRect = tester.getRect(find.byType(TabBar));
+    expect(tabBarRect.top, 0);
+    // ... et le premier paragraphe commence sous eux, pas dessous : c'est le
+    // rôle du `SliverOverlapInjector`.
+    expect(tester.getRect(firstParagraph).top, greaterThanOrEqualTo(tabBarRect.bottom));
   });
 
   // Succession rangée par zawiya + rôle (migration
