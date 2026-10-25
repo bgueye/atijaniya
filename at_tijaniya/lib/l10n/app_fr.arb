@@ -990,6 +990,7 @@
   "figureUnpublishSuccess": "Figure repassée en brouillon.",
   "figureUnavailable": "Cette fiche n'est plus disponible.",
   "figureDraftTag": "Brouillon",
+  "figureChangePortrait": "Changer le portrait",
   "figureUnpublishError": "Impossible de dépublier cette figure.",
   "a11yTogglePasswordVisibility": "Afficher ou masquer le mot de passe",
   "a11yRemove": "Retirer",

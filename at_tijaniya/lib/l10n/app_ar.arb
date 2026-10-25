@@ -989,6 +989,7 @@
   "figureUnpublishSuccess": "أُعيدت الشخصية إلى مسودة.",
   "figureUnavailable": "هذه الشخصية لم تعد متاحة.",
   "figureDraftTag": "مسودة",
+  "figureChangePortrait": "تغيير الصورة",
   "figureUnpublishError": "تعذّر سحب هذه الشخصية من النشر.",
   "a11yTogglePasswordVisibility": "إظهار أو إخفاء كلمة المرور",
   "a11yRemove": "إزالة",

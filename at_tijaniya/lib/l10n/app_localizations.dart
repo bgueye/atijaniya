@@ -5492,6 +5492,12 @@ abstract class AppLocalizations {
   /// **'Brouillon'**
   String get figureDraftTag;
 
+  /// No description provided for @figureChangePortrait.
+  ///
+  /// In fr, this message translates to:
+  /// **'Changer le portrait'**
+  String get figureChangePortrait;
+
   /// No description provided for @figureUnpublishError.
   ///
   /// In fr, this message translates to:

@@ -2800,6 +2800,9 @@ class AppLocalizationsFr extends AppLocalizations {
   String get figureDraftTag => 'Brouillon';
 
   @override
+  String get figureChangePortrait => 'Changer le portrait';
+
+  @override
   String get figureUnpublishError => 'Impossible de dépublier cette figure.';
 
   @override

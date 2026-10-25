@@ -459,55 +459,64 @@ class _FigureHero extends StatelessWidget {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   if (figure.portraitUrl != null || isAdmin) ...[
-                    GestureDetector(
-                      onTap: isAdmin ? onChangePortrait : null,
-                      child: Stack(
-                        clipBehavior: Clip.none,
-                        children: [
-                          Container(
-                            width: 72,
-                            height: 72,
-                            decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              color: AppColors.parchment.withValues(alpha: 0.2),
+                    // Libellé pour l'admin, seul à pouvoir toucher le
+                    // portrait : TalkBack annonçait un bouton sans nom
+                    // (audit Figures du 2026-10-25, P3-7). Pour un disciple,
+                    // le portrait reste une image décorative, le nom suit.
+                    Semantics(
+                      container: isAdmin,
+                      button: isAdmin,
+                      label: isAdmin ? AppLocalizations.of(context)!.figureChangePortrait : null,
+                      child: GestureDetector(
+                        onTap: isAdmin ? onChangePortrait : null,
+                        child: Stack(
+                          clipBehavior: Clip.none,
+                          children: [
+                            Container(
+                              width: 72,
+                              height: 72,
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                color: AppColors.parchment.withValues(alpha: 0.2),
+                              ),
+                              // Portrait introuvable ou absent : même icône (voir
+                              // `FigurePortrait`, audit Figures du 2026-10-25, P2-5).
+                              child: figure.portraitUrl == null
+                                  ? _portraitPlaceholder
+                                  : FigurePortrait(
+                                      url: figure.portraitUrl!,
+                                      size: 72,
+                                      circle: true,
+                                      errorPlaceholder: _portraitPlaceholder,
+                                    ),
                             ),
-                            // Portrait introuvable ou absent : même icône (voir
-                            // `FigurePortrait`, audit Figures du 2026-10-25, P2-5).
-                            child: figure.portraitUrl == null
-                                ? _portraitPlaceholder
-                                : FigurePortrait(
-                                    url: figure.portraitUrl!,
-                                    size: 72,
-                                    circle: true,
-                                    errorPlaceholder: _portraitPlaceholder,
+                            if (changingPortrait)
+                              const Positioned.fill(
+                                child: CircleAvatar(
+                                  backgroundColor: Colors.black45,
+                                  child: SizedBox(
+                                    width: 20,
+                                    height: 20,
+                                    child: CircularProgressIndicator(
+                                        strokeWidth: 2, color: Colors.white),
                                   ),
-                          ),
-                          if (changingPortrait)
-                            const Positioned.fill(
-                              child: CircleAvatar(
-                                backgroundColor: Colors.black45,
-                                child: SizedBox(
-                                  width: 20,
-                                  height: 20,
-                                  child: CircularProgressIndicator(
-                                      strokeWidth: 2, color: Colors.white),
+                                ),
+                              )
+                            else if (isAdmin)
+                              PositionedDirectional(
+                                end: -2,
+                                bottom: -2,
+                                child: Container(
+                                  padding: const EdgeInsets.all(4),
+                                  decoration: BoxDecoration(
+                                      color: AppColors.gold,
+                                      shape: BoxShape.circle),
+                                  child: const Icon(Icons.edit,
+                                      size: 14, color: AppColors.zaytoune),
                                 ),
                               ),
-                            )
-                          else if (isAdmin)
-                            PositionedDirectional(
-                              end: -2,
-                              bottom: -2,
-                              child: Container(
-                                padding: const EdgeInsets.all(4),
-                                decoration: BoxDecoration(
-                                    color: AppColors.gold,
-                                    shape: BoxShape.circle),
-                                child: const Icon(Icons.edit,
-                                    size: 14, color: AppColors.zaytoune),
-                              ),
-                            ),
-                        ],
+                          ],
+                        ),
                       ),
                     ),
                     const SizedBox(height: 10),

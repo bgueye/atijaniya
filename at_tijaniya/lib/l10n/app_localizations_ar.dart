@@ -2771,6 +2771,9 @@ class AppLocalizationsAr extends AppLocalizations {
   String get figureDraftTag => 'مسودة';
 
   @override
+  String get figureChangePortrait => 'تغيير الصورة';
+
+  @override
   String get figureUnpublishError => 'تعذّر سحب هذه الشخصية من النشر.';
 
   @override

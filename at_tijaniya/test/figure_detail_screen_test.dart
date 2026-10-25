@@ -199,6 +199,30 @@ void main() {
     expect(tag, greaterThan(tester.getTopLeft(find.text('Maillon en brouillon')).dy));
   });
 
+  // Audit Figures du 2026-10-25 (P3-7) : pour l'admin, le portrait est un
+  // bouton nommé ; avant, TalkBack annonçait un bouton vide.
+  testWidgets('admin : le portrait modifiable est annoncé « Changer le portrait »', (tester) async {
+    final semantics = tester.ensureSemantics();
+    const figure = Figure(
+      id: 'test-figure-portrait',
+      nameArabic: 'اسم تجريبي',
+      nameFrench: 'Figure sans portrait',
+      category: FigureCategory.founder,
+    );
+    await tester.pumpWidget(_wrap(
+      const FigureDetailScreen(figure: figure),
+      isAdmin: true,
+      overrides: [figuresProvider.overrideWith((ref) async => const [figure])],
+    ));
+    await tester.pumpAndSettle();
+
+    expect(
+      tester.getSemantics(find.bySemanticsLabel('Changer le portrait')),
+      isSemantics(label: 'Changer le portrait', isButton: true, hasTapAction: true),
+    );
+    semantics.dispose();
+  });
+
   // Audit Figures du 2026-10-25 (P3-2) : un échec de chargement des zawiyas
   // ou des évènements liés propose « Réessayer », qui relance la requête.
   testWidgets('onglet Zawiya : « Réessayer » relance le chargement en échec', (tester) async {
