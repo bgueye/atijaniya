@@ -1109,5 +1109,6 @@
   "wirdAudioLoadFailed": "تعذّر تحميل التلاوات الصوتية — تحقّق من اتصالك.",
   "wirdReminderScheduleFailed": "تعذّرت جدولة التذكير. أعد المحاولة.",
   "wirdReminderChannelName": "تذكيرات الأوراد",
-  "wirdReminderChannelDescription": "تذكيرات مجدولة لأداء الأوراد."
+  "wirdReminderChannelDescription": "تذكيرات مجدولة لأداء الأوراد.",
+  "wirdRecitationsManageDefaultReciter": "التلاوة المرجعية"
 }

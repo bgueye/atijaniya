@@ -3153,4 +3153,7 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get wirdReminderChannelDescription => 'تذكيرات مجدولة لأداء الأوراد.';
+
+  @override
+  String get wirdRecitationsManageDefaultReciter => 'التلاوة المرجعية';
 }

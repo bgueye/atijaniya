@@ -1118,5 +1118,6 @@
   "wirdAudioLoadFailed": "Récitations audio indisponibles — vérifiez votre connexion.",
   "wirdReminderScheduleFailed": "Impossible de programmer le rappel. Réessayez.",
   "wirdReminderChannelName": "Rappels des wirds",
-  "wirdReminderChannelDescription": "Rappels programmés pour la pratique des wirds."
+  "wirdReminderChannelDescription": "Rappels programmés pour la pratique des wirds.",
+  "wirdRecitationsManageDefaultReciter": "Récitation de référence"
 }

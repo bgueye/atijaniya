@@ -24,6 +24,7 @@ import '../data/wird_recitation_repository.dart';
 import '../data/wirds_content.dart';
 import '../domain/wird_models.dart';
 import '../domain/wird_recitation.dart';
+import 'wird_display_name.dart';
 import 'wird_recitation_providers.dart';
 import '../../../core/widgets/app_snackbar.dart';
 import '../../../core/widgets/content_text.dart';
@@ -72,7 +73,8 @@ class WirdRecitationsManagementScreen extends ConsumerWidget {
               for (final wird in validatedWirds) ...[
                 Padding(
                   padding: const EdgeInsets.only(top: 8, bottom: 8),
-                  child: ContentText(wird.nameFrench,
+                  // Nom arabe dans l'app en arabe (P3-4).
+                  child: ContentText(wirdDisplayName(context, wird),
                       style: const TextStyle(
                           fontWeight: FontWeight.w600, fontSize: 18)),
                 ),
@@ -397,8 +399,11 @@ class _UploadRecitationSheet extends ConsumerStatefulWidget {
 
 class _UploadRecitationSheetState
     extends ConsumerState<_UploadRecitationSheet> {
-  final _reciterController =
-      TextEditingController(text: 'Récitation de référence');
+  // Nom proposé par défaut dans la langue de l'app (il était en français en
+  // dur, P3-4) ; l'admin le modifie librement, et il est enregistré tel
+  // qu'il est saisi.
+  late final _reciterController =
+      TextEditingController(text: widget.l10n.wirdRecitationsManageDefaultReciter);
   final _picker = WirdAudioPickerService();
 
   PlatformFile? _pickedFile;
@@ -444,7 +449,7 @@ class _UploadRecitationSheetState
             orderIndex: widget.step.orderIndex,
             contentVersion: nextContentVersionFor(widget.step.recitations),
             reciterName: _reciterController.text.trim().isEmpty
-                ? 'Récitation de référence'
+                ? widget.l10n.wirdRecitationsManageDefaultReciter
                 : _reciterController.text.trim(),
             bytes: bytes,
             extension: extension,
@@ -517,7 +522,7 @@ class _UploadRecitationSheetState
                       width: 20,
                       height: 20,
                       child: CircularProgressIndicator(
-                          strokeWidth: 2, color: Colors.white))
+                          strokeWidth: 2, color: AppColors.offWhite))
                   : Text(l10n.wirdRecitationsManageUploadSubmit),
             ),
           ],

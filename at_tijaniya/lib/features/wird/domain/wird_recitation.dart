@@ -69,6 +69,7 @@ class WirdRecitationDraft {
     required this.contentVersion,
     required this.wirdNameFrench,
     required this.pillarLabel,
+    this.wirdKey,
     this.durationSeconds,
   });
 
@@ -77,6 +78,11 @@ class WirdRecitationDraft {
   final String audioPath;
   final int contentVersion;
   final String wirdNameFrench;
+
+  /// Clé du wird (`wirds.key`, identique à `Wird.id` du corpus local) : sert à
+  /// afficher son nom dans la langue de l'app. `null` pour une ligne lue
+  /// avant que la requête ne la demande.
+  final String? wirdKey;
 
   /// Translittération du pilier (ou, à défaut, son texte arabe) — juste de
   /// quoi identifier lequel des piliers du wird est concerné, pas un
@@ -95,6 +101,7 @@ class WirdRecitationDraft {
       contentVersion: row['content_version'] as int,
       durationSeconds: row['duration_seconds'] as int?,
       wirdNameFrench: wird['name_fr'] as String,
+      wirdKey: wird['key'] as String?,
       pillarLabel: (step['transliteration'] as String?) ??
           (step['arabic_text'] as String),
     );

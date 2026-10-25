@@ -133,7 +133,7 @@ class WirdRecitationRepository {
         .from('wird_recitations')
         .select(
           'id, reciter_name, audio_path, content_version, duration_seconds, '
-          'wird_steps!inner(order_index, transliteration, arabic_text, wirds!inner(name_fr))',
+          'wird_steps!inner(order_index, transliteration, arabic_text, wirds!inner(key, name_fr))',
         )
         .eq('content_status', 'brouillon')
         .order('created_at');

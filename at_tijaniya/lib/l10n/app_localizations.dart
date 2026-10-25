@@ -6217,6 +6217,12 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'Rappels programmés pour la pratique des wirds.'**
   String get wirdReminderChannelDescription;
+
+  /// No description provided for @wirdRecitationsManageDefaultReciter.
+  ///
+  /// In fr, this message translates to:
+  /// **'Récitation de référence'**
+  String get wirdRecitationsManageDefaultReciter;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

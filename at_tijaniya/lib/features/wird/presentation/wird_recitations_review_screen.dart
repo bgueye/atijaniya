@@ -20,7 +20,9 @@ import 'package:path_provider/path_provider.dart';
 
 import '../../../core/theme/app_colors.dart';
 import '../../../l10n/app_localizations.dart';
+import '../data/wirds_content.dart';
 import '../domain/wird_recitation.dart';
+import 'wird_display_name.dart';
 import 'wird_recitation_providers.dart';
 import 'wird_recitations_management_screen.dart';
 import '../../../core/widgets/app_snackbar.dart';
@@ -298,7 +300,7 @@ class _DraftCardState extends ConsumerState<_DraftCard> {
                         );
                       },
                     ),
-              title: ContentText('${draft.wirdNameFrench} — ${draft.pillarLabel}',
+              title: ContentText('${_wirdName(context, draft)} — ${draft.pillarLabel}',
                   style: const TextStyle(fontWeight: FontWeight.w500)),
               subtitle: ContentText(draft.reciterName),
             ),
@@ -332,4 +334,13 @@ class _DraftCardState extends ConsumerState<_DraftCard> {
       ),
     );
   }
+}
+
+/// Nom du wird d'un brouillon dans la langue de l'app, d'après le corpus local
+/// ; le nom français de la base à défaut (P3-4).
+String _wirdName(BuildContext context, WirdRecitationDraft draft) {
+  for (final wird in validatedWirds) {
+    if (wird.id == draft.wirdKey) return wirdDisplayName(context, wird);
+  }
+  return draft.wirdNameFrench;
 }

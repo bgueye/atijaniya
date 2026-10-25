@@ -3186,4 +3186,7 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get wirdReminderChannelDescription => 'Rappels programmés pour la pratique des wirds.';
+
+  @override
+  String get wirdRecitationsManageDefaultReciter => 'Récitation de référence';
 }
