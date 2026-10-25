@@ -141,45 +141,56 @@ class _FiguresScreenState extends ConsumerState<FiguresScreen> {
               final founders = figures.where((f) => f.category == FigureCategory.founder).toList();
               final families = figures.where((f) => f.category == FigureCategory.religiousFamily).toList();
 
-              return ListView(
-                padding: const EdgeInsets.all(16),
-                children: [
-                  _SearchField(
-                    controller: _searchController,
-                    onChanged: () => setState(() {}),
-                  ),
-                  const SizedBox(height: 12),
-                  // Inutile de filtrer quand toutes les fiches ont le même
-                  // foyer (ou aucun).
-                  if (foyers.length > 1) ...[
-                    _FoyerFilter(
-                      foyers: foyers,
-                      selected: foyer,
-                      onSelected: (value) => setState(() => _foyer = value),
+              // Tirer pour actualiser (audit Figures du 2026-10-25, P3-3) :
+              // `figuresProvider` reste en cache toute la session, et une
+              // fiche dépubliée restait listée jusqu'au redémarrage. La liste
+              // en place reste affichée pendant le rechargement.
+              return RefreshIndicator(
+                color: AppColors.emerald,
+                onRefresh: () => ref.refresh(figuresProvider.future),
+                child: ListView(
+                  // Défilable même quand la liste tient dans l'écran : sans
+                  // défilement possible, le geste d'actualisation ne part pas.
+                  physics: const AlwaysScrollableScrollPhysics(),
+                  padding: const EdgeInsets.all(16),
+                  children: [
+                    _SearchField(
+                      controller: _searchController,
+                      onChanged: () => setState(() {}),
                     ),
-                    const SizedBox(height: 4),
-                  ],
-                  if (figures.isEmpty)
-                    Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 32),
-                      // Une recherche sans résultat le dit, avec la saisie,
-                      // plutôt que de laisser croire que le foyer est vide.
-                      child: Text(
-                        query.isNotEmpty ? l10n.figuresSearchNoResult(query) : l10n.figuresNoneForFoyer,
-                        textAlign: TextAlign.center,
-                        style: TextStyle(color: AppColors.secondaryInk),
+                    const SizedBox(height: 12),
+                    // Inutile de filtrer quand toutes les fiches ont le même
+                    // foyer (ou aucun).
+                    if (foyers.length > 1) ...[
+                      _FoyerFilter(
+                        foyers: foyers,
+                        selected: foyer,
+                        onSelected: (value) => setState(() => _foyer = value),
                       ),
-                    ),
-                  if (founders.isNotEmpty) ...[
-                    _SectionHeader(title: l10n.figuresSectionFounders),
-                    for (final figure in founders) _FigureTile(figure: figure),
-                    const SizedBox(height: 16),
+                      const SizedBox(height: 4),
+                    ],
+                    if (figures.isEmpty)
+                      Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 32),
+                        // Une recherche sans résultat le dit, avec la saisie,
+                        // plutôt que de laisser croire que le foyer est vide.
+                        child: Text(
+                          query.isNotEmpty ? l10n.figuresSearchNoResult(query) : l10n.figuresNoneForFoyer,
+                          textAlign: TextAlign.center,
+                          style: TextStyle(color: AppColors.secondaryInk),
+                        ),
+                      ),
+                    if (founders.isNotEmpty) ...[
+                      _SectionHeader(title: l10n.figuresSectionFounders),
+                      for (final figure in founders) _FigureTile(figure: figure),
+                      const SizedBox(height: 16),
+                    ],
+                    if (families.isNotEmpty) ...[
+                      _SectionHeader(title: l10n.figuresSectionFamilies),
+                      for (final figure in families) _FigureTile(figure: figure),
+                    ],
                   ],
-                  if (families.isNotEmpty) ...[
-                    _SectionHeader(title: l10n.figuresSectionFamilies),
-                    for (final figure in families) _FigureTile(figure: figure),
-                  ],
-                ],
+                ),
               );
             },
           ),

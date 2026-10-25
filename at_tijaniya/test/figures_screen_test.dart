@@ -175,6 +175,36 @@ void main() {
     expect(tester.widget<Text>(find.text('الاسم الثاني')).style?.fontSize, 16);
   });
 
+  // Audit Figures du 2026-10-25 (P3-3) : tirer pour actualiser recharge la
+  // liste — une fiche dépubliée entre-temps disparaît.
+  testWidgets('tirer pour actualiser recharge la liste', (tester) async {
+    var calls = 0;
+    await tester.pumpWidget(ProviderScope(
+      overrides: [
+        isAdminProvider.overrideWithValue(false),
+        figuresProvider.overrideWith((ref) async {
+          calls++;
+          // Au second chargement, « Thierno Omar Diop » a été dépubliée.
+          return calls == 1 ? _figures : _figures.where((f) => f.id != 'c').toList();
+        }),
+      ],
+      child: const MaterialApp(
+        localizationsDelegates: AppLocalizations.localizationsDelegates,
+        supportedLocales: AppLocalizations.supportedLocales,
+        locale: Locale('fr'),
+        home: Scaffold(body: FiguresScreen()),
+      ),
+    ));
+    await tester.pumpAndSettle();
+    expect(find.text('Thierno Omar Diop'), findsOneWidget);
+
+    await tester.fling(find.text('Sidi Bachir Tidjani'), const Offset(0, 400), 1000);
+    await tester.pumpAndSettle();
+
+    expect(calls, 2);
+    expect(find.text('Thierno Omar Diop'), findsNothing);
+  });
+
   testWidgets('la recherche se combine au filtre par foyer', (tester) async {
     await tester.pumpWidget(_wrap());
     await tester.pumpAndSettle();
