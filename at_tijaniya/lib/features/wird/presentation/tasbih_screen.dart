@@ -407,20 +407,28 @@ class _DonationNudgeState extends State<_DonationNudge> {
   Widget build(BuildContext context) {
     if (!_visible) return const SizedBox.shrink();
     return Padding(
-      padding: const EdgeInsets.only(top: 20),
+      padding: const EdgeInsets.only(top: 6),
       child: InkWell(
         borderRadius: BorderRadius.circular(8),
         onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const DonationScreen())),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const Icon(Icons.favorite_outline, size: 14, color: AppColors.goldOnDark),
-            const SizedBox(width: 6),
-            Text(
-              AppLocalizations.of(context)!.wirdTasbihDonationNudge,
-              style: TextStyle(color: AppColors.secondaryOnDark, fontSize: 12, decoration: TextDecoration.underline, decorationColor: AppColors.secondaryOnDark),
+        // Zone tactile de 48 dp de haut : la ligne de texte seule en faisait
+        // une vingtaine (audit du 2026-10-25, P2-8). Le dessin ne change pas.
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(minHeight: 48),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 8),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Icon(Icons.favorite_outline, size: 14, color: AppColors.goldOnDark),
+                const SizedBox(width: 6),
+                Text(
+                  AppLocalizations.of(context)!.wirdTasbihDonationNudge,
+                  style: TextStyle(color: AppColors.secondaryOnDark, fontSize: 12, decoration: TextDecoration.underline, decorationColor: AppColors.secondaryOnDark),
+                ),
+              ],
             ),
-          ],
+          ),
         ),
       ),
     );

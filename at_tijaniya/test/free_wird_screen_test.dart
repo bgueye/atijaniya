@@ -88,6 +88,34 @@ void main() {
     expect(find.text('/ 33'), findsNothing);
   });
 
+  testWidgets('Formulaire accessible : zones tactiles de 48 dp, pastilles et champ « cible » annoncés',
+      (tester) async {
+    final handle = tester.ensureSemantics();
+    await tester.pumpWidget(_wrap(const FreeWirdScreen()));
+    await tester.pumpAndSettle();
+
+    await expectLater(tester, meetsGuideline(androidTapTargetGuideline));
+    await expectLater(tester, meetsGuideline(labeledTapTargetGuideline));
+
+    // Le champ porte le libellé affiché au-dessus des pastilles, pas seulement
+    // son indication « 100 ».
+    expect(
+      tester.getSemantics(find.byType(TextField).last),
+      // L'indication « 100 » suit le libellé dans la même annonce.
+      isSemantics(label: 'Nombre de répétitions\n100', isTextField: true),
+    );
+
+    // Pastille choisie annoncée comme telle.
+    await tester.tap(find.text('99'));
+    await tester.pumpAndSettle();
+    expect(
+      // `InkWell` : après le toucher, « 99 » s'affiche aussi dans le champ.
+      tester.getSemantics(find.widgetWithText(InkWell, '99')),
+      isSemantics(label: '99', isButton: true, isSelected: true, hasTapAction: true),
+    );
+    handle.dispose();
+  });
+
   testWidgets('« Annuler » après « Réinitialiser » rétablit le compte, sans perdre les répétitions comptées depuis',
       (tester) async {
     await tester.pumpWidget(_wrap(const FreeWirdScreen()));

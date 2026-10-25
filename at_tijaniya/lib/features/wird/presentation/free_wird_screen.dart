@@ -135,18 +135,26 @@ class _SetupFormState extends State<_SetupForm> {
             ],
           ),
           const SizedBox(height: 12),
-          TextField(
-            controller: _targetController,
-            keyboardType: TextInputType.number,
-            inputFormatters: [FilteringTextInputFormatter.allow(RegExp(r'[0-9٠-٩۰-۹]'))],
-            style: const TextStyle(color: AppColors.parchment),
-            onChanged: (_) => setState(() => _error = null),
-            decoration: InputDecoration(
-              hintText: '100',
-              hintStyle: TextStyle(color: AppColors.secondaryOnDark),
-              enabledBorder: UnderlineInputBorder(borderSide: BorderSide(color: AppColors.secondaryOnDark)),
-              focusedBorder: const UnderlineInputBorder(borderSide: BorderSide(color: AppColors.goldOnDark)),
-              errorText: _error,
+          // Le libellé visible (« Nombre de répétitions ») est au-dessus des
+          // pastilles : sans ce `Semantics`, TalkBack n'annonçait du champ que
+          // son indication, « 100 » (audit du 2026-10-25, P2-8).
+          MergeSemantics(
+            child: Semantics(
+              label: l10n.wirdFreeTargetFieldLabel,
+              child: TextField(
+                controller: _targetController,
+                keyboardType: TextInputType.number,
+                inputFormatters: [FilteringTextInputFormatter.allow(RegExp(r'[0-9٠-٩۰-۹]'))],
+                style: const TextStyle(color: AppColors.parchment),
+                onChanged: (_) => setState(() => _error = null),
+                decoration: InputDecoration(
+                  hintText: '100',
+                  hintStyle: TextStyle(color: AppColors.secondaryOnDark),
+                  enabledBorder: UnderlineInputBorder(borderSide: BorderSide(color: AppColors.secondaryOnDark)),
+                  focusedBorder: const UnderlineInputBorder(borderSide: BorderSide(color: AppColors.goldOnDark)),
+                  errorText: _error,
+                ),
+              ),
             ),
           ),
           const SizedBox(height: 32),
@@ -172,14 +180,29 @@ class _QuickTargetPill extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return InkWell(
-      borderRadius: BorderRadius.circular(20),
-      onTap: onTap,
+    // Annoncée comme un bouton, avec son état ; hauteur portée à 48 dp, la
+    // zone tactile minimale d'Android (la pastille en faisait environ 40,
+    // audit du 2026-10-25, P2-8).
+    return Semantics(
+      button: true,
+      selected: selected,
+      child: InkWell(
+        borderRadius: BorderRadius.circular(24),
+        onTap: onTap,
+        child: _pill(),
+      ),
+    );
+  }
+
+  Widget _pill() {
+    return ConstrainedBox(
+      constraints: const BoxConstraints(minHeight: 48, minWidth: 48),
       child: Container(
+        alignment: Alignment.center,
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
         decoration: BoxDecoration(
           color: selected ? AppColors.goldOnDark : AppColors.parchment.withValues(alpha: 0.12),
-          borderRadius: BorderRadius.circular(20),
+          borderRadius: BorderRadius.circular(24),
           border: Border.all(color: AppColors.bronze.withValues(alpha: 0.4)),
         ),
         child: ContentText(
