@@ -58,9 +58,11 @@ class AppTheme {
         onPrimary: AppColors.offWhite,
         primaryContainer: isLight ? AppColors.emeraldSoft : AppColors.emerald.withValues(alpha: 0.25),
         onPrimaryContainer: isLight ? AppColors.ink : AppColors.parchment,
-        secondary: AppColors.gold,
+        // Fond sombre : or fixe, jamais la variante renforcée des fonds clairs
+        // (AppColors.goldOnDark).
+        secondary: isLight ? AppColors.gold : AppColors.goldOnDark,
         onSecondary: AppColors.ink,
-        secondaryContainer: isLight ? AppColors.goldSoft : AppColors.gold,
+        secondaryContainer: isLight ? AppColors.goldSoft : AppColors.goldOnDark,
         onSecondaryContainer: AppColors.ink,
         // Bronze porte déjà le rôle "texte secondaire, bordures, légendes"
         // dans design_tokens.yaml — mapping naturel vers tertiary plutôt
@@ -90,7 +92,7 @@ class AppTheme {
         scrim: Colors.black,
         inverseSurface: isLight ? AppColors.ink : AppColors.parchment,
         onInverseSurface: isLight ? AppColors.parchment : AppColors.ink,
-        inversePrimary: AppColors.gold,
+        inversePrimary: isLight ? AppColors.gold : AppColors.goldOnDark,
         // Évite le voile de teinte automatique M3 (primary appliqué en
         // surimpression sur les surfaces élevées) : les couleurs de surface
         // sont déjà choisies explicitement ci-dessus et par `cardTheme`.

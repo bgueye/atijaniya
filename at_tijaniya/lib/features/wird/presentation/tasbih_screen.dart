@@ -51,7 +51,7 @@ class TasbihScreen extends ConsumerWidget {
         ),
         body: SafeArea(
           child: state.loadingSession
-              ? Center(child: CircularProgressIndicator(color: AppColors.gold))
+              ? const Center(child: CircularProgressIndicator(color: AppColors.goldOnDark))
               : state.wirdCompleted
                   ? _WirdCompletedView(wird: wird)
                   : KeepScreenOn(child: _TasbihBody(wird: wird, state: state, controller: controller)),
@@ -155,7 +155,7 @@ class _PillarProgress extends StatelessWidget {
                       height: 3,
                       margin: const EdgeInsetsDirectional.only(end: 4),
                       decoration: BoxDecoration(
-                        color: i <= current ? AppColors.gold : AppColors.parchment.withValues(alpha: 0.2),
+                        color: i <= current ? AppColors.goldOnDark : AppColors.parchment.withValues(alpha: 0.2),
                         borderRadius: BorderRadius.circular(2),
                       ),
                     ),
@@ -227,7 +227,7 @@ class _Reading extends StatelessWidget {
                   usingAlternative ? alternative!.arabic : pillar.arabic,
                   textAlign: TextAlign.center,
                   textDirection: TextDirection.rtl,
-                  style: AppTheme.sacredText(fontSize: 28, color: AppColors.gold),
+                  style: AppTheme.sacredText(fontSize: 28, color: AppColors.goldOnDark),
                 ),
                 const SizedBox(height: 8),
                 // Translittération et notes sont écrites en caractères latins :
@@ -262,7 +262,7 @@ class _Reading extends StatelessWidget {
                   SwitchListTile(
                     contentPadding: EdgeInsets.zero,
                     dense: true,
-                    activeThumbColor: AppColors.gold,
+                    activeThumbColor: AppColors.goldOnDark,
                     title: Text(
                       l10n.wirdTasbihUseAlternative(alternative.repetitions, alternative.name),
                       style: const TextStyle(color: AppColors.parchment, fontSize: 14),
@@ -302,7 +302,7 @@ class _Reading extends StatelessWidget {
         formula.arabic,
         textAlign: TextAlign.center,
         textDirection: TextDirection.rtl,
-        style: AppTheme.sacredText(fontSize: large ? 26 : 20, color: AppColors.gold),
+        style: AppTheme.sacredText(fontSize: large ? 26 : 20, color: AppColors.goldOnDark),
       ),
       if (formula.transliteration != null) ...[
         const SizedBox(height: 4),
@@ -336,7 +336,7 @@ class _WirdCompletedView extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(Icons.check_circle, color: AppColors.gold, size: 72),
+            const Icon(Icons.check_circle, color: AppColors.goldOnDark, size: 72),
             const SizedBox(height: 16),
             Text(
               AppLocalizations.of(context)!.wirdTasbihCompletedTitle(wirdDisplayName(context, wird)),
@@ -400,7 +400,7 @@ class _DonationNudgeState extends State<_DonationNudge> {
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(Icons.favorite_outline, size: 14, color: AppColors.gold),
+            const Icon(Icons.favorite_outline, size: 14, color: AppColors.goldOnDark),
             const SizedBox(width: 6),
             Text(
               AppLocalizations.of(context)!.wirdTasbihDonationNudge,

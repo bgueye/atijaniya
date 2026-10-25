@@ -49,7 +49,7 @@ class FreeWirdScreen extends ConsumerWidget {
         ),
         body: SafeArea(
           child: state.loading
-              ? Center(child: CircularProgressIndicator(color: AppColors.gold))
+              ? const Center(child: CircularProgressIndicator(color: AppColors.goldOnDark))
               : state.completed
                   ? _CompletedView(l10n: l10n, controller: controller)
                   : state.session == null
@@ -116,7 +116,7 @@ class _SetupFormState extends State<_SetupForm> {
               labelText: l10n.wirdFreeLabelFieldLabel,
               labelStyle: TextStyle(color: AppColors.bronze),
               enabledBorder: UnderlineInputBorder(borderSide: BorderSide(color: AppColors.bronze)),
-              focusedBorder: UnderlineInputBorder(borderSide: BorderSide(color: AppColors.gold)),
+              focusedBorder: const UnderlineInputBorder(borderSide: BorderSide(color: AppColors.goldOnDark)),
             ),
           ),
           const SizedBox(height: 24),
@@ -145,7 +145,7 @@ class _SetupFormState extends State<_SetupForm> {
               hintText: '100',
               hintStyle: TextStyle(color: AppColors.bronze),
               enabledBorder: UnderlineInputBorder(borderSide: BorderSide(color: AppColors.bronze)),
-              focusedBorder: UnderlineInputBorder(borderSide: BorderSide(color: AppColors.gold)),
+              focusedBorder: const UnderlineInputBorder(borderSide: BorderSide(color: AppColors.goldOnDark)),
               errorText: _error,
             ),
           ),
@@ -178,7 +178,7 @@ class _QuickTargetPill extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
         decoration: BoxDecoration(
-          color: selected ? AppColors.gold : AppColors.parchment.withValues(alpha: 0.12),
+          color: selected ? AppColors.goldOnDark : AppColors.parchment.withValues(alpha: 0.12),
           borderRadius: BorderRadius.circular(20),
           border: Border.all(color: AppColors.bronze.withValues(alpha: 0.4)),
         ),
@@ -306,7 +306,7 @@ class _CompletedView extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(Icons.check_circle, color: AppColors.gold, size: 72),
+            const Icon(Icons.check_circle, color: AppColors.goldOnDark, size: 72),
             const SizedBox(height: 16),
             Text(
               l10n.wirdFreeCompletedTitle,

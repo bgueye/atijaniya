@@ -107,7 +107,7 @@ class _WirdDetailScreenState extends ConsumerState<WirdDetailScreen> {
       ),
       floatingActionButton: FloatingActionButton.extended(
         heroTag: 'wird_detail_tasbih',
-        backgroundColor: AppColors.gold,
+        backgroundColor: AppColors.goldOnDark,
         foregroundColor: AppColors.ink,
         icon: const Icon(Icons.touch_app),
         label: Text(AppLocalizations.of(context)!.wirdDetailTasbihButton),
@@ -137,7 +137,7 @@ class _WirdDetailScreenState extends ConsumerState<WirdDetailScreen> {
             ContentText(
               wird.nameArabic,
               textAlign: TextAlign.center,
-              style: AppTheme.sacredText(fontSize: 32, color: AppColors.gold),
+              style: AppTheme.sacredText(fontSize: 32, color: AppColors.goldOnDark),
             ),
             if (wird.conditionsNote != null) ...[
               const SizedBox(height: 16),
@@ -194,12 +194,12 @@ class _InfoBanner extends StatelessWidget {
       decoration: BoxDecoration(
         color: AppColors.parchment.withValues(alpha: 0.08),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: AppColors.gold.withValues(alpha: 0.4)),
+        border: Border.all(color: AppColors.goldOnDark.withValues(alpha: 0.4)),
       ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Icon(icon, color: AppColors.gold, size: 18),
+          Icon(icon, color: AppColors.goldOnDark, size: 18),
           const SizedBox(width: 8),
           Expanded(
             child: ContentText(text, style: const TextStyle(color: AppColors.parchment, fontSize: 13)),
@@ -236,7 +236,7 @@ class _PillarCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: AppColors.offWhite,
         borderRadius: BorderRadius.circular(16),
-        border: isActive ? Border.all(color: AppColors.gold, width: 2) : null,
+        border: isActive ? Border.all(color: AppColors.goldOnDark, width: 2) : null,
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -488,7 +488,7 @@ class _AudioPlayerBar extends StatelessWidget {
                   iconSize: 34,
                   icon: Icon(
                     state.isPlaying ? Icons.pause_circle_filled : Icons.play_circle_fill,
-                    color: hasAnyAudio ? AppColors.gold : AppColors.bronze,
+                    color: hasAnyAudio ? AppColors.goldOnDark : AppColors.bronze,
                   ),
                   onPressed: controller.togglePlayPause,
                 ),
@@ -525,7 +525,7 @@ class _AudioPlayerBar extends StatelessWidget {
                 ),
                 child: Slider(
                   value: progress,
-                  activeColor: AppColors.gold,
+                  activeColor: AppColors.goldOnDark,
                   inactiveColor: AppColors.parchment.withValues(alpha: 0.2),
                   onChanged: duration == Duration.zero
                       ? null

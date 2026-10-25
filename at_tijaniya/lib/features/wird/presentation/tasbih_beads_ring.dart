@@ -97,10 +97,10 @@ class _Bead extends StatelessWidget {
         height: beadSize,
         decoration: BoxDecoration(
           shape: BoxShape.circle,
-          color: filled ? AppColors.gold : AppColors.parchment.withValues(alpha: isMarker ? 0.3 : 0.16),
-          border: isNext ? Border.all(color: AppColors.gold, width: 2) : null,
+          color: filled ? AppColors.goldOnDark : AppColors.parchment.withValues(alpha: isMarker ? 0.3 : 0.16),
+          border: isNext ? Border.all(color: AppColors.goldOnDark, width: 2) : null,
           boxShadow: filled
-              ? [BoxShadow(color: AppColors.gold.withValues(alpha: 0.5), blurRadius: 6, spreadRadius: 1)]
+              ? [BoxShadow(color: AppColors.goldOnDark.withValues(alpha: 0.5), blurRadius: 6, spreadRadius: 1)]
               : null,
         ),
       ),

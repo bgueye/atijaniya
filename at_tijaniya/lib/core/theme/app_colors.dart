@@ -37,6 +37,13 @@ class AppColors {
   static const _goldStandard = Color(0xFFC9A24B);
   static const _goldHighContrast = Color(0xFF8A6A1E);
 
+  /// Or des fonds sombres (zaytoune : Tasbih, guide d'un wird, wird libre).
+  /// Toujours la valeur standard, jamais assombrie par le mode renforcé :
+  /// la variante renforcée, pensée pour les fonds clairs, tombait à 2,41:1
+  /// sur zaytoune (texte arabe récité à peine lisible) contre 5,07:1 ici
+  /// (audit du 2026-10-25, design_tokens.yaml § gold_on_dark).
+  static const goldOnDark = _goldStandard;
+
   /// Fonds doux d'accent, badges
   static const goldSoft = Color(0xFFF1E6C9);
 

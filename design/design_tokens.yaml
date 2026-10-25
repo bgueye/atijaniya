@@ -98,3 +98,12 @@ accessibility:
         hex: "#8A6A1E"
         contrast_on_parchment: "4,52:1 (AA)"
         note: "Reste perceptiblement doré (AAA ferait virer au brun et perdrait l'identité de la couleur) ; gold reste un accent, rarement du texte de lecture longue."
+      gold_on_dark:
+        hex: "#C9A24B"
+        contrast_on_zaytoune: "5,07:1 (AA)"
+        note: >
+          Or des écrans de pratique sur fond zaytoune (AppColors.goldOnDark),
+          fixe dans les deux modes. Les variantes renforcées sont conçues pour
+          les fonds clairs : sur zaytoune, gold_high_contrast tombe à 2,41:1 et
+          bronze_high_contrast à 1,18:1 (audit du 2026-10-25). Sur fond sombre,
+          le texte secondaire utilise le parchemin atténué, jamais le bronze.

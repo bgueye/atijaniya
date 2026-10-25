@@ -43,7 +43,7 @@ class TasbihCounterLayout extends StatelessWidget {
         // Léger voile et filet doré : la zone de comptage se lit comme un
         // socle distinct de la lecture, sans carte ni ombre. Le filet est du
         // côté qui touche la lecture.
-        final gold = BorderSide(color: AppColors.gold.withValues(alpha: 0.45));
+        final gold = BorderSide(color: AppColors.goldOnDark.withValues(alpha: 0.45));
         Widget base(Widget child) => DecoratedBox(
               decoration: BoxDecoration(
                 color: AppColors.parchment.withValues(alpha: 0.045),
@@ -225,7 +225,7 @@ class TasbihCounterPanel extends StatelessWidget {
             textAlign: TextAlign.center,
             maxLines: compact ? 1 : 2,
             overflow: TextOverflow.ellipsis,
-            style: TextStyle(color: failed ? AppColors.gold : tasbihSecondaryText(), fontSize: 13, height: 1.25),
+            style: TextStyle(color: failed ? AppColors.goldOnDark : tasbihSecondaryText(), fontSize: 13, height: 1.25),
           ),
           if (canListen) ...[
             SizedBox(height: compact ? 2 : 6),
@@ -246,9 +246,9 @@ class TasbihCounterPanel extends StatelessWidget {
                   child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
               decoration: BoxDecoration(
-                color: isListening ? Colors.transparent : AppColors.gold,
+                color: isListening ? Colors.transparent : AppColors.goldOnDark,
                 borderRadius: BorderRadius.circular(22),
-                border: Border.all(color: AppColors.gold),
+                border: Border.all(color: AppColors.goldOnDark),
               ),
               child: Row(
                 mainAxisSize: MainAxisSize.min,
@@ -256,7 +256,7 @@ class TasbihCounterPanel extends StatelessWidget {
                   Icon(
                     isListening ? Icons.pause : Icons.mic,
                     size: 16,
-                    color: isListening ? AppColors.gold : AppColors.ink,
+                    color: isListening ? AppColors.goldOnDark : AppColors.ink,
                   ),
                   const SizedBox(width: 6),
                   Text(
@@ -264,7 +264,7 @@ class TasbihCounterPanel extends StatelessWidget {
                     style: TextStyle(
                       fontSize: 13,
                       fontWeight: FontWeight.w500,
-                      color: isListening ? AppColors.gold : AppColors.ink,
+                      color: isListening ? AppColors.goldOnDark : AppColors.ink,
                     ),
                   ),
                 ],
@@ -382,7 +382,7 @@ class _Ring extends StatelessWidget {
               ),
               if (complete) ...[
                 const SizedBox(height: 4),
-                Icon(Icons.check_circle, color: AppColors.gold, size: size * 0.11),
+                Icon(Icons.check_circle, color: AppColors.goldOnDark, size: size * 0.11),
               ],
             ],
               ),
@@ -460,7 +460,7 @@ class _ModeToggle extends StatelessWidget {
               width: 52,
               height: 44,
               decoration: BoxDecoration(
-                color: selected ? AppColors.gold : Colors.transparent,
+                color: selected ? AppColors.goldOnDark : Colors.transparent,
                 borderRadius: BorderRadius.circular(24),
               ),
               child: Icon(icon, size: 22, color: selected ? AppColors.ink : AppColors.parchment),
