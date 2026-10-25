@@ -123,6 +123,12 @@ class AppTheme {
           textStyle: GoogleFonts.jost(fontWeight: FontWeight.w500),
           padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          // Fond sombre : l'émeraude ne se détache pas du zaytoune (1,96:1,
+          // 1,18:1 en mode renforcé) et la forme du bouton disparaissait
+          // (« Commencer » du wird libre, audit du 2026-10-25, P3-11). Un
+          // filet parchemin la dessine (6,7:1) sans changer la couleur du
+          // bouton principal fixée par la charte.
+          side: isLight ? null : BorderSide(color: AppColors.secondaryOnDark),
         ),
       ),
       cardTheme: CardThemeData(

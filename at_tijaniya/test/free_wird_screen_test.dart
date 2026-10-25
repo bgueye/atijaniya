@@ -9,6 +9,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import 'package:at_tijaniya/core/theme/app_colors.dart';
 import 'package:at_tijaniya/features/wird/presentation/free_wird_screen.dart';
 import 'package:at_tijaniya/l10n/app_localizations.dart';
 
@@ -122,6 +123,16 @@ void main() {
       isSemantics(label: '99', isButton: true, isSelected: true, hasTapAction: true),
     );
     handle.dispose();
+  });
+
+  testWidgets('sur fond zaytoune, le bouton principal a un contour visible', (tester) async {
+    await tester.pumpWidget(_wrap(const FreeWirdScreen()));
+    await tester.pumpAndSettle();
+
+    final material = tester.widget<Material>(
+      find.descendant(of: find.widgetWithText(ElevatedButton, 'Commencer'), matching: find.byType(Material)).first,
+    );
+    expect((material.shape! as RoundedRectangleBorder).side.color, AppColors.secondaryOnDark);
   });
 
   testWidgets('en mode voix, le compte est annoncé au lecteur d’écran à chaque changement', (tester) async {
