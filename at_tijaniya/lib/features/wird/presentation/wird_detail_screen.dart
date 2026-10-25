@@ -528,8 +528,13 @@ class _AudioPlayerBar extends StatelessWidget {
                   ),
                 ),
                 if (activeIndex != null)
-                  ContentText(
+                  // Toujours de gauche à droite : fait de chiffres et de
+                  // signes, ce texte prenait le sens de l'interface, et
+                  // s'affichait « durée / position » en arabe (passe sur
+                  // émulateur du 2026-10-25). Même règle que « ×100 ».
+                  Text(
                     '${_formatDuration(position)} / ${_formatDuration(duration)}',
+                    textDirection: TextDirection.ltr,
                     style: TextStyle(color: AppColors.secondaryOnDark, fontSize: 11),
                   ),
               ],
