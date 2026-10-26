@@ -13,12 +13,28 @@
 /// ouverture de son écran de rappels (voir `WirdReminderController._load()`).
 library;
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_timezone/flutter_timezone.dart';
 import 'package:timezone/data/latest.dart' as tz_data;
 import 'package:timezone/timezone.dart' as tz;
 
 import '../domain/wird_reminder.dart';
+import 'wird_reminder_slots.dart';
+
+/// Wird auquel appartient la notification [notificationId] — via son créneau
+/// (identifiants fixes de [WirdNotificationService]). `null` pour un
+/// identifiant inconnu. Logique pure, testée dans
+/// `wird_reminder_tap_test.dart`.
+String? wirdIdForNotificationId(int? notificationId) {
+  if (notificationId == null) return null;
+  for (final entry in wirdReminderSlots.entries) {
+    for (final slot in entry.value) {
+      if (WirdNotificationService.notificationIdForSlot(slot.id) == notificationId) return entry.key;
+    }
+  }
+  return null;
+}
 
 class WirdNotificationService {
   WirdNotificationService._();
@@ -27,6 +43,25 @@ class WirdNotificationService {
 
   final FlutterLocalNotificationsPlugin _plugin = FlutterLocalNotificationsPlugin();
   bool _initialized = false;
+
+  /// Wird dont le disciple a touché le rappel, en attente d'ouverture (audit
+  /// de l'accueil du 2026-10-26, P2-5). Toucher un rappel ouvrait l'app
+  /// depuis le début au lieu du guide du wird. `HomeShell` l'écoute et ouvre
+  /// le guide dès que l'app est sur ses onglets — y compris quand le rappel a
+  /// lancé l'app (le parcours splash/langue/connexion passe d'abord).
+  final ValueNotifier<String?> pendingWirdId = ValueNotifier(null);
+
+  /// Lit et efface le wird en attente.
+  String? takePendingWirdId() {
+    final id = pendingWirdId.value;
+    pendingWirdId.value = null;
+    return id;
+  }
+
+  void _onNotificationTapped(int? notificationId) {
+    final wirdId = wirdIdForNotificationId(notificationId);
+    if (wirdId != null) pendingWirdId.value = wirdId;
+  }
 
   Future<void> init() async {
     if (_initialized) return;
@@ -42,7 +77,12 @@ class WirdNotificationService {
     const iosSettings = DarwinInitializationSettings();
     await _plugin.initialize(
       const InitializationSettings(android: androidSettings, iOS: iosSettings),
+      // App ouverte ou en arrière-plan : toucher le rappel ouvre le wird.
+      onDidReceiveNotificationResponse: (response) => _onNotificationTapped(response.id),
     );
+    // App lancée par le toucher d'un rappel.
+    final launch = await _plugin.getNotificationAppLaunchDetails();
+    if (launch?.didNotificationLaunchApp ?? false) _onNotificationTapped(launch!.notificationResponse?.id);
     _initialized = true;
   }
 
@@ -75,12 +115,18 @@ class WirdNotificationService {
     'hadratou_jouma_weekly': 1301,
   };
 
-  int _notificationId(String slotId) => _notificationIds[slotId] ?? _legacyNotificationId(slotId);
+  int _notificationId(String slotId) => notificationIdForSlot(slotId);
+
+  /// Identifiant de notification du créneau [slotId] — public pour
+  /// retrouver le wird d'une notification touchée ([wirdIdForNotificationId]).
+  static int notificationIdForSlot(String slotId) => _notificationIds[slotId] ?? _legacyId(slotId);
+
+  static int _legacyId(String slotId) => slotId.hashCode & 0x7fffffff;
 
   /// Ancien identifiant, encore annulé à chaque programmation : les rappels
   /// posés avant le passage aux identifiants fixes ne doivent pas rester en
   /// plus des nouveaux.
-  int _legacyNotificationId(String slotId) => slotId.hashCode & 0x7fffffff;
+  int _legacyNotificationId(String slotId) => _legacyId(slotId);
 
   /// [channelName] et [channelDescription] : nom et description du canal,
   /// affichés dans les réglages de notification d'Android, dans la langue de

@@ -16,6 +16,9 @@ import '../../notifications/presentation/notifications_providers.dart';
 import '../../notifications/presentation/notifications_screen.dart';
 import '../../profil/presentation/profil_screen.dart';
 import '../../profil/presentation/profile_providers.dart';
+import '../../wird/data/wird_notification_service.dart';
+import '../../wird/data/wirds_content.dart';
+import '../../wird/presentation/wird_detail_screen.dart';
 import '../../wird/presentation/wird_list_screen.dart';
 import 'home_dashboard_provider.dart';
 import 'home_screen.dart';
@@ -46,6 +49,31 @@ class _HomeShellState extends ConsumerState<HomeShell> {
   /// l'accueil, et leurs requêtes (fil, groupes, conversations, lieux, directs,
   /// figures) passaient avant celles de l'accueil sur une connexion lente.
   final _visited = <int>{0};
+
+  @override
+  void initState() {
+    super.initState();
+    // Rappel du wird touché (P2-5) : ouvert dès l'arrivée sur les onglets
+    // s'il a lancé l'app, ou aussitôt s'il est touché pendant l'utilisation.
+    WirdNotificationService.instance.pendingWirdId.addListener(_openPendingWird);
+    WidgetsBinding.instance.addPostFrameCallback((_) => _openPendingWird());
+  }
+
+  @override
+  void dispose() {
+    WirdNotificationService.instance.pendingWirdId.removeListener(_openPendingWird);
+    super.dispose();
+  }
+
+  /// Ouvre le guide du wird dont le rappel a été touché, par-dessus l'écran
+  /// courant : le retour arrière ramène là où était le disciple.
+  void _openPendingWird() {
+    if (!mounted || WirdNotificationService.instance.pendingWirdId.value == null) return;
+    final wirdId = WirdNotificationService.instance.takePendingWirdId();
+    final wird = validatedWirds.where((w) => w.id == wirdId).firstOrNull;
+    if (wird == null) return;
+    Navigator.of(context).push(MaterialPageRoute(builder: (_) => WirdDetailScreen(wird: wird)));
+  }
 
   static const _screens = [
     HomeScreen(),
