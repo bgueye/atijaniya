@@ -350,8 +350,21 @@ class _PostDetailScreenState extends ConsumerState<PostDetailScreen> {
                       child: CircularProgressIndicator(color: AppColors.emerald),
                     ),
                   ),
-                  error: (error, stackTrace) =>
-                      Text(l10n.communityLoadError, style: TextStyle(color: AppColors.secondaryInk)),
+                  // Hors ligne distingué et « Réessayer » (P3-3) ; le message
+                  // parlait des publications, pas des commentaires.
+                  error: (error, stackTrace) => Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        isNetworkError(error) ? l10n.khadaraOfflineError : l10n.communityCommentsLoadError,
+                        style: TextStyle(color: AppColors.secondaryInk),
+                      ),
+                      TextButton(
+                        onPressed: () => ref.invalidate(postCommentsProvider(post.id)),
+                        child: Text(l10n.communityRetry),
+                      ),
+                    ],
+                  ),
                   data: (list) => list.isEmpty
                       ? Text(l10n.communityNoComments, style: TextStyle(color: AppColors.secondaryInk))
                       : Column(

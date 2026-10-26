@@ -3275,7 +3275,7 @@ abstract class AppLocalizations {
   /// No description provided for @communityFeedEmpty.
   ///
   /// In fr, this message translates to:
-  /// **'Aucune publication pour le moment.'**
+  /// **'Aucune publication pour le moment. Soyez le premier à partager une nouvelle de votre zawiya.'**
   String get communityFeedEmpty;
 
   /// No description provided for @communityLoadError.
@@ -3395,7 +3395,7 @@ abstract class AppLocalizations {
   /// No description provided for @communityGroupsEmpty.
   ///
   /// In fr, this message translates to:
-  /// **'Aucun groupe pour le moment.'**
+  /// **'Aucun groupe pour le moment. Créez le groupe de votre zawiya ou de votre ville.'**
   String get communityGroupsEmpty;
 
   /// No description provided for @communityGroupsLoadError.
@@ -3725,7 +3725,7 @@ abstract class AppLocalizations {
   /// No description provided for @communityConversationsEmpty.
   ///
   /// In fr, this message translates to:
-  /// **'Aucune conversation pour le moment.'**
+  /// **'Aucune conversation pour le moment. Pour écrire à un disciple, ouvrez une de ses publications : le bouton « Envoyer un message » apparaît quand vous partagez un groupe.'**
   String get communityConversationsEmpty;
 
   /// No description provided for @communityConversationsLoadError.
@@ -5437,6 +5437,12 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'Compte supprimé'**
   String get communityDeletedAccountAuthor;
+
+  /// No description provided for @communityCommentsLoadError.
+  ///
+  /// In fr, this message translates to:
+  /// **'Impossible de charger les commentaires.'**
+  String get communityCommentsLoadError;
 
   /// No description provided for @communityMessageSendError.
   ///

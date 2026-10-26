@@ -422,6 +422,12 @@ avant une ouverture plus large.
    premier à partager une nouvelle de votre zawiya » + bouton Publier ; « Créez le groupe
    de votre zawiya ou de votre ville » ; « Pour écrire à un disciple, ouvrez une de ses
    publications : le bouton Envoyer un message apparaît quand vous partagez un groupe ».
+   **Statut : corrigé le 2026-10-26.** Widgets partagés `community_states.dart` : erreur avec
+   hors ligne distingué et « Réessayer » sur le fil, les groupes, les conversations, la
+   discussion de groupe, les commentaires (nouveau message « Impossible de charger les
+   commentaires ») et les directs passés ; « tirer pour actualiser » sur le fil, les groupes
+   et les conversations, états vides compris ; états vides avec les textes proposés (FR et AR)
+   et un bouton Publier / Créer un groupe. Test `test/communaute_states_test.dart`.
 4. **Texte de la feuille de publication** : « Publié au nom de votre zawiya de
    rattachement » contredit l'affichage « disciple · zawiya » décidé le 2026-10-06 ; à
    remplacer par « Votre zawiya (X) sera indiquée à côté de votre nom ».

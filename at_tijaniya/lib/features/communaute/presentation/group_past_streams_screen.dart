@@ -1,3 +1,4 @@
+import 'community_states.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -70,8 +71,10 @@ class GroupPastLiveStreamsScreen extends ConsumerWidget {
       body: SafeArea(
         child: streamsAsync.when(
           loading: () => Center(child: CircularProgressIndicator(color: AppColors.emerald)),
-          error: (error, stackTrace) => Center(
-            child: Text(l10n.communityGroupsPastStreamsLoadError, style: TextStyle(color: AppColors.secondaryInk)),
+          error: (error, stackTrace) => CommunityErrorState(
+            error: error,
+            message: l10n.communityGroupsPastStreamsLoadError,
+            onRetry: () => ref.invalidate(pastStreamsForGroupProvider(group.id)),
           ),
           data: (streams) => streams.isEmpty
               ? Center(

@@ -21,6 +21,7 @@ import '../../profil/presentation/profile_providers.dart';
 import '../domain/group_errors.dart';
 import '../domain/group_models.dart';
 import 'community_format.dart';
+import 'community_states.dart';
 import 'group_past_streams_screen.dart';
 import 'groups_providers.dart';
 import 'load_more_button.dart';
@@ -506,8 +507,12 @@ class _GroupPosts extends ConsumerWidget {
     return posts.when(
       skipLoadingOnReload: true,
       loading: () => Center(child: CircularProgressIndicator(color: AppColors.emerald)),
-      error: (error, stackTrace) => Center(
-        child: Text(l10n.communityGroupsLoadPostsError, style: TextStyle(color: AppColors.secondaryInk)),
+      // « Réessayer » et hors ligne distingué (P3-3) : l'erreur n'offrait
+      // aucune issue que d'attendre le prochain rechargement périodique.
+      error: (error, stackTrace) => CommunityErrorState(
+        error: error,
+        message: l10n.communityGroupsLoadPostsError,
+        onRetry: () => ref.invalidate(groupPostsProvider(groupId)),
       ),
       data: (list) => list.isEmpty
           ? Center(

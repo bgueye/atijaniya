@@ -5,6 +5,7 @@ import '../../../core/theme/app_colors.dart';
 import '../../../l10n/app_localizations.dart';
 import '../domain/message_models.dart';
 import 'community_format.dart';
+import 'community_states.dart';
 import 'conversation_screen.dart';
 import 'messages_providers.dart';
 import '../../../core/widgets/content_text.dart';
@@ -26,46 +27,28 @@ class ConversationsScreen extends ConsumerWidget {
       // navigation Android (3 boutons) — même défaut que sur « Rattraper son
       // wird », Conditions, Bienfaits, Paramètres et « Comprendre la Zawiya ».
       body: SafeArea(
-        child: conversations.when(
-          loading: () => Center(child: CircularProgressIndicator(color: AppColors.emerald)),
-          error: (error, stackTrace) => Center(
-            child: Padding(
-              padding: const EdgeInsets.all(24),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Icon(Icons.wifi_off, color: AppColors.bronze, size: 32),
-                  const SizedBox(height: 12),
-                  Text(
-                    l10n.communityConversationsLoadError,
-                    textAlign: TextAlign.center,
-                    style: TextStyle(color: AppColors.secondaryInk),
-                  ),
-                  const SizedBox(height: 12),
-                  OutlinedButton(
-                    onPressed: () => ref.invalidate(conversationsProvider),
-                    child: Text(l10n.communityConversationsRetry),
-                  ),
-                ],
-              ),
+        child: RefreshIndicator(
+          color: AppColors.emerald,
+          onRefresh: () => ref.refresh(conversationsProvider.future),
+          child: conversations.when(
+            loading: () => Center(child: CircularProgressIndicator(color: AppColors.emerald)),
+            error: (error, stackTrace) => CommunityErrorState(
+              error: error,
+              message: l10n.communityConversationsLoadError,
+              onRetry: () => ref.invalidate(conversationsProvider),
             ),
-          ),
-          data: (list) => list.isEmpty
-              ? Center(
-                  child: Padding(
-                    padding: const EdgeInsets.all(24),
-                    child: Text(
-                      l10n.communityConversationsEmpty,
-                      textAlign: TextAlign.center,
-                      style: TextStyle(color: AppColors.secondaryInk),
-                    ),
+            // Le message dit comment ouvrir une conversation : rien ne
+            // l'indiquait (P3-3).
+            data: (list) => list.isEmpty
+                ? CommunityEmptyState(icon: Icons.mail_outline, message: l10n.communityConversationsEmpty)
+                : ListView.separated(
+                    physics: const AlwaysScrollableScrollPhysics(),
+                    itemCount: list.length,
+                    separatorBuilder: (_, __) => const Divider(height: 1),
+                    itemBuilder: (context, i) =>
+                        _ConversationTile(conversation: list[i], fallback: l10n.communityDefaultAuthor),
                   ),
-                )
-              : ListView.separated(
-                  itemCount: list.length,
-                  separatorBuilder: (_, __) => const Divider(height: 1),
-                  itemBuilder: (context, i) => _ConversationTile(conversation: list[i], fallback: l10n.communityDefaultAuthor),
-                ),
+          ),
         ),
       ),
     );

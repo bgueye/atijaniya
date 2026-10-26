@@ -1655,7 +1655,8 @@ class AppLocalizationsFr extends AppLocalizations {
   String get figureFormSaveError => 'Impossible d\'enregistrer la figure.';
 
   @override
-  String get communityFeedEmpty => 'Aucune publication pour le moment.';
+  String get communityFeedEmpty =>
+      'Aucune publication pour le moment. Soyez le premier à partager une nouvelle de votre zawiya.';
 
   @override
   String get communityLoadError => 'Impossible de charger les publications.';
@@ -1716,7 +1717,7 @@ class AppLocalizationsFr extends AppLocalizations {
   String get communityGroupsTab => 'Groupes';
 
   @override
-  String get communityGroupsEmpty => 'Aucun groupe pour le moment.';
+  String get communityGroupsEmpty => 'Aucun groupe pour le moment. Créez le groupe de votre zawiya ou de votre ville.';
 
   @override
   String get communityGroupsLoadError => 'Impossible de charger les groupes.';
@@ -1885,7 +1886,8 @@ class AppLocalizationsFr extends AppLocalizations {
   String get communityConversationsTitle => 'Conversations';
 
   @override
-  String get communityConversationsEmpty => 'Aucune conversation pour le moment.';
+  String get communityConversationsEmpty =>
+      'Aucune conversation pour le moment. Pour écrire à un disciple, ouvrez une de ses publications : le bouton « Envoyer un message » apparaît quand vous partagez un groupe.';
 
   @override
   String get communityConversationsLoadError => 'Impossible de charger les conversations.';
@@ -2775,6 +2777,9 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get communityDeletedAccountAuthor => 'Compte supprimé';
+
+  @override
+  String get communityCommentsLoadError => 'Impossible de charger les commentaires.';
 
   @override
   String get communityMessageSendError => 'Le message n\'a pas pu être envoyé. Réessayez.';

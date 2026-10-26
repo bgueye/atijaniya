@@ -16,6 +16,7 @@ import '../domain/community_models.dart';
 import '../domain/group_models.dart';
 import 'community_format.dart';
 import 'community_providers.dart';
+import 'community_states.dart';
 import 'conversations_screen.dart';
 import 'group_detail_screen.dart';
 import 'groups_providers.dart';
@@ -96,56 +97,49 @@ class _FeedTab extends ConsumerWidget {
       ),
       // `skipLoadingOnReload` : « Voir plus » recharge le fil avec une page de
       // plus, sans le remplacer par l'indicateur de chargement.
-      body: feed.when(
-        skipLoadingOnReload: true,
-        loading: () => Center(child: CircularProgressIndicator(color: AppColors.emerald)),
-        error: (error, stackTrace) => Center(
-          child: Padding(
-            padding: const EdgeInsets.all(24),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Icon(Icons.wifi_off, color: AppColors.bronze, size: 32),
-                const SizedBox(height: 12),
-                Text(l10n.communityLoadError,
-                    textAlign: TextAlign.center, style: TextStyle(color: AppColors.secondaryInk)),
-                const SizedBox(height: 12),
-                OutlinedButton(
-                  onPressed: () => ref.invalidate(communityFeedProvider),
-                  child: Text(l10n.communityRetry),
-                ),
-              ],
-            ),
+      // Tirer pour actualiser (audit Communauté du 2026-10-26, P3-3) : le fil
+      // ne se rechargeait qu'au retour d'une publication ou par « Réessayer ».
+      body: RefreshIndicator(
+        color: AppColors.emerald,
+        onRefresh: () => ref.refresh(communityFeedProvider.future),
+        child: feed.when(
+          skipLoadingOnReload: true,
+          loading: () => Center(child: CircularProgressIndicator(color: AppColors.emerald)),
+          error: (error, stackTrace) => CommunityErrorState(
+            error: error,
+            message: l10n.communityLoadError,
+            onRetry: () => ref.invalidate(communityFeedProvider),
           ),
-        ),
-        data: (posts) => posts.isEmpty
-            ? Center(
-                child: Padding(
-                  padding: const EdgeInsets.all(24),
-                  child: Text(l10n.communityFeedEmpty,
-                      textAlign: TextAlign.center, style: TextStyle(color: AppColors.secondaryInk)),
+          data: (posts) => posts.isEmpty
+              ? CommunityEmptyState(
+                  icon: Icons.forum_outlined,
+                  message: l10n.communityFeedEmpty,
+                  actionLabel: l10n.communityCreatePostButton,
+                  onAction: () => _openCreateSheet(context, ref),
+                )
+              : ListView.builder(
+                  physics: const AlwaysScrollableScrollPhysics(),
+                  // 100 plutôt que la seule hauteur du FAB : celui-ci masquait
+                  // encore le bas de la dernière carte (image d'une
+                  // publication) avec une marge de 88 — constaté à l'audit
+                  // design pré-publication Play Store.
+                  padding: const EdgeInsets.fromLTRB(16, 16, 16, 100),
+                  // Une ligne de plus pour « Voir plus » quand la page est
+                  // pleine : d'autres publications peuvent suivre.
+                  itemCount: posts.length + (posts.length >= ref.watch(communityFeedLimitProvider) ? 1 : 0),
+                  // `key` par publication : sans elle, après une création ou une
+                  // suppression, chaque carte gardait le « j'aime » de la carte
+                  // qui occupait sa position avant.
+                  itemBuilder: (context, i) => i == posts.length
+                      ? LoadMoreButton(
+                          label: l10n.communityFeedLoadMore,
+                          loading: feed.isReloading,
+                          onPressed: () => ref.read(communityFeedLimitProvider.notifier).state += communityPageSize,
+                        )
+                      : _PostCard(
+                          key: ValueKey(posts[i].id), post: posts[i], fallbackAuthor: l10n.communityDefaultAuthor),
                 ),
-              )
-            : ListView.builder(
-                // 100 plutôt que la seule hauteur du FAB : celui-ci masquait
-                // encore le bas de la dernière carte (image d'une
-                // publication) avec une marge de 88 — constaté à l'audit
-                // design pré-publication Play Store.
-                padding: const EdgeInsets.fromLTRB(16, 16, 16, 100),
-                // Une ligne de plus pour « Voir plus » quand la page est
-                // pleine : d'autres publications peuvent suivre.
-                itemCount: posts.length + (posts.length >= ref.watch(communityFeedLimitProvider) ? 1 : 0),
-                // `key` par publication : sans elle, après une création ou une
-                // suppression, chaque carte gardait le « j'aime » de la carte
-                // qui occupait sa position avant.
-                itemBuilder: (context, i) => i == posts.length
-                    ? LoadMoreButton(
-                        label: l10n.communityFeedLoadMore,
-                        loading: feed.isReloading,
-                        onPressed: () => ref.read(communityFeedLimitProvider.notifier).state += communityPageSize,
-                      )
-                    : _PostCard(key: ValueKey(posts[i].id), post: posts[i], fallbackAuthor: l10n.communityDefaultAuthor),
-              ),
+        ),
       ),
     );
   }
@@ -362,44 +356,34 @@ class _GroupsTab extends ConsumerWidget {
         icon: const Icon(Icons.add),
         label: Text(l10n.communityGroupsCreateButton),
       ),
-      body: groups.when(
-        loading: () => Center(child: CircularProgressIndicator(color: AppColors.emerald)),
-        error: (error, stackTrace) => Center(
-          child: Padding(
-            padding: const EdgeInsets.all(24),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Icon(Icons.wifi_off, color: AppColors.bronze, size: 32),
-                const SizedBox(height: 12),
-                Text(l10n.communityGroupsLoadError,
-                    textAlign: TextAlign.center, style: TextStyle(color: AppColors.secondaryInk)),
-                const SizedBox(height: 12),
-                OutlinedButton(
-                  onPressed: () => ref.invalidate(groupsProvider),
-                  child: Text(l10n.communityGroupsRetry),
-                ),
-              ],
-            ),
+      body: RefreshIndicator(
+        color: AppColors.emerald,
+        onRefresh: () => ref.refresh(groupsProvider.future),
+        child: groups.when(
+          loading: () => Center(child: CircularProgressIndicator(color: AppColors.emerald)),
+          error: (error, stackTrace) => CommunityErrorState(
+            error: error,
+            message: l10n.communityGroupsLoadError,
+            onRetry: () => ref.invalidate(groupsProvider),
           ),
-        ),
-        data: (list) => list.isEmpty
-            ? Center(
-                child: Padding(
-                  padding: const EdgeInsets.all(24),
-                  child: Text(l10n.communityGroupsEmpty,
-                      textAlign: TextAlign.center, style: TextStyle(color: AppColors.secondaryInk)),
+          data: (list) => list.isEmpty
+              ? CommunityEmptyState(
+                  icon: Icons.groups_outlined,
+                  message: l10n.communityGroupsEmpty,
+                  actionLabel: l10n.communityGroupsCreateButton,
+                  onAction: () => _openCreateSheet(context, ref),
+                )
+              : ListView.builder(
+                  physics: const AlwaysScrollableScrollPhysics(),
+                  // 100 plutôt que la seule hauteur du FAB : celui-ci masquait
+                  // encore le bas de la dernière carte (image d'une
+                  // publication) avec une marge de 88 — constaté à l'audit
+                  // design pré-publication Play Store.
+                  padding: const EdgeInsets.fromLTRB(16, 16, 16, 100),
+                  itemCount: list.length,
+                  itemBuilder: (context, i) => _GroupCard(group: list[i]),
                 ),
-              )
-            : ListView.builder(
-                // 100 plutôt que la seule hauteur du FAB : celui-ci masquait
-                // encore le bas de la dernière carte (image d'une
-                // publication) avec une marge de 88 — constaté à l'audit
-                // design pré-publication Play Store.
-                padding: const EdgeInsets.fromLTRB(16, 16, 16, 100),
-                itemCount: list.length,
-                itemBuilder: (context, i) => _GroupCard(group: list[i]),
-              ),
+        ),
       ),
     );
   }

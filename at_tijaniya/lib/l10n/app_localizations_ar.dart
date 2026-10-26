@@ -1641,7 +1641,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get figureFormSaveError => 'تعذّر حفظ الشخصية.';
 
   @override
-  String get communityFeedEmpty => 'لا توجد منشورات حاليًا.';
+  String get communityFeedEmpty => 'لا توجد منشورات حاليًا. كن أول من يشارك خبرًا من زاويتك.';
 
   @override
   String get communityLoadError => 'تعذّر تحميل المنشورات.';
@@ -1702,7 +1702,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get communityGroupsTab => 'المجموعات';
 
   @override
-  String get communityGroupsEmpty => 'لا توجد مجموعات حاليًا.';
+  String get communityGroupsEmpty => 'لا توجد مجموعات حاليًا. أنشئ مجموعة زاويتك أو مدينتك.';
 
   @override
   String get communityGroupsLoadError => 'تعذّر تحميل المجموعات.';
@@ -1869,7 +1869,8 @@ class AppLocalizationsAr extends AppLocalizations {
   String get communityConversationsTitle => 'المحادثات';
 
   @override
-  String get communityConversationsEmpty => 'لا توجد محادثات حاليًا.';
+  String get communityConversationsEmpty =>
+      'لا توجد محادثات حاليًا. لمراسلة مريد، افتح أحد منشوراته: يظهر زر «إرسال رسالة» عندما تكونان في مجموعة مشتركة.';
 
   @override
   String get communityConversationsLoadError => 'تعذّر تحميل المحادثات.';
@@ -2749,6 +2750,9 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get communityDeletedAccountAuthor => 'حساب محذوف';
+
+  @override
+  String get communityCommentsLoadError => 'تعذّر تحميل التعليقات.';
 
   @override
   String get communityMessageSendError => 'تعذّر إرسال الرسالة. حاول مرة أخرى.';
