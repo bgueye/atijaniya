@@ -70,25 +70,20 @@ class _ConversationTile extends StatelessWidget {
         backgroundColor: AppColors.emeraldSoft,
         child: Icon(Icons.person_outline, color: AppColors.emerald),
       ),
-      // Non lu : nom en gras et pastille avec le nombre de messages (P3-8).
-      title: ContentText(
-        conversation.otherDisplayName ?? fallback,
-        style: unread > 0 ? const TextStyle(fontWeight: FontWeight.w700) : null,
-      ),
-      subtitle: conversation.lastMessageText != null
-          ? ContentText(conversation.lastMessageText!, maxLines: 1, overflow: TextOverflow.ellipsis)
-          : null,
-      trailing: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.end,
+      // Non lu : nom en gras et pastille avec le nombre de messages (P3-8),
+      // à côté du nom : empilée sous la date, elle débordait de la ligne avec
+      // le texte agrandi à 200 %.
+      title: Row(
         children: [
-          if (conversation.lastMessageAt != null)
-            ContentText(
-              formatCommunityDateTime(conversation.lastMessageAt!),
-              style: TextStyle(color: AppColors.secondaryInk, fontSize: 11),
+          Flexible(
+            child: ContentText(
+              conversation.otherDisplayName ?? fallback,
+              overflow: TextOverflow.ellipsis,
+              style: unread > 0 ? const TextStyle(fontWeight: FontWeight.w700) : null,
             ),
+          ),
           if (unread > 0) ...[
-            const SizedBox(height: 4),
+            const SizedBox(width: 8),
             Semantics(
               label: l10n.communityConversationUnread(unread),
               child: ExcludeSemantics(child: Badge(label: Text('$unread'), backgroundColor: AppColors.emerald)),
@@ -96,6 +91,15 @@ class _ConversationTile extends StatelessWidget {
           ],
         ],
       ),
+      subtitle: conversation.lastMessageText != null
+          ? ContentText(conversation.lastMessageText!, maxLines: 1, overflow: TextOverflow.ellipsis)
+          : null,
+      trailing: conversation.lastMessageAt != null
+          ? ContentText(
+              formatCommunityDateTime(conversation.lastMessageAt!),
+              style: TextStyle(color: AppColors.secondaryInk, fontSize: 11),
+            )
+          : null,
       onTap: () => Navigator.of(context).push(
         MaterialPageRoute(
           builder: (_) => ConversationScreen(

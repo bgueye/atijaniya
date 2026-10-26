@@ -475,6 +475,11 @@ chaque constat porte son statut. Aucun P0 : 32 écritures forcées refusées par
   de la discussion de groupe, compteurs et aperçus calculés par le serveur avec pagination :
   corrigés et appliqués en base le 2026-10-26. Publications d'un compte supprimé : affichées
   « Compte supprimé · zawiya », supprimables par l'admin (elles seules, avec journal).
+- **P3** : les 12 points mineurs corrigés le même jour (fonction de signalement dans `private`,
+  blocage indiscernable à l'ouverture d'une conversation, états hors ligne / vides / tirer pour
+  actualiser, non-lus et notifications de messages et commentaires, écrans découpés, nom
+  neutre à l'inscription, « j'aime » en échec signalé, tests). Scénario de non-régression :
+  `database/tests/communaute_rls.sql`.
 
 **Reste à faire** :
 - **appliquer `database/migrations/2026-10-26_close_anonymous_community_reads.sql`** (P2-2 :
@@ -489,8 +494,10 @@ chaque constat porte son statut. Aucun P0 : 32 écritures forcées refusées par
   version 1.0.0+4 afficherait ces notifications comme des cartes vides ;
 - décision du porteur de projet sur les publications d'un compte supprimé (les garder,
   ou les supprimer avec le compte) et sur les trois autres questions du rapport ;
-- validation sur téléphone (français et arabe, réseau coupé, texte agrandi) ;
-- points P3 du rapport.
+- validation sur téléphone (français et arabe, réseau coupé, texte agrandi), dont les
+  non-lus et, une fois les migrations appliquées, les notifications avec deux comptes ;
+- après application des deux migrations retenues, rejouer `database/tests/communaute_rls.sql` :
+  les lignes « A FERMER (P2-2) » doivent passer à « ok ».
 
 ## Index des rapports par module
 

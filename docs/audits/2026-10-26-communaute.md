@@ -498,6 +498,13 @@ avant une ouverture plus large.
 12. **Tests** : seulement les modèles et `MessageComposer`. Aucun test d'écran pour le fil,
     la publication, le groupe ou la messagerie (erreurs d'envoi, double appui, états, texte
     à 200 %, arabe), ni de scénario SQL rejouable pour les essais de l'annexe A.
+    **Statut : corrigé le 2026-10-26.** Tests d'écran ajoutés avec les corrections (envois en
+    échec et double appui, états, pagination, accessibilité, blocage, non-lus, mise en page du
+    groupe, arabe) et `test/communaute_text_scale_test.dart` (fil, détail et conversations à
+    200 %, FR et AR) — qui a trouvé un débordement de la pastille de non-lus ajoutée au P3-8,
+    corrigé (pastille à côté du nom). Scénario SQL rejouable `database/tests/communaute_rls.sql`
+    (annexe A mise à jour : 49 contrôles) ; joué le 2026-10-26 : tous `ok`, sauf les quatre
+    lectures anonymes « A FERMER (P2-2) » en attente de la seconde migration.
 
 ## Langues et RTL
 
