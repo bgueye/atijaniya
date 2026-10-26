@@ -282,6 +282,11 @@ avant une ouverture plus large.
 - **Correctif** : ajouter « Bloquer ce disciple » au menu de la publication et du
   commentaire (`confirmAndBlockUser`, déjà prêt), puis recharger le fil et les
   commentaires ; la RLS fait déjà le reste.
+- **Statut : corrigé le 2026-10-26.** Menu « Signaler / Bloquer ce disciple » (même menu que
+  les messages de groupe) dans la barre de la publication et sur chaque commentaire d'un
+  autre ; après blocage depuis la publication, l'écran se ferme et le fil est rechargé ;
+  depuis un commentaire, les commentaires sont rechargés. Publication d'un compte supprimé :
+  signalement seul. Test `test/communaute_block_from_feed_test.dart`.
 
 ### P2-7 · Accessibilité : cibles trop petites et textes en bronze
 

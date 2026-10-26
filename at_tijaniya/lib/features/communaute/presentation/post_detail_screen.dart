@@ -14,6 +14,7 @@ import '../../../core/widgets/app_snackbar.dart';
 import '../../../core/widgets/message_composer.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../moderation/domain/moderation_models.dart';
+import '../../moderation/presentation/block_user.dart';
 import '../../moderation/presentation/report_content_dialog.dart';
 import '../../profil/presentation/profile_providers.dart';
 import '../data/messages_repository.dart';
@@ -175,6 +176,31 @@ class _PostDetailScreenState extends ConsumerState<PostDetailScreen> {
     }
   }
 
+  /// Bloque l'auteur de la publication, puis quitte l'écran : la RLS ne la
+  /// montre plus, et le fil est rechargé par `confirmAndBlockUser`.
+  Future<void> _blockAuthor() async {
+    final l10n = AppLocalizations.of(context)!;
+    final blocked = await confirmAndBlockUser(
+      context,
+      ref,
+      userId: widget.post.authorUserId!,
+      displayName: widget.post.authorDisplayName ?? l10n.communityDefaultAuthor,
+    );
+    if (blocked && mounted) Navigator.of(context).pop();
+  }
+
+  /// Bloque l'auteur d'un commentaire : ses commentaires disparaissent.
+  Future<void> _blockCommentAuthor(CommunityComment comment) async {
+    final l10n = AppLocalizations.of(context)!;
+    final blocked = await confirmAndBlockUser(
+      context,
+      ref,
+      userId: comment.userId,
+      displayName: comment.authorDisplayName ?? l10n.communityDefaultAuthor,
+    );
+    if (blocked && mounted) ref.invalidate(postCommentsProvider(widget.post.id));
+  }
+
   /// Envoi d'un commentaire par `MessageComposer` (audit du 2026-10-26, P1) :
   /// l'ancien champ n'avait ni verrou (deux appuis rapides publiaient deux
   /// commentaires), ni message d'échec, et vidait son contrôleur après
@@ -216,18 +242,19 @@ class _PostDetailScreenState extends ConsumerState<PostDetailScreen> {
               ]
             // Signalement (audit du 2026-10-04, S61) : tout compte connecté
             // qui n'est pas l'auteur — même règle que côté serveur
-            // (`can_report_content`).
+            // (`can_report_content`). Blocage de l'auteur depuis la
+            // publication (audit du 2026-10-26, P2-6) : il fallait jusque-là
+            // le retrouver dans un groupe commun ou une conversation.
             : [
                 if (myUserId != null)
-                  IconButton(
-                    icon: const Icon(Icons.flag_outlined),
-                    tooltip: l10n.moderationReportAction,
-                    onPressed: () => showReportContentDialog(
+                  _ReportOrBlockMenu(
+                    onReport: () => showReportContentDialog(
                       context,
                       ref,
                       contentType: ReportableContentType.post,
                       contentId: post.id,
                     ),
+                    onBlock: post.authorUserId == null ? null : _blockAuthor,
                   ),
               ],
       ),
@@ -323,6 +350,7 @@ class _PostDetailScreenState extends ConsumerState<PostDetailScreen> {
                                           contentType: ReportableContentType.postComment,
                                           contentId: comment.id,
                                         ),
+                                onBlock: () => _blockCommentAuthor(comment),
                               ),
                           ],
                         ),
@@ -362,6 +390,7 @@ class _CommentTile extends StatelessWidget {
     required this.isAuthor,
     required this.onDelete,
     required this.onReport,
+    required this.onBlock,
   });
 
   final CommunityComment comment;
@@ -369,8 +398,11 @@ class _CommentTile extends StatelessWidget {
   final bool isAuthor;
   final VoidCallback onDelete;
 
-  /// `null` pour l'auteur du commentaire et pour un invité : pas de bouton.
+  /// `null` pour l'auteur du commentaire et pour un invité : pas de menu.
   final VoidCallback? onReport;
+
+  /// Bloquer l'auteur, proposé avec le signalement.
+  final VoidCallback onBlock;
 
   @override
   Widget build(BuildContext context) {
@@ -406,16 +438,7 @@ class _CommentTile extends StatelessWidget {
               ],
               if (onReport != null) ...[
                 const Spacer(),
-                InkWell(
-                  onTap: onReport,
-                  child: Tooltip(
-                    message: l10n.moderationReportAction,
-                    child: Padding(
-                      padding: const EdgeInsets.all(10),
-                      child: Icon(Icons.flag_outlined, size: 16, color: AppColors.bronze),
-                    ),
-                  ),
-                ),
+                _ReportOrBlockMenu(onReport: onReport!, onBlock: onBlock, iconSize: 18),
               ],
             ],
           ),
@@ -429,6 +452,31 @@ class _CommentTile extends StatelessWidget {
           ),
         ],
       ),
+    );
+  }
+}
+
+/// Menu « Signaler / Bloquer ce disciple » d'une publication ou d'un
+/// commentaire écrit par un autre — même menu que les messages de groupe.
+/// [onBlock] `null` : auteur inconnu (compte supprimé), signalement seul.
+class _ReportOrBlockMenu extends StatelessWidget {
+  const _ReportOrBlockMenu({required this.onReport, required this.onBlock, this.iconSize});
+
+  final VoidCallback onReport;
+  final VoidCallback? onBlock;
+  final double? iconSize;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    return PopupMenuButton<String>(
+      tooltip: MaterialLocalizations.of(context).showMenuTooltip,
+      icon: Icon(Icons.more_vert, size: iconSize, color: iconSize == null ? null : AppColors.bronze),
+      onSelected: (value) => value == 'block' ? onBlock?.call() : onReport(),
+      itemBuilder: (_) => [
+        PopupMenuItem(value: 'report', child: Text(l10n.moderationReportAction)),
+        if (onBlock != null) PopupMenuItem(value: 'block', child: Text(l10n.blockUserAction)),
+      ],
     );
   }
 }
