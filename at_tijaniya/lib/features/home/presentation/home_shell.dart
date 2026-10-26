@@ -40,6 +40,13 @@ class HomeShell extends ConsumerStatefulWidget {
 class _HomeShellState extends ConsumerState<HomeShell> {
   int _index = 0;
 
+  /// Onglets déjà ouverts (audit de l'accueil du 2026-10-26, P2-7) : un
+  /// onglet n'est construit qu'à sa première visite, puis gardé (et son état
+  /// avec) par l'`IndexedStack`. Les cinq étaient construits dès l'arrivée sur
+  /// l'accueil, et leurs requêtes (fil, groupes, conversations, lieux, directs,
+  /// figures) passaient avant celles de l'accueil sur une connexion lente.
+  final _visited = <int>{0};
+
   static const _screens = [
     HomeScreen(),
     WirdListScreen(),
@@ -84,7 +91,12 @@ class _HomeShellState extends ConsumerState<HomeShell> {
           ),
         ],
       ),
-      body: IndexedStack(index: _index, children: _screens),
+      body: IndexedStack(
+        index: _index,
+        children: [
+          for (var i = 0; i < _screens.length; i++) _visited.contains(i) ? _screens[i] : const SizedBox.shrink(),
+        ],
+      ),
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _index,
         onTap: (i) {
@@ -120,7 +132,10 @@ class _HomeShellState extends ConsumerState<HomeShell> {
               ref.invalidate(groupsProvider);
             }
           }
-          setState(() => _index = i);
+          setState(() {
+            _index = i;
+            _visited.add(i);
+          });
         },
         items: [
           BottomNavigationBarItem(icon: const AppNavIcon(AppNavIconType.home), label: l10n.navHome),
