@@ -121,6 +121,7 @@
   "homeDateHijriMonth10": "Chawwal",
   "homeDateHijriMonth11": "Dhoul Qi'da",
   "homeDateHijriMonth12": "Dhoul Hijja",
+  "homeHijriApproximateNote": "Date hégirienne calculée, à un jour près",
   "homeLoadError": "Impossible de charger votre tableau de bord.",
   "homeRetry": "Réessayer",
   "homeStatusAllDone": "Tous les wirds du jour sont accomplis",

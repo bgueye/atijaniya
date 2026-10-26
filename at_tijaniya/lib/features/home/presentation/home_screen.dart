@@ -205,6 +205,17 @@ class _Hero extends StatelessWidget {
                     textAlign: TextAlign.center,
                     style: TextStyle(fontSize: 12, color: AppColors.offWhite.withValues(alpha: 0.55)),
                   ),
+                  // La date hégirienne est calculée (calendrier tabulaire) et
+                  // peut différer d'un jour de l'observation de la lune, que
+                  // suit la communauté : on le dit plutôt que de l'afficher
+                  // comme un fait (décision du porteur de projet du
+                  // 2026-10-26, audit de l'accueil P2-4).
+                  const SizedBox(height: 2),
+                  Text(
+                    AppLocalizations.of(context)!.homeHijriApproximateNote,
+                    textAlign: TextAlign.center,
+                    style: TextStyle(fontSize: 11, color: AppColors.offWhite.withValues(alpha: 0.55)),
+                  ),
                   const SizedBox(height: 16),
                   if (statusPill != null) statusPill!,
                 ],

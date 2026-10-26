@@ -318,6 +318,9 @@ class AppLocalizationsAr extends AppLocalizations {
   String get homeDateHijriMonth12 => 'ذو الحجة';
 
   @override
+  String get homeHijriApproximateNote => 'التاريخ الهجري محسوب، وقد يختلف بيوم';
+
+  @override
   String get homeLoadError => 'تعذّر تحميل لوحتك.';
 
   @override

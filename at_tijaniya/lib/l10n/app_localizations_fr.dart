@@ -321,6 +321,9 @@ class AppLocalizationsFr extends AppLocalizations {
   String get homeDateHijriMonth12 => 'Dhoul Hijja';
 
   @override
+  String get homeHijriApproximateNote => 'Date hégirienne calculée, à un jour près';
+
+  @override
   String get homeLoadError => 'Impossible de charger votre tableau de bord.';
 
   @override

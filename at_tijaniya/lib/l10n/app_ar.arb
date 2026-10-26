@@ -121,6 +121,7 @@
   "homeDateHijriMonth10": "شوال",
   "homeDateHijriMonth11": "ذو القعدة",
   "homeDateHijriMonth12": "ذو الحجة",
+  "homeHijriApproximateNote": "التاريخ الهجري محسوب، وقد يختلف بيوم",
   "homeLoadError": "تعذّر تحميل لوحتك.",
   "homeRetry": "إعادة المحاولة",
   "homeStatusAllDone": "جميع أوراد اليوم أُنجزت",

@@ -132,4 +132,14 @@ void main() {
     expect(streak.style?.color, AppColors.emerald);
     await tester.pumpWidget(const SizedBox());
   });
+
+  // Audit de l'accueil du 2026-10-26 (P2-4) : la date hégirienne, calculée,
+  // est accompagnée d'une mention.
+  testWidgets('la date hégirienne porte la mention de calcul approximatif', (tester) async {
+    await tester.pumpWidget(_app(_Clock(DateTime(2026, 10, 26, 9, 0))));
+    await tester.pumpAndSettle();
+    expect(find.textContaining('Joumada al-Oula 1448'), findsOneWidget);
+    expect(find.text('Date hégirienne calculée, à un jour près'), findsOneWidget);
+    await tester.pumpWidget(const SizedBox());
+  });
 }

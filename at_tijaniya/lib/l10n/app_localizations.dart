@@ -704,6 +704,12 @@ abstract class AppLocalizations {
   /// **'Dhoul Hijja'**
   String get homeDateHijriMonth12;
 
+  /// No description provided for @homeHijriApproximateNote.
+  ///
+  /// In fr, this message translates to:
+  /// **'Date hégirienne calculée, à un jour près'**
+  String get homeHijriApproximateNote;
+
   /// No description provided for @homeLoadError.
   ///
   /// In fr, this message translates to:
