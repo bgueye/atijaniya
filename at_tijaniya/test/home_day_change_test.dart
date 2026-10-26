@@ -9,6 +9,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:at_tijaniya/core/date/current_day.dart';
+import 'package:at_tijaniya/core/theme/app_colors.dart';
 import 'package:at_tijaniya/features/figures/presentation/figures_providers.dart';
 import 'package:at_tijaniya/features/home/presentation/home_dashboard_provider.dart';
 import 'package:at_tijaniya/features/home/presentation/home_screen.dart';
@@ -122,4 +123,13 @@ void main() {
     await tester.pumpWidget(const SizedBox());
   });
 
+  testWidgets('le badge de série est en émeraude, lisible sur l\'or pâle', (tester) async {
+    _lazimDoneOnThursday();
+    await tester.pumpWidget(_app(_Clock(DateTime(2026, 10, 29, 22, 0))));
+    await tester.pumpAndSettle();
+
+    final streak = tester.widget<Text>(find.text('1 jour de suite'));
+    expect(streak.style?.color, AppColors.emerald);
+    await tester.pumpWidget(const SizedBox());
+  });
 }

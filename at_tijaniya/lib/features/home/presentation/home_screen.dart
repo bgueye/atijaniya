@@ -440,7 +440,9 @@ class _WirdRow extends StatelessWidget {
           ? Container(
               padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 4),
               decoration: BoxDecoration(color: AppColors.goldSoft, borderRadius: BorderRadius.circular(999)),
-              child: ContentText(streakLabel, style: TextStyle(color: AppColors.gold, fontSize: 10.5, fontWeight: FontWeight.w500)),
+              // Émeraude sur or pâle (5,00:1) : l'or sur or pâle faisait
+              // 1,93:1, illisible (audit de l'accueil du 2026-10-26, P1).
+              child: ContentText(streakLabel, style: TextStyle(color: AppColors.emerald, fontSize: 10.5, fontWeight: FontWeight.w500)),
             )
           : DirectionalChevron(color: AppColors.bronze),
     );

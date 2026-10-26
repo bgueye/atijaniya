@@ -64,7 +64,10 @@ class _HomeShellState extends ConsumerState<HomeShell> {
               icon: Badge(
                 label: ContentText('$unreadCount'),
                 isLabelVisible: unreadCount > 0,
-                backgroundColor: AppColors.gold,
+                // Émeraude : le chiffre blanc cassé sur or faisait 2,40:1
+                // (audit de l'accueil du 2026-10-26, P1) ; 6,11:1 ici, comme
+                // les pastilles de non-lus de la Communauté.
+                backgroundColor: AppColors.emerald,
                 child: const Icon(Icons.notifications_outlined),
               ),
               tooltip: l10n.notificationsTooltip,
