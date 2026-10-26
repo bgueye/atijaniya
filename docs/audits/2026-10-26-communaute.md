@@ -446,6 +446,9 @@ avant une ouverture plus large.
 7. **Message de profil en chargement** : `_openCreateSheet` lit `valueOrNull` ; profil pas
    encore chargé ou en erreur → « rattachez-vous à une zawiya » à tort
    (`communaute_screen.dart:155`, relevé le 2026-10-04).
+   **Statut : corrigé le 2026-10-26.** `_openCreateSheet` attend `myProfileProvider.future` ;
+   en cas d'échec, « Impossible de charger votre profil » (ou le message hors ligne) au lieu
+   du message de rattachement. Test `test/communaute_create_post_profile_test.dart`.
 8. **Pas d'alerte pour un message privé ou un commentaire reçu** : aucune notification,
    seulement le rechargement quand l'écran est ouvert ; un message peut rester des jours
    sans réponse. Aucun indicateur de non-lu (`read_at` jamais écrit).

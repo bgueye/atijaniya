@@ -131,13 +131,18 @@ Widget wrapCommunaute(
   Locale locale = const Locale('fr'),
   double textScale = 1.0,
   List<Override> extraOverrides = const [],
+  // Chargement du profil à la place de la valeur déjà prête : profil lent ou
+  // en échec.
+  Future<Profile> Function()? loadProfile,
 }) {
   return ProviderScope(
     overrides: [
       currentUserIdProvider.overrideWithValue(userId),
       // Valeur synchrone : profil déjà chargé, comme dans l'app une fois
       // l'onglet Profil ou l'accueil affichés.
-      myProfileProvider.overrideWith((ref) => testProfile),
+      loadProfile != null
+          ? myProfileProvider.overrideWith((ref) => loadProfile())
+          : myProfileProvider.overrideWith((ref) => testProfile),
       isAdminProvider.overrideWithValue(isAdmin),
       communityRepositoryProvider.overrideWithValue(community ?? FakeCommunityRepository()),
       groupsRepositoryProvider.overrideWithValue(groups ?? FakeGroupsRepository()),

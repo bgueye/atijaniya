@@ -9,8 +9,10 @@ import '../../../core/storage/image_source_sheet.dart';
 import '../../../core/storage/image_upload_service.dart';
 import '../../../core/supabase/supabase_config.dart';
 import '../../../core/theme/app_colors.dart';
+import '../../../core/widgets/app_snackbar.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../khadara/presentation/khadara_providers.dart';
+import '../../profil/domain/profile_models.dart';
 import '../../profil/presentation/profile_providers.dart';
 import '../domain/community_models.dart';
 import '../domain/group_models.dart';
@@ -144,7 +146,7 @@ class _FeedTab extends ConsumerWidget {
     );
   }
 
-  void _openCreateSheet(BuildContext context, WidgetRef ref) {
+  Future<void> _openCreateSheet(BuildContext context, WidgetRef ref) async {
     final l10n = AppLocalizations.of(context)!;
     if (ref.read(currentUserIdProvider) == null) {
       ScaffoldMessenger.of(context)
@@ -152,19 +154,32 @@ class _FeedTab extends ConsumerWidget {
         ..showSnackBar(SnackBar(content: Text(l10n.communityCreatePostSignInRequired)));
       return;
     }
-    final profile = ref.read(myProfileProvider).valueOrNull;
-    if (profile?.zawiyaId == null) {
+    // Profil attendu s'il charge encore (audit Communauté du 2026-10-26,
+    // P3-7) : lu tel quel, un profil pas encore chargé ou en erreur faisait
+    // dire « rattachez-vous à une zawiya » à un disciple qui l'est déjà.
+    final Profile profile;
+    try {
+      profile = await ref.read(myProfileProvider.future);
+    } catch (error) {
+      if (context.mounted) {
+        showErrorSnackBar(context, isNetworkError(error) ? l10n.khadaraOfflineError : l10n.profileLoadError);
+      }
+      return;
+    }
+    if (!context.mounted) return;
+    final zawiyaId = profile.zawiyaId;
+    if (zawiyaId == null) {
       ScaffoldMessenger.of(context)
         ..hideCurrentSnackBar()
         ..showSnackBar(SnackBar(content: Text(l10n.communityCreatePostNeedsZawiya)));
       return;
     }
-    showModalBottomSheet<void>(
+    await showModalBottomSheet<void>(
       context: context,
       isScrollControlled: true,
       backgroundColor: AppColors.offWhite,
       shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
-      builder: (context) => _CreatePostSheet(zawiyaId: profile!.zawiyaId!, zawiyaName: profile.zawiyaName),
+      builder: (context) => _CreatePostSheet(zawiyaId: zawiyaId, zawiyaName: profile.zawiyaName),
     );
   }
 }
