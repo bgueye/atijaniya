@@ -4,9 +4,9 @@
 /// `conversations`, `conversation_participants`, `messages` — voir
 /// `messages_repository.dart`.
 ///
-/// Ouverture d'une conversation restreinte par RLS aux disciples qui
-/// partagent au moins un groupe (`conversation_participants_insert`) : pas
-/// d'annuaire public de disciples ailleurs dans l'app.
+/// Ouverture d'une conversation réservée aux disciples qui partagent au
+/// moins un groupe, vérifié par `start_conversation` : pas d'annuaire public
+/// de disciples ailleurs dans l'app.
 library;
 
 class Conversation {

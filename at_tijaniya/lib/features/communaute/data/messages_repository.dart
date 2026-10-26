@@ -11,9 +11,10 @@
 /// déjà, et un filtre client-side viendrait en plus pour isoler "l'autre"
 /// participant de chaque conversation.
 ///
-/// Ouvrir une conversation avec quelqu'un exige un groupe commun
-/// (`conversation_participants_insert`, cf. `database/schema.sql`) — voir
-/// `shareGroupWith()`.
+/// Ouvrir une conversation avec quelqu'un exige un groupe commun, vérifié
+/// par la fonction `start_conversation` (le client n'insère jamais dans
+/// `conversations` ni `conversation_participants`) — voir `shareGroupWith()`
+/// pour l'affichage du bouton.
 ///
 /// Autre piège RLS découvert en testant : `insert(...).select(...)` sur
 /// `conversations` déclenche une évaluation de la policy SELECT

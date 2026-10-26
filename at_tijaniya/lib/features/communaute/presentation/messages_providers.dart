@@ -47,7 +47,7 @@ final conversationMessagesLimitProvider =
 /// Détermine si le bouton "Envoyer un message" doit être affiché sur un
 /// auteur de post/commentaire — voir `post_detail_screen.dart`. `false` sans
 /// groupe commun plutôt qu'un affichage systématique qui échouerait à
-/// l'écriture (RLS `conversation_participants_insert`). `.autoDispose` :
+/// l'ouverture (`start_conversation`). `.autoDispose` :
 /// une entrée par auteur de post croisé — sans intérêt à conserver au-delà
 /// de la consultation du post/commentaire concerné.
 final shareGroupWithProvider = FutureProvider.autoDispose.family<bool, String>((ref, otherUserId) {

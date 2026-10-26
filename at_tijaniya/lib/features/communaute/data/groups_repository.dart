@@ -1,8 +1,10 @@
 /// Accès aux données du module Groupes (Supabase — `groups`,
 /// `group_memberships`, `group_posts`). Contrairement au fil d'actualité,
 /// certaines lectures sont volontairement restreintes par RLS :
-/// - `groups`/`group_memberships` : lecture publique (`using (true)`),
-///   fonctionne en mode invité (liste des groupes + comptage de membres).
+/// - `groups` : lecture publique, fonctionne en mode invité. Nombre de
+///   membres et appartenance servis par la fonction `group_member_counts`
+///   (audit Communauté du 2026-10-26, P2-9) : la lecture de
+///   `group_memberships` par autrui doit être fermée (P2-2).
 /// - `group_posts` : lecture ET écriture réservées aux membres du groupe
 ///   (`group_posts_members_read`/`members_write`, vérifiées via un `exists`
 ///   sur `group_memberships`) — `fetchGroupPosts` ne doit être appelé que
@@ -44,12 +46,9 @@ class GroupsRepository {
     }).toList();
   }
 
-  /// Insère le groupe puis inscrit automatiquement son créateur — la
-  /// policy `groups_authenticated_create` reste ouverte à tout disciple
-  /// connecté (n'importe qui peut créer un groupe), donc pas d'inscription
-  /// automatique possible côté serveur (pas de trigger dédié) : sans cette
-  /// étape, le créateur se retrouverait devant son propre groupe
-  /// fraîchement créé sans pouvoir en voir les discussions.
+  /// Insère le groupe ; son créateur en devient membre par le trigger
+  /// `trg_groups_add_creator` (voir le commentaire dans le corps). La policy
+  /// `groups_authenticated_create` reste ouverte à tout disciple connecté.
   ///
   /// [created_by_user_id] (migration
   /// `add_groups_owner_column_and_update_delete_policies`, 2026-08-20) sert

@@ -1,10 +1,12 @@
 /// Accès aux données du fil d'actualité (Supabase — `posts`, `post_likes`,
-/// `post_comments`, `profiles`). Lecture publique côté RLS pour les
-/// publications déjà validées (`posts_read_valid_or_admin` :
-/// `content_status = 'valide' or is_admin(...)`, `post_likes_read_all`,
-/// `post_comments_read_all` : `using (true)`) : fonctionne en mode invité.
-/// Les écritures (aimer, commenter, publier) exigent en revanche un
-/// `auth.uid()` réel (`posts_author_create`, `post_likes_owner_only`,
+/// `post_comments`, `profiles`). Le fil se lit sans compte : la RLS
+/// (`posts_read_valid_or_admin`, `post_comments_read_all`) ne renvoie que
+/// les publications validées et les contenus non masqués, sans ceux des
+/// disciples que le compte a bloqués — sauf à l'admin, d'où les filtres
+/// répétés ici (audit Communauté du 2026-10-26, P2-5). Compteurs servis par
+/// la fonction `post_counts` (P2-9).
+/// Les écritures (aimer, commenter, publier) exigent un `auth.uid()` réel
+/// (`posts_author_create`, `post_likes_owner_only`,
 /// `post_comments_author_create`).
 library;
 

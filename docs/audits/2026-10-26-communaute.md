@@ -475,6 +475,13 @@ avant une ouverture plus large.
    dit qu'aucun trigger n'inscrit le créateur, alors que `trg_groups_add_creator` le fait ;
    `community_repository.dart:1-8` décrit des lectures `using (true)` qui filtrent
    désormais masquage et blocage).
+   **Statut : corrigé le 2026-10-26.** Module formaté (23 fichiers, largeur 120 de
+   `analysis_options.yaml`) ; feuilles de création (`create_sheets.dart`), de modification
+   d'une publication (`edit_post_sheet.dart`) et d'un groupe (`edit_group_sheet.dart`) et tuile
+   de message de groupe (`group_post_tile.dart`) sorties des écrans, déplacement sans
+   changement de comportement : plus aucun fichier au-delà de 601 lignes. Commentaires
+   périmés corrigés (`conversation_participants_insert`, trigger du créateur de groupe,
+   lectures `using (true)`).
 10. **Repli sur l'adresse e-mail** : `handle_new_user` prend le début de l'e-mail comme nom
     d'affichage public si l'inscription n'en fournit pas. Aucun profil concerné aujourd'hui
     (l'écran d'inscription l'envoie), mais un compte créé autrement (tableau de bord,

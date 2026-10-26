@@ -1,4 +1,3 @@
-import '../../../core/validation/text_limits.dart';
 import 'dart:async';
 
 import 'package:flutter/material.dart';
@@ -10,19 +9,16 @@ import '../../../core/widgets/app_snackbar.dart';
 import '../../../core/widgets/message_composer.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../khadara/domain/khadara_models.dart';
-import '../../khadara/presentation/khadara_providers.dart';
 import '../../khadara/presentation/live_stream_providers.dart';
 import '../../khadara/presentation/live_stream_screen.dart';
 import '../../khadara/presentation/start_live_stream_screen.dart';
-import '../../moderation/domain/moderation_models.dart';
-import '../../moderation/presentation/block_user.dart';
-import '../../moderation/presentation/report_content_dialog.dart';
 import '../../profil/presentation/profile_providers.dart';
 import '../domain/group_errors.dart';
 import '../domain/group_models.dart';
-import 'community_format.dart';
+import 'edit_group_sheet.dart';
 import 'community_states.dart';
 import 'group_past_streams_screen.dart';
+import 'group_post_tile.dart';
 import 'groups_providers.dart';
 import 'load_more_button.dart';
 import '../../../core/widgets/content_text.dart';
@@ -128,12 +124,12 @@ class _GroupDetailScreenState extends ConsumerState<GroupDetailScreen> {
   }
 
   Future<void> _editGroup() async {
-    final result = await showModalBottomSheet<_EditGroupResult>(
+    final result = await showModalBottomSheet<EditGroupResult>(
       context: context,
       isScrollControlled: true,
       backgroundColor: AppColors.offWhite,
       shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
-      builder: (context) => _EditGroupSheet(group: _group),
+      builder: (context) => EditGroupSheet(group: _group),
     );
     if (result == null || !mounted) return;
     setState(() {
@@ -548,369 +544,13 @@ class _GroupPosts extends ConsumerWidget {
                   );
                 }
                 final post = list[list.length - 1 - i];
-                return _GroupPostTile(
+                return GroupPostTile(
                   key: ValueKey(post.id),
                   post: post,
                   fallback: l10n.communityDefaultAuthor,
                 );
               },
             ),
-    );
-  }
-}
-
-/// Message d'une discussion de groupe — édition/suppression réservées à son
-/// auteur par les RLS `group_posts_author_update`/`_delete` (migration
-/// `add_group_posts_author_update_delete_policies`, 2026-08-20), aucune
-/// exception admin, même restriction que `CommunityRepository`/`posts`.
-class _GroupPostTile extends ConsumerStatefulWidget {
-  const _GroupPostTile({super.key, required this.post, required this.fallback});
-
-  final GroupPost post;
-  final String fallback;
-
-  @override
-  ConsumerState<_GroupPostTile> createState() => _GroupPostTileState();
-}
-
-class _GroupPostTileState extends ConsumerState<_GroupPostTile> {
-  late String _contentText = widget.post.contentText;
-  bool _busy = false;
-
-  Future<void> _edit() async {
-    final l10n = AppLocalizations.of(context)!;
-    final controller = TextEditingController(text: _contentText);
-    final result = await showDialog<String>(
-      context: context,
-      builder: (context) => AlertDialog(
-        // `TextField` sur 4 lignes + `autofocus` (clavier ouvert
-        // immédiatement) : sans `scrollable: true`, déborde sous les
-        // boutons d'action en mode paysage (même bug que
-        // profil_screen.dart _DeleteAccountDialog).
-        scrollable: true,
-        title: Text(l10n.communityGroupsEditPostTitle),
-        content: TextField(
-          controller: controller,
-          maxLength: TextLimits.message,
-          maxLines: 4,
-          autofocus: true,
-          decoration: InputDecoration(labelText: l10n.communityGroupsEditPostContentLabel),
-        ),
-        actions: [
-          TextButton(onPressed: () => Navigator.of(context).pop(), child: Text(l10n.profileCancel)),
-          TextButton(
-            onPressed: () {
-              final text = controller.text.trim();
-              if (text.isEmpty) return;
-              Navigator.of(context).pop(text);
-            },
-            child: Text(l10n.communityGroupsEditPostSubmit),
-          ),
-        ],
-      ),
-    );
-    controller.dispose();
-    if (result == null || !mounted) return;
-
-    setState(() => _busy = true);
-    try {
-      await ref.read(groupsRepositoryProvider).updateGroupPost(widget.post.id, result);
-      if (mounted) setState(() => _contentText = result);
-    } catch (_) {
-      if (mounted) showErrorSnackBar(context, l10n.communityGroupsEditPostError);
-    } finally {
-      if (mounted) setState(() => _busy = false);
-    }
-  }
-
-  Future<void> _delete() async {
-    final l10n = AppLocalizations.of(context)!;
-    final confirmed = await showDialog<bool>(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: Text(l10n.communityGroupsDeletePostConfirmTitle),
-        content: Text(l10n.communityGroupsDeletePostConfirmBody),
-        actions: [
-          TextButton(onPressed: () => Navigator.of(context).pop(false), child: Text(l10n.profileCancel)),
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(true),
-            child: Text(l10n.communityGroupsDeletePostConfirmAction, style: const TextStyle(color: AppColors.danger)),
-          ),
-        ],
-      ),
-    );
-    if (confirmed != true || !mounted) return;
-
-    setState(() => _busy = true);
-    try {
-      await ref.read(groupsRepositoryProvider).deleteGroupPost(widget.post.id);
-      ref.invalidate(groupPostsProvider(widget.post.groupId));
-    } catch (_) {
-      if (mounted) {
-        showErrorSnackBar(context, l10n.communityGroupsDeletePostError);
-        setState(() => _busy = false);
-      }
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
-    final isAuthor = widget.post.authorUserId == ref.watch(currentUserIdProvider);
-
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 12),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              // Nom coupé par une ellipse plutôt qu'un débordement (P2-8) ;
-              // la date et les actions gardent leur place.
-              Expanded(
-                child: Row(
-                  children: [
-                    Flexible(
-                      child: ContentText(
-                        widget.post.authorDisplayName ?? widget.fallback,
-                        overflow: TextOverflow.ellipsis,
-                        style: const TextStyle(fontWeight: FontWeight.w600, color: AppColors.ink, fontSize: 13),
-                      ),
-                    ),
-                    const SizedBox(width: 8),
-                    ContentText(
-                      formatCommunityDateTime(widget.post.createdAt),
-                      style: TextStyle(color: AppColors.secondaryInk, fontSize: 11),
-                    ),
-                  ],
-                ),
-              ),
-              if (isAuthor) ...[
-                InkWell(
-                  onTap: _busy ? null : _edit,
-                  child: Tooltip(
-                    message: l10n.communityGroupsEditPostTooltip,
-                    child: Padding(
-                      padding: const EdgeInsets.all(16), // 48 dp avec l'icône de 16
-                      child: Icon(Icons.edit_outlined, size: 16, color: AppColors.bronze),
-                    ),
-                  ),
-                ),
-                InkWell(
-                  onTap: _busy ? null : _delete,
-                  child: Tooltip(
-                    message: l10n.communityGroupsDeletePostTooltip,
-                    child: Padding(
-                      padding: const EdgeInsets.all(16), // 48 dp avec l'icône de 16
-                      child: Icon(Icons.delete_outline, size: 16, color: AppColors.bronze),
-                    ),
-                  ),
-                ),
-              ] else ...[
-                // Message d'un autre membre (2026-10-11) : le signaler à la
-                // modération, ou bloquer son auteur — ses messages
-                // disparaissent alors pour moi seul.
-                PopupMenuButton<String>(
-                  tooltip: l10n.moderationReportAction,
-                  icon: Icon(Icons.more_vert, size: 18, color: AppColors.bronze),
-                  onSelected: (value) async {
-                    if (value == 'report') {
-                      await showReportContentDialog(
-                        context,
-                        ref,
-                        contentType: ReportableContentType.groupPost,
-                        contentId: widget.post.id,
-                      );
-                      return;
-                    }
-                    final blocked = await confirmAndBlockUser(
-                      context,
-                      ref,
-                      userId: widget.post.authorUserId,
-                      displayName: widget.post.authorDisplayName ?? widget.fallback,
-                    );
-                    if (blocked) ref.invalidate(groupPostsProvider(widget.post.groupId));
-                  },
-                  itemBuilder: (_) => [
-                    PopupMenuItem(value: 'report', child: Text(l10n.moderationReportAction)),
-                    PopupMenuItem(value: 'block', child: Text(l10n.blockUserAction)),
-                  ],
-                ),
-              ],
-            ],
-          ),
-          const SizedBox(height: 2),
-          ContentText(_contentText, style: const TextStyle(color: AppColors.ink, fontSize: 15)),
-        ],
-      ),
-    );
-  }
-}
-
-/// Résultat retourné par `_EditGroupSheet` une fois l'enregistrement réussi
-/// — `GroupsRepository.updateGroup` ne renvoie pas la ligne mise à jour
-/// (contrairement à `KhadaraRepository.updateZawiya`), donc l'appelant
-/// reconstruit l'objet `Group` localement à partir de ce résultat.
-class _EditGroupResult {
-  const _EditGroupResult({
-    required this.name,
-    required this.description,
-    required this.zawiyaId,
-    required this.zawiyaName,
-    required this.regionText,
-  });
-
-  final String name;
-  final String? description;
-  final String? zawiyaId;
-  final String? zawiyaName;
-  final String? regionText;
-}
-
-/// Modale d'édition d'un groupe — mêmes champs que `_CreateGroupSheet`
-/// (communaute_screen.dart), pré-remplis, appuyée sur `updateGroup` plutôt
-/// que `createGroup`.
-class _EditGroupSheet extends ConsumerStatefulWidget {
-  const _EditGroupSheet({required this.group});
-
-  final Group group;
-
-  @override
-  ConsumerState<_EditGroupSheet> createState() => _EditGroupSheetState();
-}
-
-class _EditGroupSheetState extends ConsumerState<_EditGroupSheet> {
-  final _formKey = GlobalKey<FormState>();
-  late final _nameController = TextEditingController(text: widget.group.name);
-  late final _descriptionController = TextEditingController(text: widget.group.description ?? '');
-  late final _regionController = TextEditingController(text: widget.group.regionText ?? '');
-  late String? _zawiyaId = widget.group.zawiyaId;
-  bool _saving = false;
-
-  @override
-  void dispose() {
-    _nameController.dispose();
-    _descriptionController.dispose();
-    _regionController.dispose();
-    super.dispose();
-  }
-
-  Future<void> _submit(List<Zawiya> zawiyas) async {
-    if (!_formKey.currentState!.validate()) return;
-    setState(() => _saving = true);
-    final l10n = AppLocalizations.of(context)!;
-    try {
-      final name = _nameController.text.trim();
-      final description = _descriptionController.text.trim().isEmpty ? null : _descriptionController.text.trim();
-      final regionText = _regionController.text.trim().isEmpty ? null : _regionController.text.trim();
-      await ref.read(groupsRepositoryProvider).updateGroup(
-            widget.group.id,
-            name: name,
-            description: description,
-            zawiyaId: _zawiyaId,
-            regionText: regionText,
-          );
-      String? zawiyaName;
-      for (final zawiya in zawiyas) {
-        if (zawiya.id == _zawiyaId) {
-          zawiyaName = zawiya.name;
-          break;
-        }
-      }
-      if (mounted) {
-        Navigator.of(context).pop(_EditGroupResult(
-          name: name,
-          description: description,
-          zawiyaId: _zawiyaId,
-          zawiyaName: zawiyaName,
-          regionText: regionText,
-        ));
-      }
-    } catch (_) {
-      if (mounted) showErrorSnackBar(context, l10n.communityGroupsEditError);
-    } finally {
-      if (mounted) setState(() => _saving = false);
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
-    // Rattachement : uniquement les zawiyas proprement dites, pas les lieux
-    // saints ni les mosquées de l'annuaire (voir `attachableZawiyas`).
-    final zawiyas = ref.watch(attachableZawiyasProvider);
-
-    // Mêmes choix (SafeArea + SingleChildScrollView) que _EditPostSheet
-    // (post_detail_screen.dart) : évite que le bouton Enregistrer se
-    // retrouve masqué sous la nav-bar Android, et surtout que le formulaire
-    // déborde (overflow) une fois le clavier affiché avec une description
-    // longue.
-    return SafeArea(
-      child: SingleChildScrollView(
-        padding: EdgeInsets.fromLTRB(20, 20, 20, MediaQuery.of(context).viewInsets.bottom + 20),
-        child: Form(
-          key: _formKey,
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              Text(l10n.communityGroupsEditTitle, style: Theme.of(context).textTheme.titleLarge),
-              const SizedBox(height: 16),
-              TextFormField(
-                controller: _nameController,
-                maxLength: TextLimits.groupName,
-                decoration: InputDecoration(labelText: l10n.communityGroupsNameLabel),
-                validator: (value) => (value == null || value.trim().isEmpty) ? l10n.communityGroupsNameRequired : null,
-              ),
-              const SizedBox(height: 16),
-              TextFormField(
-                controller: _descriptionController,
-                maxLength: TextLimits.groupDescription,
-                decoration: InputDecoration(labelText: l10n.communityGroupsDescriptionLabel),
-                maxLines: 3,
-              ),
-              const SizedBox(height: 16),
-              zawiyas.when(
-                loading: () => LinearProgressIndicator(color: AppColors.emerald),
-                error: (error, stackTrace) => const SizedBox.shrink(),
-                data: (list) => DropdownButtonFormField<String?>(
-                  // `isExpanded` + ellipsis : sans eux la liste prend la largeur du
-                  // nom le plus long et déborde ("right overflowed") avec les noms de
-                  // zawiyas ajoutés fin septembre — constaté sur téléphone le 2026-10-01.
-                  isExpanded: true,
-                  initialValue: _zawiyaId,
-                  decoration: InputDecoration(labelText: l10n.communityGroupsZawiyaLabel),
-                  items: [
-                    const DropdownMenuItem<String?>(value: null, child: Text('—')),
-                    ...list.map((z) => DropdownMenuItem<String?>(
-                        value: z.id, child: ContentText(z.name, overflow: TextOverflow.ellipsis))),
-                  ],
-                  onChanged: (value) => setState(() => _zawiyaId = value),
-                ),
-              ),
-              const SizedBox(height: 16),
-              TextFormField(
-                controller: _regionController,
-                maxLength: TextLimits.groupRegion,
-                decoration: InputDecoration(labelText: l10n.communityGroupsRegionLabel),
-              ),
-              const SizedBox(height: 24),
-              ElevatedButton(
-                onPressed: _saving ? null : () => _submit(zawiyas.valueOrNull ?? const []),
-                child: _saving
-                    // Émeraude : un indicateur blanc était invisible sur le gris du
-                    // bouton désactivé (audit Communauté du 2026-10-26, P3-5).
-                    ? SizedBox(
-                        height: 18,
-                        width: 18,
-                        child: CircularProgressIndicator(strokeWidth: 2, color: AppColors.emerald),
-                      )
-                    : Text(l10n.communityGroupsEditSubmit),
-              ),
-            ],
-          ),
-        ),
-      ),
     );
   }
 }
