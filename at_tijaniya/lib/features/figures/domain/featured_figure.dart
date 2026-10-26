@@ -5,6 +5,7 @@ library;
 
 import '../../../core/date/calendar_days.dart';
 import '../../khadara/domain/khadara_models.dart' show KhadaraEvent;
+import '../../lineage/domain/lineage_models.dart' show Foyer;
 import 'figure_models.dart';
 
 /// Lundi ISO (minuit local) de la semaine contenant [now] — convention
@@ -15,15 +16,23 @@ DateTime weekStartFor(DateTime now) {
   return addDays(date, DateTime.monday - date.weekday);
 }
 
-/// Figures éligibles à la rotation automatique. La demande du porteur de
-/// projet est une carte "avec une photo de la figure" : une figure sans
-/// portrait n'y apparaît donc jamais, même avec une biographie complète
-/// (état des lieux du 2026-08-17 : 8 des 10 figures valides n'ont pas encore
-/// de portrait — exclues jusqu'à ce qu'un admin en ajoute un). Triées par id
-/// pour un ordre stable d'une exécution à l'autre.
+/// Figures éligibles à la rotation automatique : toutes les figures reçues
+/// (déjà filtrées `content_status = 'valide'`), triées par id pour un ordre
+/// stable.
+///
+/// Jusqu'au 2026-10-26, seules les figures dotées d'un portrait l'étaient
+/// (demande du 2026-08-17, « une carte avec une photo »). Résultat relevé par
+/// l'audit de l'accueil (P2-3) : 22 des 32 figures éligibles venaient de
+/// Tivaouane, Kaolack et Médina Baye, aucune d'Aïn Madhi. Décision du porteur
+/// de projet du 2026-10-26 : les figures sans portrait entrent dans la
+/// rotation, l'accueil leur donne une carte sans photo.
 List<Figure> eligibleForRotation(List<Figure> figures) {
-  return figures.where((figure) => figure.portraitUrl != null).toList()..sort((a, b) => a.id.compareTo(b.id));
+  return [...figures]..sort((a, b) => a.id.compareTo(b.id));
 }
+
+/// Foyer d'une figure pour la rotation : [Foyer.autre] quand il n'est pas
+/// renseigné.
+Foyer _rotationFoyer(Figure figure) => figure.foyer ?? Foyer.autre;
 
 /// Époque fixe (lundi) servant d'ancre à la rotation automatique — choisie
 /// avant le lancement de cette fonctionnalité, sans autre signification.
@@ -38,14 +47,16 @@ final DateTime _rotationEpoch = DateTime(2026, 1, 5);
 /// [overrideFigureId] (`featured_figures.figure_id` pour la semaine
 /// courante, voir `featured_figure_providers.dart`) gagne toujours quand il
 /// désigne une figure encore valide — un épinglage admin volontaire prime
-/// sur la rotation, même si la figure visée n'a pas de portrait (l'admin est
-/// réputé avoir fait ce choix en connaissance de cause). Sans épinglage
-/// valide, rotation déterministe sur [eligibleForRotation] : reproductible
-/// sans aucun état à écrire côté client.
+/// sur la rotation. Sans épinglage valide, rotation déterministe,
+/// reproductible sans aucun état à écrire côté client, **à tour de rôle entre
+/// les foyers** (décision du porteur de projet du 2026-10-26, audit de
+/// l'accueil P2-3) : la semaine n présente le foyer n mod k (foyers présents,
+/// dans l'ordre de [Foyer]), puis, dans ce foyer, la figure suivante —
+/// celles qui ont un portrait d'abord. Chaque foyer revient toutes les k
+/// semaines, quel que soit son nombre de figures.
 ///
-/// `null` si aucune figure n'est éligible (aucun portrait en base) et
-/// qu'aucun épinglage n'est actif — état honnête plutôt qu'une figure par
-/// défaut inventée.
+/// `null` si aucune figure n'est reçue et qu'aucun épinglage n'est actif —
+/// état honnête plutôt qu'une figure par défaut inventée.
 Figure? pickFigureOfTheWeek(
   List<Figure> figures, {
   String? overrideFigureId,
@@ -60,10 +71,26 @@ Figure? pickFigureOfTheWeek(
   final eligible = eligibleForRotation(figures);
   if (eligible.isEmpty) return null;
 
+  final byFoyer = <Foyer, List<Figure>>{};
+  for (final figure in eligible) {
+    byFoyer.putIfAbsent(_rotationFoyer(figure), () => []).add(figure);
+  }
+  final foyers = Foyer.values.where(byFoyer.containsKey).toList();
+  for (final list in byFoyer.values) {
+    // Portrait d'abord, puis ordre stable par id (déjà trié).
+    list.sort((a, b) {
+      final byPortrait = (a.portraitUrl == null ? 1 : 0).compareTo(b.portraitUrl == null ? 1 : 0);
+      return byPortrait != 0 ? byPortrait : a.id.compareTo(b.id);
+    });
+  }
+
   // Arrondi sur les heures : une semaine contenant un changement d'heure
   // dure 167 ou 169 h, et `inDays ~/ 7` perdait alors une semaine entière.
+  // Modulo positif : une date antérieure à l'époque ne doit pas planter.
   final weeksSinceEpoch = (weekStartFor(now ?? DateTime.now()).difference(_rotationEpoch).inHours / (7 * 24)).round();
-  return eligible[weeksSinceEpoch % eligible.length];
+  final foyer = foyers[weeksSinceEpoch % foyers.length];
+  final inFoyer = byFoyer[foyer]!;
+  return inFoyer[(weeksSinceEpoch ~/ foyers.length) % inFoyer.length];
 }
 
 /// Contenu affiché sur la carte "Figure de la semaine" — la figure elle-même

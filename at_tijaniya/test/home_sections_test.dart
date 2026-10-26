@@ -15,6 +15,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:at_tijaniya/core/date/current_day.dart';
 import 'package:at_tijaniya/features/figures/domain/featured_figure.dart';
+import 'package:at_tijaniya/features/figures/domain/figure_models.dart';
 import 'package:at_tijaniya/features/figures/presentation/figures_providers.dart';
 import 'package:at_tijaniya/features/home/presentation/home_screen.dart';
 import 'package:at_tijaniya/features/khadara/domain/khadara_models.dart';
@@ -134,6 +135,26 @@ void main() {
     await tester.pumpWidget(_app(_Events()));
     await tester.pumpAndSettle();
     expect(find.text('Figure de la semaine'), findsNothing);
+    await tester.pumpWidget(const SizedBox());
+  });
+
+  // Audit de l'accueil du 2026-10-26 (P2-3) : une figure sans portrait,
+  // admise dans la rotation, a une carte sans photo plutôt qu'un cadre vide.
+  testWidgets('figure sans portrait : carte typographique, sans image', (tester) async {
+    const figure = Figure(
+      id: 'f1',
+      nameArabic: 'سيدي علي التماسيني',
+      nameFrench: 'Sidi Ali Tamacini',
+      category: FigureCategory.founder,
+    );
+    await tester.pumpWidget(
+      _app(_Events(), figure: () async => const FeaturedFigure(figure: figure, pinned: false)),
+    );
+    await tester.pumpAndSettle();
+    await _scrollTo(tester, find.text('Sidi Ali Tamacini'));
+    expect(find.text('سيدي علي التماسيني'), findsOneWidget);
+    expect(find.byType(Image), findsNothing);
+    expect(tester.takeException(), isNull);
     await tester.pumpWidget(const SizedBox());
   });
 }

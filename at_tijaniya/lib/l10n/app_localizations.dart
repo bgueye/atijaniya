@@ -2393,7 +2393,7 @@ abstract class AppLocalizations {
   /// No description provided for @featuredFigureAdminIntro.
   ///
   /// In fr, this message translates to:
-  /// **'Sans épinglage pour une semaine, l\'app choisit automatiquement une figure valide dotée d\'un portrait.'**
+  /// **'Sans épinglage pour une semaine, l\'app choisit automatiquement une figure valide, à tour de rôle entre les foyers.'**
   String get featuredFigureAdminIntro;
 
   /// No description provided for @featuredFigureAdminPinnedLabel.
@@ -2417,7 +2417,7 @@ abstract class AppLocalizations {
   /// No description provided for @featuredFigureAdminNoEligible.
   ///
   /// In fr, this message translates to:
-  /// **'Aucune figure valide n\'a encore de portrait. Ajoutez-en un depuis la fiche d\'une figure pour pouvoir l\'épingler ici.'**
+  /// **'Aucune figure valide pour le moment.'**
   String get featuredFigureAdminNoEligible;
 
   /// No description provided for @featuredFigureAdminPickLabel.

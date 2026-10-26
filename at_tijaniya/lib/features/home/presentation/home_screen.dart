@@ -879,9 +879,9 @@ class _KhadaraTeaserCard extends StatelessWidget {
 /// de ziara superposés en bas sur un dégradé émeraude translucide (jamais
 /// zaytoune ici : réservé aux écrans de pratique, voir `CLAUDE.md`), pour
 /// que la photo reste lisible sous le texte plutôt que d'être masquée par
-/// un bandeau opaque. `featuredFigureProvider` ne renvoie jamais de figure
-/// sans portrait (voir `eligibleForRotation`), donc l'image est toujours
-/// présente ici.
+/// un bandeau opaque. Une figure sans portrait (admise dans la rotation
+/// depuis le 2026-10-26, audit de l'accueil P2-3) a une carte sans photo :
+/// voir `_FeaturedFigureTypographicCard`.
 class _FeaturedFigureCard extends StatelessWidget {
   const _FeaturedFigureCard({required this.featured});
 
@@ -892,6 +892,7 @@ class _FeaturedFigureCard extends StatelessWidget {
     final figure = featured.figure;
     final citation = featured.citation;
     final nextZiyara = featured.nextZiyara;
+    if (figure.portraitUrl == null) return _FeaturedFigureTypographicCard(featured: featured);
 
     return Card(
       clipBehavior: Clip.antiAlias,
@@ -908,28 +909,22 @@ class _FeaturedFigureCard extends StatelessWidget {
           child: Stack(
             fit: StackFit.expand,
             children: [
-              // Une figure épinglée par l'admin peut ne pas avoir de portrait
-              // (saisie directe en base) : fond uni plutôt qu'un plantage de
-              // l'accueil pour tous les disciples.
-              if (figure.portraitUrl == null)
-                const ColoredBox(color: AppColors.zaytoune)
-              else
-                Image.network(
-                  figure.portraitUrl!,
-                  fit: BoxFit.cover,
-                  alignment: Alignment.topCenter,
-                  errorBuilder: (context, error, stackTrace) => const ColoredBox(color: AppColors.zaytoune),
-                  // Fond et indicateur pendant le téléchargement : la carte était
-                  // un rectangle vide jusqu'à l'arrivée du portrait (P2-2).
-                  loadingBuilder: (context, child, progress) => progress == null
-                      ? child
-                      : ColoredBox(
-                          color: AppColors.emeraldSoft,
-                          child: Center(child: CircularProgressIndicator(color: AppColors.emerald)),
-                        ),
-                  // Voir la même note dans event_detail_screen.dart.
-                  cacheWidth: (MediaQuery.of(context).size.width * MediaQuery.of(context).devicePixelRatio).round(),
-                ),
+              Image.network(
+                figure.portraitUrl!,
+                fit: BoxFit.cover,
+                alignment: Alignment.topCenter,
+                errorBuilder: (context, error, stackTrace) => const ColoredBox(color: AppColors.zaytoune),
+                // Fond et indicateur pendant le téléchargement : la carte était
+                // un rectangle vide jusqu'à l'arrivée du portrait (P2-2).
+                loadingBuilder: (context, child, progress) => progress == null
+                    ? child
+                    : ColoredBox(
+                        color: AppColors.emeraldSoft,
+                        child: Center(child: CircularProgressIndicator(color: AppColors.emerald)),
+                      ),
+                // Voir la même note dans event_detail_screen.dart.
+                cacheWidth: (MediaQuery.of(context).size.width * MediaQuery.of(context).devicePixelRatio).round(),
+              ),
               DecoratedBox(
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
@@ -1005,6 +1000,98 @@ class _FeaturedFigureCard extends StatelessWidget {
               ),
             ],
           ),
+        ),
+      ),
+    );
+  }
+}
+
+/// Carte "Figure de la semaine" sans photo (P2-3) : nom arabe en grand
+/// (Amiri, texte religieux), nom français, citation et prochaine ziara, sur
+/// fond émeraude avec la rosace de la charte. Hauteur selon le contenu, pas
+/// de cadre 3:4 vide.
+class _FeaturedFigureTypographicCard extends StatelessWidget {
+  const _FeaturedFigureTypographicCard({required this.featured});
+
+  final FeaturedFigure featured;
+
+  @override
+  Widget build(BuildContext context) {
+    final figure = featured.figure;
+    final citation = featured.citation;
+    final nextZiyara = featured.nextZiyara;
+    return Card(
+      clipBehavior: Clip.antiAlias,
+      color: AppColors.emerald,
+      child: InkWell(
+        onTap: () => Navigator.of(context).push(
+          MaterialPageRoute(builder: (_) => FigureDetailScreen(figure: figure)),
+        ),
+        child: Stack(
+          children: [
+            const PositionedDirectional(
+              top: -24,
+              end: -24,
+              child: Opacity(
+                opacity: 0.18,
+                child: SizedBox(
+                  width: 140,
+                  height: 140,
+                  child: CustomPaint(painter: RosacePainter(color: AppColors.goldSoft, strokeWidth: 1.6)),
+                ),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(20, 28, 20, 20),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Text(
+                    figure.nameArabic,
+                    textAlign: TextAlign.center,
+                    textDirection: TextDirection.rtl,
+                    style: AppTheme.sacredText(fontSize: 30, color: AppColors.goldSoft),
+                  ),
+                  const SizedBox(height: 6),
+                  ContentText(
+                    figure.nameFrench,
+                    textAlign: TextAlign.center,
+                    style: AppTheme.titleText(fontWeight: FontWeight.w700, fontSize: 22, color: AppColors.offWhite),
+                  ),
+                  if (citation != null) ...[
+                    const SizedBox(height: 12),
+                    ContentText(
+                      '« ${citation.translation} »',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        fontStyle: FontStyle.italic,
+                        color: AppColors.offWhite.withValues(alpha: 0.9),
+                        fontSize: 12.5,
+                      ),
+                    ),
+                  ],
+                  if (nextZiyara != null) ...[
+                    const SizedBox(height: 12),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const Icon(Icons.event_outlined, size: 14, color: AppColors.goldSoft),
+                        const SizedBox(width: 4),
+                        Flexible(
+                          child: Text(
+                            '${nextZiyara.title} · ${formatKhadaraEventSchedule(nextZiyara, AppLocalizations.of(context)!)}',
+                            style: const TextStyle(color: AppColors.goldSoft, fontSize: 11.5),
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ],
+              ),
+            ),
+          ],
         ),
       ),
     );

@@ -1196,7 +1196,8 @@ class AppLocalizationsAr extends AppLocalizations {
   String get featuredFigureAdminTitle => 'شخصية الأسبوع';
 
   @override
-  String get featuredFigureAdminIntro => 'بدون تثبيت لأسبوع معيّن، يختار التطبيق تلقائيًا شخصية معتمدة لديها صورة.';
+  String get featuredFigureAdminIntro =>
+      'إن لم تُثبَّت شخصية لأسبوع ما، يختار التطبيق تلقائيًا شخصية معتمدة، بالتناوب بين الفروع.';
 
   @override
   String get featuredFigureAdminPinnedLabel => 'مثبّتة لهذا الأسبوع';
@@ -1208,8 +1209,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get featuredFigureAdminNoPin => 'لا توجد شخصية مثبّتة — سيختار التدوير التلقائي واحدة.';
 
   @override
-  String get featuredFigureAdminNoEligible =>
-      'لا توجد بعد شخصية معتمدة لديها صورة. أضف صورة من صفحة إحدى الشخصيات لتتمكن من تثبيتها هنا.';
+  String get featuredFigureAdminNoEligible => 'لا توجد شخصية معتمدة حاليًا.';
 
   @override
   String get featuredFigureAdminPickLabel => 'اختر شخصية';

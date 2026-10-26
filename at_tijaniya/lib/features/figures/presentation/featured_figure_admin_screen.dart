@@ -17,11 +17,9 @@ import '../../../core/widgets/content_text.dart';
 /// `true` — la RLS `featured_figures_admin_write`/`_update`/`_delete` refuse
 /// de toute façon l'écriture à tout autre compte.
 ///
-/// Restreint la sélection aux figures dotées d'un portrait
-/// ([eligibleForRotation]) : la carte affichée au disciple suppose toujours
-/// une photo (demande explicite du porteur de projet, 2026-08-17), donc
-/// épingler une figure sans portrait produirait une carte incomplète que la
-/// rotation automatique n'aurait jamais produite d'elle-même.
+/// Toutes les figures validées peuvent être épinglées ([eligibleForRotation]) :
+/// depuis le 2026-10-26 (décision du porteur de projet, audit de l'accueil
+/// P2-3), une figure sans portrait a sa carte sans photo sur l'accueil.
 class FeaturedFigureAdminScreen extends ConsumerStatefulWidget {
   const FeaturedFigureAdminScreen({super.key});
 

@@ -1205,7 +1205,7 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get featuredFigureAdminIntro =>
-      'Sans épinglage pour une semaine, l\'app choisit automatiquement une figure valide dotée d\'un portrait.';
+      'Sans épinglage pour une semaine, l\'app choisit automatiquement une figure valide, à tour de rôle entre les foyers.';
 
   @override
   String get featuredFigureAdminPinnedLabel => 'Épinglée pour cette semaine';
@@ -1217,8 +1217,7 @@ class AppLocalizationsFr extends AppLocalizations {
   String get featuredFigureAdminNoPin => 'Aucune figure épinglée — la rotation automatique choisira.';
 
   @override
-  String get featuredFigureAdminNoEligible =>
-      'Aucune figure valide n\'a encore de portrait. Ajoutez-en un depuis la fiche d\'une figure pour pouvoir l\'épingler ici.';
+  String get featuredFigureAdminNoEligible => 'Aucune figure valide pour le moment.';
 
   @override
   String get featuredFigureAdminPickLabel => 'Choisir une figure';
