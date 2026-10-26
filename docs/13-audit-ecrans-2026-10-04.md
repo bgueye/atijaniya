@@ -484,6 +484,9 @@ chaque constat porte son statut. Aucun P0 : 32 écritures forcées refusées par
   (compteurs faux, « Envoyer un message » absent, profil illisible). Scénario annulé
   déjà joué le 2026-10-26 ; le rejouer juste avant d'appliquer, puis ajouter le fichier à
   la section 12 de `schema.sql` ;
+- **appliquer en même temps `database/migrations/2026-10-26_notify_messages_and_comments.sql`**
+  (P3-8 : notification d'un message privé ou d'un commentaire reçu) — même condition : la
+  version 1.0.0+4 afficherait ces notifications comme des cartes vides ;
 - décision du porteur de projet sur les publications d'un compte supprimé (les garder,
   ou les supprimer avec le compte) et sur les trois autres questions du rapport ;
 - validation sur téléphone (français et arabe, réseau coupé, texte agrandi) ;

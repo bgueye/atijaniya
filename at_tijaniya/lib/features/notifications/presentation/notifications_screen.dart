@@ -6,6 +6,10 @@ import '../../../l10n/app_localizations.dart';
 import '../../khadara/presentation/khadara_format.dart';
 import '../../khadara/presentation/live_stream_providers.dart';
 import '../../khadara/presentation/live_stream_screen.dart';
+import '../../communaute/presentation/community_providers.dart';
+import '../../communaute/presentation/conversation_screen.dart';
+import '../../communaute/presentation/messages_providers.dart';
+import '../../communaute/presentation/post_detail_screen.dart';
 import '../../moderation/presentation/moderation_reports_screen.dart';
 import '../domain/app_notification.dart';
 import 'notifications_providers.dart';
@@ -40,7 +44,8 @@ class NotificationsScreen extends ConsumerWidget {
               ? Center(
                   child: Padding(
                     padding: const EdgeInsets.all(24),
-                    child: Text(l10n.notificationsEmpty, textAlign: TextAlign.center, style: TextStyle(color: AppColors.bronze)),
+                    child: Text(l10n.notificationsEmpty,
+                        textAlign: TextAlign.center, style: TextStyle(color: AppColors.bronze)),
                   ),
                 )
               : ListView.separated(
@@ -63,8 +68,26 @@ class _NotificationTile extends ConsumerWidget {
 
   (IconData, String, String) _content() {
     return switch (notification.type) {
-      AppNotificationType.streamLive => (Icons.podcasts_outlined, l10n.notificationStreamLiveTitle, l10n.notificationStreamLiveBody),
-      AppNotificationType.contentReport => (Icons.flag_outlined, l10n.notificationContentReportTitle, l10n.notificationContentReportBody),
+      AppNotificationType.streamLive => (
+          Icons.podcasts_outlined,
+          l10n.notificationStreamLiveTitle,
+          l10n.notificationStreamLiveBody
+        ),
+      AppNotificationType.contentReport => (
+          Icons.flag_outlined,
+          l10n.notificationContentReportTitle,
+          l10n.notificationContentReportBody
+        ),
+      AppNotificationType.directMessage => (
+          Icons.mail_outline,
+          l10n.notificationDirectMessageTitle,
+          l10n.notificationDirectMessageBody
+        ),
+      AppNotificationType.postComment => (
+          Icons.mode_comment_outlined,
+          l10n.notificationPostCommentTitle,
+          l10n.notificationPostCommentBody
+        ),
       AppNotificationType.unknown => (Icons.notifications_outlined, '', ''),
     };
   }
@@ -97,9 +120,52 @@ class _NotificationTile extends ConsumerWidget {
         if (context.mounted) {
           Navigator.of(context).push(MaterialPageRoute(builder: (_) => const ModerationReportsScreen()));
         }
+      case AppNotificationType.directMessage:
+        final conversationId = notification.conversationId;
+        if (conversationId == null) return;
+        try {
+          // L'autre participant et son nom viennent de la liste des
+          // conversations ; absente (disciple bloqué entre-temps) : message.
+          final conversations = await ref.read(messagesRepositoryProvider).fetchConversations();
+          final conversation = conversations.where((c) => c.id == conversationId).firstOrNull;
+          if (!context.mounted) return;
+          if (conversation == null) {
+            _showUnavailable(context);
+            return;
+          }
+          Navigator.of(context).push(MaterialPageRoute(
+            builder: (_) => ConversationScreen(
+              conversationId: conversation.id,
+              otherUserId: conversation.otherUserId,
+              otherDisplayName: conversation.otherDisplayName ?? l10n.communityDefaultAuthor,
+            ),
+          ));
+        } catch (_) {
+          if (context.mounted) _showUnavailable(context);
+        }
+      case AppNotificationType.postComment:
+        final postId = notification.postId;
+        if (postId == null) return;
+        try {
+          final post = await ref.read(communityRepositoryProvider).fetchPost(postId);
+          if (!context.mounted) return;
+          if (post == null) {
+            _showUnavailable(context);
+            return;
+          }
+          Navigator.of(context).push(MaterialPageRoute(builder: (_) => PostDetailScreen(post: post)));
+        } catch (_) {
+          if (context.mounted) _showUnavailable(context);
+        }
       case AppNotificationType.unknown:
         break;
     }
+  }
+
+  void _showUnavailable(BuildContext context) {
+    ScaffoldMessenger.of(context)
+      ..hideCurrentSnackBar()
+      ..showSnackBar(SnackBar(content: Text(l10n.notificationContentUnavailable)));
   }
 
   @override

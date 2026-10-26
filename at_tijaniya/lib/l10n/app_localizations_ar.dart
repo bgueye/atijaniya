@@ -2757,6 +2757,31 @@ class AppLocalizationsAr extends AppLocalizations {
   String get communityCommentsLoadError => 'تعذّر تحميل التعليقات.';
 
   @override
+  String get notificationDirectMessageTitle => 'رسالة جديدة';
+
+  @override
+  String get notificationDirectMessageBody => 'راسلك أحد المريدين. المس للقراءة.';
+
+  @override
+  String get notificationPostCommentTitle => 'تعليق جديد';
+
+  @override
+  String get notificationPostCommentBody => 'تلقّى منشورك تعليقًا.';
+
+  @override
+  String get notificationContentUnavailable => 'لم يعد هذا المحتوى متاحًا.';
+
+  @override
+  String communityMessagesTooltipUnread(int count) {
+    return 'الرسائل، $count محادثات غير مقروءة';
+  }
+
+  @override
+  String communityConversationUnread(int count) {
+    return '$count رسائل غير مقروءة';
+  }
+
+  @override
   String get communityMessageSendError => 'تعذّر إرسال الرسالة. حاول مرة أخرى.';
 
   @override

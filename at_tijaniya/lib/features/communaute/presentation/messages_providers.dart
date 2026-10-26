@@ -9,6 +9,16 @@ final messagesRepositoryProvider = Provider<MessagesRepository>((ref) => const M
 
 // `autoDispose` : la liste est rechargée à chaque ouverture de l'écran (une
 // conversation ou un message reçus restaient invisibles jusqu'au redémarrage).
+/// Conversations avec au moins un message reçu non lu : pastille sur
+/// l'icône de la messagerie (P3-8). 0 sans compte ou en cas d'erreur.
+final unreadConversationsCountProvider = Provider.autoDispose<int>((ref) {
+  if (ref.watch(currentUserIdProvider) == null) return 0;
+  return ref.watch(conversationsProvider).maybeWhen(
+        data: (list) => list.where((c) => c.unreadCount > 0).length,
+        orElse: () => 0,
+      );
+});
+
 final conversationsProvider = FutureProvider.autoDispose<List<Conversation>>((ref) {
   // Lié au compte connecté (audit du 2026-10-04, S40/S41) : sans cette
   // dépendance, le résultat restait en cache après une déconnexion et le

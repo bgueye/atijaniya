@@ -2784,6 +2784,31 @@ class AppLocalizationsFr extends AppLocalizations {
   String get communityCommentsLoadError => 'Impossible de charger les commentaires.';
 
   @override
+  String get notificationDirectMessageTitle => 'Nouveau message';
+
+  @override
+  String get notificationDirectMessageBody => 'Un disciple vous a écrit. Touchez pour lire.';
+
+  @override
+  String get notificationPostCommentTitle => 'Nouveau commentaire';
+
+  @override
+  String get notificationPostCommentBody => 'Votre publication a reçu un commentaire.';
+
+  @override
+  String get notificationContentUnavailable => 'Ce contenu n\'est plus disponible.';
+
+  @override
+  String communityMessagesTooltipUnread(int count) {
+    return 'Messages, $count conversations non lues';
+  }
+
+  @override
+  String communityConversationUnread(int count) {
+    return '$count messages non lus';
+  }
+
+  @override
   String get communityMessageSendError => 'Le message n\'a pas pu être envoyé. Réessayez.';
 
   @override

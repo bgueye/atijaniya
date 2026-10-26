@@ -452,6 +452,23 @@ avant une ouverture plus large.
 8. **Pas d'alerte pour un message privé ou un commentaire reçu** : aucune notification,
    seulement le rechargement quand l'écran est ouvert ; un message peut rester des jours
    sans réponse. Aucun indicateur de non-lu (`read_at` jamais écrit).
+   **Statut : en deux parties, la première faite le 2026-10-26.**
+   - *Appliqué* : migration `2026-10-26_conversations_unread.sql` —
+     `mark_conversation_read(id)` (marque lus les messages reçus, participant seulement) et
+     `unread_count` dans `conversation_previews`. Côté app : pastille sur l'icône de la
+     messagerie (conversations non lues), nombre de messages non lus et nom en gras dans la
+     liste, conversation marquée lue à l'ouverture et à chaque message reçu affiché ; types de
+     notification `direct_message` et `post_comment` reconnus, affichés et ouverts
+     (conversation, publication), notification marquée lue à l'ouverture. Vérifié par un
+     scénario annulé : 2 non lus pour le destinataire, 1 pour l'autre, un tiers ne marque
+     rien, ses propres messages jamais marqués.
+   - *À appliquer avec la migration du P2-2, après diffusion de cette version* :
+     `2026-10-26_notify_messages_and_comments.sql` (triggers de notification ; la version
+     1.0.0+4 afficherait ces types comme des cartes vides). Rejouée dans un scénario annulé :
+     une seule notification non lue pour deux messages, aucune pour l'expéditeur ni pour son
+     propre commentaire, aucune pour l'auteur qui a bloqué le commentateur, illisible par
+     autrui. Suivi dans `docs/13`.
+   Tests `test/communaute_unread_test.dart`.
 9. **Maintenance** : 7 fichiers à passer au formateur ; 3 écrans de plus de 700 lignes ;
    commentaires périmés (`messages_repository.dart:14-16` et `message_models.dart`
    citent `conversation_participants_insert`, supprimée ; `groups_repository.dart:40-46`

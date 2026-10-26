@@ -8,8 +8,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:at_tijaniya/features/communaute/data/community_repository.dart';
 import 'package:at_tijaniya/features/communaute/data/groups_repository.dart';
+import 'package:at_tijaniya/features/communaute/data/messages_repository.dart';
 import 'package:at_tijaniya/features/communaute/domain/community_models.dart';
 import 'package:at_tijaniya/features/communaute/domain/group_models.dart';
+import 'package:at_tijaniya/features/communaute/domain/message_models.dart';
 import 'package:at_tijaniya/features/communaute/presentation/community_providers.dart';
 import 'package:at_tijaniya/features/communaute/presentation/groups_providers.dart';
 import 'package:at_tijaniya/features/communaute/presentation/messages_providers.dart';
@@ -107,6 +109,25 @@ class FakeGroupsRepository extends GroupsRepository {
   Future<void> leaveGroup(String groupId) => _write('leave:$groupId');
 }
 
+/// Dépôt de la messagerie : conversations et messages fixés par le test,
+/// marquages « lu » notés.
+class FakeMessagesRepository extends MessagesRepository {
+  FakeMessagesRepository({this.conversations = const [], this.messages = const []});
+
+  final List<Conversation> conversations;
+  final List<DirectMessage> messages;
+  final markedRead = <String>[];
+
+  @override
+  Future<List<Conversation>> fetchConversations() async => conversations;
+
+  @override
+  Future<List<DirectMessage>> fetchMessages(String conversationId, {required int limit}) async => messages;
+
+  @override
+  Future<void> markConversationRead(String conversationId) async => markedRead.add(conversationId);
+}
+
 /// Pour un membre, le détail d'un groupe affiche aussi son direct : aucun ici.
 final groupMemberOverrides = <Override>[
   latestStreamForGroupProvider.overrideWith((ref, groupId) async => null),
@@ -126,6 +147,7 @@ Widget wrapCommunaute(
   Widget child, {
   FakeCommunityRepository? community,
   FakeGroupsRepository? groups,
+  FakeMessagesRepository? messages,
   String? userId = 'me',
   bool isAdmin = false,
   Locale locale = const Locale('fr'),
@@ -146,6 +168,7 @@ Widget wrapCommunaute(
       isAdminProvider.overrideWithValue(isAdmin),
       communityRepositoryProvider.overrideWithValue(community ?? FakeCommunityRepository()),
       groupsRepositoryProvider.overrideWithValue(groups ?? FakeGroupsRepository()),
+      messagesRepositoryProvider.overrideWithValue(messages ?? FakeMessagesRepository()),
       attachableZawiyasProvider.overrideWith((ref) async => const []),
       shareGroupWithProvider.overrideWith((ref, otherUserId) async => false),
       ...extraOverrides,

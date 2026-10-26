@@ -20,6 +20,7 @@ import 'community_format.dart';
 import 'community_providers.dart';
 import 'community_states.dart';
 import 'conversations_screen.dart';
+import 'messages_providers.dart';
 import 'group_detail_screen.dart';
 import 'groups_providers.dart';
 import 'load_more_button.dart';
@@ -36,11 +37,12 @@ import '../../../core/widgets/content_text.dart';
 /// module. La lignée spirituelle et le statut Mouqaddam restent dans des
 /// écrans dédiés accessibles depuis le profil (données sensibles, cf.
 /// CLAUDE.md), hors périmètre de cet écran.
-class CommunauteScreen extends StatelessWidget {
+class CommunauteScreen extends ConsumerWidget {
   const CommunauteScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final unread = ref.watch(unreadConversationsCountProvider);
     final l10n = AppLocalizations.of(context)!;
     return DefaultTabController(
       length: 2,
@@ -59,9 +61,15 @@ class CommunauteScreen extends StatelessWidget {
                   ],
                 ),
               ),
+              // Pastille : conversations avec un message non lu (P3-8).
               IconButton(
-                icon: Icon(Icons.mail_outline, color: AppColors.bronze),
-                tooltip: l10n.communityMessagesTooltip,
+                icon: Badge(
+                  isLabelVisible: unread > 0,
+                  label: Text('$unread'),
+                  backgroundColor: AppColors.emerald,
+                  child: Icon(Icons.mail_outline, color: AppColors.bronze),
+                ),
+                tooltip: unread > 0 ? l10n.communityMessagesTooltipUnread(unread) : l10n.communityMessagesTooltip,
                 onPressed: () => Navigator.of(context).push(
                   MaterialPageRoute(builder: (_) => const ConversationsScreen()),
                 ),

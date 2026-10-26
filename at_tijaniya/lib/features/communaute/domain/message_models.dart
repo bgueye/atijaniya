@@ -16,6 +16,7 @@ class Conversation {
     this.otherDisplayName,
     this.lastMessageText,
     this.lastMessageAt,
+    this.unreadCount = 0,
   });
 
   final String id;
@@ -23,6 +24,11 @@ class Conversation {
   final String? otherDisplayName;
   final String? lastMessageText;
   final DateTime? lastMessageAt;
+
+  /// Messages reçus non lus (audit Communauté du 2026-10-26, P3-8) :
+  /// `messages.read_at` n'était jamais écrit, rien ne distinguait une
+  /// conversation avec un message nouveau.
+  final int unreadCount;
 
   /// Ligne renvoyée par la fonction `conversation_previews`.
   factory Conversation.fromPreviewRow(Map<String, dynamic> row) {
@@ -33,6 +39,7 @@ class Conversation {
       otherDisplayName: row['other_display_name'] as String?,
       lastMessageText: row['last_message_text'] as String?,
       lastMessageAt: lastAt == null ? null : DateTime.parse(lastAt).toLocal(),
+      unreadCount: row['unread_count'] as int? ?? 0,
     );
   }
 }

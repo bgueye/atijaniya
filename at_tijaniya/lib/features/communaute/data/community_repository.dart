@@ -69,6 +69,34 @@ class CommunityRepository {
     }).toList();
   }
 
+  /// Une publication du fil, pour l'ouvrir depuis une notification (P3-8).
+  /// `null` si elle n'est plus visible (supprimée, masquée, auteur bloqué).
+  Future<CommunityPost?> fetchPost(String id) async {
+    final row = await SupabaseConfig.client
+        .from('posts')
+        .select('*, zawiyas(name), profiles(display_name)')
+        .eq('id', id)
+        .eq('content_status', 'valide')
+        .isFilter('hidden_at', null)
+        .maybeSingle();
+    if (row == null) return null;
+    final count = (await _fetchCounts([id]))[id];
+    if (count == null) return null;
+    return CommunityPost.fromRow(row,
+        likeCount: count.likes, commentCount: count.comments, isLikedByMe: count.likedByMe);
+  }
+
+  /// Notification « nouveau commentaire » de cette publication marquée lue,
+  /// à l'ouverture de la publication par son auteur (P3-8). Au mieux.
+  Future<void> markPostCommentNotificationsRead(String postId) async {
+    await SupabaseConfig.client
+        .from('notifications')
+        .update({'read_at': DateTime.now().toUtc().toIso8601String()})
+        .eq('type', 'post_comment')
+        .eq('payload->>post_id', postId)
+        .isFilter('read_at', null);
+  }
+
   /// « J'aime », commentaires et « j'aime » du compte connecté, calculés par
   /// le serveur (`post_counts`) — fonctionne aussi sans compte.
   Future<Map<String, ({int likes, int comments, bool likedByMe})>> _fetchCounts(List<String> postIds) async {

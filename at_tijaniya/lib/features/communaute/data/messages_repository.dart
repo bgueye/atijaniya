@@ -70,6 +70,18 @@ class MessagesRepository {
     return id as String;
   }
 
+  /// Marque lus les messages reçus de la conversation (`mark_conversation_read`)
+  /// et la notification « nouveau message » qui s'y rapporte (P3-8).
+  Future<void> markConversationRead(String conversationId) async {
+    await SupabaseConfig.client.rpc('mark_conversation_read', params: {'p_conversation_id': conversationId});
+    await SupabaseConfig.client
+        .from('notifications')
+        .update({'read_at': DateTime.now().toUtc().toIso8601String()})
+        .eq('type', 'direct_message')
+        .eq('payload->>conversation_id', conversationId)
+        .isFilter('read_at', null);
+  }
+
   /// Code d'erreur de `start_conversation` : le destinataire n'accepte que
   /// les messages de ses correspondances (mise en relation acceptée).
   static const contactRestrictedCode = 'AT002';

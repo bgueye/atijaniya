@@ -57,6 +57,17 @@ class _PostDetailScreenState extends ConsumerState<PostDetailScreen> {
 
   bool get _isSignedIn => ref.read(currentUserIdProvider) != null;
 
+  @override
+  void initState() {
+    super.initState();
+    // L'auteur qui ouvre sa publication a vu ses nouveaux commentaires : la
+    // notification correspondante est marquée lue (P3-8).
+    final me = ref.read(currentUserIdProvider);
+    if (me != null && me == widget.post.authorUserId) {
+      ref.read(communityRepositoryProvider).markPostCommentNotificationsRead(widget.post.id).catchError((_) {});
+    }
+  }
+
   void _promptSignIn() {
     final l10n = AppLocalizations.of(context)!;
     ScaffoldMessenger.of(context)

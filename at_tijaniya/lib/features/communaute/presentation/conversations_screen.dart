@@ -63,21 +63,39 @@ class _ConversationTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    final unread = conversation.unreadCount;
     return ListTile(
       leading: CircleAvatar(
         backgroundColor: AppColors.emeraldSoft,
         child: Icon(Icons.person_outline, color: AppColors.emerald),
       ),
-      title: ContentText(conversation.otherDisplayName ?? fallback),
+      // Non lu : nom en gras et pastille avec le nombre de messages (P3-8).
+      title: ContentText(
+        conversation.otherDisplayName ?? fallback,
+        style: unread > 0 ? const TextStyle(fontWeight: FontWeight.w700) : null,
+      ),
       subtitle: conversation.lastMessageText != null
           ? ContentText(conversation.lastMessageText!, maxLines: 1, overflow: TextOverflow.ellipsis)
           : null,
-      trailing: conversation.lastMessageAt != null
-          ? ContentText(
+      trailing: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.end,
+        children: [
+          if (conversation.lastMessageAt != null)
+            ContentText(
               formatCommunityDateTime(conversation.lastMessageAt!),
               style: TextStyle(color: AppColors.secondaryInk, fontSize: 11),
-            )
-          : null,
+            ),
+          if (unread > 0) ...[
+            const SizedBox(height: 4),
+            Semantics(
+              label: l10n.communityConversationUnread(unread),
+              child: ExcludeSemantics(child: Badge(label: Text('$unread'), backgroundColor: AppColors.emerald)),
+            ),
+          ],
+        ],
+      ),
       onTap: () => Navigator.of(context).push(
         MaterialPageRoute(
           builder: (_) => ConversationScreen(

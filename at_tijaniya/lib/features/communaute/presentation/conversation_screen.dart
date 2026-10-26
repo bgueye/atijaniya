@@ -50,6 +50,25 @@ class _ConversationScreenState extends ConsumerState<ConversationScreen> {
     _pollTimer = Timer.periodic(const Duration(seconds: 5), (_) {
       if (mounted) ref.invalidate(conversationMessagesProvider(widget.conversationId));
     });
+    // Lu à l'ouverture, puis à chaque message reçu affiché (P3-8). Au mieux :
+    // un échec laisse seulement la conversation marquée non lue.
+    ref.listenManual(conversationMessagesProvider(widget.conversationId), (previous, next) {
+      final list = next.valueOrNull;
+      if (list == null || list.isEmpty) return;
+      final last = list.last;
+      if (last.senderId == ref.read(currentUserIdProvider) || last.id == _lastMarkedId) return;
+      _lastMarkedId = last.id;
+      _markRead();
+    });
+  }
+
+  String? _lastMarkedId;
+
+  Future<void> _markRead() async {
+    try {
+      await ref.read(messagesRepositoryProvider).markConversationRead(widget.conversationId);
+      if (mounted) ref.invalidate(conversationsProvider);
+    } catch (_) {}
   }
 
   @override

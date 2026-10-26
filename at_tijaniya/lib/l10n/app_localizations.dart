@@ -5444,6 +5444,48 @@ abstract class AppLocalizations {
   /// **'Impossible de charger les commentaires.'**
   String get communityCommentsLoadError;
 
+  /// No description provided for @notificationDirectMessageTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Nouveau message'**
+  String get notificationDirectMessageTitle;
+
+  /// No description provided for @notificationDirectMessageBody.
+  ///
+  /// In fr, this message translates to:
+  /// **'Un disciple vous a écrit. Touchez pour lire.'**
+  String get notificationDirectMessageBody;
+
+  /// No description provided for @notificationPostCommentTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Nouveau commentaire'**
+  String get notificationPostCommentTitle;
+
+  /// No description provided for @notificationPostCommentBody.
+  ///
+  /// In fr, this message translates to:
+  /// **'Votre publication a reçu un commentaire.'**
+  String get notificationPostCommentBody;
+
+  /// No description provided for @notificationContentUnavailable.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ce contenu n\'est plus disponible.'**
+  String get notificationContentUnavailable;
+
+  /// No description provided for @communityMessagesTooltipUnread.
+  ///
+  /// In fr, this message translates to:
+  /// **'Messages, {count} conversations non lues'**
+  String communityMessagesTooltipUnread(int count);
+
+  /// No description provided for @communityConversationUnread.
+  ///
+  /// In fr, this message translates to:
+  /// **'{count} messages non lus'**
+  String communityConversationUnread(int count);
+
   /// No description provided for @communityMessageSendError.
   ///
   /// In fr, this message translates to:
