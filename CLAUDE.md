@@ -79,6 +79,9 @@ vérifier la section 12 de `database/schema.sql` et `database/migrations/`.
   aux libellés d'interface générique (boutons, menus) — utiliser Jost pour l'UI.
 - Le vert zaytoune (#0F3D2E) est réservé aux écrans de pratique (Wird, Khadara en direct) ;
   le reste de l'app est sur fond ivoire parchemin (#F7F2E7).
+  Exception actée le 2026-10-26 (audit de l'accueil) : l'en-tête de l'écran d'accueil, porte
+  d'entrée de la pratique, reste en zaytoune ; à ne pas étendre à d'autres écrans sans
+  nouvelle décision.
 
 ## Contenu religieux — règle impérative
 Aucun texte de wird, biographie ou enseignement attribué ne doit être codé en dur ou publié
