@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../theme/app_colors.dart';
+import '../validation/text_limits.dart';
 import 'app_snackbar.dart';
 
 /// Champ de saisie + bouton d'envoi, partagé par la messagerie privée, la
@@ -19,7 +20,7 @@ class MessageComposer extends StatefulWidget {
     required this.sendTooltip,
     required this.errorMessage,
     required this.onSend,
-    this.maxLength = 2000,
+    this.maxLength = TextLimits.message,
   });
 
   final String hintText;
@@ -31,7 +32,7 @@ class MessageComposer extends StatefulWidget {
   /// Envoie le message. Une exception signale l'échec.
   final Future<void> Function(String text) onSend;
 
-  /// Garde-fou côté client : les colonnes sont en `text` sans limite.
+  /// Même plafond que la contrainte en base (voir `TextLimits`).
   final int maxLength;
 
   @override

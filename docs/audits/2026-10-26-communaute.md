@@ -173,6 +173,14 @@ avant une ouverture plus large.
   ```
   Compatible avec la version installée chez les testeurs : elle n'envoie jamais de texte
   vide et ces plafonds dépassent l'usage normal.
+- **Statut : corrigé le 2026-10-26.** Migration `2026-10-26_community_text_length_checks.sql`
+  appliquée (plafonds proposés ci-dessus, textes obligatoires non vides) ; `handle_new_user`
+  tronque à 60 caractères le nom reçu à l'inscription. Vérifié par un scénario annulé :
+  publication de 5 001 caractères, publication d'espaces, nom de 61, nom de groupe de 81,
+  message de groupe de 2 001 refusés (`23514`), publication de 5 000 acceptée. Côté app,
+  `core/validation/text_limits.dart` et `maxLength` sur les champs (publication, groupe,
+  message de groupe, inscription, profil, signalement) ; test
+  `test/communaute_text_limits_test.dart`.
 
 ### P2-2 · Un visiteur non connecté cartographie les membres et les comptes
 

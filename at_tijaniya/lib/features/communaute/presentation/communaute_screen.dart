@@ -1,3 +1,4 @@
+import '../../../core/validation/text_limits.dart';
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
@@ -295,6 +296,7 @@ class _CreatePostSheetState extends ConsumerState<_CreatePostSheet> {
               const SizedBox(height: 16),
               TextFormField(
                 controller: _contentController,
+                maxLength: TextLimits.post,
                 decoration: InputDecoration(
                     labelText: l10n.communityCreatePostContentLabel),
                 maxLines: 5,
@@ -582,6 +584,7 @@ class _CreateGroupSheetState extends ConsumerState<_CreateGroupSheet> {
               const SizedBox(height: 16),
               TextFormField(
                 controller: _nameController,
+                maxLength: TextLimits.groupName,
                 decoration:
                     InputDecoration(labelText: l10n.communityGroupsNameLabel),
                 validator: (value) => (value == null || value.trim().isEmpty)
@@ -591,6 +594,7 @@ class _CreateGroupSheetState extends ConsumerState<_CreateGroupSheet> {
               const SizedBox(height: 16),
               TextFormField(
                 controller: _descriptionController,
+                maxLength: TextLimits.groupDescription,
                 decoration: InputDecoration(
                     labelText: l10n.communityGroupsDescriptionLabel),
                 maxLines: 3,
@@ -620,6 +624,7 @@ class _CreateGroupSheetState extends ConsumerState<_CreateGroupSheet> {
               const SizedBox(height: 16),
               TextFormField(
                 controller: _regionController,
+                maxLength: TextLimits.groupRegion,
                 decoration:
                     InputDecoration(labelText: l10n.communityGroupsRegionLabel),
               ),

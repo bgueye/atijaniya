@@ -1,3 +1,4 @@
+import '../../../core/validation/text_limits.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:supabase_flutter/supabase_flutter.dart' show OtpType;
@@ -379,6 +380,7 @@ class _AuthScreenState extends State<AuthScreen> {
           const SizedBox(height: 24),
           TextFormField(
             controller: _fullNameController,
+            maxLength: TextLimits.displayName,
             decoration: _fieldDecoration(l10n.authFullNameLabel),
             enabled: !loading,
             validator: (value) {

@@ -1,3 +1,4 @@
+import '../../../core/validation/text_limits.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -104,6 +105,7 @@ class _ReportDialogContentState extends State<_ReportDialogContent> {
           const SizedBox(height: 12),
           TextField(
             controller: _reasonController,
+            maxLength: TextLimits.reportReason,
             decoration: InputDecoration(labelText: l10n.moderationReportReasonLabel),
             maxLines: 3,
           ),

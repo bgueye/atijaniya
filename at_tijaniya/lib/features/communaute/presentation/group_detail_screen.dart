@@ -1,3 +1,4 @@
+import '../../../core/validation/text_limits.dart';
 import 'dart:async';
 
 import 'package:flutter/material.dart';
@@ -483,6 +484,7 @@ class _GroupPostTileState extends ConsumerState<_GroupPostTile> {
         title: Text(l10n.communityGroupsEditPostTitle),
         content: TextField(
           controller: controller,
+          maxLength: TextLimits.message,
           maxLines: 4,
           autofocus: true,
           decoration: InputDecoration(labelText: l10n.communityGroupsEditPostContentLabel),
@@ -741,6 +743,7 @@ class _EditGroupSheetState extends ConsumerState<_EditGroupSheet> {
               const SizedBox(height: 16),
               TextFormField(
                 controller: _nameController,
+                maxLength: TextLimits.groupName,
                 decoration: InputDecoration(labelText: l10n.communityGroupsNameLabel),
                 validator: (value) =>
                     (value == null || value.trim().isEmpty) ? l10n.communityGroupsNameRequired : null,
@@ -748,6 +751,7 @@ class _EditGroupSheetState extends ConsumerState<_EditGroupSheet> {
               const SizedBox(height: 16),
               TextFormField(
                 controller: _descriptionController,
+                maxLength: TextLimits.groupDescription,
                 decoration: InputDecoration(labelText: l10n.communityGroupsDescriptionLabel),
                 maxLines: 3,
               ),
@@ -772,6 +776,7 @@ class _EditGroupSheetState extends ConsumerState<_EditGroupSheet> {
               const SizedBox(height: 16),
               TextFormField(
                 controller: _regionController,
+                maxLength: TextLimits.groupRegion,
                 decoration: InputDecoration(labelText: l10n.communityGroupsRegionLabel),
               ),
               const SizedBox(height: 24),

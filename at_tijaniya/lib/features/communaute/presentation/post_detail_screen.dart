@@ -1,3 +1,4 @@
+import '../../../core/validation/text_limits.dart';
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
@@ -648,6 +649,7 @@ class _EditPostSheetState extends ConsumerState<_EditPostSheet> {
               const SizedBox(height: 16),
               TextFormField(
                 controller: _contentController,
+                maxLength: TextLimits.post,
                 decoration: InputDecoration(labelText: l10n.communityEditPostContentLabel),
                 maxLines: 5,
                 validator: (value) =>

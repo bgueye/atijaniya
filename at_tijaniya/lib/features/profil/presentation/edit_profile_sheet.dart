@@ -1,3 +1,4 @@
+import '../../../core/validation/text_limits.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -98,6 +99,7 @@ class _EditProfileFormState extends ConsumerState<_EditProfileForm> {
               const SizedBox(height: 16),
               TextFormField(
                 controller: _nameController,
+                maxLength: TextLimits.displayName,
                 decoration:
                     InputDecoration(labelText: l10n.profileDisplayNameLabel),
                 validator: (value) => (value == null || value.trim().isEmpty)
@@ -107,6 +109,7 @@ class _EditProfileFormState extends ConsumerState<_EditProfileForm> {
               const SizedBox(height: 16),
               TextFormField(
                 controller: _bioController,
+                maxLength: TextLimits.bio,
                 decoration: InputDecoration(labelText: l10n.profileBioLabel),
                 maxLines: 3,
               ),
