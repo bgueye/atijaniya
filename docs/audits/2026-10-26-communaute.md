@@ -400,6 +400,10 @@ avant une ouverture plus large.
    de placer les fonctions de contrôle des politiques dans `private`. Elle ne révèle rien
    que l'appelant ne puisse déjà voir, mais l'écart est à aligner. Reste aussi une copie
    inutilisée `public.is_conversation_participant` (plus exécutable), à supprimer.
+   **Statut : corrigé le 2026-10-26.** Migration `2026-10-26_can_report_content_private.sql`
+   appliquée : fonction recréée dans `private` (corps inchangé), politique d'insertion de
+   `content_reports` repointée, copies `public` supprimées. Vérifié par un scénario annulé :
+   signaler la publication d'autrui accepté, la sienne refusé (`42501`).
 2. **Blocage détectable par l'API** : `start_conversation()` renvoie un code distinct
    (`AT003`) quand un blocage existe, alors que `docs/13` présente le blocage comme
    indétectable. L'app affiche bien un message générique ; un échec d'envoi dans une
