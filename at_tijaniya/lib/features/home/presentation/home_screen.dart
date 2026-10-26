@@ -282,7 +282,7 @@ class _DashboardErrorState extends StatelessWidget {
           children: [
             Icon(Icons.wifi_off, color: AppColors.bronze, size: 32),
             const SizedBox(height: 12),
-            Text(l10n.homeLoadError, textAlign: TextAlign.center, style: TextStyle(color: AppColors.bronze)),
+            Text(l10n.homeLoadError, textAlign: TextAlign.center, style: TextStyle(color: AppColors.secondaryInk)),
             const SizedBox(height: 12),
             OutlinedButton(onPressed: onRetry, child: Text(l10n.homeRetry)),
           ],
@@ -364,13 +364,18 @@ class _SectionLabel extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.fromLTRB(2, 0, 2, 8),
-      child: ContentText(
-        text,
-        style: TextStyle(
-          fontSize: 11,
-          letterSpacing: 0.8,
-          color: AppColors.bronze,
-          fontWeight: FontWeight.w500,
+      // Annoncé comme titre (P2-6) : TalkBack peut passer de section en
+      // section ; encre secondaire plutôt que bronze (3,72:1).
+      child: Semantics(
+        header: true,
+        child: ContentText(
+          text,
+          style: TextStyle(
+            fontSize: 11,
+            letterSpacing: 0.8,
+            color: AppColors.secondaryInk,
+            fontWeight: FontWeight.w500,
+          ),
         ),
       ),
     );
@@ -446,7 +451,7 @@ class _WirdRow extends StatelessWidget {
             ? AppTheme.sacredText(fontSize: 18, color: AppColors.ink)
             : const TextStyle(fontWeight: FontWeight.w500),
       ),
-      subtitle: subtitle != null ? ContentText(subtitle, style: TextStyle(color: AppColors.bronze, fontSize: 12)) : null,
+      subtitle: subtitle != null ? ContentText(subtitle, style: TextStyle(color: AppColors.secondaryInk, fontSize: 12)) : null,
       trailing: streakLabel != null
           ? Container(
               padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 4),
@@ -477,29 +482,54 @@ class _ResumeTasbihCard extends StatelessWidget {
     final subtitle =
         '$wirdName · ${l10n.homeResumeTasbihSubtitle(pillar.transliteration, resumable.session.currentCount, pillar.repetitions)}';
 
+    void resume() => Navigator.of(context).push(
+          MaterialPageRoute(builder: (_) => TasbihScreen(wird: resumable.wird)),
+        );
+
+    // Audit de l'accueil du 2026-10-26 (P2-6) : la carte entière reprend le
+    // tasbih, et le bouton passe sous le texte, à 48 dp. Il faisait 25 dp, et
+    // placé à droite il réduisait le texte à une colonne étroite à 200 %
+    // (« Repren / dre le Tasbih »).
     return Card(
-      child: ListTile(
-        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
-        leading: Container(
-          width: 38,
-          height: 38,
-          decoration: BoxDecoration(color: AppColors.goldSoft, borderRadius: BorderRadius.circular(11)),
-          child: Icon(Icons.replay_circle_filled_outlined, color: AppColors.gold, size: 20),
-        ),
-        title: Text(l10n.homeResumeTasbihTitle, style: const TextStyle(fontWeight: FontWeight.w500)),
-        subtitle: ContentText(subtitle, style: TextStyle(color: AppColors.bronze, fontSize: 12)),
-        trailing: OutlinedButton(
-          style: OutlinedButton.styleFrom(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-            minimumSize: Size.zero,
-            tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-            side: BorderSide(color: AppColors.emerald),
-            foregroundColor: AppColors.emerald,
+      clipBehavior: Clip.antiAlias,
+      child: InkWell(
+        onTap: resume,
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Container(
+                width: 38,
+                height: 38,
+                decoration: BoxDecoration(color: AppColors.goldSoft, borderRadius: BorderRadius.circular(11)),
+                child: Icon(Icons.replay_circle_filled_outlined, color: AppColors.gold, size: 20),
+              ),
+              const SizedBox(width: 16),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(l10n.homeResumeTasbihTitle, style: const TextStyle(fontWeight: FontWeight.w500, fontSize: 16)),
+                    const SizedBox(height: 4),
+                    ContentText(subtitle, style: TextStyle(color: AppColors.secondaryInk, fontSize: 12)),
+                    const SizedBox(height: 8),
+                    Align(
+                      alignment: AlignmentDirectional.centerEnd,
+                      child: OutlinedButton(
+                        style: OutlinedButton.styleFrom(
+                          side: BorderSide(color: AppColors.emerald),
+                          foregroundColor: AppColors.emerald,
+                        ),
+                        onPressed: resume,
+                        child: Text(l10n.homeResumeTasbihCta),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
           ),
-          onPressed: () => Navigator.of(context).push(
-            MaterialPageRoute(builder: (_) => TasbihScreen(wird: resumable.wird)),
-          ),
-          child: Text(l10n.homeResumeTasbihCta, style: const TextStyle(fontSize: 12)),
         ),
       ),
     );
@@ -543,7 +573,7 @@ class _NextReminderCard extends StatelessWidget {
         title: Text(_slotLabel(l10n), style: const TextStyle(fontWeight: FontWeight.w500)),
         subtitle: Text(
           l10n.homeNextReminderSubtitle(wirdName, time),
-          style: TextStyle(color: AppColors.bronze, fontSize: 12),
+          style: TextStyle(color: AppColors.secondaryInk, fontSize: 12),
         ),
       ),
     );
@@ -666,7 +696,7 @@ class _DonationCard extends StatelessWidget {
           child: Icon(Icons.favorite_outline, color: AppColors.gold, size: 19),
         ),
         title: Text(l10n.donationTitle, style: const TextStyle(fontWeight: FontWeight.w500)),
-        subtitle: Text(l10n.settingsDonationTileSubtitle, style: TextStyle(color: AppColors.bronze, fontSize: 12)),
+        subtitle: Text(l10n.settingsDonationTileSubtitle, style: TextStyle(color: AppColors.secondaryInk, fontSize: 12)),
         trailing: DirectionalChevron(color: AppColors.bronze),
       ),
     );
@@ -701,8 +731,9 @@ class _KhadaraTeaserCard extends StatelessWidget {
                 )
               : const _KhadaraThumbFallback(),
         ),
-        title: ContentText(event.title, style: const TextStyle(fontWeight: FontWeight.w500, fontSize: 13.5), maxLines: 1, overflow: TextOverflow.ellipsis),
-        subtitle: Text(formatKhadaraEventSchedule(event, AppLocalizations.of(context)!), style: TextStyle(color: AppColors.bronze, fontSize: 11.5)),
+        // Deux lignes : à 200 %, une seule coupait le titre (« Ziarra de Taïba… »).
+        title: ContentText(event.title, style: const TextStyle(fontWeight: FontWeight.w500, fontSize: 13.5), maxLines: 2, overflow: TextOverflow.ellipsis),
+        subtitle: Text(formatKhadaraEventSchedule(event, AppLocalizations.of(context)!), style: TextStyle(color: AppColors.secondaryInk, fontSize: 11.5)),
         trailing: DirectionalChevron(color: AppColors.bronze),
       ),
     );
