@@ -324,6 +324,24 @@ class AppLocalizationsFr extends AppLocalizations {
   String get homeHijriApproximateNote => 'Date hégirienne calculée, à un jour près';
 
   @override
+  String get homeEventsLoadError => 'Impossible de charger le prochain évènement.';
+
+  @override
+  String get homeEventsEmpty => 'Aucun évènement annoncé pour le moment.';
+
+  @override
+  String get homeFigureLoadError => 'Impossible de charger la figure de la semaine.';
+
+  @override
+  String get homeSectionOfflineStale => 'Hors ligne : dernières informations reçues.';
+
+  @override
+  String get homeSectionStale => 'Mise à jour impossible : dernières informations reçues.';
+
+  @override
+  String get homeSectionLoading => 'Chargement';
+
+  @override
   String get homeLoadError => 'Impossible de charger votre tableau de bord.';
 
   @override

@@ -710,6 +710,42 @@ abstract class AppLocalizations {
   /// **'Date hégirienne calculée, à un jour près'**
   String get homeHijriApproximateNote;
 
+  /// No description provided for @homeEventsLoadError.
+  ///
+  /// In fr, this message translates to:
+  /// **'Impossible de charger le prochain évènement.'**
+  String get homeEventsLoadError;
+
+  /// No description provided for @homeEventsEmpty.
+  ///
+  /// In fr, this message translates to:
+  /// **'Aucun évènement annoncé pour le moment.'**
+  String get homeEventsEmpty;
+
+  /// No description provided for @homeFigureLoadError.
+  ///
+  /// In fr, this message translates to:
+  /// **'Impossible de charger la figure de la semaine.'**
+  String get homeFigureLoadError;
+
+  /// No description provided for @homeSectionOfflineStale.
+  ///
+  /// In fr, this message translates to:
+  /// **'Hors ligne : dernières informations reçues.'**
+  String get homeSectionOfflineStale;
+
+  /// No description provided for @homeSectionStale.
+  ///
+  /// In fr, this message translates to:
+  /// **'Mise à jour impossible : dernières informations reçues.'**
+  String get homeSectionStale;
+
+  /// No description provided for @homeSectionLoading.
+  ///
+  /// In fr, this message translates to:
+  /// **'Chargement'**
+  String get homeSectionLoading;
+
   /// No description provided for @homeLoadError.
   ///
   /// In fr, this message translates to:

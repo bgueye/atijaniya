@@ -321,6 +321,24 @@ class AppLocalizationsAr extends AppLocalizations {
   String get homeHijriApproximateNote => 'التاريخ الهجري محسوب، وقد يختلف بيوم';
 
   @override
+  String get homeEventsLoadError => 'تعذّر تحميل المناسبة القادمة.';
+
+  @override
+  String get homeEventsEmpty => 'لا توجد مناسبة معلنة حاليًا.';
+
+  @override
+  String get homeFigureLoadError => 'تعذّر تحميل شخصية الأسبوع.';
+
+  @override
+  String get homeSectionOfflineStale => 'دون اتصال: آخر المعلومات المستلمة.';
+
+  @override
+  String get homeSectionStale => 'تعذّر التحديث: آخر المعلومات المستلمة.';
+
+  @override
+  String get homeSectionLoading => 'جارٍ التحميل';
+
+  @override
   String get homeLoadError => 'تعذّر تحميل لوحتك.';
 
   @override

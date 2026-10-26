@@ -4,6 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 
 import '../../../core/date/current_day.dart';
 import '../../../core/date/hijri_date.dart';
+import '../../../core/network/network_errors.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../core/theme/rosace_painter.dart';
@@ -59,38 +60,60 @@ class HomeScreen extends ConsumerWidget {
     final eventsAsync = ref.watch(upcomingEventsProvider);
     final featuredFigureAsync = ref.watch(featuredFigureProvider);
 
-    return ListView(
-      padding: EdgeInsets.zero,
-      children: [
-        _Hero(
-          greeting: greeting,
-          dateLine: _formatTodayDate(l10n, today),
-          statusPill: dashboardAsync.maybeWhen(
-            data: (data) => _StatusPill(status: data.todayStatus, l10n: l10n),
-            orElse: () => null,
-          ),
-        ),
-        Padding(
-          padding: const EdgeInsets.fromLTRB(16, 20, 16, 24),
-          child: dashboardAsync.when(
-            loading: () => Padding(
-              padding: const EdgeInsets.symmetric(vertical: 48),
-              child: Center(child: CircularProgressIndicator(color: AppColors.emerald)),
-            ),
-            error: (error, stackTrace) => _DashboardErrorState(
-              l10n: l10n,
-              onRetry: () => ref.invalidate(homeDashboardProvider),
-            ),
-            data: (data) => _DashboardBody(
-              data: data,
-              today: today,
-              l10n: l10n,
-              eventsAsync: eventsAsync,
-              featuredFigureAsync: featuredFigureAsync,
+    // Tirer pour actualiser (audit de l'accueil du 2026-10-26, P2-2) : le
+    // tableau de bord local, le prochain évènement et la figure de la semaine.
+    // Un échec n'interrompt pas le geste : la section concernée le dit.
+    Future<void> refresh() async {
+      ref.invalidate(homeDashboardProvider);
+      ref.invalidate(figuresProvider);
+      await Future.wait([
+        ref.refresh(upcomingEventsProvider.future).then<void>((_) {}, onError: (_) {}),
+        ref.refresh(featuredFigureProvider.future).then<void>((_) {}, onError: (_) {}),
+      ]);
+    }
+
+    return RefreshIndicator(
+      color: AppColors.emerald,
+      onRefresh: refresh,
+      child: ListView(
+        physics: const AlwaysScrollableScrollPhysics(),
+        padding: EdgeInsets.zero,
+        children: [
+          _Hero(
+            greeting: greeting,
+            dateLine: _formatTodayDate(l10n, today),
+            statusPill: dashboardAsync.maybeWhen(
+              data: (data) => _StatusPill(status: data.todayStatus, l10n: l10n),
+              orElse: () => null,
             ),
           ),
-        ),
-      ],
+          Padding(
+            padding: const EdgeInsets.fromLTRB(16, 20, 16, 24),
+            child: dashboardAsync.when(
+              loading: () => Padding(
+                padding: const EdgeInsets.symmetric(vertical: 48),
+                child: Center(child: CircularProgressIndicator(color: AppColors.emerald)),
+              ),
+              error: (error, stackTrace) => _DashboardErrorState(
+                l10n: l10n,
+                onRetry: () => ref.invalidate(homeDashboardProvider),
+              ),
+              data: (data) => _DashboardBody(
+                data: data,
+                today: today,
+                l10n: l10n,
+                eventsAsync: eventsAsync,
+                featuredFigureAsync: featuredFigureAsync,
+                onRetryEvents: () => ref.invalidate(upcomingEventsProvider),
+                onRetryFigure: () {
+                  ref.invalidate(figuresProvider);
+                  ref.invalidate(featuredFigureProvider);
+                },
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
@@ -299,9 +322,13 @@ class _DashboardBody extends StatelessWidget {
     required this.l10n,
     required this.eventsAsync,
     required this.featuredFigureAsync,
+    required this.onRetryEvents,
+    required this.onRetryFigure,
   });
 
   final HomeDashboardData data;
+  final VoidCallback onRetryEvents;
+  final VoidCallback onRetryFigure;
 
   /// Jour courant (`currentDayProvider`).
   final DateTime today;
@@ -312,8 +339,6 @@ class _DashboardBody extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final hasNextMoment = data.resumableSession != null || data.nextReminder != null;
-    final nextEvent = eventsAsync.maybeWhen(data: (list) => list.isNotEmpty ? list.first : null, orElse: () => null);
-    final featuredFigure = featuredFigureAsync.maybeWhen(data: (value) => value, orElse: () => null);
     // Hadratou-l-Jouma (hebdomadaire) n'a de sens que le vendredi — hors de
     // ce jour, la ligne "non fait aujourd'hui" serait trompeuse puisqu'il
     // n'y a rien à faire.
@@ -335,15 +360,31 @@ class _DashboardBody extends StatelessWidget {
         const SizedBox(height: 20),
         _SectionLabel(l10n.homeSectionQuickAccess),
         _QuickAccessRow(isFriday: isFriday, l10n: l10n),
-        if (nextEvent != null) ...[
-          const SizedBox(height: 20),
-          _SectionLabel(l10n.homeSectionKhadara),
-          _KhadaraTeaserCard(event: nextEvent),
-        ],
-        if (featuredFigure != null) ...[
+        // Sections venues du réseau (P2-2) : elles disparaissaient en silence
+        // en cas d'erreur, apparaissaient en décalant la page, et rien ne
+        // disait qu'on était hors ligne. Voir `_NetworkSection`.
+        const SizedBox(height: 20),
+        _SectionLabel(l10n.homeSectionKhadara),
+        _NetworkSection<List<KhadaraEvent>>(
+          value: eventsAsync,
+          placeholderHeight: 72,
+          errorMessage: l10n.homeEventsLoadError,
+          onRetry: onRetryEvents,
+          builder: (events) =>
+              events.isEmpty ? _SectionNotice(l10n.homeEventsEmpty) : _KhadaraTeaserCard(event: events.first),
+        ),
+        // La figure de la semaine peut ne pas exister (aucune éligible) : la
+        // section n'apparaît alors pas, sauf erreur ou chargement.
+        if (featuredFigureAsync.valueOrNull != null || !featuredFigureAsync.hasValue) ...[
           const SizedBox(height: 20),
           _SectionLabel(l10n.homeSectionFeaturedFigure),
-          _FeaturedFigureCard(featured: featuredFigure),
+          _NetworkSection<FeaturedFigure?>(
+            value: featuredFigureAsync,
+            placeholderHeight: 280,
+            errorMessage: l10n.homeFigureLoadError,
+            onRetry: onRetryFigure,
+            builder: (featured) => featured == null ? const SizedBox.shrink() : _FeaturedFigureCard(featured: featured),
+          ),
         ],
         if (kDonationsEnabled) ...[
           const SizedBox(height: 20),
@@ -351,6 +392,92 @@ class _DashboardBody extends StatelessWidget {
           _DonationCard(l10n: l10n),
         ],
       ],
+    );
+  }
+}
+
+/// Section de l'accueil alimentée par le réseau (audit de l'accueil du
+/// 2026-10-26, P2-2) :
+/// - chargement : un emplacement de [placeholderHeight], pour que la page ne
+///   saute pas à l'arrivée du contenu ;
+/// - erreur sans contenu : message local (hors ligne distingué) et
+///   « Réessayer », les autres sections restant affichées ;
+/// - échec d'une mise à jour : le dernier contenu reçu pendant la session
+///   reste affiché, avec une mention.
+class _NetworkSection<T> extends StatelessWidget {
+  const _NetworkSection({
+    required this.value,
+    required this.placeholderHeight,
+    required this.errorMessage,
+    required this.onRetry,
+    required this.builder,
+  });
+
+  final AsyncValue<T> value;
+  final double placeholderHeight;
+  final String errorMessage;
+  final VoidCallback onRetry;
+  final Widget Function(T value) builder;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    final error = value.error;
+    if (value.hasValue) {
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          if (error != null && !value.isLoading)
+            _SectionNotice(isNetworkError(error) ? l10n.homeSectionOfflineStale : l10n.homeSectionStale),
+          builder(value.requireValue),
+        ],
+      );
+    }
+    if (error != null && !value.isLoading) {
+      return Card(
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(16, 12, 8, 12),
+          child: Row(
+            children: [
+              Icon(isNetworkError(error) ? Icons.wifi_off : Icons.error_outline, color: AppColors.bronze, size: 20),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Text(
+                  isNetworkError(error) ? l10n.khadaraOfflineError : errorMessage,
+                  style: TextStyle(color: AppColors.secondaryInk, fontSize: 13),
+                ),
+              ),
+              TextButton(onPressed: onRetry, child: Text(l10n.homeRetry)),
+            ],
+          ),
+        ),
+      );
+    }
+    return Semantics(
+      label: l10n.homeSectionLoading,
+      child: Container(
+        height: placeholderHeight,
+        decoration: BoxDecoration(
+          color: AppColors.offWhite,
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(color: AppColors.bronze.withValues(alpha: 0.15)),
+        ),
+      ),
+    );
+  }
+}
+
+/// Court message sous un intitulé de section (vide, hors ligne).
+class _SectionNotice extends StatelessWidget {
+  const _SectionNotice(this.text);
+
+  final String text;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(2, 0, 2, 8),
+      child: Text(text, style: TextStyle(color: AppColors.secondaryInk, fontSize: 12.5)),
     );
   }
 }
@@ -451,14 +578,17 @@ class _WirdRow extends StatelessWidget {
             ? AppTheme.sacredText(fontSize: 18, color: AppColors.ink)
             : const TextStyle(fontWeight: FontWeight.w500),
       ),
-      subtitle: subtitle != null ? ContentText(subtitle, style: TextStyle(color: AppColors.secondaryInk, fontSize: 12)) : null,
+      subtitle: subtitle != null
+          ? ContentText(subtitle, style: TextStyle(color: AppColors.secondaryInk, fontSize: 12))
+          : null,
       trailing: streakLabel != null
           ? Container(
               padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 4),
               decoration: BoxDecoration(color: AppColors.goldSoft, borderRadius: BorderRadius.circular(999)),
               // Émeraude sur or pâle (5,00:1) : l'or sur or pâle faisait
               // 1,93:1, illisible (audit de l'accueil du 2026-10-26, P1).
-              child: ContentText(streakLabel, style: TextStyle(color: AppColors.emerald, fontSize: 10.5, fontWeight: FontWeight.w500)),
+              child: ContentText(streakLabel,
+                  style: TextStyle(color: AppColors.emerald, fontSize: 10.5, fontWeight: FontWeight.w500)),
             )
           : DirectionalChevron(color: AppColors.bronze),
     );
@@ -696,7 +826,8 @@ class _DonationCard extends StatelessWidget {
           child: Icon(Icons.favorite_outline, color: AppColors.gold, size: 19),
         ),
         title: Text(l10n.donationTitle, style: const TextStyle(fontWeight: FontWeight.w500)),
-        subtitle: Text(l10n.settingsDonationTileSubtitle, style: TextStyle(color: AppColors.secondaryInk, fontSize: 12)),
+        subtitle:
+            Text(l10n.settingsDonationTileSubtitle, style: TextStyle(color: AppColors.secondaryInk, fontSize: 12)),
         trailing: DirectionalChevron(color: AppColors.bronze),
       ),
     );
@@ -732,8 +863,12 @@ class _KhadaraTeaserCard extends StatelessWidget {
               : const _KhadaraThumbFallback(),
         ),
         // Deux lignes : à 200 %, une seule coupait le titre (« Ziarra de Taïba… »).
-        title: ContentText(event.title, style: const TextStyle(fontWeight: FontWeight.w500, fontSize: 13.5), maxLines: 2, overflow: TextOverflow.ellipsis),
-        subtitle: Text(formatKhadaraEventSchedule(event, AppLocalizations.of(context)!), style: TextStyle(color: AppColors.secondaryInk, fontSize: 11.5)),
+        title: ContentText(event.title,
+            style: const TextStyle(fontWeight: FontWeight.w500, fontSize: 13.5),
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis),
+        subtitle: Text(formatKhadaraEventSchedule(event, AppLocalizations.of(context)!),
+            style: TextStyle(color: AppColors.secondaryInk, fontSize: 11.5)),
         trailing: DirectionalChevron(color: AppColors.bronze),
       ),
     );
@@ -779,14 +914,22 @@ class _FeaturedFigureCard extends StatelessWidget {
               if (figure.portraitUrl == null)
                 const ColoredBox(color: AppColors.zaytoune)
               else
-              Image.network(
-                figure.portraitUrl!,
-                fit: BoxFit.cover,
-                alignment: Alignment.topCenter,
-                errorBuilder: (context, error, stackTrace) => const ColoredBox(color: AppColors.zaytoune),
-                // Voir la même note dans event_detail_screen.dart.
-                cacheWidth: (MediaQuery.of(context).size.width * MediaQuery.of(context).devicePixelRatio).round(),
-              ),
+                Image.network(
+                  figure.portraitUrl!,
+                  fit: BoxFit.cover,
+                  alignment: Alignment.topCenter,
+                  errorBuilder: (context, error, stackTrace) => const ColoredBox(color: AppColors.zaytoune),
+                  // Fond et indicateur pendant le téléchargement : la carte était
+                  // un rectangle vide jusqu'à l'arrivée du portrait (P2-2).
+                  loadingBuilder: (context, child, progress) => progress == null
+                      ? child
+                      : ColoredBox(
+                          color: AppColors.emeraldSoft,
+                          child: Center(child: CircularProgressIndicator(color: AppColors.emerald)),
+                        ),
+                  // Voir la même note dans event_detail_screen.dart.
+                  cacheWidth: (MediaQuery.of(context).size.width * MediaQuery.of(context).devicePixelRatio).round(),
+                ),
               DecoratedBox(
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
