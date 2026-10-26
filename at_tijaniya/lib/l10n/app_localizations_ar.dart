@@ -2736,6 +2736,12 @@ class AppLocalizationsAr extends AppLocalizations {
   String get communityGroupsLeaveError => 'تعذّر مغادرة هذه المجموعة. حاول مرة أخرى.';
 
   @override
+  String get communityGroupsDescriptionMore => 'عرض المزيد';
+
+  @override
+  String get communityGroupsDescriptionLess => 'عرض أقل';
+
+  @override
   String get communityMessageSendError => 'تعذّر إرسال الرسالة. حاول مرة أخرى.';
 
   @override

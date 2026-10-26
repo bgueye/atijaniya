@@ -5408,6 +5408,18 @@ abstract class AppLocalizations {
   /// **'Impossible de quitter ce groupe. Réessayez.'**
   String get communityGroupsLeaveError;
 
+  /// No description provided for @communityGroupsDescriptionMore.
+  ///
+  /// In fr, this message translates to:
+  /// **'Voir plus'**
+  String get communityGroupsDescriptionMore;
+
+  /// No description provided for @communityGroupsDescriptionLess.
+  ///
+  /// In fr, this message translates to:
+  /// **'Voir moins'**
+  String get communityGroupsDescriptionLess;
+
   /// No description provided for @communityMessageSendError.
   ///
   /// In fr, this message translates to:

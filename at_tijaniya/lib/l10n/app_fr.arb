@@ -980,6 +980,8 @@
   "communityCommentSendError": "Le commentaire n'a pas pu être envoyé. Réessayez.",
   "communityGroupsJoinError": "Impossible de rejoindre ce groupe. Réessayez.",
   "communityGroupsLeaveError": "Impossible de quitter ce groupe. Réessayez.",
+  "communityGroupsDescriptionMore": "Voir plus",
+  "communityGroupsDescriptionLess": "Voir moins",
   "communityMessageSendError": "Le message n'a pas pu être envoyé. Réessayez.",
   "communityMessagesLoadError": "Impossible de charger les messages.",
   "adminMouqaddamZawiyasTitle": "Zawiyas des mouqaddams",

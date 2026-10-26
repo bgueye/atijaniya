@@ -55,6 +55,7 @@ class _GroupDetailScreenState extends ConsumerState<GroupDetailScreen> {
       if (mounted && _group.isMember) ref.invalidate(groupPostsProvider(_group.id));
     });
   }
+
   late Group _group = widget.group;
   bool _updatingMembership = false;
   bool _deletingGroup = false;
@@ -222,35 +223,50 @@ class _GroupDetailScreenState extends ConsumerState<GroupDetailScreen> {
               ]
             : null,
       ),
-      body: Column(
-        children: [
-          _GroupHeader(
-            group: _group,
-            l10n: l10n,
-            signedIn: userId != null,
-            updating: _updatingMembership,
-            onJoin: _join,
-            onLeave: _confirmLeave,
-            onSignInPrompt: () => _promptSignIn(l10n.communityGroupsSignInToJoin),
-          ),
-          if (_group.isMember) _GroupLiveStreamSection(group: _group, l10n: l10n, canManage: canManage),
-          const Divider(height: 1),
-          Expanded(
-            child: _group.isMember
-                ? _GroupPosts(groupId: _group.id, l10n: l10n)
-                : _NotMemberState(l10n: l10n),
-          ),
-          if (_group.isMember)
-            SafeArea(
-              top: false,
-              child: MessageComposer(
-                hintText: l10n.communityGroupsPostHint,
-                sendTooltip: l10n.communitySendMessageButton,
-                errorMessage: l10n.communityMessageSendError,
-                onSend: _sendMessage,
+      // En-tête plafonné et défilant (audit Communauté du 2026-10-26, P2-8) :
+      // une longue description, plus le clavier ouvert, repoussait la
+      // discussion hors de l'écran. Un membre garde au moins 60 % de la
+      // hauteur pour la discussion ; un non-membre n'en a pas, son en-tête
+      // (et le bouton Rejoindre) peut aller plus loin.
+      body: LayoutBuilder(
+        builder: (context, constraints) => Column(
+          children: [
+            ConstrainedBox(
+              constraints: BoxConstraints(maxHeight: constraints.maxHeight * (_group.isMember ? 0.4 : 0.75)),
+              child: SingleChildScrollView(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    _GroupHeader(
+                      group: _group,
+                      l10n: l10n,
+                      signedIn: userId != null,
+                      updating: _updatingMembership,
+                      onJoin: _join,
+                      onLeave: _confirmLeave,
+                      onSignInPrompt: () => _promptSignIn(l10n.communityGroupsSignInToJoin),
+                    ),
+                    if (_group.isMember) _GroupLiveStreamSection(group: _group, l10n: l10n, canManage: canManage),
+                  ],
+                ),
               ),
             ),
-        ],
+            const Divider(height: 1),
+            Expanded(
+              child: _group.isMember ? _GroupPosts(groupId: _group.id, l10n: l10n) : _NotMemberState(l10n: l10n),
+            ),
+            if (_group.isMember)
+              SafeArea(
+                top: false,
+                child: MessageComposer(
+                  hintText: l10n.communityGroupsPostHint,
+                  sendTooltip: l10n.communitySendMessageButton,
+                  errorMessage: l10n.communityMessageSendError,
+                  onSend: _sendMessage,
+                ),
+              ),
+          ],
+        ),
       ),
     );
   }
@@ -283,7 +299,7 @@ class _GroupHeader extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           if (group.description != null) ...[
-            ContentText(group.description!, style: const TextStyle(color: AppColors.ink, fontSize: 16, height: 1.4)),
+            _CollapsibleDescription(text: group.description!, l10n: l10n),
             const SizedBox(height: 12),
           ],
           Row(
@@ -291,7 +307,15 @@ class _GroupHeader extends StatelessWidget {
               if (group.locationLabel != null) ...[
                 Icon(Icons.place_outlined, size: 16, color: AppColors.bronze),
                 const SizedBox(width: 4),
-                ContentText(group.locationLabel!, style: TextStyle(color: AppColors.secondaryInk, fontSize: 13)),
+                // `Flexible` + ellipse : un nom de zawiya long (« Zawiya Seydi
+                // El Hadji Malick Sy de New York ») débordait de la ligne.
+                Flexible(
+                  child: ContentText(
+                    group.locationLabel!,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(color: AppColors.secondaryInk, fontSize: 13),
+                  ),
+                ),
                 const SizedBox(width: 16),
               ],
               Icon(Icons.people_alt_outlined, size: 16, color: AppColors.bronze),
@@ -315,6 +339,63 @@ class _GroupHeader extends StatelessWidget {
           ),
         ],
       ),
+    );
+  }
+}
+
+/// Description d'un groupe repliée sur 3 lignes, avec « Voir plus » quand
+/// elle dépasse (audit Communauté du 2026-10-26, P2-8).
+class _CollapsibleDescription extends StatefulWidget {
+  const _CollapsibleDescription({required this.text, required this.l10n});
+
+  final String text;
+  final AppLocalizations l10n;
+
+  @override
+  State<_CollapsibleDescription> createState() => _CollapsibleDescriptionState();
+}
+
+class _CollapsibleDescriptionState extends State<_CollapsibleDescription> {
+  static const _collapsedLines = 3;
+  static const _style = TextStyle(color: AppColors.ink, fontSize: 16, height: 1.4);
+  bool _expanded = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        // Le texte dépasse-t-il 3 lignes à cette largeur et à cette taille de
+        // texte ? Sinon, pas de bouton.
+        final painter = TextPainter(
+          text: TextSpan(text: widget.text, style: _style),
+          maxLines: _collapsedLines,
+          textDirection: Directionality.of(context),
+          textScaler: MediaQuery.textScalerOf(context),
+        )..layout(maxWidth: constraints.maxWidth);
+        final overflows = painter.didExceedMaxLines;
+        painter.dispose();
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            ContentText(
+              widget.text,
+              maxLines: _expanded ? null : _collapsedLines,
+              overflow: _expanded ? null : TextOverflow.ellipsis,
+              style: _style,
+            ),
+            if (overflows)
+              Align(
+                alignment: AlignmentDirectional.centerStart,
+                child: TextButton(
+                  onPressed: () => setState(() => _expanded = !_expanded),
+                  child: Text(_expanded
+                      ? widget.l10n.communityGroupsDescriptionLess
+                      : widget.l10n.communityGroupsDescriptionMore),
+                ),
+              ),
+          ],
+        );
+      },
     );
   }
 }
@@ -357,7 +438,8 @@ class _GroupLiveStreamSection extends ConsumerWidget {
               }
               return OutlinedButton.icon(
                 onPressed: () => Navigator.of(context).push(
-                  MaterialPageRoute(builder: (_) => StartLiveStreamScreen.forGroup(groupId: group.id, contextTitle: group.name)),
+                  MaterialPageRoute(
+                      builder: (_) => StartLiveStreamScreen.forGroup(groupId: group.id, contextTitle: group.name)),
                 ),
                 icon: const Icon(Icons.podcasts_outlined),
                 label: Text(l10n.khadaraStartLive),
@@ -439,14 +521,22 @@ class _GroupPosts extends ConsumerWidget {
           // rechargement, la tuile réutilisait l'état de la précédente à la
           // même position (texte d'un message supprimé affiché sur le
           // suivant, boutons restés désactivés).
+          // `reverse` (audit Communauté du 2026-10-26, P2-8) : la discussion
+          // s'ouvre sur le message le plus récent et y reste quand un nouveau
+          // arrive, comme la conversation privée depuis le 2026-10-04 ; elle
+          // s'ouvrait sur les plus anciens.
           : ListView.builder(
+              reverse: true,
               padding: const EdgeInsets.all(16),
               itemCount: list.length,
-              itemBuilder: (context, i) => _GroupPostTile(
-                key: ValueKey(list[i].id),
-                post: list[i],
-                fallback: l10n.communityDefaultAuthor,
-              ),
+              itemBuilder: (context, i) {
+                final post = list[list.length - 1 - i];
+                return _GroupPostTile(
+                  key: ValueKey(post.id),
+                  post: post,
+                  fallback: l10n.communityDefaultAuthor,
+                );
+              },
             ),
     );
   }
@@ -558,17 +648,27 @@ class _GroupPostTileState extends ConsumerState<_GroupPostTile> {
         children: [
           Row(
             children: [
-              ContentText(
-                widget.post.authorDisplayName ?? widget.fallback,
-                style: const TextStyle(fontWeight: FontWeight.w600, color: AppColors.ink, fontSize: 13),
-              ),
-              const SizedBox(width: 8),
-              ContentText(
-                formatCommunityDateTime(widget.post.createdAt),
-                style: TextStyle(color: AppColors.secondaryInk, fontSize: 11),
+              // Nom coupé par une ellipse plutôt qu'un débordement (P2-8) ;
+              // la date et les actions gardent leur place.
+              Expanded(
+                child: Row(
+                  children: [
+                    Flexible(
+                      child: ContentText(
+                        widget.post.authorDisplayName ?? widget.fallback,
+                        overflow: TextOverflow.ellipsis,
+                        style: const TextStyle(fontWeight: FontWeight.w600, color: AppColors.ink, fontSize: 13),
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    ContentText(
+                      formatCommunityDateTime(widget.post.createdAt),
+                      style: TextStyle(color: AppColors.secondaryInk, fontSize: 11),
+                    ),
+                  ],
+                ),
               ),
               if (isAuthor) ...[
-                const Spacer(),
                 InkWell(
                   onTap: _busy ? null : _edit,
                   child: Tooltip(
@@ -593,7 +693,6 @@ class _GroupPostTileState extends ConsumerState<_GroupPostTile> {
                 // Message d'un autre membre (2026-10-11) : le signaler à la
                 // modération, ou bloquer son auteur — ses messages
                 // disparaissent alors pour moi seul.
-                const Spacer(),
                 PopupMenuButton<String>(
                   tooltip: l10n.moderationReportAction,
                   icon: Icon(Icons.more_vert, size: 18, color: AppColors.bronze),
@@ -744,8 +843,7 @@ class _EditGroupSheetState extends ConsumerState<_EditGroupSheet> {
                 controller: _nameController,
                 maxLength: TextLimits.groupName,
                 decoration: InputDecoration(labelText: l10n.communityGroupsNameLabel),
-                validator: (value) =>
-                    (value == null || value.trim().isEmpty) ? l10n.communityGroupsNameRequired : null,
+                validator: (value) => (value == null || value.trim().isEmpty) ? l10n.communityGroupsNameRequired : null,
               ),
               const SizedBox(height: 16),
               TextFormField(
@@ -767,7 +865,8 @@ class _EditGroupSheetState extends ConsumerState<_EditGroupSheet> {
                   decoration: InputDecoration(labelText: l10n.communityGroupsZawiyaLabel),
                   items: [
                     const DropdownMenuItem<String?>(value: null, child: Text('—')),
-                    ...list.map((z) => DropdownMenuItem<String?>(value: z.id, child: ContentText(z.name, overflow: TextOverflow.ellipsis))),
+                    ...list.map((z) => DropdownMenuItem<String?>(
+                        value: z.id, child: ContentText(z.name, overflow: TextOverflow.ellipsis))),
                   ],
                   onChanged: (value) => setState(() => _zawiyaId = value),
                 ),

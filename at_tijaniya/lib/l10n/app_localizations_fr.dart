@@ -2762,6 +2762,12 @@ class AppLocalizationsFr extends AppLocalizations {
   String get communityGroupsLeaveError => 'Impossible de quitter ce groupe. Réessayez.';
 
   @override
+  String get communityGroupsDescriptionMore => 'Voir plus';
+
+  @override
+  String get communityGroupsDescriptionLess => 'Voir moins';
+
+  @override
   String get communityMessageSendError => 'Le message n\'a pas pu être envoyé. Réessayez.';
 
   @override

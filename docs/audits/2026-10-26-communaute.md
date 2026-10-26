@@ -326,6 +326,12 @@ avant une ouverture plus large.
 - **Correctif** : `Flexible`/`Expanded` + ellipse sur ces textes ; description repliable
   (`maxLines: 3` + « Voir plus ») ou en-tête dans le défilement ; `reverse: true` et ordre
   inversé, comme `conversation_screen.dart`.
+- **Statut : corrigé le 2026-10-26.** En-tête (description, lieu, bouton, direct) dans une
+  zone défilante plafonnée à 40 % de la hauteur pour un membre (75 % sinon) ; description
+  repliée sur 3 lignes avec « Voir plus / Voir moins » (FR et AR) ; lieu, nom d'auteur coupés
+  par une ellipse ; discussion en `reverse`, ouverte sur le dernier message. Test
+  `test/group_detail_layout_test.dart` (200 %, arabe, petit écran), en échec avant la
+  correction.
 
 ### P2-9 · Chargements entiers, compteurs faux au-delà de 1 000 lignes
 
