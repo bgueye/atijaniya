@@ -1862,6 +1862,24 @@ abstract class AppLocalizations {
   /// **'Doit être un nombre valide.'**
   String get zawiyaFormCoordinateInvalid;
 
+  /// No description provided for @zawiyaFormLatitudeOutOfRange.
+  ///
+  /// In fr, this message translates to:
+  /// **'La latitude doit être comprise entre -90 et 90.'**
+  String get zawiyaFormLatitudeOutOfRange;
+
+  /// No description provided for @zawiyaFormLongitudeOutOfRange.
+  ///
+  /// In fr, this message translates to:
+  /// **'La longitude doit être comprise entre -180 et 180.'**
+  String get zawiyaFormLongitudeOutOfRange;
+
+  /// No description provided for @zawiyaFormCoordinatesPairRequired.
+  ///
+  /// In fr, this message translates to:
+  /// **'Renseignez la latitude et la longitude, ou aucune des deux.'**
+  String get zawiyaFormCoordinatesPairRequired;
+
   /// No description provided for @zawiyaFormSave.
   ///
   /// In fr, this message translates to:

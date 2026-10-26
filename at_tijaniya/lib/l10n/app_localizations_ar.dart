@@ -923,6 +923,15 @@ class AppLocalizationsAr extends AppLocalizations {
   String get zawiyaFormCoordinateInvalid => 'يجب أن يكون رقمًا صالحًا.';
 
   @override
+  String get zawiyaFormLatitudeOutOfRange => 'يجب أن يكون خط العرض بين ‎-90 و90.';
+
+  @override
+  String get zawiyaFormLongitudeOutOfRange => 'يجب أن يكون خط الطول بين ‎-180 و180.';
+
+  @override
+  String get zawiyaFormCoordinatesPairRequired => 'أدخل خط العرض وخط الطول معًا، أو اتركهما فارغين.';
+
+  @override
   String get zawiyaFormSave => 'حفظ';
 
   @override

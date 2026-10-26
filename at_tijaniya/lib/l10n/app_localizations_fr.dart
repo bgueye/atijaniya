@@ -928,6 +928,15 @@ class AppLocalizationsFr extends AppLocalizations {
   String get zawiyaFormCoordinateInvalid => 'Doit être un nombre valide.';
 
   @override
+  String get zawiyaFormLatitudeOutOfRange => 'La latitude doit être comprise entre -90 et 90.';
+
+  @override
+  String get zawiyaFormLongitudeOutOfRange => 'La longitude doit être comprise entre -180 et 180.';
+
+  @override
+  String get zawiyaFormCoordinatesPairRequired => 'Renseignez la latitude et la longitude, ou aucune des deux.';
+
+  @override
   String get zawiyaFormSave => 'Enregistrer';
 
   @override

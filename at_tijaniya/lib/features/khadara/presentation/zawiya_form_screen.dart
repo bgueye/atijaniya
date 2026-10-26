@@ -3,9 +3,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../l10n/app_localizations.dart';
 import '../domain/khadara_models.dart';
+import '../domain/zawiya_coordinates.dart';
 import 'khadara_format.dart';
 import 'khadara_providers.dart';
-import '../../../core/text/numerals.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/widgets/content_text.dart';
 
@@ -67,21 +67,19 @@ class _ZawiyaFormScreenState extends ConsumerState<ZawiyaFormScreen> {
     super.dispose();
   }
 
-  /// `null` pour un champ vide (optionnel) ; sinon la valeur parsée, jamais
-  /// levée d'exception ici — la validation du format est faite par le
-  /// `validator` du champ, cette méthode n'est appelée qu'après validation.
-  double? _parseOptionalDouble(String text) {
-    final trimmed = text.trim();
-    if (trimmed.isEmpty) return null;
-    return double.parse(trimmed.replaceAll(',', '.'));
-  }
-
-  String? _validateOptionalDouble(String? value, AppLocalizations l10n) {
-    final trimmed = value?.trim() ?? '';
-    if (trimmed.isEmpty) return null;
-    return parseLocalizedDouble(trimmed) == null
-        ? l10n.zawiyaFormCoordinateInvalid
-        : null;
+  /// Message d'erreur d'un champ de coordonnée, ou `null` : nombre valide,
+  /// dans les bornes, et les deux coordonnées ensemble ou aucune. La lecture
+  /// est la même qu'à l'enregistrement (`parseZawiyaCoordinate`), chiffres
+  /// arabo-indiens compris (audit Zawiyas du 2026-10-25, P2-9).
+  String? _validateCoordinate(String? value, {required bool isLatitude, required AppLocalizations l10n}) {
+    final other = isLatitude ? _longitudeController.text : _latitudeController.text;
+    return switch (zawiyaCoordinateError(value ?? '', isLatitude: isLatitude, otherText: other)) {
+      null => null,
+      ZawiyaCoordinateError.invalid => l10n.zawiyaFormCoordinateInvalid,
+      ZawiyaCoordinateError.outOfRange =>
+        isLatitude ? l10n.zawiyaFormLatitudeOutOfRange : l10n.zawiyaFormLongitudeOutOfRange,
+      ZawiyaCoordinateError.missingPair => l10n.zawiyaFormCoordinatesPairRequired,
+    };
   }
 
   Future<void> _submit() async {
@@ -105,8 +103,8 @@ class _ZawiyaFormScreenState extends ConsumerState<ZawiyaFormScreen> {
           name: _nameController.text.trim(),
           kind: _kind,
           description: descriptionText.isEmpty ? null : descriptionText,
-          latitude: _parseOptionalDouble(_latitudeController.text),
-          longitude: _parseOptionalDouble(_longitudeController.text),
+          latitude: parseZawiyaCoordinate(_latitudeController.text),
+          longitude: parseZawiyaCoordinate(_longitudeController.text),
           addressText: addressText.isEmpty ? null : addressText,
           contactInfo: contactText.isEmpty ? null : contactText,
           coordinatesApproximate: _coordinatesApproximate,
@@ -117,8 +115,8 @@ class _ZawiyaFormScreenState extends ConsumerState<ZawiyaFormScreen> {
           name: _nameController.text.trim(),
           kind: _kind,
           description: descriptionText.isEmpty ? null : descriptionText,
-          latitude: _parseOptionalDouble(_latitudeController.text),
-          longitude: _parseOptionalDouble(_longitudeController.text),
+          latitude: parseZawiyaCoordinate(_latitudeController.text),
+          longitude: parseZawiyaCoordinate(_longitudeController.text),
           addressText: addressText.isEmpty ? null : addressText,
           contactInfo: contactText.isEmpty ? null : contactText,
           coordinatesApproximate: _coordinatesApproximate,
@@ -200,8 +198,7 @@ class _ZawiyaFormScreenState extends ConsumerState<ZawiyaFormScreen> {
                             labelText: l10n.zawiyaFormLatitudeLabel),
                         keyboardType: const TextInputType.numberWithOptions(
                             decimal: true, signed: true),
-                        validator: (value) =>
-                            _validateOptionalDouble(value, l10n),
+                        validator: (value) => _validateCoordinate(value, isLatitude: true, l10n: l10n),
                       ),
                     ),
                     const SizedBox(width: 12),
@@ -212,8 +209,7 @@ class _ZawiyaFormScreenState extends ConsumerState<ZawiyaFormScreen> {
                             labelText: l10n.zawiyaFormLongitudeLabel),
                         keyboardType: const TextInputType.numberWithOptions(
                             decimal: true, signed: true),
-                        validator: (value) =>
-                            _validateOptionalDouble(value, l10n),
+                        validator: (value) => _validateCoordinate(value, isLatitude: false, l10n: l10n),
                       ),
                     ),
                   ],
