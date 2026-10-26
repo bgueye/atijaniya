@@ -209,6 +209,25 @@ avant une ouverture plus large.
     politiques `*_public_read` sur `storage.objects`, qui ne servent qu'au listage.
   Ordre sûr : nouvelle version de l'app qui passe par les fonctions, publication, puis
   migration (la version des testeurs lit `group_memberships` et `post_likes` directement).
+- **Statut : en deux étapes, la première faite le 2026-10-26.**
+  - *Appliqué* : migration `2026-10-26_community_private_reads_functions.sql` —
+    `shares_group_with(autre)` et `am_i_admin()` (comptes connectés seulement), et `is_admin`
+    passé en security definer et limité au compte appelant (il permettait, en RPC, de tester
+    n'importe quel identifiant et donc de repérer l'administrateur, même sans la colonne).
+    Côté app, « Envoyer un message » passe par `shares_group_with`, le profil liste ses
+    colonnes et lit son droit d'admin par `am_i_admin` ; compteurs déjà servis par
+    `post_counts` / `group_member_counts` (P2-9). Vérifié : `is_admin` d'un autre compte
+    répond `false` pour un compte ordinaire et sans compte, `am_i_admin` refusé sans compte.
+  - *À appliquer après diffusion de cette version aux testeurs* :
+    `2026-10-26_close_anonymous_community_reads.sql` (lecture de ses seules lignes dans
+    `group_memberships` et `post_likes`, `profiles.is_admin` retiré du privilège de lecture,
+    listage de `post-media` et `avatars` limité à son propre dossier — Storage exige une
+    politique de lecture pour `remove()` et `list()`). Rejouée dans un scénario annulé :
+    sans compte, 0 appartenance, 0 « j'aime », `is_admin` refusé (`42501`), 0 fichier listé,
+    les 14 profils et 11 publications toujours lisibles et les compteurs servis ; pour un
+    membre, ses 3 appartenances, la discussion de son groupe lue et écrite, ses 8 « j'aime » et
+    ses 11 fichiers visibles, aucun fichier d'autrui ; `select *` sur `profiles` refusé (d'où la
+    liste de colonnes côté app). Suivi dans `docs/13`.
 
 ### P2-3 · Publications d'un compte supprimé présentées au nom de la zawiya
 

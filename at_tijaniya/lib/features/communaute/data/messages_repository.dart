@@ -35,14 +35,14 @@ import '../domain/message_models.dart';
 class MessagesRepository {
   const MessagesRepository();
 
+  /// Groupe commun avec [otherUserId], vérifié par la fonction
+  /// `shares_group_with` (audit Communauté du 2026-10-26, P2-2) : l'app lisait
+  /// les groupes de l'autre disciple dans `group_memberships`, dont la lecture
+  /// par autrui sera fermée.
   Future<bool> shareGroupWith(String otherUserId) async {
-    final userId = SupabaseConfig.client.auth.currentUser?.id;
-    if (userId == null) return false;
-    final myGroups = await SupabaseConfig.client.from('group_memberships').select('group_id').eq('user_id', userId);
-    final theirGroups =
-        await SupabaseConfig.client.from('group_memberships').select('group_id').eq('user_id', otherUserId);
-    final myGroupIds = myGroups.map((row) => row['group_id'] as String).toSet();
-    return theirGroups.any((row) => myGroupIds.contains(row['group_id'] as String));
+    if (SupabaseConfig.client.auth.currentUser == null) return false;
+    final result = await SupabaseConfig.client.rpc('shares_group_with', params: {'p_other_user_id': otherUserId});
+    return result as bool? ?? false;
   }
 
   /// Conversations du compte connecté, de la plus récente à la plus

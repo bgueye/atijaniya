@@ -14,14 +14,19 @@ import '../domain/profile_models.dart';
 class ProfileRepository {
   const ProfileRepository();
 
+  /// Colonnes listées et droit d'administration lu par `am_i_admin()`
+  /// (audit Communauté du 2026-10-26, P2-2) : `profiles.is_admin` sera retiré
+  /// de la lecture, pour que personne ne puisse repérer le compte
+  /// administrateur ; un `select('*')` serait alors refusé.
   Future<Profile> fetchMyProfile() async {
     final userId = SupabaseConfig.client.auth.currentUser!.id;
     final row = await SupabaseConfig.client
         .from('profiles')
-        .select('*, zawiyas(name)')
+        .select('user_id, display_name, avatar_url, locale, zawiya_id, bio, zawiyas(name)')
         .eq('user_id', userId)
         .single();
-    return Profile.fromRow(row);
+    final isAdmin = await SupabaseConfig.client.rpc('am_i_admin') as bool? ?? false;
+    return Profile.fromRow({...row, 'is_admin': isAdmin});
   }
 
   /// `zawiyaId` à `null` efface le rattachement à une zawiya.

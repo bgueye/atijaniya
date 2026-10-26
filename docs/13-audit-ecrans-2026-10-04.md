@@ -459,6 +459,30 @@ Second passage sur le module Figures, après `audit-2026-10-04/08-figures.md` : 
   (37 fichiers), à reprendre écran par écran ;
 - pagination de la liste des figures au-delà d'environ 150 fiches (reportée).
 
+## Audit de l'onglet Communauté (2026-10-26)
+
+Second passage sur le fil, les groupes et la messagerie, après
+`audit-2026-10-04/09-communaute.md` : rapport `docs/audits/2026-10-26-communaute.md`, où
+chaque constat porte son statut. Aucun P0 : 32 écritures forcées refusées par la base.
+
+- **P1** : publier, créer un groupe, commenter, rejoindre ou quitter un groupe échouaient
+  sans message, le commentaire pouvait partir en double. Corrigé.
+- **P2** : limites de longueur en base, journal des actions d'admin, fil de l'admin sans
+  contenus masqués, blocage depuis le fil, cibles de 48 dp et encre secondaire, mise en page
+  de la discussion de groupe, compteurs et aperçus calculés par le serveur avec pagination :
+  corrigés et appliqués en base le 2026-10-26.
+
+**Reste à faire** :
+- **appliquer `database/migrations/2026-10-26_close_anonymous_community_reads.sql`** (P2-2 :
+  appartenances aux groupes, « j'aime », `profiles.is_admin` et listage des buckets fermés à
+  autrui et aux visiteurs) **une fois diffusée aux testeurs la version qui passe par les
+  fonctions serveur** — pas avant : la version 1.0.0+4 lit encore ces tables directement
+  (compteurs faux, « Envoyer un message » absent, profil illisible). Scénario annulé
+  déjà joué le 2026-10-26 ; le rejouer juste avant d'appliquer, puis ajouter le fichier à
+  la section 12 de `schema.sql` ;
+- validation sur téléphone (français et arabe, réseau coupé, texte agrandi) ;
+- points P3 du rapport.
+
 ## Index des rapports par module
 
 | Fichier | Écrans |
