@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'app.dart';
 import 'core/supabase/supabase_config.dart';
+import 'core/theme/locale_controller.dart';
 import 'features/wird/data/wird_notification_service.dart';
 
 Future<void> main() async {
@@ -13,5 +14,11 @@ Future<void> main() async {
   // plus tard, quand le disciple active son premier rappel (voir
   // WirdReminderController.setEnabled).
   await WirdNotificationService.instance.init();
-  runApp(const ProviderScope(child: AtTijaniyaApp()));
+  // Langue enregistrée (audit de l'accueil du 2026-10-26, P2-1) : connue dès
+  // le premier affichage, l'étape de choix de langue est sautée.
+  final savedLocale = await LocaleStore.load();
+  runApp(ProviderScope(
+    overrides: [initialLocaleProvider.overrideWithValue(savedLocale)],
+    child: const AtTijaniyaApp(),
+  ));
 }

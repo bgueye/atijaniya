@@ -17,9 +17,9 @@ void main() {
     final scaffold = tester.widget<Scaffold>(find.byType(Scaffold).first);
     expect(scaffold.backgroundColor, AppColors.zaytoune);
 
-    // Le Splash screen programme un Future.delayed(1600ms) pour avancer
+    // Le Splash screen programme un minuteur de 450 ms pour avancer
     // automatiquement vers l'écran de langue : le vider évite un timer
     // encore pendant à la fin du test.
-    await tester.pump(const Duration(milliseconds: 1600));
+    await tester.pump(const Duration(milliseconds: 450));
   });
 }

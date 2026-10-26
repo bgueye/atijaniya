@@ -43,6 +43,14 @@ class ProfileRepository {
     }).eq('user_id', userId);
   }
 
+  /// Langue de l'app du compte connecté (`profiles.locale`, `fr` ou `ar`) —
+  /// écrite par `app.dart` au changement de langue et à la connexion
+  /// (audit de l'accueil du 2026-10-26, P2-1).
+  Future<void> updateMyLocale(String locale) async {
+    final userId = SupabaseConfig.client.auth.currentUser!.id;
+    await SupabaseConfig.client.from('profiles').update({'locale': locale}).eq('user_id', userId);
+  }
+
   /// Photo de profil — appel séparé de [updateMyProfile] (même principe que
   /// `FiguresRepository.updatePortrait`) : l'image est téléversée puis son
   /// URL enregistrée seule, sans dépendre du reste du formulaire nom/bio/

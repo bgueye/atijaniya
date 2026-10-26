@@ -1,12 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Modify this file to customize your launch splash screen -->
+<!-- Écran de lancement natif aux couleurs du splash de l'app (zaytoune et
+     logo) : il s'enchaîne sans rupture avec le splash Flutter (audit de
+     l'accueil du 2026-10-26, P2-1). Il était blanc, puis venait le splash
+     vert, puis l'écran de langue. -->
 <layer-list xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:drawable="?android:colorBackground" />
-
-    <!-- You can insert your own image assets here -->
-    <!-- <item>
+    <item android:drawable="@color/launch_background" />
+    <item>
         <bitmap
             android:gravity="center"
-            android:src="@mipmap/launch_image" />
-    </item> -->
+            android:src="@mipmap/ic_launcher" />
+    </item>
 </layer-list>

@@ -24,14 +24,20 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
   @override
   void initState() {
     super.initState();
-    _controller = AnimationController(vsync: this, duration: const Duration(milliseconds: 900));
+    _controller = AnimationController(vsync: this, duration: const Duration(milliseconds: 350));
     _fade = CurvedAnimation(parent: _controller, curve: Curves.easeOut);
     _controller.forward();
     // Minuteur annulable (audit du 2026-10-04, S50) : un `Future.delayed` nu
     // se déclenchait même après le démontage du splash et réécrivait l'étape
     // de l'app — notamment par-dessus l'écran de réinitialisation ouvert par
     // un lien reçu par e-mail.
-    _timer = Timer(const Duration(milliseconds: 1600), () {
+    //
+    // Plus d'attente fixe de 1,6 s (audit de l'accueil du 2026-10-26, P2-1,
+    // décision du porteur de projet) : Supabase, la langue et les
+    // notifications sont déjà prêts quand ce widget s'affiche (`main()`), le
+    // splash ne dure que le court fondu du logo, prolongeant l'écran de
+    // lancement natif qui a les mêmes couleurs.
+    _timer = Timer(const Duration(milliseconds: 450), () {
       if (mounted) widget.onFinished();
     });
   }

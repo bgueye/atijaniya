@@ -124,6 +124,12 @@ class _AtTijaniyaAppState extends ConsumerState<AtTijaniyaApp> {
     });
 
     // Un invité demande à se connecter (voir `signInRequestProvider`).
+    // Langue du compte connecté écrite dans `profiles.locale` (P2-1), au
+    // changement de langue comme à la connexion : la colonne restait à sa
+    // valeur par défaut.
+    ref.listen(localeControllerProvider, (previous, next) => _syncProfileLocale());
+    ref.listen(currentUserIdProvider, (previous, next) => _syncProfileLocale());
+
     ref.listen(signInRequestProvider, (previous, next) {
       if (!mounted || _step != _Step.home) return;
       _navigatorKey.currentState?.popUntil((route) => route.isFirst);
@@ -173,9 +179,17 @@ class _AtTijaniyaAppState extends ConsumerState<AtTijaniyaApp> {
     switch (_step) {
       case _Step.splash:
         // Ne quitte le splash que si l'étape n'a pas déjà été fixée par un
-        // évènement d'authentification arrivé pendant l'animation.
+        // évènement d'authentification arrivé pendant l'animation. Langue
+        // déjà enregistrée (P2-1) : pas d'écran de langue, on passe
+        // directement à la suite du parcours.
         return SplashScreen(onFinished: () {
-          if (_step == _Step.splash) setState(() => _step = _Step.language);
+          if (_step != _Step.splash) return;
+          if (ref.read(localeControllerProvider) != null) {
+            _step = _Step.language;
+            _afterLanguageChosen();
+          } else {
+            setState(() => _step = _Step.language);
+          }
         });
       case _Step.language:
         // On avance automatiquement dès qu'une langue est choisie
@@ -213,18 +227,34 @@ class _AtTijaniyaAppState extends ConsumerState<AtTijaniyaApp> {
     }
   }
 
+  /// Dernière langue écrite dans le profil, pour ne l'écrire qu'une fois.
+  String? _syncedProfileLocale;
+
+  /// Écrit la langue de l'app dans `profiles.locale` du compte connecté — au
+  /// mieux : un échec (hors ligne) sera retenté au prochain changement.
+  void _syncProfileLocale() {
+    final locale = ref.read(localeControllerProvider)?.languageCode;
+    if (locale == null || ref.read(currentUserIdProvider) == null || locale == _syncedProfileLocale) return;
+    _syncedProfileLocale = locale;
+    ref.read(profileRepositoryProvider).updateMyLocale(locale).catchError((_) => _syncedProfileLocale = null);
+  }
+
   Future<void> _afterLanguageChosen() async {
+    _syncProfileLocale();
     final seen = await _onboardingStore.hasSeenOnboarding();
     final recoveryPending = (await SharedPreferences.getInstance()).getBool(_recoveryPendingKey) ?? false;
     if (!mounted) return;
     // Un évènement d'authentification a déjà fixé l'étape pendant le choix
     // de la langue (lien e-mail) : on ne la réécrit pas.
     if (_step != _Step.language) return;
-    if (SupabaseConfig.client.auth.currentSession != null && recoveryPending) {
+    // `currentUserIdProvider` plutôt que la session lue directement : même
+    // information, remplaçable dans les tests du parcours de démarrage.
+    final signedIn = ref.read(currentUserIdProvider) != null;
+    if (signedIn && recoveryPending) {
       setState(() => _step = _Step.resetPassword);
       return;
     }
-    if (SupabaseConfig.client.auth.currentSession != null) {
+    if (signedIn) {
       // Session restaurée par supabase_flutter au démarrage (voir
       // `main.dart`, `SupabaseConfig.init()` est attendu avant `runApp`) :
       // un disciple déjà connecté ne doit pas se reconnecter à chaque

@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Vert zaytoune de la charte (design/design_tokens.yaml), fond du splash. -->
+    <color name="launch_background">#0F3D2E</color>
+</resources>
