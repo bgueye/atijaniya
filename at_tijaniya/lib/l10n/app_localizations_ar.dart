@@ -2782,6 +2782,9 @@ class AppLocalizationsAr extends AppLocalizations {
   }
 
   @override
+  String get communityLikeError => 'تعذّر تسجيل إعجابك. حاول مرة أخرى.';
+
+  @override
   String get communityMessageSendError => 'تعذّر إرسال الرسالة. حاول مرة أخرى.';
 
   @override

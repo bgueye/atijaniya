@@ -492,6 +492,9 @@ avant une ouverture plus large.
     tronqué à 60).
 11. **« J'aime » en échec annulé sans message** (`communaute_screen.dart:666`,
     `post_detail_screen.dart:85`), connu depuis août.
+    **Statut : corrigé le 2026-10-26.** Message après l'annulation (hors ligne distingué, clé
+    `communityLikeError` FR et AR), dans le fil et le détail. Test
+    `test/communaute_like_error_test.dart`.
 12. **Tests** : seulement les modèles et `MessageComposer`. Aucun test d'écran pour le fil,
     la publication, le groupe ou la messagerie (erreurs d'envoi, double appui, états, texte
     à 200 %, arabe), ni de scénario SQL rejouable pour les essais de l'annexe A.

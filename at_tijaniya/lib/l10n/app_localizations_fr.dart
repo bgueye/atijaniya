@@ -2809,6 +2809,9 @@ class AppLocalizationsFr extends AppLocalizations {
   }
 
   @override
+  String get communityLikeError => 'Votre « j\'aime » n\'a pas pu être enregistré. Réessayez.';
+
+  @override
   String get communityMessageSendError => 'Le message n\'a pas pu être envoyé. Réessayez.';
 
   @override

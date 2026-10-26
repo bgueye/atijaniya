@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/network/network_errors.dart';
-import '../../../core/supabase/supabase_config.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/widgets/app_snackbar.dart';
 import '../../../l10n/app_localizations.dart';
@@ -338,7 +337,7 @@ class _PostCardState extends ConsumerState<_PostCard> {
     _likeCount = widget.post.likeCount;
   }
 
-  bool get _isSignedIn => SupabaseConfig.client.auth.currentUser != null;
+  bool get _isSignedIn => ref.read(currentUserIdProvider) != null;
 
   void _promptSignIn() {
     final l10n = AppLocalizations.of(context)!;
@@ -361,12 +360,16 @@ class _PostCardState extends ConsumerState<_PostCard> {
     });
     try {
       await ref.read(communityRepositoryProvider).toggleLike(widget.post.id, currentlyLiked: wasLiked);
-    } catch (_) {
+    } catch (error) {
       if (mounted) {
         setState(() {
           _liked = wasLiked;
           _likeCount += wasLiked ? 1 : -1;
         });
+        // Annulé en silence jusqu'à l'audit Communauté du 2026-10-26 (P3-11) :
+        // le cœur se « décochait » tout seul, sans explication.
+        final l10n = AppLocalizations.of(context)!;
+        showErrorSnackBar(context, isNetworkError(error) ? l10n.khadaraOfflineError : l10n.communityLikeError);
       }
     } finally {
       if (mounted) setState(() => _likeInFlight = false);

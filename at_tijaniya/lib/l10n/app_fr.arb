@@ -995,6 +995,7 @@
   "communityConversationUnread": "{count} messages non lus",
   "@communityMessagesTooltipUnread": {"placeholders": {"count": {"type": "int"}}},
   "@communityConversationUnread": {"placeholders": {"count": {"type": "int"}}},
+  "communityLikeError": "Votre « j'aime » n'a pas pu être enregistré. Réessayez.",
   "communityMessageSendError": "Le message n'a pas pu être envoyé. Réessayez.",
   "communityMessagesLoadError": "Impossible de charger les messages.",
   "adminMouqaddamZawiyasTitle": "Zawiyas des mouqaddams",

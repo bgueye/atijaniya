@@ -84,12 +84,16 @@ class _PostDetailScreenState extends ConsumerState<PostDetailScreen> {
     });
     try {
       await ref.read(communityRepositoryProvider).toggleLike(widget.post.id, currentlyLiked: wasLiked);
-    } catch (_) {
+    } catch (error) {
       if (mounted) {
         setState(() {
           _liked = wasLiked;
           _likeCount += wasLiked ? 1 : -1;
         });
+        // Annulé en silence jusqu'à l'audit Communauté du 2026-10-26 (P3-11) :
+        // le cœur se « décochait » tout seul, sans explication.
+        final l10n = AppLocalizations.of(context)!;
+        showErrorSnackBar(context, isNetworkError(error) ? l10n.khadaraOfflineError : l10n.communityLikeError);
       }
     } finally {
       if (mounted) setState(() => _likeInFlight = false);

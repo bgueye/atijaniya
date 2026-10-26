@@ -5486,6 +5486,12 @@ abstract class AppLocalizations {
   /// **'{count} messages non lus'**
   String communityConversationUnread(int count);
 
+  /// No description provided for @communityLikeError.
+  ///
+  /// In fr, this message translates to:
+  /// **'Votre « j\'aime » n\'a pas pu être enregistré. Réessayez.'**
+  String get communityLikeError;
+
   /// No description provided for @communityMessageSendError.
   ///
   /// In fr, this message translates to:
