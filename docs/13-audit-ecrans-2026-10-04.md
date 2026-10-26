@@ -470,7 +470,8 @@ chaque constat porte son statut. Aucun P0 : 32 écritures forcées refusées par
 - **P2** : limites de longueur en base, journal des actions d'admin, fil de l'admin sans
   contenus masqués, blocage depuis le fil, cibles de 48 dp et encre secondaire, mise en page
   de la discussion de groupe, compteurs et aperçus calculés par le serveur avec pagination :
-  corrigés et appliqués en base le 2026-10-26.
+  corrigés et appliqués en base le 2026-10-26. Publications d'un compte supprimé : affichées
+  « Compte supprimé · zawiya », supprimables par l'admin (elles seules, avec journal).
 
 **Reste à faire** :
 - **appliquer `database/migrations/2026-10-26_close_anonymous_community_reads.sql`** (P2-2 :
@@ -480,6 +481,8 @@ chaque constat porte son statut. Aucun P0 : 32 écritures forcées refusées par
   (compteurs faux, « Envoyer un message » absent, profil illisible). Scénario annulé
   déjà joué le 2026-10-26 ; le rejouer juste avant d'appliquer, puis ajouter le fichier à
   la section 12 de `schema.sql` ;
+- décision du porteur de projet sur les publications d'un compte supprimé (les garder,
+  ou les supprimer avec le compte) et sur les trois autres questions du rapport ;
 - validation sur téléphone (français et arabe, réseau coupé, texte agrandi) ;
 - points P3 du rapport.
 

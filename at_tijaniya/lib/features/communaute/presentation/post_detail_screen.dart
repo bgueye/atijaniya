@@ -217,10 +217,14 @@ class _PostDetailScreenState extends ConsumerState<PostDetailScreen> {
     final comments = ref.watch(postCommentsProvider(post.id));
     final myUserId = ref.watch(currentUserIdProvider);
     final isAuthor = post.authorUserId != null && post.authorUserId == myUserId;
+    // Publication d'un compte supprimé : plus personne ne pouvait la retirer
+    // (audit Communauté du 2026-10-26, P2-3). L'admin le peut, et seulement
+    // celle-là (`posts_admin_delete_orphan`), suppression journalisée.
+    final canAdminDelete = post.authorUserId == null && ref.watch(isAdminProvider);
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(post.authorLabel(l10n.communityDefaultAuthor)),
+        title: Text(post.authorLabel(l10n.communityDefaultAuthor, deletedAccount: l10n.communityDeletedAccountAuthor)),
         actions: isAuthor
             ? [
                 IconButton(
@@ -246,6 +250,14 @@ class _PostDetailScreenState extends ConsumerState<PostDetailScreen> {
             // publication (audit du 2026-10-26, P2-6) : il fallait jusque-là
             // le retrouver dans un groupe commun ou une conversation.
             : [
+                if (canAdminDelete)
+                  IconButton(
+                    icon: _deleting
+                        ? const SizedBox(width: 18, height: 18, child: CircularProgressIndicator(strokeWidth: 2))
+                        : const Icon(Icons.delete_outline),
+                    tooltip: l10n.communityDeletePostTooltip,
+                    onPressed: _deleting ? null : _confirmDelete,
+                  ),
                 if (myUserId != null)
                   _ReportOrBlockMenu(
                     onReport: () => showReportContentDialog(

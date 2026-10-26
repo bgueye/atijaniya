@@ -142,9 +142,10 @@ class CommunityRepository {
   }
 
   /// Réservé à l'auteur de la publication par la RLS `posts_author_delete`
-  /// (`auth.uid() = author_user_id`) — contrairement aux zawiyas/figures,
-  /// aucune exception admin n'existe ici : un disciple ne peut retirer que
-  /// sa propre publication. `post_likes`/`post_comments` référencent
+  /// (`auth.uid() = author_user_id`) : un disciple ne peut retirer que sa
+  /// propre publication. Seule exception admin, depuis l'audit du 2026-10-26
+  /// (P2-3) : une publication dont le compte a été supprimé
+  /// (`posts_admin_delete_orphan`), suppression journalisée. `post_likes`/`post_comments` référencent
   /// `posts.id` avec `on delete cascade` (`database/schema.sql`), donc
   /// aucune violation de clé étrangère possible à ce niveau.
   ///

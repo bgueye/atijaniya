@@ -5432,6 +5432,12 @@ abstract class AppLocalizations {
   /// **'Messages précédents'**
   String get communityLoadOlderMessages;
 
+  /// No description provided for @communityDeletedAccountAuthor.
+  ///
+  /// In fr, this message translates to:
+  /// **'Compte supprimé'**
+  String get communityDeletedAccountAuthor;
+
   /// No description provided for @communityMessageSendError.
   ///
   /// In fr, this message translates to:

@@ -17,7 +17,8 @@ void main() {
         likeCount: 3,
         commentCount: 2,
       );
-      expect(post.authorLabel('Disciple'), 'Zawiya Test');
+      // Compte supprimé : jamais la zawiya seule (audit du 2026-10-26, P2-3).
+      expect(post.authorLabel('Disciple', deletedAccount: 'Compte supprimé'), 'Compte supprimé · Zawiya Test');
       expect(post.likeCount, 3);
       expect(post.commentCount, 2);
     });
@@ -36,7 +37,7 @@ void main() {
         likeCount: 0,
         commentCount: 0,
       );
-      expect(post.authorLabel('Disciple'), 'Amina · Zawiya Test');
+      expect(post.authorLabel('Disciple', deletedAccount: 'Compte supprimé'), 'Amina · Zawiya Test');
     });
 
     test('résout le nom du disciple quand il n\'y a pas de zawiya auteure', () {
@@ -52,7 +53,7 @@ void main() {
         likeCount: 0,
         commentCount: 0,
       );
-      expect(post.authorLabel('Disciple'), 'Amina');
+      expect(post.authorLabel('Disciple', deletedAccount: 'Compte supprimé'), 'Amina');
     });
 
     test('retombe sur le repli générique si aucun nom résolu', () {
@@ -66,7 +67,7 @@ void main() {
         likeCount: 0,
         commentCount: 0,
       );
-      expect(post.authorLabel('Disciple'), 'Disciple');
+      expect(post.authorLabel('Disciple', deletedAccount: 'Compte supprimé'), 'Disciple');
     });
 
     test('parse media_url quand présent', () {

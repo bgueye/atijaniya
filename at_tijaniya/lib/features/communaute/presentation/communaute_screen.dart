@@ -738,7 +738,8 @@ class _PostCardState extends ConsumerState<_PostCard> {
                 children: [
                   Expanded(
                     child: ContentText(
-                      post.authorLabel(fallbackAuthor),
+                      post.authorLabel(fallbackAuthor,
+                          deletedAccount: AppLocalizations.of(context)!.communityDeletedAccountAuthor),
                       style: const TextStyle(fontWeight: FontWeight.w600, color: AppColors.ink),
                     ),
                   ),

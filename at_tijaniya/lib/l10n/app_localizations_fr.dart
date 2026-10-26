@@ -2774,6 +2774,9 @@ class AppLocalizationsFr extends AppLocalizations {
   String get communityLoadOlderMessages => 'Messages précédents';
 
   @override
+  String get communityDeletedAccountAuthor => 'Compte supprimé';
+
+  @override
   String get communityMessageSendError => 'Le message n\'a pas pu être envoyé. Réessayez.';
 
   @override

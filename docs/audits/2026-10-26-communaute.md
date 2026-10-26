@@ -245,6 +245,19 @@ avant une ouverture plus large.
   « Disciple · Zawiya de X » (ou « Ancien compte · … ») au lieu de la zawiya seule, et
   ajouter `posts_admin_delete` (+ journalisation, voir P2-4). Alternative : supprimer les
   publications à la suppression du compte, comme les commentaires.
+- **Statut : corrigé le 2026-10-26, dans sa forme la plus étroite** (la question 2 reste
+  ouverte). Libellé « Compte supprimé · Zawiya de X » (FR et AR), jamais la zawiya seule.
+  Migration `2026-10-26_posts_admin_delete_orphan.sql` appliquée : l'admin peut supprimer une
+  publication sans auteur, et seulement celle-là (`posts_admin_delete_orphan`), avec une
+  entrée `post_delete_orphan` dans `admin_actions_log` ; il peut aussi lire et supprimer dans
+  `post-media` les seuls dossiers dont le compte n'existe plus, pour que l'image parte avec la
+  publication. Bouton « Supprimer » affiché à l'admin sur ces publications. Vérifié par un
+  scénario annulé : un compte ordinaire ne supprime pas une publication orpheline (0 ligne),
+  l'admin ne supprime pas celle d'un autre disciple (0 ligne), il supprime l'orpheline
+  (1 ligne, 1 entrée au journal). Si le porteur de projet choisit de supprimer ces
+  publications avec le compte, `delete_my_account()` et son texte de confirmation sont à
+  reprendre. Tests `test/communaute_deleted_account_post_test.dart` et
+  `test/community_models_test.dart`.
 
 ### P2-4 · Actions d'administration non tracées dans `admin_actions_log`
 

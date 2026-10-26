@@ -46,12 +46,16 @@ class CommunityPost {
   /// Nom affiché : « disciple · zawiya » (décision du porteur de projet du
   /// 2026-10-06). La zawiya seule était affichée en priorité, alors que le
   /// rattachement est déclaré par le disciple lui-même : une publication
-  /// pouvait passer pour une parole officielle de la zawiya. La zawiya seule
-  /// ne subsiste que pour une publication dont le compte a été supprimé,
-  /// puis un repli générique si rien n'est connu.
-  String authorLabel(String fallback) {
+  /// pouvait passer pour une parole officielle de la zawiya.
+  ///
+  /// Compte supprimé (`author_user_id` mis à `null` par `delete_my_account`) :
+  /// « [deletedAccount] · zawiya ». La zawiya seule restait affichée dans ce
+  /// cas, exactement ce que la décision du 2026-10-06 voulait éviter (audit
+  /// Communauté du 2026-10-26, P2-3). Repli générique si rien n'est connu.
+  String authorLabel(String fallback, {required String deletedAccount}) {
     final name = authorDisplayName;
     final zawiya = authorZawiyaName;
+    if (authorUserId == null) return zawiya == null ? deletedAccount : '$deletedAccount · $zawiya';
     if (name != null && zawiya != null) return '$name · $zawiya';
     return name ?? zawiya ?? fallback;
   }
