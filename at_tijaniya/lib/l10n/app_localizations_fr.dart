@@ -2747,6 +2747,21 @@ class AppLocalizationsFr extends AppLocalizations {
   String get wirdHistoryTotalDaily => 'Récitations complètes au total';
 
   @override
+  String get communityCreatePostError => 'La publication n\'a pas pu être envoyée. Réessayez.';
+
+  @override
+  String get communityGroupsCreateError => 'Le groupe n\'a pas pu être créé. Réessayez.';
+
+  @override
+  String get communityCommentSendError => 'Le commentaire n\'a pas pu être envoyé. Réessayez.';
+
+  @override
+  String get communityGroupsJoinError => 'Impossible de rejoindre ce groupe. Réessayez.';
+
+  @override
+  String get communityGroupsLeaveError => 'Impossible de quitter ce groupe. Réessayez.';
+
+  @override
   String get communityMessageSendError => 'Le message n\'a pas pu être envoyé. Réessayez.';
 
   @override

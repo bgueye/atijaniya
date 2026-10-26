@@ -2721,6 +2721,21 @@ class AppLocalizationsAr extends AppLocalizations {
   String get wirdHistoryTotalDaily => 'مجموع التلاوات المكتملة';
 
   @override
+  String get communityCreatePostError => 'تعذّر نشر المنشور. حاول مرة أخرى.';
+
+  @override
+  String get communityGroupsCreateError => 'تعذّر إنشاء المجموعة. حاول مرة أخرى.';
+
+  @override
+  String get communityCommentSendError => 'تعذّر إرسال التعليق. حاول مرة أخرى.';
+
+  @override
+  String get communityGroupsJoinError => 'تعذّر الانضمام إلى هذه المجموعة. حاول مرة أخرى.';
+
+  @override
+  String get communityGroupsLeaveError => 'تعذّر مغادرة هذه المجموعة. حاول مرة أخرى.';
+
+  @override
   String get communityMessageSendError => 'تعذّر إرسال الرسالة. حاول مرة أخرى.';
 
   @override

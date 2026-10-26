@@ -138,6 +138,12 @@ avant une ouverture plus large.
   Clés à créer : erreur de publication, de création de groupe, de commentaire, de
   rejoindre/quitter (FR et AR). Retirer l'image téléversée si l'insertion échoue
   (`removeByPublicUrl`).
+- **Statut : corrigé le 2026-10-26.** Publication, création de groupe et modification d'une
+  publication : message dans la feuille (une `SnackBar` s'affichait sous la feuille modale),
+  hors ligne distingué, texte conservé, image téléversée retirée si l'enregistrement échoue
+  (création et modification, P3-6 réglé avec). Commentaire envoyé par `MessageComposer`
+  (verrou, message, texte rendu). Rejoindre/quitter : message d'erreur. Cinq clés FR et AR.
+  Tests : `test/communaute_submit_errors_test.dart` (7 cas, dont double appui et arabe).
 
 ### P2-1 · Aucune limite de longueur en base, publication vide acceptée
 

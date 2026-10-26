@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../core/network/network_errors.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/widgets/app_snackbar.dart';
 import '../../../core/widgets/message_composer.dart';
@@ -69,12 +70,23 @@ class _GroupDetailScreenState extends ConsumerState<GroupDetailScreen> {
       ..showSnackBar(SnackBar(content: ContentText(message)));
   }
 
+  /// Échec de rejoindre ou de quitter : restait muet jusqu'à l'audit du
+  /// 2026-10-26 (P1), le bouton se réactivant comme si de rien n'était.
+  void _showMembershipError(Object error, String message) {
+    if (!mounted) return;
+    showErrorSnackBar(context, isNetworkError(error) ? AppLocalizations.of(context)!.khadaraOfflineError : message);
+  }
+
   Future<void> _join() async {
+    if (_updatingMembership) return;
+    final l10n = AppLocalizations.of(context)!;
     setState(() => _updatingMembership = true);
     try {
       await ref.read(groupsRepositoryProvider).joinGroup(_group.id);
       ref.invalidate(groupsProvider);
       if (mounted) setState(() => _group = _group.copyWith(memberCount: _group.memberCount + 1, isMember: true));
+    } catch (error) {
+      _showMembershipError(error, l10n.communityGroupsJoinError);
     } finally {
       if (mounted) setState(() => _updatingMembership = false);
     }
@@ -96,7 +108,7 @@ class _GroupDetailScreenState extends ConsumerState<GroupDetailScreen> {
         ],
       ),
     );
-    if (confirmed != true) return;
+    if (confirmed != true || !mounted) return;
     setState(() => _updatingMembership = true);
     try {
       await ref.read(groupsRepositoryProvider).leaveGroup(_group.id);
@@ -104,6 +116,8 @@ class _GroupDetailScreenState extends ConsumerState<GroupDetailScreen> {
       if (mounted) {
         setState(() => _group = _group.copyWith(memberCount: _group.memberCount - 1, isMember: false));
       }
+    } catch (error) {
+      _showMembershipError(error, l10n.communityGroupsLeaveError);
     } finally {
       if (mounted) setState(() => _updatingMembership = false);
     }

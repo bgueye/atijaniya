@@ -5378,6 +5378,36 @@ abstract class AppLocalizations {
   /// **'Récitations complètes au total'**
   String get wirdHistoryTotalDaily;
 
+  /// No description provided for @communityCreatePostError.
+  ///
+  /// In fr, this message translates to:
+  /// **'La publication n\'a pas pu être envoyée. Réessayez.'**
+  String get communityCreatePostError;
+
+  /// No description provided for @communityGroupsCreateError.
+  ///
+  /// In fr, this message translates to:
+  /// **'Le groupe n\'a pas pu être créé. Réessayez.'**
+  String get communityGroupsCreateError;
+
+  /// No description provided for @communityCommentSendError.
+  ///
+  /// In fr, this message translates to:
+  /// **'Le commentaire n\'a pas pu être envoyé. Réessayez.'**
+  String get communityCommentSendError;
+
+  /// No description provided for @communityGroupsJoinError.
+  ///
+  /// In fr, this message translates to:
+  /// **'Impossible de rejoindre ce groupe. Réessayez.'**
+  String get communityGroupsJoinError;
+
+  /// No description provided for @communityGroupsLeaveError.
+  ///
+  /// In fr, this message translates to:
+  /// **'Impossible de quitter ce groupe. Réessayez.'**
+  String get communityGroupsLeaveError;
+
   /// No description provided for @communityMessageSendError.
   ///
   /// In fr, this message translates to:

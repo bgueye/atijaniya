@@ -4,11 +4,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart' show PostgrestException;
 
+import '../../../core/network/network_errors.dart';
 import '../../../core/storage/image_source_sheet.dart';
 import '../../../core/storage/image_upload_service.dart';
 import '../../../core/supabase/supabase_config.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/widgets/app_snackbar.dart';
+import '../../../core/widgets/message_composer.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../moderation/domain/moderation_models.dart';
 import '../../moderation/presentation/report_content_dialog.dart';
@@ -38,8 +40,6 @@ class PostDetailScreen extends ConsumerStatefulWidget {
 }
 
 class _PostDetailScreenState extends ConsumerState<PostDetailScreen> {
-  final _commentController = TextEditingController();
-
   // État local optimiste : évite un rechargement complet du fil (invalidate
   // communityFeedProvider) juste pour refléter un like, cf. _toggleLike.
   late bool _liked = widget.post.isLikedByMe;
@@ -53,13 +53,7 @@ class _PostDetailScreenState extends ConsumerState<PostDetailScreen> {
   late String _contentText = widget.post.contentText;
   late String? _mediaUrl = widget.post.mediaUrl;
 
-  bool get _isSignedIn => SupabaseConfig.client.auth.currentUser != null;
-
-  @override
-  void dispose() {
-    _commentController.dispose();
-    super.dispose();
-  }
+  bool get _isSignedIn => ref.read(currentUserIdProvider) != null;
 
   void _promptSignIn() {
     final l10n = AppLocalizations.of(context)!;
@@ -180,19 +174,13 @@ class _PostDetailScreenState extends ConsumerState<PostDetailScreen> {
     }
   }
 
-  Future<void> _submitComment() async {
-    final l10n = AppLocalizations.of(context)!;
-    if (!_isSignedIn) {
-      ScaffoldMessenger.of(context)
-        ..hideCurrentSnackBar()
-        ..showSnackBar(SnackBar(content: Text(l10n.communityCommentSignInHint)));
-      return;
-    }
-    final text = _commentController.text.trim();
-    if (text.isEmpty) return;
+  /// Envoi d'un commentaire par `MessageComposer` (audit du 2026-10-26, P1) :
+  /// l'ancien champ n'avait ni verrou (deux appuis rapides publiaient deux
+  /// commentaires), ni message d'échec, et vidait son contrôleur après
+  /// l'envoi, même une fois l'écran quitté.
+  Future<void> _sendComment(String text) async {
     await ref.read(communityRepositoryProvider).addComment(widget.post.id, text);
-    _commentController.clear();
-    ref.invalidate(postCommentsProvider(widget.post.id));
+    if (mounted) ref.invalidate(postCommentsProvider(widget.post.id));
   }
 
   @override
@@ -343,27 +331,22 @@ class _PostDetailScreenState extends ConsumerState<PostDetailScreen> {
           ),
           SafeArea(
             top: false,
-            child: Padding(
-              padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
-              child: Row(
-                children: [
-                  Expanded(
+            child: myUserId != null
+                ? MessageComposer(
+                    hintText: l10n.communityCommentHint,
+                    sendTooltip: l10n.a11ySend,
+                    errorMessage: l10n.communityCommentSendError,
+                    onSend: _sendComment,
+                  )
+                // Invité : champ en lecture seule qui invite à se connecter.
+                : Padding(
+                    padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
                     child: TextField(
-                      controller: _commentController,
-                      readOnly: !_isSignedIn,
-                      decoration: InputDecoration(
-                        hintText: _isSignedIn ? l10n.communityCommentHint : l10n.communityCommentSignInHint,
-                      ),
-                      onTap: _isSignedIn ? null : _promptSignIn,
+                      readOnly: true,
+                      decoration: InputDecoration(hintText: l10n.communityCommentSignInHint),
+                      onTap: _promptSignIn,
                     ),
                   ),
-                  IconButton(tooltip: AppLocalizations.of(context)!.a11ySend, 
-                    icon: Icon(Icons.send, color: AppColors.emerald),
-                    onPressed: _submitComment,
-                  ),
-                ],
-              ),
-            ),
           ),
         ],
       ),
@@ -569,6 +552,10 @@ class _EditPostSheetState extends ConsumerState<_EditPostSheet> {
   String? _pickedImageExtension;
   bool _removeExistingImage = false;
 
+  /// Message d'échec, affiché dans la feuille : la `SnackBar` utilisée
+  /// jusqu'ici s'affichait sous la feuille modale, donc invisible.
+  String? _error;
+
   @override
   void dispose() {
     _contentController.dispose();
@@ -597,9 +584,13 @@ class _EditPostSheetState extends ConsumerState<_EditPostSheet> {
   }
 
   Future<void> _submit() async {
-    if (!_formKey.currentState!.validate()) return;
-    setState(() => _saving = true);
+    if (_saving || !_formKey.currentState!.validate()) return;
+    setState(() {
+      _saving = true;
+      _error = null;
+    });
     final l10n = AppLocalizations.of(context)!;
+    String? uploadedUrl;
     try {
       String? mediaUrl = widget.initialMediaUrl;
       if (_pickedImageBytes != null) {
@@ -610,6 +601,7 @@ class _EditPostSheetState extends ConsumerState<_EditPostSheet> {
           bytes: _pickedImageBytes!,
           contentType: imageContentTypeForExtension(_pickedImageExtension!),
         );
+        uploadedUrl = mediaUrl;
       } else if (_removeExistingImage) {
         mediaUrl = null;
       }
@@ -623,11 +615,12 @@ class _EditPostSheetState extends ConsumerState<_EditPostSheet> {
       if (mounted) {
         Navigator.of(context).pop(_EditPostResult(contentText: contentText, mediaUrl: mediaUrl));
       }
-    } catch (_) {
+    } catch (error) {
+      // Nouvelle image téléversée mais publication non modifiée : retirée du
+      // bucket public, comme à la création (audit du 2026-10-26, P1).
+      await _imageUploadService.removeByPublicUrl(bucket: 'post-media', url: uploadedUrl);
       if (mounted) {
-        ScaffoldMessenger.of(context)
-          ..hideCurrentSnackBar()
-          ..showSnackBar(SnackBar(content: Text(l10n.communityEditPostError)));
+        setState(() => _error = isNetworkError(error) ? l10n.khadaraOfflineError : l10n.communityEditPostError);
       }
     } finally {
       if (mounted) setState(() => _saving = false);
@@ -704,6 +697,14 @@ class _EditPostSheetState extends ConsumerState<_EditPostSheet> {
                 ],
               ),
               const SizedBox(height: 12),
+              if (_error != null)
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 12),
+                  child: Semantics(
+                    liveRegion: true,
+                    child: Text(_error!, style: const TextStyle(color: AppColors.danger)),
+                  ),
+                ),
               ElevatedButton(
                 onPressed: _saving ? null : _submit,
                 child: _saving

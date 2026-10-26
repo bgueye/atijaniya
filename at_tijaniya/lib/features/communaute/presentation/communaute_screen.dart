@@ -3,6 +3,7 @@ import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../core/network/network_errors.dart';
 import '../../../core/storage/image_source_sheet.dart';
 import '../../../core/storage/image_upload_service.dart';
 import '../../../core/supabase/supabase_config.dart';
@@ -188,6 +189,10 @@ class _CreatePostSheetState extends ConsumerState<_CreatePostSheet> {
   final _imageUploadService = ImageUploadService();
   bool _saving = false;
 
+  /// Message d'échec de l'envoi, affiché dans la feuille : une `SnackBar`
+  /// s'afficherait sous la feuille modale, donc invisible.
+  String? _error;
+
   Uint8List? _pickedImageBytes;
   String? _pickedImageExtension;
 
@@ -217,10 +222,14 @@ class _CreatePostSheetState extends ConsumerState<_CreatePostSheet> {
   }
 
   Future<void> _submit() async {
-    if (!_formKey.currentState!.validate()) return;
-    setState(() => _saving = true);
+    if (_saving || !_formKey.currentState!.validate()) return;
+    final l10n = AppLocalizations.of(context)!;
+    setState(() {
+      _saving = true;
+      _error = null;
+    });
+    String? mediaUrl;
     try {
-      String? mediaUrl;
       if (_pickedImageBytes != null) {
         final userId = SupabaseConfig.client.auth.currentUser!.id;
         mediaUrl = await _imageUploadService.uploadImage(
@@ -238,6 +247,16 @@ class _CreatePostSheetState extends ConsumerState<_CreatePostSheet> {
           );
       ref.invalidate(communityFeedProvider);
       if (mounted) Navigator.of(context).pop();
+    } catch (error) {
+      // Audit du 2026-10-26 (P1) : l'échec (réseau coupé, refus du serveur)
+      // restait muet, le bouton se réactivait et le disciple croyait avoir
+      // publié. Le texte reste dans le champ. L'image déjà téléversée est
+      // retirée : elle restait sinon dans le bucket public, et chaque
+      // nouvelle tentative en ajoutait une.
+      await _imageUploadService.removeByPublicUrl(bucket: 'post-media', url: mediaUrl);
+      if (mounted) {
+        setState(() => _error = isNetworkError(error) ? l10n.khadaraOfflineError : l10n.communityCreatePostError);
+      }
     } finally {
       if (mounted) setState(() => _saving = false);
     }
@@ -313,6 +332,7 @@ class _CreatePostSheetState extends ConsumerState<_CreatePostSheet> {
                 ],
               ),
               const SizedBox(height: 12),
+              if (_error != null) _SheetError(_error!),
               ElevatedButton(
                 onPressed: _saving ? null : _submit,
                 child: _saving
@@ -492,6 +512,10 @@ class _CreateGroupSheetState extends ConsumerState<_CreateGroupSheet> {
   String? _zawiyaId;
   bool _saving = false;
 
+  /// Message d'échec de la création, affiché dans la feuille (voir
+  /// `_CreatePostSheetState._error`).
+  String? _error;
+
   @override
   void dispose() {
     _nameController.dispose();
@@ -501,8 +525,12 @@ class _CreateGroupSheetState extends ConsumerState<_CreateGroupSheet> {
   }
 
   Future<void> _submit() async {
-    if (!_formKey.currentState!.validate()) return;
-    setState(() => _saving = true);
+    if (_saving || !_formKey.currentState!.validate()) return;
+    final l10n = AppLocalizations.of(context)!;
+    setState(() {
+      _saving = true;
+      _error = null;
+    });
     try {
       await ref.read(groupsRepositoryProvider).createGroup(
             name: _nameController.text.trim(),
@@ -516,6 +544,12 @@ class _CreateGroupSheetState extends ConsumerState<_CreateGroupSheet> {
           );
       ref.invalidate(groupsProvider);
       if (mounted) Navigator.of(context).pop();
+    } catch (error) {
+      // Audit du 2026-10-26 (P1) : l'échec restait muet, comme pour la
+      // publication. Les champs gardent leur saisie.
+      if (mounted) {
+        setState(() => _error = isNetworkError(error) ? l10n.khadaraOfflineError : l10n.communityGroupsCreateError);
+      }
     } finally {
       if (mounted) setState(() => _saving = false);
     }
@@ -590,6 +624,7 @@ class _CreateGroupSheetState extends ConsumerState<_CreateGroupSheet> {
                     InputDecoration(labelText: l10n.communityGroupsRegionLabel),
               ),
               const SizedBox(height: 24),
+              if (_error != null) _SheetError(_error!),
               ElevatedButton(
                 onPressed: _saving ? null : _submit,
                 child: _saving
@@ -604,6 +639,25 @@ class _CreateGroupSheetState extends ConsumerState<_CreateGroupSheet> {
             ],
           ),
         ),
+      ),
+    );
+  }
+}
+
+/// Échec d'un envoi, affiché au-dessus du bouton d'une feuille modale et
+/// annoncé au lecteur d'écran.
+class _SheetError extends StatelessWidget {
+  const _SheetError(this.message);
+
+  final String message;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 12),
+      child: Semantics(
+        liveRegion: true,
+        child: Text(message, style: const TextStyle(color: AppColors.danger)),
       ),
     );
   }
