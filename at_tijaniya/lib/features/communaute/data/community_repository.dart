@@ -10,7 +10,19 @@ library;
 
 import '../../../core/storage/image_upload_service.dart';
 import '../../../core/supabase/supabase_config.dart';
+import '../../moderation/data/blocks_repository.dart';
 import '../domain/community_models.dart';
+
+/// Retire de [rows] les lignes dont l'auteur ([authorKey]) est dans
+/// [blockedIds]. Une ligne sans auteur (compte supprimé) est gardée.
+List<Map<String, dynamic>> withoutBlockedAuthors(
+  List<Map<String, dynamic>> rows,
+  Set<String> blockedIds, {
+  required String authorKey,
+}) {
+  if (blockedIds.isEmpty) return rows;
+  return rows.where((row) => !blockedIds.contains(row[authorKey])).toList();
+}
 
 class CommunityRepository {
   const CommunityRepository();
@@ -19,11 +31,20 @@ class CommunityRepository {
     // .eq('content_status', 'valide') en plus de la RLS : même défense en
     // profondeur que FiguresRepository.fetchFigures() — un compte admin ne
     // doit jamais voir un brouillon dans le fil public.
-    final postRows = await SupabaseConfig.client
+    //
+    // Masquage et blocage (audit Communauté du 2026-10-26, P2-5) : la RLS les
+    // applique à tous sauf à l'admin, qui lit tout pour pouvoir modérer. Le
+    // fil n'est pas l'écran de modération : un contenu masqué, ou écrit par
+    // un disciple qu'il a bloqué, y restait affiché sans repère, et l'admin
+    // pouvait croire que « Masquer » n'avait pas fonctionné.
+    final blockedIds = await const BlocksRepository().fetchBlockedUserIds();
+    final allRows = await SupabaseConfig.client
         .from('posts')
         .select('*, zawiyas(name), profiles(display_name)')
         .eq('content_status', 'valide')
+        .isFilter('hidden_at', null)
         .order('created_at', ascending: false);
+    final postRows = withoutBlockedAuthors(allRows, blockedIds, authorKey: 'author_user_id');
 
     final postIds = postRows.map((row) => row['id'] as String).toList();
 
@@ -78,11 +99,16 @@ class CommunityRepository {
   }
 
   Future<List<CommunityComment>> fetchComments(String postId) async {
-    final rows = await SupabaseConfig.client
+    // Même filtre que `fetchFeed` : masqués et auteurs bloqués exclus,
+    // y compris pour l'admin.
+    final blockedIds = await const BlocksRepository().fetchBlockedUserIds();
+    final allRows = await SupabaseConfig.client
         .from('post_comments')
         .select()
         .eq('post_id', postId)
+        .isFilter('hidden_at', null)
         .order('created_at', ascending: true);
+    final rows = withoutBlockedAuthors(allRows, blockedIds, authorKey: 'user_id');
 
     final authorIds = rows.map((row) => row['user_id'] as String).toSet();
     final names = await _fetchDisplayNames(authorIds);

@@ -265,6 +265,10 @@ avant une ouverture plus large.
 - **Correctif** : `.isFilter('hidden_at', null)` dans `fetchFeed` et `fetchComments` (le fil
   n'est pas l'écran de modération), ou lire `hidden_at` et afficher un bandeau « Masqué par
   la modération » réservé à l'admin.
+- **Statut : corrigé le 2026-10-26.** `fetchFeed` et `fetchComments` filtrent `hidden_at` et
+  retirent les auteurs que le compte a bloqués (`withoutBlockedAuthors`) : l'admin voit le fil
+  comme les autres disciples, la modération reste dans son écran. Test
+  `test/community_feed_filter_test.dart`. Aucun changement en base.
 
 ### P2-6 · Pas de blocage depuis le fil ni depuis un commentaire
 
