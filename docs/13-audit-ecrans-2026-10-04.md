@@ -375,13 +375,16 @@ projet live), scénario dans `database/tests/blocage_disciple.sql`.
   compris.
 - **Confidentialité** : le blocage est privé. La personne bloquée n'est pas informée et ne
   peut pas lire qui l'a bloquée ; un envoi refusé lui affiche le message d'erreur générique.
+  Depuis le 2026-10-26, l'ouverture d'une conversation refusée pour blocage répond le même
+  code (`AT001`) et le même message qu'en l'absence de groupe commun ; un envoi refusé dans
+  une conversation déjà ouverte laisse en revanche deviner le blocage (limite acceptée).
   Les deux fonctions de contrôle sont dans le schéma `private`, non appelables en RPC —
   sinon n'importe qui pourrait tester s'il a été bloqué.
 - **Vérifié en base** par dix-neuf contrôles joués avec chaque rôle (celui qui bloque, le
   bloqué, un tiers, un visiteur non connecté), dans une transaction annulée. **Pas encore vu
   sur téléphone** : il faut deux comptes.
-- **Limites connues** : pas de blocage depuis une publication ou un commentaire du fil (il
-  faut passer par un message de groupe ou une conversation) ; un disciple bloqué apparaît
+- **Limites connues** : ~~pas de blocage depuis une publication ou un commentaire du fil~~
+  (ajouté le 2026-10-26, audit Communauté P2-6) ; un disciple bloqué apparaît
   encore dans « Retrouver mes condisciples » et dans la recherche de parrain, sans pouvoir
   être contacté ; dans un groupe, le disciple bloqué continue de voir les messages de celui
   qui l'a bloqué.

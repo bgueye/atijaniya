@@ -409,6 +409,11 @@ avant une ouverture plus large.
    indétectable. L'app affiche bien un message générique ; un échec d'envoi dans une
    conversation existante le trahit de toute façon. À dire tel quel dans la documentation,
    ou à ramener sur le même code que `AT001`.
+   **Statut : corrigé le 2026-10-26.** Migration
+   `2026-10-26_start_conversation_same_refusal.sql` appliquée : blocage et absence de groupe
+   commun répondent tous deux `AT001` « Conversation indisponible » (vérifié dans un scénario
+   annulé). La limite restante (envoi refusé dans une conversation ouverte) est écrite dans
+   `docs/13`.
 3. **États** : erreur « hors ligne » non distinguée (`isNetworkError` existe depuis l'audit
    Zawiyas) ; pas de « tirer pour actualiser » sur le fil et les groupes ; erreur de la
    discussion de groupe et des directs passés sans « Réessayer » ; états vides qui
