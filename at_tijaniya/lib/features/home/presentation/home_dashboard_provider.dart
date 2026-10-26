@@ -5,6 +5,8 @@ library;
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../core/date/current_day.dart';
+
 import '../../wird/data/wird_completion_store.dart';
 import '../../wird/data/wirds_content.dart';
 import '../../wird/data/tasbih_session_store.dart';
@@ -33,7 +35,13 @@ class HomeDashboardData {
 /// garder un état périmé (un wird terminé ou une session de tasbih avancée
 /// entre deux visites doit se refléter immédiatement) — même principe que
 /// `wirdHistoryControllerProvider`.
+///
+/// Dépend du jour courant (`currentDayProvider`, audit de l'accueil du
+/// 2026-10-26, P1) : recalculé au passage de minuit et au retour au premier
+/// plan un autre jour — sinon le statut de la veille restait affiché.
 final homeDashboardProvider = FutureProvider.autoDispose<HomeDashboardData>((ref) async {
+  ref.watch(currentDayProvider);
+  final now = ref.read(clockProvider)();
   const completionStore = WirdCompletionStore();
   const sessionStore = TasbihSessionStore();
   const reminderStore = WirdReminderStore();
@@ -44,7 +52,7 @@ final homeDashboardProvider = FutureProvider.autoDispose<HomeDashboardData>((ref
 
   for (final wird in validatedWirds) {
     final dates = await completionStore.load(wird.id);
-    final stats = computeWirdProgressStats(frequency: wird.frequency, completionDates: dates);
+    final stats = computeWirdProgressStats(frequency: wird.frequency, completionDates: dates, now: now);
     statuses.add(HomeWirdStatus(
       wird: wird,
       doneToday: stats.recentPeriods.isNotEmpty && stats.recentPeriods.last.completed,
@@ -57,8 +65,8 @@ final homeDashboardProvider = FutureProvider.autoDispose<HomeDashboardData>((ref
 
   return HomeDashboardData(
     statuses: statuses,
-    todayStatus: summarizeTodayStatus(statuses),
+    todayStatus: summarizeTodayStatus(statuses, now: now),
     resumableSession: pickResumableSession(sessions),
-    nextReminder: pickNextReminderToday(reminders),
+    nextReminder: pickNextReminderToday(reminders, now: now),
   );
 });

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+import '../../../core/date/current_day.dart';
 import '../../../core/date/hijri_date.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_theme.dart';
@@ -51,6 +52,9 @@ class HomeScreen extends ConsumerWidget {
         : ref.watch(myProfileProvider).maybeWhen(data: (profile) => profile.displayName, orElse: () => null);
     final greeting = displayName != null ? '${l10n.homeGreetingPrefix} $displayName' : l10n.homeGreeting;
 
+    // Jour courant, et non `DateTime.now()` lu à la construction : l'en-tête
+    // et les sections du vendredi suivent le changement de jour (P1).
+    final today = ref.watch(currentDayProvider);
     final dashboardAsync = ref.watch(homeDashboardProvider);
     final eventsAsync = ref.watch(upcomingEventsProvider);
     final featuredFigureAsync = ref.watch(featuredFigureProvider);
@@ -60,7 +64,7 @@ class HomeScreen extends ConsumerWidget {
       children: [
         _Hero(
           greeting: greeting,
-          dateLine: _formatTodayDate(l10n, DateTime.now()),
+          dateLine: _formatTodayDate(l10n, today),
           statusPill: dashboardAsync.maybeWhen(
             data: (data) => _StatusPill(status: data.todayStatus, l10n: l10n),
             orElse: () => null,
@@ -79,6 +83,7 @@ class HomeScreen extends ConsumerWidget {
             ),
             data: (data) => _DashboardBody(
               data: data,
+              today: today,
               l10n: l10n,
               eventsAsync: eventsAsync,
               featuredFigureAsync: featuredFigureAsync,
@@ -279,12 +284,16 @@ class _DashboardErrorState extends StatelessWidget {
 class _DashboardBody extends StatelessWidget {
   const _DashboardBody({
     required this.data,
+    required this.today,
     required this.l10n,
     required this.eventsAsync,
     required this.featuredFigureAsync,
   });
 
   final HomeDashboardData data;
+
+  /// Jour courant (`currentDayProvider`).
+  final DateTime today;
   final AppLocalizations l10n;
   final AsyncValue<List<KhadaraEvent>> eventsAsync;
   final AsyncValue<FeaturedFigure?> featuredFigureAsync;
@@ -297,14 +306,14 @@ class _DashboardBody extends StatelessWidget {
     // Hadratou-l-Jouma (hebdomadaire) n'a de sens que le vendredi — hors de
     // ce jour, la ligne "non fait aujourd'hui" serait trompeuse puisqu'il
     // n'y a rien à faire.
-    final isFriday = DateTime.now().weekday == DateTime.friday;
+    final isFriday = today.weekday == DateTime.friday;
     final todayStatuses = data.statuses.where((s) => s.wird.frequency == WirdFrequency.daily || isFriday).toList();
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         _SectionLabel(l10n.homeSectionToday),
-        _WirdChecklistCard(statuses: todayStatuses, l10n: l10n),
+        _WirdChecklistCard(statuses: todayStatuses, isFriday: isFriday, l10n: l10n),
         if (hasNextMoment) ...[
           const SizedBox(height: 20),
           _SectionLabel(l10n.homeSectionNextMoment),
@@ -314,7 +323,7 @@ class _DashboardBody extends StatelessWidget {
         ],
         const SizedBox(height: 20),
         _SectionLabel(l10n.homeSectionQuickAccess),
-        _QuickAccessRow(l10n: l10n),
+        _QuickAccessRow(isFriday: isFriday, l10n: l10n),
         if (nextEvent != null) ...[
           const SizedBox(height: 20),
           _SectionLabel(l10n.homeSectionKhadara),
@@ -358,9 +367,10 @@ class _SectionLabel extends StatelessWidget {
 }
 
 class _WirdChecklistCard extends StatelessWidget {
-  const _WirdChecklistCard({required this.statuses, required this.l10n});
+  const _WirdChecklistCard({required this.statuses, required this.isFriday, required this.l10n});
 
   final List<HomeWirdStatus> statuses;
+  final bool isFriday;
   final AppLocalizations l10n;
 
   @override
@@ -369,7 +379,7 @@ class _WirdChecklistCard extends StatelessWidget {
       child: Column(
         children: [
           for (var i = 0; i < statuses.length; i++) ...[
-            _WirdRow(status: statuses[i], l10n: l10n),
+            _WirdRow(status: statuses[i], isFriday: isFriday, l10n: l10n),
             if (i < statuses.length - 1) const Divider(height: 1, indent: 16, endIndent: 16),
           ],
         ],
@@ -379,15 +389,16 @@ class _WirdChecklistCard extends StatelessWidget {
 }
 
 class _WirdRow extends StatelessWidget {
-  const _WirdRow({required this.status, required this.l10n});
+  const _WirdRow({required this.status, required this.isFriday, required this.l10n});
 
   final HomeWirdStatus status;
+  final bool isFriday;
   final AppLocalizations l10n;
 
-  String? _subtitle(DateTime now) {
+  String? _subtitle() {
     if (status.doneToday) return null;
     if (status.wird.frequency == WirdFrequency.daily) return l10n.homeWirdSubtitlePendingDaily;
-    return now.weekday == DateTime.friday ? l10n.homeWirdSubtitlePendingFridayToday : l10n.homeWirdSubtitleWeeklyInfo;
+    return isFriday ? l10n.homeWirdSubtitlePendingFridayToday : l10n.homeWirdSubtitleWeeklyInfo;
   }
 
   String? _streakLabel() {
@@ -400,7 +411,7 @@ class _WirdRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final subtitle = _subtitle(DateTime.now());
+    final subtitle = _subtitle();
     final streakLabel = status.doneToday ? _streakLabel() : null;
     // Même règle que la liste des wirds (`wird_list_screen.dart`) : le nom
     // arabe validé sert de titre en locale `ar`, plutôt que la
@@ -527,13 +538,13 @@ class _NextReminderCard extends StatelessWidget {
 }
 
 class _QuickAccessRow extends StatelessWidget {
-  const _QuickAccessRow({required this.l10n});
+  const _QuickAccessRow({required this.isFriday, required this.l10n});
 
+  final bool isFriday;
   final AppLocalizations l10n;
 
   @override
   Widget build(BuildContext context) {
-    final isFriday = DateTime.now().weekday == DateTime.friday;
     final quickAccessWirds = validatedWirds.where((wird) => wird.frequency == WirdFrequency.daily || isFriday);
     final isArabic = Localizations.localeOf(context).languageCode == 'ar';
 

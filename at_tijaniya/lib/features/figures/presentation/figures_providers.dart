@@ -1,5 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../core/date/current_day.dart';
 import '../../khadara/domain/khadara_models.dart' show KhadaraEvent, Zawiya;
 import '../data/figures_repository.dart';
 import '../domain/featured_figure.dart';
@@ -82,7 +83,9 @@ final featuredFigureOverrideProvider = FutureProvider.autoDispose.family<String?
 /// portrait et qu'aucun épinglage n'est actif : l'accueil masque alors la
 /// carte plutôt que d'afficher un état vide.
 final featuredFigureProvider = FutureProvider<FeaturedFigure?>((ref) async {
-  final weekStart = weekStartFor(DateTime.now());
+  // Jour courant (audit de l'accueil du 2026-10-26) : la figure change bien
+  // le lundi même si l'app est restée ouverte depuis la semaine précédente.
+  final weekStart = weekStartFor(ref.watch(currentDayProvider));
   final repo = ref.watch(figuresRepositoryProvider);
 
   final figures = await ref.watch(figuresProvider.future);
