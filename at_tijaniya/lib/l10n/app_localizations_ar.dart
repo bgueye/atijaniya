@@ -1686,7 +1686,9 @@ class AppLocalizationsAr extends AppLocalizations {
   String get communityCreatePostSubmit => 'نشر';
 
   @override
-  String get communityCreatePostZawiyaNote => 'سيُنشر باسم الزاوية التي تنتمي إليها.';
+  String communityCreatePostZawiyaShown(Object zawiya) {
+    return 'ستظهر زاويتك ($zawiya) بجانب اسمك.';
+  }
 
   @override
   String get communityCreatePostSignInRequired => 'سجّل الدخول للنشر.';

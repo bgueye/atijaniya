@@ -281,7 +281,10 @@ class _CreatePostSheetState extends ConsumerState<_CreatePostSheet> {
               if (widget.zawiyaName != null) ...[
                 const SizedBox(height: 4),
                 Text(
-                  '${l10n.communityCreatePostZawiyaNote} (${widget.zawiyaName})',
+                  // « Publié au nom de votre zawiya » contredisait l'affichage
+                  // « disciple · zawiya » décidé le 2026-10-06 (audit
+                  // Communauté du 2026-10-26, P3-4).
+                  l10n.communityCreatePostZawiyaShown(widget.zawiyaName!),
                   style: TextStyle(color: AppColors.secondaryInk, fontSize: 12),
                 ),
               ],

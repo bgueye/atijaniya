@@ -617,7 +617,7 @@
   "communityCreatePostContentLabel": "Votre message",
   "communityCreatePostContentRequired": "Le message est obligatoire.",
   "communityCreatePostSubmit": "Publier",
-  "communityCreatePostZawiyaNote": "Publié au nom de votre zawiya de rattachement.",
+  "communityCreatePostZawiyaShown": "Votre zawiya ({zawiya}) sera indiquée à côté de votre nom.",
   "communityCreatePostSignInRequired": "Connectez-vous pour publier.",
   "communityCreatePostNeedsZawiya": "Seuls les comptes rattachés à une zawiya peuvent publier pour le moment. Renseignez votre zawiya de rattachement depuis votre profil.",
 

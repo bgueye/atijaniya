@@ -1701,7 +1701,9 @@ class AppLocalizationsFr extends AppLocalizations {
   String get communityCreatePostSubmit => 'Publier';
 
   @override
-  String get communityCreatePostZawiyaNote => 'Publié au nom de votre zawiya de rattachement.';
+  String communityCreatePostZawiyaShown(Object zawiya) {
+    return 'Votre zawiya ($zawiya) sera indiquée à côté de votre nom.';
+  }
 
   @override
   String get communityCreatePostSignInRequired => 'Connectez-vous pour publier.';

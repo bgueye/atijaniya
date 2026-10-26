@@ -431,6 +431,9 @@ avant une ouverture plus large.
 4. **Texte de la feuille de publication** : « Publié au nom de votre zawiya de
    rattachement » contredit l'affichage « disciple · zawiya » décidé le 2026-10-06 ; à
    remplacer par « Votre zawiya (X) sera indiquée à côté de votre nom ».
+   **Statut : corrigé le 2026-10-26.** Clé `communityCreatePostZawiyaShown` (FR et AR, nom de
+   la zawiya en paramètre) à la place de `communityCreatePostZawiyaNote`. Test
+   `test/communaute_create_post_note_test.dart`.
 5. **Indicateur blanc** dans 4 boutons désactivés (`communaute_screen.dart:323, 600`,
    `group_detail_screen.dart:770`, `post_detail_screen.dart:713`) : invisible sur le gris ;
    émeraude, comme corrigé dans les formulaires Zawiyas et Figures.

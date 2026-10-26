@@ -3362,11 +3362,11 @@ abstract class AppLocalizations {
   /// **'Publier'**
   String get communityCreatePostSubmit;
 
-  /// No description provided for @communityCreatePostZawiyaNote.
+  /// No description provided for @communityCreatePostZawiyaShown.
   ///
   /// In fr, this message translates to:
-  /// **'Publié au nom de votre zawiya de rattachement.'**
-  String get communityCreatePostZawiyaNote;
+  /// **'Votre zawiya ({zawiya}) sera indiquée à côté de votre nom.'**
+  String communityCreatePostZawiyaShown(Object zawiya);
 
   /// No description provided for @communityCreatePostSignInRequired.
   ///

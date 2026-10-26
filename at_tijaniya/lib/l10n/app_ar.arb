@@ -612,7 +612,7 @@
   "communityCreatePostContentLabel": "رسالتك",
   "communityCreatePostContentRequired": "الرسالة إلزامية.",
   "communityCreatePostSubmit": "نشر",
-  "communityCreatePostZawiyaNote": "سيُنشر باسم الزاوية التي تنتمي إليها.",
+  "communityCreatePostZawiyaShown": "ستظهر زاويتك ({zawiya}) بجانب اسمك.",
   "communityCreatePostSignInRequired": "سجّل الدخول للنشر.",
   "communityCreatePostNeedsZawiya": "يمكن للحسابات المرتبطة بزاوية فقط النشر حاليًا. يرجى تحديد زاويتك من ملفك الشخصي.",
 
