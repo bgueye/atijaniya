@@ -23,6 +23,18 @@ class Conversation {
   final String? otherDisplayName;
   final String? lastMessageText;
   final DateTime? lastMessageAt;
+
+  /// Ligne renvoyée par la fonction `conversation_previews`.
+  factory Conversation.fromPreviewRow(Map<String, dynamic> row) {
+    final lastAt = row['last_message_at'] as String?;
+    return Conversation(
+      id: row['conversation_id'] as String,
+      otherUserId: row['other_user_id'] as String,
+      otherDisplayName: row['other_display_name'] as String?,
+      lastMessageText: row['last_message_text'] as String?,
+      lastMessageAt: lastAt == null ? null : DateTime.parse(lastAt).toLocal(),
+    );
+  }
 }
 
 class DirectMessage {

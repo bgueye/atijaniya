@@ -22,18 +22,25 @@ class GroupsRepository {
   const GroupsRepository();
 
   Future<List<Group>> fetchGroups() async {
-    final rows = await SupabaseConfig.client
-        .from('groups')
-        .select('*, zawiyas(name)')
-        .order('created_at', ascending: false);
+    final rows =
+        await SupabaseConfig.client.from('groups').select('*, zawiyas(name)').order('created_at', ascending: false);
 
+    // Nombre de membres et appartenance servis par `group_member_counts`
+    // (audit Communauté du 2026-10-26, P2-9) : l'app chargeait toutes les
+    // appartenances pour les compter.
     final groupIds = rows.map((row) => row['id'] as String).toList();
-    final memberCounts = await _fetchMemberCounts(groupIds);
-    final myMemberships = await _fetchMyMemberships();
+    final counts = groupIds.isEmpty
+        ? const <dynamic>[]
+        : await SupabaseConfig.client.rpc('group_member_counts', params: {'p_group_ids': groupIds}) as List<dynamic>;
+    final byGroup = {for (final row in counts.cast<Map<String, dynamic>>()) row['group_id'] as String: row};
 
     return rows.map((row) {
-      final id = row['id'] as String;
-      return Group.fromRow(row, memberCount: memberCounts[id] ?? 0, isMember: myMemberships.contains(id));
+      final count = byGroup[row['id'] as String];
+      return Group.fromRow(
+        row,
+        memberCount: count?['member_count'] as int? ?? 0,
+        isMember: count?['is_member'] as bool? ?? false,
+      );
     }).toList();
   }
 
@@ -108,18 +115,20 @@ class GroupsRepository {
 
   Future<void> leaveGroup(String groupId) async {
     final userId = SupabaseConfig.client.auth.currentUser!.id;
-    await SupabaseConfig.client
-        .from('group_memberships')
-        .delete()
-        .match({'group_id': groupId, 'user_id': userId});
+    await SupabaseConfig.client.from('group_memberships').delete().match({'group_id': groupId, 'user_id': userId});
   }
 
-  Future<List<GroupPost>> fetchGroupPosts(String groupId) async {
-    final rows = await SupabaseConfig.client
+  /// Les [limit] messages les plus récents, du plus ancien au plus récent
+  /// (audit Communauté du 2026-10-26, P2-9 : toute la discussion était
+  /// rechargée toutes les 6 secondes).
+  Future<List<GroupPost>> fetchGroupPosts(String groupId, {required int limit}) async {
+    final latest = await SupabaseConfig.client
         .from('group_posts')
         .select()
         .eq('group_id', groupId)
-        .order('created_at', ascending: true);
+        .order('created_at', ascending: false)
+        .limit(limit);
+    final rows = latest.reversed.toList();
 
     final authorIds = rows.map((row) => row['author_user_id'] as String).toSet();
     final names = await _fetchDisplayNames(authorIds);
@@ -147,27 +156,6 @@ class GroupsRepository {
   /// Réservé à l'auteur du message par la RLS `group_posts_author_delete`.
   Future<void> deleteGroupPost(String id) async {
     await SupabaseConfig.client.from('group_posts').delete().eq('id', id);
-  }
-
-  Future<Map<String, int>> _fetchMemberCounts(List<String> groupIds) async {
-    if (groupIds.isEmpty) return {};
-    final rows = await SupabaseConfig.client.from('group_memberships').select('group_id').inFilter('group_id', groupIds);
-    final counts = <String, int>{};
-    for (final row in rows) {
-      final id = row['group_id'] as String;
-      counts[id] = (counts[id] ?? 0) + 1;
-    }
-    return counts;
-  }
-
-  /// Ensemble des groupes dont l'utilisateur courant est déjà membre —
-  /// aucune requête en mode invité (`currentUser` nul), donc `isMember`
-  /// vaut `false` pour tous les groupes plutôt que d'échouer.
-  Future<Set<String>> _fetchMyMemberships() async {
-    final userId = SupabaseConfig.client.auth.currentUser?.id;
-    if (userId == null) return {};
-    final rows = await SupabaseConfig.client.from('group_memberships').select('group_id').eq('user_id', userId);
-    return rows.map((row) => row['group_id'] as String).toSet();
   }
 
   Future<Map<String, String>> _fetchDisplayNames(Set<String> userIds) async {

@@ -12,6 +12,7 @@ import '../../moderation/presentation/report_content_dialog.dart';
 import '../../profil/presentation/profile_providers.dart';
 import '../domain/message_models.dart';
 import 'community_format.dart';
+import 'load_more_button.dart';
 import 'messages_providers.dart';
 import '../../../core/widgets/content_text.dart';
 
@@ -69,6 +70,7 @@ class _ConversationScreenState extends ConsumerState<ConversationScreen> {
     final l10n = AppLocalizations.of(context)!;
     final myUserId = ref.watch(currentUserIdProvider);
     final messages = ref.watch(conversationMessagesProvider(widget.conversationId));
+    final limit = ref.watch(conversationMessagesLimitProvider(widget.conversationId));
 
     return Scaffold(
       appBar: AppBar(
@@ -94,6 +96,7 @@ class _ConversationScreenState extends ConsumerState<ConversationScreen> {
         children: [
           Expanded(
             child: messages.when(
+              skipLoadingOnReload: true,
               loading: () => Center(child: CircularProgressIndicator(color: AppColors.emerald)),
               error: (error, stackTrace) => Center(
                 child: Column(
@@ -124,8 +127,19 @@ class _ConversationScreenState extends ConsumerState<ConversationScreen> {
                   : ListView.builder(
                       reverse: true,
                       padding: const EdgeInsets.all(16),
-                      itemCount: list.length,
+                      // Ligne en plus, tout en haut : messages précédents quand
+                      // la tranche chargée est pleine (P2-9).
+                      itemCount: list.length + (list.length >= limit ? 1 : 0),
                       itemBuilder: (context, i) {
+                        if (i == list.length) {
+                          return LoadMoreButton(
+                            label: l10n.communityLoadOlderMessages,
+                            loading: messages.isReloading,
+                            onPressed: () => ref
+                                .read(conversationMessagesLimitProvider(widget.conversationId).notifier)
+                                .state += discussionPageSize,
+                          );
+                        }
                         final message = list[list.length - 1 - i];
                         final isMine = message.senderId == myUserId;
                         return _MessageBubble(

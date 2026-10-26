@@ -45,48 +45,16 @@ class MessagesRepository {
     return theirGroups.any((row) => myGroupIds.contains(row['group_id'] as String));
   }
 
+  /// Conversations du compte connecté, de la plus récente à la plus
+  /// ancienne, par la fonction `conversation_previews` (audit Communauté du
+  /// 2026-10-26, P2-9) : l'app chargeait tous les messages de toutes les
+  /// conversations pour trouver le dernier, et les aperçus disparaissaient
+  /// au-delà du plafond de 1 000 lignes. La fonction applique la RLS de
+  /// l'appelant et écarte, comme avant, un disciple bloqué.
   Future<List<Conversation>> fetchConversations() async {
-    final userId = SupabaseConfig.client.auth.currentUser?.id;
-    if (userId == null) return [];
-
-    final participantRows = await SupabaseConfig.client.from('conversation_participants').select();
-    final otherUserIdByConversation = <String, String>{};
-    for (final row in participantRows) {
-      final conversationId = row['conversation_id'] as String;
-      final rowUserId = row['user_id'] as String;
-      if (rowUserId != userId) otherUserIdByConversation[conversationId] = rowUserId;
-    }
-    // Un disciple bloqué n'apparaît plus dans la liste (2026-10-11). La RLS
-    // ne renvoie que mes propres blocages ; elle masque déjà ses messages et
-    // refuse tout envoi, ce filtre évite seulement une conversation vide.
-    final blockedRows = await SupabaseConfig.client.from('user_blocks').select('blocked_id');
-    final blockedIds = blockedRows.map((row) => row['blocked_id'] as String).toSet();
-    otherUserIdByConversation.removeWhere((_, otherUserId) => blockedIds.contains(otherUserId));
-    if (otherUserIdByConversation.isEmpty) return [];
-
-    final names = await _fetchDisplayNames(otherUserIdByConversation.values.toSet());
-    final lastMessages = await _fetchLastMessages(otherUserIdByConversation.keys.toList());
-
-    final conversations = otherUserIdByConversation.entries.map((entry) {
-      final lastMessage = lastMessages[entry.key];
-      return Conversation(
-        id: entry.key,
-        otherUserId: entry.value,
-        otherDisplayName: names[entry.value],
-        lastMessageText: lastMessage?.contentText,
-        lastMessageAt: lastMessage?.sentAt,
-      );
-    }).toList();
-
-    conversations.sort((a, b) {
-      final aDate = a.lastMessageAt;
-      final bDate = b.lastMessageAt;
-      if (aDate == null && bDate == null) return 0;
-      if (aDate == null) return 1;
-      if (bDate == null) return -1;
-      return bDate.compareTo(aDate);
-    });
-    return conversations;
+    if (SupabaseConfig.client.auth.currentUser == null) return [];
+    final rows = await SupabaseConfig.client.rpc('conversation_previews') as List<dynamic>;
+    return [for (final row in rows.cast<Map<String, dynamic>>()) Conversation.fromPreviewRow(row)];
   }
 
   /// Réutilise la conversation à deux {moi, otherUserId} si elle existe,
@@ -106,13 +74,16 @@ class MessagesRepository {
   /// les messages de ses correspondances (mise en relation acceptée).
   static const contactRestrictedCode = 'AT002';
 
-  Future<List<DirectMessage>> fetchMessages(String conversationId) async {
+  /// Les [limit] messages les plus récents, du plus ancien au plus récent
+  /// (P2-9 : toute la conversation était rechargée toutes les 5 secondes).
+  Future<List<DirectMessage>> fetchMessages(String conversationId, {required int limit}) async {
     final rows = await SupabaseConfig.client
         .from('messages')
         .select()
         .eq('conversation_id', conversationId)
-        .order('sent_at', ascending: true);
-    return rows.map(DirectMessage.fromRow).toList();
+        .order('sent_at', ascending: false)
+        .limit(limit);
+    return rows.reversed.map(DirectMessage.fromRow).toList();
   }
 
   Future<void> sendMessage(String conversationId, String contentText) async {
@@ -122,29 +93,5 @@ class MessagesRepository {
       'sender_id': userId,
       'content_text': contentText,
     });
-  }
-
-  Future<Map<String, DirectMessage>> _fetchLastMessages(List<String> conversationIds) async {
-    if (conversationIds.isEmpty) return {};
-    final rows = await SupabaseConfig.client
-        .from('messages')
-        .select()
-        .inFilter('conversation_id', conversationIds)
-        .order('sent_at', ascending: false);
-    final lastByConversation = <String, DirectMessage>{};
-    for (final row in rows) {
-      final message = DirectMessage.fromRow(row);
-      lastByConversation.putIfAbsent(message.conversationId, () => message);
-    }
-    return lastByConversation;
-  }
-
-  Future<Map<String, String>> _fetchDisplayNames(Set<String> userIds) async {
-    if (userIds.isEmpty) return {};
-    final rows = await SupabaseConfig.client
-        .from('profiles')
-        .select('user_id, display_name')
-        .inFilter('user_id', userIds.toList());
-    return {for (final row in rows) row['user_id'] as String: row['display_name'] as String};
   }
 }

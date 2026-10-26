@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../data/messages_repository.dart';
 import '../domain/message_models.dart';
 import '../../profil/presentation/profile_providers.dart';
+import 'load_more_button.dart';
 
 final messagesRepositoryProvider = Provider<MessagesRepository>((ref) => const MessagesRepository());
 
@@ -20,10 +21,18 @@ final conversationsProvider = FutureProvider.autoDispose<List<Conversation>>((re
 /// `ConversationScreen`, poussé/dépilé par conversation — sans ça, chaque
 /// conversation ouverte au fil d'une session laisse ses messages en cache
 /// indéfiniment.
-final conversationMessagesProvider = FutureProvider.autoDispose.family<List<DirectMessage>, String>((ref, conversationId) {
+final conversationMessagesProvider =
+    FutureProvider.autoDispose.family<List<DirectMessage>, String>((ref, conversationId) {
   ref.watch(currentUserIdProvider); // lié au compte, voir plus haut
-  return ref.watch(messagesRepositoryProvider).fetchMessages(conversationId);
+  return ref
+      .watch(messagesRepositoryProvider)
+      .fetchMessages(conversationId, limit: ref.watch(conversationMessagesLimitProvider(conversationId)));
 });
+
+/// Nombre de messages chargés dans une conversation, augmenté par
+/// « Messages précédents » (audit Communauté du 2026-10-26, P2-9).
+final conversationMessagesLimitProvider =
+    StateProvider.autoDispose.family<int, String>((ref, conversationId) => discussionPageSize);
 
 /// Détermine si le bouton "Envoyer un message" doit être affiché sur un
 /// auteur de post/commentaire — voir `post_detail_screen.dart`. `false` sans

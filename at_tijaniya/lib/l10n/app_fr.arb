@@ -982,6 +982,8 @@
   "communityGroupsLeaveError": "Impossible de quitter ce groupe. Réessayez.",
   "communityGroupsDescriptionMore": "Voir plus",
   "communityGroupsDescriptionLess": "Voir moins",
+  "communityFeedLoadMore": "Voir plus de publications",
+  "communityLoadOlderMessages": "Messages précédents",
   "communityMessageSendError": "Le message n'a pas pu être envoyé. Réessayez.",
   "communityMessagesLoadError": "Impossible de charger les messages.",
   "adminMouqaddamZawiyasTitle": "Zawiyas des mouqaddams",

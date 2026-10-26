@@ -23,6 +23,7 @@ import '../domain/group_models.dart';
 import 'community_format.dart';
 import 'group_past_streams_screen.dart';
 import 'groups_providers.dart';
+import 'load_more_button.dart';
 import '../../../core/widgets/content_text.dart';
 
 /// Détail d'un groupe — en-tête (description, lieu, membres), action
@@ -501,7 +502,9 @@ class _GroupPosts extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final posts = ref.watch(groupPostsProvider(groupId));
+    final limit = ref.watch(groupPostsLimitProvider(groupId));
     return posts.when(
+      skipLoadingOnReload: true,
       loading: () => Center(child: CircularProgressIndicator(color: AppColors.emerald)),
       error: (error, stackTrace) => Center(
         child: Text(l10n.communityGroupsLoadPostsError, style: TextStyle(color: AppColors.secondaryInk)),
@@ -528,8 +531,17 @@ class _GroupPosts extends ConsumerWidget {
           : ListView.builder(
               reverse: true,
               padding: const EdgeInsets.all(16),
-              itemCount: list.length,
+              // Liste inversée : la ligne en plus, tout en haut, propose les
+              // messages précédents quand la tranche chargée est pleine.
+              itemCount: list.length + (list.length >= limit ? 1 : 0),
               itemBuilder: (context, i) {
+                if (i == list.length) {
+                  return LoadMoreButton(
+                    label: l10n.communityLoadOlderMessages,
+                    loading: posts.isReloading,
+                    onPressed: () => ref.read(groupPostsLimitProvider(groupId).notifier).state += discussionPageSize,
+                  );
+                }
                 final post = list[list.length - 1 - i];
                 return _GroupPostTile(
                   key: ValueKey(post.id),

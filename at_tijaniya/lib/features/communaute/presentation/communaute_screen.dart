@@ -19,6 +19,7 @@ import 'community_providers.dart';
 import 'conversations_screen.dart';
 import 'group_detail_screen.dart';
 import 'groups_providers.dart';
+import 'load_more_button.dart';
 import 'post_detail_screen.dart';
 import '../../../core/widgets/content_text.dart';
 
@@ -93,7 +94,10 @@ class _FeedTab extends ConsumerWidget {
         icon: const Icon(Icons.add),
         label: Text(l10n.communityCreatePostButton),
       ),
+      // `skipLoadingOnReload` : « Voir plus » recharge le fil avec une page de
+      // plus, sans le remplacer par l'indicateur de chargement.
       body: feed.when(
+        skipLoadingOnReload: true,
         loading: () => Center(child: CircularProgressIndicator(color: AppColors.emerald)),
         error: (error, stackTrace) => Center(
           child: Padding(
@@ -128,12 +132,19 @@ class _FeedTab extends ConsumerWidget {
                 // publication) avec une marge de 88 — constaté à l'audit
                 // design pré-publication Play Store.
                 padding: const EdgeInsets.fromLTRB(16, 16, 16, 100),
-                itemCount: posts.length,
+                // Une ligne de plus pour « Voir plus » quand la page est
+                // pleine : d'autres publications peuvent suivre.
+                itemCount: posts.length + (posts.length >= ref.watch(communityFeedLimitProvider) ? 1 : 0),
                 // `key` par publication : sans elle, après une création ou une
                 // suppression, chaque carte gardait le « j'aime » de la carte
                 // qui occupait sa position avant.
-                itemBuilder: (context, i) =>
-                    _PostCard(key: ValueKey(posts[i].id), post: posts[i], fallbackAuthor: l10n.communityDefaultAuthor),
+                itemBuilder: (context, i) => i == posts.length
+                    ? LoadMoreButton(
+                        label: l10n.communityFeedLoadMore,
+                        loading: feed.isReloading,
+                        onPressed: () => ref.read(communityFeedLimitProvider.notifier).state += communityPageSize,
+                      )
+                    : _PostCard(key: ValueKey(posts[i].id), post: posts[i], fallbackAuthor: l10n.communityDefaultAuthor),
               ),
       ),
     );

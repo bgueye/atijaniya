@@ -2742,6 +2742,12 @@ class AppLocalizationsAr extends AppLocalizations {
   String get communityGroupsDescriptionLess => 'عرض أقل';
 
   @override
+  String get communityFeedLoadMore => 'عرض المزيد من المنشورات';
+
+  @override
+  String get communityLoadOlderMessages => 'الرسائل السابقة';
+
+  @override
   String get communityMessageSendError => 'تعذّر إرسال الرسالة. حاول مرة أخرى.';
 
   @override

@@ -349,6 +349,18 @@ avant une ouverture plus large.
   règle aussi la lecture anonyme de `post_likes`, P2-2) ; pagination du fil (`range`) ;
   dernier message par conversation via une fonction ; rechargement périodique limité aux
   messages postérieurs au dernier reçu.
+- **Statut : corrigé le 2026-10-26.** Migration `2026-10-26_community_counts_and_previews.sql`
+  appliquée : `post_counts(ids)` et `group_member_counts(ids)` (security definer, nombres
+  seuls, pour des contenus visibles par l'appelant ; exécutables sans compte) et
+  `conversation_previews()` (security invoker, réservée aux comptes connectés), plus trois
+  index de tri. Vérifié : compteurs identiques au calcul précédent sur les 11 publications et
+  les groupes, conversation d'autrui invisible, conversation d'un disciple bloqué écartée,
+  `conversation_previews` refusée sans compte (`42501`). Côté app : fil par pages de 20 avec
+  « Voir plus », discussion de groupe et conversation limitées aux 50 derniers messages avec
+  « Messages précédents » (le rechargement périodique ne porte plus que sur cette tranche),
+  blocages filtrés dans la requête du fil. Choix assumé : la tranche est rechargée en entier
+  (bornée) plutôt que par différence, pour que les modifications et suppressions des autres
+  apparaissent aussi. Test `test/communaute_pagination_test.dart`.
 
 ### P3 · Points mineurs
 

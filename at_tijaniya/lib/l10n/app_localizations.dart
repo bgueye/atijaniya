@@ -5420,6 +5420,18 @@ abstract class AppLocalizations {
   /// **'Voir moins'**
   String get communityGroupsDescriptionLess;
 
+  /// No description provided for @communityFeedLoadMore.
+  ///
+  /// In fr, this message translates to:
+  /// **'Voir plus de publications'**
+  String get communityFeedLoadMore;
+
+  /// No description provided for @communityLoadOlderMessages.
+  ///
+  /// In fr, this message translates to:
+  /// **'Messages précédents'**
+  String get communityLoadOlderMessages;
+
   /// No description provided for @communityMessageSendError.
   ///
   /// In fr, this message translates to:

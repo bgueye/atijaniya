@@ -36,8 +36,14 @@ class FakeCommunityRepository extends CommunityRepository {
     if (failWith != null) throw failWith!;
   }
 
+  /// Limites demandées, dans l'ordre.
+  final feedLimits = <int>[];
+
   @override
-  Future<List<CommunityPost>> fetchFeed() async => posts;
+  Future<List<CommunityPost>> fetchFeed({required int limit}) async {
+    feedLimits.add(limit);
+    return posts.take(limit).toList();
+  }
 
   @override
   Future<List<CommunityComment>> fetchComments(String postId) async => comments;
@@ -76,7 +82,8 @@ class FakeGroupsRepository extends GroupsRepository {
   Future<List<Group>> fetchGroups() async => groups;
 
   @override
-  Future<List<GroupPost>> fetchGroupPosts(String groupId) async => posts;
+  Future<List<GroupPost>> fetchGroupPosts(String groupId, {required int limit}) async =>
+      posts.skip(posts.length > limit ? posts.length - limit : 0).toList();
 
   @override
   Future<void> createGroup({required String name, String? description, String? zawiyaId, String? regionText}) =>

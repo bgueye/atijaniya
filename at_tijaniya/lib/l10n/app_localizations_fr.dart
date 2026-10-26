@@ -2768,6 +2768,12 @@ class AppLocalizationsFr extends AppLocalizations {
   String get communityGroupsDescriptionLess => 'Voir moins';
 
   @override
+  String get communityFeedLoadMore => 'Voir plus de publications';
+
+  @override
+  String get communityLoadOlderMessages => 'Messages précédents';
+
+  @override
   String get communityMessageSendError => 'Le message n\'a pas pu être envoyé. Réessayez.';
 
   @override
