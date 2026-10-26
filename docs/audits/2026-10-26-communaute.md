@@ -486,6 +486,10 @@ avant une ouverture plus large.
     d'affichage public si l'inscription n'en fournit pas. Aucun profil concerné aujourd'hui
     (l'écran d'inscription l'envoie), mais un compte créé autrement (tableau de bord,
     futur fournisseur) exposerait le début de son e-mail. Repli neutre (« Disciple »).
+    **Statut : corrigé le 2026-10-26.** Migration
+    `2026-10-26_handle_new_user_neutral_name.sql` appliquée : repli sur « Disciple ».
+    Vérifié dans une transaction annulée (compte sans nom → « Disciple », nom de 80 caractères
+    tronqué à 60).
 11. **« J'aime » en échec annulé sans message** (`communaute_screen.dart:666`,
     `post_detail_screen.dart:85`), connu depuis août.
 12. **Tests** : seulement les modèles et `MessageComposer`. Aucun test d'écran pour le fil,
