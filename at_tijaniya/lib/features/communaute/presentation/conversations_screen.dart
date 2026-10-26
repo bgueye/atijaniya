@@ -39,7 +39,7 @@ class ConversationsScreen extends ConsumerWidget {
                   Text(
                     l10n.communityConversationsLoadError,
                     textAlign: TextAlign.center,
-                    style: TextStyle(color: AppColors.bronze),
+                    style: TextStyle(color: AppColors.secondaryInk),
                   ),
                   const SizedBox(height: 12),
                   OutlinedButton(
@@ -57,7 +57,7 @@ class ConversationsScreen extends ConsumerWidget {
                     child: Text(
                       l10n.communityConversationsEmpty,
                       textAlign: TextAlign.center,
-                      style: TextStyle(color: AppColors.bronze),
+                      style: TextStyle(color: AppColors.secondaryInk),
                     ),
                   ),
                 )
@@ -92,7 +92,7 @@ class _ConversationTile extends StatelessWidget {
       trailing: conversation.lastMessageAt != null
           ? ContentText(
               formatCommunityDateTime(conversation.lastMessageAt!),
-              style: TextStyle(color: AppColors.bronze, fontSize: 11),
+              style: TextStyle(color: AppColors.secondaryInk, fontSize: 11),
             )
           : null,
       onTap: () => Navigator.of(context).push(

@@ -99,7 +99,7 @@ class _ConversationScreenState extends ConsumerState<ConversationScreen> {
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Text(l10n.communityMessagesLoadError, style: TextStyle(color: AppColors.bronze)),
+                    Text(l10n.communityMessagesLoadError, style: TextStyle(color: AppColors.secondaryInk)),
                     TextButton(
                       onPressed: () => ref.invalidate(conversationMessagesProvider(widget.conversationId)),
                       child: Text(l10n.homeRetry),
@@ -114,7 +114,7 @@ class _ConversationScreenState extends ConsumerState<ConversationScreen> {
                         child: Text(
                           l10n.communityConversationsNoMessages,
                           textAlign: TextAlign.center,
-                          style: TextStyle(color: AppColors.bronze),
+                          style: TextStyle(color: AppColors.secondaryInk),
                         ),
                       ),
                     )
@@ -201,7 +201,7 @@ class _MessageBubble extends StatelessWidget {
               children: [
                 ContentText(
                   formatCommunityDateTime(message.sentAt),
-                  style: TextStyle(color: AppColors.bronze, fontSize: 10),
+                  style: TextStyle(color: AppColors.secondaryInk, fontSize: 10),
                 ),
                 if (onReport != null)
                   InkWell(
@@ -209,7 +209,7 @@ class _MessageBubble extends StatelessWidget {
                     child: Tooltip(
                       message: reportTooltip,
                       child: Padding(
-                        padding: const EdgeInsets.all(10),
+                        padding: const EdgeInsets.all(16), // 48 dp avec l'icône de 16
                         child: Icon(Icons.flag_outlined, size: 16, color: AppColors.bronze),
                       ),
                     ),

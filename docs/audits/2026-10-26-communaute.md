@@ -304,6 +304,13 @@ avant une ouverture plus large.
 - **Correctif** : `ConstrainedBox(minWidth/minHeight: 48)` ou `IconButton` (48 dp par
   défaut) pour ces actions ; `AppColors.secondaryInk` pour le texte, le bronze restant aux
   icônes. Test `meetsGuideline(androidTapTargetGuideline)` sur le fil et le détail.
+- **Statut : corrigé le 2026-10-26.** « J'aime » (fil et détail) et « Envoyer un message » à
+  48 dp de haut ; icônes des commentaires, des messages de groupe et du drapeau d'une bulle à
+  48 dp (marge de 16) ; menu d'un message de groupe sans marge réduite. Les 30 textes en bronze
+  du module (dont les onglets non sélectionnés) passent en `secondaryInk`, le bronze restant aux
+  icônes. Test `test/communaute_accessibility_test.dart` (guideline Android sur le fil, le
+  détail et la discussion de groupe), en échec avant la correction. `communaute_screen.dart`
+  passé au formateur au passage.
 
 ### P2-8 · Mise en page de la discussion de groupe
 

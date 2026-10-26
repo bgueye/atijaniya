@@ -266,7 +266,7 @@ class _PostDetailScreenState extends ConsumerState<PostDetailScreen> {
               children: [
                 ContentText(
                   formatCommunityDateTime(post.createdAt),
-                  style: TextStyle(color: AppColors.bronze, fontSize: 12),
+                  style: TextStyle(color: AppColors.secondaryInk, fontSize: 12),
                 ),
                 const SizedBox(height: 12),
                 ContentText(
@@ -293,19 +293,27 @@ class _PostDetailScreenState extends ConsumerState<PostDetailScreen> {
                       selected: _liked,
                       label: AppLocalizations.of(context)!.a11yLike,
                       child: InkWell(
-                      onTap: _toggleLike,
-                      child: Row(
-                        children: [
-                          Icon(
-                            _liked ? Icons.favorite : Icons.favorite_border,
-                            color: _liked ? AppColors.emerald : AppColors.bronze,
-                            size: 20,
+                        onTap: _toggleLike,
+                        // 48 dp (audit Communauté du 2026-10-26, P2-7) : la zone
+                        // se limitait à l'icône de 20 dp.
+                        child: ConstrainedBox(
+                          constraints: const BoxConstraints(minHeight: 48, minWidth: 48),
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 8),
+                            child: Row(
+                              children: [
+                                Icon(
+                                  _liked ? Icons.favorite : Icons.favorite_border,
+                                  color: _liked ? AppColors.emerald : AppColors.bronze,
+                                  size: 20,
+                                ),
+                                const SizedBox(width: 6),
+                                ContentText('$_likeCount', style: TextStyle(color: AppColors.secondaryInk)),
+                              ],
+                            ),
                           ),
-                          const SizedBox(width: 6),
-                          ContentText('$_likeCount', style: TextStyle(color: AppColors.bronze)),
-                        ],
+                        ),
                       ),
-                    ),
                     ),
                     if (post.authorUserId != null) ...[
                       const SizedBox(width: 20),
@@ -331,9 +339,9 @@ class _PostDetailScreenState extends ConsumerState<PostDetailScreen> {
                     ),
                   ),
                   error: (error, stackTrace) =>
-                      Text(l10n.communityLoadError, style: TextStyle(color: AppColors.bronze)),
+                      Text(l10n.communityLoadError, style: TextStyle(color: AppColors.secondaryInk)),
                   data: (list) => list.isEmpty
-                      ? Text(l10n.communityNoComments, style: TextStyle(color: AppColors.bronze))
+                      ? Text(l10n.communityNoComments, style: TextStyle(color: AppColors.secondaryInk))
                       : Column(
                           children: [
                             for (final comment in list)
@@ -421,7 +429,7 @@ class _CommentTile extends StatelessWidget {
               const SizedBox(width: 8),
               ContentText(
                 formatCommunityDateTime(comment.createdAt),
-                style: TextStyle(color: AppColors.bronze, fontSize: 11),
+                style: TextStyle(color: AppColors.secondaryInk, fontSize: 11),
               ),
               if (isAuthor) ...[
                 const Spacer(),
@@ -430,7 +438,7 @@ class _CommentTile extends StatelessWidget {
                   child: Tooltip(
                     message: l10n.communityDeleteCommentTooltip,
                     child: Padding(
-                      padding: const EdgeInsets.all(10),
+                      padding: const EdgeInsets.all(16), // 48 dp avec l'icône de 16
                       child: Icon(Icons.delete_outline, size: 16, color: AppColors.bronze),
                     ),
                   ),
@@ -544,13 +552,18 @@ class _MessageAuthorButton extends ConsumerWidget {
           );
         }
       },
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(Icons.mail_outline, size: 14, color: AppColors.emerald),
-          const SizedBox(width: 4),
-          Text(l10n.communitySendMessageButton, style: TextStyle(color: AppColors.emerald, fontSize: 12)),
-        ],
+      // 48 dp de haut (audit Communauté du 2026-10-26, P2-7) : le lien
+      // faisait 16 dp, la hauteur de son texte.
+      child: ConstrainedBox(
+        constraints: const BoxConstraints(minHeight: 48),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(Icons.mail_outline, size: 14, color: AppColors.emerald),
+            const SizedBox(width: 4),
+            Text(l10n.communitySendMessageButton, style: TextStyle(color: AppColors.emerald, fontSize: 12)),
+          ],
+        ),
       ),
     );
   }
@@ -734,15 +747,16 @@ class _EditPostSheetState extends ConsumerState<_EditPostSheet> {
                       onPressed: _pickImage,
                       icon: const Icon(Icons.image_outlined),
                       label: Text(
-                        _pickedImageBytes != null || showExistingImage
-                            ? l10n.imagePickerChange
-                            : l10n.imagePickerAdd,
+                        _pickedImageBytes != null || showExistingImage ? l10n.imagePickerChange : l10n.imagePickerAdd,
                       ),
                     ),
                   ),
                   if (_pickedImageBytes != null || showExistingImage) ...[
                     const SizedBox(width: 8),
-                    IconButton(tooltip: AppLocalizations.of(context)!.a11yRemove, icon: Icon(Icons.close, color: AppColors.bronze), onPressed: _clearImage),
+                    IconButton(
+                        tooltip: AppLocalizations.of(context)!.a11yRemove,
+                        icon: Icon(Icons.close, color: AppColors.bronze),
+                        onPressed: _clearImage),
                   ],
                 ],
               ),

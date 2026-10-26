@@ -291,12 +291,12 @@ class _GroupHeader extends StatelessWidget {
               if (group.locationLabel != null) ...[
                 Icon(Icons.place_outlined, size: 16, color: AppColors.bronze),
                 const SizedBox(width: 4),
-                ContentText(group.locationLabel!, style: TextStyle(color: AppColors.bronze, fontSize: 13)),
+                ContentText(group.locationLabel!, style: TextStyle(color: AppColors.secondaryInk, fontSize: 13)),
                 const SizedBox(width: 16),
               ],
               Icon(Icons.people_alt_outlined, size: 16, color: AppColors.bronze),
               const SizedBox(width: 4),
-              ContentText('${group.memberCount}', style: TextStyle(color: AppColors.bronze, fontSize: 13)),
+              ContentText('${group.memberCount}', style: TextStyle(color: AppColors.secondaryInk, fontSize: 13)),
             ],
           ),
           const SizedBox(height: 16),
@@ -401,7 +401,7 @@ class _NotMemberState extends StatelessWidget {
             Text(
               l10n.communityGroupsNotMemberBody,
               textAlign: TextAlign.center,
-              style: TextStyle(color: AppColors.bronze),
+              style: TextStyle(color: AppColors.secondaryInk),
             ),
           ],
         ),
@@ -422,7 +422,7 @@ class _GroupPosts extends ConsumerWidget {
     return posts.when(
       loading: () => Center(child: CircularProgressIndicator(color: AppColors.emerald)),
       error: (error, stackTrace) => Center(
-        child: Text(l10n.communityGroupsLoadPostsError, style: TextStyle(color: AppColors.bronze)),
+        child: Text(l10n.communityGroupsLoadPostsError, style: TextStyle(color: AppColors.secondaryInk)),
       ),
       data: (list) => list.isEmpty
           ? Center(
@@ -431,7 +431,7 @@ class _GroupPosts extends ConsumerWidget {
                 child: Text(
                   l10n.communityGroupsPostsEmpty,
                   textAlign: TextAlign.center,
-                  style: TextStyle(color: AppColors.bronze),
+                  style: TextStyle(color: AppColors.secondaryInk),
                 ),
               ),
             )
@@ -565,7 +565,7 @@ class _GroupPostTileState extends ConsumerState<_GroupPostTile> {
               const SizedBox(width: 8),
               ContentText(
                 formatCommunityDateTime(widget.post.createdAt),
-                style: TextStyle(color: AppColors.bronze, fontSize: 11),
+                style: TextStyle(color: AppColors.secondaryInk, fontSize: 11),
               ),
               if (isAuthor) ...[
                 const Spacer(),
@@ -574,7 +574,7 @@ class _GroupPostTileState extends ConsumerState<_GroupPostTile> {
                   child: Tooltip(
                     message: l10n.communityGroupsEditPostTooltip,
                     child: Padding(
-                      padding: const EdgeInsets.all(10),
+                      padding: const EdgeInsets.all(16), // 48 dp avec l'icône de 16
                       child: Icon(Icons.edit_outlined, size: 16, color: AppColors.bronze),
                     ),
                   ),
@@ -584,7 +584,7 @@ class _GroupPostTileState extends ConsumerState<_GroupPostTile> {
                   child: Tooltip(
                     message: l10n.communityGroupsDeletePostTooltip,
                     child: Padding(
-                      padding: const EdgeInsets.all(10),
+                      padding: const EdgeInsets.all(16), // 48 dp avec l'icône de 16
                       child: Icon(Icons.delete_outline, size: 16, color: AppColors.bronze),
                     ),
                   ),
@@ -596,7 +596,6 @@ class _GroupPostTileState extends ConsumerState<_GroupPostTile> {
                 const Spacer(),
                 PopupMenuButton<String>(
                   tooltip: l10n.moderationReportAction,
-                  padding: EdgeInsets.zero,
                   icon: Icon(Icons.more_vert, size: 18, color: AppColors.bronze),
                   onSelected: (value) async {
                     if (value == 'report') {

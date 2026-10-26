@@ -71,7 +71,7 @@ class GroupPastLiveStreamsScreen extends ConsumerWidget {
         child: streamsAsync.when(
           loading: () => Center(child: CircularProgressIndicator(color: AppColors.emerald)),
           error: (error, stackTrace) => Center(
-            child: Text(l10n.communityGroupsPastStreamsLoadError, style: TextStyle(color: AppColors.bronze)),
+            child: Text(l10n.communityGroupsPastStreamsLoadError, style: TextStyle(color: AppColors.secondaryInk)),
           ),
           data: (streams) => streams.isEmpty
               ? Center(
@@ -80,7 +80,7 @@ class GroupPastLiveStreamsScreen extends ConsumerWidget {
                     child: Text(
                       l10n.communityGroupsPastStreamsEmpty,
                       textAlign: TextAlign.center,
-                      style: TextStyle(color: AppColors.bronze),
+                      style: TextStyle(color: AppColors.secondaryInk),
                     ),
                   ),
                 )
