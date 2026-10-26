@@ -437,8 +437,12 @@ avant une ouverture plus large.
 5. **Indicateur blanc** dans 4 boutons désactivés (`communaute_screen.dart:323, 600`,
    `group_detail_screen.dart:770`, `post_detail_screen.dart:713`) : invisible sur le gris ;
    émeraude, comme corrigé dans les formulaires Zawiyas et Figures.
+   **Statut : corrigé le 2026-10-26.** Les quatre indicateurs passent en émeraude ; plus aucun
+   `Colors.white` dans le module. Test `test/communaute_spinner_color_test.dart`.
 6. **Image orpheline** si la modification d'une publication échoue après le téléversement
    (`post_detail_screen.dart:599-635`), comme à la création (P1).
+   **Statut : corrigé le 2026-10-26 avec le P1** (image retirée du bucket si la modification
+   échoue).
 7. **Message de profil en chargement** : `_openCreateSheet` lit `valueOrNull` ; profil pas
    encore chargé ou en erreur → « rattachez-vous à une zawiya » à tort
    (`communaute_screen.dart:155`, relevé le 2026-10-04).

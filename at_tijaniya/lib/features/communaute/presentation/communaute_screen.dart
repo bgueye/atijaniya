@@ -329,10 +329,12 @@ class _CreatePostSheetState extends ConsumerState<_CreatePostSheet> {
               ElevatedButton(
                 onPressed: _saving ? null : _submit,
                 child: _saving
-                    ? const SizedBox(
+                    // Émeraude : un indicateur blanc était invisible sur le gris du
+                    // bouton désactivé (audit Communauté du 2026-10-26, P3-5).
+                    ? SizedBox(
                         height: 18,
                         width: 18,
-                        child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
+                        child: CircularProgressIndicator(strokeWidth: 2, color: AppColors.emerald),
                       )
                     : Text(l10n.communityCreatePostSubmit),
               ),
@@ -586,10 +588,12 @@ class _CreateGroupSheetState extends ConsumerState<_CreateGroupSheet> {
               ElevatedButton(
                 onPressed: _saving ? null : _submit,
                 child: _saving
-                    ? const SizedBox(
+                    // Émeraude : un indicateur blanc était invisible sur le gris du
+                    // bouton désactivé (audit Communauté du 2026-10-26, P3-5).
+                    ? SizedBox(
                         height: 18,
                         width: 18,
-                        child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
+                        child: CircularProgressIndicator(strokeWidth: 2, color: AppColors.emerald),
                       )
                     : Text(l10n.communityGroupsCreateSubmit),
               ),
