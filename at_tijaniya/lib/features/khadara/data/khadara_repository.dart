@@ -98,10 +98,7 @@ class KhadaraRepository {
     final now = DateTime.now();
     final nowIso = now.toUtc().toIso8601String();
     final todayIso = DateTime(now.year, now.month, now.day).toIso8601String().split('T').first;
-    final rows = await SupabaseConfig.client
-        .from('events')
-        .select('*, zawiyas(name)')
-        .or(
+    final rows = await SupabaseConfig.client.from('events').select('*, zawiyas(name)').or(
           'starts_at.gte.$nowIso,'
           'and(is_recurring.eq.true,or(recurrence_until.is.null,recurrence_until.gte.$todayIso))',
         );

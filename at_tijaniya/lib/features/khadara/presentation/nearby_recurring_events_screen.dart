@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/location/location_service.dart';
+import '../../../core/network/network_errors.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../l10n/app_localizations.dart';
 import '../domain/khadara_models.dart';
@@ -27,6 +28,11 @@ class NearbyRecurringEventsScreen extends ConsumerStatefulWidget {
 
 class _NearbyRecurringEventsScreenState extends ConsumerState<NearbyRecurringEventsScreen> {
   bool _loading = true;
+
+  /// Échec du chargement des évènements par manque de réseau (audit Zawiyas
+  /// du 2026-10-25, P3-3) : affiché avec l'icône et le message du hors ligne,
+  /// et non avec ceux d'une localisation coupée.
+  bool _offline = false;
   LocationFailure? _failure;
   List<NearbyRecurringEvent>? _results;
 
@@ -40,6 +46,7 @@ class _NearbyRecurringEventsScreenState extends ConsumerState<NearbyRecurringEve
     setState(() {
       _loading = true;
       _failure = null;
+      _offline = false;
     });
 
     final locationResult = await ref.read(locationServiceProvider).getCurrentPosition();
@@ -66,12 +73,13 @@ class _NearbyRecurringEventsScreenState extends ConsumerState<NearbyRecurringEve
           userLongitude: locationResult.position!.longitude,
         );
       });
-    } catch (_) {
+    } catch (error) {
       // Réseau coupé : sans ce cas, l'écran restait sur son sablier.
       if (mounted) {
         setState(() {
           _loading = false;
           _failure = LocationFailure.unknown;
+          _offline = isNetworkError(error);
         });
       }
     }
@@ -109,9 +117,10 @@ class _NearbyRecurringEventsScreenState extends ConsumerState<NearbyRecurringEve
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Icon(Icons.location_off_outlined, color: AppColors.bronze, size: 32),
+              Icon(_offline ? Icons.wifi_off : Icons.location_off_outlined, color: AppColors.bronze, size: 32),
               const SizedBox(height: 12),
-              Text(_failureMessage(_failure!, l10n), textAlign: TextAlign.center, style: TextStyle(color: AppColors.secondaryInk)),
+              Text(_offline ? l10n.khadaraOfflineError : _failureMessage(_failure!, l10n),
+                  textAlign: TextAlign.center, style: TextStyle(color: AppColors.secondaryInk)),
               const SizedBox(height: 12),
               // Refus définitif ou localisation coupée : le système ne
               // redemandera pas, « Réessayer » seul échouait indéfiniment. Un
@@ -142,7 +151,8 @@ class _NearbyRecurringEventsScreenState extends ConsumerState<NearbyRecurringEve
       return Center(
         child: Padding(
           padding: const EdgeInsets.all(24),
-          child: Text(l10n.khadaraNearbyRecurringEmpty, textAlign: TextAlign.center, style: TextStyle(color: AppColors.secondaryInk)),
+          child: Text(l10n.khadaraNearbyRecurringEmpty,
+              textAlign: TextAlign.center, style: TextStyle(color: AppColors.secondaryInk)),
         ),
       );
     }

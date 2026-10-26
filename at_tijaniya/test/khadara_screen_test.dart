@@ -2,6 +2,8 @@
 // les corrections de l'audit Zawiyas du 2026-10-25. Lieux factices, locaux au
 // test.
 
+import 'dart:io' show SocketException;
+
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -21,12 +23,16 @@ const _zawiyas = [
 ];
 
 // `isAdminProvider` et `zawiyasProvider` surchargés : leurs valeurs par
-// défaut appellent Supabase, non initialisé dans ce test.
-Widget _wrap({Locale locale = const Locale('fr'), double textScale = 1.0}) {
+// défaut appellent Supabase, non initialisé dans ce test. [loadError] :
+// erreur levée par le chargement des lieux, à la place de la liste.
+Widget _wrap({Locale locale = const Locale('fr'), double textScale = 1.0, Object? loadError}) {
   return ProviderScope(
     overrides: [
       isAdminProvider.overrideWithValue(false),
-      zawiyasProvider.overrideWith((ref) async => _zawiyas),
+      zawiyasProvider.overrideWith((ref) async {
+        if (loadError != null) throw loadError;
+        return _zawiyas;
+      }),
     ],
     child: MaterialApp(
       builder: (context, child) => MediaQuery(
@@ -62,7 +68,8 @@ void main() {
     await tester.pump();
     expect(find.text('Aucun lieu ne correspond à « introuvable ».'), findsOneWidget);
     // Texte d'état en encre secondaire, pas en bronze (P2-6).
-    expect(tester.widget<Text>(find.text('Aucun lieu ne correspond à « introuvable ».')).style?.color, AppColors.secondaryInk);
+    expect(tester.widget<Text>(find.text('Aucun lieu ne correspond à « introuvable ».')).style?.color,
+        AppColors.secondaryInk);
 
     await tester.tap(find.byTooltip('Effacer la recherche'));
     await tester.pump();
@@ -101,6 +108,37 @@ void main() {
     };
     expect(tops.length, greaterThan(1));
     expect(find.text('Lieux saints'), findsOneWidget);
+  });
+
+  // Audit Zawiyas du 2026-10-25 (P3-3) : hors ligne distingué d'une autre
+  // erreur, avec « Réessayer » dans les deux cas.
+  testWidgets("hors ligne : message de connexion et « Réessayer »", (tester) async {
+    await tester.pumpWidget(_wrap(loadError: const SocketException('Failed host lookup')));
+    await tester.pumpAndSettle();
+    expect(find.text('Pas de connexion internet. Vérifiez la connexion, puis réessayez.'), findsOneWidget);
+    expect(find.text('Réessayer'), findsOneWidget);
+  });
+
+  testWidgets('autre erreur : message de chargement générique', (tester) async {
+    await tester.pumpWidget(_wrap(loadError: StateError('inattendu')));
+    await tester.pumpAndSettle();
+    expect(find.text('Impossible de charger les données.'), findsOneWidget);
+    expect(find.text('Réessayer'), findsOneWidget);
+  });
+
+  // Interface en arabe : libellés traduits, recherche et filtres en miroir,
+  // noms des lieux (en français) inchangés.
+  testWidgets('en arabe : annuaire traduit, sans débordement', (tester) async {
+    await tester.pumpWidget(_wrap(locale: const Locale('ar')));
+    await tester.pumpAndSettle();
+
+    expect(tester.takeException(), isNull);
+    expect(find.text('ابحث عن مكان أو مدينة أو بلد'), findsOneWidget);
+    expect(find.text('Zawiya de Ségou (Mali)'), findsOneWidget);
+    // Puce « الكل » (Tous) en tête de ligne, donc à droite en RTL.
+    final all = tester.getRect(find.widgetWithText(ChoiceChip, 'الكل'));
+    final mosques = tester.getRect(find.widgetWithText(ChoiceChip, 'المساجد'));
+    expect(all.left, greaterThan(mosques.left));
   });
 
   testWidgets('la recherche se combine au filtre par type', (tester) async {

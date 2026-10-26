@@ -85,8 +85,7 @@ class _LiveStreamScreenState extends ConsumerState<LiveStreamScreen> {
                 controller: _replayUrlController,
                 decoration: InputDecoration(labelText: l10n.khadaraAddReplayUrlLabel),
                 keyboardType: TextInputType.url,
-                validator: (value) =>
-                    parseSafeHttpUrl(value) == null ? l10n.khadaraAddReplayUrlInvalid : null,
+                validator: (value) => parseSafeHttpUrl(value) == null ? l10n.khadaraAddReplayUrlInvalid : null,
               ),
               const SizedBox(height: 12),
               TextFormField(
@@ -159,8 +158,11 @@ class _LiveStreamScreenState extends ConsumerState<LiveStreamScreen> {
         title: Text(l10n.khadaraEndLiveConfirmTitle),
         content: Text(l10n.khadaraEndLiveConfirmBody),
         actions: [
-          TextButton(onPressed: () => Navigator.of(dialogContext).pop(false), child: Text(MaterialLocalizations.of(dialogContext).cancelButtonLabel)),
-          FilledButton(onPressed: () => Navigator.of(dialogContext).pop(true), child: Text(l10n.khadaraEndLiveConfirmAction)),
+          TextButton(
+              onPressed: () => Navigator.of(dialogContext).pop(false),
+              child: Text(MaterialLocalizations.of(dialogContext).cancelButtonLabel)),
+          FilledButton(
+              onPressed: () => Navigator.of(dialogContext).pop(true), child: Text(l10n.khadaraEndLiveConfirmAction)),
         ],
       ),
     );
@@ -243,17 +245,17 @@ class _LiveStreamScreenState extends ConsumerState<LiveStreamScreen> {
             child: widget.stream.status == LiveStreamStatus.ended
                 ? const SizedBox.shrink()
                 : myUserId == null
-                ? Padding(
-                    padding: const EdgeInsets.all(16),
-                    child: Text(l10n.khadaraChatSignInToWrite, style: TextStyle(color: AppColors.bronze)),
-                  )
-                : MessageComposer(
-                    hintText: l10n.khadaraChatHint,
-                    sendTooltip: l10n.communitySendMessageButton,
-                    errorMessage: l10n.communityMessageSendError,
-                    maxLength: 500,
-                    onSend: _send,
-                  ),
+                    ? Padding(
+                        padding: const EdgeInsets.all(16),
+                        child: Text(l10n.khadaraChatSignInToWrite, style: TextStyle(color: AppColors.bronze)),
+                      )
+                    : MessageComposer(
+                        hintText: l10n.khadaraChatHint,
+                        sendTooltip: l10n.communitySendMessageButton,
+                        errorMessage: l10n.communityMessageSendError,
+                        maxLength: 500,
+                        onSend: _send,
+                      ),
           ),
         ],
       ),
@@ -314,7 +316,8 @@ class _NativeUnavailableBanner extends StatelessWidget {
         children: [
           Icon(Icons.info_outline, color: AppColors.emerald),
           const SizedBox(width: 10),
-          Expanded(child: Text(l10n.khadaraNativeNotAvailable, style: const TextStyle(color: AppColors.ink, fontSize: 13))),
+          Expanded(
+              child: Text(l10n.khadaraNativeNotAvailable, style: const TextStyle(color: AppColors.ink, fontSize: 13))),
         ],
       ),
     );
@@ -346,7 +349,8 @@ class _ChatBubble extends StatelessWidget {
             if (!isMine && message.senderName != null)
               Padding(
                 padding: const EdgeInsets.only(bottom: 2),
-                child: ContentText(message.senderName!, style: TextStyle(color: AppColors.emerald, fontSize: 11, fontWeight: FontWeight.w600)),
+                child: ContentText(message.senderName!,
+                    style: TextStyle(color: AppColors.emerald, fontSize: 11, fontWeight: FontWeight.w600)),
               ),
             ContentText(message.message, style: const TextStyle(color: AppColors.ink, fontSize: 15)),
           ],

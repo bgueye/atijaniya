@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import '../../../core/network/network_errors.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/widgets/empty_notice.dart';
 import '../../../core/url/safe_url.dart';
@@ -154,6 +155,7 @@ class _EventsTab extends ConsumerWidget {
         value: events,
         emptyMessage: l10n.khadaraNoEvents,
         onRetry: () => ref.invalidate(upcomingEventsProvider),
+        onRefresh: () => ref.refresh(upcomingEventsProvider.future),
         padding: const EdgeInsets.fromLTRB(16, 16, 16, 88),
         itemBuilder: (context, event) => Card(
           child: ListTile(
@@ -288,6 +290,7 @@ class _ZawiyasTabState extends ConsumerState<_ZawiyasTab> {
                       ? l10n.khadaraNoZawiyas
                       : l10n.khadaraNoPlacesForFilter,
               onRetry: () => ref.invalidate(zawiyasProvider),
+              onRefresh: () => ref.refresh(zawiyasProvider.future),
               padding: const EdgeInsets.fromLTRB(16, 12, 16, 88),
               itemBuilder: (context, zawiya) {
                 // Le type n'est rappelé sous le nom que pour un lieu saint ou
@@ -309,7 +312,8 @@ class _ZawiyasTabState extends ConsumerState<_ZawiyasTab> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               if (kindLabel != null)
-                                ContentText(kindLabel, style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 12)),
+                                ContentText(kindLabel,
+                                    style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 12)),
                               if (zawiya.addressText != null)
                                 ContentText(zawiya.addressText!, maxLines: 2, overflow: TextOverflow.ellipsis),
                             ],
@@ -348,7 +352,8 @@ class _LiveTab extends ConsumerWidget {
     return ListView(
       padding: const EdgeInsets.all(16),
       children: [
-        Text(l10n.khadaraLiveNowSection, style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 15, color: AppColors.ink)),
+        Text(l10n.khadaraLiveNowSection,
+            style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 15, color: AppColors.ink)),
         const SizedBox(height: 8),
         liveStreams.when(
           loading: () => Center(child: CircularProgressIndicator(color: AppColors.emerald)),
@@ -377,7 +382,8 @@ class _LiveTab extends ConsumerWidget {
                 ),
         ),
         const SizedBox(height: 24),
-        Text(l10n.khadaraReplaysSection, style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 15, color: AppColors.ink)),
+        Text(l10n.khadaraReplaysSection,
+            style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 15, color: AppColors.ink)),
         const SizedBox(height: 8),
         replays.when(
           loading: () => Center(child: CircularProgressIndicator(color: AppColors.emerald)),
@@ -397,7 +403,8 @@ class _LiveTab extends ConsumerWidget {
                             trailing: Icon(Icons.open_in_new, color: AppColors.bronze),
                             onTap: () async {
                               final uri = parseSafeHttpUrl(replay.videoUrl);
-                              final launched = uri != null && await launchUrl(uri, mode: LaunchMode.externalApplication);
+                              final launched =
+                                  uri != null && await launchUrl(uri, mode: LaunchMode.externalApplication);
                               if (!launched && context.mounted) {
                                 ScaffoldMessenger.of(context).showSnackBar(
                                   SnackBar(content: Text(l10n.khadaraOpenReplayError)),
@@ -423,6 +430,7 @@ class _AsyncSection<T> extends StatelessWidget {
     required this.itemBuilder,
     required this.emptyMessage,
     required this.onRetry,
+    required this.onRefresh,
     this.padding = const EdgeInsets.all(16),
   });
 
@@ -430,6 +438,11 @@ class _AsyncSection<T> extends StatelessWidget {
   final Widget Function(BuildContext, T) itemBuilder;
   final String emptyMessage;
   final VoidCallback onRetry;
+
+  /// Tirer pour actualiser (audit Zawiyas du 2026-10-25, P3-2) : la liste des
+  /// lieux n'était rechargée ni à l'arrivée sur l'onglet ni à la demande. La
+  /// liste en place reste affichée pendant le rechargement.
+  final Future<void> Function() onRefresh;
 
   /// Padding de la liste de résultats — personnalisable pour laisser de la
   /// place à un FAB (voir `_EventsTab`) sans affecter les autres onglets.
@@ -440,33 +453,53 @@ class _AsyncSection<T> extends StatelessWidget {
     final l10n = AppLocalizations.of(context)!;
     return value.when(
       loading: () => Center(child: CircularProgressIndicator(color: AppColors.emerald)),
-      error: (error, stackTrace) => Center(
-        child: Padding(
-          padding: const EdgeInsets.all(24),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Icon(Icons.wifi_off, color: AppColors.bronze, size: 32),
-              const SizedBox(height: 12),
-              Text(l10n.khadaraLoadError, textAlign: TextAlign.center, style: TextStyle(color: AppColors.secondaryInk)),
-              const SizedBox(height: 12),
-              OutlinedButton(onPressed: onRetry, child: Text(l10n.khadaraRetry)),
-            ],
-          ),
-        ),
-      ),
-      data: (items) => items.isEmpty
-          ? Center(
-              child: Padding(
-                padding: const EdgeInsets.all(24),
-                child: ContentText(emptyMessage, textAlign: TextAlign.center, style: TextStyle(color: AppColors.secondaryInk)),
-              ),
-            )
-          : ListView.builder(
-              padding: padding,
-              itemCount: items.length,
-              itemBuilder: (context, i) => itemBuilder(context, items[i]),
+      error: (error, stackTrace) {
+        // Hors ligne distingué d'une autre erreur (audit Zawiyas du
+        // 2026-10-25, P3-3) : « impossible de charger » laissait croire à un
+        // problème de l'app quand le téléphone n'avait simplement pas de
+        // réseau.
+        final offline = isNetworkError(error);
+        return Center(
+          child: Padding(
+            padding: const EdgeInsets.all(24),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(offline ? Icons.wifi_off : Icons.error_outline, color: AppColors.bronze, size: 32),
+                const SizedBox(height: 12),
+                Text(
+                  offline ? l10n.khadaraOfflineError : l10n.khadaraLoadError,
+                  textAlign: TextAlign.center,
+                  style: TextStyle(color: AppColors.secondaryInk),
+                ),
+                const SizedBox(height: 12),
+                OutlinedButton(onPressed: onRetry, child: Text(l10n.khadaraRetry)),
+              ],
             ),
+          ),
+        );
+      },
+      // Défilable même vide ou court : sans défilement possible, le geste
+      // d'actualisation ne part pas.
+      data: (items) => RefreshIndicator(
+        color: AppColors.emerald,
+        onRefresh: onRefresh,
+        child: items.isEmpty
+            ? ListView(
+                physics: const AlwaysScrollableScrollPhysics(),
+                padding: const EdgeInsets.all(24),
+                children: [
+                  ContentText(emptyMessage,
+                      textAlign: TextAlign.center, style: TextStyle(color: AppColors.secondaryInk)),
+                ],
+              )
+            : ListView.builder(
+                physics: const AlwaysScrollableScrollPhysics(),
+                padding: padding,
+                itemCount: items.length,
+                itemBuilder: (context, i) => itemBuilder(context, items[i]),
+              ),
+      ),
     );
   }
 }

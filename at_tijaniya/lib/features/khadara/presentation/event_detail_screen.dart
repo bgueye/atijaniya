@@ -48,13 +48,10 @@ class _EventDetailScreenState extends ConsumerState<EventDetailScreen> {
         title: Text(l10n.khadaraDeleteEventConfirmTitle),
         content: Text(l10n.khadaraDeleteEventConfirmBody),
         actions: [
-          TextButton(
-              onPressed: () => Navigator.of(context).pop(false),
-              child: Text(l10n.profileCancel)),
+          TextButton(onPressed: () => Navigator.of(context).pop(false), child: Text(l10n.profileCancel)),
           TextButton(
             onPressed: () => Navigator.of(context).pop(true),
-            child: Text(l10n.khadaraDeleteEventConfirmAction,
-                style: const TextStyle(color: AppColors.danger)),
+            child: Text(l10n.khadaraDeleteEventConfirmAction, style: const TextStyle(color: AppColors.danger)),
           ),
         ],
       ),
@@ -137,15 +134,13 @@ class _EventDetailScreenState extends ConsumerState<EventDetailScreen> {
                   // l'image selon son orientation.
                   width: double.infinity,
                   fit: BoxFit.fitWidth,
-                  errorBuilder: (context, error, stackTrace) =>
-                      const SizedBox.shrink(),
+                  errorBuilder: (context, error, stackTrace) => const SizedBox.shrink(),
                 ),
               ),
               const SizedBox(height: 16),
             ],
             Chip(
-              avatar: Icon(khadaraEventTypeIcon(_event.type),
-                  size: 18, color: AppColors.emerald),
+              avatar: Icon(khadaraEventTypeIcon(_event.type), size: 18, color: AppColors.emerald),
               label: Text(khadaraEventTypeLabel(_event.type, l10n)),
               backgroundColor: AppColors.emeraldSoft,
             ),
@@ -180,8 +175,7 @@ class _EventDetailScreenState extends ConsumerState<EventDetailScreen> {
               const SizedBox(height: 20),
               ContentText(
                 _event.description!,
-                style: const TextStyle(
-                    color: AppColors.ink, fontSize: 16, height: 1.4),
+                style: const TextStyle(color: AppColors.ink, fontSize: 16, height: 1.4),
               ),
             ],
             if (_event.hasMapsTarget) ...[
@@ -224,13 +218,11 @@ class _LiveStreamSection extends ConsumerWidget {
 
     return streamAsync.maybeWhen(
       data: (stream) {
-        final isActive =
-            stream != null && stream.status != LiveStreamStatus.ended;
+        final isActive = stream != null && stream.status != LiveStreamStatus.ended;
         if (isActive) {
           return FilledButton.icon(
             onPressed: () => Navigator.of(context).push(
-              MaterialPageRoute(
-                  builder: (_) => LiveStreamScreen(stream: stream)),
+              MaterialPageRoute(builder: (_) => LiveStreamScreen(stream: stream)),
             ),
             icon: const Icon(Icons.podcasts),
             label: Text(l10n.khadaraJoinLive),
@@ -249,8 +241,7 @@ class _LiveStreamSection extends ConsumerWidget {
         return OutlinedButton.icon(
           onPressed: () => Navigator.of(context).push(
             MaterialPageRoute(
-                builder: (_) => StartLiveStreamScreen.forEvent(
-                    eventId: event.id, contextTitle: event.title)),
+                builder: (_) => StartLiveStreamScreen.forEvent(eventId: event.id, contextTitle: event.title)),
           ),
           icon: const Icon(Icons.podcasts_outlined),
           label: Text(l10n.khadaraStartLive),
@@ -274,8 +265,7 @@ class _InfoRow extends StatelessWidget {
       children: [
         Icon(icon, size: 18, color: AppColors.bronze),
         const SizedBox(width: 8),
-        Expanded(
-            child: ContentText(text, style: const TextStyle(color: AppColors.ink))),
+        Expanded(child: ContentText(text, style: const TextStyle(color: AppColors.ink))),
       ],
     );
   }

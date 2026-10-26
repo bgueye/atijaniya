@@ -1403,7 +1403,7 @@ abstract class AppLocalizations {
   /// No description provided for @khadaraNoZawiyas.
   ///
   /// In fr, this message translates to:
-  /// **'Aucune zawiya renseignée pour le moment.'**
+  /// **'Aucun lieu renseigné pour le moment.'**
   String get khadaraNoZawiyas;
 
   /// No description provided for @khadaraLoadError.
@@ -1411,6 +1411,12 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'Impossible de charger les données.'**
   String get khadaraLoadError;
+
+  /// No description provided for @khadaraOfflineError.
+  ///
+  /// In fr, this message translates to:
+  /// **'Pas de connexion internet. Vérifiez la connexion, puis réessayez.'**
+  String get khadaraOfflineError;
 
   /// No description provided for @khadaraRetry.
   ///
@@ -1733,7 +1739,7 @@ abstract class AppLocalizations {
   /// No description provided for @khadaraNoUpcomingEventsAtZawiya.
   ///
   /// In fr, this message translates to:
-  /// **'Aucun évènement à venir dans cette zawiya.'**
+  /// **'Aucun évènement à venir dans ce lieu.'**
   String get khadaraNoUpcomingEventsAtZawiya;
 
   /// No description provided for @khadaraAddressLabel.
@@ -1748,10 +1754,28 @@ abstract class AppLocalizations {
   /// **'Contact'**
   String get khadaraContactLabel;
 
+  /// No description provided for @khadaraContactCall.
+  ///
+  /// In fr, this message translates to:
+  /// **'Appeler le {number}'**
+  String khadaraContactCall(String number);
+
+  /// No description provided for @khadaraContactWrite.
+  ///
+  /// In fr, this message translates to:
+  /// **'Écrire à {email}'**
+  String khadaraContactWrite(String email);
+
+  /// No description provided for @khadaraContactOpenError.
+  ///
+  /// In fr, this message translates to:
+  /// **'Impossible d\'ouvrir l\'application.'**
+  String get khadaraContactOpenError;
+
   /// No description provided for @khadaraAddZawiyaButton.
   ///
   /// In fr, this message translates to:
-  /// **'Ajouter une zawiya'**
+  /// **'Ajouter un lieu'**
   String get khadaraAddZawiyaButton;
 
   /// No description provided for @khadaraEditZawiyaTooltip.
@@ -1769,7 +1793,7 @@ abstract class AppLocalizations {
   /// No description provided for @khadaraDeleteZawiyaConfirmTitle.
   ///
   /// In fr, this message translates to:
-  /// **'Supprimer cette zawiya ?'**
+  /// **'Supprimer ce lieu ?'**
   String get khadaraDeleteZawiyaConfirmTitle;
 
   /// No description provided for @khadaraDeleteZawiyaConfirmBody.
@@ -1787,25 +1811,25 @@ abstract class AppLocalizations {
   /// No description provided for @khadaraDeleteZawiyaBlockedByReferences.
   ///
   /// In fr, this message translates to:
-  /// **'Impossible de supprimer cette zawiya : elle est encore utilisée (disciples rattachés, évènements, publications ou groupes).'**
+  /// **'Impossible de supprimer ce lieu : il est encore utilisé (disciples rattachés, évènements, publications, groupes ou successions).'**
   String get khadaraDeleteZawiyaBlockedByReferences;
 
   /// No description provided for @khadaraDeleteZawiyaError.
   ///
   /// In fr, this message translates to:
-  /// **'Impossible de supprimer cette zawiya.'**
+  /// **'Impossible de supprimer ce lieu.'**
   String get khadaraDeleteZawiyaError;
 
   /// No description provided for @zawiyaFormCreateTitle.
   ///
   /// In fr, this message translates to:
-  /// **'Nouvelle zawiya'**
+  /// **'Nouveau lieu'**
   String get zawiyaFormCreateTitle;
 
   /// No description provided for @zawiyaFormEditTitle.
   ///
   /// In fr, this message translates to:
-  /// **'Modifier la zawiya'**
+  /// **'Modifier le lieu'**
   String get zawiyaFormEditTitle;
 
   /// No description provided for @zawiyaFormNameLabel.
@@ -1889,7 +1913,7 @@ abstract class AppLocalizations {
   /// No description provided for @zawiyaFormSaveError.
   ///
   /// In fr, this message translates to:
-  /// **'Impossible d\'enregistrer la zawiya.'**
+  /// **'Impossible d\'enregistrer ce lieu.'**
   String get zawiyaFormSaveError;
 
   /// No description provided for @zawiyaFormKindLabel.
@@ -2015,7 +2039,7 @@ abstract class AppLocalizations {
   /// No description provided for @khadaraNearbyRecurringEmpty.
   ///
   /// In fr, this message translates to:
-  /// **'Aucun évènement récurrent avec une zawiya géolocalisée n\'a été trouvé.'**
+  /// **'Aucun évènement récurrent dans un lieu géolocalisé n\'a été trouvé.'**
   String get khadaraNearbyRecurringEmpty;
 
   /// No description provided for @khadaraLocationServiceDisabled.

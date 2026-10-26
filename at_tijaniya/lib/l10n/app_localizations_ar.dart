@@ -682,10 +682,13 @@ class AppLocalizationsAr extends AppLocalizations {
   String get khadaraNoEvents => 'لا توجد مناسبات قادمة حاليًا.';
 
   @override
-  String get khadaraNoZawiyas => 'لم تُسجَّل أي زاوية حاليًا.';
+  String get khadaraNoZawiyas => 'لم يُسجَّل أي مكان حاليًا.';
 
   @override
   String get khadaraLoadError => 'تعذّر تحميل البيانات.';
+
+  @override
+  String get khadaraOfflineError => 'لا يوجد اتصال بالإنترنت. تحقّق من الاتصال ثم أعد المحاولة.';
 
   @override
   String get khadaraRetry => 'إعادة المحاولة';
@@ -856,7 +859,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get khadaraUpcomingEventsAtZawiya => 'المناسبات القادمة';
 
   @override
-  String get khadaraNoUpcomingEventsAtZawiya => 'لا توجد مناسبات قادمة في هذه الزاوية.';
+  String get khadaraNoUpcomingEventsAtZawiya => 'لا توجد مناسبات قادمة في هذا المكان.';
 
   @override
   String get khadaraAddressLabel => 'العنوان';
@@ -865,7 +868,20 @@ class AppLocalizationsAr extends AppLocalizations {
   String get khadaraContactLabel => 'التواصل';
 
   @override
-  String get khadaraAddZawiyaButton => 'إضافة زاوية';
+  String khadaraContactCall(String number) {
+    return 'الاتصال بالرقم $number';
+  }
+
+  @override
+  String khadaraContactWrite(String email) {
+    return 'مراسلة $email';
+  }
+
+  @override
+  String get khadaraContactOpenError => 'تعذّر فتح التطبيق.';
+
+  @override
+  String get khadaraAddZawiyaButton => 'إضافة مكان';
 
   @override
   String get khadaraEditZawiyaTooltip => 'تعديل';
@@ -874,7 +890,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get khadaraDeleteZawiyaTooltip => 'حذف';
 
   @override
-  String get khadaraDeleteZawiyaConfirmTitle => 'حذف هذه الزاوية؟';
+  String get khadaraDeleteZawiyaConfirmTitle => 'حذف هذا المكان؟';
 
   @override
   String get khadaraDeleteZawiyaConfirmBody => 'هذا الإجراء نهائي.';
@@ -884,16 +900,16 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get khadaraDeleteZawiyaBlockedByReferences =>
-      'تعذّر حذف هذه الزاوية: لا تزال مستخدمة (مريدون مرتبطون، مناسبات، منشورات أو مجموعات).';
+      'تعذّر حذف هذا المكان: لا يزال مستخدمًا (مريدون مرتبطون، مناسبات، منشورات، مجموعات أو سلاسل خلافة).';
 
   @override
-  String get khadaraDeleteZawiyaError => 'تعذّر حذف هذه الزاوية.';
+  String get khadaraDeleteZawiyaError => 'تعذّر حذف هذا المكان.';
 
   @override
-  String get zawiyaFormCreateTitle => 'زاوية جديدة';
+  String get zawiyaFormCreateTitle => 'مكان جديد';
 
   @override
-  String get zawiyaFormEditTitle => 'تعديل الزاوية';
+  String get zawiyaFormEditTitle => 'تعديل المكان';
 
   @override
   String get zawiyaFormNameLabel => 'الاسم';
@@ -935,7 +951,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get zawiyaFormSave => 'حفظ';
 
   @override
-  String get zawiyaFormSaveError => 'تعذّر حفظ الزاوية.';
+  String get zawiyaFormSaveError => 'تعذّر حفظ هذا المكان.';
 
   @override
   String get zawiyaFormKindLabel => 'نوع المكان';
@@ -1000,7 +1016,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get khadaraNearbyRecurringTitle => 'أقرب حضرة';
 
   @override
-  String get khadaraNearbyRecurringEmpty => 'لم يتم العثور على أي مناسبة متكررة مرتبطة بزاوية محددة الموقع.';
+  String get khadaraNearbyRecurringEmpty => 'لم يتم العثور على أي مناسبة متكررة في مكان محدد الموقع.';
 
   @override
   String get khadaraLocationServiceDisabled => 'تحديد الموقع معطّل على هذا الجهاز. فعّله للعثور على أقرب مناسبة.';

@@ -136,7 +136,8 @@ class _SectionTile extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            ContentText(section.title, style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 16, color: AppColors.ink)),
+            ContentText(section.title,
+                style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 16, color: AppColors.ink)),
             const SizedBox(height: 8),
             ContentText(
               section.body,

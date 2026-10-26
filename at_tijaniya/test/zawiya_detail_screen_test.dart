@@ -57,6 +57,33 @@ const _zawiya = Zawiya(
 );
 
 void main() {
+  // Audit Zawiyas du 2026-10-25 (P3-1) : le numéro repéré dans le contact
+  // s'appelle d'un toucher (lien `tel:` construit, numéro normalisé) ; un
+  // échec d'ouverture donne un message.
+  testWidgets('contact : bouton d\'appel vers le numéro normalisé, échec géré', (tester) async {
+    const channel = MethodChannel('plugins.flutter.io/url_launcher');
+    final opened = <String>[];
+    var succeed = true;
+    tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(channel, (call) async {
+      opened.add((call.arguments as Map)['url'] as String);
+      return succeed;
+    });
+    addTearDown(() => tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(channel, null));
+
+    await tester.pumpWidget(_wrap(const ZawiyaDetailScreen(zawiya: _zawiya)));
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.text('Appeler le +221 00 000 00 00'));
+    await tester.pumpAndSettle();
+    expect(opened.last, 'tel:+221000000000');
+    expect(find.text("Impossible d'ouvrir l'application."), findsNothing);
+
+    succeed = false;
+    await tester.tap(find.text('Appeler le +221 00 000 00 00'));
+    await tester.pumpAndSettle();
+    expect(find.text("Impossible d'ouvrir l'application."), findsOneWidget);
+  });
+
   // Audit Zawiyas du 2026-10-25 (P2-5) : le nom n'était que dans la barre de
   // titre, coupé sur une ligne. Il est en tête de la fiche, en entier, et
   // annoncé comme titre.
@@ -115,7 +142,8 @@ void main() {
   // Audit Zawiyas du 2026-10-25 (P2-2) : coordonnées approximatives
   // signalées près du bouton Maps, et seulement dans ce cas.
   testWidgets('signale un emplacement approximatif près du bouton Maps', (tester) async {
-    const approximate = Zawiya(id: 'z2', name: 'Lieu approximatif', latitude: 1, longitude: 2, coordinatesApproximate: true);
+    const approximate =
+        Zawiya(id: 'z2', name: 'Lieu approximatif', latitude: 1, longitude: 2, coordinatesApproximate: true);
     await tester.pumpWidget(_wrap(const ZawiyaDetailScreen(zawiya: approximate)));
     await tester.pumpAndSettle();
     expect(find.textContaining('Emplacement approximatif'), findsOneWidget);

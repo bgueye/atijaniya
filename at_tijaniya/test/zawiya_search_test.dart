@@ -8,12 +8,21 @@ import 'package:at_tijaniya/features/khadara/domain/khadara_models.dart';
 import 'package:at_tijaniya/features/khadara/domain/zawiya_search.dart';
 
 const _zawiyas = [
-  Zawiya(id: 'ain', name: "Zawiya d'Aïn Madhi", addressText: 'Aïn Madhi, wilaya de Laghouat, Algérie (coordonnées approximatives)'),
+  Zawiya(
+      id: 'ain',
+      name: "Zawiya d'Aïn Madhi",
+      addressText: 'Aïn Madhi, wilaya de Laghouat, Algérie (coordonnées approximatives)'),
   Zawiya(id: 'medina', name: 'Zawiya de Médina Baye (Kaolack)', addressText: 'Médina Baye, Kaolack, Sénégal'),
-  Zawiya(id: 'taiba', name: 'Zawiya de Taïba Niassène', addressText: 'Taïba Niassène, département de Nioro du Rip, région de Kaolack, Sénégal'),
+  Zawiya(
+      id: 'taiba',
+      name: 'Zawiya de Taïba Niassène',
+      addressText: 'Taïba Niassène, département de Nioro du Rip, région de Kaolack, Sénégal'),
   Zawiya(id: 'segou', name: 'Zawiya de Ségou (Mali)', addressText: 'Ségou, Mali (coordonnées approximatives)'),
   Zawiya(id: 'tivaouane', name: 'Zawiya de Tivaouane', addressText: 'Tivaouane, région de Thiès, Sénégal'),
-  Zawiya(id: 'ndiarnde', name: 'Ndiarndé', addressText: 'Ndiarndé, commune de Ngandiouf, département de Tivaouane, Sénégal'),
+  Zawiya(
+      id: 'ndiarnde',
+      name: 'Ndiarndé',
+      addressText: 'Ndiarndé, commune de Ngandiouf, département de Tivaouane, Sénégal'),
 ];
 
 List<String> _ids(String query) => searchZawiyas(_zawiyas, query).map((z) => z.id).toList();

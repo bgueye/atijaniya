@@ -1,13 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:url_launcher/url_launcher.dart';
 
+import '../../../core/network/network_errors.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../l10n/app_localizations.dart';
+import '../domain/contact_links.dart';
 import '../domain/khadara_errors.dart';
 import '../domain/khadara_models.dart';
 import 'event_detail_screen.dart';
 import 'khadara_format.dart';
+import '../../figures/presentation/figures_providers.dart' show linkedZawiyasForFigureProvider;
 import 'khadara_providers.dart';
 import 'open_in_maps.dart';
 import 'zawiya_form_screen.dart';
@@ -58,6 +62,11 @@ class _ZawiyaDetailScreenState extends ConsumerState<ZawiyaDetailScreen> {
     try {
       await ref.read(khadaraRepositoryProvider).deleteZawiya(_zawiya.id);
       ref.invalidate(zawiyasProvider);
+      // Les évènements et la fiche d'une figure (lieux rattachés, supprimés
+      // en cascade) montraient encore le lieu supprimé (audit Zawiyas du
+      // 2026-10-25, P3-5).
+      ref.invalidate(upcomingEventsProvider);
+      ref.invalidate(linkedZawiyasForFigureProvider);
       if (mounted) Navigator.of(context).pop();
     } catch (error) {
       final kind = classifyZawiyaDeleteError(error);
@@ -148,6 +157,10 @@ class _ZawiyaDetailScreenState extends ConsumerState<ZawiyaDetailScreen> {
             ],
             if (zawiya.contactInfo != null) ...[
               _InfoRow(icon: Icons.call_outlined, label: l10n.khadaraContactLabel, text: zawiya.contactInfo!),
+              // Un bouton par numéro ou adresse repéré dans le texte libre
+              // (audit Zawiyas du 2026-10-25, P3-1) ; le texte, remarques
+              // comprises, reste affiché au-dessus.
+              _ContactActions(links: extractContactLinks(zawiya.contactInfo!)),
               const SizedBox(height: 8),
             ],
             // Bouton Maps avec des coordonnées, ou à défaut l'adresse (recherche
@@ -196,7 +209,23 @@ class _ZawiyaDetailScreenState extends ConsumerState<ZawiyaDetailScreen> {
                 padding: const EdgeInsets.symmetric(vertical: 16),
                 child: Center(child: CircularProgressIndicator(color: AppColors.emerald)),
               ),
-              error: (err, st) => Text(l10n.khadaraLoadError, style: TextStyle(color: AppColors.secondaryInk)),
+              // Message selon la cause (hors ligne ou autre) et « Réessayer » :
+              // seul un texte s'affichait, sans moyen de relancer (audit
+              // Zawiyas du 2026-10-25, P3-3).
+              error: (err, st) => Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    isNetworkError(err) ? l10n.khadaraOfflineError : l10n.khadaraLoadError,
+                    style: TextStyle(color: AppColors.secondaryInk),
+                  ),
+                  const SizedBox(height: 8),
+                  OutlinedButton(
+                    onPressed: () => ref.invalidate(upcomingEventsProvider),
+                    child: Text(l10n.khadaraRetry),
+                  ),
+                ],
+              ),
               data: (events) => events.isEmpty
                   ? Text(l10n.khadaraNoUpcomingEventsAtZawiya, style: TextStyle(color: AppColors.secondaryInk))
                   : Column(
@@ -257,6 +286,53 @@ class _InfoRow extends StatelessWidget {
               ],
             ),
           ),
+        ],
+      ),
+    );
+  }
+}
+
+/// Boutons « Appeler le … » et « Écrire à … » sous le contact d'un lieu.
+/// Liens `tel:`/`mailto:` construits par `extractContactLinks`, jamais repris
+/// tels quels du texte ; échec d'ouverture géré par un message traduit.
+class _ContactActions extends StatelessWidget {
+  const _ContactActions({required this.links});
+
+  final List<ContactLink> links;
+
+  Future<void> _open(BuildContext context, Uri uri) async {
+    final message = AppLocalizations.of(context)!.khadaraContactOpenError;
+    bool launched;
+    try {
+      launched = await launchUrl(uri);
+    } catch (_) {
+      launched = false;
+    }
+    if (!launched && context.mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(message)));
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (links.isEmpty) return const SizedBox.shrink();
+    final l10n = AppLocalizations.of(context)!;
+    return Padding(
+      padding: const EdgeInsetsDirectional.only(start: 26, top: 4),
+      child: Wrap(
+        spacing: 8,
+        runSpacing: 4,
+        children: [
+          for (final link in links)
+            TextButton.icon(
+              onPressed: () => _open(context, link.uri),
+              icon: Icon(link.kind == ContactLinkKind.phone ? Icons.call_outlined : Icons.mail_outline, size: 18),
+              label: Text(
+                link.kind == ContactLinkKind.phone
+                    ? l10n.khadaraContactCall(link.label)
+                    : l10n.khadaraContactWrite(link.label),
+              ),
+            ),
         ],
       ),
     );

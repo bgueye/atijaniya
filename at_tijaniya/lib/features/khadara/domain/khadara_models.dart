@@ -373,10 +373,7 @@ bool canManageEvent(
   required String? managedZawiyaId,
 }) {
   if (isAdmin) return true;
-  return userId != null &&
-      userId == event.createdBy &&
-      managedZawiyaId != null &&
-      managedZawiyaId == event.zawiyaId;
+  return userId != null && userId == event.createdBy && managedZawiyaId != null && managedZawiyaId == event.zawiyaId;
 }
 
 /// Direct (`live_streams`) — "Lecteur natif + agrégation de flux externes"

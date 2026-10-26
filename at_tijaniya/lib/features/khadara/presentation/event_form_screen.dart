@@ -158,8 +158,7 @@ class _EventFormScreenState extends ConsumerState<EventFormScreen> {
       initialTime: TimeOfDay.fromDateTime(_startsAt ?? DateTime.now()),
     );
     if (time == null || !mounted) return;
-    setState(() => _startsAt =
-        DateTime(date.year, date.month, date.day, time.hour, time.minute));
+    setState(() => _startsAt = DateTime(date.year, date.month, date.day, time.hour, time.minute));
   }
 
   Future<void> _pickRecurrenceTime() async {
@@ -189,12 +188,10 @@ class _EventFormScreenState extends ConsumerState<EventFormScreen> {
     if (date == null || !mounted) return;
     final time = await showTimePicker(
       context: context,
-      initialTime:
-          TimeOfDay.fromDateTime(_endsAt ?? _startsAt ?? DateTime.now()),
+      initialTime: TimeOfDay.fromDateTime(_endsAt ?? _startsAt ?? DateTime.now()),
     );
     if (time == null || !mounted) return;
-    setState(() => _endsAt =
-        DateTime(date.year, date.month, date.day, time.hour, time.minute));
+    setState(() => _endsAt = DateTime(date.year, date.month, date.day, time.hour, time.minute));
   }
 
   Future<void> _submit() async {
@@ -348,14 +345,12 @@ class _EventFormScreenState extends ConsumerState<EventFormScreen> {
 
   Widget _buildImagePicker(AppLocalizations l10n) {
     final hasPickedImage = _pickedImageBytes != null;
-    final hasExistingImage =
-        !hasPickedImage && !_removeImage && _existingImageUrl != null;
+    final hasExistingImage = !hasPickedImage && !_removeImage && _existingImageUrl != null;
 
     Widget preview;
     if (hasPickedImage) {
       // Pas de hauteur fixe — voir la même remarque dans event_detail_screen.dart.
-      preview = Image.memory(_pickedImageBytes!,
-          width: double.infinity, fit: BoxFit.fitWidth);
+      preview = Image.memory(_pickedImageBytes!, width: double.infinity, fit: BoxFit.fitWidth);
     } else if (hasExistingImage) {
       preview = Image.network(
         _existingImageUrl!,
@@ -382,14 +377,13 @@ class _EventFormScreenState extends ConsumerState<EventFormScreen> {
               child: OutlinedButton.icon(
                 onPressed: _pickImage,
                 icon: const Icon(Icons.image_outlined),
-                label: Text(hasPickedImage || hasExistingImage
-                    ? l10n.imagePickerChange
-                    : l10n.imagePickerAdd),
+                label: Text(hasPickedImage || hasExistingImage ? l10n.imagePickerChange : l10n.imagePickerAdd),
               ),
             ),
             if (hasPickedImage || hasExistingImage) ...[
               const SizedBox(width: 8),
-              IconButton(tooltip: AppLocalizations.of(context)!.a11yRemove, 
+              IconButton(
+                tooltip: AppLocalizations.of(context)!.a11yRemove,
                 icon: Icon(Icons.close, color: AppColors.bronze),
                 onPressed: _clearImage,
               ),
@@ -407,16 +401,12 @@ class _EventFormScreenState extends ConsumerState<EventFormScreen> {
     // Nom de la zawiya attribuée au mouqaddam, pour le champ en lecture
     // seule : retrouvé dans l'annuaire déjà chargé, sans requête de plus.
     final managedZawiyaId = ref.watch(myManagedZawiyaIdProvider);
-    final managedZawiyaName = ref.watch(zawiyasProvider).valueOrNull
-        ?.where((z) => z.id == managedZawiyaId)
-        .map((z) => z.name)
-        .firstOrNull;
+    final managedZawiyaName =
+        ref.watch(zawiyasProvider).valueOrNull?.where((z) => z.id == managedZawiyaId).map((z) => z.name).firstOrNull;
     final isEdit = widget.event != null;
 
     return Scaffold(
-      appBar: AppBar(
-          title: Text(
-              isEdit ? l10n.eventFormEditTitle : l10n.eventFormCreateTitle)),
+      appBar: AppBar(title: Text(isEdit ? l10n.eventFormEditTitle : l10n.eventFormCreateTitle)),
       // `SafeArea` : évite que le bouton Enregistrer se retrouve masqué sous
       // la barre de navigation Android (3 boutons).
       body: SafeArea(
@@ -429,38 +419,28 @@ class _EventFormScreenState extends ConsumerState<EventFormScreen> {
               children: [
                 TextFormField(
                   controller: _titleController,
-                  decoration:
-                      InputDecoration(labelText: l10n.eventFormTitleLabel),
-                  validator: (value) => (value == null || value.trim().isEmpty)
-                      ? l10n.eventFormTitleRequired
-                      : null,
+                  decoration: InputDecoration(labelText: l10n.eventFormTitleLabel),
+                  validator: (value) => (value == null || value.trim().isEmpty) ? l10n.eventFormTitleRequired : null,
                 ),
                 const SizedBox(height: 16),
                 TextFormField(
                   controller: _descriptionController,
-                  decoration: InputDecoration(
-                      labelText: l10n.eventFormDescriptionLabel),
+                  decoration: InputDecoration(labelText: l10n.eventFormDescriptionLabel),
                   maxLines: 4,
                 ),
                 const SizedBox(height: 16),
-                Text(l10n.eventFormImageLabel,
-                    style:
-                        TextStyle(color: AppColors.bronze, fontSize: 13)),
+                Text(l10n.eventFormImageLabel, style: TextStyle(color: AppColors.bronze, fontSize: 13)),
                 const SizedBox(height: 6),
                 _buildImagePicker(l10n),
                 const SizedBox(height: 16),
                 DropdownButtonFormField<KhadaraEventType>(
                   initialValue: _type,
-                  decoration:
-                      InputDecoration(labelText: l10n.eventFormTypeLabel),
+                  decoration: InputDecoration(labelText: l10n.eventFormTypeLabel),
                   items: [
                     for (final type in KhadaraEventType.values)
-                      DropdownMenuItem(
-                          value: type,
-                          child: Text(khadaraEventTypeLabel(type, l10n))),
+                      DropdownMenuItem(value: type, child: Text(khadaraEventTypeLabel(type, l10n))),
                   ],
-                  onChanged: (value) =>
-                      setState(() => _type = value ?? KhadaraEventType.hadra),
+                  onChanged: (value) => setState(() => _type = value ?? KhadaraEventType.hadra),
                 ),
                 const SizedBox(height: 16),
                 SwitchListTile.adaptive(
@@ -497,13 +477,13 @@ class _EventFormScreenState extends ConsumerState<EventFormScreen> {
                         child: OutlinedButton.icon(
                           onPressed: _pickRecurrenceUntil,
                           icon: const Icon(Icons.event_outlined),
-                          label: Text(_recurrenceUntil != null
-                              ? formatKhadaraDate(_recurrenceUntil!)
-                              : l10n.eventFormPickDate),
+                          label: Text(
+                              _recurrenceUntil != null ? formatKhadaraDate(_recurrenceUntil!) : l10n.eventFormPickDate),
                         ),
                       ),
                       if (_recurrenceUntil != null)
-                        IconButton(tooltip: AppLocalizations.of(context)!.a11yRemove, 
+                        IconButton(
+                          tooltip: AppLocalizations.of(context)!.a11yRemove,
                           icon: Icon(Icons.close, color: AppColors.bronze),
                           onPressed: () => setState(() => _recurrenceUntil = null),
                         ),
@@ -511,21 +491,15 @@ class _EventFormScreenState extends ConsumerState<EventFormScreen> {
                   ),
                 ] else ...[
                   const SizedBox(height: 8),
-                  Text(l10n.eventFormStartsAtLabel,
-                      style:
-                          TextStyle(color: AppColors.bronze, fontSize: 13)),
+                  Text(l10n.eventFormStartsAtLabel, style: TextStyle(color: AppColors.bronze, fontSize: 13)),
                   const SizedBox(height: 6),
                   OutlinedButton.icon(
                     onPressed: _pickStartsAt,
                     icon: const Icon(Icons.event_outlined),
-                    label: Text(_startsAt != null
-                        ? formatKhadaraDateTime(_startsAt!)
-                        : l10n.eventFormPickDateTime),
+                    label: Text(_startsAt != null ? formatKhadaraDateTime(_startsAt!) : l10n.eventFormPickDateTime),
                   ),
                   const SizedBox(height: 16),
-                  Text(l10n.eventFormEndsAtLabel,
-                      style:
-                          TextStyle(color: AppColors.bronze, fontSize: 13)),
+                  Text(l10n.eventFormEndsAtLabel, style: TextStyle(color: AppColors.bronze, fontSize: 13)),
                   const SizedBox(height: 6),
                   Row(
                     children: [
@@ -533,13 +507,12 @@ class _EventFormScreenState extends ConsumerState<EventFormScreen> {
                         child: OutlinedButton.icon(
                           onPressed: _pickEndsAt,
                           icon: const Icon(Icons.event_outlined),
-                          label: Text(_endsAt != null
-                              ? formatKhadaraDateTime(_endsAt!)
-                              : l10n.eventFormPickDateTime),
+                          label: Text(_endsAt != null ? formatKhadaraDateTime(_endsAt!) : l10n.eventFormPickDateTime),
                         ),
                       ),
                       if (_endsAt != null)
-                        IconButton(tooltip: AppLocalizations.of(context)!.a11yRemove, 
+                        IconButton(
+                          tooltip: AppLocalizations.of(context)!.a11yRemove,
                           icon: Icon(Icons.close, color: AppColors.bronze),
                           onPressed: () => setState(() => _endsAt = null),
                         ),
@@ -566,22 +539,18 @@ class _EventFormScreenState extends ConsumerState<EventFormScreen> {
                 const SizedBox(height: 16),
                 if (isAdmin)
                   ref.watch(zawiyasProvider).when(
-                        loading: () => LinearProgressIndicator(
-                            color: AppColors.emerald),
-                        error: (error, stackTrace) => Text(
-                            l10n.khadaraLoadError,
-                            style: TextStyle(color: AppColors.bronze)),
+                        loading: () => LinearProgressIndicator(color: AppColors.emerald),
+                        error: (error, stackTrace) =>
+                            Text(l10n.khadaraLoadError, style: TextStyle(color: AppColors.bronze)),
                         data: (list) => DropdownButtonFormField<String?>(
                           // `isExpanded` + ellipsis : sans eux la liste prend la largeur du
                           // nom le plus long et déborde ("right overflowed") avec les noms de
                           // zawiyas ajoutés fin septembre — constaté sur téléphone le 2026-10-01.
                           isExpanded: true,
                           initialValue: _zawiyaId,
-                          decoration: InputDecoration(
-                              labelText: l10n.eventFormZawiyaLabel),
+                          decoration: InputDecoration(labelText: l10n.eventFormZawiyaLabel),
                           items: [
-                            const DropdownMenuItem<String?>(
-                                value: null, child: Text('—')),
+                            const DropdownMenuItem<String?>(value: null, child: Text('—')),
                             ...list.map((z) => DropdownMenuItem<String?>(
                                 value: z.id, child: ContentText(z.name, overflow: TextOverflow.ellipsis))),
                           ],
@@ -605,19 +574,16 @@ class _EventFormScreenState extends ConsumerState<EventFormScreen> {
                     // en cours de chargement), `initialValue` seul resterait figé.
                     key: ValueKey(managedZawiyaName),
                     initialValue: managedZawiyaName ?? '—',
-                    decoration:
-                        InputDecoration(labelText: l10n.eventFormZawiyaLabel),
+                    decoration: InputDecoration(labelText: l10n.eventFormZawiyaLabel),
                   ),
                 const SizedBox(height: 16),
                 TextFormField(
                   controller: _addressController,
-                  decoration:
-                      InputDecoration(labelText: l10n.khadaraAddressLabel),
+                  decoration: InputDecoration(labelText: l10n.khadaraAddressLabel),
                 ),
                 if (_errorMessage != null) ...[
                   const SizedBox(height: 16),
-                  ContentText(_errorMessage!,
-                      style: const TextStyle(color: AppColors.danger)),
+                  ContentText(_errorMessage!, style: const TextStyle(color: AppColors.danger)),
                 ],
                 const SizedBox(height: 24),
                 ElevatedButton(
@@ -626,8 +592,7 @@ class _EventFormScreenState extends ConsumerState<EventFormScreen> {
                       ? const SizedBox(
                           height: 18,
                           width: 18,
-                          child: CircularProgressIndicator(
-                              strokeWidth: 2, color: Colors.white),
+                          child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
                         )
                       : Text(l10n.eventFormSave),
                 ),

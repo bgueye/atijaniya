@@ -27,7 +27,8 @@ Future<void> openInMaps(
   );
   // Lu avant l'attente : le contexte peut ne plus être monté après.
   final message = AppLocalizations.of(context)!.khadaraOpenInMapsError;
-  final query = (latitude != null && longitude != null) ? '$latitude,$longitude' : Uri.encodeComponent(addressText!.trim());
+  final query =
+      (latitude != null && longitude != null) ? '$latitude,$longitude' : Uri.encodeComponent(addressText!.trim());
   final uri = Uri.parse('https://www.google.com/maps/search/?api=1&query=$query');
   // `launchUrl` renvoie `false` quand rien ne sait ouvrir le lien, mais peut
   // aussi lever (plateforme qui refuse, profil restreint) : les deux cas

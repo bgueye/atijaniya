@@ -100,6 +100,10 @@ class _HomeShellState extends ConsumerState<HomeShell> {
           // reste affiché pendant le rechargement.
           if (i != _index) {
             if (i == 0 || i == 2) ref.invalidate(upcomingEventsProvider);
+            // Les lieux aussi, depuis l'audit Zawiyas du 2026-10-25 (P3-2) :
+            // un lieu ajouté ou modifié par l'admin n'apparaissait qu'au
+            // redémarrage.
+            if (i == 2) ref.invalidate(zawiyasProvider);
             if (i == 2) {
               // Statut mouqaddam et zawiya attribuée : décidés par d'autres
               // (parrain, admin) pendant que l'app est ouverte, ils n'étaient

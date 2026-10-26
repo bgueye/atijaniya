@@ -685,10 +685,13 @@ class AppLocalizationsFr extends AppLocalizations {
   String get khadaraNoEvents => 'Aucun évènement à venir pour le moment.';
 
   @override
-  String get khadaraNoZawiyas => 'Aucune zawiya renseignée pour le moment.';
+  String get khadaraNoZawiyas => 'Aucun lieu renseigné pour le moment.';
 
   @override
   String get khadaraLoadError => 'Impossible de charger les données.';
+
+  @override
+  String get khadaraOfflineError => 'Pas de connexion internet. Vérifiez la connexion, puis réessayez.';
 
   @override
   String get khadaraRetry => 'Réessayer';
@@ -861,7 +864,7 @@ class AppLocalizationsFr extends AppLocalizations {
   String get khadaraUpcomingEventsAtZawiya => 'Prochains évènements';
 
   @override
-  String get khadaraNoUpcomingEventsAtZawiya => 'Aucun évènement à venir dans cette zawiya.';
+  String get khadaraNoUpcomingEventsAtZawiya => 'Aucun évènement à venir dans ce lieu.';
 
   @override
   String get khadaraAddressLabel => 'Adresse';
@@ -870,7 +873,20 @@ class AppLocalizationsFr extends AppLocalizations {
   String get khadaraContactLabel => 'Contact';
 
   @override
-  String get khadaraAddZawiyaButton => 'Ajouter une zawiya';
+  String khadaraContactCall(String number) {
+    return 'Appeler le $number';
+  }
+
+  @override
+  String khadaraContactWrite(String email) {
+    return 'Écrire à $email';
+  }
+
+  @override
+  String get khadaraContactOpenError => 'Impossible d\'ouvrir l\'application.';
+
+  @override
+  String get khadaraAddZawiyaButton => 'Ajouter un lieu';
 
   @override
   String get khadaraEditZawiyaTooltip => 'Modifier';
@@ -879,7 +895,7 @@ class AppLocalizationsFr extends AppLocalizations {
   String get khadaraDeleteZawiyaTooltip => 'Supprimer';
 
   @override
-  String get khadaraDeleteZawiyaConfirmTitle => 'Supprimer cette zawiya ?';
+  String get khadaraDeleteZawiyaConfirmTitle => 'Supprimer ce lieu ?';
 
   @override
   String get khadaraDeleteZawiyaConfirmBody => 'Cette action est définitive.';
@@ -889,16 +905,16 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get khadaraDeleteZawiyaBlockedByReferences =>
-      'Impossible de supprimer cette zawiya : elle est encore utilisée (disciples rattachés, évènements, publications ou groupes).';
+      'Impossible de supprimer ce lieu : il est encore utilisé (disciples rattachés, évènements, publications, groupes ou successions).';
 
   @override
-  String get khadaraDeleteZawiyaError => 'Impossible de supprimer cette zawiya.';
+  String get khadaraDeleteZawiyaError => 'Impossible de supprimer ce lieu.';
 
   @override
-  String get zawiyaFormCreateTitle => 'Nouvelle zawiya';
+  String get zawiyaFormCreateTitle => 'Nouveau lieu';
 
   @override
-  String get zawiyaFormEditTitle => 'Modifier la zawiya';
+  String get zawiyaFormEditTitle => 'Modifier le lieu';
 
   @override
   String get zawiyaFormNameLabel => 'Nom';
@@ -940,7 +956,7 @@ class AppLocalizationsFr extends AppLocalizations {
   String get zawiyaFormSave => 'Enregistrer';
 
   @override
-  String get zawiyaFormSaveError => 'Impossible d\'enregistrer la zawiya.';
+  String get zawiyaFormSaveError => 'Impossible d\'enregistrer ce lieu.';
 
   @override
   String get zawiyaFormKindLabel => 'Type de lieu';
@@ -1006,7 +1022,7 @@ class AppLocalizationsFr extends AppLocalizations {
   String get khadaraNearbyRecurringTitle => 'La Hadra la plus proche';
 
   @override
-  String get khadaraNearbyRecurringEmpty => 'Aucun évènement récurrent avec une zawiya géolocalisée n\'a été trouvé.';
+  String get khadaraNearbyRecurringEmpty => 'Aucun évènement récurrent dans un lieu géolocalisé n\'a été trouvé.';
 
   @override
   String get khadaraLocationServiceDisabled =>

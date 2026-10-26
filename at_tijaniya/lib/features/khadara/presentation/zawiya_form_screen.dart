@@ -5,7 +5,9 @@ import '../../../l10n/app_localizations.dart';
 import '../domain/khadara_models.dart';
 import '../domain/zawiya_coordinates.dart';
 import 'khadara_format.dart';
+import '../../figures/presentation/figures_providers.dart' show linkedZawiyasForFigureProvider;
 import 'khadara_providers.dart';
+import '../../../core/network/network_errors.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/widgets/content_text.dart';
 
@@ -123,9 +125,21 @@ class _ZawiyaFormScreenState extends ConsumerState<ZawiyaFormScreen> {
         );
       }
       ref.invalidate(zawiyasProvider);
+      // Les évènements portent le nom du lieu (`zawiyas(name)`), comme la
+      // liste des lieux rattachés à une figure : rechargés aussi, sinon ils
+      // gardaient l'ancien nom après un renommage (audit Zawiyas du
+      // 2026-10-25, P3-5).
+      ref.invalidate(upcomingEventsProvider);
+      ref.invalidate(linkedZawiyasForFigureProvider);
       if (mounted) Navigator.of(context).pop(saved);
-    } catch (_) {
-      if (mounted) setState(() => _errorMessage = l10n.zawiyaFormSaveError);
+    } catch (error) {
+      // Hors ligne distingué d'un refus du serveur (audit Zawiyas du
+      // 2026-10-25, P3-7) : les deux donnaient le même message. Les autres
+      // causes (droits, contrainte) restent sous le message générique ; la
+      // validation du formulaire écarte déjà les coordonnées refusées.
+      if (mounted) {
+        setState(() => _errorMessage = isNetworkError(error) ? l10n.khadaraOfflineError : l10n.zawiyaFormSaveError);
+      }
     } finally {
       if (mounted) setState(() => _saving = false);
     }
@@ -137,9 +151,7 @@ class _ZawiyaFormScreenState extends ConsumerState<ZawiyaFormScreen> {
     final isEdit = widget.zawiya != null;
 
     return Scaffold(
-      appBar: AppBar(
-          title: Text(
-              isEdit ? l10n.zawiyaFormEditTitle : l10n.zawiyaFormCreateTitle)),
+      appBar: AppBar(title: Text(isEdit ? l10n.zawiyaFormEditTitle : l10n.zawiyaFormCreateTitle)),
       // `SafeArea` : évite que le bouton Enregistrer se retrouve masqué sous
       // la barre de navigation Android (3 boutons).
       body: SafeArea(
@@ -152,11 +164,8 @@ class _ZawiyaFormScreenState extends ConsumerState<ZawiyaFormScreen> {
               children: [
                 TextFormField(
                   controller: _nameController,
-                  decoration:
-                      InputDecoration(labelText: l10n.zawiyaFormNameLabel),
-                  validator: (value) => (value == null || value.trim().isEmpty)
-                      ? l10n.zawiyaFormNameRequired
-                      : null,
+                  decoration: InputDecoration(labelText: l10n.zawiyaFormNameLabel),
+                  validator: (value) => (value == null || value.trim().isEmpty) ? l10n.zawiyaFormNameRequired : null,
                 ),
                 const SizedBox(height: 16),
                 DropdownButtonFormField<ZawiyaKind>(
@@ -172,21 +181,18 @@ class _ZawiyaFormScreenState extends ConsumerState<ZawiyaFormScreen> {
                 const SizedBox(height: 16),
                 TextFormField(
                   controller: _descriptionController,
-                  decoration: InputDecoration(
-                      labelText: l10n.zawiyaFormDescriptionLabel),
+                  decoration: InputDecoration(labelText: l10n.zawiyaFormDescriptionLabel),
                   maxLines: 4,
                 ),
                 const SizedBox(height: 16),
                 TextFormField(
                   controller: _addressController,
-                  decoration:
-                      InputDecoration(labelText: l10n.zawiyaFormAddressLabel),
+                  decoration: InputDecoration(labelText: l10n.zawiyaFormAddressLabel),
                 ),
                 const SizedBox(height: 16),
                 TextFormField(
                   controller: _contactController,
-                  decoration:
-                      InputDecoration(labelText: l10n.zawiyaFormContactLabel),
+                  decoration: InputDecoration(labelText: l10n.zawiyaFormContactLabel),
                 ),
                 const SizedBox(height: 16),
                 Row(
@@ -194,10 +200,8 @@ class _ZawiyaFormScreenState extends ConsumerState<ZawiyaFormScreen> {
                     Expanded(
                       child: TextFormField(
                         controller: _latitudeController,
-                        decoration: InputDecoration(
-                            labelText: l10n.zawiyaFormLatitudeLabel),
-                        keyboardType: const TextInputType.numberWithOptions(
-                            decimal: true, signed: true),
+                        decoration: InputDecoration(labelText: l10n.zawiyaFormLatitudeLabel),
+                        keyboardType: const TextInputType.numberWithOptions(decimal: true, signed: true),
                         validator: (value) => _validateCoordinate(value, isLatitude: true, l10n: l10n),
                       ),
                     ),
@@ -205,10 +209,8 @@ class _ZawiyaFormScreenState extends ConsumerState<ZawiyaFormScreen> {
                     Expanded(
                       child: TextFormField(
                         controller: _longitudeController,
-                        decoration: InputDecoration(
-                            labelText: l10n.zawiyaFormLongitudeLabel),
-                        keyboardType: const TextInputType.numberWithOptions(
-                            decimal: true, signed: true),
+                        decoration: InputDecoration(labelText: l10n.zawiyaFormLongitudeLabel),
+                        keyboardType: const TextInputType.numberWithOptions(decimal: true, signed: true),
                         validator: (value) => _validateCoordinate(value, isLatitude: false, l10n: l10n),
                       ),
                     ),
@@ -225,18 +227,19 @@ class _ZawiyaFormScreenState extends ConsumerState<ZawiyaFormScreen> {
                 ),
                 if (_errorMessage != null) ...[
                   const SizedBox(height: 16),
-                  ContentText(_errorMessage!,
-                      style: const TextStyle(color: AppColors.danger)),
+                  ContentText(_errorMessage!, style: const TextStyle(color: AppColors.danger)),
                 ],
                 const SizedBox(height: 24),
                 ElevatedButton(
                   onPressed: _saving ? null : _submit,
                   child: _saving
-                      ? const SizedBox(
+                      // Émeraude : le bouton est désactivé pendant l'enregistrement,
+                      // et son fond gris clair rendait l'indicateur blanc
+                      // invisible (audit Zawiyas du 2026-10-25, P3-6).
+                      ? SizedBox(
                           height: 18,
                           width: 18,
-                          child: CircularProgressIndicator(
-                              strokeWidth: 2, color: Colors.white),
+                          child: CircularProgressIndicator(strokeWidth: 2, color: AppColors.emerald),
                         )
                       : Text(l10n.zawiyaFormSave),
                 ),
