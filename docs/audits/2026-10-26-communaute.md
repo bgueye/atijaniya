@@ -244,6 +244,14 @@ avant une ouverture plus large.
   la même transaction (`'moderation_hide'`, `'moderation_dismiss'`,
   `'mouqaddam_zawiya_set'`, avec type et id du contenu) ; pour les suppressions directes par
   la RLS, un trigger `after delete` qui journalise quand `auth.uid() <> created_by_user_id`.
+- **Statut : corrigé le 2026-10-26.** Migration `2026-10-26_admin_actions_log_writes.sql`
+  appliquée : `resolve_report` écrit `moderation_hide` / `moderation_dismiss` (cible : auteur
+  du contenu, motif du signalement, sans la copie du contenu), `admin_set_mouqaddam_zawiya`
+  écrit `mouqaddam_zawiya_set` (ancienne et nouvelle zawiya), et le trigger
+  `trg_groups_log_admin_change` (fonction dans `private`) écrit `group_update` /
+  `group_delete` quand un admin touche au groupe d'un autre. Vérifié par un scénario annulé :
+  les quatre types d'entrées écrits avec la bonne cible, journal illisible pour un compte
+  ordinaire (0 ligne), fonction du trigger non appelable (`42501`).
 
 ### P2-5 · L'admin voit dans le fil public les contenus masqués, sans repère
 
