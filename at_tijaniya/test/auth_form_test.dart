@@ -71,4 +71,25 @@ void main() {
     await tester.pump();
     expect(tester.widget<TextField>(find.byType(TextField).last).obscureText, isFalse);
   });
+
+  // P3-1 : les onglets Connexion / Créer un compte faisaient 47 dp de haut.
+  for (final locale in const [Locale('fr'), Locale('ar')]) {
+    testWidgets('cibles tactiles de 48 dp (${locale.languageCode})', (tester) async {
+      final handle = tester.ensureSemantics();
+      await tester.pumpWidget(MaterialApp(
+        locale: locale,
+        supportedLocales: const [Locale('fr'), Locale('ar')],
+        localizationsDelegates: const [
+          AppLocalizations.delegate,
+          GlobalMaterialLocalizations.delegate,
+          GlobalWidgetsLocalizations.delegate,
+          GlobalCupertinoLocalizations.delegate,
+        ],
+        home: AuthScreen(onAuthenticated: () {}, onContinueAsGuest: () {}),
+      ));
+      await tester.pumpAndSettle();
+      await expectLater(tester, meetsGuideline(androidTapTargetGuideline));
+      handle.dispose();
+    });
+  }
 }

@@ -639,7 +639,10 @@ class _SegmentedToggle extends StatelessWidget {
         onTap: onTap,
         child: AnimatedContainer(
           duration: const Duration(milliseconds: 180),
-          // 14 de marge verticale : hauteur tactile d'au moins 48 px.
+          // Hauteur tactile d'au moins 48 dp garantie par la contrainte : la
+          // seule marge de 14 donnait 47 dp avec le texte à 100 % (audit de
+          // l'authentification du 2026-10-27, P3-1).
+          constraints: const BoxConstraints(minHeight: 48),
           padding: const EdgeInsets.symmetric(vertical: 14),
           decoration: BoxDecoration(
             color: active ? AppColors.emerald : Colors.transparent,
