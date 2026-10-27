@@ -65,11 +65,13 @@ void main() {
       (const [AutofillHints.newPassword], TextInputAction.next),
       (const [AutofillHints.newPassword], TextInputAction.done),
     ]);
-    expect(find.byTooltip('Afficher ou masquer le mot de passe'), findsNWidgets(2));
+    // Libellé de l'action réelle (P3-3).
+    expect(find.byTooltip('Afficher le mot de passe'), findsNWidgets(2));
     expect(tester.widget<TextField>(find.byType(TextField).last).obscureText, isTrue);
-    await tester.tap(find.byTooltip('Afficher ou masquer le mot de passe').last);
+    await tester.tap(find.byTooltip('Afficher le mot de passe').last);
     await tester.pump();
     expect(tester.widget<TextField>(find.byType(TextField).last).obscureText, isFalse);
+    expect(find.byTooltip('Masquer le mot de passe'), findsNWidgets(2));
   });
 
   // P3-1 : les onglets Connexion / Créer un compte faisaient 47 dp de haut.

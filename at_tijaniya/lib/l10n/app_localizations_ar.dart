@@ -2925,7 +2925,10 @@ class AppLocalizationsAr extends AppLocalizations {
   String get figureUnpublishError => 'تعذّر سحب هذه الشخصية من النشر.';
 
   @override
-  String get a11yTogglePasswordVisibility => 'إظهار أو إخفاء كلمة المرور';
+  String get a11yShowPassword => 'إظهار كلمة المرور';
+
+  @override
+  String get a11yHidePassword => 'إخفاء كلمة المرور';
 
   @override
   String get a11yRemove => 'إزالة';

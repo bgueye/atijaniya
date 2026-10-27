@@ -2955,7 +2955,10 @@ class AppLocalizationsFr extends AppLocalizations {
   String get figureUnpublishError => 'Impossible de dépublier cette figure.';
 
   @override
-  String get a11yTogglePasswordVisibility => 'Afficher ou masquer le mot de passe';
+  String get a11yShowPassword => 'Afficher le mot de passe';
+
+  @override
+  String get a11yHidePassword => 'Masquer le mot de passe';
 
   @override
   String get a11yRemove => 'Retirer';

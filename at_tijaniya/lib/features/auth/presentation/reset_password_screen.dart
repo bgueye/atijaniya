@@ -138,7 +138,8 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                           enabled: !_submitting,
                           decoration: _fieldDecoration(l10n.authPasswordLabel).copyWith(
                             suffixIcon: IconButton(
-                              tooltip: AppLocalizations.of(context)!.a11yTogglePasswordVisibility,
+                              // Libellé de l'action réelle, selon l'état (P3-3).
+                              tooltip: _obscured ? l10n.a11yShowPassword : l10n.a11yHidePassword,
                               icon: Icon(_obscured ? Icons.visibility_outlined : Icons.visibility_off_outlined,
                                   color: AppColors.bronze),
                               onPressed: () => setState(() => _obscured = !_obscured),
@@ -164,7 +165,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                           onFieldSubmitted: (_) => _submitting ? null : _submit(),
                           decoration: _fieldDecoration(l10n.resetPasswordConfirmLabel).copyWith(
                             suffixIcon: IconButton(
-                              tooltip: l10n.a11yTogglePasswordVisibility,
+                              tooltip: _obscured ? l10n.a11yShowPassword : l10n.a11yHidePassword,
                               icon: Icon(_obscured ? Icons.visibility_outlined : Icons.visibility_off_outlined,
                                   color: AppColors.bronze),
                               onPressed: () => setState(() => _obscured = !_obscured),

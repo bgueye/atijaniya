@@ -560,7 +560,9 @@ class _AuthScreenState extends State<AuthScreen> {
 
   Widget _obscureToggleIcon({required bool obscured, required VoidCallback onPressed}) {
     return IconButton(
-      tooltip: AppLocalizations.of(context)!.a11yTogglePasswordVisibility,
+      // Libellé de l'action réelle, selon l'état (P3-3).
+      tooltip:
+          obscured ? AppLocalizations.of(context)!.a11yShowPassword : AppLocalizations.of(context)!.a11yHidePassword,
       icon: Icon(obscured ? Icons.visibility_outlined : Icons.visibility_off_outlined, color: AppColors.bronze),
       onPressed: onPressed,
     );

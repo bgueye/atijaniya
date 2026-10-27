@@ -5768,11 +5768,17 @@ abstract class AppLocalizations {
   /// **'Impossible de dépublier cette figure.'**
   String get figureUnpublishError;
 
-  /// No description provided for @a11yTogglePasswordVisibility.
+  /// No description provided for @a11yShowPassword.
   ///
   /// In fr, this message translates to:
-  /// **'Afficher ou masquer le mot de passe'**
-  String get a11yTogglePasswordVisibility;
+  /// **'Afficher le mot de passe'**
+  String get a11yShowPassword;
+
+  /// No description provided for @a11yHidePassword.
+  ///
+  /// In fr, this message translates to:
+  /// **'Masquer le mot de passe'**
+  String get a11yHidePassword;
 
   /// No description provided for @a11yRemove.
   ///
