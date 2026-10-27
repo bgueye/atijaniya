@@ -7,14 +7,19 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 
+import 'package:at_tijaniya/features/khadara/domain/khadara_models.dart' show Zawiya;
 import 'package:at_tijaniya/features/khadara/presentation/khadara_providers.dart';
 import 'package:at_tijaniya/features/profil/domain/profile_models.dart';
 import 'package:at_tijaniya/features/profil/presentation/edit_profile_sheet.dart';
 import 'package:at_tijaniya/l10n/app_localizations.dart';
 
-Widget _app(Locale locale, double keyboard) {
+Widget _app(Locale locale, double keyboard, {bool zawiyasFail = false}) {
   return ProviderScope(
-    overrides: [attachableZawiyasProvider.overrideWith((ref) async => const [])],
+    overrides: [
+      attachableZawiyasProvider.overrideWith(
+        (ref) async => zawiyasFail ? throw Exception('hors ligne') : const <Zawiya>[],
+      ),
+    ],
     child: MaterialApp(
       locale: locale,
       supportedLocales: const [Locale('fr'), Locale('ar')],
@@ -69,4 +74,13 @@ void main() {
       });
     }
   }
+
+  // P3-7 : liste des zawiyas indisponible, signalée au lieu de disparaître.
+  testWidgets('zawiyas indisponibles : message et « Réessayer »', (tester) async {
+    await tester.pumpWidget(_app(const Locale('fr'), 0, zawiyasFail: true));
+    await tester.tap(find.text('open'));
+    await tester.pumpAndSettle();
+    expect(find.textContaining('Liste des zawiyas indisponible'), findsOneWidget);
+    expect(find.text('Réessayer'), findsOneWidget);
+  });
 }

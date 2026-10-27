@@ -719,6 +719,7 @@
   "profileDisplayNameLabel": "الاسم المعروض",
   "profileDisplayNameRequired": "الاسم المعروض إلزامي.",
   "profileBioLabel": "نبذة تعريفية (اختياري)",
+  "profileZawiyasUnavailable": "قائمة الزوايا غير متاحة حاليًا، وانتماؤك الحالي محفوظ.",
   "profileZawiyaLabel": "الزاوية",
   "profileZawiyaNone": "بدون زاوية",
   "profileSave": "حفظ",

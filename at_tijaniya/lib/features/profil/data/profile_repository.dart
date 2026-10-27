@@ -59,9 +59,7 @@ class ProfileRepository {
   /// `null` retire la photo du profil (avant la suppression du compte, P3-6).
   Future<void> updateMyAvatar(String? avatarUrl) async {
     final userId = SupabaseConfig.client.auth.currentUser!.id;
-    await SupabaseConfig.client
-        .from('profiles')
-        .update({'avatar_url': avatarUrl}).eq('user_id', userId);
+    await SupabaseConfig.client.from('profiles').update({'avatar_url': avatarUrl}).eq('user_id', userId);
   }
 
   /// Suppression définitive du compte connecté — via l'Edge Function

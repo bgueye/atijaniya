@@ -114,7 +114,24 @@ class _EditProfileFormState extends ConsumerState<_EditProfileForm> {
                 const SizedBox(height: 16),
                 zawiyas.when(
                   loading: () => LinearProgressIndicator(color: AppColors.emerald),
-                  error: (error, stackTrace) => const SizedBox.shrink(),
+                  // Liste indisponible (hors ligne) : la zawiya actuelle est
+                  // conservée à l'enregistrement ; on le dit, avec un nouvel
+                  // essai, au lieu de faire disparaître le champ (audit de
+                  // l'authentification du 2026-10-27, P3-7).
+                  error: (error, stackTrace) => Row(
+                    children: [
+                      Expanded(
+                        child: Text(
+                          l10n.profileZawiyasUnavailable,
+                          style: TextStyle(color: AppColors.secondaryInk),
+                        ),
+                      ),
+                      TextButton(
+                        onPressed: () => ref.invalidate(zawiyasProvider),
+                        child: Text(l10n.profileRetry),
+                      ),
+                    ],
+                  ),
                   data: (list) => DropdownButtonFormField<String?>(
                     // `isExpanded` + ellipsis : sans eux la liste prend la largeur du
                     // nom le plus long et déborde ("right overflowed") avec les noms de

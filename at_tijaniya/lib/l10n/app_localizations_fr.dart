@@ -2021,6 +2021,9 @@ class AppLocalizationsFr extends AppLocalizations {
   String get profileBioLabel => 'À propos (optionnel)';
 
   @override
+  String get profileZawiyasUnavailable => 'Liste des zawiyas indisponible : votre rattachement actuel est conservé.';
+
+  @override
   String get profileZawiyaLabel => 'Zawiya';
 
   @override

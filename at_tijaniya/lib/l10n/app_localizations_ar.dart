@@ -2005,6 +2005,9 @@ class AppLocalizationsAr extends AppLocalizations {
   String get profileBioLabel => 'نبذة تعريفية (اختياري)';
 
   @override
+  String get profileZawiyasUnavailable => 'قائمة الزوايا غير متاحة حاليًا، وانتماؤك الحالي محفوظ.';
+
+  @override
   String get profileZawiyaLabel => 'الزاوية';
 
   @override

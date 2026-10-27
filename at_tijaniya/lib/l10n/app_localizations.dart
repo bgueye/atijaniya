@@ -3986,6 +3986,12 @@ abstract class AppLocalizations {
   /// **'À propos (optionnel)'**
   String get profileBioLabel;
 
+  /// No description provided for @profileZawiyasUnavailable.
+  ///
+  /// In fr, this message translates to:
+  /// **'Liste des zawiyas indisponible : votre rattachement actuel est conservé.'**
+  String get profileZawiyasUnavailable;
+
   /// No description provided for @profileZawiyaLabel.
   ///
   /// In fr, this message translates to:
