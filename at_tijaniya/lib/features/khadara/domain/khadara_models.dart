@@ -281,14 +281,27 @@ DateTime? computeNextWeeklyOccurrence({
 /// Les évènements récurrents dont la récurrence est terminée (`until`
 /// dépassé) sont repoussés en fin de liste plutôt qu'exclus — filtrage déjà
 /// fait côté requête (`KhadaraRepository.fetchUpcomingEvents`).
+///
+/// À la même date, ordre par titre, puis nom de la zawiya, puis id (audit de
+/// l'accueil du 2026-10-26, P3-2) : quatre Gamou à la même heure sortaient
+/// dans l'ordre renvoyé par la base (requête sans `order by`), et l'accueil,
+/// qui n'en montre qu'un, en choisissait un au hasard des lignes.
 List<KhadaraEvent> sortByNextOccurrence(List<KhadaraEvent> events, {DateTime? from}) {
   DateTime effectiveDate(KhadaraEvent event) {
     if (!event.isRecurring) return event.startsAt;
     return nextOccurrence(event, from: from) ?? DateTime(9999);
   }
 
+  final dates = {for (final event in events) event.id: effectiveDate(event)};
   final sorted = [...events];
-  sorted.sort((a, b) => effectiveDate(a).compareTo(effectiveDate(b)));
+  sorted.sort((a, b) {
+    final byDate = dates[a.id]!.compareTo(dates[b.id]!);
+    if (byDate != 0) return byDate;
+    final byTitle = a.title.toLowerCase().compareTo(b.title.toLowerCase());
+    if (byTitle != 0) return byTitle;
+    final byZawiya = (a.zawiyaName ?? '').toLowerCase().compareTo((b.zawiyaName ?? '').toLowerCase());
+    return byZawiya != 0 ? byZawiya : a.id.compareTo(b.id);
+  });
   return sorted;
 }
 

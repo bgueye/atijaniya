@@ -324,6 +324,28 @@ void main() {
       final sorted = sortByNextOccurrence([recurrentTermine, classique], from: from);
       expect(sorted.map((e) => e.id).toList(), ['e14', 'e15']);
     });
+
+    // Audit de l'accueil du 2026-10-26, P3-2 : à la même heure, l'ordre ne
+    // dépend plus de celui renvoyé par la base.
+    test('départage les évènements à la même heure par titre, puis zawiya, puis id', () {
+      KhadaraEvent gamou(String id, String title, String zawiya) => KhadaraEvent.fromRow({
+            'id': id,
+            'title': title,
+            'event_type': 'other',
+            'starts_at': '2027-08-14T18:00:00.000Z',
+            'zawiyas': {'name': zawiya},
+          });
+      final events = [
+        gamou('e4', 'Gamou', 'Tivaouane'),
+        gamou('e3', 'Gamou', 'Médina Baye'),
+        gamou('e2', 'Gamou', 'Médina Baye'),
+        gamou('e1', 'Burd', 'Tivaouane'),
+      ];
+      for (final order in [events, events.reversed.toList()]) {
+        final sorted = sortByNextOccurrence(order, from: DateTime(2027, 8, 1));
+        expect(sorted.map((e) => e.id).toList(), ['e1', 'e2', 'e3', 'e4']);
+      }
+    });
   });
 
   group('distanceInKm', () {
@@ -332,7 +354,8 @@ void main() {
     });
 
     test('distance approximative Dakar–Thiès (~65 km à vol d\'oiseau)', () {
-      final km = distanceInKm(fromLatitude: 14.7167, fromLongitude: -17.4677, toLatitude: 14.7910, toLongitude: -16.9359);
+      final km =
+          distanceInKm(fromLatitude: 14.7167, fromLongitude: -17.4677, toLatitude: 14.7910, toLongitude: -16.9359);
       expect(km, greaterThan(50));
       expect(km, lessThan(80));
     });
