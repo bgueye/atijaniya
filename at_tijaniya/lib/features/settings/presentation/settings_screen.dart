@@ -127,14 +127,24 @@ class SettingsScreen extends ConsumerWidget {
   }
 }
 
-class _AboutVersionSubtitle extends StatelessWidget {
+/// Version de l'app, lue une seule fois : `PackageInfo.fromPlatform()` était
+/// rappelé à chaque reconstruction de l'écran (audit de l'authentification
+/// du 2026-10-27, P3-9).
+class _AboutVersionSubtitle extends StatefulWidget {
   const _AboutVersionSubtitle();
+
+  @override
+  State<_AboutVersionSubtitle> createState() => _AboutVersionSubtitleState();
+}
+
+class _AboutVersionSubtitleState extends State<_AboutVersionSubtitle> {
+  late final Future<PackageInfo> _packageInfo = PackageInfo.fromPlatform();
 
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     return FutureBuilder<PackageInfo>(
-      future: PackageInfo.fromPlatform(),
+      future: _packageInfo,
       builder: (context, snapshot) {
         final version = snapshot.data?.version;
         return Text(version == null ? '${l10n.aboutVersionLabel}…' : '${l10n.aboutVersionLabel} $version');
