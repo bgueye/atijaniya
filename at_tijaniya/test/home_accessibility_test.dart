@@ -108,4 +108,16 @@ void main() {
       await tester.pumpWidget(const SizedBox());
     });
   }
+
+  // P3-4 : la reprise donnait la translittération latine du pilier, même en
+  // arabe, et pour certains piliers le texte entier ; elle donne sa position.
+  testWidgets('reprise du tasbih : position du pilier, pas sa translittération', (tester) async {
+    _wazifaInProgress();
+    await tester.pumpWidget(_app(locale: const Locale('ar')));
+    await tester.pumpAndSettle();
+    await tester.scrollUntilVisible(find.byType(OutlinedButton), 300);
+    expect(find.textContaining('الركن 1 /'), findsOneWidget);
+    expect(find.textContaining(RegExp('[A-Za-z]{4,}')), findsNothing);
+    await tester.pumpWidget(const SizedBox());
+  });
 }

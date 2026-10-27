@@ -46,7 +46,7 @@ class _Events {
   }
 }
 
-Widget _app(_Events events, {Future<FeaturedFigure?> Function()? figure}) {
+Widget _app(_Events events, {Future<FeaturedFigure?> Function()? figure, Locale locale = const Locale('fr')}) {
   return ProviderScope(
     overrides: [
       clockProvider.overrideWithValue(() => DateTime(2026, 10, 26, 9, 0)),
@@ -55,16 +55,16 @@ Widget _app(_Events events, {Future<FeaturedFigure?> Function()? figure}) {
       featuredFigureProvider.overrideWith((ref) => figure != null ? figure() : Future.value(null)),
       figuresProvider.overrideWith((ref) async => const []),
     ],
-    child: const MaterialApp(
-      locale: Locale('fr'),
-      supportedLocales: [Locale('fr'), Locale('ar')],
-      localizationsDelegates: [
+    child: MaterialApp(
+      locale: locale,
+      supportedLocales: const [Locale('fr'), Locale('ar')],
+      localizationsDelegates: const [
         AppLocalizations.delegate,
         GlobalMaterialLocalizations.delegate,
         GlobalWidgetsLocalizations.delegate,
         GlobalCupertinoLocalizations.delegate,
       ],
-      home: Scaffold(body: HomeScreen()),
+      home: const Scaffold(body: HomeScreen()),
     ),
   );
 }
@@ -156,5 +156,56 @@ void main() {
     expect(find.byType(Image), findsNothing);
     expect(tester.takeException(), isNull);
     await tester.pumpWidget(const SizedBox());
+  });
+
+  // P3-4 : en interface arabe, la carte titrait en français et citait la
+  // traduction française alors que le texte arabe existe.
+  group('figure de la semaine en arabe', () {
+    const citation = FigureCitation(arabic: 'قول بالعربية', translation: 'Parole en français', source: 'Source');
+
+    testWidgets('carte avec portrait : nom arabe en titre, citation arabe', (tester) async {
+      const figure = Figure(
+        id: 'f1',
+        nameArabic: 'الحاج مالك سي',
+        nameFrench: 'El Hadj Malick Sy',
+        category: FigureCategory.founder,
+        portraitUrl: 'https://example.invalid/portrait.jpg',
+      );
+      await tester.pumpWidget(_app(
+        _Events(),
+        locale: const Locale('ar'),
+        figure: () async => const FeaturedFigure(figure: figure, pinned: false, citation: citation),
+      ));
+      await tester.pumpAndSettle();
+      await _scrollTo(tester, find.text('El Hadj Malick Sy'));
+      expect(tester.getTopLeft(find.text('الحاج مالك سي')).dy,
+          lessThan(tester.getTopLeft(find.text('El Hadj Malick Sy')).dy));
+      expect(find.text('« قول بالعربية »'), findsOneWidget);
+      expect(find.textContaining('Parole en français'), findsNothing);
+      await tester.pumpWidget(const SizedBox());
+    });
+
+    testWidgets('carte sans portrait : citation arabe ; traduction en français', (tester) async {
+      const figure = Figure(
+        id: 'f2',
+        nameArabic: 'سيدي علي التماسيني',
+        nameFrench: 'Sidi Ali Tamacini',
+        category: FigureCategory.founder,
+      );
+      for (final (locale, expected) in [
+        (const Locale('ar'), '« قول بالعربية »'),
+        (const Locale('fr'), '« Parole en français »')
+      ]) {
+        await tester.pumpWidget(_app(
+          _Events(),
+          locale: locale,
+          figure: () async => const FeaturedFigure(figure: figure, pinned: false, citation: citation),
+        ));
+        await tester.pumpAndSettle();
+        await _scrollTo(tester, find.text(expected));
+        expect(find.text(expected), findsOneWidget);
+        await tester.pumpWidget(const SizedBox());
+      }
+    });
   });
 }

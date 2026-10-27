@@ -12,6 +12,7 @@ import '../../../l10n/app_localizations.dart';
 import '../../donation/data/donation_feature_flag.dart';
 import '../../donation/presentation/donation_screen.dart';
 import '../../figures/domain/featured_figure.dart';
+import '../../figures/domain/figure_models.dart' show FigureCitation;
 import '../../figures/presentation/figure_detail_screen.dart';
 import '../../figures/presentation/figures_providers.dart';
 import '../../khadara/domain/khadara_models.dart';
@@ -606,11 +607,17 @@ class _ResumeTasbihCard extends StatelessWidget {
     // Index borné : une session enregistrée par une ancienne version peut
     // pointer au-delà du nombre de piliers actuel.
     final pillars = resumable.wird.pillars;
-    final pillar = pillars[resumable.session.pillarIndex.clamp(0, pillars.length - 1)];
+    final pillarIndex = resumable.session.pillarIndex.clamp(0, pillars.length - 1);
+    final pillar = pillars[pillarIndex];
     final isArabic = Localizations.localeOf(context).languageCode == 'ar';
     final wirdName = isArabic ? resumable.wird.nameArabic : resumable.wird.nameFrench;
+    // Position du pilier plutôt que sa translittération (audit de l'accueil
+    // du 2026-10-26, P3-4) : elle restait en latin dans l'interface arabe, et
+    // pour l'intention ou Salatoul Fatihi elle contient le texte entier. Même
+    // libellé que l'écran du Tasbih.
+    final pillarLabel = l10n.wirdTasbihPillarProgress(pillarIndex + 1, pillars.length);
     final subtitle =
-        '$wirdName · ${l10n.homeResumeTasbihSubtitle(pillar.transliteration, resumable.session.currentCount, pillar.repetitions)}';
+        '$wirdName · ${l10n.homeResumeTasbihSubtitle(pillarLabel, resumable.session.currentCount, pillar.repetitions)}';
 
     void resume() => Navigator.of(context).push(
           MaterialPageRoute(builder: (_) => TasbihScreen(wird: resumable.wird)),
@@ -893,6 +900,26 @@ class _FeaturedFigureCard extends StatelessWidget {
     final citation = featured.citation;
     final nextZiyara = featured.nextZiyara;
     if (figure.portraitUrl == null) return _FeaturedFigureTypographicCard(featured: featured);
+    // Interface arabe (P3-4) : le nom arabe passe en titre et le nom français
+    // en dessous ; la citation est donnée dans son texte arabe quand il existe.
+    final isArabic = Localizations.localeOf(context).languageCode == 'ar';
+    final frenchName = ContentText(
+      figure.nameFrench,
+      style: AppTheme.titleText(
+        fontWeight: FontWeight.w700,
+        fontSize: isArabic ? 17 : 26,
+        height: 1.05,
+        color: isArabic ? AppColors.goldSoft : AppColors.offWhite,
+      ),
+    );
+    final arabicName = Text(
+      figure.nameArabic,
+      textDirection: TextDirection.rtl,
+      style: AppTheme.sacredText(
+        fontSize: isArabic ? 26 : 19,
+        color: isArabic ? AppColors.offWhite : AppColors.goldSoft,
+      ),
+    );
 
     return Card(
       clipBehavior: Clip.antiAlias,
@@ -949,33 +976,15 @@ class _FeaturedFigureCard extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      ContentText(
-                        figure.nameFrench,
-                        // Cormorant Garamond : voir `AppTheme.titleText`
-                        // (le `fontFamily` d'avant n'était jamais appliqué).
-                        style: AppTheme.titleText(
-                          fontWeight: FontWeight.w700,
-                          fontSize: 26,
-                          height: 1.05,
-                          color: AppColors.offWhite,
-                        ),
-                      ),
+                      // Cormorant Garamond pour le nom français : voir
+                      // `AppTheme.titleText` (le `fontFamily` d'avant n'était
+                      // jamais appliqué).
+                      if (isArabic) arabicName else frenchName,
                       const SizedBox(height: 2),
-                      Text(
-                        figure.nameArabic,
-                        textDirection: TextDirection.rtl,
-                        style: AppTheme.sacredText(fontSize: 19, color: AppColors.goldSoft),
-                      ),
+                      if (isArabic) frenchName else arabicName,
                       if (citation != null) ...[
                         const SizedBox(height: 8),
-                        ContentText(
-                          '« ${citation.translation} »',
-                          style: TextStyle(
-                            fontStyle: FontStyle.italic,
-                            color: AppColors.offWhite.withValues(alpha: 0.9),
-                            fontSize: 12.5,
-                          ),
-                        ),
+                        _FeaturedCitation(citation: citation),
                       ],
                       if (nextZiyara != null) ...[
                         const SizedBox(height: 8),
@@ -1060,15 +1069,7 @@ class _FeaturedFigureTypographicCard extends StatelessWidget {
                   ),
                   if (citation != null) ...[
                     const SizedBox(height: 12),
-                    ContentText(
-                      '« ${citation.translation} »',
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        fontStyle: FontStyle.italic,
-                        color: AppColors.offWhite.withValues(alpha: 0.9),
-                        fontSize: 12.5,
-                      ),
-                    ),
+                    _FeaturedCitation(citation: citation, textAlign: TextAlign.center),
                   ],
                   if (nextZiyara != null) ...[
                     const SizedBox(height: 12),
@@ -1093,6 +1094,39 @@ class _FeaturedFigureTypographicCard extends StatelessWidget {
             ),
           ],
         ),
+      ),
+    );
+  }
+}
+
+/// Citation de la figure de la semaine. En interface arabe, son texte arabe
+/// d'origine quand il a été saisi (audit de l'accueil du 2026-10-26, P3-4),
+/// en Amiri comme sur la fiche de la figure ; sinon la traduction, en
+/// italique.
+class _FeaturedCitation extends StatelessWidget {
+  const _FeaturedCitation({required this.citation, this.textAlign});
+
+  final FigureCitation citation;
+  final TextAlign? textAlign;
+
+  @override
+  Widget build(BuildContext context) {
+    final arabic = citation.arabic?.trim();
+    if (Localizations.localeOf(context).languageCode == 'ar' && arabic != null && arabic.isNotEmpty) {
+      return Text(
+        '« $arabic »',
+        textAlign: textAlign,
+        textDirection: TextDirection.rtl,
+        style: AppTheme.sacredText(fontSize: 16, color: AppColors.offWhite.withValues(alpha: 0.9)),
+      );
+    }
+    return ContentText(
+      '« ${citation.translation} »',
+      textAlign: textAlign,
+      style: TextStyle(
+        fontStyle: FontStyle.italic,
+        color: AppColors.offWhite.withValues(alpha: 0.9),
+        fontSize: 12.5,
       ),
     );
   }
