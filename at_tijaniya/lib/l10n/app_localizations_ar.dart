@@ -169,13 +169,16 @@ class AppLocalizationsAr extends AppLocalizations {
   String get authLegalPrefix => 'عند إنشاء حساب، فإنك توافق على ';
 
   @override
-  String get authLegalTerms => 'شروط الاستخدام';
-
-  @override
-  String get authLegalMiddle => ' و';
-
-  @override
   String get authLegalPrivacy => 'سياسة الخصوصية';
+
+  @override
+  String get privacyPolicyTitle => 'سياسة الخصوصية';
+
+  @override
+  String get privacyPolicyFrenchOnly => 'هذا النص متوفر بالفرنسية فقط حاليًا.';
+
+  @override
+  String get aboutPrivacyPolicyTile => 'اقرأ سياسة الخصوصية';
 
   @override
   String get authLegalSuffix => '.';

@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../../core/widgets/content_text.dart';
+import '../../../core/widgets/directional_chevron.dart';
+import 'privacy_policy_screen.dart';
 
 /// À propos d'At-Tijaniya — positionnement institutionnel (non-affiliation,
 /// statut du contenu religieux, badge "Parrainage confirmé", neutralité
@@ -71,6 +73,18 @@ class AboutScreen extends StatelessWidget {
                 children: [
                   SelectableText(l10n.aboutContactBody, style: _bodyStyle),
                 ],
+              ),
+              // Politique de confidentialité (P2-5 de l'audit du 2026-10-27),
+              // après le texte de « À propos », qui reste inchangé.
+              Card(
+                child: ListTile(
+                  leading: const Icon(Icons.privacy_tip_outlined),
+                  title: Text(l10n.aboutPrivacyPolicyTile),
+                  trailing: const DirectionalChevron(),
+                  onTap: () => Navigator.of(context).push(
+                    MaterialPageRoute(builder: (_) => const PrivacyPolicyScreen()),
+                  ),
+                ),
               ),
             ],
           ),

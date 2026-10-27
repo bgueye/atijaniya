@@ -7,6 +7,7 @@ import 'package:supabase_flutter/supabase_flutter.dart' show GoTrueClient, OtpTy
 import '../../../core/supabase/supabase_config.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../l10n/app_localizations.dart';
+import '../../settings/presentation/privacy_policy_screen.dart';
 import '../domain/auth_error_message.dart';
 import '../../../core/widgets/content_text.dart';
 
@@ -506,18 +507,39 @@ class _AuthScreenState extends State<AuthScreen> {
             onPressed: loading ? null : _signUp,
           ),
           const SizedBox(height: 16),
-          Text.rich(
-            TextSpan(
-              children: [
-                TextSpan(text: l10n.authLegalPrefix),
-                TextSpan(text: l10n.authLegalTerms, style: TextStyle(color: AppColors.emerald)),
-                TextSpan(text: l10n.authLegalMiddle),
-                TextSpan(text: l10n.authLegalPrivacy, style: TextStyle(color: AppColors.emerald)),
-                TextSpan(text: l10n.authLegalSuffix),
-              ],
-              style: TextStyle(color: AppColors.secondaryInk, fontSize: 11, height: 1.5),
+          // Mention légale (audit de l'authentification du 2026-10-27, P2-5) :
+          // les deux mentions avaient l'air de liens mais ne menaient nulle
+          // part, et les conditions d'utilisation n'existent pas encore
+          // (mention retirée, décision du porteur de projet). Toute la phrase
+          // ouvre la politique de confidentialité : une cible de 48 dp plutôt
+          // qu'un lien de 11 px dans le texte.
+          Semantics(
+            link: true,
+            child: InkWell(
+              onTap: () => Navigator.of(context).push(
+                MaterialPageRoute(builder: (_) => const PrivacyPolicyScreen()),
+              ),
+              borderRadius: BorderRadius.circular(8),
+              child: ConstrainedBox(
+                constraints: const BoxConstraints(minHeight: 48),
+                child: Center(
+                  child: Text.rich(
+                    TextSpan(
+                      children: [
+                        TextSpan(text: l10n.authLegalPrefix),
+                        TextSpan(
+                          text: l10n.authLegalPrivacy,
+                          style: TextStyle(color: AppColors.emerald, decoration: TextDecoration.underline),
+                        ),
+                        TextSpan(text: l10n.authLegalSuffix),
+                      ],
+                      style: TextStyle(color: AppColors.secondaryInk, fontSize: 11, height: 1.5),
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+              ),
             ),
-            textAlign: TextAlign.center,
           ),
         ],
       ),

@@ -58,9 +58,10 @@
   "authGenericError": "حدث خطأ ما. أعد المحاولة.",
   "authCheckEmailToConfirm": "تم إنشاء الحساب. تحقّق من بريدك الإلكتروني لتأكيد عنوانك قبل تسجيل الدخول.",
   "authLegalPrefix": "عند إنشاء حساب، فإنك توافق على ",
-  "authLegalTerms": "شروط الاستخدام",
-  "authLegalMiddle": " و",
   "authLegalPrivacy": "سياسة الخصوصية",
+  "privacyPolicyTitle": "سياسة الخصوصية",
+  "privacyPolicyFrenchOnly": "هذا النص متوفر بالفرنسية فقط حاليًا.",
+  "aboutPrivacyPolicyTile": "اقرأ سياسة الخصوصية",
   "authLegalSuffix": ".",
 
   "resetPasswordTitle": "كلمة مرور جديدة",

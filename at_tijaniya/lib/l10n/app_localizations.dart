@@ -407,26 +407,32 @@ abstract class AppLocalizations {
   /// No description provided for @authLegalPrefix.
   ///
   /// In fr, this message translates to:
-  /// **'En créant un compte, vous acceptez nos '**
+  /// **'En créant un compte, vous acceptez notre '**
   String get authLegalPrefix;
-
-  /// No description provided for @authLegalTerms.
-  ///
-  /// In fr, this message translates to:
-  /// **'Conditions d\'utilisation'**
-  String get authLegalTerms;
-
-  /// No description provided for @authLegalMiddle.
-  ///
-  /// In fr, this message translates to:
-  /// **' et notre '**
-  String get authLegalMiddle;
 
   /// No description provided for @authLegalPrivacy.
   ///
   /// In fr, this message translates to:
-  /// **'Politique de confidentialité'**
+  /// **'politique de confidentialité'**
   String get authLegalPrivacy;
+
+  /// No description provided for @privacyPolicyTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Politique de confidentialité'**
+  String get privacyPolicyTitle;
+
+  /// No description provided for @privacyPolicyFrenchOnly.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ce texte est disponible en français uniquement pour le moment.'**
+  String get privacyPolicyFrenchOnly;
+
+  /// No description provided for @aboutPrivacyPolicyTile.
+  ///
+  /// In fr, this message translates to:
+  /// **'Lire notre politique de confidentialité'**
+  String get aboutPrivacyPolicyTile;
 
   /// No description provided for @authLegalSuffix.
   ///

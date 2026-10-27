@@ -169,16 +169,19 @@ class AppLocalizationsFr extends AppLocalizations {
       'Compte créé. Vérifiez votre boîte mail pour confirmer votre adresse avant de vous connecter.';
 
   @override
-  String get authLegalPrefix => 'En créant un compte, vous acceptez nos ';
+  String get authLegalPrefix => 'En créant un compte, vous acceptez notre ';
 
   @override
-  String get authLegalTerms => 'Conditions d\'utilisation';
+  String get authLegalPrivacy => 'politique de confidentialité';
 
   @override
-  String get authLegalMiddle => ' et notre ';
+  String get privacyPolicyTitle => 'Politique de confidentialité';
 
   @override
-  String get authLegalPrivacy => 'Politique de confidentialité';
+  String get privacyPolicyFrenchOnly => 'Ce texte est disponible en français uniquement pour le moment.';
+
+  @override
+  String get aboutPrivacyPolicyTile => 'Lire notre politique de confidentialité';
 
   @override
   String get authLegalSuffix => '.';
