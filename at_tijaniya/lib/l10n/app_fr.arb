@@ -41,7 +41,7 @@
   "authPasswordLabel": "Mot de passe",
   "authPasswordMinCharsHint": "8 caractères minimum",
   "authForgotPassword": "Mot de passe oublié ?",
-  "authResetPasswordSent": "E-mail de réinitialisation envoyé. Vérifiez votre boîte mail.",
+  "authResetPasswordSent": "Si un compte existe pour cette adresse, un e-mail de réinitialisation vient d'être envoyé. Vérifiez votre boîte mail.",
   "authSignInAction": "Se connecter",
   "authSignUpAction": "Créer un compte",
   "authContinueWithoutAccount": "Continuer sans compte",

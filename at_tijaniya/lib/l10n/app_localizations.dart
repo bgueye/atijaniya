@@ -311,7 +311,7 @@ abstract class AppLocalizations {
   /// No description provided for @authResetPasswordSent.
   ///
   /// In fr, this message translates to:
-  /// **'E-mail de réinitialisation envoyé. Vérifiez votre boîte mail.'**
+  /// **'Si un compte existe pour cette adresse, un e-mail de réinitialisation vient d\'être envoyé. Vérifiez votre boîte mail.'**
   String get authResetPasswordSent;
 
   /// No description provided for @authSignInAction.

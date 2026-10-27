@@ -41,7 +41,7 @@
   "authPasswordLabel": "كلمة السر",
   "authPasswordMinCharsHint": "8 أحرف على الأقل",
   "authForgotPassword": "نسيت كلمة السر؟",
-  "authResetPasswordSent": "تم إرسال بريد إعادة التعيين. تحقّق من بريدك الإلكتروني.",
+  "authResetPasswordSent": "إن كان هناك حساب بهذا العنوان، فقد أُرسل إليه بريد إعادة التعيين. تحقّق من بريدك الإلكتروني.",
   "authSignInAction": "تسجيل الدخول",
   "authSignUpAction": "إنشاء حساب",
   "authContinueWithoutAccount": "الاستمرار بدون حساب",

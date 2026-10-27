@@ -28,6 +28,11 @@ class _FakeAuth extends Fake implements GoTrueClient {
       throw signInError;
 
   @override
+  Future<void> resetPasswordForEmail(String email, {String? redirectTo, String? captchaToken}) async {
+    resentTo.add('reset $email');
+  }
+
+  @override
   Future<ResendResponse> resend({
     String? email,
     String? phone,
@@ -75,5 +80,20 @@ void main() {
     await _signIn(tester, _FakeAuth(const AuthException('Invalid login credentials', statusCode: '400')));
     expect(find.text('Adresse e-mail ou mot de passe incorrect.'), findsOneWidget);
     expect(find.text("Renvoyer l'e-mail"), findsNothing);
+  });
+
+  // P3-2 : Supabase répond toujours oui, que l'adresse ait un compte ou non ;
+  // le message ne l'affirme plus.
+  testWidgets('mot de passe oublié : message qui ne dit pas si le compte existe', (tester) async {
+    final auth = _FakeAuth(const AuthException('unused'));
+    await _signIn(tester, auth);
+    await tester.tap(find.text('Mot de passe oublié ?'));
+    await tester.pumpAndSettle();
+    expect(auth.resentTo, contains('reset disciple@example.com'));
+    expect(
+      find.text("Si un compte existe pour cette adresse, un e-mail de réinitialisation vient d'être envoyé. "
+          'Vérifiez votre boîte mail.'),
+      findsOneWidget,
+    );
   });
 }

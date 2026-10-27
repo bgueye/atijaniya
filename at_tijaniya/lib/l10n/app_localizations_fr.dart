@@ -120,7 +120,8 @@ class AppLocalizationsFr extends AppLocalizations {
   String get authForgotPassword => 'Mot de passe oublié ?';
 
   @override
-  String get authResetPasswordSent => 'E-mail de réinitialisation envoyé. Vérifiez votre boîte mail.';
+  String get authResetPasswordSent =>
+      'Si un compte existe pour cette adresse, un e-mail de réinitialisation vient d\'être envoyé. Vérifiez votre boîte mail.';
 
   @override
   String get authSignInAction => 'Se connecter';
