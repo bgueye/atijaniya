@@ -42,7 +42,9 @@ class WirdNotificationService {
   static final WirdNotificationService instance = WirdNotificationService._();
 
   final FlutterLocalNotificationsPlugin _plugin = FlutterLocalNotificationsPlugin();
-  bool _initialized = false;
+
+  /// Initialisation en cours ou terminée, partagée par tous les appels.
+  Future<void>? _initFuture;
 
   /// Wird dont le disciple a touché le rappel, en attente d'ouverture (audit
   /// de l'accueil du 2026-10-26, P2-5). Toucher un rappel ouvrait l'app
@@ -63,8 +65,21 @@ class WirdNotificationService {
     if (wirdId != null) pendingWirdId.value = wirdId;
   }
 
-  Future<void> init() async {
-    if (_initialized) return;
+  /// Initialise les fuseaux horaires et le plugin, une seule fois.
+  ///
+  /// Lancée par `main()` après `runApp` depuis l'audit de l'accueil du
+  /// 2026-10-26 (P3-6) : elle était attendue avant le premier affichage, et
+  /// une exception du plugin empêchait l'app de démarrer. Chaque méthode qui
+  /// touche au plugin l'attend d'abord ; en cas d'échec, l'appel suivant
+  /// réessaie.
+  Future<void> init() {
+    return _initFuture ??= _init().then((_) {}, onError: (Object error, StackTrace stackTrace) {
+      _initFuture = null;
+      Error.throwWithStackTrace(error, stackTrace);
+    });
+  }
+
+  Future<void> _init() async {
     tz_data.initializeTimeZones();
     try {
       final localTimezone = await FlutterTimezone.getLocalTimezone();
@@ -83,18 +98,16 @@ class WirdNotificationService {
     // App lancée par le toucher d'un rappel.
     final launch = await _plugin.getNotificationAppLaunchDetails();
     if (launch?.didNotificationLaunchApp ?? false) _onNotificationTapped(launch!.notificationResponse?.id);
-    _initialized = true;
   }
 
   Future<bool> requestPermission() async {
-    final androidImpl = _plugin
-        .resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>();
+    await init();
+    final androidImpl = _plugin.resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>();
     if (androidImpl != null) {
       final granted = await androidImpl.requestNotificationsPermission();
       return granted ?? false;
     }
-    final iosImpl = _plugin
-        .resolvePlatformSpecificImplementation<IOSFlutterLocalNotificationsPlugin>();
+    final iosImpl = _plugin.resolvePlatformSpecificImplementation<IOSFlutterLocalNotificationsPlugin>();
     if (iosImpl != null) {
       final granted = await iosImpl.requestPermissions(alert: true, badge: true, sound: true);
       return granted ?? false;
@@ -139,6 +152,7 @@ class WirdNotificationService {
     required String channelName,
     required String channelDescription,
   }) async {
+    await init();
     await cancel(slot.id);
     if (!setting.enabled) return;
 
@@ -166,6 +180,7 @@ class WirdNotificationService {
   }
 
   Future<void> cancel(String slotId) async {
+    await init();
     await _plugin.cancel(_notificationId(slotId));
     final legacy = _legacyNotificationId(slotId);
     if (legacy != _notificationId(slotId)) await _plugin.cancel(legacy);
