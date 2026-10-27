@@ -255,18 +255,25 @@ class _ProfileBody extends ConsumerWidget {
       ),
     );
     if (confirmed == true) {
-      await SupabaseConfig.client.auth.signOut();
-      if (context.mounted) Navigator.of(context).pop();
+      // Aucune navigation ici (audit de l'authentification du 2026-10-27,
+      // P2-4) : `signOut()` émet `signedOut` avant son appel réseau, et
+      // `app.dart` vide alors la pile pour revenir à la connexion. Le
+      // `Navigator.pop()` fait ici au retour de l'appel pouvait tomber pendant
+      // l'animation de sortie et retirer l'écran racine. Hors ligne, la
+      // session est fermée sur l'appareil puis l'appel au serveur échoue :
+      // sans conséquence.
+      try {
+        await SupabaseConfig.client.auth.signOut();
+      } catch (_) {}
     }
   }
 
   /// `_DeleteAccountDialog` fait elle-même l'appel réseau (voir sa
-  /// justification) et ne se ferme (`pop(true)`) qu'après succès — cet
-  /// appelant n'a donc plus qu'à quitter l'écran Profil, même geste que
-  /// `_confirmSignOut` ci-dessus.
+  /// justification). Après une suppression réussie, la session est fermée et
+  /// `app.dart` vide la pile (dialogue et écran Profil compris) : rien à
+  /// faire ici, même raison que `_confirmSignOut` ci-dessus.
   Future<void> _confirmDeleteAccount(BuildContext context) async {
-    final deleted = await showDialog<bool>(context: context, builder: (_) => const _DeleteAccountDialog());
-    if (deleted == true && context.mounted) Navigator.of(context).pop();
+    await showDialog<void>(context: context, builder: (_) => const _DeleteAccountDialog());
   }
 }
 
@@ -311,12 +318,13 @@ class _DeleteAccountDialogState extends ConsumerState<_DeleteAccountDialog> {
       // suit ne doit faire afficher « Impossible de supprimer » (audit du
       // 2026-10-04, S53). On efface les données locales du compte, puis on
       // ferme la session ; un échec de ces deux étapes est sans conséquence
-      // (session déjà invalide côté serveur).
+      // (session déjà invalide côté serveur). La fermeture de la session
+      // ramène à la connexion via `app.dart`, qui ferme aussi ce dialogue
+      // (P2-4) : pas de `pop` ici.
       try {
         if (userId != null) await clearUserScopedPrefs(userId);
         await SupabaseConfig.client.auth.signOut();
       } catch (_) {}
-      if (mounted) Navigator.of(context).pop(true);
     } catch (_) {
       if (mounted) {
         final l10n = AppLocalizations.of(context)!;
@@ -365,7 +373,7 @@ class _DeleteAccountDialogState extends ConsumerState<_DeleteAccountDialog> {
       ),
       actions: [
         TextButton(
-          onPressed: _deleting ? null : () => Navigator.of(context).pop(false),
+          onPressed: _deleting ? null : () => Navigator.of(context).pop(),
           child: Text(l10n.profileCancel),
         ),
         TextButton(
@@ -472,9 +480,8 @@ class _ProfileHeaderState extends ConsumerState<_ProfileHeader> {
                                   height: (56 * MediaQuery.of(context).devicePixelRatio).round(),
                                 )
                               : null,
-                          child: avatarUrl == null
-                              ? Icon(Icons.person_outline, color: AppColors.emerald, size: 28)
-                              : null,
+                          child:
+                              avatarUrl == null ? Icon(Icons.person_outline, color: AppColors.emerald, size: 28) : null,
                         ),
                         if (_changingAvatar)
                           const Positioned.fill(

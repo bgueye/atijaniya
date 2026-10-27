@@ -6,7 +6,8 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:supabase_flutter/supabase_flutter.dart' show AuthException, AuthRetryableFetchException, AuthState;
+import 'package:supabase_flutter/supabase_flutter.dart'
+    show AuthChangeEvent, AuthException, AuthRetryableFetchException, AuthState;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -124,5 +125,30 @@ void main() {
       expect(find.text(message), findsNothing);
       await tester.pumpWidget(const SizedBox());
     });
+  });
+
+  // Audit de l'authentification du 2026-10-27, P2-4 : la déconnexion et la
+  // suppression de compte ne font plus leur propre `pop` ; c'est app.dart qui
+  // vide la pile sur `signedOut`, y compris les écrans ouverts par-dessus.
+  testWidgets('déconnexion depuis un écran ouvert sur l\'accueil : retour à la connexion', (tester) async {
+    SharedPreferences.setMockInitialValues({'onboarding_seen': true});
+    final states = StreamController<AuthState>.broadcast();
+    addTearDown(states.close);
+    await tester.pumpWidget(_app(savedLocale: const Locale('fr'), userId: 'me', authStates: states.stream));
+    await tester.pump(const Duration(milliseconds: 450));
+    await tester.pumpAndSettle();
+    expect(find.byType(HomeShell), findsOneWidget);
+
+    Navigator.of(tester.element(find.byType(HomeShell))).push(
+      MaterialPageRoute<void>(builder: (_) => const Scaffold(body: Text('Profil ouvert'))),
+    );
+    await tester.pumpAndSettle();
+    expect(find.text('Profil ouvert'), findsOneWidget);
+
+    states.add(const AuthState(AuthChangeEvent.signedOut, null));
+    await tester.pumpAndSettle();
+    expect(find.text('Profil ouvert'), findsNothing);
+    expect(find.byType(AuthScreen), findsOneWidget);
+    await tester.pumpWidget(const SizedBox());
   });
 }
