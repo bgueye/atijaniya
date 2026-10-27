@@ -1,5 +1,6 @@
 import '../../../core/validation/text_limits.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart' show TextInput;
 import 'package:google_fonts/google_fonts.dart';
 import 'package:supabase_flutter/supabase_flutter.dart' show OtpType;
 
@@ -109,6 +110,9 @@ class _AuthScreenState extends State<AuthScreen> {
         email: _loginEmailController.text.trim(),
         password: _loginPasswordController.text,
       );
+      // Propose d'enregistrer l'identifiant dans le gestionnaire de mots de
+      // passe (P2-1).
+      TextInput.finishAutofillContext();
       if (mounted) widget.onAuthenticated();
     } catch (error) {
       if (mounted) setState(() => _errorMessage = _messageFor(classifyAuthError(error), l10n));
@@ -136,6 +140,7 @@ class _AuthScreenState extends State<AuthScreen> {
         emailRedirectTo: SupabaseConfig.authCallbackUrl,
       );
       if (!mounted) return;
+      TextInput.finishAutofillContext();
       if (response.session != null) {
         // Confirmation par e-mail désactivée côté projet : la session est
         // active immédiatement après l'inscription.
@@ -301,30 +306,45 @@ class _AuthScreenState extends State<AuthScreen> {
         children: [
           _PanelTitle(title: l10n.authTitle, subtitle: l10n.authSubtitle),
           const SizedBox(height: 24),
-          TextFormField(
-            controller: _loginEmailController,
-            decoration: _fieldDecoration(l10n.authEmailLabel),
-            keyboardType: TextInputType.emailAddress,
-            enabled: !loading,
-            validator: (value) => _validateEmail(value, l10n),
-          ),
-          const SizedBox(height: 14),
-          TextFormField(
-            controller: _loginPasswordController,
-            decoration: _fieldDecoration(l10n.authPasswordLabel).copyWith(
-              suffixIcon: _obscureToggleIcon(
-                obscured: _loginPasswordObscured,
-                onPressed: () => setState(() => _loginPasswordObscured = !_loginPasswordObscured),
-              ),
+          // Autoremplissage et touche « suivant »/« OK » du clavier (audit de
+          // l'authentification du 2026-10-27, P2-1) : le gestionnaire de mots
+          // de passe d'Android ne proposait rien, et Entrée ne faisait rien.
+          AutofillGroup(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                TextFormField(
+                  controller: _loginEmailController,
+                  decoration: _fieldDecoration(l10n.authEmailLabel),
+                  keyboardType: TextInputType.emailAddress,
+                  autofillHints: const [AutofillHints.email],
+                  textInputAction: TextInputAction.next,
+                  enabled: !loading,
+                  validator: (value) => _validateEmail(value, l10n),
+                ),
+                const SizedBox(height: 14),
+                TextFormField(
+                  controller: _loginPasswordController,
+                  autofillHints: const [AutofillHints.password],
+                  textInputAction: TextInputAction.done,
+                  onFieldSubmitted: (_) => loading ? null : _signIn(),
+                  decoration: _fieldDecoration(l10n.authPasswordLabel).copyWith(
+                    suffixIcon: _obscureToggleIcon(
+                      obscured: _loginPasswordObscured,
+                      onPressed: () => setState(() => _loginPasswordObscured = !_loginPasswordObscured),
+                    ),
+                  ),
+                  obscureText: _loginPasswordObscured,
+                  enabled: !loading,
+                  validator: (value) {
+                    final text = value ?? '';
+                    if (text.isEmpty) return l10n.authPasswordRequired;
+                    if (text.length < 6) return l10n.authPasswordTooShort;
+                    return null;
+                  },
+                ),
+              ],
             ),
-            obscureText: _loginPasswordObscured,
-            enabled: !loading,
-            validator: (value) {
-              final text = value ?? '';
-              if (text.isEmpty) return l10n.authPasswordRequired;
-              if (text.length < 6) return l10n.authPasswordTooShort;
-              return null;
-            },
           ),
           const SizedBox(height: 8),
           Align(
@@ -378,41 +398,57 @@ class _AuthScreenState extends State<AuthScreen> {
         children: [
           _PanelTitle(title: l10n.authSignupTitle, subtitle: l10n.authSignupSubtitle),
           const SizedBox(height: 24),
-          TextFormField(
-            controller: _fullNameController,
-            maxLength: TextLimits.displayName,
-            decoration: _fieldDecoration(l10n.authFullNameLabel),
-            enabled: !loading,
-            validator: (value) {
-              if ((value ?? '').trim().isEmpty) return l10n.authFullNameRequired;
-              return null;
-            },
-          ),
-          const SizedBox(height: 14),
-          TextFormField(
-            controller: _signupEmailController,
-            decoration: _fieldDecoration(l10n.authEmailLabel),
-            keyboardType: TextInputType.emailAddress,
-            enabled: !loading,
-            validator: (value) => _validateEmail(value, l10n),
-          ),
-          const SizedBox(height: 14),
-          TextFormField(
-            controller: _signupPasswordController,
-            decoration: _fieldDecoration(l10n.authPasswordLabel).copyWith(
-              suffixIcon: _obscureToggleIcon(
-                obscured: _signupPasswordObscured,
-                onPressed: () => setState(() => _signupPasswordObscured = !_signupPasswordObscured),
-              ),
+          AutofillGroup(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                TextFormField(
+                  controller: _fullNameController,
+                  maxLength: TextLimits.displayName,
+                  decoration: _fieldDecoration(l10n.authFullNameLabel),
+                  keyboardType: TextInputType.name,
+                  textCapitalization: TextCapitalization.words,
+                  autofillHints: const [AutofillHints.name],
+                  textInputAction: TextInputAction.next,
+                  enabled: !loading,
+                  validator: (value) {
+                    if ((value ?? '').trim().isEmpty) return l10n.authFullNameRequired;
+                    return null;
+                  },
+                ),
+                const SizedBox(height: 14),
+                TextFormField(
+                  controller: _signupEmailController,
+                  decoration: _fieldDecoration(l10n.authEmailLabel),
+                  keyboardType: TextInputType.emailAddress,
+                  autofillHints: const [AutofillHints.email],
+                  textInputAction: TextInputAction.next,
+                  enabled: !loading,
+                  validator: (value) => _validateEmail(value, l10n),
+                ),
+                const SizedBox(height: 14),
+                TextFormField(
+                  controller: _signupPasswordController,
+                  autofillHints: const [AutofillHints.newPassword],
+                  textInputAction: TextInputAction.done,
+                  onFieldSubmitted: (_) => loading ? null : _signUp(),
+                  decoration: _fieldDecoration(l10n.authPasswordLabel).copyWith(
+                    suffixIcon: _obscureToggleIcon(
+                      obscured: _signupPasswordObscured,
+                      onPressed: () => setState(() => _signupPasswordObscured = !_signupPasswordObscured),
+                    ),
+                  ),
+                  obscureText: _signupPasswordObscured,
+                  enabled: !loading,
+                  validator: (value) {
+                    final text = value ?? '';
+                    if (text.isEmpty) return l10n.authPasswordRequired;
+                    if (text.length < 8) return l10n.authPasswordTooShortSignup;
+                    return null;
+                  },
+                ),
+              ],
             ),
-            obscureText: _signupPasswordObscured,
-            enabled: !loading,
-            validator: (value) {
-              final text = value ?? '';
-              if (text.isEmpty) return l10n.authPasswordRequired;
-              if (text.length < 8) return l10n.authPasswordTooShortSignup;
-              return null;
-            },
           ),
           const SizedBox(height: 6),
           Text(
@@ -460,7 +496,8 @@ class _AuthScreenState extends State<AuthScreen> {
   }
 
   Widget _obscureToggleIcon({required bool obscured, required VoidCallback onPressed}) {
-    return IconButton(tooltip: AppLocalizations.of(context)!.a11yTogglePasswordVisibility, 
+    return IconButton(
+      tooltip: AppLocalizations.of(context)!.a11yTogglePasswordVisibility,
       icon: Icon(obscured ? Icons.visibility_outlined : Icons.visibility_off_outlined, color: AppColors.bronze),
       onPressed: onPressed,
     );
@@ -536,26 +573,26 @@ class _SegmentedToggle extends StatelessWidget {
       button: true,
       selected: active,
       child: GestureDetector(
-      onTap: onTap,
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 180),
-        // 14 de marge verticale : hauteur tactile d'au moins 48 px.
-        padding: const EdgeInsets.symmetric(vertical: 14),
-        decoration: BoxDecoration(
-          color: active ? AppColors.emerald : Colors.transparent,
-          borderRadius: BorderRadius.circular(18),
-        ),
-        alignment: Alignment.center,
-        child: ContentText(
-          label,
-          style: TextStyle(
-            color: active ? Colors.white : AppColors.secondaryInk,
-            fontWeight: FontWeight.w600,
-            fontSize: 13,
+        onTap: onTap,
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 180),
+          // 14 de marge verticale : hauteur tactile d'au moins 48 px.
+          padding: const EdgeInsets.symmetric(vertical: 14),
+          decoration: BoxDecoration(
+            color: active ? AppColors.emerald : Colors.transparent,
+            borderRadius: BorderRadius.circular(18),
+          ),
+          alignment: Alignment.center,
+          child: ContentText(
+            label,
+            style: TextStyle(
+              color: active ? Colors.white : AppColors.secondaryInk,
+              fontWeight: FontWeight.w600,
+              fontSize: 13,
+            ),
           ),
         ),
       ),
-    ),
     );
   }
 }

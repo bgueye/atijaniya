@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart' show TextInput;
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../../core/supabase/supabase_config.dart';
@@ -50,6 +51,8 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
     });
     try {
       await SupabaseConfig.client.auth.updateUser(UserAttributes(password: _passwordController.text));
+      // Propose d'enregistrer le nouveau mot de passe (P2-1).
+      TextInput.finishAutofillContext();
       widget.onDone();
     } catch (_) {
       if (mounted) setState(() => _errorMessage = l10n.resetPasswordError);
@@ -63,7 +66,8 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
       labelText: label,
       filled: true,
       fillColor: AppColors.offWhite,
-      border: OutlineInputBorder(borderRadius: BorderRadius.circular(8), borderSide: BorderSide(color: AppColors.bronze)),
+      border:
+          OutlineInputBorder(borderRadius: BorderRadius.circular(8), borderSide: BorderSide(color: AppColors.bronze)),
     );
   }
 
@@ -87,37 +91,63 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                     style: const TextStyle(color: AppColors.zaytoune, fontSize: 22, fontWeight: FontWeight.w600),
                   ),
                   const SizedBox(height: 8),
-                  Text(l10n.resetPasswordSubtitle, style: TextStyle(color: AppColors.secondaryInk, fontSize: 13, height: 1.4)),
+                  Text(l10n.resetPasswordSubtitle,
+                      style: TextStyle(color: AppColors.secondaryInk, fontSize: 13, height: 1.4)),
                   const SizedBox(height: 24),
-                  TextFormField(
-                    controller: _passwordController,
-                    obscureText: _obscured,
-                    enabled: !_submitting,
-                    decoration: _fieldDecoration(l10n.authPasswordLabel).copyWith(
-                      suffixIcon: IconButton(tooltip: AppLocalizations.of(context)!.a11yTogglePasswordVisibility, 
-                        icon: Icon(_obscured ? Icons.visibility_outlined : Icons.visibility_off_outlined, color: AppColors.bronze),
-                        onPressed: () => setState(() => _obscured = !_obscured),
-                      ),
+                  // Autoremplissage et clavier (audit de l'authentification du
+                  // 2026-10-27, P2-1) ; la confirmation a son propre bouton
+                  // afficher/masquer, qui agit sur les deux champs.
+                  AutofillGroup(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        TextFormField(
+                          controller: _passwordController,
+                          autofillHints: const [AutofillHints.newPassword],
+                          textInputAction: TextInputAction.next,
+                          obscureText: _obscured,
+                          enabled: !_submitting,
+                          decoration: _fieldDecoration(l10n.authPasswordLabel).copyWith(
+                            suffixIcon: IconButton(
+                              tooltip: AppLocalizations.of(context)!.a11yTogglePasswordVisibility,
+                              icon: Icon(_obscured ? Icons.visibility_outlined : Icons.visibility_off_outlined,
+                                  color: AppColors.bronze),
+                              onPressed: () => setState(() => _obscured = !_obscured),
+                            ),
+                          ),
+                          validator: (value) {
+                            final text = value ?? '';
+                            if (text.isEmpty) return l10n.authPasswordRequired;
+                            if (text.length < 8) return l10n.authPasswordTooShortSignup;
+                            return null;
+                          },
+                        ),
+                        const SizedBox(height: 6),
+                        Text(l10n.authPasswordMinCharsHint,
+                            style: TextStyle(color: AppColors.secondaryInk, fontSize: 11)),
+                        const SizedBox(height: 14),
+                        TextFormField(
+                          controller: _confirmController,
+                          obscureText: _obscured,
+                          enabled: !_submitting,
+                          autofillHints: const [AutofillHints.newPassword],
+                          textInputAction: TextInputAction.done,
+                          onFieldSubmitted: (_) => _submitting ? null : _submit(),
+                          decoration: _fieldDecoration(l10n.resetPasswordConfirmLabel).copyWith(
+                            suffixIcon: IconButton(
+                              tooltip: l10n.a11yTogglePasswordVisibility,
+                              icon: Icon(_obscured ? Icons.visibility_outlined : Icons.visibility_off_outlined,
+                                  color: AppColors.bronze),
+                              onPressed: () => setState(() => _obscured = !_obscured),
+                            ),
+                          ),
+                          validator: (value) {
+                            if (value != _passwordController.text) return l10n.resetPasswordMismatch;
+                            return null;
+                          },
+                        ),
+                      ],
                     ),
-                    validator: (value) {
-                      final text = value ?? '';
-                      if (text.isEmpty) return l10n.authPasswordRequired;
-                      if (text.length < 8) return l10n.authPasswordTooShortSignup;
-                      return null;
-                    },
-                  ),
-                  const SizedBox(height: 6),
-                  Text(l10n.authPasswordMinCharsHint, style: TextStyle(color: AppColors.secondaryInk, fontSize: 11)),
-                  const SizedBox(height: 14),
-                  TextFormField(
-                    controller: _confirmController,
-                    obscureText: _obscured,
-                    enabled: !_submitting,
-                    decoration: _fieldDecoration(l10n.resetPasswordConfirmLabel),
-                    validator: (value) {
-                      if (value != _passwordController.text) return l10n.resetPasswordMismatch;
-                      return null;
-                    },
                   ),
                   if (_errorMessage != null) ...[
                     const SizedBox(height: 12),
@@ -133,7 +163,10 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                     ),
                     onPressed: _submitting ? null : _submit,
                     child: _submitting
-                        ? const SizedBox(height: 18, width: 18, child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white))
+                        ? const SizedBox(
+                            height: 18,
+                            width: 18,
+                            child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white))
                         : Text(l10n.resetPasswordSubmit, style: const TextStyle(fontWeight: FontWeight.w600)),
                   ),
                   const SizedBox(height: 8),
