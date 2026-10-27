@@ -1,6 +1,7 @@
 /// Persistance locale (SharedPreferences) des réglages de rappels par wird —
-/// même approche que `tasbih_session_store.dart` : pas de dépendance à
-/// l'authentification Supabase, qui n'est pas encore branchée côté app.
+/// même approche que `tasbih_session_store.dart` : stockage sur l'appareil,
+/// sans serveur. Propres à l'appareil et non au compte, comme les
+/// notifications qu'ils programment.
 library;
 
 import 'dart:convert';

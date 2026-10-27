@@ -33,12 +33,9 @@ import '../../../core/widgets/content_text.dart';
 /// d'annuaire public. Ne jamais construire ici de liste/recherche publique
 /// sur ces champs.
 ///
-/// Comme le module Communauté, la lecture/l'édition du profil ont besoin
-/// d'un `auth.uid()` réel, indisponible tant que l'authentification n'est
-/// pas branchée côté app (TODO dans `auth_screen.dart`) : cet écran affiche
-/// donc un état "connectez-vous" explicite plutôt qu'un échec silencieux —
-/// se réactivera automatiquement une fois l'auth branchée, aucun changement
-/// nécessaire ici.
+/// La lecture et l'édition du profil demandent une session : en mode
+/// invité, cet écran affiche un état « connectez-vous » explicite plutôt
+/// qu'un échec silencieux.
 class ProfilScreen extends ConsumerWidget {
   const ProfilScreen({super.key});
 

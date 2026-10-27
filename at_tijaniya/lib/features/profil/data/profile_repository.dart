@@ -1,11 +1,10 @@
 /// Accès aux données du profil disciple (Supabase — table `profiles`).
 /// Lecture publique côté RLS (`profiles_read_all` : `using (true)`), mais
-/// "Mon profil" ne concerne que l'utilisateur courant : la lecture comme
-/// l'écriture ont besoin d'un `auth.uid()` réel (policies `profiles_owner_*`),
-/// indisponible tant que l'authentification n'est pas branchée côté app
-/// (TODO dans `auth_screen.dart` — même limitation documentée que
-/// `CommunityRepository`). Les méthodes ci-dessous sont prêtes et
-/// s'activeront automatiquement dès qu'une session réelle existera.
+/// "Mon profil" ne concerne que le compte connecté : chaque méthode lit
+/// `auth.currentUser` et n'est appelée qu'avec une session (l'écran Profil
+/// affiche « connectez-vous » sinon). Côté base, le client ne modifie que
+/// `display_name`, `avatar_url`, `locale`, `zawiya_id` et `bio` (privilèges
+/// de colonne, voir CLAUDE.md).
 library;
 
 import '../../../core/supabase/supabase_config.dart';

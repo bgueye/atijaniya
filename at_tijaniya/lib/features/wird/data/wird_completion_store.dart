@@ -1,8 +1,9 @@
 /// Persistance locale (SharedPreferences) des jours où un wird a été
 /// entièrement terminé — P1 "Historique & progression"
 /// (docs/03-architecture-ecrans.md). Même approche que
-/// `tasbih_session_store.dart` : pas de dépendance à l'authentification
-/// Supabase, qui n'est pas encore branchée côté app.
+/// `tasbih_session_store.dart` : stockage sur l'appareil, sans serveur — la
+/// politique de confidentialité l'annonce (« progression des wirds stockée
+/// localement »). Clés propres à chaque compte, voir `user_scoped_prefs.dart`.
 ///
 /// Une date est ajoutée par `TasbihController` quand le disciple termine le
 /// dernier pilier d'un wird (voir `TasbihController.nextPillar()`). Stockée

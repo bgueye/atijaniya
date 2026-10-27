@@ -2,12 +2,12 @@
 /// docs/03-architecture-ecrans.md : "Tape manuel, reconnaissance vocale,
 /// reprise de session").
 ///
-/// Persisté localement (voir `tasbih_session_store.dart`) pour permettre la
-/// reprise de session sans dépendre de l'authentification Supabase, qui
-/// n'est pas encore branchée côté app (voir TODO dans auth_screen.dart).
-/// Le schéma `tasbih_sessions` de `database/schema.sql` (mode manual/voice,
-/// current_count, target_count, wird_id, step_id) est prévu pour une
-/// synchronisation cloud à brancher une fois l'auth réelle en place.
+/// Persisté sur l'appareil (voir `tasbih_session_store.dart`) pour permettre
+/// la reprise de session, comme le reste de la pratique (la politique de
+/// confidentialité l'annonce). Le schéma `tasbih_sessions` de
+/// `database/schema.sql` (mode manual/voice, current_count, target_count,
+/// wird_id, step_id) reste prévu pour une éventuelle synchronisation, non
+/// décidée.
 library;
 
 enum TasbihMode { manual, voice }
