@@ -35,7 +35,13 @@ create policy post_likes_read_own on public.post_likes
 -- lors refusé ; l'app liste ses colonnes.
 revoke select on public.profiles from anon, authenticated;
 grant select (user_id, display_name, avatar_url, locale, zawiya_id, bio, created_at, updated_at)
-  on public.profiles to anon, authenticated;
+  on public.profiles to authenticated;
+-- Sans compte, pas de langue préférée non plus (audit de l'authentification
+-- du 2026-10-27, P3-8) : seul le compte connecté lit sa propre `locale`
+-- (« Mon profil »), les autres lectures se limitent à user_id et
+-- display_name.
+grant select (user_id, display_name, avatar_url, zawiya_id, bio, created_at, updated_at)
+  on public.profiles to anon;
 
 -- Buckets publics : l'image reste lisible par son URL publique (le bucket
 -- est public, sans passer par ces politiques), mais on ne peut plus lister

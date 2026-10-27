@@ -19,11 +19,13 @@ import 'package:at_tijaniya/features/figures/presentation/figures_providers.dart
 import 'package:at_tijaniya/features/home/presentation/home_shell.dart';
 import 'package:at_tijaniya/features/khadara/presentation/khadara_providers.dart';
 import 'package:at_tijaniya/features/onboarding/presentation/language_selection_screen.dart';
+import 'package:at_tijaniya/features/profil/data/profile_repository.dart';
 import 'package:at_tijaniya/features/profil/presentation/profile_providers.dart';
 
-Widget _app({Locale? savedLocale, String? userId, Stream<AuthState>? authStates}) {
+Widget _app({Locale? savedLocale, String? userId, Stream<AuthState>? authStates, ProfileRepository? profiles}) {
   return ProviderScope(
     overrides: [
+      if (profiles != null) profileRepositoryProvider.overrideWithValue(profiles),
       if (authStates != null) authStateChangesProvider.overrideWith((ref) => authStates),
       initialLocaleProvider.overrideWithValue(savedLocale),
       currentUserIdProvider.overrideWithValue(userId),
@@ -33,6 +35,14 @@ Widget _app({Locale? savedLocale, String? userId, Stream<AuthState>? authStates}
     ],
     child: const AtTijaniyaApp(),
   );
+}
+
+/// Dépôt de profil sans serveur : compte les écritures de la langue.
+class _FakeProfiles extends Fake implements ProfileRepository {
+  final written = <String>[];
+
+  @override
+  Future<void> updateMyLocale(String locale) async => written.add(locale);
 }
 
 void main() {
@@ -174,4 +184,21 @@ void main() {
       await tester.pumpWidget(const SizedBox());
     });
   }
+
+  // Audit de l'authentification du 2026-10-27, P3-8 : la langue n'est plus
+  // réécrite dans le profil à chaque lancement.
+  testWidgets('langue du profil écrite une fois, pas à chaque lancement', (tester) async {
+    SharedPreferences.setMockInitialValues({'onboarding_seen': true});
+    for (final expected in [
+      ['ar'],
+      <String>[],
+    ]) {
+      final profiles = _FakeProfiles();
+      await tester.pumpWidget(_app(savedLocale: const Locale('ar'), userId: 'me', profiles: profiles));
+      await tester.pump(const Duration(milliseconds: 450));
+      await tester.pumpAndSettle();
+      expect(profiles.written, expected);
+      await tester.pumpWidget(const SizedBox());
+    }
+  });
 }

@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -267,16 +269,36 @@ class _AtTijaniyaAppState extends ConsumerState<AtTijaniyaApp> {
     });
   }
 
-  /// Dernière langue écrite dans le profil, pour ne l'écrire qu'une fois.
+  /// Compte et langue déjà traités pendant ce lancement (`compte:langue`).
   String? _syncedProfileLocale;
 
   /// Écrit la langue de l'app dans `profiles.locale` du compte connecté — au
   /// mieux : un échec (hors ligne) sera retenté au prochain changement.
+  ///
+  /// La dernière langue écrite pour chaque compte est retenue sur l'appareil
+  /// (audit de l'authentification du 2026-10-27, P3-8) : la colonne était
+  /// réécrite à chaque lancement. Le compte fait partie de la clé : avec la
+  /// même langue, un second compte connecté sur l'appareil n'était jamais
+  /// synchronisé. La clé finit par `::{compte}`, comme les autres données
+  /// locales du compte : `clearUserScopedPrefs` l'efface à la suppression.
   void _syncProfileLocale() {
     final locale = ref.read(localeControllerProvider)?.languageCode;
-    if (locale == null || ref.read(currentUserIdProvider) == null || locale == _syncedProfileLocale) return;
-    _syncedProfileLocale = locale;
-    ref.read(profileRepositoryProvider).updateMyLocale(locale).catchError((_) => _syncedProfileLocale = null);
+    final userId = ref.read(currentUserIdProvider);
+    if (locale == null || userId == null || '$userId:$locale' == _syncedProfileLocale) return;
+    _syncedProfileLocale = '$userId:$locale';
+    unawaited(_writeProfileLocale(userId, locale));
+  }
+
+  Future<void> _writeProfileLocale(String userId, String locale) async {
+    final key = 'profile_locale_synced::$userId';
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      if (prefs.getString(key) == locale) return;
+      await ref.read(profileRepositoryProvider).updateMyLocale(locale);
+      await prefs.setString(key, locale);
+    } catch (_) {
+      _syncedProfileLocale = null;
+    }
   }
 
   Future<void> _afterLanguageChosen() async {
