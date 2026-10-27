@@ -221,6 +221,7 @@ version :
   // Réinitialisation : AutofillHints.newPassword sur les deux champs.
   // Après un succès : TextInput.finishAutofillContext();
   ```
+- **Statut : corrigé le 2026-10-27** (c537d0c). Test : `auth_form_test.dart`.
 
 ### P2-2 · Erreurs non annoncées à TalkBack, hors ligne non distingué
 
@@ -236,6 +237,9 @@ version :
   `create_sheets.dart:350`. Ajouter un cas `network` à `classifyAuthError`
   (`AuthRetryableFetchException`, ou `isNetworkError` de `core/network`), avec le message
   hors ligne existant (`khadaraOfflineError`).
+- **Statut : corrigé le 2026-10-27** (5f3c1eb). Un serveur qui répond par une erreur HTTP
+  reste un cas générique. Tests : `auth_error_message_test.dart`,
+  `signup_check_email_panel_test.dart`.
 
 ### P2-3 · Nouveau mot de passe : une seule erreur, et les autres sessions restent ouvertes
 
@@ -255,6 +259,9 @@ version :
     await SupabaseConfig.client.auth.signOut(scope: SignOutScope.others);
   } catch (_) {}
   ```
+- **Statut : corrigé le 2026-10-27** (56354d9). Le message « mot de passe trop faible »,
+  qui demandait encore 6 caractères alors que l'app en exige 8, ne cite plus de longueur.
+  Test : `reset_password_errors_test.dart`.
 
 ### P2-4 · Déconnexion et suppression : deux fermetures d'écran concurrentes (À confirmer)
 
@@ -284,6 +291,9 @@ version :
   Même chose pour le dialogue de suppression (`pop(true)` seulement si la session n'a pas
   déjà été fermée). Vérification : se déconnecter et supprimer un compte de test sur
   téléphone, en Wi-Fi rapide.
+- **Statut : corrigé le 2026-10-27** (f3df82c). Mécanisme testé dans
+  `app_startup_test.dart` ; la déconnexion et la suppression réelles restent à vérifier sur
+  téléphone avec un compte de test.
 
 ### P2-5 · Mentions légales en apparence de liens, sans destination
 
@@ -302,6 +312,11 @@ version :
   de l'app ou une adresse publique) et ajouter une entrée « Politique de confidentialité »
   dans « À propos ». Tant qu'il n'y a pas de conditions d'utilisation, retirer cette
   mention. Voir les questions ouvertes.
+- **Statut : corrigé le 2026-10-27** (65f98fe), décisions du porteur de projet du
+  2026-10-27 : écran dans l'app (copie de `docs/politique-de-confidentialite.md` dans
+  `assets/legal/`, test d'identité des deux fichiers) ouvert depuis l'inscription et « À
+  propos » ; mention des conditions d'utilisation retirée. Toute la phrase de l'inscription
+  ouvre la politique (cible de 48 dp, annoncée comme lien). Test : `legal_document_test.dart`.
 
 ### P2-6 · Confirmation d'e-mail : pas de renvoi depuis l'onglet Connexion
 
@@ -314,6 +329,8 @@ version :
 - **Correctif** : sur `AuthErrorKind.emailNotConfirmed`, afficher sous le message un bouton
   « Renvoyer l'e-mail de confirmation », qui réutilise `_resendConfirmation` avec l'adresse
   saisie.
+- **Statut : corrigé le 2026-10-27** (5a5d0b8). `AuthScreen` accepte un client
+  d'authentification de test. Test : `auth_resend_from_login_test.dart`.
 
 ### P3 · Points mineurs
 
@@ -374,10 +391,10 @@ version :
    compris ceux qui n'ont jamais rien publié. Le fil des invités en a besoin pour les
    auteurs. Faut-il limiter `anon` aux auteurs de publications visibles, par une fonction
    ou une vue ? L'audit Communauté (P2-2) avait gardé cette lecture.
-3. **Politique de confidentialité et conditions d'utilisation** (P2-5) :
-   - la politique est-elle publiée à une adresse publique, à relier dans l'app et sur la
-     fiche Play ?
-   - faut-il rédiger des conditions d'utilisation, ou retirer la mention ?
+3. **Politique de confidentialité et conditions d'utilisation** (P2-5) — *tranché le
+   2026-10-27 : politique affichée dans l'app, mention des conditions retirée.* Reste :
+   - la politique est-elle publiée à une adresse publique, pour la fiche Play ?
+   - conditions d'utilisation à rédiger, puis à ajouter à l'inscription.
 4. **E-mails en arabe** : les e-mails de confirmation et de réinitialisation ne sont qu'en
    français. Faut-il un modèle bilingue ?
 5. **P2-4** : à confirmer sur téléphone avec un compte de test, que je n'ai pas créé.
