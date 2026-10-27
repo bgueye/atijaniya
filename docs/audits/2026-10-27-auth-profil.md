@@ -336,32 +336,48 @@ version :
 
 1. **Onglets Connexion / Créer un compte** : 47 dp de haut (mesuré), alors que le
    commentaire de `auth_screen.dart:537` annonce 48. Passer la marge à 15 ou ajouter
-   `constraints: const BoxConstraints(minHeight: 48)`.
+   `constraints: const BoxConstraints(minHeight: 48)`. **Corrigé le 2026-10-27** (c32deda), test des
+   cibles tactiles en français et en arabe.
 2. **« E-mail de réinitialisation envoyé »** s'affiche aussi pour une adresse sans compte
    (Supabase répond toujours oui). Ce n'est pas une faille, mais c'est trompeur après une
    faute de frappe. Écrire « Si un compte existe pour cette adresse, un e-mail vient d'être
-   envoyé. ».
+   envoyé. ». **Corrigé le 2026-10-27** (881ccf5).
 3. **Afficher/masquer** : libellé fixe (« Afficher ou masquer le mot de passe ») quel que
-   soit l'état. Annoncer l'action réelle (« Afficher le mot de passe » / « Masquer… »).
+   soit l'état. Annoncer l'action réelle (« Afficher le mot de passe » / « Masquer… »). **Corrigé
+   le 2026-10-27** (54c3160).
 4. **Session expirée** : un rafraîchissement refusé ramène à la connexion sans explication.
-   `AuthState` porte la raison de la déconnexion : un court message suffirait.
+   `AuthState` porte la raison de la déconnexion : un court message suffirait. **Corrigé le
+   2026-10-27** (c74352b). L'erreur `session_expired` émise sur le même flux est écartée
+   d'`isAuthLinkError`, qui l'aurait prise pour un lien expiré.
 5. **Commentaires périmés** : `profile_repository.dart:1-9` et `profil_screen.dart:36-41`
-   disent encore que « l'authentification n'est pas branchée ».
+   disent encore que « l'authentification n'est pas branchée ». **Corrigé le 2026-10-27**
+   (10441f3), ainsi que la même affirmation dans trois fichiers du module Wird.
 6. **Suppression de compte** : la photo est retirée du Storage **avant** l'appel
    (`profil_screen.dart:306-309`). Si la suppression échoue ensuite, le profil garde une
    `avatar_url` vers un fichier effacé. La photo ne peut pas être retirée après coup (la
    politique Storage exige une session) : en cas d'échec, remettre `avatar_url` à `null`.
+   **Corrigé le 2026-10-27** (4df0962) : `avatar_url` est remise à `null` *avant* de retirer le
+   fichier, ce qui reste vrai même si la suppression échoue hors ligne.
 7. **Zawiyas indisponibles** dans « Modifier le profil » : la liste disparaît sans message
    (`edit_profile_sheet.dart:119`). Afficher une ligne « Liste des zawiyas indisponible ».
+   **Corrigé le 2026-10-27** (6b16785), avec « Réessayer ».
 8. **`profiles.locale`** est réécrite à chaque lancement (`app.dart:233-238`). C'est sans
    effet, mais la colonne est lisible par `anon`. Elle peut sortir du `grant select`
-   accordé à `anon` dans la migration retenue `close_anonymous_community_reads`.
+   accordé à `anon` dans la migration retenue `close_anonymous_community_reads`. **Corrigé
+   le 2026-10-27** (5a4d4f3) : dernière langue écrite retenue par compte sur l'appareil ;
+   `locale` retirée du `grant select` à `anon` dans la migration retenue (non appliquée).
 9. **Version dans les Paramètres** : `PackageInfo.fromPlatform()` est rappelé à chaque
-   reconstruction (`settings_screen.dart:139`). Garder la `Future` dans un provider.
+   reconstruction (`settings_screen.dart:139`). Garder la `Future` dans un provider. **Corrigé
+   le 2026-10-27** (4bf5a44), `Future` gardée par l'écran ; sans effet visible.
 10. **Formatage** : 8 fichiers du périmètre à reformater ; 16 tailles de police en dur.
+    **Formatage fait le 2026-10-27** (3346e23). Les tailles de police restent (revue visuelle).
 11. **Tests** : aucun test d'écran pour la connexion, l'inscription, la réinitialisation, la
     feuille de profil ni la déconnexion. Seuls existent la classification des erreurs, le
-    panneau « Vérifiez votre boîte mail » et l'URL de retour.
+    panneau « Vérifiez votre boîte mail » et l'URL de retour. **Couvert le 2026-10-27** :
+    `auth_form_test`, `auth_contrast_test`, `auth_resend_from_login_test`,
+    `reset_password_errors_test`, `edit_profile_sheet_test`, `legal_document_test`,
+    `app_startup_test` (liens refusés, session expirée, déconnexion). La déconnexion et la
+    suppression réelles restent à vérifier sur téléphone.
 
 ## Langues et RTL
 
