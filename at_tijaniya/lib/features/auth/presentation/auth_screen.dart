@@ -251,6 +251,8 @@ class _AuthScreenState extends State<AuthScreen> {
         return l10n.authEmailNotConfirmed;
       case AuthErrorKind.rateLimited:
         return l10n.authRateLimited;
+      case AuthErrorKind.network:
+        return l10n.khadaraOfflineError;
       case AuthErrorKind.generic:
         return l10n.authGenericError;
     }
@@ -635,7 +637,14 @@ class _MessageBanner extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 8),
-      child: ContentText(text, style: TextStyle(color: isError ? AppColors.danger : AppColors.emerald)),
+      // Région live (audit de l'authentification du 2026-10-27, P2-2) :
+      // TalkBack annonce le message dès qu'il paraît (« Adresse e-mail ou
+      // mot de passe incorrect », « E-mail renvoyé »…), sans qu'il faille le
+      // chercher à l'écran.
+      child: Semantics(
+        liveRegion: true,
+        child: ContentText(text, style: TextStyle(color: isError ? AppColors.danger : AppColors.emerald)),
+      ),
     );
   }
 }

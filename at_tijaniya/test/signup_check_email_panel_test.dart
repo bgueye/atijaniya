@@ -84,4 +84,23 @@ void main() {
     )));
     expect(find.text('E-mail de confirmation renvoyé.'), findsOneWidget);
   });
+
+  // Audit de l'authentification du 2026-10-27, P2-2 : le message est une
+  // région live, annoncée par TalkBack dès qu'il paraît.
+  testWidgets('le message est annoncé à TalkBack (région live)', (tester) async {
+    final handle = tester.ensureSemantics();
+    await tester.pumpWidget(_wrap(SignupCheckEmailPanel(
+      email: 'disciple@example.com',
+      resending: false,
+      errorMessage: 'Trop de tentatives.',
+      onGoToLogin: () {},
+      onResend: () {},
+      onEditEmail: () {},
+    )));
+    expect(
+      tester.getSemantics(find.text('Trop de tentatives.')),
+      matchesSemantics(label: 'Trop de tentatives.', isLiveRegion: true, textDirection: TextDirection.ltr),
+    );
+    handle.dispose();
+  });
 }

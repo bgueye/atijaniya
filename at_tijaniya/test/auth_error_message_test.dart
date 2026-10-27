@@ -1,3 +1,5 @@
+import 'dart:io' show SocketException;
+
 import 'package:flutter_test/flutter_test.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -47,6 +49,23 @@ void main() {
 
     test('erreur non-AuthException (ex. réseau) retombe sur generic', () {
       expect(classifyAuthError(Exception('socket closed')), AuthErrorKind.generic);
+    });
+  });
+
+  // Audit de l'authentification du 2026-10-27, P2-2 : hors ligne distingué.
+  group('classifyAuthError — réseau', () {
+    test('requête sans réponse du serveur', () {
+      expect(classifyAuthError(AuthRetryableFetchException(message: 'ClientException: Failed host lookup')),
+          AuthErrorKind.network);
+    });
+
+    test('exception réseau brute', () {
+      expect(classifyAuthError(const SocketException('Failed host lookup')), AuthErrorKind.network);
+    });
+
+    test('serveur indisponible (statut HTTP) : erreur générique', () {
+      expect(classifyAuthError(AuthRetryableFetchException(message: 'Bad gateway', statusCode: '502')),
+          AuthErrorKind.generic);
     });
   });
 

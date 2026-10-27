@@ -6,12 +6,19 @@ library;
 
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+import '../../../core/network/network_errors.dart';
+
 enum AuthErrorKind {
   invalidCredentials,
   emailAlreadyRegistered,
   weakPassword,
   emailNotConfirmed,
   rateLimited,
+
+  /// Pas de connexion (audit de l'authentification du 2026-10-27, P2-2) :
+  /// tombait dans [generic], « Une erreur est survenue », alors que le reste
+  /// de l'app dit « Pas de connexion internet ».
+  network,
   generic,
 }
 
@@ -20,6 +27,11 @@ enum AuthErrorKind {
 /// fiable (ex. identifiants invalides) — voir
 /// https://supabase.com/docs/guides/auth/debugging/error-codes.
 AuthErrorKind classifyAuthError(Object error) {
+  // Coupure réseau : `AuthRetryableFetchException` sans statut HTTP (le
+  // serveur n'a pas répondu), ou l'exception réseau elle-même.
+  if (isNetworkError(error) || (error is AuthRetryableFetchException && error.statusCode == null)) {
+    return AuthErrorKind.network;
+  }
   if (error is! AuthException) return AuthErrorKind.generic;
 
   switch (error.code) {
