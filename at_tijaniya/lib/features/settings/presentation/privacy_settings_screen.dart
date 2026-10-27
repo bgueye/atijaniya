@@ -183,7 +183,8 @@ class _PrivacyFormState extends ConsumerState<_PrivacyForm> {
         Card(
           child: ListTile(
             leading: Icon(Icons.block, color: AppColors.bronze),
-            title: Text(l10n.blockedUsersTitle, style: const TextStyle(fontWeight: FontWeight.w600, color: AppColors.ink)),
+            title:
+                Text(l10n.blockedUsersTitle, style: const TextStyle(fontWeight: FontWeight.w600, color: AppColors.ink)),
             subtitle: Text(l10n.blockedUsersSubtitle, style: TextStyle(color: AppColors.secondaryInk, fontSize: 14)),
             trailing: DirectionalChevron(color: AppColors.bronze),
             onTap: () => Navigator.of(context).push(

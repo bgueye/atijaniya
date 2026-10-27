@@ -15,11 +15,7 @@ class PrivacySettingsRepository {
 
   Future<PrivacySettings> fetchMyPrivacySettings() async {
     final userId = SupabaseConfig.client.auth.currentUser!.id;
-    final row = await SupabaseConfig.client
-        .from('privacy_settings')
-        .select()
-        .eq('user_id', userId)
-        .maybeSingle();
+    final row = await SupabaseConfig.client.from('privacy_settings').select().eq('user_id', userId).maybeSingle();
     return PrivacySettings.fromRow(row);
   }
 
