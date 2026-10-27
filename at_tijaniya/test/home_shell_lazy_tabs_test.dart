@@ -20,10 +20,7 @@ import 'package:at_tijaniya/features/profil/presentation/profile_providers.dart'
 import 'package:at_tijaniya/features/wird/presentation/wird_list_screen.dart';
 import 'package:at_tijaniya/l10n/app_localizations.dart';
 
-void main() {
-  testWidgets("seul l'accueil est construit au départ ; un onglet l'est à sa première visite", (tester) async {
-    SharedPreferences.setMockInitialValues({});
-    await tester.pumpWidget(ProviderScope(
+Widget _shell() => ProviderScope(
       overrides: [
         clockProvider.overrideWithValue(() => DateTime(2026, 10, 26, 9, 0)),
         currentUserIdProvider.overrideWithValue(null),
@@ -41,7 +38,12 @@ void main() {
         ],
         home: HomeShell(),
       ),
-    ));
+    );
+
+void main() {
+  testWidgets("seul l'accueil est construit au départ ; un onglet l'est à sa première visite", (tester) async {
+    SharedPreferences.setMockInitialValues({});
+    await tester.pumpWidget(_shell());
     await tester.pumpAndSettle();
 
     expect(find.byType(HomeScreen), findsOneWidget);
@@ -59,6 +61,28 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.byType(WirdListScreen, skipOffstage: false), findsOneWidget);
     expect(find.byType(CommunauteScreen, skipOffstage: false), findsNothing);
+    await tester.pumpWidget(const SizedBox());
+  });
+
+  // P3-1 : le bouton retour d'Android revenait au bureau depuis n'importe
+  // quel onglet ; il ramène d'abord à l'accueil.
+  testWidgets("le retour depuis un autre onglet ramène à l'accueil sans quitter l'app", (tester) async {
+    SharedPreferences.setMockInitialValues({});
+    await tester.pumpWidget(_shell());
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.text('Wird'));
+    await tester.pumpAndSettle();
+    expect(find.byType(WirdListScreen), findsOneWidget);
+
+    final popped = await tester.binding.handlePopRoute();
+    await tester.pumpAndSettle();
+    expect(popped, isTrue, reason: "l'app ne doit pas se fermer");
+    expect(find.byType(HomeScreen), findsOneWidget);
+    expect(find.byType(WirdListScreen), findsNothing);
+
+    // Depuis l'accueil, le retour est laissé au système (fermeture de l'app).
+    expect(await tester.binding.handlePopRoute(), isFalse);
     await tester.pumpWidget(const SizedBox());
   });
 }
