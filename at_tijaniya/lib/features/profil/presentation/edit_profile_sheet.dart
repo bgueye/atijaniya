@@ -18,8 +18,7 @@ Future<void> showEditProfileSheet(BuildContext context, Profile profile) {
     context: context,
     isScrollControlled: true,
     backgroundColor: AppColors.offWhite,
-    shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
+    shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
     builder: (context) => _EditProfileForm(profile: profile),
   );
 }
@@ -35,10 +34,8 @@ class _EditProfileForm extends ConsumerStatefulWidget {
 
 class _EditProfileFormState extends ConsumerState<_EditProfileForm> {
   final _formKey = GlobalKey<FormState>();
-  late final _nameController =
-      TextEditingController(text: widget.profile.displayName);
-  late final _bioController =
-      TextEditingController(text: widget.profile.bio ?? '');
+  late final _nameController = TextEditingController(text: widget.profile.displayName);
+  late final _bioController = TextEditingController(text: widget.profile.bio ?? '');
   late String? _zawiyaId = widget.profile.zawiyaId;
   bool _saving = false;
   String? _error;
@@ -60,9 +57,7 @@ class _EditProfileFormState extends ConsumerState<_EditProfileForm> {
     try {
       await ref.read(profileRepositoryProvider).updateMyProfile(
             displayName: _nameController.text.trim(),
-            bio: _bioController.text.trim().isEmpty
-                ? null
-                : _bioController.text.trim(),
+            bio: _bioController.text.trim().isEmpty ? null : _bioController.text.trim(),
             zawiyaId: _zawiyaId,
           );
       ref.invalidate(myProfileProvider);
@@ -84,74 +79,74 @@ class _EditProfileFormState extends ConsumerState<_EditProfileForm> {
     // `SafeArea` : évite que le bouton Enregistrer se retrouve masqué sous
     // la barre de navigation Android (3 boutons) — `viewInsets.bottom` seul
     // ne couvre que le clavier, jamais la zone système.
+    //
+    // Formulaire défilant (audit de l'authentification du 2026-10-27, P1-2) :
+    // la colonne fixe dépassait de 44 à 76 px avec le texte à 200 % sur un
+    // écran de 360 dp, et de plus de 250 px clavier ouvert ; Enregistrer
+    // sortait de l'écran.
     return SafeArea(
       child: Padding(
-        padding: EdgeInsets.fromLTRB(
-            20, 20, 20, MediaQuery.of(context).viewInsets.bottom + 20),
-        child: Form(
-          key: _formKey,
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              Text(l10n.profileEditTitle,
-                  style: Theme.of(context).textTheme.titleLarge),
-              const SizedBox(height: 16),
-              TextFormField(
-                controller: _nameController,
-                maxLength: TextLimits.displayName,
-                decoration:
-                    InputDecoration(labelText: l10n.profileDisplayNameLabel),
-                validator: (value) => (value == null || value.trim().isEmpty)
-                    ? l10n.profileDisplayNameRequired
-                    : null,
-              ),
-              const SizedBox(height: 16),
-              TextFormField(
-                controller: _bioController,
-                maxLength: TextLimits.bio,
-                decoration: InputDecoration(labelText: l10n.profileBioLabel),
-                maxLines: 3,
-              ),
-              const SizedBox(height: 16),
-              zawiyas.when(
-                loading: () =>
-                    LinearProgressIndicator(color: AppColors.emerald),
-                error: (error, stackTrace) => const SizedBox.shrink(),
-                data: (list) => DropdownButtonFormField<String?>(
-                  // `isExpanded` + ellipsis : sans eux la liste prend la largeur du
-                  // nom le plus long et déborde ("right overflowed") avec les noms de
-                  // zawiyas ajoutés fin septembre — constaté sur téléphone le 2026-10-01.
-                  isExpanded: true,
-                  initialValue: _zawiyaId,
-                  decoration:
-                      InputDecoration(labelText: l10n.profileZawiyaLabel),
-                  items: [
-                    DropdownMenuItem<String?>(
-                        value: null, child: Text(l10n.profileZawiyaNone)),
-                    ...list.map((z) => DropdownMenuItem<String?>(
-                        value: z.id, child: ContentText(z.name, overflow: TextOverflow.ellipsis))),
-                  ],
-                  onChanged: (value) => setState(() => _zawiyaId = value),
+        padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.all(20),
+          child: Form(
+            key: _formKey,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Text(l10n.profileEditTitle, style: Theme.of(context).textTheme.titleLarge),
+                const SizedBox(height: 16),
+                TextFormField(
+                  controller: _nameController,
+                  maxLength: TextLimits.displayName,
+                  decoration: InputDecoration(labelText: l10n.profileDisplayNameLabel),
+                  validator: (value) =>
+                      (value == null || value.trim().isEmpty) ? l10n.profileDisplayNameRequired : null,
                 ),
-              ),
-              if (_error != null) ...[
-                const SizedBox(height: 12),
-                ContentText(_error!, style: const TextStyle(color: AppColors.danger)),
+                const SizedBox(height: 16),
+                TextFormField(
+                  controller: _bioController,
+                  maxLength: TextLimits.bio,
+                  decoration: InputDecoration(labelText: l10n.profileBioLabel),
+                  maxLines: 3,
+                ),
+                const SizedBox(height: 16),
+                zawiyas.when(
+                  loading: () => LinearProgressIndicator(color: AppColors.emerald),
+                  error: (error, stackTrace) => const SizedBox.shrink(),
+                  data: (list) => DropdownButtonFormField<String?>(
+                    // `isExpanded` + ellipsis : sans eux la liste prend la largeur du
+                    // nom le plus long et déborde ("right overflowed") avec les noms de
+                    // zawiyas ajoutés fin septembre — constaté sur téléphone le 2026-10-01.
+                    isExpanded: true,
+                    initialValue: _zawiyaId,
+                    decoration: InputDecoration(labelText: l10n.profileZawiyaLabel),
+                    items: [
+                      DropdownMenuItem<String?>(value: null, child: Text(l10n.profileZawiyaNone)),
+                      ...list.map((z) => DropdownMenuItem<String?>(
+                          value: z.id, child: ContentText(z.name, overflow: TextOverflow.ellipsis))),
+                    ],
+                    onChanged: (value) => setState(() => _zawiyaId = value),
+                  ),
+                ),
+                if (_error != null) ...[
+                  const SizedBox(height: 12),
+                  ContentText(_error!, style: const TextStyle(color: AppColors.danger)),
+                ],
+                const SizedBox(height: 24),
+                ElevatedButton(
+                  onPressed: _saving ? null : _save,
+                  child: _saving
+                      ? const SizedBox(
+                          height: 18,
+                          width: 18,
+                          child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
+                        )
+                      : Text(l10n.profileSave),
+                ),
               ],
-              const SizedBox(height: 24),
-              ElevatedButton(
-                onPressed: _saving ? null : _save,
-                child: _saving
-                    ? const SizedBox(
-                        height: 18,
-                        width: 18,
-                        child: CircularProgressIndicator(
-                            strokeWidth: 2, color: Colors.white),
-                      )
-                    : Text(l10n.profileSave),
-              ),
-            ],
+            ),
           ),
         ),
       ),
