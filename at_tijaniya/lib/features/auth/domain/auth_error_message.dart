@@ -67,9 +67,11 @@ AuthErrorKind classifyAuthError(Object error) {
 /// `supabase_flutter` transmet ces refus comme une erreur du flux (audit de
 /// l'authentification du 2026-10-27, P1-1). Le même flux porte aussi les
 /// échecs réseau du rafraîchissement de session
-/// (`AuthRetryableFetchException`) et une session enregistrée illisible au
-/// démarrage (`session_missing`) : ceux-là ne concernent aucun lien.
+/// (`AuthRetryableFetchException`), une session enregistrée illisible au
+/// démarrage (`session_missing`) et une session expirée (`session_expired`,
+/// accompagnée d'un évènement `signedOut`, P3-4) : ceux-là ne concernent
+/// aucun lien.
 bool isAuthLinkError(Object error) {
   if (error is! AuthException || error is AuthRetryableFetchException) return false;
-  return error.code != 'session_missing';
+  return error.code != 'session_missing' && error.code != 'session_expired';
 }

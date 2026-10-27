@@ -113,6 +113,12 @@ class _AtTijaniyaAppState extends ConsumerState<AtTijaniyaApp> {
       if (event == AuthChangeEvent.signedOut && _step == _Step.home && mounted) {
         _navigatorKey.currentState?.popUntil((route) => route.isFirst);
         setState(() => _step = _Step.auth);
+        // Session expirée (rafraîchissement refusé) : le disciple revenait à
+        // la connexion sans savoir pourquoi (audit de l'authentification du
+        // 2026-10-27, P3-4). Une déconnexion voulue n'a pas de message.
+        if (next.valueOrNull?.signOutReason == SignOutReason.sessionExpired) {
+          _showAuthMessage((l10n) => l10n.authSessionExpired);
+        }
       } else if (event == AuthChangeEvent.passwordRecovery && mounted) {
         // Lien de réinitialisation de mot de passe ouvert depuis l'e-mail
         // (deep link, voir SupabaseConfig.authCallbackUrl). La session
@@ -243,8 +249,13 @@ class _AtTijaniyaAppState extends ConsumerState<AtTijaniyaApp> {
       _navigatorKey.currentState?.popUntil((route) => route.isFirst);
       setState(() => _step = _Step.auth);
     }
-    // Après la reconstruction : le messager n'existe qu'une fois MaterialApp
-    // monté (lien ouvert pendant le splash).
+    _showAuthMessage((l10n) => l10n.authLinkExpired);
+  }
+
+  /// Message de session affiché hors de tout écran. Après la reconstruction :
+  /// le messager n'existe qu'une fois MaterialApp monté (lien ouvert pendant
+  /// le splash).
+  void _showAuthMessage(String Function(AppLocalizations l10n) message) {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final messenger = _scaffoldMessengerKey.currentState;
       if (messenger == null) return;
@@ -252,7 +263,7 @@ class _AtTijaniyaAppState extends ConsumerState<AtTijaniyaApp> {
       if (l10n == null) return;
       messenger
         ..hideCurrentSnackBar()
-        ..showSnackBar(SnackBar(content: Text(l10n.authLinkExpired), duration: const Duration(seconds: 8)));
+        ..showSnackBar(SnackBar(content: Text(message(l10n)), duration: const Duration(seconds: 8)));
     });
   }
 

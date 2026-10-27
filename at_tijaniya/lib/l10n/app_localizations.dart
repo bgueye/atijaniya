@@ -6332,6 +6332,12 @@ abstract class AppLocalizations {
   /// **'Renvoyer l\'e-mail'**
   String get authResendConfirmation;
 
+  /// No description provided for @authSessionExpired.
+  ///
+  /// In fr, this message translates to:
+  /// **'Votre session a expiré. Reconnectez-vous pour retrouver votre compte.'**
+  String get authSessionExpired;
+
   /// No description provided for @authLinkExpired.
   ///
   /// In fr, this message translates to:

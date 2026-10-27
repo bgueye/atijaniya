@@ -7,7 +7,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart'
-    show AuthChangeEvent, AuthException, AuthRetryableFetchException, AuthState;
+    show AuthChangeEvent, AuthException, AuthRetryableFetchException, AuthState, SignOutReason;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -151,4 +151,27 @@ void main() {
     expect(find.byType(AuthScreen), findsOneWidget);
     await tester.pumpWidget(const SizedBox());
   });
+
+  // Audit de l'authentification du 2026-10-27, P3-4 : une session expirée
+  // ramène à la connexion avec une explication ; une déconnexion voulue, sans.
+  for (final (reason, explained) in const [
+    (SignOutReason.sessionExpired, true),
+    (SignOutReason.userInitiated, false),
+  ]) {
+    testWidgets('déconnexion ${reason.name} : message ${explained ? 'affiché' : 'absent'}', (tester) async {
+      SharedPreferences.setMockInitialValues({'onboarding_seen': true});
+      final states = StreamController<AuthState>.broadcast();
+      addTearDown(states.close);
+      await tester.pumpWidget(_app(savedLocale: const Locale('fr'), userId: 'me', authStates: states.stream));
+      await tester.pump(const Duration(milliseconds: 450));
+      await tester.pumpAndSettle();
+
+      states.add(AuthState(AuthChangeEvent.signedOut, null, signOutReason: reason));
+      await tester.pumpAndSettle();
+      expect(find.byType(AuthScreen), findsOneWidget);
+      expect(find.text('Votre session a expiré. Reconnectez-vous pour retrouver votre compte.'),
+          explained ? findsOneWidget : findsNothing);
+      await tester.pumpWidget(const SizedBox());
+    });
+  }
 }

@@ -86,6 +86,11 @@ void main() {
       expect(isAuthLinkError(AuthRetryableFetchException(message: 'Failed host lookup')), isFalse);
     });
 
+    test('session expirée (P3-4) : pas un lien', () {
+      const error = AuthException('Session expired', code: 'session_expired');
+      expect(isAuthLinkError(error), isFalse);
+    });
+
     test('session enregistrée illisible au démarrage : pas un lien', () {
       const error = AuthException('Initial session is missing data.', code: 'session_missing');
       expect(isAuthLinkError(error), isFalse);

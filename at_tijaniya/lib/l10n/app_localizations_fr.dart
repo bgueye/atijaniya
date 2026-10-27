@@ -3263,6 +3263,9 @@ class AppLocalizationsFr extends AppLocalizations {
   String get authResendConfirmation => 'Renvoyer l\'e-mail';
 
   @override
+  String get authSessionExpired => 'Votre session a expiré. Reconnectez-vous pour retrouver votre compte.';
+
+  @override
   String get authLinkExpired =>
       'Ce lien a expiré ou a déjà servi. Demandez-en un nouveau depuis l\'écran de connexion.';
 
