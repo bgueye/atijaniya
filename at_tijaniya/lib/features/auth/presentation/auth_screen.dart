@@ -2,7 +2,7 @@ import '../../../core/validation/text_limits.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show TextInput;
 import 'package:google_fonts/google_fonts.dart';
-import 'package:supabase_flutter/supabase_flutter.dart' show OtpType;
+import 'package:supabase_flutter/supabase_flutter.dart' show GoTrueClient, OtpType;
 
 import '../../../core/supabase/supabase_config.dart';
 import '../../../core/theme/app_colors.dart';
@@ -36,10 +36,15 @@ import '../../../core/widgets/content_text.dart';
 /// jamais de bouton pour une fonctionnalité qui n'a pas d'implémentation
 /// réelle derrière.
 class AuthScreen extends StatefulWidget {
-  const AuthScreen({super.key, required this.onAuthenticated, required this.onContinueAsGuest});
+  const AuthScreen({super.key, required this.onAuthenticated, required this.onContinueAsGuest, this.auth});
 
   final VoidCallback onAuthenticated;
   final VoidCallback onContinueAsGuest;
+
+  /// Client d'authentification — celui de Supabase par défaut ; remplacé
+  /// dans les tests de l'écran, qui n'ont pas de serveur.
+  @visibleForTesting
+  final GoTrueClient? auth;
 
   @override
   State<AuthScreen> createState() => _AuthScreenState();
@@ -49,6 +54,15 @@ enum _AuthAction { signIn, signUp, resetPassword, resendConfirmation }
 
 class _AuthScreenState extends State<AuthScreen> {
   bool _isSignUp = false;
+
+  GoTrueClient get _auth => widget.auth ?? SupabaseConfig.client.auth;
+
+  /// Connexion refusée parce que l'adresse n'est pas confirmée : l'onglet
+  /// Connexion propose alors de renvoyer l'e-mail de confirmation (audit de
+  /// l'authentification du 2026-10-27, P2-6). Ce renvoi n'existait que dans le
+  /// panneau qui suit l'inscription, perdu à la fermeture de l'app : le
+  /// disciple dont le lien avait expiré restait sans issue visible.
+  bool _offerResendFromLogin = false;
 
   // Panneau Connexion — formulaire et champs séparés du panneau Créer un
   // compte pour que basculer d'onglet réinitialise naturellement les
@@ -94,6 +108,7 @@ class _AuthScreenState extends State<AuthScreen> {
       _isSignUp = isSignUp;
       _errorMessage = null;
       _infoMessage = null;
+      _offerResendFromLogin = false;
     });
   }
 
@@ -104,9 +119,10 @@ class _AuthScreenState extends State<AuthScreen> {
       _loadingAction = _AuthAction.signIn;
       _errorMessage = null;
       _infoMessage = null;
+      _offerResendFromLogin = false;
     });
     try {
-      await SupabaseConfig.client.auth.signInWithPassword(
+      await _auth.signInWithPassword(
         email: _loginEmailController.text.trim(),
         password: _loginPasswordController.text,
       );
@@ -115,7 +131,13 @@ class _AuthScreenState extends State<AuthScreen> {
       TextInput.finishAutofillContext();
       if (mounted) widget.onAuthenticated();
     } catch (error) {
-      if (mounted) setState(() => _errorMessage = _messageFor(classifyAuthError(error), l10n));
+      final kind = classifyAuthError(error);
+      if (mounted) {
+        setState(() {
+          _errorMessage = _messageFor(kind, l10n);
+          _offerResendFromLogin = kind == AuthErrorKind.emailNotConfirmed;
+        });
+      }
     } finally {
       if (mounted) setState(() => _loadingAction = null);
     }
@@ -130,7 +152,7 @@ class _AuthScreenState extends State<AuthScreen> {
       _infoMessage = null;
     });
     try {
-      final response = await SupabaseConfig.client.auth.signUp(
+      final response = await _auth.signUp(
         email: _signupEmailController.text.trim(),
         password: _signupPasswordController.text,
         // Clé lue par le trigger serveur `handle_new_user`
@@ -160,20 +182,21 @@ class _AuthScreenState extends State<AuthScreen> {
     }
   }
 
-  /// Renvoie l'e-mail de confirmation de l'inscription en attente. Supabase
+  /// Renvoie l'e-mail de confirmation de l'inscription en attente, ou de
+  /// l'adresse saisie dans l'onglet Connexion ([fromLogin], P2-6). Supabase
   /// limite la fréquence des envois : un renvoi trop rapproché revient en
   /// erreur `rateLimited`, affichée par le message habituel.
-  Future<void> _resendConfirmation() async {
+  Future<void> _resendConfirmation({bool fromLogin = false}) async {
     final l10n = AppLocalizations.of(context)!;
-    final email = _pendingConfirmationEmail;
-    if (email == null) return;
+    final email = fromLogin ? _loginEmailController.text.trim() : _pendingConfirmationEmail;
+    if (email == null || email.isEmpty) return;
     setState(() {
       _loadingAction = _AuthAction.resendConfirmation;
       _errorMessage = null;
       _infoMessage = null;
     });
     try {
-      await SupabaseConfig.client.auth.resend(
+      await _auth.resend(
         type: OtpType.signup,
         email: email,
         emailRedirectTo: SupabaseConfig.authCallbackUrl,
@@ -220,7 +243,7 @@ class _AuthScreenState extends State<AuthScreen> {
       _infoMessage = null;
     });
     try {
-      await SupabaseConfig.client.auth.resetPasswordForEmail(
+      await _auth.resetPasswordForEmail(
         email,
         redirectTo: SupabaseConfig.authCallbackUrl,
       );
@@ -375,6 +398,20 @@ class _AuthScreenState extends State<AuthScreen> {
           const SizedBox(height: 8),
           if (_errorMessage != null) _MessageBanner(text: _errorMessage!, isError: true),
           if (_infoMessage != null) _MessageBanner(text: _infoMessage!, isError: false),
+          if (_offerResendFromLogin)
+            Align(
+              alignment: AlignmentDirectional.centerStart,
+              child: TextButton(
+                onPressed: loading ? null : () => _resendConfirmation(fromLogin: true),
+                child: _loadingAction == _AuthAction.resendConfirmation
+                    ? SizedBox(
+                        height: 14,
+                        width: 14,
+                        child: CircularProgressIndicator(strokeWidth: 2, color: AppColors.emerald),
+                      )
+                    : Text(l10n.authResendConfirmation),
+              ),
+            ),
           const SizedBox(height: 8),
           _PrimaryButton(
             label: l10n.authSignInAction,
