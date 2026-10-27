@@ -76,8 +76,7 @@ class SettingsScreen extends ConsumerWidget {
                 subtitle: Text(l10n.settingsPrivacyTileSubtitle),
                 trailing: const DirectionalChevron(),
                 onTap: () => Navigator.of(context).push(
-                  MaterialPageRoute(
-                      builder: (_) => const PrivacySettingsScreen()),
+                  MaterialPageRoute(builder: (_) => const PrivacySettingsScreen()),
                 ),
               ),
             ),
@@ -105,9 +104,7 @@ class SettingsScreen extends ConsumerWidget {
                 subtitle: Text(l10n.settingsHighContrastSubtitle),
                 value: highContrast,
                 activeThumbColor: AppColors.emerald,
-                onChanged: (value) => ref
-                    .read(contrastControllerProvider.notifier)
-                    .setEnabled(value),
+                onChanged: (value) => ref.read(contrastControllerProvider.notifier).setEnabled(value),
               ),
             ),
             const SizedBox(height: 24),
@@ -140,9 +137,7 @@ class _AboutVersionSubtitle extends StatelessWidget {
       future: PackageInfo.fromPlatform(),
       builder: (context, snapshot) {
         final version = snapshot.data?.version;
-        return Text(version == null
-            ? '${l10n.aboutVersionLabel}…'
-            : '${l10n.aboutVersionLabel} $version');
+        return Text(version == null ? '${l10n.aboutVersionLabel}…' : '${l10n.aboutVersionLabel} $version');
       },
     );
   }
@@ -155,12 +150,16 @@ class _SectionLabel extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Encre secondaire (P1-3 de l'audit du 2026-10-27, le bronze faisait
+    // 3,72:1) et intitulé annoncé comme titre à TalkBack, comme sur l'accueil.
     return Padding(
       padding: const EdgeInsets.fromLTRB(8, 4, 8, 8),
-      child: ContentText(
-        label,
-        style: TextStyle(
-            fontWeight: FontWeight.w600, color: AppColors.bronze, fontSize: 13),
+      child: Semantics(
+        header: true,
+        child: ContentText(
+          label,
+          style: TextStyle(fontWeight: FontWeight.w600, color: AppColors.secondaryInk, fontSize: 13),
+        ),
       ),
     );
   }

@@ -417,7 +417,7 @@ class _AuthScreenState extends State<AuthScreen> {
           const SizedBox(height: 6),
           Text(
             l10n.authPasswordMinCharsHint,
-            style: TextStyle(color: AppColors.bronze, fontSize: 11),
+            style: TextStyle(color: AppColors.secondaryInk, fontSize: 11),
           ),
           const SizedBox(height: 12),
           if (_errorMessage != null) _MessageBanner(text: _errorMessage!, isError: true),
@@ -438,7 +438,7 @@ class _AuthScreenState extends State<AuthScreen> {
                 TextSpan(text: l10n.authLegalPrivacy, style: TextStyle(color: AppColors.emerald)),
                 TextSpan(text: l10n.authLegalSuffix),
               ],
-              style: TextStyle(color: AppColors.bronze, fontSize: 11, height: 1.5),
+              style: TextStyle(color: AppColors.secondaryInk, fontSize: 11, height: 1.5),
             ),
             textAlign: TextAlign.center,
           ),
@@ -470,6 +470,11 @@ class _AuthScreenState extends State<AuthScreen> {
 /// Titre (Cormorant Garamond) + sous-titre (Jost) partagés par les deux
 /// panneaux — même hiérarchie typographique que le reste de l'app, réservée
 /// aux titres pour la police serif (cf. règle du design system).
+/// Textes secondaires de cet écran (sous-titres, consignes, mentions, onglet
+/// inactif) en `AppColors.secondaryInk` depuis l'audit de l'authentification
+/// du 2026-10-27 (P1-3) : le bronze faisait 3,72:1 sur le parchemin et 3,35:1
+/// sur l'or doux, sous les 4,5:1 requis pour un texte de 11 à 13 px. Le bronze
+/// reste pour les icônes et les bordures.
 class _PanelTitle extends StatelessWidget {
   const _PanelTitle({required this.title, required this.subtitle});
 
@@ -490,7 +495,7 @@ class _PanelTitle extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 4),
-        ContentText(subtitle, style: TextStyle(color: AppColors.bronze, fontSize: 12, height: 1.4)),
+        ContentText(subtitle, style: TextStyle(color: AppColors.secondaryInk, fontSize: 12, height: 1.4)),
       ],
     );
   }
@@ -544,7 +549,7 @@ class _SegmentedToggle extends StatelessWidget {
         child: ContentText(
           label,
           style: TextStyle(
-            color: active ? Colors.white : AppColors.bronze,
+            color: active ? Colors.white : AppColors.secondaryInk,
             fontWeight: FontWeight.w600,
             fontSize: 13,
           ),
@@ -645,7 +650,7 @@ class SignupCheckEmailPanel extends StatelessWidget {
         const SizedBox(height: 20),
         _PanelTitle(title: l10n.authCheckEmailTitle, subtitle: l10n.authCheckEmailBody(email)),
         const SizedBox(height: 8),
-        Text(l10n.authCheckEmailSpamHint, style: TextStyle(color: AppColors.bronze, fontSize: 12)),
+        Text(l10n.authCheckEmailSpamHint, style: TextStyle(color: AppColors.secondaryInk, fontSize: 12)),
         const SizedBox(height: 24),
         if (errorMessage != null) _MessageBanner(text: errorMessage!, isError: true),
         if (infoMessage != null) _MessageBanner(text: infoMessage!, isError: false),

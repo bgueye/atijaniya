@@ -87,7 +87,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                     style: const TextStyle(color: AppColors.zaytoune, fontSize: 22, fontWeight: FontWeight.w600),
                   ),
                   const SizedBox(height: 8),
-                  Text(l10n.resetPasswordSubtitle, style: TextStyle(color: AppColors.bronze, fontSize: 13, height: 1.4)),
+                  Text(l10n.resetPasswordSubtitle, style: TextStyle(color: AppColors.secondaryInk, fontSize: 13, height: 1.4)),
                   const SizedBox(height: 24),
                   TextFormField(
                     controller: _passwordController,
@@ -107,7 +107,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                     },
                   ),
                   const SizedBox(height: 6),
-                  Text(l10n.authPasswordMinCharsHint, style: TextStyle(color: AppColors.bronze, fontSize: 11)),
+                  Text(l10n.authPasswordMinCharsHint, style: TextStyle(color: AppColors.secondaryInk, fontSize: 11)),
                   const SizedBox(height: 14),
                   TextFormField(
                     controller: _confirmController,

@@ -50,7 +50,7 @@ class PrivacySettingsScreen extends ConsumerWidget {
                   Text(
                     l10n.privacyLoadError,
                     textAlign: TextAlign.center,
-                    style: TextStyle(color: AppColors.bronze),
+                    style: TextStyle(color: AppColors.secondaryInk),
                   ),
                   const SizedBox(height: 12),
                   OutlinedButton(
@@ -184,7 +184,7 @@ class _PrivacyFormState extends ConsumerState<_PrivacyForm> {
           child: ListTile(
             leading: Icon(Icons.block, color: AppColors.bronze),
             title: Text(l10n.blockedUsersTitle, style: const TextStyle(fontWeight: FontWeight.w600, color: AppColors.ink)),
-            subtitle: Text(l10n.blockedUsersSubtitle, style: TextStyle(color: AppColors.bronze, fontSize: 14)),
+            subtitle: Text(l10n.blockedUsersSubtitle, style: TextStyle(color: AppColors.secondaryInk, fontSize: 14)),
             trailing: DirectionalChevron(color: AppColors.bronze),
             onTap: () => Navigator.of(context).push(
               MaterialPageRoute(builder: (_) => const BlockedUsersScreen()),
@@ -222,7 +222,7 @@ class _PrivacySwitch extends StatelessWidget {
       child: SwitchListTile(
         activeThumbColor: AppColors.emerald,
         title: ContentText(label, style: const TextStyle(fontWeight: FontWeight.w600, color: AppColors.ink)),
-        subtitle: ContentText(description, style: TextStyle(color: AppColors.bronze, fontSize: 14)),
+        subtitle: ContentText(description, style: TextStyle(color: AppColors.secondaryInk, fontSize: 14)),
         value: value,
         onChanged: onChanged,
       ),

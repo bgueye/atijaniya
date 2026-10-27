@@ -77,7 +77,7 @@ class _SignInRequired extends ConsumerWidget {
             Text(
               l10n.profileSignInRequired,
               textAlign: TextAlign.center,
-              style: TextStyle(color: AppColors.bronze),
+              style: TextStyle(color: AppColors.secondaryInk),
             ),
             const SizedBox(height: 16),
             FilledButton(
@@ -112,7 +112,7 @@ class _ProfileBody extends ConsumerWidget {
               Text(
                 l10n.profileLoadError,
                 textAlign: TextAlign.center,
-                style: TextStyle(color: AppColors.bronze),
+                style: TextStyle(color: AppColors.secondaryInk),
               ),
               const SizedBox(height: 12),
               OutlinedButton(
@@ -509,7 +509,7 @@ class _ProfileHeaderState extends ConsumerState<_ProfileHeader> {
                       ContentText(profile.displayName, style: Theme.of(context).textTheme.titleMedium),
                       Text(
                         profile.zawiyaName ?? l10n.profileZawiyaNoneLabel,
-                        style: TextStyle(color: AppColors.bronze, fontSize: 13),
+                        style: TextStyle(color: AppColors.secondaryInk, fontSize: 13),
                       ),
                       // Jamais le mot « vérifié » : libellé et explication au
                       // tap portés ensemble par `SponsorshipBadge`.
