@@ -1142,6 +1142,7 @@
   "authCheckEmailSpamHint": "Rien reçu ? Regardez aussi dans les courriers indésirables.",
   "authGoToLogin": "Aller à la connexion",
   "authResendConfirmation": "Renvoyer l'e-mail",
+  "authLinkExpired": "Ce lien a expiré ou a déjà servi. Demandez-en un nouveau depuis l'écran de connexion.",
   "authConfirmationResent": "E-mail de confirmation renvoyé.",
   "authChangeEmail": "Modifier l'adresse e-mail",
   "tariqaBenefitsCardTitle": "Bienfaits de la Tijaniyya",

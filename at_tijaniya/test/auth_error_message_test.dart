@@ -16,7 +16,8 @@ void main() {
     });
 
     test('e-mail déjà utilisé (code email_exists)', () {
-      const error = AuthApiException('A user with this email address has already been registered', code: 'email_exists');
+      const error =
+          AuthApiException('A user with this email address has already been registered', code: 'email_exists');
       expect(classifyAuthError(error), AuthErrorKind.emailAlreadyRegistered);
     });
 
@@ -46,6 +47,33 @@ void main() {
 
     test('erreur non-AuthException (ex. réseau) retombe sur generic', () {
       expect(classifyAuthError(Exception('socket closed')), AuthErrorKind.generic);
+    });
+  });
+
+  // Audit de l'authentification du 2026-10-27, P1-1.
+  group('isAuthLinkError', () {
+    test("lien expiré ou déjà utilisé (erreur renvoyée dans l'URL)", () {
+      const error =
+          AuthException('Email link is invalid or has expired', statusCode: 'otp_expired', code: 'access_denied');
+      expect(isAuthLinkError(error), isTrue);
+    });
+
+    test('code déjà échangé (lien ouvert deux fois)', () {
+      const error = AuthApiException('invalid flow state, no valid flow state found', code: 'flow_state_not_found');
+      expect(isAuthLinkError(error), isTrue);
+    });
+
+    test('rafraîchissement de session hors ligne : pas un lien', () {
+      expect(isAuthLinkError(AuthRetryableFetchException(message: 'Failed host lookup')), isFalse);
+    });
+
+    test('session enregistrée illisible au démarrage : pas un lien', () {
+      const error = AuthException('Initial session is missing data.', code: 'session_missing');
+      expect(isAuthLinkError(error), isFalse);
+    });
+
+    test("erreur d'une autre nature : ignorée", () {
+      expect(isAuthLinkError(StateError('x')), isFalse);
     });
   });
 }

@@ -2,8 +2,11 @@
 // l'écran de choix de langue n'apparaît plus qu'au premier lancement ; le
 // splash n'impose plus d'attente fixe de 1,6 s.
 
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:supabase_flutter/supabase_flutter.dart' show AuthException, AuthRetryableFetchException, AuthState;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -17,9 +20,10 @@ import 'package:at_tijaniya/features/khadara/presentation/khadara_providers.dart
 import 'package:at_tijaniya/features/onboarding/presentation/language_selection_screen.dart';
 import 'package:at_tijaniya/features/profil/presentation/profile_providers.dart';
 
-Widget _app({Locale? savedLocale, String? userId}) {
+Widget _app({Locale? savedLocale, String? userId, Stream<AuthState>? authStates}) {
   return ProviderScope(
     overrides: [
+      if (authStates != null) authStateChangesProvider.overrideWith((ref) => authStates),
       initialLocaleProvider.overrideWithValue(savedLocale),
       currentUserIdProvider.overrideWithValue(userId),
       clockProvider.overrideWithValue(() => DateTime(2026, 10, 26, 9, 0)),
@@ -72,5 +76,53 @@ void main() {
     expect(find.byType(LanguageSelectionScreen), findsNothing);
     expect(find.byType(HomeShell), findsOneWidget);
     await tester.pumpWidget(const SizedBox());
+  });
+
+  // Audit de l'authentification du 2026-10-27, P1-1 : un lien d'e-mail expiré
+  // arrivait comme une erreur du flux de session, ignorée.
+  group("lien d'e-mail refusé", () {
+    Future<StreamController<AuthState>> start(WidgetTester tester) async {
+      SharedPreferences.setMockInitialValues({'onboarding_seen': true});
+      final states = StreamController<AuthState>.broadcast();
+      addTearDown(states.close);
+      await tester.pumpWidget(_app(savedLocale: const Locale('fr'), authStates: states.stream));
+      await tester.pump(const Duration(milliseconds: 450));
+      await tester.pumpAndSettle();
+      return states;
+    }
+
+    const expired =
+        AuthException('Email link is invalid or has expired', statusCode: 'otp_expired', code: 'access_denied');
+    const message = "Ce lien a expiré ou a déjà servi. Demandez-en un nouveau depuis l'écran de connexion.";
+
+    testWidgets("invité sur l'accueil : message et retour à la connexion", (tester) async {
+      final states = await start(tester);
+      await tester.tap(find.text('Continuer sans compte'));
+      await tester.pumpAndSettle();
+      expect(find.byType(HomeShell), findsOneWidget);
+
+      states.addError(expired);
+      await tester.pumpAndSettle();
+      expect(find.byType(AuthScreen), findsOneWidget);
+      expect(find.text(message), findsOneWidget);
+      await tester.pumpWidget(const SizedBox());
+    });
+
+    testWidgets('sur la connexion : message, écran inchangé', (tester) async {
+      final states = await start(tester);
+      states.addError(expired);
+      await tester.pumpAndSettle();
+      expect(find.byType(AuthScreen), findsOneWidget);
+      expect(find.text(message), findsOneWidget);
+      await tester.pumpWidget(const SizedBox());
+    });
+
+    testWidgets('échec réseau du rafraîchissement : aucun message', (tester) async {
+      final states = await start(tester);
+      states.addError(AuthRetryableFetchException(message: 'Failed host lookup'));
+      await tester.pumpAndSettle();
+      expect(find.text(message), findsNothing);
+      await tester.pumpWidget(const SizedBox());
+    });
   });
 }

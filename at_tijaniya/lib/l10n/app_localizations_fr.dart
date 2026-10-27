@@ -3253,6 +3253,10 @@ class AppLocalizationsFr extends AppLocalizations {
   String get authResendConfirmation => 'Renvoyer l\'e-mail';
 
   @override
+  String get authLinkExpired =>
+      'Ce lien a expiré ou a déjà servi. Demandez-en un nouveau depuis l\'écran de connexion.';
+
+  @override
   String get authConfirmationResent => 'E-mail de confirmation renvoyé.';
 
   @override

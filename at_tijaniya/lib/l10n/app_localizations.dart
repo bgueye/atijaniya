@@ -6314,6 +6314,12 @@ abstract class AppLocalizations {
   /// **'Renvoyer l\'e-mail'**
   String get authResendConfirmation;
 
+  /// No description provided for @authLinkExpired.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ce lien a expiré ou a déjà servi. Demandez-en un nouveau depuis l\'écran de connexion.'**
+  String get authLinkExpired;
+
   /// No description provided for @authConfirmationResent.
   ///
   /// In fr, this message translates to:

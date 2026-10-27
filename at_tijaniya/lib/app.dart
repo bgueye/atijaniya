@@ -11,6 +11,7 @@ import 'core/theme/app_colors.dart';
 import 'core/theme/app_theme.dart';
 import 'core/theme/contrast_controller.dart';
 import 'core/theme/locale_controller.dart';
+import 'features/auth/domain/auth_error_message.dart';
 import 'features/auth/presentation/auth_screen.dart';
 import 'features/auth/presentation/reset_password_screen.dart';
 import 'features/home/presentation/home_dashboard_provider.dart';
@@ -77,6 +78,9 @@ class _AtTijaniyaAppState extends ConsumerState<AtTijaniyaApp> {
   // pas la pile du Navigator existant).
   final _navigatorKey = GlobalKey<NavigatorState>();
 
+  /// Messages affichés hors de tout écran (lien d'e-mail refusé, P1-1).
+  final _scaffoldMessengerKey = GlobalKey<ScaffoldMessengerState>();
+
   @override
   Widget build(BuildContext context) {
     final locale = ref.watch(localeControllerProvider);
@@ -97,6 +101,14 @@ class _AtTijaniyaAppState extends ConsumerState<AtTijaniyaApp> {
     // (état de session au démarrage) ne déclenche pas ce callback, seules
     // les transitions ultérieures le font.
     ref.listen(authStateChangesProvider, (previous, next) {
+      // Lien d'e-mail expiré ou déjà utilisé (audit de l'authentification du
+      // 2026-10-27, P1-1) : l'erreur arrivait sur ce flux et était ignorée,
+      // l'app s'ouvrait sans rien dire. Message, puis écran de connexion pour
+      // un invité, d'où l'on redemande un lien.
+      if (next is AsyncError && isAuthLinkError(next.error!) && mounted) {
+        _showAuthLinkExpired();
+        return;
+      }
       final event = next.valueOrNull?.event;
       if (event == AuthChangeEvent.signedOut && _step == _Step.home && mounted) {
         _navigatorKey.currentState?.popUntil((route) => route.isFirst);
@@ -149,6 +161,7 @@ class _AtTijaniyaAppState extends ConsumerState<AtTijaniyaApp> {
       // tree — voir `SupabaseConfig`/`authStateChangesProvider`).
       key: ValueKey(highContrast),
       navigatorKey: _navigatorKey,
+      scaffoldMessengerKey: _scaffoldMessengerKey,
       // Au retour sur l'écran racine (wird terminé, tasbih avancé, rappel
       // modifié depuis une carte de l'accueil), le tableau de bord doit
       // refléter ce qui vient d'être fait : il n'était rechargé qu'au
@@ -223,6 +236,24 @@ class _AtTijaniyaAppState extends ConsumerState<AtTijaniyaApp> {
       case _Step.home:
         return const HomeShell();
     }
+  }
+
+  void _showAuthLinkExpired() {
+    if (ref.read(currentUserIdProvider) == null && _step == _Step.home) {
+      _navigatorKey.currentState?.popUntil((route) => route.isFirst);
+      setState(() => _step = _Step.auth);
+    }
+    // Après la reconstruction : le messager n'existe qu'une fois MaterialApp
+    // monté (lien ouvert pendant le splash).
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final messenger = _scaffoldMessengerKey.currentState;
+      if (messenger == null) return;
+      final l10n = AppLocalizations.of(messenger.context);
+      if (l10n == null) return;
+      messenger
+        ..hideCurrentSnackBar()
+        ..showSnackBar(SnackBar(content: Text(l10n.authLinkExpired), duration: const Duration(seconds: 8)));
+    });
   }
 
   /// Dernière langue écrite dans le profil, pour ne l'écrire qu'une fois.

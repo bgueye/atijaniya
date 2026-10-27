@@ -41,3 +41,17 @@ AuthErrorKind classifyAuthError(Object error) {
 
   return AuthErrorKind.generic;
 }
+
+/// `true` si [error], reçue sur `onAuthStateChange`, vient d'un lien d'e-mail
+/// (confirmation d'inscription, réinitialisation du mot de passe) que le
+/// serveur refuse : expiré, déjà utilisé ou ouvert sur un autre appareil.
+///
+/// `supabase_flutter` transmet ces refus comme une erreur du flux (audit de
+/// l'authentification du 2026-10-27, P1-1). Le même flux porte aussi les
+/// échecs réseau du rafraîchissement de session
+/// (`AuthRetryableFetchException`) et une session enregistrée illisible au
+/// démarrage (`session_missing`) : ceux-là ne concernent aucun lien.
+bool isAuthLinkError(Object error) {
+  if (error is! AuthException || error is AuthRetryableFetchException) return false;
+  return error.code != 'session_missing';
+}

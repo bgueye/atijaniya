@@ -3219,6 +3219,9 @@ class AppLocalizationsAr extends AppLocalizations {
   String get authResendConfirmation => 'إعادة إرسال الرسالة';
 
   @override
+  String get authLinkExpired => 'انتهت صلاحية هذا الرابط أو سبق استخدامه. اطلب رابطًا جديدًا من شاشة تسجيل الدخول.';
+
+  @override
   String get authConfirmationResent => 'أُعيد إرسال رسالة التأكيد.';
 
   @override

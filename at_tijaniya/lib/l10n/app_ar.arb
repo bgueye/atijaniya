@@ -1126,6 +1126,7 @@
   "authCheckEmailSpamHint": "لم يصلك شيء؟ تحقّق أيضًا من مجلد الرسائل غير المرغوب فيها.",
   "authGoToLogin": "الانتقال إلى تسجيل الدخول",
   "authResendConfirmation": "إعادة إرسال الرسالة",
+  "authLinkExpired": "انتهت صلاحية هذا الرابط أو سبق استخدامه. اطلب رابطًا جديدًا من شاشة تسجيل الدخول.",
   "authConfirmationResent": "أُعيد إرسال رسالة التأكيد.",
   "authChangeEmail": "تعديل عنوان البريد الإلكتروني",
   "tariqaBenefitsCardTitle": "فضائل الطريقة التجانية",
