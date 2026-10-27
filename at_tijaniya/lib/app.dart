@@ -69,6 +69,7 @@ class _AtTijaniyaAppState extends ConsumerState<AtTijaniyaApp> {
       await prefs.remove(_recoveryPendingKey);
     }
   }
+
   // Permet de purger les routes poussées par-dessus HomeShell (ProfilScreen,
   // Paramètres, Ma lignée...) avant de basculer `_step` — sans ça, ces routes
   // resteraient affichées par-dessus le nouvel écran racine tant qu'on ne les
@@ -109,10 +110,7 @@ class _AtTijaniyaAppState extends ConsumerState<AtTijaniyaApp> {
         _setRecoveryPending(true);
         _navigatorKey.currentState?.popUntil((route) => route.isFirst);
         setState(() => _step = _Step.resetPassword);
-      } else if (event == AuthChangeEvent.signedIn &&
-          _step != _Step.home &&
-          _step != _Step.resetPassword &&
-          mounted) {
+      } else if (event == AuthChangeEvent.signedIn && _step != _Step.home && _step != _Step.resetPassword && mounted) {
         // Lien de confirmation d'inscription ouvert depuis l'e-mail (même
         // mécanisme) : la session est établie de façon asynchrone après le
         // démarrage de l'app, potentiellement après le calcul initial de

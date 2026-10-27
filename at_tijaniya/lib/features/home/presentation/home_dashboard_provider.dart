@@ -50,17 +50,28 @@ final homeDashboardProvider = FutureProvider.autoDispose<HomeDashboardData>((ref
   final sessions = <({Wird wird, TasbihSession? session})>[];
   final reminders = <({Wird wird, List<WirdReminderSetting> settings})>[];
 
-  for (final wird in validatedWirds) {
-    final dates = await completionStore.load(wird.id);
-    final stats = computeWirdProgressStats(frequency: wird.frequency, completionDates: dates, now: now);
+  // Les trois stores de chaque wird lus en parallèle (audit de l'accueil du
+  // 2026-10-26, P3-5) plutôt que l'un après l'autre ; l'ordre des wirds est
+  // gardé.
+  final loaded = await Future.wait(validatedWirds.map((wird) async {
+    final (dates, session, settings) = await (
+      completionStore.load(wird.id),
+      sessionStore.load(wird.id),
+      reminderStore.load(wird.id),
+    ).wait;
+    return (wird: wird, dates: dates, session: session, settings: settings);
+  }));
+
+  for (final entry in loaded) {
+    final wird = entry.wird;
+    final stats = computeWirdProgressStats(frequency: wird.frequency, completionDates: entry.dates, now: now);
     statuses.add(HomeWirdStatus(
       wird: wird,
       doneToday: stats.recentPeriods.isNotEmpty && stats.recentPeriods.last.completed,
       streak: stats.currentStreak,
     ));
-
-    sessions.add((wird: wird, session: await sessionStore.load(wird.id)));
-    reminders.add((wird: wird, settings: await reminderStore.load(wird.id)));
+    sessions.add((wird: wird, session: entry.session));
+    reminders.add((wird: wird, settings: entry.settings));
   }
 
   return HomeDashboardData(
