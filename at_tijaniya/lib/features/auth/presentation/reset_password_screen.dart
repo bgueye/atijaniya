@@ -6,6 +6,29 @@ import '../../../core/supabase/supabase_config.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../../core/widgets/content_text.dart';
+import '../domain/auth_error_message.dart';
+
+/// Message affiché quand le nouveau mot de passe est refusé (audit de
+/// l'authentification du 2026-10-27, P2-3). Toutes les erreurs donnaient
+/// « Impossible d'enregistrer… Réessayez », y compris un mot de passe
+/// identique à l'ancien, que réessayer ne règle pas.
+String resetPasswordErrorMessage(Object error, AppLocalizations l10n) {
+  switch (classifyAuthError(error)) {
+    case AuthErrorKind.samePassword:
+      return l10n.resetPasswordSame;
+    case AuthErrorKind.weakPassword:
+      return l10n.authWeakPassword;
+    case AuthErrorKind.network:
+      return l10n.khadaraOfflineError;
+    case AuthErrorKind.rateLimited:
+      return l10n.authRateLimited;
+    case AuthErrorKind.invalidCredentials:
+    case AuthErrorKind.emailAlreadyRegistered:
+    case AuthErrorKind.emailNotConfirmed:
+    case AuthErrorKind.generic:
+      return l10n.resetPasswordError;
+  }
+}
 
 /// Nouveau mot de passe — ouvert automatiquement par `AtTijaniyaApp` quand le
 /// lien de réinitialisation reçu par e-mail (deep link vers
@@ -53,9 +76,15 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
       await SupabaseConfig.client.auth.updateUser(UserAttributes(password: _passwordController.text));
       // Propose d'enregistrer le nouveau mot de passe (P2-1).
       TextInput.finishAutofillContext();
+      // Ferme les sessions ouvertes sur les autres appareils (P2-3) : si la
+      // réinitialisation suit un vol de compte, l'autre appareil restait
+      // connecté. Au mieux : le mot de passe est déjà changé.
+      try {
+        await SupabaseConfig.client.auth.signOut(scope: SignOutScope.others);
+      } catch (_) {}
       widget.onDone();
-    } catch (_) {
-      if (mounted) setState(() => _errorMessage = l10n.resetPasswordError);
+    } catch (error) {
+      if (mounted) setState(() => _errorMessage = resetPasswordErrorMessage(error, l10n));
     } finally {
       if (mounted) setState(() => _submitting = false);
     }

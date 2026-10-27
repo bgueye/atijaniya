@@ -247,6 +247,8 @@ class _AuthScreenState extends State<AuthScreen> {
         return l10n.authEmailAlreadyRegistered;
       case AuthErrorKind.weakPassword:
         return l10n.authWeakPassword;
+      case AuthErrorKind.samePassword:
+        return l10n.resetPasswordSame;
       case AuthErrorKind.emailNotConfirmed:
         return l10n.authEmailNotConfirmed;
       case AuthErrorKind.rateLimited:

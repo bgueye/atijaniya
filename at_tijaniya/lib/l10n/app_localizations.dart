@@ -377,7 +377,7 @@ abstract class AppLocalizations {
   /// No description provided for @authWeakPassword.
   ///
   /// In fr, this message translates to:
-  /// **'Mot de passe trop faible. Utilisez au moins 6 caractères.'**
+  /// **'Mot de passe trop faible. Choisissez-en un plus long ou plus varié.'**
   String get authWeakPassword;
 
   /// No description provided for @authEmailNotConfirmed.
@@ -463,6 +463,12 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'Enregistrer le mot de passe'**
   String get resetPasswordSubmit;
+
+  /// No description provided for @resetPasswordSame.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ce mot de passe est identique à l\'ancien. Choisissez-en un autre.'**
+  String get resetPasswordSame;
 
   /// No description provided for @resetPasswordError.
   ///

@@ -153,7 +153,7 @@ class AppLocalizationsFr extends AppLocalizations {
   String get authEmailAlreadyRegistered => 'Un compte existe déjà avec cette adresse e-mail.';
 
   @override
-  String get authWeakPassword => 'Mot de passe trop faible. Utilisez au moins 6 caractères.';
+  String get authWeakPassword => 'Mot de passe trop faible. Choisissez-en un plus long ou plus varié.';
 
   @override
   String get authEmailNotConfirmed => 'Confirmez votre e-mail avant de vous connecter (lien envoyé à votre adresse).';
@@ -197,6 +197,9 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get resetPasswordSubmit => 'Enregistrer le mot de passe';
+
+  @override
+  String get resetPasswordSame => 'Ce mot de passe est identique à l\'ancien. Choisissez-en un autre.';
 
   @override
   String get resetPasswordError => 'Impossible d\'enregistrer le nouveau mot de passe. Réessayez.';

@@ -12,6 +12,10 @@ enum AuthErrorKind {
   invalidCredentials,
   emailAlreadyRegistered,
   weakPassword,
+
+  /// Nouveau mot de passe identique à l'ancien (`same_password`), à la
+  /// réinitialisation (audit de l'authentification du 2026-10-27, P2-3).
+  samePassword,
   emailNotConfirmed,
   rateLimited,
 
@@ -37,6 +41,8 @@ AuthErrorKind classifyAuthError(Object error) {
   switch (error.code) {
     case 'weak_password':
       return AuthErrorKind.weakPassword;
+    case 'same_password':
+      return AuthErrorKind.samePassword;
     case 'user_already_exists':
     case 'email_exists':
       return AuthErrorKind.emailAlreadyRegistered;

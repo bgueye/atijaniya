@@ -52,7 +52,7 @@
   "authPasswordTooShortSignup": "Le mot de passe doit contenir au moins 8 caractères.",
   "authInvalidCredentials": "Adresse e-mail ou mot de passe incorrect.",
   "authEmailAlreadyRegistered": "Un compte existe déjà avec cette adresse e-mail.",
-  "authWeakPassword": "Mot de passe trop faible. Utilisez au moins 6 caractères.",
+  "authWeakPassword": "Mot de passe trop faible. Choisissez-en un plus long ou plus varié.",
   "authEmailNotConfirmed": "Confirmez votre e-mail avant de vous connecter (lien envoyé à votre adresse).",
   "authRateLimited": "Trop de tentatives. Réessayez dans quelques instants.",
   "authGenericError": "Une erreur est survenue. Réessayez.",
@@ -68,6 +68,7 @@
   "resetPasswordConfirmLabel": "Confirmer le mot de passe",
   "resetPasswordMismatch": "Les mots de passe ne correspondent pas.",
   "resetPasswordSubmit": "Enregistrer le mot de passe",
+  "resetPasswordSame": "Ce mot de passe est identique à l'ancien. Choisissez-en un autre.",
   "resetPasswordError": "Impossible d'enregistrer le nouveau mot de passe. Réessayez.",
 
   "navHome": "Accueil",

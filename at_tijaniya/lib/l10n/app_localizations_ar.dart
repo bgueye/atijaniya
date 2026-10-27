@@ -151,7 +151,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get authEmailAlreadyRegistered => 'يوجد حساب مسجَّل بالفعل بهذا البريد الإلكتروني.';
 
   @override
-  String get authWeakPassword => 'كلمة السر ضعيفة جدًا. استخدم 6 أحرف على الأقل.';
+  String get authWeakPassword => 'كلمة المرور ضعيفة جدًا. اختر كلمة أطول أو أكثر تنوعًا.';
 
   @override
   String get authEmailNotConfirmed => 'أكّد بريدك الإلكتروني قبل تسجيل الدخول (رابط أُرسل إلى عنوانك).';
@@ -194,6 +194,9 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get resetPasswordSubmit => 'حفظ كلمة المرور';
+
+  @override
+  String get resetPasswordSame => 'كلمة المرور هذه مطابقة للقديمة. اختر كلمة أخرى.';
 
   @override
   String get resetPasswordError => 'تعذّر حفظ كلمة المرور الجديدة. حاول مرة أخرى.';
