@@ -143,6 +143,9 @@ version :
   Ajouter `scaffoldMessengerKey: _scaffoldMessengerKey` au `MaterialApp` et la clé
   `authLinkExpired` (FR : « Ce lien a expiré ou a déjà servi. Demandez-en un nouveau. »).
   Test : remplacer `authStateChangesProvider` par un flux qui émet une `AuthException`.
+- **Statut : corrigé le 2026-10-27** (b3b5c98). `isAuthLinkError` écarte les échecs réseau
+  du rafraîchissement et la session illisible au démarrage, qui passent par le même flux.
+  Tests : `auth_error_message_test.dart`, `app_startup_test.dart`.
 
 ### P1-2 · « Modifier le profil » : le bouton Enregistrer sort de l'écran à 200 %
 
@@ -169,6 +172,8 @@ version :
   ```
   Test : feuille ouverte à 200 % sur 360 dp avec `viewInsets.bottom = 300`, aucune
   exception, bouton atteignable par `scrollUntilVisible`.
+- **Statut : corrigé le 2026-10-27** (63a4b07). Test : `edit_profile_sheet_test.dart`, qui
+  échoue sans la correction.
 
 ### P1-3 · Textes en bronze sous le contraste minimal
 
@@ -188,6 +193,10 @@ version :
 - **Correctif** : `AppColors.secondaryInk`, comme sur l'accueil (5,34 à 5,96:1 sur les trois
   fonds). Garder le bronze pour les icônes et les bordures. Les intitulés de section des
   Paramètres peuvent aussi prendre `Semantics(header: true)`, comme sur l'accueil.
+- **Statut : corrigé le 2026-10-27** (e9a6f9f), y compris les deux sous-titres en bronze de
+  `privacy_settings_screen.dart` et son message d'erreur ; intitulés des Paramètres annoncés
+  comme titres. Test : `auth_contrast_test.dart` (couleur rendue, connexion, inscription et
+  nouveau mot de passe, en français et en arabe).
 
 ### P2-1 · Formulaires sans autoremplissage ni action du clavier
 
