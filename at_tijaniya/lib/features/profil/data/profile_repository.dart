@@ -55,7 +55,9 @@ class ProfileRepository {
   /// URL enregistrée seule, sans dépendre du reste du formulaire nom/bio/
   /// zawiya. Bucket `avatars` (database/schema.sql § 11.2quater), chemin
   /// `avatars/{auth.uid()}/...` déjà scopé par RLS côté Storage.
-  Future<void> updateMyAvatar(String avatarUrl) async {
+  ///
+  /// `null` retire la photo du profil (avant la suppression du compte, P3-6).
+  Future<void> updateMyAvatar(String? avatarUrl) async {
     final userId = SupabaseConfig.client.auth.currentUser!.id;
     await SupabaseConfig.client
         .from('profiles')

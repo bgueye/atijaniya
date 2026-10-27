@@ -307,7 +307,12 @@ class _DeleteAccountDialogState extends ConsumerState<_DeleteAccountDialog> {
       final userId = SupabaseConfig.client.auth.currentUser?.id;
       // Photo de profil retirée du bucket public AVANT la suppression : une
       // fois le compte supprimé, plus aucune session ne permet de le faire.
+      // Le profil cesse d'abord d'y renvoyer (audit de l'authentification du
+      // 2026-10-27, P3-6) : si la suppression échoue ensuite, il n'affiche
+      // pas une image effacée. Un échec de cette première étape arrête tout,
+      // avant qu'aucun fichier ne soit retiré.
       if (userId != null) {
+        await ref.read(profileRepositoryProvider).updateMyAvatar(null);
         await ImageUploadService().removeFolderExcept(bucket: 'avatars', folder: userId);
       }
       await ref.read(profileRepositoryProvider).deleteMyAccount();
@@ -323,6 +328,9 @@ class _DeleteAccountDialogState extends ConsumerState<_DeleteAccountDialog> {
         await SupabaseConfig.client.auth.signOut();
       } catch (_) {}
     } catch (_) {
+      // La photo a pu être retirée avant l'échec : l'en-tête du profil se
+      // recharge pour ne plus l'afficher.
+      ref.invalidate(myProfileProvider);
       if (mounted) {
         final l10n = AppLocalizations.of(context)!;
         setState(() {
