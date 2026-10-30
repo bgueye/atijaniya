@@ -218,7 +218,7 @@ avant une ouverture plus large.
     colonnes et lit son droit d'admin par `am_i_admin` ; compteurs déjà servis par
     `post_counts` / `group_member_counts` (P2-9). Vérifié : `is_admin` d'un autre compte
     répond `false` pour un compte ordinaire et sans compte, `am_i_admin` refusé sans compte.
-  - *À appliquer après diffusion de cette version aux testeurs* :
+  - *Appliquée le 2026-10-30, après diffusion de la version 1.0.0+5 en test fermé* :
     `2026-10-26_close_anonymous_community_reads.sql` (lecture de ses seules lignes dans
     `group_memberships` et `post_likes`, `profiles.is_admin` retiré du privilège de lecture,
     listage de `post-media` et `avatars` limité à son propre dossier — Storage exige une
@@ -462,7 +462,7 @@ avant une ouverture plus large.
      (conversation, publication), notification marquée lue à l'ouverture. Vérifié par un
      scénario annulé : 2 non lus pour le destinataire, 1 pour l'autre, un tiers ne marque
      rien, ses propres messages jamais marqués.
-   - *À appliquer avec la migration du P2-2, après diffusion de cette version* :
+   - *Appliquée le 2026-10-30 avec la migration du P2-2 (version 1.0.0+5 en test fermé)* :
      `2026-10-26_notify_messages_and_comments.sql` (triggers de notification ; la version
      1.0.0+4 afficherait ces types comme des cartes vides). Rejouée dans un scénario annulé :
      une seule notification non lue pour deux messages, aucune pour l'expéditeur ni pour son

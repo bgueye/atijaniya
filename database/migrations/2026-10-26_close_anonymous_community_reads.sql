@@ -3,14 +3,15 @@
 -- appartenances aux groupes, des « j'aime », de profiles.is_admin et du
 -- listage des buckets d'images.
 --
--- !! NON APPLIQUÉE au 2026-10-26. À appliquer seulement quand la version de
--- l'app qui passe par post_counts, group_member_counts, shares_group_with et
--- am_i_admin (commit « Passe l'onglet Communauté par des fonctions serveur »)
--- aura été diffusée aux testeurs et installée. La version 1.0.0+4 lit encore
--- ces tables directement : ses compteurs de « j'aime » et de membres
--- tomberaient à 0 ou 1, « Envoyer un message » disparaîtrait et la lecture
--- de son propre profil (select *) échouerait.
--- Rejouée dans un scénario annulé le 2026-10-26 (résultats dans le rapport).
+-- Appliquée sur le projet live le 2026-10-30 sous le nom
+-- close_anonymous_community_reads, une fois la version 1.0.0+5 (qui passe par
+-- post_counts, group_member_counts, shares_group_with et am_i_admin) diffusée
+-- en test fermé. Tenue en attente jusque-là : la version 1.0.0+4 lit encore
+-- ces tables directement (compteurs de « j'aime » et de membres faux,
+-- « Envoyer un message » absent, select * sur son propre profil refusé) ;
+-- un testeur qui n'a pas encore mis à jour garde ces défauts.
+-- Rejouée dans un scénario annulé le 2026-10-26 puis le 2026-10-30, juste
+-- avant l'application ; database/tests/communaute_rls.sql tout « ok » après.
 --
 -- Ce qui sortait jusque-là, sans compte : qui appartient à quel groupe, qui
 -- a aimé quoi, quel compte est administrateur, et la liste des fichiers de

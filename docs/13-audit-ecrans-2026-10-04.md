@@ -482,22 +482,16 @@ chaque constat porte son statut. Aucun P0 : 32 écritures forcées refusées par
   `database/tests/communaute_rls.sql`.
 
 **Reste à faire** :
-- **appliquer `database/migrations/2026-10-26_close_anonymous_community_reads.sql`** (P2-2 :
-  appartenances aux groupes, « j'aime », `profiles.is_admin` et listage des buckets fermés à
-  autrui et aux visiteurs) **une fois diffusée aux testeurs la version qui passe par les
-  fonctions serveur** — pas avant : la version 1.0.0+4 lit encore ces tables directement
-  (compteurs faux, « Envoyer un message » absent, profil illisible). Scénario annulé
-  déjà joué le 2026-10-26 ; le rejouer juste avant d'appliquer, puis ajouter le fichier à
-  la section 12 de `schema.sql` ;
-- **appliquer en même temps `database/migrations/2026-10-26_notify_messages_and_comments.sql`**
-  (P3-8 : notification d'un message privé ou d'un commentaire reçu) — même condition : la
-  version 1.0.0+4 afficherait ces notifications comme des cartes vides ;
+- ~~appliquer `2026-10-26_close_anonymous_community_reads.sql` (P2-2) et
+  `2026-10-26_notify_messages_and_comments.sql` (P3-8)~~ — **appliquées le 2026-10-30**, une fois
+  la version 1.0.0+5 diffusée en test fermé. Scénario annulé rejoué juste avant, fichiers
+  ajoutés à la section 12 de `schema.sql`, `database/tests/communaute_rls.sql` rejoué après :
+  tout « ok », y compris les quatre lignes « A FERMER (P2-2) ». Un testeur resté sur la
+  1.0.0+4 voit ses compteurs faux et son profil illisible jusqu'à la mise à jour ;
 - décision du porteur de projet sur les publications d'un compte supprimé (les garder,
   ou les supprimer avec le compte) et sur les trois autres questions du rapport ;
 - validation sur téléphone (français et arabe, réseau coupé, texte agrandi), dont les
   non-lus et, une fois les migrations appliquées, les notifications avec deux comptes ;
-- après application des deux migrations retenues, rejouer `database/tests/communaute_rls.sql` :
-  les lignes « A FERMER (P2-2) » doivent passer à « ok ».
 
 ## Index des rapports par module
 

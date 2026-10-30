@@ -1,11 +1,11 @@
 -- Audit Communauté du 2026-10-26 (docs/audits/2026-10-26-communaute.md, P3-8),
 -- seconde partie : notification d'un message privé ou d'un commentaire reçu.
 --
--- !! NON APPLIQUÉE au 2026-10-26. À appliquer avec
--- 2026-10-26_close_anonymous_community_reads.sql, quand la version de l'app qui
--- sait afficher les types 'direct_message' et 'post_comment' (commit
--- « Signale les messages et commentaires reçus ») aura été diffusée aux
--- testeurs. La version 1.0.0+4 classe un type inconnu en « unknown » et
+-- Appliquée sur le projet live le 2026-10-30 sous le nom
+-- notify_messages_and_comments, avec
+-- 2026-10-26_close_anonymous_community_reads.sql, une fois la version 1.0.0+5
+-- (qui sait afficher les types 'direct_message' et 'post_comment') diffusée en
+-- test fermé. La version 1.0.0+4 classe un type inconnu en « unknown » et
 -- l'affiche comme une carte sans titre ni texte, comptée dans le badge.
 --
 -- Jusqu'ici, un message privé ou un commentaire n'était visible qu'en

@@ -13,8 +13,9 @@
 -- Lecture : « RESULTAT | ok ... | ok ... ». Tout élément qui commence par
 -- FAILLE ou REGRESSION est à corriger avant de publier. « A FERMER (P2-2) »
 -- signale une lecture anonyme encore ouverte en attendant
--- 2026-10-26_close_anonymous_community_reads.sql : une fois cette migration
--- appliquée, ces lignes doivent passer à « ok ».
+-- 2026-10-26_close_anonymous_community_reads.sql. Migration appliquée le
+-- 2026-10-30 : ces lignes passent à « ok » ; une « A FERMER » serait désormais
+-- une régression.
 -- Il faut trois comptes non admin et deux zawiyas.
 do $$
 declare
