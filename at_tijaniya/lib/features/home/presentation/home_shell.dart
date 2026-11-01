@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/theme/app_colors.dart';
@@ -100,6 +101,15 @@ class _HomeShellState extends ConsumerState<HomeShell> {
       },
       child: Scaffold(
         appBar: AppBar(
+          // Accueil : barre zaytoune, dans la continuité de l'en-tête de la
+          // page (refonte du 2026-11-01). Les autres onglets gardent la
+          // barre parchemin du thème.
+          backgroundColor: _index == 0 ? AppColors.zaytoune : null,
+          foregroundColor: _index == 0 ? AppColors.offWhite : null,
+          systemOverlayStyle: _index == 0 ? SystemUiOverlayStyle.light : null,
+          titleTextStyle: _index == 0
+              ? Theme.of(context).appBarTheme.titleTextStyle?.copyWith(color: AppColors.offWhite)
+              : null,
           title: Text(_titleFor(_index, l10n)),
           actions: [
             if (isSignedIn)

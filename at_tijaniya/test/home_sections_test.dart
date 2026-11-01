@@ -23,6 +23,8 @@ import 'package:at_tijaniya/features/khadara/presentation/khadara_providers.dart
 import 'package:at_tijaniya/features/profil/presentation/profile_providers.dart';
 import 'package:at_tijaniya/l10n/app_localizations.dart';
 
+import 'home_test_overrides.dart';
+
 final _event = KhadaraEvent(
   id: 'e1',
   title: 'Ziarra de test',
@@ -52,6 +54,7 @@ Widget _app(_Events events, {Future<FeaturedFigure?> Function()? figure, Locale 
       clockProvider.overrideWithValue(() => DateTime(2026, 10, 26, 9, 0)),
       currentUserIdProvider.overrideWithValue(null),
       upcomingEventsProvider.overrideWith((ref) => events.load()),
+      ...homeContentOverrides(),
       featuredFigureProvider.overrideWith((ref) => figure != null ? figure() : Future.value(null)),
       figuresProvider.overrideWith((ref) async => const []),
     ],

@@ -12,6 +12,7 @@ import '../data/wirds_content.dart';
 import '../domain/wird_models.dart';
 import 'free_wird_screen.dart';
 import 'wird_detail_screen.dart';
+import 'wird_icon.dart';
 import 'wird_repair_providers.dart';
 import 'wird_repair_screen.dart';
 import 'wird_recitations_management_screen.dart';
@@ -125,20 +126,6 @@ class _RecitationsManageCard extends StatelessWidget {
   }
 }
 
-/// Icône par wird, choisie sur son trait distinctif plutôt qu'une icône
-/// générique répétée trois fois — voir les `conditionsNote` du corpus validé
-/// (`wirds_content.dart`) : Lazim se distingue par son rythme matin/soir,
-/// Wazifa par sa forme de récitation (idéalement en assemblée), Hadratou-
-/// l-Jouma par son caractère collectif et hebdomadaire (vendredi).
-IconData _iconForWird(String id) {
-  return switch (id) {
-    'lazim' => Icons.wb_twilight,
-    'wazifa' => Icons.auto_stories,
-    'hadratou_jouma' => Icons.groups,
-    _ => Icons.self_improvement,
-  };
-}
-
 class _WirdCard extends StatelessWidget {
   const _WirdCard({required this.wird});
 
@@ -156,7 +143,7 @@ class _WirdCard extends StatelessWidget {
     return Card(
       child: ListTile(
         contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-        leading: Icon(_iconForWird(wird.id), color: AppColors.emerald),
+        leading: Icon(iconForWird(wird.id), color: AppColors.emerald),
         title: ContentText(
           isArabic ? wird.nameArabic : wird.nameFrench,
           style: isArabic

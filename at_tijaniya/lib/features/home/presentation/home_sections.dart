@@ -7,7 +7,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/network/network_errors.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../l10n/app_localizations.dart';
-import '../../../core/widgets/content_text.dart';
 
 /// Section de l'accueil alimentée par le réseau (audit de l'accueil du
 /// 2026-10-26, P2-2) :
@@ -92,33 +91,6 @@ class HomeSectionNotice extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.fromLTRB(2, 0, 2, 8),
       child: Text(text, style: TextStyle(color: AppColors.secondaryInk, fontSize: 12.5)),
-    );
-  }
-}
-
-class HomeSectionLabel extends StatelessWidget {
-  const HomeSectionLabel(this.text, {super.key});
-
-  final String text;
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(2, 0, 2, 8),
-      // Annoncé comme titre (P2-6) : TalkBack peut passer de section en
-      // section ; encre secondaire plutôt que bronze (3,72:1).
-      child: Semantics(
-        header: true,
-        child: ContentText(
-          text,
-          style: TextStyle(
-            fontSize: 11,
-            letterSpacing: 0.8,
-            color: AppColors.secondaryInk,
-            fontWeight: FontWeight.w500,
-          ),
-        ),
-      ),
     );
   }
 }

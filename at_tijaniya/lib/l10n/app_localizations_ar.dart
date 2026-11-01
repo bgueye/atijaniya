@@ -3339,4 +3339,110 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get wirdRecitationsManageDefaultReciter => 'التلاوة المرجعية';
+
+  @override
+  String homeDayLine(String weekday, int day, String month) {
+    return '$weekday $day $month';
+  }
+
+  @override
+  String homeHijriShortLine(int hijriDay, String hijriMonth, int hijriYear) {
+    return '$hijriDay $hijriMonth $hijriYear · محسوب، بفارق يوم محتمل';
+  }
+
+  @override
+  String get homeRingCaption => 'أوراد';
+
+  @override
+  String get homeNextStepEyebrow => 'الخطوة التالية';
+
+  @override
+  String get homeResumeEyebrow => 'للاستئناف';
+
+  @override
+  String get homeNextStepStart => 'ابدأ';
+
+  @override
+  String get homeNextStepResume => 'استأنف';
+
+  @override
+  String homeNextStepReminder(String time) {
+    return 'تذكير في $time';
+  }
+
+  @override
+  String get homeDayDoneEyebrow => 'اليوم';
+
+  @override
+  String get homeDayDoneTitle => 'يوم مكتمل';
+
+  @override
+  String get homeDiscoverTitle => 'الفهم والتدارك';
+
+  @override
+  String get homeSeeAll => 'عرض الكل';
+
+  @override
+  String get homeDiscoverFilterForYou => 'لك';
+
+  @override
+  String get homeDiscoverFilterRepair => 'التدارك';
+
+  @override
+  String get homeDiscoverFilterConditions => 'الشروط';
+
+  @override
+  String get homeDiscoverFilterBenefits => 'الفضائل';
+
+  @override
+  String homeDiscoverUnmarkedYesterday(String wird) {
+    return '$wird: لم يُسجَّل شيء أمس';
+  }
+
+  @override
+  String get homeDiscoverWhatToDo => 'ماذا أفعل؟';
+
+  @override
+  String homeDiscoverCaseEyebrow(String kind) {
+    return 'حالة · $kind';
+  }
+
+  @override
+  String homeDiscoverConditionEyebrow(String category) {
+    return 'شرط · $category';
+  }
+
+  @override
+  String homeDiscoverBenefitEyebrow(String section) {
+    return 'فضيلة · $section';
+  }
+
+  @override
+  String get homeDiscoverSeeAnswer => 'عرض الجواب';
+
+  @override
+  String get homeDiscoverReadMore => 'قراءة كاملة';
+
+  @override
+  String get homeDiscoverRead => 'قراءة';
+
+  @override
+  String get homeDiscoverOpenPage => 'فتح الصفحة كاملة';
+
+  @override
+  String get homeDiscoverClose => 'إغلاق';
+
+  @override
+  String get homeDiscoverLoadError => 'تعذّر تحميل هذه المحتويات.';
+
+  @override
+  String get homeSectionUpcoming => 'قادم';
+
+  @override
+  String homeLiveNow(String title) {
+    return 'مباشر · $title';
+  }
+
+  @override
+  String get homeDonationLine => 'التجانية تعيش بتبرعاتكم';
 }

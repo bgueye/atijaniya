@@ -1181,5 +1181,59 @@
   "wirdReminderScheduleFailed": "Impossible de programmer le rappel. Réessayez.",
   "wirdReminderChannelName": "Rappels des wirds",
   "wirdReminderChannelDescription": "Rappels programmés pour la pratique des wirds.",
-  "wirdRecitationsManageDefaultReciter": "Récitation de référence"
+  "wirdRecitationsManageDefaultReciter": "Récitation de référence",
+  "homeDayLine": "{weekday} {day} {month}",
+  "@homeDayLine": {
+    "placeholders": { "weekday": { "type": "String" }, "day": { "type": "int" }, "month": { "type": "String" } }
+  },
+  "homeHijriShortLine": "{hijriDay} {hijriMonth} {hijriYear} · calculée, à un jour près",
+  "@homeHijriShortLine": {
+    "placeholders": { "hijriDay": { "type": "int" }, "hijriMonth": { "type": "String" }, "hijriYear": { "type": "int" } }
+  },
+  "homeRingCaption": "wirds",
+  "homeNextStepEyebrow": "Prochaine étape",
+  "homeResumeEyebrow": "À reprendre",
+  "homeNextStepStart": "Commencer",
+  "homeNextStepResume": "Reprendre",
+  "homeNextStepReminder": "Rappel à {time}",
+  "@homeNextStepReminder": {
+    "placeholders": { "time": { "type": "String" } }
+  },
+  "homeDayDoneEyebrow": "Aujourd'hui",
+  "homeDayDoneTitle": "Journée accomplie",
+  "homeDiscoverTitle": "Comprendre et rattraper",
+  "homeSeeAll": "Tout voir",
+  "homeDiscoverFilterForYou": "Pour vous",
+  "homeDiscoverFilterRepair": "Rattraper",
+  "homeDiscoverFilterConditions": "Conditions",
+  "homeDiscoverFilterBenefits": "Bienfaits",
+  "homeDiscoverUnmarkedYesterday": "{wird} : rien de marqué hier",
+  "@homeDiscoverUnmarkedYesterday": {
+    "placeholders": { "wird": { "type": "String" } }
+  },
+  "homeDiscoverWhatToDo": "Que faire ?",
+  "homeDiscoverCaseEyebrow": "Situation · {kind}",
+  "@homeDiscoverCaseEyebrow": {
+    "placeholders": { "kind": { "type": "String" } }
+  },
+  "homeDiscoverConditionEyebrow": "Condition · {category}",
+  "@homeDiscoverConditionEyebrow": {
+    "placeholders": { "category": { "type": "String" } }
+  },
+  "homeDiscoverBenefitEyebrow": "Bienfait · {section}",
+  "@homeDiscoverBenefitEyebrow": {
+    "placeholders": { "section": { "type": "String" } }
+  },
+  "homeDiscoverSeeAnswer": "Voir la réponse",
+  "homeDiscoverReadMore": "Lire en entier",
+  "homeDiscoverRead": "Lire",
+  "homeDiscoverOpenPage": "Ouvrir la page complète",
+  "homeDiscoverClose": "Fermer",
+  "homeDiscoverLoadError": "Impossible de charger ces contenus.",
+  "homeSectionUpcoming": "À venir",
+  "homeLiveNow": "En direct · {title}",
+  "@homeLiveNow": {
+    "placeholders": { "title": { "type": "String" } }
+  },
+  "homeDonationLine": "At-Tijaniya vit de vos dons"
 }

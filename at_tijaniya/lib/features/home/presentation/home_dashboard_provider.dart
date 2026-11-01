@@ -23,12 +23,23 @@ class HomeDashboardData {
     required this.todayStatus,
     this.resumableSession,
     this.nextReminder,
+    this.nextStep,
+    this.unmarkedYesterday = const [],
   });
 
   final List<HomeWirdStatus> statuses;
   final HomeTodayStatus todayStatus;
   final HomeResumableSession? resumableSession;
   final HomeNextReminder? nextReminder;
+
+  /// Étape proposée par la carte d'action de l'accueil ; `null` quand tout
+  /// est accompli (`pickNextStep`).
+  final HomeNextStep? nextStep;
+
+  /// Wirds quotidiens non marqués la veille, seulement si le disciple a
+  /// marqué au moins un wird ces 7 derniers jours (`isUnmarkedYesterday`,
+  /// `isRecentlyActive`) — alimente la carte de rattrapage du carrousel.
+  final List<Wird> unmarkedYesterday;
 }
 
 /// `autoDispose` : recharge à chaque retour sur l'accueil plutôt que de
@@ -47,6 +58,8 @@ final homeDashboardProvider = FutureProvider.autoDispose<HomeDashboardData>((ref
   const reminderStore = WirdReminderStore();
 
   final statuses = <HomeWirdStatus>[];
+  final completedDays = <Set<DateTime>>[];
+  final unmarkedCandidates = <Wird>[];
   final sessions = <({Wird wird, TasbihSession? session})>[];
   final reminders = <({Wird wird, List<WirdReminderSetting> settings})>[];
 
@@ -70,14 +83,28 @@ final homeDashboardProvider = FutureProvider.autoDispose<HomeDashboardData>((ref
       doneToday: stats.recentPeriods.isNotEmpty && stats.recentPeriods.last.completed,
       streak: stats.currentStreak,
     ));
+    completedDays.add(stats.completedDays);
+    if (isUnmarkedYesterday(
+      frequency: wird.frequency,
+      completedDays: stats.completedDays,
+      firstCompletion: stats.firstCompletion,
+      now: now,
+    )) {
+      unmarkedCandidates.add(wird);
+    }
     sessions.add((wird: wird, session: entry.session));
     reminders.add((wird: wird, settings: entry.settings));
   }
 
+  final doneIds = {for (final s in statuses) if (s.doneToday) s.wird.id};
+  final resumable = pickResumableSession(sessions);
+  final nextReminder = pickNextReminderToday(reminders, now: now, doneWirdIds: doneIds);
   return HomeDashboardData(
     statuses: statuses,
     todayStatus: summarizeTodayStatus(statuses, now: now),
-    resumableSession: pickResumableSession(sessions),
-    nextReminder: pickNextReminderToday(reminders, now: now),
+    resumableSession: resumable,
+    nextReminder: nextReminder,
+    nextStep: pickNextStep(statuses: statuses, resumable: resumable, nextReminder: nextReminder, now: now),
+    unmarkedYesterday: isRecentlyActive(completedDays, now: now) ? unmarkedCandidates : const [],
   );
 });

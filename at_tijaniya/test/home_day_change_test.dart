@@ -9,13 +9,14 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:at_tijaniya/core/date/current_day.dart';
-import 'package:at_tijaniya/core/theme/app_colors.dart';
 import 'package:at_tijaniya/features/figures/presentation/figures_providers.dart';
 import 'package:at_tijaniya/features/home/presentation/home_dashboard_provider.dart';
 import 'package:at_tijaniya/features/home/presentation/home_screen.dart';
 import 'package:at_tijaniya/features/khadara/presentation/khadara_providers.dart';
 import 'package:at_tijaniya/features/profil/presentation/profile_providers.dart';
 import 'package:at_tijaniya/l10n/app_localizations.dart';
+
+import 'home_test_overrides.dart';
 
 /// Horloge réglable par le test.
 class _Clock {
@@ -36,6 +37,7 @@ Widget _app(_Clock clock) {
       clockProvider.overrideWithValue(() => clock.now),
       currentUserIdProvider.overrideWithValue(null),
       upcomingEventsProvider.overrideWith((ref) async => const []),
+      ...homeContentOverrides(),
       featuredFigureProvider.overrideWith((ref) async => null),
     ],
     child: const MaterialApp(
@@ -106,8 +108,8 @@ void main() {
     await tester.pumpWidget(_app(clock));
     await tester.pumpAndSettle();
 
-    expect(find.textContaining('Jeudi 29 octobre 2026'), findsOneWidget);
-    expect(find.text('Non commencé aujourd\'hui'), findsOneWidget); // Wazifa seule
+    expect(find.text('JEUDI 29 OCTOBRE'), findsOneWidget);
+    expect(find.text('1/2'), findsOneWidget); // Lazim fait, Wazifa à faire
     expect(find.text('Hadratou-l-Jouma'), findsNothing);
 
     // Nuit en arrière-plan : le minuteur de minuit ne s'est pas déclenché.
@@ -115,21 +117,25 @@ void main() {
     _backgroundThenResume(tester);
     await tester.pumpAndSettle();
 
-    expect(find.textContaining('Vendredi 30 octobre 2026'), findsOneWidget);
+    expect(find.text('VENDREDI 30 OCTOBRE'), findsOneWidget);
     // Lazim n'est plus « accompli » : les deux wirds quotidiens sont à faire,
-    // et Hadratou-l-Jouma apparaît, c'est vendredi.
-    expect(find.text('Non commencé aujourd\'hui'), findsNWidgets(2));
+    // et Hadratou-l-Jouma s'ajoute à l'anneau, c'est vendredi.
+    expect(find.text('0/3'), findsOneWidget);
     expect(find.text('Hadratou-l-Jouma'), findsWidgets);
     await tester.pumpWidget(const SizedBox());
   });
 
-  testWidgets('le badge de série est en émeraude, lisible sur l\'or pâle', (tester) async {
-    _lazimDoneOnThursday();
+  testWidgets('journée accomplie : la carte d\'action le dit, avec la série', (tester) async {
+    SharedPreferences.setMockInitialValues({
+      'wird_completions_lazim::guest': ['2026-10-29'],
+      'wird_completions_wazifa::guest': ['2026-10-29'],
+    });
     await tester.pumpWidget(_app(_Clock(DateTime(2026, 10, 29, 22, 0))));
     await tester.pumpAndSettle();
 
-    final streak = tester.widget<Text>(find.text('1 jour de suite'));
-    expect(streak.style?.color, AppColors.emerald);
+    expect(find.text('Journée accomplie'), findsOneWidget);
+    expect(find.text('1 jour de suite'), findsOneWidget);
+    expect(find.text('2/2'), findsOneWidget);
     await tester.pumpWidget(const SizedBox());
   });
 
@@ -138,8 +144,7 @@ void main() {
   testWidgets('la date hégirienne porte la mention de calcul approximatif', (tester) async {
     await tester.pumpWidget(_app(_Clock(DateTime(2026, 10, 26, 9, 0))));
     await tester.pumpAndSettle();
-    expect(find.textContaining('Joumada al-Oula 1448'), findsOneWidget);
-    expect(find.text('Date hégirienne calculée, à un jour près'), findsOneWidget);
+    expect(find.textContaining(RegExp(r'^\d+ Joumada al-Oula 1448 · calculée, à un jour près$')), findsOneWidget);
     await tester.pumpWidget(const SizedBox());
   });
 }

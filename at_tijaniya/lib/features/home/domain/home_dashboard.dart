@@ -5,6 +5,7 @@
 /// I/O, juste de la logique sur des données déjà chargées.
 library;
 
+import '../../../core/date/calendar_days.dart';
 import '../../wird/data/wird_reminder_slots.dart';
 import '../../wird/domain/tasbih_session.dart';
 import '../../wird/domain/wird_models.dart';
@@ -101,9 +102,14 @@ class HomeNextReminder {
 /// (`ReminderFrequency.weeklyFriday`) n'est considéré que le vendredi.
 /// `null` si aucun rappel activé ne reste à venir aujourd'hui — état
 /// honnête plutôt qu'une estimation de "demain" non demandée.
+///
+/// Un wird déjà accompli aujourd'hui ([doneWirdIds]) n'a plus de rappel à
+/// montrer : l'accueil affichait « Wazifa — aujourd'hui à 18:00 » sous une
+/// Wazifa déjà cochée (refonte de l'accueil du 2026-11-01).
 HomeNextReminder? pickNextReminderToday(
   List<({Wird wird, List<WirdReminderSetting> settings})> loaded, {
   DateTime? now,
+  Set<String> doneWirdIds = const {},
 }) {
   final today = now ?? DateTime.now();
   final isFriday = today.weekday == DateTime.friday;
@@ -112,6 +118,7 @@ HomeNextReminder? pickNextReminderToday(
   HomeNextReminder? best;
   int? bestMinutes;
   for (final entry in loaded) {
+    if (doneWirdIds.contains(entry.wird.id)) continue;
     final slots = wirdReminderSlots[entry.wird.id] ?? const [];
     for (final setting in entry.settings) {
       if (!setting.enabled) continue;
@@ -134,3 +141,85 @@ HomeNextReminder? pickNextReminderToday(
   }
   return best;
 }
+
+/// Wird quotidien non marqué la veille, alors que le disciple pratiquait déjà
+/// avec l'app (première récitation enregistrée avant hier). « Non marqué » et
+/// non « manqué » : l'app ne sait que ce que le disciple a coché. Jamais pour
+/// un wird hebdomadaire (Hadratou-l-Jouma ne se rattrape pas, voir la carte
+/// du vendredi).
+bool isUnmarkedYesterday({
+  required WirdFrequency frequency,
+  required Set<DateTime> completedDays,
+  required DateTime? firstCompletion,
+  required DateTime now,
+}) {
+  if (frequency != WirdFrequency.daily || firstCompletion == null) return false;
+  final today = _dateOnly(now);
+  final yesterday = addDays(today, -1);
+  if (_dateOnly(firstCompletion).isAfter(yesterday)) return false;
+  return !completedDays.contains(yesterday);
+}
+
+/// Le disciple a-t-il marqué au moins un wird ces 7 derniers jours (aujourd'hui
+/// compris) ? Garde-fou de la carte « wird d'hier non marqué » : un disciple
+/// qui ne coche pas ses wirds dans l'app la verrait tous les jours.
+bool isRecentlyActive(Iterable<Set<DateTime>> completedDaysPerWird, {required DateTime now}) {
+  final today = _dateOnly(now);
+  final start = addDays(today, -6);
+  for (final days in completedDaysPerWird) {
+    for (final day in days) {
+      if (!day.isBefore(start) && !day.isAfter(today)) return true;
+    }
+  }
+  return false;
+}
+
+/// L'étape à proposer en premier sur l'accueil (carte d'action), parmi les
+/// wirds applicables aujourd'hui et pas encore faits :
+/// 1. une session de Tasbih en pause, à reprendre ;
+/// 2. le wird du prochain rappel de la journée ;
+/// 3. sinon le premier wird à faire, dans l'ordre du corpus validé.
+/// `null` quand tout est accompli.
+class HomeNextStep {
+  const HomeNextStep({required this.status, this.resumable, this.reminder});
+
+  final HomeWirdStatus status;
+  final HomeResumableSession? resumable;
+  final HomeNextReminder? reminder;
+}
+
+HomeNextStep? pickNextStep({
+  required List<HomeWirdStatus> statuses,
+  HomeResumableSession? resumable,
+  HomeNextReminder? nextReminder,
+  DateTime? now,
+}) {
+  final today = now ?? DateTime.now();
+  final pending = statuses.where((s) => _isApplicableToday(s.wird, today) && !s.doneToday).toList();
+  if (pending.isEmpty) return null;
+  HomeWirdStatus? statusOf(String wirdId) => pending.where((s) => s.wird.id == wirdId).firstOrNull;
+
+  if (resumable != null) {
+    final status = statusOf(resumable.wird.id);
+    if (status != null) {
+      final reminder = nextReminder?.wird.id == status.wird.id ? nextReminder : null;
+      return HomeNextStep(status: status, resumable: resumable, reminder: reminder);
+    }
+  }
+  if (nextReminder != null) {
+    final status = statusOf(nextReminder.wird.id);
+    if (status != null) return HomeNextStep(status: status, reminder: nextReminder);
+  }
+  return HomeNextStep(status: pending.first);
+}
+
+/// Série à afficher quand la journée est accomplie : la plus courte des
+/// séries des wirds quotidiens (la journée entière n'est « tenue » que
+/// depuis ce nombre de jours). 0 s'il n'y a aucun wird quotidien.
+int dailyStreakOfTheDay(List<HomeWirdStatus> statuses) {
+  final daily = statuses.where((s) => s.wird.frequency == WirdFrequency.daily).map((s) => s.streak);
+  if (daily.isEmpty) return 0;
+  return daily.reduce((a, b) => a < b ? a : b);
+}
+
+DateTime _dateOnly(DateTime d) => DateTime(d.year, d.month, d.day);

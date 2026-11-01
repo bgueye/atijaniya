@@ -6553,6 +6553,186 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'Récitation de référence'**
   String get wirdRecitationsManageDefaultReciter;
+
+  /// No description provided for @homeDayLine.
+  ///
+  /// In fr, this message translates to:
+  /// **'{weekday} {day} {month}'**
+  String homeDayLine(String weekday, int day, String month);
+
+  /// No description provided for @homeHijriShortLine.
+  ///
+  /// In fr, this message translates to:
+  /// **'{hijriDay} {hijriMonth} {hijriYear} · calculée, à un jour près'**
+  String homeHijriShortLine(int hijriDay, String hijriMonth, int hijriYear);
+
+  /// No description provided for @homeRingCaption.
+  ///
+  /// In fr, this message translates to:
+  /// **'wirds'**
+  String get homeRingCaption;
+
+  /// No description provided for @homeNextStepEyebrow.
+  ///
+  /// In fr, this message translates to:
+  /// **'Prochaine étape'**
+  String get homeNextStepEyebrow;
+
+  /// No description provided for @homeResumeEyebrow.
+  ///
+  /// In fr, this message translates to:
+  /// **'À reprendre'**
+  String get homeResumeEyebrow;
+
+  /// No description provided for @homeNextStepStart.
+  ///
+  /// In fr, this message translates to:
+  /// **'Commencer'**
+  String get homeNextStepStart;
+
+  /// No description provided for @homeNextStepResume.
+  ///
+  /// In fr, this message translates to:
+  /// **'Reprendre'**
+  String get homeNextStepResume;
+
+  /// No description provided for @homeNextStepReminder.
+  ///
+  /// In fr, this message translates to:
+  /// **'Rappel à {time}'**
+  String homeNextStepReminder(String time);
+
+  /// No description provided for @homeDayDoneEyebrow.
+  ///
+  /// In fr, this message translates to:
+  /// **'Aujourd\'hui'**
+  String get homeDayDoneEyebrow;
+
+  /// No description provided for @homeDayDoneTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Journée accomplie'**
+  String get homeDayDoneTitle;
+
+  /// No description provided for @homeDiscoverTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Comprendre et rattraper'**
+  String get homeDiscoverTitle;
+
+  /// No description provided for @homeSeeAll.
+  ///
+  /// In fr, this message translates to:
+  /// **'Tout voir'**
+  String get homeSeeAll;
+
+  /// No description provided for @homeDiscoverFilterForYou.
+  ///
+  /// In fr, this message translates to:
+  /// **'Pour vous'**
+  String get homeDiscoverFilterForYou;
+
+  /// No description provided for @homeDiscoverFilterRepair.
+  ///
+  /// In fr, this message translates to:
+  /// **'Rattraper'**
+  String get homeDiscoverFilterRepair;
+
+  /// No description provided for @homeDiscoverFilterConditions.
+  ///
+  /// In fr, this message translates to:
+  /// **'Conditions'**
+  String get homeDiscoverFilterConditions;
+
+  /// No description provided for @homeDiscoverFilterBenefits.
+  ///
+  /// In fr, this message translates to:
+  /// **'Bienfaits'**
+  String get homeDiscoverFilterBenefits;
+
+  /// No description provided for @homeDiscoverUnmarkedYesterday.
+  ///
+  /// In fr, this message translates to:
+  /// **'{wird} : rien de marqué hier'**
+  String homeDiscoverUnmarkedYesterday(String wird);
+
+  /// No description provided for @homeDiscoverWhatToDo.
+  ///
+  /// In fr, this message translates to:
+  /// **'Que faire ?'**
+  String get homeDiscoverWhatToDo;
+
+  /// No description provided for @homeDiscoverCaseEyebrow.
+  ///
+  /// In fr, this message translates to:
+  /// **'Situation · {kind}'**
+  String homeDiscoverCaseEyebrow(String kind);
+
+  /// No description provided for @homeDiscoverConditionEyebrow.
+  ///
+  /// In fr, this message translates to:
+  /// **'Condition · {category}'**
+  String homeDiscoverConditionEyebrow(String category);
+
+  /// No description provided for @homeDiscoverBenefitEyebrow.
+  ///
+  /// In fr, this message translates to:
+  /// **'Bienfait · {section}'**
+  String homeDiscoverBenefitEyebrow(String section);
+
+  /// No description provided for @homeDiscoverSeeAnswer.
+  ///
+  /// In fr, this message translates to:
+  /// **'Voir la réponse'**
+  String get homeDiscoverSeeAnswer;
+
+  /// No description provided for @homeDiscoverReadMore.
+  ///
+  /// In fr, this message translates to:
+  /// **'Lire en entier'**
+  String get homeDiscoverReadMore;
+
+  /// No description provided for @homeDiscoverRead.
+  ///
+  /// In fr, this message translates to:
+  /// **'Lire'**
+  String get homeDiscoverRead;
+
+  /// No description provided for @homeDiscoverOpenPage.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ouvrir la page complète'**
+  String get homeDiscoverOpenPage;
+
+  /// No description provided for @homeDiscoverClose.
+  ///
+  /// In fr, this message translates to:
+  /// **'Fermer'**
+  String get homeDiscoverClose;
+
+  /// No description provided for @homeDiscoverLoadError.
+  ///
+  /// In fr, this message translates to:
+  /// **'Impossible de charger ces contenus.'**
+  String get homeDiscoverLoadError;
+
+  /// No description provided for @homeSectionUpcoming.
+  ///
+  /// In fr, this message translates to:
+  /// **'À venir'**
+  String get homeSectionUpcoming;
+
+  /// No description provided for @homeLiveNow.
+  ///
+  /// In fr, this message translates to:
+  /// **'En direct · {title}'**
+  String homeLiveNow(String title);
+
+  /// No description provided for @homeDonationLine.
+  ///
+  /// In fr, this message translates to:
+  /// **'At-Tijaniya vit de vos dons'**
+  String get homeDonationLine;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

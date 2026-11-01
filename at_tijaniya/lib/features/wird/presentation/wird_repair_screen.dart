@@ -32,14 +32,18 @@ import 'wird_repair_summary.dart';
 /// Écran d'information, pas de pratique : fond ivoire (le vert zaytoune est
 /// réservé aux écrans de wird et de khadara en direct, CLAUDE.md).
 class WirdRepairScreen extends ConsumerStatefulWidget {
-  const WirdRepairScreen({super.key});
+  const WirdRepairScreen({super.key, this.initialWird = RepairWird.lazim});
+
+  /// Wird ouvert d'abord : la carte de rattrapage de l'accueil ouvre
+  /// directement celui dont elle parle (refonte de l'accueil du 2026-11-01).
+  final RepairWird initialWird;
 
   @override
   ConsumerState<WirdRepairScreen> createState() => _WirdRepairScreenState();
 }
 
 class _WirdRepairScreenState extends ConsumerState<WirdRepairScreen> {
-  RepairWird _wird = RepairWird.lazim;
+  late RepairWird _wird = widget.initialWird == RepairWird.all ? RepairWird.lazim : widget.initialWird;
 
   /// Type de situation choisi ; `null` : tous les types.
   RepairKind? _kind;

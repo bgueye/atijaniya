@@ -81,7 +81,18 @@ vérifier la section 12 de `database/schema.sql` et `database/migrations/`.
   le reste de l'app est sur fond ivoire parchemin (#F7F2E7).
   Exception actée le 2026-10-26 (audit de l'accueil) : l'en-tête de l'écran d'accueil, porte
   d'entrée de la pratique, reste en zaytoune ; à ne pas étendre à d'autres écrans sans
-  nouvelle décision.
+  nouvelle décision. Étendue le 2026-11-01 (refonte de l'accueil, proposition B retenue),
+  sur l'accueil seulement, à sa barre d'app et à la carte de rattrapage contextuelle du
+  carrousel « Comprendre et rattraper ».
+
+## Écran d'accueil (refonte du 2026-11-01)
+En-tête + anneau du jour, carte « Prochaine étape » (seule action principale), carrousel
+« Comprendre et rattraper » (contenu validé des trois pages de l'onglet Wird, choisi par
+`lib/features/home/domain/home_discover.dart`), figure de la semaine, « À venir », don.
+Les wirds du jour n'y apparaissent qu'une fois. Une carte du carrousel ne montre jamais une
+réponse tronquée : la réponse s'ouvre en entier avec sa source. Bienfaits exclus du
+carrousel en arabe tant que leur texte arabe n'est pas saisi. Détail :
+`docs/09-journal-implementation-frontend.md`, entrée du 2026-11-01.
 
 ## Contenu religieux — règle impérative
 Aucun texte de wird, biographie ou enseignement attribué ne doit être codé en dur ou publié

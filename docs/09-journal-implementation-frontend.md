@@ -3544,3 +3544,66 @@ silsila ; couverts par les tests.
 modules (37 fichiers, ex. sous-titres de la liste des wirds, adresses des zawiyas), à
 reprendre écran par écran selon le fond ; pagination de la liste au-delà d'environ
 150 fiches (P3-4, reporté). Tests : 417 au vert. **Pas encore validé sur téléphone.**
+
+## Refonte de l'accueil, proposition B (2026-11-01)
+
+Le porteur de projet a demandé un accueil « plus dynamique, plus pratique, sans les
+redondances » des wirds, avec des cartes défilant latéralement tirées de « Comprendre et
+rattraper ». Deux directions ont été maquettées (A : cartes colorées ; B : sobre et
+éditoriale) ; **B a été retenue**, avec l'évènement descendu en bas de page.
+
+**Avant** : le statut des wirds apparaissait trois fois (pastille de l'en-tête, carte
+« Aujourd'hui », « Accès rapide ») ; l'en-tête prenait un tiers de l'écran ; la vignette de
+l'évènement sans image était un carré vert ; la figure de la semaine (3:4) passait sous la
+barre d'onglets ; **défaut** : « Rappel quotidien — Wazifa à 18:00 » restait affiché sous
+une Wazifa déjà cochée (`pickNextReminderToday` ignorait `doneToday`, corrigé par le
+paramètre `doneWirdIds`).
+
+**Après**, de haut en bas (`home_screen.dart`) :
+1. `HomeHeader` (zaytoune, halo émeraude, rosace) : jour, salutation, date hégirienne
+   courte « … · calculée, à un jour près » (même mention qu'avant, sur une ligne), anneau
+   segmenté (`HomeDayRing`, un segment par wird applicable, doré quand il est fait, lu en
+   clair au lecteur d'écran). La barre d'app de l'onglet Accueil passe en zaytoune
+   (`home_shell.dart`).
+2. `HomeActionCard`, la seule action principale : « Prochaine étape » (`pickNextStep` :
+   session de tasbih en pause, puis wird du prochain rappel, puis premier wird à faire),
+   ou « Journée accomplie » avec la série et le tasbih libre ; pastilles des wirds du jour
+   en bas. Remplace « Aujourd'hui », « Prochain moment » et « Accès rapide ».
+3. `HomeDiscoverSection`, carrousel « Comprendre et rattraper » (choix des cartes dans
+   `home_discover.dart`, logique pure) : filtres Pour vous / Rattraper / Conditions /
+   Bienfaits ; carte contextuelle en tête (réponse courte validée `quick_answer` du wird
+   quotidien non marqué la veille — seulement si le disciple a marqué au moins un wird ces
+   7 derniers jours —, ou « Ne se rattrape pas » le vendredi tant que la Hadratou-l-Jouma
+   n'est pas faite) ; puis rotation quotidienne d'un cas, d'un bienfait, d'une condition,
+   d'un second cas. Une carte de cas montre la question ; la réponse s'ouvre **en entier
+   avec sa source** dans une feuille, jamais tronquée. Aucun brouillon n'est retenu, même
+   pour l'admin. `WirdRepairScreen` prend un `initialWird` pour ouvrir le wird concerné.
+4. Figure de la semaine en 4:3 (cadrage sur le tiers haut, citation bornée à 3 lignes).
+5. « À venir » (`home_upcoming_section.dart`) : bandeau d'un direct en cours
+   (`allLiveStreamsProvider`), puis jusqu'à 3 évènements en liste datée (jour et mois ;
+   « ~ » devant une date approximative, dite en clair dessous).
+6. Don : une ligne discrète.
+
+**Décisions prises avec la proposition B** : couleur restée dans la palette (aucun nouveau
+jeton) ; zaytoune étendu, sur l'accueil seulement, à la carte de rattrapage contextuelle
+(voir `CLAUDE.md`) ; titres de section en Cormorant (Amiri en arabe) au lieu des petites
+capitales grises.
+
+**Constat en base (2026-11-01)** : aucune des 34 cartes de bienfaits n'a de texte arabe
+(`title_ar`, `blocks_ar` vides). En arabe, les bienfaits sont donc **exclus du carrousel**
+(la page complète reste accessible, en français) ; les 23 conditions et les 39 cas ont
+leur arabe.
+
+**Tests** : `home_discover_test.dart` (choix des cartes, brouillons exclus, arabe,
+rotation, feuille de réponse, filtres), `home_dashboard_test.dart` étendu (rappel d'un
+wird fait, prochaine étape, veille non marquée), tests d'accessibilité et de changement de
+jour repris pour la nouvelle structure ; `home_test_overrides.dart` remplace le contenu
+Supabase dans les tests de l'accueil. 609 tests au vert, `flutter analyze` sans remarque.
+Rendu vérifié par captures de test avec les vraies polices (français ; l'arabe n'a pu être
+vérifié que pour la mise en page, sans police arabe système dans l'environnement de test).
+
+**Limites connues** : le carrousel garde son contenu pendant la session mais pas d'une
+session à l'autre (hors ligne au démarrage : section « Impossible de charger » avec
+« Réessayer ») ; pas d'aimantation carte par carte au défilement ; « Tout voir » sur
+« Pour vous » ouvre un choix entre les trois pages plutôt que l'onglet Wird. **Pas encore
+validé sur téléphone.**

@@ -58,19 +58,19 @@ class HomeFeaturedFigureCard extends StatelessWidget {
         onTap: () => Navigator.of(context).push(
           MaterialPageRoute(builder: (_) => FigureDetailScreen(figure: figure)),
         ),
-        // 3:4 (portrait) plutôt que 4:3 : carte plus grande, format proche
-        // des portraits en base (sujet proche du haut de la photo, comme
-        // `figure_detail_screen.dart`) et assez de hauteur pour que le
-        // dégradé + le texte n'empiètent que sur le tiers bas de l'image.
+        // 4:3 depuis la refonte de l'accueil du 2026-11-01 : en 3:4, la
+        // carte dépassait 400 dp et le nom passait sous la barre d'onglets.
+        // Le portrait est cadré sur son tiers haut, où se trouve le visage
+        // dans les portraits en base.
         child: AspectRatio(
-          aspectRatio: 3 / 4,
+          aspectRatio: 4 / 3,
           child: Stack(
             fit: StackFit.expand,
             children: [
               Image.network(
                 figure.portraitUrl!,
                 fit: BoxFit.cover,
-                alignment: Alignment.topCenter,
+                alignment: const Alignment(0, -0.55),
                 errorBuilder: (context, error, stackTrace) => const ColoredBox(color: AppColors.zaytoune),
                 // Fond et indicateur pendant le téléchargement : la carte était
                 // un rectangle vide jusqu'à l'arrivée du portrait (P2-2).
@@ -115,7 +115,7 @@ class HomeFeaturedFigureCard extends StatelessWidget {
                       if (isArabic) frenchName else arabicName,
                       if (citation != null) ...[
                         const SizedBox(height: 8),
-                        _FeaturedCitation(citation: citation),
+                        _FeaturedCitation(citation: citation, maxLines: 3),
                       ],
                       if (nextZiyara != null) ...[
                         const SizedBox(height: 8),
@@ -235,10 +235,14 @@ class _FeaturedFigureTypographicCard extends StatelessWidget {
 /// en Amiri comme sur la fiche de la figure ; sinon la traduction, en
 /// italique.
 class _FeaturedCitation extends StatelessWidget {
-  const _FeaturedCitation({required this.citation, this.textAlign});
+  const _FeaturedCitation({required this.citation, this.textAlign, this.maxLines});
 
   final FigureCitation citation;
   final TextAlign? textAlign;
+
+  /// Borne la citation sur la carte à portrait (4:3), qui n'a plus la
+  /// hauteur de l'ancien format ; la citation entière reste sur la fiche.
+  final int? maxLines;
 
   @override
   Widget build(BuildContext context) {
@@ -247,6 +251,8 @@ class _FeaturedCitation extends StatelessWidget {
       return Text(
         '« $arabic »',
         textAlign: textAlign,
+        maxLines: maxLines,
+        overflow: maxLines == null ? null : TextOverflow.ellipsis,
         textDirection: TextDirection.rtl,
         style: AppTheme.sacredText(fontSize: 16, color: AppColors.offWhite.withValues(alpha: 0.9)),
       );
@@ -254,6 +260,8 @@ class _FeaturedCitation extends StatelessWidget {
     return ContentText(
       '« ${citation.translation} »',
       textAlign: textAlign,
+      maxLines: maxLines,
+      overflow: maxLines == null ? null : TextOverflow.ellipsis,
       style: TextStyle(
         fontStyle: FontStyle.italic,
         color: AppColors.offWhite.withValues(alpha: 0.9),

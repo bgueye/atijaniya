@@ -1,4 +1,5 @@
 import 'package:at_tijaniya/features/home/domain/home_dashboard.dart';
+import 'package:at_tijaniya/features/wird/data/wird_reminder_slots.dart';
 import 'package:at_tijaniya/features/wird/domain/tasbih_session.dart';
 import 'package:at_tijaniya/features/wird/domain/wird_models.dart';
 import 'package:at_tijaniya/features/wird/domain/wird_reminder.dart';
@@ -142,5 +143,140 @@ void main() {
       ], now: at18h00);
       expect(result, isNull);
     });
+  });
+
+  // Refonte de l'accueil du 2026-11-01.
+  group('rappel d\'un wird déjà fait', () {
+    test('pickNextReminderToday ignore un wird accompli aujourd\'hui', () {
+      final result = pickNextReminderToday([
+        (wird: _wazifa, settings: [const WirdReminderSetting(slotId: 'wazifa_daily', enabled: true, hour: 19, minute: 0)]),
+        (wird: _lazim, settings: [const WirdReminderSetting(slotId: 'lazim_evening', enabled: true, hour: 20, minute: 0)]),
+      ], now: DateTime(2026, 8, 21, 18), doneWirdIds: {'wazifa'});
+      expect(result?.wird.id, 'lazim');
+    });
+  });
+
+  group('pickNextStep', () {
+    final monday = DateTime(2026, 8, 17, 10);
+    HomeWirdStatus status(Wird wird, {bool done = false}) => HomeWirdStatus(wird: wird, doneToday: done, streak: 0);
+
+    test('tout accompli : aucune étape', () {
+      expect(pickNextStep(statuses: [status(_lazim, done: true), status(_wazifa, done: true)], now: monday), isNull);
+    });
+
+    test('Hadratou-l-Jouma non faite un lundi : ne compte pas', () {
+      expect(
+        pickNextStep(statuses: [status(_lazim, done: true), status(_wazifa, done: true), status(_hadratouJouma)], now: monday),
+        isNull,
+      );
+    });
+
+    test('sans rappel ni session : premier wird à faire, dans l\'ordre du corpus', () {
+      final step = pickNextStep(statuses: [status(_lazim), status(_wazifa)], now: monday);
+      expect(step?.status.wird.id, 'lazim');
+    });
+
+    test('le wird du prochain rappel passe avant l\'ordre du corpus', () {
+      final reminder = HomeNextReminder(
+        wird: _wazifa,
+        setting: const WirdReminderSetting(slotId: 'wazifa_daily', enabled: true, hour: 18, minute: 0),
+        slot: wirdReminderSlots['wazifa']!.first,
+      );
+      final step = pickNextStep(statuses: [status(_lazim), status(_wazifa)], nextReminder: reminder, now: monday);
+      expect(step?.status.wird.id, 'wazifa');
+      expect(step?.reminder, same(reminder));
+    });
+
+    test('une session de tasbih en pause passe en premier', () {
+      final session = HomeResumableSession(
+        wird: _wazifa,
+        session: TasbihSession(wirdId: 'wazifa', pillarIndex: 1, currentCount: 3, mode: TasbihMode.manual, updatedAt: monday),
+      );
+      final step = pickNextStep(statuses: [status(_lazim), status(_wazifa)], resumable: session, now: monday);
+      expect(step?.status.wird.id, 'wazifa');
+      expect(step?.resumable, same(session));
+    });
+
+    test('une session d\'un wird déjà accompli est ignorée', () {
+      final session = HomeResumableSession(
+        wird: _lazim,
+        session: TasbihSession(wirdId: 'lazim', pillarIndex: 1, currentCount: 3, mode: TasbihMode.manual, updatedAt: monday),
+      );
+      final step = pickNextStep(statuses: [status(_lazim, done: true), status(_wazifa)], resumable: session, now: monday);
+      expect(step?.status.wird.id, 'wazifa');
+      expect(step?.resumable, isNull);
+    });
+  });
+
+  group('wird d\'hier non marqué', () {
+    final now = DateTime(2026, 11, 1, 9);
+
+    test('wird quotidien non marqué hier, pratique déjà commencée', () {
+      expect(
+        isUnmarkedYesterday(
+          frequency: WirdFrequency.daily,
+          completedDays: {DateTime(2026, 10, 30)},
+          firstCompletion: DateTime(2026, 10, 30),
+          now: now,
+        ),
+        isTrue,
+      );
+    });
+
+    test('marqué hier : rien à signaler', () {
+      expect(
+        isUnmarkedYesterday(
+          frequency: WirdFrequency.daily,
+          completedDays: {DateTime(2026, 10, 31)},
+          firstCompletion: DateTime(2026, 10, 30),
+          now: now,
+        ),
+        isFalse,
+      );
+    });
+
+    test('jamais pratiqué, ou commencé aujourd\'hui : rien à signaler', () {
+      expect(
+        isUnmarkedYesterday(frequency: WirdFrequency.daily, completedDays: const {}, firstCompletion: null, now: now),
+        isFalse,
+      );
+      expect(
+        isUnmarkedYesterday(
+          frequency: WirdFrequency.daily,
+          completedDays: {DateTime(2026, 11, 1)},
+          firstCompletion: DateTime(2026, 11, 1),
+          now: now,
+        ),
+        isFalse,
+      );
+    });
+
+    test('jamais pour un wird hebdomadaire', () {
+      expect(
+        isUnmarkedYesterday(
+          frequency: WirdFrequency.weekly,
+          completedDays: {DateTime(2026, 10, 23)},
+          firstCompletion: DateTime(2026, 10, 23),
+          now: DateTime(2026, 10, 31),
+        ),
+        isFalse,
+      );
+    });
+
+    test('isRecentlyActive : au moins un wird marqué ces 7 derniers jours', () {
+      expect(isRecentlyActive([{DateTime(2026, 10, 26)}], now: now), isTrue);
+      expect(isRecentlyActive([{DateTime(2026, 10, 25)}, const {}], now: now), isFalse);
+    });
+  });
+
+  test('dailyStreakOfTheDay : la plus courte des séries quotidiennes', () {
+    expect(
+      dailyStreakOfTheDay([
+        HomeWirdStatus(wird: _lazim, doneToday: true, streak: 5),
+        HomeWirdStatus(wird: _wazifa, doneToday: true, streak: 3),
+        HomeWirdStatus(wird: _hadratouJouma, doneToday: false, streak: 1),
+      ]),
+      3,
+    );
   });
 }
