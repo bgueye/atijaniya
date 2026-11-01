@@ -1,0 +1,297 @@
+<!doctype html>
+<html lang="fr">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Nouvel écran Profil</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Cormorant+Garamond:wght@500;600&family=Jost:wght@300;400;500;600&display=swap">
+<style>
+/* Layout : colonne de lecture ; maquette de téléphone à gauche, explications à droite
+   (empilées sur mobile) ; puis avant/après, décisions et limites. */
+:root{
+  --bg:#F3EEE2; --surface:#FFFDF8; --fg:#2B2620; --muted:#66625C; --line:rgba(140,122,91,.28);
+  --accent:#1C6E4A; --accent-soft:#E4EEE8; --gold:#9A7A2E; --gold-soft:#F1E6C9;
+  --z:#0F3D2E; --em:#1C6E4A; --go:#C9A24B; --gos:#F1E6C9; --pa:#F7F2E7; --ems:#E4EEE8;
+  --ink:#2B2620; --br:#8C7A5B; --off:#FFFDF8; --ink2:#66625C; --aline:rgba(140,122,91,.22); --danger:#B3261E;
+  --f-display:"Cormorant Garamond", Georgia, serif;
+  --f-ui:"Jost", "Segoe UI", system-ui, sans-serif;
+  --f-ar:"Amiri", "Traditional Arabic", serif;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#101a16; --surface:#17241f; --fg:#ECE6D8; --muted:#B5AE9F; --line:rgba(201,162,75,.22);
+  --accent:#6FC29A; --accent-soft:#1d3a2e; --gold:#D8B661; --gold-soft:#2f2a1b; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#101a16; --surface:#17241f; --fg:#ECE6D8; --muted:#B5AE9F; --line:rgba(201,162,75,.22);
+  --accent:#6FC29A; --accent-soft:#1d3a2e; --gold:#D8B661; --gold-soft:#2f2a1b; color-scheme:dark}
+
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--fg);font-family:var(--f-ui);font-size:16px;line-height:1.55;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:32px 64px}
+.wrap{max-width:1100px;margin:0 auto;display:flex;flex-direction:column;gap:56px}
+h1,h2{font-family:var(--f-display);font-weight:600;text-wrap:balance;margin:0;line-height:1.1}
+h1{font-size:clamp(2.2rem,5vw,3.1rem)} h2{font-size:1.9rem}
+h3{font-size:1.05rem;font-weight:600;margin:0}
+p{margin:0} code{font-size:.88em}
+.eyebrow{font-size:.78rem;letter-spacing:.12em;text-transform:uppercase;color:var(--gold);font-weight:500}
+.lede{font-size:1.1rem;color:var(--muted);max-width:66ch}
+header.top,section{display:flex;flex-direction:column;gap:16px}
+.diag,.decisions{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px}
+.diag article,.decisions article{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:16px 18px;display:flex;flex-direction:column;gap:6px;min-width:0}
+.diag p,.decisions p{font-size:.95rem;color:var(--muted)}
+.tag{font-size:.72rem;letter-spacing:.08em;text-transform:uppercase;font-weight:600;color:var(--accent)}
+.rec{font-size:.9rem;color:var(--accent);font-weight:500}
+
+.demo{display:grid;grid-template-columns:minmax(0,370px) minmax(0,1fr);gap:40px;align-items:start}
+@media (max-width:820px){.demo{grid-template-columns:1fr}}
+.phonecol{display:flex;flex-direction:column;gap:12px;align-items:center}
+.states{display:flex;flex-wrap:wrap;gap:8px;justify-content:center}
+.states button{font:inherit;font-size:.86rem;padding:7px 13px;border-radius:999px;border:1px solid var(--line);background:var(--surface);color:var(--fg);cursor:pointer}
+.states button[aria-pressed="true"]{background:var(--accent);color:var(--surface);border-color:var(--accent)}
+button:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+.phone{width:100%;max-width:360px;border-radius:34px;background:#1b1b1b;padding:10px;box-shadow:0 20px 50px -20px rgba(0,0,0,.45)}
+.screen{position:relative;height:780px;border-radius:26px;overflow:hidden;background:var(--pa);color:var(--ink);display:flex;flex-direction:column}
+.scroll{flex:1;overflow-y:auto;overflow-x:hidden;scrollbar-width:none;padding-bottom:22px}
+.scroll::-webkit-scrollbar{display:none}
+.appbar{display:flex;align-items:center;padding:12px 16px 8px;background:var(--pa)}
+.appbar .back{font-size:1.2rem;width:28px}
+.appbar b{font-family:var(--f-display);font-size:1.45rem;font-weight:600;flex:1;text-align:center;padding-right:28px}
+
+/* En-tête */
+.head{margin:4px 14px 0;border-radius:20px;background:var(--off);border:1px solid var(--aline);padding:16px;display:flex;flex-direction:column;gap:12px;position:relative;overflow:hidden}
+.head .row{display:flex;gap:14px;align-items:center}
+.avatar{width:68px;height:68px;border-radius:50%;flex:none;background:var(--ems);display:grid;place-items:center;font-family:var(--f-display);font-size:1.8rem;font-weight:600;color:var(--em);position:relative;box-shadow:0 0 0 3px var(--off),0 0 0 4px rgba(201,162,75,.6)}
+.avatar .cam{position:absolute;right:-2px;bottom:-2px;width:22px;height:22px;border-radius:50%;background:var(--go);color:var(--z);font-size:.62rem;display:grid;place-items:center;border:2px solid var(--off)}
+.head .name{font-family:var(--f-display);font-size:1.5rem;font-weight:600;line-height:1.05}
+.zchip{display:inline-flex;align-items:center;gap:5px;margin-top:5px;font-size:.7rem;padding:3px 9px;border-radius:999px;background:var(--ems);color:var(--em);font-weight:500}
+.zchip.none{background:var(--gos);color:#6d5520}
+.badge{display:inline-flex;align-items:center;gap:5px;margin-top:5px;margin-inline-start:4px;font-size:.66rem;padding:3px 9px;border-radius:999px;background:var(--z);color:var(--gos);font-weight:500}
+.badge i{font-style:normal;width:13px;height:13px;border-radius:50%;border:1px solid var(--go);font-size:.55rem;display:grid;place-items:center;color:var(--go)}
+.tip{font-size:.68rem;line-height:1.4;color:var(--ink2);background:var(--pa);border-radius:10px;padding:8px 10px;border-inline-start:3px solid var(--go)}
+.bio{font-size:.8rem;color:var(--ink);line-height:1.45}
+.bio.empty{color:var(--ink2);font-style:italic}
+.edit{position:absolute;top:12px;right:12px;font-size:.72rem;color:var(--em);font-weight:500}
+
+/* Sections */
+.sec-h{padding:20px 18px 8px;display:flex;justify-content:space-between;align-items:baseline}
+.sec-h h4{margin:0;font-family:var(--f-display);font-size:1.25rem;font-weight:600}
+.sec-h span{font-size:.66rem;color:var(--ink2);display:flex;gap:4px;align-items:center}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;padding:0 14px}
+.stat{background:var(--off);border:1px solid var(--aline);border-radius:14px;padding:10px;display:flex;flex-direction:column;gap:2px}
+.stat b{font-family:var(--f-display);font-size:1.7rem;font-weight:600;line-height:1;color:var(--em);font-variant-numeric:tabular-nums}
+.stat small{font-size:.64rem;color:var(--ink2);line-height:1.3}
+.stat.z{background:var(--z);border-color:var(--z)} .stat.z b{color:var(--go)} .stat.z small{color:rgba(247,242,231,.75)}
+.list{margin:0 14px;background:var(--off);border:1px solid var(--aline);border-radius:16px;overflow:hidden}
+.item{display:flex;align-items:center;gap:12px;padding:11px 12px}
+.item+.item{border-top:1px solid var(--aline)}
+.item .ic{width:34px;height:34px;border-radius:10px;display:grid;place-items:center;flex:none;font-size:.95rem}
+.ic.e{background:var(--ems);color:var(--em)} .ic.g{background:var(--gos);color:#6d5520} .ic.n{background:var(--pa);color:var(--br)}
+.item b{font-weight:500;font-size:.86rem;display:block;line-height:1.25}
+.item small{font-size:.68rem;color:var(--ink2);display:block;line-height:1.3}
+.item .end{margin-inline-start:auto;display:flex;align-items:center;gap:6px;font-size:.68rem;color:var(--ink2);white-space:nowrap}
+.state{font-size:.6rem;padding:2px 8px;border-radius:999px;font-weight:500}
+.state.priv{background:var(--pa);color:var(--ink2);border:1px solid var(--aline)}
+.state.vis{background:var(--ems);color:var(--em)}
+.state.todo{background:var(--gos);color:#6d5520}
+.count{min-width:19px;height:19px;border-radius:10px;background:var(--em);color:var(--off);font-size:.62rem;font-weight:600;display:grid;place-items:center;padding:0 5px}
+.toggle{width:34px;height:20px;border-radius:10px;background:rgba(140,122,91,.3);position:relative;flex:none}
+.toggle::after{content:"";position:absolute;top:2px;left:2px;width:16px;height:16px;border-radius:50%;background:var(--off)}
+.toggle.on{background:var(--em)} .toggle.on::after{left:16px}
+.langseg{display:flex;background:rgba(140,122,91,.12);border-radius:9px;padding:2px}
+.langseg span{font-size:.68rem;padding:3px 9px;border-radius:7px}
+.langseg span.on{background:var(--off);color:var(--ink);font-weight:500}
+.adm{margin:0 14px;border-radius:16px;overflow:hidden;border:1px dashed rgba(140,122,91,.45)}
+.adm .item{background:transparent}
+.out{margin:22px 14px 0;display:flex;flex-direction:column;gap:12px;align-items:center}
+.out .so{width:100%;text-align:center;font-size:.84rem;font-weight:500;padding:11px;border-radius:14px;border:1px solid rgba(140,122,91,.35);background:var(--off)}
+.out .del{font-size:.72rem;color:var(--danger)}
+.out .ver{font-size:.62rem;color:var(--ink2)}
+
+/* Sans compte */
+.guest{margin:6px 14px 0;border-radius:22px;background:radial-gradient(120% 100% at 100% 0%,#2a7a56 0%,var(--em) 35%,var(--z) 100%);color:var(--off);padding:22px 18px;display:flex;flex-direction:column;gap:12px}
+.guest .ar{font-family:var(--f-ar);font-size:1.6rem;color:var(--gos);text-align:center;line-height:1.5}
+.guest h5{margin:0;font-family:var(--f-display);font-size:1.6rem;font-weight:600;line-height:1.1;text-align:center}
+.guest ul{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:9px}
+.guest li{display:flex;gap:10px;font-size:.8rem;line-height:1.4;align-items:flex-start}
+.guest li i{font-style:normal;width:22px;height:22px;border-radius:50%;background:rgba(201,162,75,.25);color:var(--go);display:grid;place-items:center;flex:none;font-size:.7rem}
+.guest .cta{background:var(--go);color:var(--z);border-radius:999px;text-align:center;padding:11px;font-weight:600;font-size:.86rem}
+.guest .sec{text-align:center;font-size:.76rem;color:rgba(247,242,231,.85)}
+
+.notes{display:flex;flex-direction:column;gap:16px;min-width:0}
+.nt{border-left:3px solid var(--gold);padding:2px 0 2px 16px;display:flex;flex-direction:column;gap:4px}
+.nt p{color:var(--muted);font-size:.95rem}
+.explain{background:var(--accent-soft);border-radius:12px;padding:14px 16px;font-size:.95rem}
+.tbl{overflow-x:auto;border:1px solid var(--line);border-radius:12px;background:var(--surface)}
+table{border-collapse:collapse;width:100%;min-width:600px;font-size:.92rem}
+th,td{text-align:left;padding:11px 14px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-size:.74rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:500}
+tr:last-child td{border-bottom:0}
+ul.plain{margin:0;padding-left:1.1em;display:flex;flex-direction:column;gap:8px;color:var(--muted);max-width:72ch}
+ul.plain b{color:var(--fg);font-weight:500}
+</style>
+
+<div class="wrap">
+  <header class="top">
+    <span class="eyebrow">At-Tijaniya · Écran Profil · proposition du 1er novembre 2026</span>
+    <h1>Un Profil qui montre ma pratique, mon chemin et ce qui est visible de moi</h1>
+    <p class="lede">Aujourd'hui, une petite carte d'identité puis une pile de lignes identiques où se mêlent lignée, statut mouqaddam, administration, don, paramètres et suppression du compte. La proposition range ces éléments par sens, affiche l'état de chaque réglage sensible là où il s'applique et met la confidentialité à un toucher.</p>
+  </header>
+
+  <section>
+    <span class="eyebrow">Constat, à partir du code</span>
+    <h2>Diagnostic</h2>
+    <div class="diag">
+      <article><span class="tag">Tout au même rang</span><h3>Une pile de lignes identiques</h3><p>Lignée, Devenir Mouqaddam, deux entrées admin, don et paramètres ont la même carte, la même icône dorée et le même chevron. Rien ne dit ce qui est personnel, sensible ou administratif.</p></article>
+      <article><span class="tag">Confidentialité</span><h3>Les réglages sensibles à deux niveaux</h3><p>Visibilité de la lignée, du statut mouqaddam, « Qui peut vous contacter » : Profil → Paramètres → Confidentialité. Leur état n'apparaît nulle part sur le Profil.</p></article>
+      <article><span class="tag">Pratique absente</span><h3>Rien sur la pratique du disciple</h3><p>Les séries et l'historique des wirds existent, enregistrés sur le téléphone et séparés par compte, mais le Profil n'en montre rien.</p></article>
+      <article><span class="tag">Actions risquées</span><h3>« Supprimer mon compte » juste sous « Se déconnecter »</h3><p>Deux lignes rouges côte à côte, de même taille. L'action irréversible est aussi facile à toucher que la déconnexion (elle reste protégée par une confirmation).</p></article>
+    </div>
+  </section>
+
+  <section>
+    <span class="eyebrow">Maquette interactive</span>
+    <h2>L'écran proposé</h2>
+    <div class="demo">
+      <div class="phonecol">
+        <div class="states" role="group" aria-label="Situation">
+          <button type="button" data-u="guest" aria-pressed="false">Sans compte</button>
+          <button type="button" data-u="disciple" aria-pressed="true">Disciple</button>
+          <button type="button" data-u="mouqaddam" aria-pressed="false">Parrainage confirmé</button>
+          <button type="button" data-u="admin" aria-pressed="false">Admin</button>
+        </div>
+        <div class="phone"><div class="screen">
+          <div class="appbar"><span class="back">←</span><b>Profil</b></div>
+          <div class="scroll" id="scroll"></div>
+        </div></div>
+        <p style="font-size:.8rem;color:var(--muted);text-align:center;max-width:360px">Le nom, la zawiya, les chiffres et les réglages sont des exemples.</p>
+      </div>
+      <div class="notes">
+        <div class="explain" id="explain"></div>
+        <div class="nt"><h3>1. Une vraie carte d'identité</h3><p>Avatar plus grand avec son bouton photo, nom en Cormorant, zawiya en pastille. Sans zawiya, la pastille invite à la choisir (c'est ce qui permet de publier dans la Communauté). Le badge « Parrainage confirmé » garde son explication obligatoire au toucher, montrée ici ouverte.</p></div>
+        <div class="nt"><h3>2. Ma pratique</h3><p>Trois chiffres tirés des données de pratique déjà enregistrées sur le téléphone : série en cours, récitations du mois, vendredis tenus. Ils ne quittent pas l'appareil et ne sont visibles que du disciple.</p></div>
+        <div class="nt"><h3>3. Mon chemin spirituel, avec l'état de chaque réglage</h3><p>Lignée, condisciples, parcours mouqaddam. Chaque ligne dit si l'information est renseignée et qui peut la voir (« Privée », « Visible des condisciples »). Le nom du moqaddam n'est jamais affiché ici, seulement l'état.</p></div>
+        <div class="nt"><h3>4. La confidentialité à un toucher</h3><p>« Qui peut vous contacter », la visibilité de la lignée et les comptes bloqués, avec leur valeur actuelle, sans passer par Paramètres.</p></div>
+        <div class="nt"><h3>5. Réglages rapides, administration à part, sortie en bas</h3><p>Langue et contraste renforcé se changent sur place. Les entrées admin sont regroupées dans un cadre pointillé, visible du seul admin. En bas, « Se déconnecter » en bouton, et « Supprimer mon compte » en lien discret, séparé.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <span class="eyebrow">Avant / après</span>
+    <h2>Ce qui change</h2>
+    <div class="tbl"><table>
+      <thead><tr><th>Élément</th><th>Aujourd'hui</th><th>Proposé</th></tr></thead>
+      <tbody>
+        <tr><td>En-tête</td><td>Avatar 56 px, nom, zawiya en texte, bio</td><td>Carte d'identité, zawiya en pastille ou invitation à la choisir</td></tr>
+        <tr><td>Pratique</td><td>Absente</td><td>Trois chiffres et lien vers l'historique</td></tr>
+        <tr><td>Lignée, mouqaddam</td><td>Lignes sans état</td><td>Section « Mon chemin spirituel » avec l'état de visibilité de chaque élément</td></tr>
+        <tr><td>Confidentialité</td><td>Paramètres → Confidentialité</td><td>Section du Profil, avec les valeurs actuelles</td></tr>
+        <tr><td>Langue, contraste</td><td>Dans Paramètres</td><td>Modifiables sur place</td></tr>
+        <tr><td>Administration</td><td>Mêlée aux autres lignes</td><td>Cadre séparé, admin seulement, avec le nombre de signalements</td></tr>
+        <tr><td>Sans compte</td><td>Icône, une phrase, un bouton</td><td>Carte qui dit ce qu'un compte apporte</td></tr>
+        <tr><td>Suppression du compte</td><td>Ligne rouge sous la déconnexion</td><td>Lien discret, séparé, même confirmation</td></tr>
+      </tbody>
+    </table></div>
+  </section>
+
+  <section>
+    <span class="eyebrow">À trancher par vous</span>
+    <h2>Décisions</h2>
+    <div class="decisions">
+      <article><h3>Chiffres de pratique sur le Profil</h3><p>Ils restent sur l'appareil et ne sont visibles que du disciple. Mais certains préfèrent ne pas « compter » leur pratique.</p><span class="rec">Recommandation : les afficher, avec un réglage pour les masquer.</span></article>
+      <article><h3>Confidentialité sur le Profil</h3><p>Les réglages sensibles remontent d'un niveau. L'écran Confidentialité actuel reste en place ; la section n'en est qu'un résumé qui y mène.</p><span class="rec">Recommandation : l'adopter, c'est là qu'on les cherche.</span></article>
+      <article><h3>« Devenir Mouqaddam » pour tous</h3><p>Aujourd'hui, chaque disciple voit cette entrée. Dans la maquette, elle reste dans « Mon chemin spirituel » mais sans mise en avant. Le statut n'est jamais auto-proclamé : le parcours de parrainage ne change pas.</p><span class="rec">Recommandation : la garder discrète, en dernière ligne de la section.</span></article>
+      <article><h3>Paramètres</h3><p>Langue, contraste et confidentialité remontent sur le Profil. Il ne resterait dans Paramètres que la note sur les rappels, À propos et la politique de confidentialité.</p><span class="rec">Recommandation : supprimer l'écran Paramètres et mettre ces trois lignes dans une section « Application ».</span></article>
+    </div>
+  </section>
+
+  <section>
+    <span class="eyebrow">Limites</span>
+    <h2>Ce qui reste fragile</h2>
+    <ul class="plain">
+      <li><b>Chiffres de pratique.</b> Ils viennent du téléphone : après une réinstallation ou sur un autre appareil, ils repartent de zéro. Il faut le dire sous les chiffres.</li>
+      <li><b>États de visibilité.</b> Les afficher sur chaque ligne demande de charger les réglages de confidentialité en même temps que le profil.</li>
+      <li><b>Écran plus long</b> pour un mouqaddam admin, qui cumule toutes les sections. Elles restent dans le même ordre pour tous.</li>
+      <li><b>Ce qui est solide :</b> toutes les fonctions existent déjà ; aucune règle de confidentialité, de parrainage ou de suppression de compte ne change.</li>
+    </ul>
+  </section>
+</div>
+
+<script>
+const $=s=>document.querySelector(s);
+let user='disciple';
+function item(ic,cls,title,sub,end){return `<div class="item"><span class="ic ${cls}">${ic}</span><span style="min-width:0"><b>${title}</b>${sub?`<small>${sub}</small>`:''}</span><span class="end">${end||'›'}</span></div>`}
+function head(){
+  const m=user==='mouqaddam', a=user==='admin';
+  const zawiya = user==='disciple'?'<span class="zchip none">＋ Choisir ma zawiya</span>':'<span class="zchip">⌂ Zawiya de Tivaouane</span>';
+  const badge = m?'<span class="badge">Parrainage confirmé <i>i</i></span>':'';
+  const tip = m?`<div class="tip">Ce statut atteste qu'un parrainage a été confirmé au sein de la communauté At-Tijaniya. Ce n'est pas une reconnaissance ou une habilitation religieuse officielle.</div>`:'';
+  const bio = user==='disciple'?'<div class="bio empty">Ajoutez quelques mots sur vous.</div>':'<div class="bio">Disciple à Thiès. Wazifa du jeudi avec la dahira du quartier.</div>';
+  return `<div class="head"><span class="edit">Modifier</span><div class="row"><span class="avatar">B<span class="cam">▣</span></span><span style="min-width:0"><span class="name">Bocar Gueye</span><br>${zawiya}${badge}</span></div>${tip}${bio}</div>`;
+}
+function practice(){
+  return `<div class="sec-h"><h4>Ma pratique</h4><span>🔒 sur cet appareil</span></div>
+  <div class="stats"><div class="stat z"><b>7</b><small>jours de suite, Lazim et Wazifa</small></div><div class="stat"><b>52</b><small>récitations en octobre</small></div><div class="stat"><b>3</b><small>vendredis de suite</small></div></div>`;
+}
+function path(){
+  const m=user==='mouqaddam';
+  let h=`<div class="sec-h"><h4>Mon chemin spirituel</h4><span>🔒 données sensibles</span></div><div class="list">`;
+  h+= user==='disciple'
+    ? item('✦','g','Ma lignée spirituelle','Le moqaddam qui vous a transmis le wird','<span class="state todo">À renseigner</span>')
+    : item('✦','g','Ma lignée spirituelle','Renseignée','<span class="state vis">Visible des condisciples</span>');
+  h+= item('⟡','e','Retrouver mes condisciples', user==='disciple'?'Après avoir renseigné votre lignée':'2 correspondances', user==='disciple'?'›':'<span class="count">2</span>');
+  if(m){
+    h+= item('↺','e','Demandes de parrainage','1 en attente','<span class="count">1</span>');
+    h+= item('⋮','e',"Ma silsila d'ijaza",'Jusqu\'à Cheikh Ahmed Tijani','<span class="state priv">Privée</span>');
+  } else {
+    h+= item('◇','n','Devenir Mouqaddam','Par parrainage d\'un mouqaddam dont le parrainage est confirmé');
+  }
+  return h+'</div>';
+}
+function privacy(){
+  const m=user==='mouqaddam';
+  return `<div class="sec-h"><h4>Confidentialité</h4></div><div class="list">
+   ${item('✉','n','Qui peut vous contacter','', '<span class="state priv">Correspondances</span>')}
+   ${item('✦','n','Visibilité de ma lignée','', user==='disciple'?'<span class="state priv">Privée</span>':'<span class="state vis">Activée</span>')}
+   ${m?item('◇','n','Disponible comme parrain','', '<span class="toggle on"></span>'):''}
+   ${item('⊘','n','Comptes bloqués','', '0 ›')}
+  </div>`;
+}
+function app(){
+  return `<div class="sec-h"><h4>Application</h4></div><div class="list">
+   ${item('Aa','n','Langue','', '<span class="langseg"><span class="on">FR</span><span>عربي</span></span>')}
+   ${item('◐','n','Contraste renforcé','', '<span class="toggle"></span>')}
+   ${item('♡','g','Faire un don','At-Tijaniya vit de vos dons')}
+   ${item('i','n','À propos et politique de confidentialité','')}
+  </div>`;
+}
+function admin(){
+  if(user!=='admin') return '';
+  return `<div class="sec-h"><h4>Administration</h4><span>admin seulement</span></div><div class="adm">
+   ${item('⚑','g','Signalements','À traiter','<span class="count">3</span>')}
+   ${item('⌂','g','Zawiyas des mouqaddams','')}
+  </div>`;
+}
+function out(){return `<div class="out"><span class="so">Se déconnecter</span><span class="del">Supprimer mon compte</span><span class="ver">At-Tijaniya · version 1.0</span></div>`}
+function guest(){
+  return `<div class="guest"><div class="ar" lang="ar">التجانية</div><h5>Créez votre compte</h5>
+   <ul><li><i>1</i>Vos séries et votre historique de wirds, rattachés à votre compte</li>
+   <li><i>2</i>Rejoindre des groupes, aimer et commenter, écrire aux disciples</li>
+   <li><i>3</i>Retrouver vos condisciples, en privé et seulement si vous l'acceptez</li></ul>
+   <div class="cta">Créer un compte</div><div class="sec">J'ai déjà un compte · Se connecter</div></div>`+app();
+}
+const EXPLAIN={
+ guest:"<b>Sans compte.</b> Au lieu d'une icône et d'une phrase, une carte dit ce qu'un compte apporte. La langue et le contraste deviennent réglables sans compte : aujourd'hui, le Profil cache les Paramètres derrière la connexion.",
+ disciple:"<b>Disciple sans zawiya ni lignée.</b> La pastille invite à choisir sa zawiya ; la lignée est marquée « À renseigner », la confidentialité montre que tout est privé.",
+ mouqaddam:"<b>Parrainage confirmé.</b> Le badge et son explication obligatoire. Les demandes de parrainage et la silsila d'ijaza remplacent « Devenir Mouqaddam », et « Disponible comme parrain » se règle dans la confidentialité.",
+ admin:"<b>Admin.</b> Les mêmes sections, plus un cadre Administration séparé avec le nombre de signalements à traiter."
+};
+function render(){
+  $('#scroll').innerHTML = user==='guest' ? guest() : head()+practice()+path()+privacy()+app()+admin()+out();
+  $('#scroll').scrollTop=0;
+  document.querySelectorAll('.states button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.u===user));
+  $('#explain').innerHTML=EXPLAIN[user];
+}
+document.addEventListener('click',e=>{const t=e.target.closest('button');if(t&&t.dataset.u){user=t.dataset.u;render();}});
+render();
+</script>

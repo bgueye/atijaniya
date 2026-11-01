@@ -1,0 +1,558 @@
+<!doctype html>
+<html lang="fr">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Nouvel accueil At-Tijaniya</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Cormorant+Garamond:wght@500;600&family=Jost:wght@300;400;500;600&display=swap">
+<style>
+/* Layout : une colonne de lecture ; au centre, les deux maquettes côte à côte, pilotées par
+   le même sélecteur de situation, pour comparer A et B dans le même état. */
+:root{
+  --bg:#F3EEE2; --surface:#FFFDF8; --fg:#2B2620; --muted:#66625C; --line:rgba(140,122,91,.28);
+  --accent:#1C6E4A; --accent-soft:#E4EEE8; --gold:#9A7A2E; --gold-soft:#F1E6C9; --warn:#8A4B12;
+  /* Jetons de l'app (design/design_tokens.yaml), fixes : ils représentent l'app */
+  --app-zaytoune:#0F3D2E; --app-emerald:#1C6E4A; --app-gold:#C9A24B; --app-gold-soft:#F1E6C9;
+  --app-parchment:#F7F2E7; --app-emerald-soft:#E4EEE8; --app-ink:#2B2620; --app-bronze:#8C7A5B;
+  --app-off:#FFFDF8; --app-ink2:#66625C; --app-line:rgba(140,122,91,.22);
+  --f-display:"Cormorant Garamond", Georgia, serif;
+  --f-ui:"Jost", "Segoe UI", system-ui, sans-serif;
+  --f-ar:"Amiri", "Traditional Arabic", serif;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#101a16; --surface:#17241f; --fg:#ECE6D8; --muted:#B5AE9F; --line:rgba(201,162,75,.22);
+  --accent:#6FC29A; --accent-soft:#1d3a2e; --gold:#D8B661; --gold-soft:#2f2a1b; --warn:#E3A86A; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#101a16; --surface:#17241f; --fg:#ECE6D8; --muted:#B5AE9F; --line:rgba(201,162,75,.22);
+  --accent:#6FC29A; --accent-soft:#1d3a2e; --gold:#D8B661; --gold-soft:#2f2a1b; --warn:#E3A86A; color-scheme:dark}
+
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--fg);font-family:var(--f-ui);font-size:16px;line-height:1.55;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:32px 64px}
+.wrap{max-width:1100px;margin:0 auto;display:flex;flex-direction:column;gap:56px}
+h1,h2{font-family:var(--f-display);font-weight:600;text-wrap:balance;margin:0;line-height:1.1}
+h1{font-size:clamp(2.2rem,5vw,3.2rem)}
+h2{font-size:1.9rem}
+h3{font-size:1.05rem;font-weight:600;margin:0}
+p{margin:0}
+code{font-size:.88em}
+.eyebrow{font-size:.78rem;letter-spacing:.12em;text-transform:uppercase;color:var(--gold);font-weight:500}
+.lede{font-size:1.1rem;color:var(--muted);max-width:64ch}
+header.top{display:flex;flex-direction:column;gap:14px}
+section{display:flex;flex-direction:column;gap:20px}
+.prose{max-width:68ch;display:flex;flex-direction:column;gap:12px}
+
+.diag{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px}
+.diag article,.decisions article{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:16px 18px;display:flex;flex-direction:column;gap:6px;min-width:0}
+.diag .tag{font-size:.72rem;letter-spacing:.08em;text-transform:uppercase;font-weight:600}
+.tag.red{color:var(--warn)} .tag.ux{color:var(--accent)}
+.diag p,.decisions p{font-size:.95rem;color:var(--muted)}
+
+/* Comparateur */
+.states{display:flex;flex-wrap:wrap;gap:8px;justify-content:center}
+.states button{font:inherit;font-size:.88rem;padding:7px 14px;border-radius:999px;border:1px solid var(--line);background:var(--surface);color:var(--fg);cursor:pointer}
+.states button[aria-pressed="true"]{background:var(--accent);color:var(--surface);border-color:var(--accent)}
+.states button:focus-visible,.phone button:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+.phones{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:32px;justify-items:center}
+.phonecol{display:flex;flex-direction:column;gap:12px;align-items:center;width:100%;max-width:360px}
+.phonecol .cap{display:flex;flex-direction:column;align-items:center;gap:2px;text-align:center}
+.phonecol .cap b{font-family:var(--f-display);font-size:1.4rem;font-weight:600}
+.phonecol .cap span{font-size:.88rem;color:var(--muted)}
+.phone{width:100%;border-radius:34px;background:#1b1b1b;padding:10px;box-shadow:0 20px 50px -20px rgba(0,0,0,.45)}
+.screen{position:relative;height:720px;border-radius:26px;overflow:hidden;background:var(--app-parchment);color:var(--app-ink);font-family:var(--f-ui);display:flex;flex-direction:column}
+.scroll{flex:1;overflow-y:auto;overflow-x:hidden;scrollbar-width:none}
+.scroll::-webkit-scrollbar{display:none}
+.explain{background:var(--accent-soft);border-radius:12px;padding:14px 16px;font-size:.95rem;max-width:760px;margin:0 auto}
+
+/* Commun aux deux maquettes */
+.appbar{display:flex;align-items:center;justify-content:space-between;padding:12px 16px 10px;background:var(--app-zaytoune);color:var(--app-off)}
+.appbar .brand{font-family:var(--f-display);font-size:1.3rem;font-weight:600}
+.appbar .ic{display:flex;gap:14px;opacity:.85}
+.ico{width:20px;height:20px;border:1.6px solid currentColor;border-radius:50%}
+.ico.bell{border-radius:8px 8px 4px 4px}
+.rosace{position:absolute;right:-40px;top:-30px;width:150px;height:150px;opacity:.12;pointer-events:none}
+.nav{display:flex;justify-content:space-around;padding:8px 0 12px;background:var(--app-off);border-top:1px solid var(--app-line);font-size:.62rem;color:var(--app-ink2)}
+.nav div{display:flex;flex-direction:column;align-items:center;gap:3px}
+.nav .on{color:var(--app-emerald);font-weight:600}
+.nav i{width:18px;height:18px;border:1.6px solid currentColor;border-radius:6px}
+.sec{padding:18px 0 0}
+.lbl{padding:0 16px 8px;display:flex;justify-content:space-between;align-items:baseline}
+.lbl span{font-size:.72rem;letter-spacing:.1em;text-transform:uppercase;color:var(--app-ink2)}
+.lbl a{font-size:.75rem;color:var(--app-emerald);text-decoration:none;font-weight:500}
+.carousel{display:flex;gap:10px;overflow-x:auto;scroll-snap-type:x mandatory;padding:2px 16px 6px;scrollbar-width:none;scroll-padding-inline:16px}
+.carousel::-webkit-scrollbar{display:none}
+.dots{display:flex;gap:5px;justify-content:center;padding:6px 0 0}
+.dots i{width:6px;height:6px;border-radius:50%;background:rgba(140,122,91,.3)}
+.dots i.on{width:16px;border-radius:3px;background:var(--app-emerald)}
+.pill{display:inline-block;font-size:.6rem;letter-spacing:.06em;text-transform:uppercase;padding:2px 7px;border-radius:999px;background:var(--app-gold-soft);color:#6d5520;font-weight:600}
+.live{margin:0 16px 10px;border-radius:14px;padding:10px 12px;background:var(--app-gold);color:var(--app-zaytoune);display:flex;align-items:center;gap:10px;font-size:.82rem;font-weight:500}
+.live .dot{width:9px;height:9px;border-radius:50%;background:var(--app-zaytoune);animation:pulse 1.6s infinite;flex:none}
+@keyframes pulse{50%{opacity:.25}}
+@media (prefers-reduced-motion:reduce){.live .dot{animation:none}}
+.portrait{background:linear-gradient(160deg,#5d4a3a,#2c2420 60%,#1d3a2e);color:rgba(255,253,248,.5);font-size:.6rem}
+
+/* Feuille de réponse */
+.sheet{position:absolute;inset:auto 0 0 0;background:var(--app-off);border-radius:22px 22px 0 0;padding:10px 18px 22px;box-shadow:0 -10px 30px rgba(0,0,0,.25);transform:translateY(105%);transition:transform .28s ease;z-index:5;display:flex;flex-direction:column;gap:10px;color:var(--app-ink)}
+.sheet.open{transform:none}
+@media (prefers-reduced-motion:reduce){.sheet{transition:none}}
+.scrim{position:absolute;inset:0;background:rgba(15,61,46,.35);z-index:4}
+.grab{width:36px;height:4px;border-radius:2px;background:rgba(140,122,91,.4);align-self:center}
+.sheet .sk{font-size:.66rem;letter-spacing:.1em;text-transform:uppercase;color:#6d5520;font-weight:600}
+.sheet .sq{font-weight:600;font-size:1rem;line-height:1.35}
+.sheet .sar{font-family:var(--f-ar);font-size:1.15rem;direction:rtl;text-align:right;color:var(--app-emerald)}
+.sheet .sa{font-size:.92rem;line-height:1.5}
+.sheet .ss{font-size:.74rem;font-style:italic;color:var(--app-ink2)}
+.sheet .btns{display:flex;gap:8px;margin-top:4px}
+.sheet .btns button{font:inherit;font-size:.8rem;padding:8px 12px;border-radius:10px;border:1px solid rgba(140,122,91,.35);background:none;color:var(--app-ink);cursor:pointer}
+.sheet .btns button.p{background:var(--app-emerald);border-color:var(--app-emerald);color:var(--app-off)}
+
+/* ===== Proposition A : cartes colorées ===== */
+.a-hero{background:var(--app-zaytoune);color:var(--app-off);padding:4px 16px 18px;position:relative;overflow:hidden}
+.hello{font-family:var(--f-display);font-size:1.55rem;font-weight:600;line-height:1.1}
+.date{font-size:.72rem;color:rgba(247,242,231,.7);margin-top:3px}
+.wtitle{display:flex;justify-content:space-between;align-items:baseline;margin:14px 0 8px}
+.wtitle span{font-size:.7rem;letter-spacing:.12em;text-transform:uppercase;color:var(--app-gold)}
+.wtitle a{font-size:.75rem;color:rgba(247,242,231,.85);text-decoration:none;border-bottom:1px solid rgba(201,162,75,.5)}
+.tiles{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.tile{border-radius:14px;padding:10px 11px;display:flex;flex-direction:column;gap:6px;border:1px solid rgba(201,162,75,.35);background:rgba(255,253,248,.06);text-align:start;font:inherit;color:inherit;cursor:pointer;min-width:0}
+.tile.todo{background:var(--app-gold);color:var(--app-zaytoune);border-color:var(--app-gold)}
+.tile .row{display:flex;align-items:center;justify-content:space-between;gap:6px}
+.tile .name{font-weight:500;font-size:.98rem}
+.ring{width:22px;height:22px;border-radius:50%;display:grid;place-items:center;font-size:.72rem;flex:none}
+.done .ring{background:var(--app-emerald-soft);color:var(--app-emerald)}
+.todo .ring{border:2px solid var(--app-zaytoune)}
+.tile .meta{font-size:.7rem;opacity:.8;line-height:1.3}
+.tile .streak{font-size:.66rem;padding:2px 7px;border-radius:999px;background:rgba(201,162,75,.22);align-self:flex-start}
+.todo .streak{background:rgba(15,61,46,.14)}
+.a-card{flex:0 0 78%;scroll-snap-align:start;border-radius:18px;padding:14px 15px 13px;min-height:178px;display:flex;flex-direction:column;gap:8px;position:relative;overflow:hidden}
+.a-card .k{font-size:.64rem;letter-spacing:.11em;text-transform:uppercase;font-weight:600}
+.a-card .t{font-size:1.02rem;line-height:1.3;font-weight:500}
+.a-card .big{font-family:var(--f-display);font-size:1.7rem;font-weight:600;line-height:1.05}
+.a-card .cta{margin-top:auto;font:inherit;font-size:.78rem;font-weight:600;background:none;border:0;padding:0;cursor:pointer;color:inherit;text-align:start}
+.a-card .cta::after{content:" →"}
+.c-rattrape{background:var(--app-emerald);color:var(--app-off)} .c-rattrape .k{color:var(--app-gold-soft)}
+.c-cas{background:var(--app-gold-soft);color:var(--app-ink)} .c-cas .k{color:#6d5520}
+.c-cond{background:var(--app-off);color:var(--app-ink);border:1px solid rgba(140,122,91,.3)} .c-cond .k{color:var(--app-emerald)} .c-cond .t{font-size:.9rem;font-weight:400}
+.c-bien{background:var(--app-zaytoune);color:var(--app-off)} .c-bien .k{color:var(--app-gold)}
+.c-bien .ev{font-size:.64rem;border:1px solid rgba(201,162,75,.5);border-radius:999px;padding:1px 8px;align-self:flex-start;color:var(--app-gold-soft)}
+.c-all{background:transparent;border:1.5px dashed rgba(140,122,91,.45);color:var(--app-emerald);justify-content:center;flex-basis:48%}
+.a-ev{margin:0 16px;background:var(--app-off);border:1px solid var(--app-line);border-radius:16px;display:flex;gap:12px;padding:12px;align-items:center}
+.datebox{width:54px;flex:none;border-radius:12px;background:var(--app-emerald-soft);color:var(--app-emerald);display:flex;flex-direction:column;align-items:center;padding:6px 0}
+.datebox b{font-size:1.35rem;line-height:1;font-weight:600}
+.datebox small{font-size:.62rem;letter-spacing:.08em;text-transform:uppercase}
+.a-ev .t{font-size:.92rem;font-weight:500;line-height:1.3}
+.a-fig{margin:0 16px;border-radius:16px;overflow:hidden;background:var(--app-off);border:1px solid var(--app-line);display:flex;min-height:132px}
+.a-fig .portrait{width:104px;flex:none;display:grid;place-items:end center;padding-bottom:6px}
+.a-fig .body{padding:12px;display:flex;flex-direction:column;gap:4px;min-width:0}
+.fname{font-family:var(--f-display);font-size:1.15rem;font-weight:600;line-height:1.15}
+.a-fig .r{font-size:.72rem;color:var(--app-ink2)}
+.a-fig a{margin-top:auto;font-size:.75rem;color:var(--app-emerald);font-weight:600;text-decoration:none}
+.a-don{margin:0 16px 20px;font-size:.8rem;display:flex;align-items:center;gap:10px;padding:12px;border-radius:14px;background:var(--app-gold-soft)}
+
+/* ===== Proposition B : sobre et éditoriale ===== */
+.b-hero{background:radial-gradient(120% 90% at 100% 0%,#1d5a43 0%,var(--app-zaytoune) 55%);color:var(--app-off);padding:6px 18px 46px;position:relative;overflow:hidden}
+.b-top{display:flex;justify-content:space-between;align-items:center;gap:12px}
+.b-day{font-size:.66rem;letter-spacing:.16em;text-transform:uppercase;color:var(--app-gold)}
+.b-hello{font-family:var(--f-display);font-size:1.75rem;font-weight:600;line-height:1.05;margin-top:4px}
+.b-hijri{font-size:.7rem;color:rgba(247,242,231,.66);margin-top:4px}
+.b-ring{position:relative;width:70px;height:70px;flex:none}
+.b-ring svg{width:70px;height:70px;transform:rotate(-90deg)}
+.b-ring .c{position:absolute;inset:0;display:grid;place-items:center;text-align:center;line-height:1}
+.b-ring .c b{font-size:1.15rem;font-weight:500}
+.b-ring .c small{display:block;font-size:.52rem;letter-spacing:.1em;text-transform:uppercase;opacity:.7;margin-top:3px}
+.b-action{margin:-34px 14px 0;position:relative;z-index:2;background:var(--app-off);border-radius:18px;padding:14px;box-shadow:0 14px 30px -14px rgba(15,61,46,.45),0 1px 0 rgba(140,122,91,.15);display:flex;flex-direction:column;gap:12px}
+.b-arow{display:flex;align-items:center;gap:12px}
+.b-chip{width:42px;height:42px;border-radius:12px;background:var(--app-emerald-soft);display:grid;place-items:center;flex:none}
+.b-chip svg{width:22px;height:22px}
+.b-atext{min-width:0;flex:1}
+.b-atext .e{font-size:.62rem;letter-spacing:.12em;text-transform:uppercase;color:var(--app-ink2)}
+.b-atext .n{font-size:1.08rem;font-weight:500;line-height:1.2}
+.b-atext .m{font-size:.72rem;color:var(--app-ink2)}
+.b-go{font:inherit;font-size:.8rem;font-weight:500;padding:9px 14px;border-radius:999px;border:0;background:var(--app-emerald);color:var(--app-off);cursor:pointer;flex:none}
+.b-go.sec2{background:var(--app-emerald-soft);color:var(--app-emerald)}
+.b-wirds{display:flex;gap:6px;border-top:1px solid var(--app-line);padding-top:10px;flex-wrap:wrap}
+.b-w{font-size:.7rem;padding:4px 9px;border-radius:999px;border:1px solid var(--app-line);color:var(--app-ink2);display:flex;gap:5px;align-items:center}
+.b-w.ok{background:var(--app-emerald-soft);border-color:transparent;color:var(--app-emerald)}
+.b-w.ok::before{content:"✓";font-size:.66rem}
+.b-w.tasbih{margin-left:auto;border-style:dashed}
+.b-h{padding:22px 16px 10px;display:flex;justify-content:space-between;align-items:baseline}
+.b-h h4{margin:0;font-family:var(--f-display);font-size:1.32rem;font-weight:600}
+.b-h a{font-size:.74rem;color:var(--app-emerald);text-decoration:none;font-weight:500}
+.b-tabs{display:flex;gap:6px;padding:0 16px 10px;overflow-x:auto;scrollbar-width:none}
+.b-tabs::-webkit-scrollbar{display:none}
+.b-tabs button{font:inherit;font-size:.72rem;padding:5px 11px;border-radius:999px;border:1px solid var(--app-line);background:transparent;color:var(--app-ink2);cursor:pointer;white-space:nowrap}
+.b-tabs button[aria-pressed="true"]{background:var(--app-ink);border-color:var(--app-ink);color:var(--app-off)}
+.b-card{flex:0 0 76%;scroll-snap-align:start;border-radius:16px;background:var(--app-off);border:1px solid var(--app-line);padding:14px;min-height:176px;display:flex;flex-direction:column;gap:8px}
+.b-card .hd{display:flex;align-items:center;gap:8px}
+.b-card .ic{width:26px;height:26px;border-radius:8px;display:grid;place-items:center;font-size:.8rem;flex:none}
+.f-cas .ic{background:var(--app-gold-soft);color:#6d5520}
+.f-cond .ic{background:var(--app-emerald-soft);color:var(--app-emerald)}
+.f-bien .ic{background:#ECE7DA;color:var(--app-bronze)}
+.b-card .k{font-size:.62rem;letter-spacing:.1em;text-transform:uppercase;color:var(--app-ink2)}
+.b-card .t{font-size:.98rem;font-weight:500;line-height:1.32}
+.b-card .ar{font-family:var(--f-ar);font-size:1.05rem;direction:rtl;text-align:right;color:var(--app-emerald);line-height:1.5}
+.b-card .tx{font-size:.84rem;line-height:1.45;color:var(--app-ink)}
+.b-card .ft{margin-top:auto;border-top:1px solid var(--app-line);padding-top:9px;display:flex;justify-content:space-between;align-items:center}
+.b-card .ft button{font:inherit;font-size:.74rem;font-weight:500;color:var(--app-emerald);background:none;border:0;padding:0;cursor:pointer}
+.b-card .ft span{font-size:.62rem;color:var(--app-ink2)}
+.b-card.ctx{background:var(--app-zaytoune);border-color:var(--app-zaytoune);color:var(--app-off)}
+.b-card.ctx .k{color:var(--app-gold)}
+.b-card.ctx .ic{background:rgba(201,162,75,.2);color:var(--app-gold)}
+.b-card.ctx .arbig{font-family:var(--f-ar);font-size:2rem;direction:rtl;text-align:right;color:var(--app-gold);line-height:1.2}
+.b-card.ctx .t{font-family:var(--f-display);font-size:1.35rem;font-weight:600}
+.b-card.ctx .ft{border-color:rgba(201,162,75,.25)}
+.b-card.ctx .ft button{color:var(--app-gold-soft)}
+.b-fig{margin:0 16px;border-radius:18px;overflow:hidden;position:relative;height:172px;display:block;color:var(--app-off)}
+.b-fig .portrait{position:absolute;inset:0;display:grid;place-items:center}
+.b-fig .ov{position:absolute;inset:0;background:linear-gradient(180deg,rgba(15,61,46,0) 35%,rgba(15,61,46,.92) 100%);display:flex;flex-direction:column;justify-content:flex-end;padding:14px;gap:2px}
+.b-fig .e{font-size:.6rem;letter-spacing:.14em;text-transform:uppercase;color:var(--app-gold)}
+.b-fig .fname{font-size:1.4rem}
+.b-fig .m{font-size:.7rem;opacity:.8}
+.b-list{margin:0 16px;background:var(--app-off);border:1px solid var(--app-line);border-radius:16px;overflow:hidden}
+.b-row{display:flex;gap:14px;align-items:center;padding:12px 14px}
+.b-row+.b-row{border-top:1px solid var(--app-line)}
+.b-date{width:40px;text-align:center;flex:none;line-height:1}
+.b-date b{display:block;font-family:var(--f-display);font-size:1.5rem;font-weight:600;color:var(--app-emerald)}
+.b-date small{font-size:.58rem;letter-spacing:.1em;text-transform:uppercase;color:var(--app-ink2)}
+.b-row .t{font-size:.9rem;font-weight:500;line-height:1.3}
+.b-row .m{font-size:.7rem;color:var(--app-ink2);margin-top:2px}
+.b-don{margin:18px 16px 22px;display:flex;justify-content:space-between;align-items:center;font-size:.78rem;color:var(--app-ink2);padding-top:14px;border-top:1px solid var(--app-line)}
+.b-don a{color:var(--app-emerald);font-weight:500;text-decoration:none}
+
+/* Notes et tableaux */
+.cols{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:32px}
+.notes{display:flex;flex-direction:column;gap:16px;min-width:0}
+.notes > h3{font-family:var(--f-display);font-size:1.4rem}
+.note{border-left:3px solid var(--gold);padding:2px 0 2px 16px;display:flex;flex-direction:column;gap:4px}
+.note p{color:var(--muted);font-size:.95rem}
+.tbl{overflow-x:auto;border:1px solid var(--line);border-radius:12px;background:var(--surface)}
+table{border-collapse:collapse;width:100%;min-width:620px;font-size:.92rem}
+th,td{text-align:left;padding:11px 14px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-size:.74rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:500}
+tr:last-child td{border-bottom:0}
+.decisions{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:14px}
+.decisions .rec{font-size:.9rem;color:var(--accent);font-weight:500}
+ul.plain{margin:0;padding-left:1.1em;display:flex;flex-direction:column;gap:8px;color:var(--muted)}
+ul.plain b{color:var(--fg);font-weight:500}
+.steps{counter-reset:s;display:flex;flex-direction:column;gap:10px;margin:0;padding:0;list-style:none}
+.steps li{counter-increment:s;display:grid;grid-template-columns:32px 1fr;gap:10px;align-items:start}
+.steps li::before{content:counter(s);width:26px;height:26px;border-radius:50%;background:var(--gold-soft);color:var(--gold);display:grid;place-items:center;font-size:.82rem;font-weight:600}
+.steps span{color:var(--muted)}
+</style>
+
+<div class="wrap">
+  <header class="top">
+    <span class="eyebrow">At-Tijaniya · Accueil · propositions du 1er novembre 2026</span>
+    <h1>Deux directions pour l'accueil, comparées dans la même situation</h1>
+    <p class="lede">A garde les cartes colorées de la première proposition. B, plus sobre et plus professionnelle, réserve la couleur à ce qui demande une action. Dans les deux, les wirds n'apparaissent qu'une fois, et l'évènement est descendu en bas de page, juste au-dessus du don.</p>
+  </header>
+
+  <section>
+    <span class="eyebrow">Maquettes interactives</span>
+    <h2>A et B côte à côte</h2>
+    <p class="lede">Changez de situation : les deux écrans réagissent ensemble. Faites défiler les carrousels, touchez « Voir la réponse », et dans B, essayez les filtres au-dessus des cartes.</p>
+    <div class="states" role="group" aria-label="Situation du disciple">
+      <button type="button" data-state="hier" aria-pressed="true">Wazifa d'hier non marquée</button>
+      <button type="button" data-state="fait" aria-pressed="false">Tout accompli</button>
+      <button type="button" data-state="vendredi" aria-pressed="false">Vendredi</button>
+    </div>
+    <div class="explain" id="explain"></div>
+
+    <div class="phones">
+      <!-- ============ A ============ -->
+      <div class="phonecol">
+        <div class="cap"><b>A · Cartes colorées</b><span>Chaque famille de contenu a sa couleur</span></div>
+        <div class="phone"><div class="screen">
+          <div class="appbar"><span class="brand">At-Tijaniya</span><span class="ic"><i class="ico bell"></i><i class="ico"></i></span></div>
+          <div class="scroll">
+            <div class="a-hero">
+              <canvas class="rosace" width="300" height="300" aria-hidden="true"></canvas>
+              <div class="hello">Salam, Bocar</div>
+              <div class="date" data-bind="dateA"></div>
+              <div class="wtitle"><span>Mon wird du jour</span><a href="#" onclick="return false">Tasbih libre</a></div>
+              <div class="tiles" id="aTiles"></div>
+            </div>
+            <div class="sec">
+              <div class="lbl"><span>Comprendre et rattraper</span><a href="#" onclick="return false">Tout voir</a></div>
+              <div class="carousel" id="aCar" tabindex="0" aria-label="Cartes, proposition A"></div>
+              <div class="dots" id="aDots"></div>
+            </div>
+            <div class="sec">
+              <div class="lbl"><span>Figure de la semaine</span></div>
+              <div class="a-fig">
+                <div class="portrait">portrait</div>
+                <div class="body"><div class="fname">Mame Abdoul Aziz Sy</div><div class="r">Citation ou date de ziara, seulement si elles existent en base</div><a href="#" onclick="return false">Lire la biographie →</a></div>
+              </div>
+            </div>
+            <div class="sec">
+              <div class="lbl"><span>À venir</span><a href="#" onclick="return false">Calendrier</a></div>
+              <div class="live" data-bind="live" hidden><span class="dot"></span>En direct · un direct de votre groupe</div>
+              <div class="a-ev"><div class="datebox"><b>25</b><small>déc.</small></div><div><div class="t">Ziarra de Taïba Niassène 2026</div><span class="pill">date approximative</span></div></div>
+            </div>
+            <div class="sec"><div class="a-don"><b style="font-weight:600">Faire un don</b><span style="color:var(--app-ink2)">Soutenir l'application</span></div></div>
+          </div>
+          <div class="nav"><div class="on"><i></i>Accueil</div><div><i></i>Wird</div><div><i></i>Zawiyas</div><div><i></i>Figures</div><div><i></i>Communauté</div></div>
+          <div class="scrim" hidden></div>
+          <div class="sheet" role="dialog" aria-modal="true"><div class="grab"></div><span class="sk"></span><div class="sq"></div><div class="sar"></div><div class="sa"></div><div class="ss"></div><div class="btns"><button type="button" class="p close">Ouvrir la page complète</button><button type="button" class="close">Fermer</button></div></div>
+        </div></div>
+      </div>
+
+      <!-- ============ B ============ -->
+      <div class="phonecol">
+        <div class="cap"><b>B · Sobre et éditoriale</b><span>Une action principale, des cartes uniformes</span></div>
+        <div class="phone"><div class="screen">
+          <div class="appbar" style="background:#123f30"><span class="brand">At-Tijaniya</span><span class="ic"><i class="ico bell"></i><i class="ico"></i></span></div>
+          <div class="scroll">
+            <div class="b-hero">
+              <canvas class="rosace" width="300" height="300" aria-hidden="true"></canvas>
+              <div class="b-top">
+                <div>
+                  <div class="b-day" data-bind="dayB"></div>
+                  <div class="b-hello">Salam, Bocar</div>
+                  <div class="b-hijri" data-bind="hijriB"></div>
+                </div>
+                <div class="b-ring" id="bRing"></div>
+              </div>
+            </div>
+            <div class="b-action" id="bAction"></div>
+
+            <div class="b-h"><h4>Comprendre et rattraper</h4><a href="#" onclick="return false">Tout voir</a></div>
+            <div class="b-tabs" id="bTabs" role="group" aria-label="Filtrer les cartes">
+              <button type="button" data-f="all" aria-pressed="true">Pour vous</button>
+              <button type="button" data-f="cas" aria-pressed="false">Rattraper</button>
+              <button type="button" data-f="cond" aria-pressed="false">Conditions</button>
+              <button type="button" data-f="bien" aria-pressed="false">Bienfaits</button>
+            </div>
+            <div class="carousel" id="bCar" tabindex="0" aria-label="Cartes, proposition B"></div>
+            <div class="dots" id="bDots"></div>
+
+            <div class="b-h"><h4>Figure de la semaine</h4></div>
+            <div class="b-fig">
+              <div class="portrait">portrait</div>
+              <div class="ov"><span class="e">Figure de la semaine</span><span class="fname">Mame Abdoul Aziz Sy</span><span class="m">Lire la biographie →</span></div>
+            </div>
+
+            <div class="b-h"><h4>À venir</h4><a href="#" onclick="return false">Calendrier</a></div>
+            <div class="live" data-bind="live" hidden><span class="dot"></span>En direct · un direct de votre groupe</div>
+            <div class="b-list">
+              <div class="b-row"><div class="b-date"><b>25</b><small>déc.</small></div><div><div class="t">Ziarra de Taïba Niassène 2026</div><div class="m">Date approximative</div></div></div>
+            </div>
+            <div class="b-don"><span>At-Tijaniya vit de vos dons</span><a href="#" onclick="return false">Faire un don →</a></div>
+          </div>
+          <div class="nav"><div class="on"><i></i>Accueil</div><div><i></i>Wird</div><div><i></i>Zawiyas</div><div><i></i>Figures</div><div><i></i>Communauté</div></div>
+          <div class="scrim" hidden></div>
+          <div class="sheet" role="dialog" aria-modal="true"><div class="grab"></div><span class="sk"></span><div class="sq"></div><div class="sar"></div><div class="sa"></div><div class="ss"></div><div class="btns"><button type="button" class="p close">Ouvrir la page complète</button><button type="button" class="close">Fermer</button></div></div>
+        </div></div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <span class="eyebrow">Ce qui distingue B</span>
+    <h2>Pourquoi B paraît plus professionnelle</h2>
+    <div class="cols">
+      <div class="notes">
+        <div class="note"><h3>Une seule action principale</h3><p>Une carte surélevée chevauche l'en-tête et dit quoi faire maintenant : « Wazifa · Commencer ». C'est le seul bouton plein de l'écran. Quand tout est fait, elle devient « Journée accomplie » et propose le tasbih libre.</p></div>
+        <div class="note"><h3>Un anneau segmenté</h3><p>Un segment par wird applicable aujourd'hui, doré quand il est fait. Il résume la journée sans texte, et un troisième segment apparaît le vendredi.</p></div>
+        <div class="note"><h3>La couleur a un sens</h3><p>Fond clair et filets fins pour tout le contenu ; le zaytoune et l'or sont réservés à ce qui concerne le disciple aujourd'hui (l'en-tête et la carte de rattrapage contextuelle). Les familles se reconnaissent à une petite pastille, pas à la couleur de toute la carte.</p></div>
+      </div>
+      <div class="notes">
+        <div class="note"><h3>L'arabe comme signature</h3><p>Quand le texte validé existe en arabe, il apparaît sous le français en Amiri : « الشك في عدد الأذكار », et en grand sur la carte contextuelle « تُقضى ». C'est ce qui ancre l'écran dans la Tariqa sans ornement ajouté. Les libellés d'interface restent en Jost.</p></div>
+        <div class="note"><h3>Des filtres au-dessus des cartes</h3><p>« Pour vous » mélange les familles ; « Rattraper », « Conditions » et « Bienfaits » permettent de parcourir un seul type. Le carrousel devient un petit outil de consultation, plus seulement une vitrine.</p></div>
+        <div class="note"><h3>Des titres de section en Cormorant</h3><p>Les intertitres en petites capitales grises sont remplacés par des titres en Cormorant Garamond, déjà la police des titres de la charte. La page se lit comme un sommaire éditorial.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <span class="eyebrow">Comparaison</span>
+    <h2>A ou B</h2>
+    <div class="tbl"><table>
+      <thead><tr><th>Critère</th><th>A · Cartes colorées</th><th>B · Sobre et éditoriale</th></tr></thead>
+      <tbody>
+        <tr><td>Impression générale</td><td>Vivante, chaleureuse, proche d'une app grand public</td><td>Posée, premium, proche d'une app de méditation ou bancaire</td></tr>
+        <tr><td>Couleur</td><td>Beaucoup : quatre aplats différents dans le carrousel</td><td>Peu, mais là où elle compte : action du jour, carte contextuelle</td></tr>
+        <tr><td>Wirds du jour</td><td>Tuiles dans l'en-tête, une par wird</td><td>Anneau + une carte d'action + pastilles de statut</td></tr>
+        <tr><td>Lisibilité dans la durée</td><td>Risque de lassitude : les aplats attirent l'œil même quand rien n'a changé</td><td>Stable : ce qui change d'un jour à l'autre ressort seul</td></tr>
+        <tr><td>Fidélité à la charte</td><td>Étend le zaytoune à une carte de contenu (décision à prendre)</td><td>Zaytoune limité à l'en-tête et à la carte contextuelle</td></tr>
+        <tr><td>Coût de réalisation</td><td>Un peu moindre</td><td>Un peu plus : anneau, carte qui chevauche l'en-tête, filtres</td></tr>
+      </tbody>
+    </table></div>
+    <p class="prose" style="color:var(--muted)">Mon avis : B tient mieux dans le temps et correspond à « professionnel et moderne ». Elle est moins « colorée » au sens de votre première demande ; si cette couleur vous manque, on peut reprendre dans B les pastilles de famille de A en plus grand, sans aller jusqu'aux aplats.</p>
+  </section>
+
+  <section>
+    <span class="eyebrow">Commun à A et B</span>
+    <h2>Logique du carrousel</h2>
+    <div class="prose"><p>Le contenu est entièrement validé en base : 39 cas et 19 notes de rattrapage, 23 conditions, 34 cartes de bienfaits en 9 sections.</p></div>
+    <div class="tbl"><table>
+      <thead><tr><th>Position</th><th>Carte</th><th>Source en base</th><th>Règle de choix</th></tr></thead>
+      <tbody>
+        <tr><td>1 (contextuelle)</td><td>Rattrapage</td><td><code>wird_repair_notes</code>, type <code>quick_answer</code></td><td>Wird de la veille non marqué : sa réponse courte (« Se rattrape »). Le vendredi : « Ne se rattrape pas » pour la Hadratou-l-Jouma. Sinon, pas de carte contextuelle.</td></tr>
+        <tr><td>2</td><td>Situation</td><td><code>wird_repair_cases</code></td><td>Un cas par jour, rotation déterministe, en privilégiant le wird de la carte 1.</td></tr>
+        <tr><td>3</td><td>Bienfait</td><td><code>tariqa_benefit_cards</code></td><td>Titre et section seulement ; le vendredi, la section Hadra.</td></tr>
+        <tr><td>4</td><td>Condition</td><td><code>tariqa_conditions</code></td><td>Une par jour, texte intégral (phrases courtes).</td></tr>
+        <tr><td>Fin</td><td>Tout voir</td><td>—</td><td>Ouvre « Comprendre et rattraper » dans l'onglet Wird.</td></tr>
+      </tbody>
+    </table></div>
+    <div class="prose">
+      <h3>Règles pour le contenu religieux</h3>
+      <ul class="plain">
+        <li><b>Jamais de réponse tronquée sur une carte.</b> La carte montre la question ; la réponse s'ouvre en entier avec sa source.</li>
+        <li><b>Aucun texte écrit par l'app.</b> Seules les étiquettes d'interface sont ajoutées ; les textes viennent des colonnes validées.</li>
+        <li><b>« Non marquée », pas « manquée ».</b> L'app ne sait que ce que le disciple a coché.</li>
+      </ul>
+    </div>
+  </section>
+
+  <section>
+    <span class="eyebrow">À trancher par vous</span>
+    <h2>Décisions avant d'implémenter</h2>
+    <div class="decisions">
+      <article><h3>A ou B</h3><p>Ou B avec les pastilles de famille de A agrandies, si vous voulez plus de couleur.</p><span class="rec">Recommandation : B.</span></article>
+      <article><h3>Bienfaits sans arabe</h3><p>Vérifié en base : aucune des 34 cartes de bienfaits n'a de titre ni de texte en arabe. L'écran actuel retombe sur le français. Sur l'accueil en arabe, une carte en français au milieu du carrousel détonnerait.</p><span class="rec">Recommandation : exclure les bienfaits du carrousel en arabe tant qu'ils ne sont pas traduits et validés.</span></article>
+      <article><h3>Note sur la date hégirienne</h3><p>Votre décision P2-4 impose de dire que la date est calculée. Les maquettes la condensent en « calculée, ±1 jour » sur la même ligne.</p><span class="rec">Recommandation : accepter la forme courte.</span></article>
+      <article><h3>Carte contextuelle de rattrapage</h3><p>Un disciple qui ne coche pas toujours la verrait souvent.</p><span class="rec">Recommandation : la réserver à ceux qui ont marqué au moins un wird dans les 7 derniers jours.</span></article>
+    </div>
+  </section>
+
+  <section>
+    <span class="eyebrow">Ce qui reste fragile</span>
+    <h2>Limites</h2>
+    <div class="prose"><ul class="plain">
+      <li><b>Les carrousels sont peu explorés au-delà de la deuxième carte.</b> D'où la carte contextuelle en tête, le débord visible de la suivante et, dans B, les filtres. Pas de défilement automatique.</li>
+      <li><b>RTL.</b> En arabe, le carrousel commence à droite ; un <code>ListView</code> horizontal Flutter le fait seul. Dans B, la carte d'action et l'anneau s'inversent aussi.</li>
+      <li><b>Hors ligne.</b> L'en-tête et la carte d'action sont locaux. Le carrousel dépend du réseau et doit garder en cache le dernier contenu reçu.</li>
+      <li><b>Ce qui est solide :</b> toutes les données existent déjà. Aucune migration n'est nécessaire.</li>
+    </ul></div>
+  </section>
+
+  <section>
+    <span class="eyebrow">Ordre de mise en œuvre</span>
+    <h2>Découpage proposé</h2>
+    <ol class="steps">
+      <li><div><b>Corriger le rappel d'un wird déjà fait</b> <span>— indépendant de la refonte.</span></div></li>
+      <li><div><b>En-tête et action du jour</b> <span>— suppression de « Aujourd'hui », « Prochain moment » et « Accès rapide ».</span></div></li>
+      <li><div><b>Carrousel « Comprendre et rattraper »</b> <span>— assemblage des cartes depuis les trois dépôts existants, feuille de réponse, cache hors ligne, tests de la rotation.</span></div></li>
+      <li><div><b>Figure de la semaine, puis À venir en bas de page</b> <span>— carte figure compacte, liste d'évènements datés, bandeau de direct.</span></div></li>
+      <li><div><b>Traductions arabes et vérification sur téléphone</b> <span>— libellés ARB, contrôle RTL et contraste.</span></div></li>
+    </ol>
+  </section>
+</div>
+
+<script>
+const SRC = 'Source affichée telle qu’enregistrée en base.';
+const CONTENT = {
+  cas1:{fam:'cas',k:'Situation · Erreur',t:'Doute sur le nombre de répétitions',ar:'الشك في عدد الأذكار',
+    sheet:{k:'Rattraper son wird · Erreur',q:'Doute sur le nombre de répétitions',ar:'الشك في عدد الأذكار',a:"On construit sur le nombre le plus bas, celui dont on est sûr. Une fois le wird terminé, on répare par 100 fois « Astaghfirou-llah » avec l'intention de réparer."}},
+  cas2:{fam:'cas',k:'Situation · Erreur',t:'Absence de présence du cœur (houdour)',ar:'غياب الحضور',
+    sheet:{k:'Rattraper son wird · Erreur',q:'Absence de présence du cœur (houdour)',ar:'غياب الحضور',a:"Après l'acte, on récite 3 fois « Djaouharatou-l-Kamel » avec l'intention de réparer, avec toute la présence possible. Al-Durra range aussi le défaut de présence parmi les manques que l'on répare dans la Wazifa."}},
+  cond:{fam:'cond',k:'Condition · Validité du talqin',tx:"Que le cheikh qui transmet le Wird ait lui-même reçu une autorisation valide remontant à Cheikh Ahmed Tijani, même à travers plusieurs intermédiaires."},
+  bienW:{fam:'bien',k:'Bienfait · Wazifa',t:"Effacer les fautes d'une Wazifa à l'autre"},
+  bienH:{fam:'bien',k:'Bienfait · Hadratou-l-Jouma',t:'La présence du Prophète ﷺ et un bien immense'},
+  bienT:{fam:'bien',k:'Bienfait · La Tariqa',t:"L'entrée au Paradis sans compte ni châtiment"},
+  rWaz:{fam:'ctx',k:"Wazifa d'hier non marquée",big:'Se rattrape',arbig:'تُقضى',sub:'Que faire, et quand ?'},
+  rHadra:{fam:'ctx',k:"Aujourd'hui, vendredi",big:'Ne se rattrape pas',arbig:'لا تُقضى',sub:'Hadratou-l-Jouma : ne la laissez pas passer.'}
+};
+const STATES = {
+  hier:{
+    dateA:'Dimanche 1 novembre · 21 Joumada al-Oula 1448 (calculée, ±1 jour)', dayB:'Dimanche 1 novembre', hijriB:'21 Joumada al-Oula 1448 · calculée, ±1 jour',
+    wirds:[{n:'Lazim',done:true,meta:'Fait ce matin',streak:'3 jours de suite'},{n:'Wazifa',done:false,meta:'Rappel à 18:00',streak:'série à reprendre'}],
+    action:{e:'Prochaine étape',n:'Wazifa',m:'Rappel à 18:00',btn:'Commencer'},
+    cards:['rWaz','cas1','bienW','cond','cas2'], live:false,
+    explain:"<b>Wazifa d'hier non marquée.</b> Dans les deux écrans, la première carte donne la réponse courte validée pour la Wazifa et ouvre ses cas. Dans B, la carte d'action propose la Wazifa du jour avec son rappel."
+  },
+  fait:{
+    dateA:'Dimanche 1 novembre · 21 Joumada al-Oula 1448 (calculée, ±1 jour)', dayB:'Dimanche 1 novembre', hijriB:'21 Joumada al-Oula 1448 · calculée, ±1 jour',
+    wirds:[{n:'Lazim',done:true,meta:'Fait ce matin',streak:'4 jours de suite'},{n:'Wazifa',done:true,meta:'Faite à 18:20',streak:'4 jours de suite'}],
+    action:{e:'Aujourd’hui',n:'Journée accomplie',m:'Lazim et Wazifa marqués · 4 jours de suite',btn:'Tasbih libre',secondary:true,done:true},
+    cards:['cas1','bienT','cond','cas2'], live:false,
+    explain:"<b>Tout est accompli.</b> Plus de carte de rattrapage ni de rappel. Dans B, l'anneau est complet et la carte d'action passe en « Journée accomplie », avec le tasbih libre en bouton secondaire."
+  },
+  vendredi:{
+    dateA:'Vendredi 6 novembre · 26 Joumada al-Oula 1448 (calculée, ±1 jour)', dayB:'Vendredi 6 novembre', hijriB:'26 Joumada al-Oula 1448 · calculée, ±1 jour',
+    wirds:[{n:'Lazim',done:true,meta:'Fait ce matin',streak:'5 jours de suite'},{n:'Wazifa',done:false,meta:'Rappel à 18:00',streak:'5 jours de suite'},{n:'Hadratou-l-Jouma',done:false,meta:'Horaire selon le contenu validé',streak:'2 vendredis de suite',wide:true}],
+    action:{e:'Prochaine étape',n:'Wazifa',m:'Rappel à 18:00 · puis Hadratou-l-Jouma',btn:'Commencer'},
+    cards:['rHadra','bienH','cas1','cond'], live:true,
+    explain:"<b>Vendredi.</b> La Hadratou-l-Jouma s'ajoute : une troisième tuile dans A, un troisième segment d'anneau dans B. Comme elle ne se rattrape pas, la carte contextuelle le rappelle avant qu'il soit trop tard. Un direct en cours dans un groupe du disciple s'affiche en bandeau dans « À venir »."
+  }
+};
+const $ = (s,r=document) => r.querySelector(s);
+const esc = s => String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+let current='hier', filter='all';
+
+const A_CLASS={cas:'c-cas',cond:'c-cond',bien:'c-bien',ctx:'c-rattrape'};
+function aCard(id){const c=CONTENT[id];
+  if(c.fam==='ctx') return `<div class="a-card c-rattrape"><span class="k">${esc(c.k)}</span><span class="big">${esc(c.big)}</span><span class="t">${esc(c.sub)}</span><button type="button" class="cta">Voir les cas</button></div>`;
+  return `<div class="a-card ${A_CLASS[c.fam]}"><span class="k">${esc(c.k)}</span><span class="t">${esc(c.t||c.tx)}</span>${c.fam==='bien'?'<span class="ev">Étiquette de solidité du texte</span>':''}<button type="button" class="cta" ${c.sheet?`data-card="${id}"`:''}>${c.sheet?'Voir la réponse':c.fam==='cond'?'Toutes les conditions':'Lire'}</button></div>`;}
+const B_ICON={cas:'↺',cond:'§',bien:'✦',ctx:'↺'};
+function bCard(id){const c=CONTENT[id];
+  if(c.fam==='ctx') return `<div class="b-card ctx"><div class="hd"><span class="ic">${B_ICON.ctx}</span><span class="k">${esc(c.k)}</span></div><div class="arbig">${esc(c.arbig)}</div><div class="t">${esc(c.big)}</div><div class="ft"><button type="button">${esc(c.sub)} →</button></div></div>`;
+  const lbl = c.sheet?'Voir la réponse':c.fam==='cond'?'Toutes les conditions':'Lire';
+  return `<div class="b-card f-${c.fam}"><div class="hd"><span class="ic">${B_ICON[c.fam]}</span><span class="k">${esc(c.k)}</span></div>
+    ${c.t?`<div class="t">${esc(c.t)}</div>`:''}${c.ar?`<div class="ar" lang="ar">${esc(c.ar)}</div>`:''}${c.tx?`<div class="tx">${esc(c.tx)}</div>`:''}
+    <div class="ft"><button type="button" ${c.sheet?`data-card="${id}"`:''}>${lbl} →</button>${c.fam==='bien'?'<span>Solidité indiquée</span>':''}</div></div>`;}
+function allCardA(){return `<div class="a-card c-all"><span class="t">Tout voir</span><button type="button" class="cta">Comprendre et rattraper</button></div>`}
+
+function ringSVG(wirds){
+  const n=wirds.length,r=30,C=2*Math.PI*r,gap=6,seg=C/n-gap;
+  const arcs=wirds.map((w,i)=>`<circle cx="35" cy="35" r="${r}" fill="none" stroke="${w.done?'#C9A24B':'rgba(255,253,248,.18)'}" stroke-width="5" stroke-linecap="round" stroke-dasharray="${seg} ${C-seg}" stroke-dashoffset="${-(i*C/n)-gap/2}"/>`).join('');
+  const done=wirds.filter(w=>w.done).length;
+  return `<svg viewBox="0 0 70 70" aria-hidden="true">${arcs}</svg><div class="c"><div><b>${done}/${n}</b><small>wirds</small></div></div>`;
+}
+const moon='<svg viewBox="0 0 24 24" fill="none" stroke="#1C6E4A" stroke-width="1.8" stroke-linecap="round"><path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z"/></svg>';
+const check='<svg viewBox="0 0 24 24" fill="none" stroke="#1C6E4A" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>';
+
+function bindDots(car,dots){
+  const upd=()=>{const cards=[...car.children];let idx=0,best=1e9;cards.forEach((c,i)=>{const d=Math.abs(c.offsetLeft-car.offsetLeft-16-car.scrollLeft);if(d<best){best=d;idx=i}});[...dots.children].forEach((d,i)=>d.className=i===idx?'on':'');};
+  car.addEventListener('scroll',upd,{passive:true});
+}
+function render(){
+  const st=STATES[current];
+  document.querySelectorAll('[data-bind]').forEach(el=>{const k=el.dataset.bind; if(k==='live') el.hidden=!st.live; else el.textContent=st[k];});
+  $('#explain').innerHTML=st.explain;
+  // A
+  $('#aTiles').innerHTML=st.wirds.map(t=>`<button type="button" class="tile ${t.done?'done':'todo'}" ${t.wide?'style="grid-column:1/-1"':''}><span class="row"><span class="name">${esc(t.n)}</span><span class="ring">${t.done?'✓':''}</span></span><span class="meta">${esc(t.meta)}</span><span class="streak">${esc(t.streak)}</span></button>`).join('');
+  $('#aCar').innerHTML=st.cards.map(aCard).join('')+allCardA(); $('#aCar').scrollLeft=0;
+  $('#aDots').innerHTML=[...st.cards,'x'].map((_,i)=>`<i class="${i?'':'on'}"></i>`).join('');
+  // B
+  $('#bRing').innerHTML=ringSVG(st.wirds);
+  const a=st.action;
+  $('#bAction').innerHTML=`<div class="b-arow"><span class="b-chip">${a.done?check:moon}</span><div class="b-atext"><div class="e">${esc(a.e)}</div><div class="n">${esc(a.n)}</div><div class="m">${esc(a.m)}</div></div><button type="button" class="b-go ${a.secondary?'sec2':''}">${esc(a.btn)}</button></div>
+    <div class="b-wirds">${st.wirds.map(w=>`<span class="b-w ${w.done?'ok':''}">${esc(w.n)}</span>`).join('')}${a.secondary?'':'<span class="b-w tasbih">Tasbih libre</span>'}</div>`;
+  renderB();
+  document.querySelectorAll('.states button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.state===current));
+  document.querySelectorAll('.scroll').forEach(s=>s.scrollTop=0);
+}
+function renderB(){
+  const st=STATES[current];
+  let ids = filter==='all' ? st.cards : Object.keys(CONTENT).filter(id=>CONTENT[id].fam===filter);
+  $('#bCar').innerHTML=ids.map(bCard).join(''); $('#bCar').scrollLeft=0;
+  $('#bDots').innerHTML=ids.map((_,i)=>`<i class="${i?'':'on'}"></i>`).join('');
+  document.querySelectorAll('#bTabs button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.f===filter));
+}
+document.querySelectorAll('.states button').forEach(b=>b.addEventListener('click',()=>{current=b.dataset.state;filter='all';closeAll();render();}));
+$('#bTabs').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;filter=b.dataset.f;renderB();});
+bindDots($('#aCar'),$('#aDots')); bindDots($('#bCar'),$('#bDots'));
+
+document.querySelectorAll('.screen').forEach(screen=>{
+  const sheet=$('.sheet',screen), scrim=$('.scrim',screen);
+  const close=()=>{scrim.hidden=true;sheet.classList.remove('open');};
+  screen.addEventListener('click',e=>{
+    const b=e.target.closest('[data-card]');
+    if(b){const s=CONTENT[b.dataset.card].sheet;
+      $('.sk',sheet).textContent=s.k; $('.sq',sheet).textContent=s.q; $('.sar',sheet).textContent=s.ar||''; $('.sa',sheet).textContent=s.a; $('.ss',sheet).textContent=SRC;
+      scrim.hidden=false; sheet.classList.add('open'); $('.close:not(.p)',sheet).focus(); return;}
+    if(e.target.closest('.close')||e.target===scrim) close();
+  });
+  screen._close=close;
+});
+function closeAll(){document.querySelectorAll('.screen').forEach(s=>s._close&&s._close());}
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeAll()});
+
+document.querySelectorAll('canvas.rosace').forEach(cv=>{const x=cv.getContext('2d'),c=150;x.strokeStyle='#C9A24B';x.lineWidth=3;
+  for(let k=0;k<2;k++){x.beginPath();for(let i=0;i<=4;i++){const a=i*Math.PI/2+k*Math.PI/4;const px=c+120*Math.cos(a),py=c+120*Math.sin(a);i?x.lineTo(px,py):x.moveTo(px,py);}x.stroke();}
+  x.beginPath();x.arc(c,c,60,0,Math.PI*2);x.stroke();x.beginPath();x.arc(c,c,135,0,Math.PI*2);x.stroke();});
+render();
+</script>

@@ -1,0 +1,403 @@
+<!doctype html>
+<html lang="fr">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Nouvel écran Zawiyas</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Cormorant+Garamond:wght@500;600&family=Jost:wght@300;400;500;600&display=swap">
+<style>
+/* Layout : colonne de lecture ; maquette de téléphone à gauche, explications à droite
+   (empilées sur mobile) ; puis avant/après, décisions et limites. */
+:root{
+  --bg:#F3EEE2; --surface:#FFFDF8; --fg:#2B2620; --muted:#66625C; --line:rgba(140,122,91,.28);
+  --accent:#1C6E4A; --accent-soft:#E4EEE8; --gold:#9A7A2E; --gold-soft:#F1E6C9;
+  --z:#0F3D2E; --em:#1C6E4A; --go:#C9A24B; --gos:#F1E6C9; --pa:#F7F2E7; --ems:#E4EEE8;
+  --ink:#2B2620; --br:#8C7A5B; --off:#FFFDF8; --ink2:#66625C; --aline:rgba(140,122,91,.22);
+  --f-display:"Cormorant Garamond", Georgia, serif;
+  --f-ui:"Jost", "Segoe UI", system-ui, sans-serif;
+  --f-ar:"Amiri", "Traditional Arabic", serif;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#101a16; --surface:#17241f; --fg:#ECE6D8; --muted:#B5AE9F; --line:rgba(201,162,75,.22);
+  --accent:#6FC29A; --accent-soft:#1d3a2e; --gold:#D8B661; --gold-soft:#2f2a1b; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#101a16; --surface:#17241f; --fg:#ECE6D8; --muted:#B5AE9F; --line:rgba(201,162,75,.22);
+  --accent:#6FC29A; --accent-soft:#1d3a2e; --gold:#D8B661; --gold-soft:#2f2a1b; color-scheme:dark}
+
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--fg);font-family:var(--f-ui);font-size:16px;line-height:1.55;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:32px 64px}
+.wrap{max-width:1100px;margin:0 auto;display:flex;flex-direction:column;gap:56px}
+h1,h2{font-family:var(--f-display);font-weight:600;text-wrap:balance;margin:0;line-height:1.1}
+h1{font-size:clamp(2.2rem,5vw,3.1rem)} h2{font-size:1.9rem}
+h3{font-size:1.05rem;font-weight:600;margin:0}
+p{margin:0} code{font-size:.88em}
+.eyebrow{font-size:.78rem;letter-spacing:.12em;text-transform:uppercase;color:var(--gold);font-weight:500}
+.lede{font-size:1.1rem;color:var(--muted);max-width:66ch}
+header.top,section{display:flex;flex-direction:column;gap:16px}
+.diag,.decisions{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px}
+.diag article,.decisions article{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:16px 18px;display:flex;flex-direction:column;gap:6px;min-width:0}
+.diag p,.decisions p{font-size:.95rem;color:var(--muted)}
+.tag{font-size:.72rem;letter-spacing:.08em;text-transform:uppercase;font-weight:600;color:var(--accent)}
+.rec{font-size:.9rem;color:var(--accent);font-weight:500}
+
+.demo{display:grid;grid-template-columns:minmax(0,370px) minmax(0,1fr);gap:40px;align-items:start}
+@media (max-width:820px){.demo{grid-template-columns:1fr}}
+.phonecol{display:flex;flex-direction:column;gap:12px;align-items:center}
+.states{display:flex;flex-wrap:wrap;gap:8px;justify-content:center}
+.states button{font:inherit;font-size:.86rem;padding:7px 13px;border-radius:999px;border:1px solid var(--line);background:var(--surface);color:var(--fg);cursor:pointer}
+.states button[aria-pressed="true"]{background:var(--accent);color:var(--surface);border-color:var(--accent)}
+button:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+.phone{width:100%;max-width:360px;border-radius:34px;background:#1b1b1b;padding:10px;box-shadow:0 20px 50px -20px rgba(0,0,0,.45)}
+.screen{position:relative;height:760px;border-radius:26px;overflow:hidden;background:var(--pa);color:var(--ink);display:flex;flex-direction:column}
+.scroll{flex:1;overflow-y:auto;overflow-x:hidden;scrollbar-width:none;padding-bottom:18px}
+.scroll::-webkit-scrollbar{display:none}
+.appbar{display:flex;align-items:center;justify-content:space-between;padding:12px 16px 8px;background:var(--pa)}
+.appbar b{font-family:var(--f-display);font-size:1.45rem;font-weight:600;flex:1;text-align:center;padding-left:40px}
+.appbar .ic{display:flex;gap:12px}
+.ico{width:20px;height:20px;border:1.6px solid currentColor;border-radius:50%}
+.ico.bell{border-radius:8px 8px 4px 4px}
+.nav{display:flex;justify-content:space-around;padding:8px 0 12px;background:var(--off);border-top:1px solid var(--aline);font-size:.62rem;color:var(--ink2)}
+.nav div{display:flex;flex-direction:column;align-items:center;gap:3px}
+.nav .on{color:var(--em);font-weight:600}
+.nav i{width:18px;height:18px;border:1.6px solid currentColor;border-radius:6px}
+
+/* Direct */
+.live{margin:4px 14px 10px;border-radius:16px;background:var(--z);color:var(--off);padding:12px 14px;display:flex;align-items:center;gap:12px}
+.live .pulse{width:10px;height:10px;border-radius:50%;background:var(--go);box-shadow:0 0 0 0 rgba(201,162,75,.6);animation:pulse 1.8s infinite;flex:none}
+@keyframes pulse{70%{box-shadow:0 0 0 10px rgba(201,162,75,0)}100%{box-shadow:0 0 0 0 rgba(201,162,75,0)}}
+@media (prefers-reduced-motion:reduce){.live .pulse{animation:none}}
+.live b{font-weight:500;font-size:.9rem;display:block}
+.live small{font-size:.7rem;color:rgba(247,242,231,.75)}
+.live .go{margin-inline-start:auto;font-size:.76rem;font-weight:600;color:var(--go)}
+
+/* Prochain rendez-vous */
+.next{margin:4px 14px 0;border-radius:18px;background:var(--off);border:1px solid var(--aline);overflow:hidden;box-shadow:0 8px 20px -14px rgba(15,61,46,.35)}
+.next .top{display:flex;gap:14px;padding:14px}
+.bigdate{width:62px;flex:none;border-radius:14px;background:var(--ems);color:var(--em);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:8px 0}
+.bigdate small{font-size:.6rem;letter-spacing:.12em;text-transform:uppercase}
+.bigdate b{font-family:var(--f-display);font-size:2rem;font-weight:600;line-height:1}
+.next .e{font-size:.62rem;letter-spacing:.12em;text-transform:uppercase;color:var(--ink2)}
+.next .t{font-weight:500;font-size:1rem;line-height:1.25;margin-top:2px}
+.next .m{font-size:.72rem;color:var(--ink2);margin-top:3px}
+.pill{display:inline-block;font-size:.6rem;letter-spacing:.05em;text-transform:uppercase;padding:2px 7px;border-radius:999px;background:var(--gos);color:#6d5520;font-weight:600}
+.next .bar{display:flex;gap:6px;align-items:center;padding:9px 14px;border-top:1px solid var(--aline);background:var(--pa)}
+.count{font-size:.72rem;color:var(--em);font-weight:500}
+.btn{font:inherit;font-size:.76rem;font-weight:500;border-radius:999px;padding:7px 13px;border:0;cursor:pointer}
+.btn.p{background:var(--em);color:var(--off);margin-inline-start:auto}
+
+/* Segments */
+.seg{margin:16px 14px 0;display:grid;grid-template-columns:1fr 1fr;background:rgba(140,122,91,.12);border-radius:12px;padding:3px}
+.seg button{font:inherit;font-size:.84rem;border:0;background:none;padding:8px;border-radius:10px;color:var(--ink2);cursor:pointer}
+.seg button[aria-pressed="true"]{background:var(--off);color:var(--ink);font-weight:500;box-shadow:0 1px 3px rgba(0,0,0,.08)}
+.seg small{color:var(--ink2);font-weight:400}
+
+/* Lieux */
+.search{margin:12px 14px 0;display:flex;align-items:center;gap:8px;background:var(--off);border:1px solid var(--aline);border-radius:12px;padding:9px 12px;font-size:.82rem;color:var(--ink2)}
+.chips{display:flex;gap:6px;overflow-x:auto;padding:10px 14px 0;scrollbar-width:none}
+.chips::-webkit-scrollbar{display:none}
+.chip{font:inherit;font-size:.72rem;white-space:nowrap;padding:6px 11px;border-radius:999px;border:1px solid rgba(140,122,91,.35);background:transparent;color:var(--ink2);cursor:pointer}
+.chip[aria-pressed="true"]{background:var(--ink);color:var(--off);border-color:var(--ink)}
+.chip.near[aria-pressed="true"]{background:var(--em);border-color:var(--em)}
+.map{margin:12px 14px 0;border-radius:16px;background:var(--z);position:relative;overflow:hidden}
+.map canvas{display:block;width:100%;height:auto}
+.map .cap{position:absolute;left:12px;top:10px;font-size:.6rem;letter-spacing:.12em;text-transform:uppercase;color:var(--go)}
+.map .ny{position:absolute;left:12px;bottom:9px;font-size:.62rem;color:rgba(247,242,231,.75)}
+.map .reset{position:absolute;right:10px;top:7px;font:inherit;font-size:.64rem;color:var(--go);background:rgba(201,162,75,.15);border:0;border-radius:999px;padding:3px 9px;cursor:pointer}
+.group{padding:14px 18px 6px;display:flex;justify-content:space-between;align-items:baseline}
+.group h5{margin:0;font-family:var(--f-display);font-size:1.15rem;font-weight:600}
+.group span{font-size:.7rem;color:var(--ink2)}
+.places{display:flex;flex-direction:column;gap:8px;padding:0 14px}
+.place{background:var(--off);border:1px solid var(--aline);border-radius:14px;padding:11px 12px;display:flex;gap:11px;align-items:flex-start}
+.place .ch{width:36px;height:36px;border-radius:10px;display:grid;place-items:center;flex:none;font-size:1rem}
+.k-zawiya .ch{background:var(--ems);color:var(--em)}
+.k-lieu .ch{background:var(--gos);color:#6d5520}
+.k-mosquee .ch{background:var(--pa);color:var(--br)}
+.place b{font-weight:500;font-size:.9rem;line-height:1.25;display:block}
+.place small{font-size:.7rem;color:var(--ink2);display:block;margin-top:1px}
+.tags{display:flex;flex-wrap:wrap;gap:4px;margin-top:6px}
+.tags span{font-size:.62rem;padding:2px 7px;border-radius:999px;background:var(--pa);border:1px solid var(--aline);color:var(--ink2)}
+.tags span.up{background:var(--ems);border-color:transparent;color:var(--em);font-weight:500}
+.tags span.su{background:var(--gos);border-color:transparent;color:#6d5520}
+.place .dist{margin-inline-start:auto;font-size:.7rem;color:var(--em);font-weight:500;white-space:nowrap}
+.understand{margin:16px 14px 0;border-radius:14px;padding:12px 14px;display:flex;gap:10px;align-items:center;background:var(--gos)}
+.understand b{font-weight:500;font-size:.88rem;display:block}
+.understand small{font-size:.7rem;color:var(--ink2)}
+
+/* Agenda */
+.month{padding:16px 18px 6px;font-family:var(--f-display);font-size:1.15rem;font-weight:600;display:flex;justify-content:space-between;align-items:baseline}
+.month span{font-family:var(--f-ui);font-size:.7rem;color:var(--ink2);font-weight:400}
+.tl{padding:0 14px;display:flex;flex-direction:column;gap:8px}
+.ev{display:grid;grid-template-columns:46px 1fr;gap:10px;align-items:stretch}
+.ev .d{display:flex;flex-direction:column;align-items:center;padding-top:8px}
+.ev .d b{font-family:var(--f-display);font-size:1.45rem;font-weight:600;color:var(--em);line-height:1}
+.ev .d small{font-size:.58rem;letter-spacing:.08em;text-transform:uppercase;color:var(--ink2)}
+.ev .c{background:var(--off);border:1px solid var(--aline);border-radius:14px;padding:10px 12px}
+.ev .c b{font-weight:500;font-size:.86rem;line-height:1.3;display:block}
+.ev .c small{font-size:.68rem;color:var(--ink2);display:block;margin-top:2px}
+.ev .c .row{display:flex;gap:5px;align-items:center;margin-top:6px;flex-wrap:wrap}
+.type{font-size:.6rem;padding:2px 7px;border-radius:999px;background:var(--ems);color:var(--em);font-weight:500}
+.replays{margin:16px 14px 0;font-size:.74rem;color:var(--ink2);border-top:1px solid var(--aline);padding-top:12px}
+
+.notes{display:flex;flex-direction:column;gap:16px;min-width:0}
+.nt{border-left:3px solid var(--gold);padding:2px 0 2px 16px;display:flex;flex-direction:column;gap:4px}
+.nt p{color:var(--muted);font-size:.95rem}
+.explain{background:var(--accent-soft);border-radius:12px;padding:14px 16px;font-size:.95rem}
+.tbl{overflow-x:auto;border:1px solid var(--line);border-radius:12px;background:var(--surface)}
+table{border-collapse:collapse;width:100%;min-width:600px;font-size:.92rem}
+th,td{text-align:left;padding:11px 14px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-size:.74rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:500}
+tr:last-child td{border-bottom:0}
+ul.plain{margin:0;padding-left:1.1em;display:flex;flex-direction:column;gap:8px;color:var(--muted);max-width:72ch}
+ul.plain b{color:var(--fg);font-weight:500}
+</style>
+
+<div class="wrap">
+  <header class="top">
+    <span class="eyebrow">At-Tijaniya · Onglet Zawiyas · proposition du 1er novembre 2026</span>
+    <h1>Un écran Zawiyas qui montre où est la Tariqa et ce qui s'y prépare</h1>
+    <p class="lede">L'écran actuel a trois onglets de listes identiques, dont un, Directs, est vide presque tout le temps. La base contient pourtant de quoi raconter beaucoup plus : 34 lieux dans 12 pays, 17 rendez-vous à venir, des successions et des figures rattachées à chaque zawiya.</p>
+  </header>
+
+  <section>
+    <span class="eyebrow">Constat, à partir du code et de la base</span>
+    <h2>Diagnostic</h2>
+    <div class="diag">
+      <article><span class="tag">Onglet vide</span><h3>« Directs » ne montre rien</h3><p>En base : 2 directs, tous deux terminés, et aucune rediffusion. Un tiers de l'écran sert à dire « aucun direct en ce moment ».</p></article>
+      <article><span class="tag">Fonction morte</span><h3>« Évènement récurrent le plus proche » ne trouve rien</h3><p>Aucun des 23 évènements n'est récurrent. L'action, cachée dans le menu ⋮, renvoie toujours une liste vide.</p></article>
+      <article><span class="tag">Richesse cachée</span><h3>Les lieux ne disent rien d'eux-mêmes</h3><p>Une carte de lieu montre un nom et une adresse. Elle ne dit pas que Tivaouane a 2 rendez-vous à venir, une succession de 7 khalifes et 8 figures liées.</p></article>
+      <article><span class="tag">Hiérarchie</span><h3>Le prochain rendez-vous est au fond d'un onglet</h3><p>Le prochain évènement n'apparaît qu'en ouvrant l'onglet Évènements, au même rang que les autres. « Comprendre la Zawiya » est caché dans le menu ⋮.</p></article>
+    </div>
+  </section>
+
+  <section>
+    <span class="eyebrow">Maquette interactive</span>
+    <h2>L'écran proposé</h2>
+    <div class="demo">
+      <div class="phonecol">
+        <div class="states" role="group" aria-label="Situation">
+          <button type="button" data-live="0" aria-pressed="true">Aucun direct</button>
+          <button type="button" data-live="1" aria-pressed="false">Direct en cours</button>
+        </div>
+        <div class="phone"><div class="screen">
+          <div class="appbar"><b>Zawiyas</b><span class="ic"><i class="ico bell"></i><i class="ico"></i></span></div>
+          <div class="scroll" id="scroll">
+            <div class="live" id="live" hidden>
+              <span class="pulse"></span>
+              <span><b>En direct · Ziarra générale de Tivaouane</b><small>Zawiya de Tivaouane · YouTube</small></span>
+              <span class="go">Regarder</span>
+            </div>
+            <div class="next">
+              <div class="top">
+                <div class="bigdate"><small>déc.</small><b>~25</b></div>
+                <div style="min-width:0">
+                  <div class="e">Prochain rendez-vous</div>
+                  <div class="t">Ziarra de Taïba Niassène 2026</div>
+                  <div class="m">Zawiya de Taïba Niassène · <span class="pill">date approximative</span></div>
+                </div>
+              </div>
+              <div class="bar"><span class="count">Dans environ 54 jours</span><button type="button" class="btn p">Voir</button></div>
+            </div>
+            <div class="seg" role="group" aria-label="Vue">
+              <button type="button" data-v="lieux" aria-pressed="true">Lieux <small>34</small></button>
+              <button type="button" data-v="agenda" aria-pressed="false">Agenda <small>17</small></button>
+            </div>
+            <div id="view"></div>
+          </div>
+          <div class="nav"><div><i></i>Accueil</div><div><i></i>Wird</div><div class="on"><i></i>Zawiyas</div><div><i></i>Figures</div><div><i></i>Communauté</div></div>
+        </div></div>
+      </div>
+
+      <div class="notes">
+        <div class="explain" id="explain"></div>
+        <div class="nt"><h3>1. Le prochain rendez-vous en tête</h3><p>Une carte avec la date en grand, le lieu et le compte à rebours. Une date approximative reste signalée (« ~25 », « environ 54 jours »). Le bouton Itinéraire n'apparaît que si le lieu a des coordonnées : Taïba Niassène n'en a pas encore.</p></div>
+        <div class="nt"><h3>2. Le direct ne s'affiche que s'il existe</h3><p>L'onglet Directs disparaît. Quand un direct est en cours, un bandeau zaytoune apparaît tout en haut (le zaytoune est permis pour la khadara en direct). Les rediffusions deviennent une ligne de l'Agenda, affichée seulement quand il y en a.</p></div>
+        <div class="nt"><h3>3. Deux vues au lieu de trois onglets</h3><p>Lieux et Agenda, en contrôle segmenté avec leur nombre. Touchez « Agenda » dans la maquette : les rendez-vous sont groupés par mois sur une frise, avec leur type.</p></div>
+        <div class="nt"><h3>4. Une vue d'ensemble de la Tariqa</h3><p>Une carte schématique, dessinée dans l'app sans fournisseur de cartes ni réseau : un point par pays, avec le nombre de lieux. Touchez un pays pour filtrer la liste. New York est indiqué à part.</p></div>
+        <div class="nt"><h3>5. Des lieux qui se racontent</h3><p>Liste groupée par pays ; chaque lieu affiche ses rendez-vous à venir, sa succession et ses figures liées, tirés des tables existantes. « Près de moi » trie par distance (dans la maquette, depuis une position d'exemple à Dakar).</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <span class="eyebrow">Avant / après</span>
+    <h2>Ce qui change</h2>
+    <div class="tbl"><table>
+      <thead><tr><th>Élément</th><th>Aujourd'hui</th><th>Proposé</th></tr></thead>
+      <tbody>
+        <tr><td>Structure</td><td>3 onglets : Zawiyas, Évènements, Directs</td><td>Prochain rendez-vous + 2 vues : Lieux, Agenda</td></tr>
+        <tr><td>Directs</td><td>Onglet le plus souvent vide</td><td>Bandeau en tête, seulement pendant un direct</td></tr>
+        <tr><td>Rediffusions</td><td>Section vide dans l'onglet Directs</td><td>Ligne de l'Agenda, seulement s'il y en a</td></tr>
+        <tr><td>Évènements</td><td>Liste plate</td><td>Frise par mois, type et compte à rebours</td></tr>
+        <tr><td>Lieux</td><td>Nom et adresse</td><td>Groupés par pays, avec rendez-vous, succession et figures</td></tr>
+        <tr><td>Proximité</td><td>« Évènement récurrent le plus proche », dans le menu ⋮, sans résultat</td><td>Filtre « Près de moi » sur les lieux</td></tr>
+        <tr><td>Comprendre la Zawiya</td><td>Menu ⋮</td><td>Carte visible en bas des Lieux</td></tr>
+      </tbody>
+    </table></div>
+  </section>
+
+  <section>
+    <span class="eyebrow">À trancher par vous</span>
+    <h2>Décisions</h2>
+    <div class="decisions">
+      <article><h3>Le pays d'un lieu</h3><p>Il n'existe pas de colonne « pays » : il n'apparaît que dans l'adresse, en texte libre. Le grouper par pays de façon fiable demande une petite évolution du schéma (une colonne <code>country</code> renseignée par l'admin).</p><span class="rec">Recommandation : ajouter la colonne, plutôt que deviner le pays dans l'adresse.</span></article>
+      <article><h3>La carte schématique</h3><p>Le projet a écarté une carte interactive intégrée (fournisseur, coût, réseau). La carte proposée n'en est pas une : c'est un dessin calculé à partir des coordonnées, sans fond de carte. 6 lieux sans coordonnées n'y figurent pas.</p><span class="rec">Recommandation : l'adopter ; « Ouvrir dans Maps » reste l'outil de navigation.</span></article>
+      <article><h3>« Près de moi »</h3><p>Il demande la localisation, déjà utilisée par l'écran de recherche actuel. Il remplace la recherche d'évènement récurrent, inutile tant qu'aucun évènement récurrent n'existe.</p><span class="rec">Recommandation : remplacer ; la recherche récurrente pourra revenir dans l'Agenda quand il y aura des évènements récurrents.</span></article>
+      <article><h3>Vue par défaut</h3><p>L'onglet s'appelle Zawiyas ; la maquette ouvre sur Lieux. L'Agenda change plus souvent et pourrait être plus utile en premier.</p><span class="rec">Recommandation : Lieux par défaut, le prochain rendez-vous étant déjà en tête.</span></article>
+    </div>
+  </section>
+
+  <section>
+    <span class="eyebrow">Limites</span>
+    <h2>Ce qui reste fragile</h2>
+    <ul class="plain">
+      <li><b>Données incomplètes.</b> 6 lieux n'ont pas de coordonnées (ni carte, ni distance, ni itinéraire), 16 évènements sur 23 n'ont pas d'image, et beaucoup de lieux n'ont encore ni figure ni succession : leurs cartes seront plus pauvres que celle de Tivaouane.</li>
+      <li><b>Compter rendez-vous, figures et successions par lieu</b> demande une requête plus riche (ou une vue en base) que la liste actuelle.</li>
+      <li><b>Dates approximatives.</b> 15 des 17 rendez-vous à venir ont une date approximative : le « ~ » et le mot « environ » seront très présents. C'est fidèle aux données, mais l'Agenda paraîtra moins précis qu'il n'y paraît sur une maquette.</li>
+      <li><b>Ce qui est solide :</b> lieux, évènements, directs, successions et liens figure–lieu existent déjà ; seule la colonne pays est nouvelle.</li>
+    </ul>
+  </section>
+</div>
+
+<script>
+const PLACES=[
+ // [nom, type, ville/pays, pays, lat, lon, à venir, succession, figures]
+ ["Zawiya de Tivaouane","zawiya","Tivaouane, Thiès","Sénégal",14.95,-16.82,2,7,8],
+ ["Zawiya de Médina Baye (Kaolack)","zawiya","Médina Baye, Kaolack","Sénégal",14.15,-16.07,2,5,6],
+ ["Zawiya Niassène de Léona (Kaolack)","zawiya","Léona, Kaolack","Sénégal",14.15,-16.07,1,6,7],
+ ["Zawiya Omarienne","zawiya","Dakar","Sénégal",14.68,-17.46,1,4,5],
+ ["Zawiya El Hadj Malick Sy de Dakar","zawiya","Dakar","Sénégal",14.67,-17.44,0,0,1],
+ ["Zawiya Omarienne de Louga","zawiya","Louga","Sénégal",15.61,-16.22,1,2,3],
+ ["Zawiya de Nguidjilone","zawiya","Nguidjilone, Matam","Sénégal",15.83,-13.48,1,2,3],
+ ["Halwar, village natal d'El Hadj Oumar Tall","lieu","Halwar, Podor","Sénégal",16.55,-14.68,1,0,1],
+ ["Zawiya de Taïba Niassène","lieu","Nioro du Rip","Sénégal",null,null,1,0,0],
+ ["Mosquée d'El Hadj Malick Sy de Gaaya","mosquee","Gaé, Dagana","Sénégal",16.49,-15.60,0,0,1],
+ ["Zawiya de Nioro du Sahel (Mali)","zawiya","Nioro du Sahel, Kayes","Mali",15.23,-9.59,0,2,3],
+ ["Zawiya de Ségou (Mali)","zawiya","Ségou","Mali",13.43,-6.22,0,2,3],
+ ["Zawiya d'Aïn Madhi","zawiya","Aïn Madhi, Laghouat","Algérie",33.67,2.17,0,12,13],
+ ["Zawiya de Temacine (Algérie)","zawiya","Temacine, Touggourt","Algérie",33.02,6.02,0,0,0],
+ ["Zawiya de Fès","zawiya","Médina de Fès","Maroc",34.07,-4.98,0,8,14],
+ ["Zawiya Sidi Larbi Ben Sayeh de Rabat (Maroc)","zawiya","Médina de Rabat","Maroc",34.03,-6.84,0,0,1],
+ ["Zawiya de Prang (Ghana)","zawiya","Prang, Bono East","Ghana",8.03,-0.90,1,0,0],
+ ["Zawiya Tijaniyya d'El Maghrabilin, Le Caire (Égypte)","zawiya","Le Caire","Égypte",30.04,31.26,0,0,0]
+];
+const COUNTRIES={ // lieux par pays (base, 34 au total) et position du point
+ "Sénégal":[18,14.8,-16.0],"Mali":[3,14.3,-8.0],"Algérie":[3,33.2,2.7],"Maroc":[2,34.0,-5.9],
+ "Guinée":[1,11.3,-10.7],"Niger":[1,13.4,2.9],"Nigeria":[1,12.0,8.5],"Ghana":[1,8.0,-0.9],
+ "Burkina Faso":[1,13.8,-1.6],"Tunisie":[1,36.8,10.2],"Égypte":[1,30.0,31.3]
+};
+const EVENTS=[
+ ["2026-12","25","déc.","Ziarra de Taïba Niassène 2026","Zawiya de Taïba Niassène","Ziyara",true,54],
+ ["2027-01","8","janv.","Ziarra annuelle de Thierno Mountaga Daha Tall 2027 (63e édition)","Zawiya Omarienne de Louga","Ziyara",true,68],
+ ["2027-01","22","janv.","Ziarra de la famille omarienne à Dakar 2027","Zawiya Omarienne","Ziyara",true,82],
+ ["2027-01","23","janv.","Ziarra annuelle de Thierno Siré Diop","Zawiya de Latmingué","Ziyara",false,83],
+ ["2027-01","30","janv.","Ziarra annuelle de Léona Niassène 2027","Zawiya Niassène de Léona (Kaolack)","Ziyara",true,90],
+ ["2027-02","3","févr.","Célébration de la naissance d'El Hadj Oumar Tall à Halwar 2027","Halwar","Ziyara",true,94],
+ ["2027-02","6","févr.","Ziarra de Thierno Aliou Thierno Yéro Baal Anne à Nguidjilone 2027","Zawiya de Nguidjilone","Ziyara",true,97],
+ ["2027-03","6","mars","Récitation annuelle du Coran pour la paix, Prang 2027","Zawiya de Prang (Ghana)","Autre",true,125],
+ ["2027-03","27","mars","Ziarra internationale Seydi Aliou Cissé 2027","Zawiya de Médina Baye (Kaolack)","Ziyara",true,146],
+ ["2027-04","4","avr.","Ziarra générale de Tivaouane 2027","Zawiya de Tivaouane","Ziyara",true,154]
+];
+const MONTHS={"2026-12":"Décembre 2026","2027-01":"Janvier 2027","2027-02":"Février 2027","2027-03":"Mars 2027","2027-04":"Avril 2027"};
+const ICON={zawiya:"⌂",lieu:"✦",mosquee:"◠"};
+const KLABEL={zawiya:"Zawiya",lieu:"Lieu saint",mosquee:"Mosquée"};
+const $=s=>document.querySelector(s);
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+let view='lieux', kind='all', near=false, country=null, live=false;
+
+function dist(lat,lon){ // depuis une position d'exemple à Dakar
+  if(lat==null) return null;
+  const R=6371,toR=x=>x*Math.PI/180,a=14.69,b=-17.44;
+  const dLa=toR(lat-a),dLo=toR(lon-b);
+  const h=Math.sin(dLa/2)**2+Math.cos(toR(a))*Math.cos(toR(lat))*Math.sin(dLo/2)**2;
+  return 2*R*Math.asin(Math.sqrt(h));
+}
+function fmtKm(d){return d<1?'< 1 km':d<10?d.toFixed(1).replace('.',',')+' km':Math.round(d).toLocaleString('fr-FR')+' km'}
+
+function drawMap(){
+  const cv=$('#map'); if(!cv) return;
+  const dpr=window.devicePixelRatio||1, w=cv.clientWidth, h=Math.round(w*0.62);
+  cv.width=w*dpr; cv.height=h*dpr; cv.style.height=h+'px';
+  const x=cv.getContext('2d'); x.scale(dpr,dpr);
+  const lonMin=-20,lonMax=34,latMin=4,latMax=40;
+  const px=lon=>14+(lon-lonMin)/(lonMax-lonMin)*(w-28), py=lat=>22+(latMax-lat)/(latMax-latMin)*(h-40);
+  x.fillStyle='rgba(247,242,231,0.10)';
+  for(let gx=8;gx<w;gx+=9)for(let gy=26;gy<h-14;gy+=9){x.beginPath();x.arc(gx,gy,0.9,0,Math.PI*2);x.fill();}
+  cv._hits=[];
+  for(const [name,[n,lat,lon]] of Object.entries(COUNTRIES)){
+    const cx=px(lon),cy=py(lat),r=n>1?7+Math.sqrt(n)*3:5, sel=country===name;
+    x.beginPath();x.arc(cx,cy,r+4,0,Math.PI*2);x.fillStyle='rgba(201,162,75,'+(sel?0.35:0.15)+')';x.fill();
+    x.beginPath();x.arc(cx,cy,r,0,Math.PI*2);x.fillStyle=sel?'#F1E6C9':'#C9A24B';x.fill();
+    if(n>1){x.fillStyle='#0F3D2E';x.font='600 '+(n>9?10:9)+'px Jost, sans-serif';x.textAlign='center';x.textBaseline='middle';x.fillText(n,cx,cy+.5);}
+    if(n>1||sel){x.fillStyle='rgba(247,242,231,0.85)';x.font='500 9px Jost, sans-serif';x.textAlign='left';x.fillText(name,cx+r+5,cy);}
+    cv._hits.push([name,cx,cy,r+6]);
+  }
+}
+function lieux(){
+  let list=PLACES.filter(p=>kind==='all'||p[1]===kind).filter(p=>!country||p[3]===country);
+  let html=`<div class="search">⌕ Rechercher un lieu, une ville…</div>
+   <div class="chips" role="group" aria-label="Filtres">
+    ${[['all','Tous · 34'],['zawiya','Zawiyas · 27'],['lieu','Lieux saints · 6'],['mosquee','Mosquée · 1']].map(([k,l])=>`<button type="button" class="chip" data-k="${k}" aria-pressed="${kind===k}">${l}</button>`).join('')}
+    <button type="button" class="chip near" data-near="1" aria-pressed="${near}">◎ Près de moi</button></div>
+   <div class="map"><span class="cap">La Tariqa · 12 pays</span>${country?`<button type="button" class="reset" data-reset="1">${esc(country)} ✕</button>`:''}<canvas id="map" aria-label="Carte schématique des lieux par pays"></canvas><span class="ny">+ New York (1) · 6 lieux sans coordonnées</span></div>`;
+  if(near){
+    list=list.filter(p=>p[4]!=null).sort((a,b)=>dist(a[4],a[5])-dist(b[4],b[5]));
+    html+=`<div class="group"><h5>Les plus proches</h5><span>depuis Dakar (exemple)</span></div><div class="places">${list.slice(0,6).map(card).join('')}</div>`;
+  } else {
+    const groups={};list.forEach(p=>(groups[p[3]]??=[]).push(p));
+    for(const [c,ps] of Object.entries(groups)){
+      html+=`<div class="group"><h5>${esc(c)}</h5><span>${COUNTRIES[c][0]} lieu${COUNTRIES[c][0]>1?'x':''}</span></div><div class="places">${ps.slice(0,c==='Sénégal'&&!country?5:9).map(card).join('')}</div>`;
+    }
+  }
+  html+=`<div class="understand"><span style="font-size:1.2rem">?</span><span><b>Comprendre la Zawiya</b><small>La page déjà rédigée et validée</small></span><span style="margin-inline-start:auto;color:var(--em);font-size:.76rem;font-weight:500">Lire →</span></div>`;
+  return html;
+}
+function card(p){
+  const [n,k,city,,lat,lon,up,su,fi]=p;
+  const tags=[up?`<span class="up">${up} rendez-vous à venir</span>`:'',su?`<span class="su">Succession · ${su}</span>`:'',fi?`<span>${fi} figure${fi>1?'s':''}</span>`:''].join('');
+  const d=near?dist(lat,lon):null;
+  return `<div class="place k-${k}"><span class="ch">${ICON[k]}</span><span style="min-width:0;flex:1"><b>${esc(n)}</b><small>${KLABEL[k]} · ${esc(city)}</small>${tags?`<span class="tags">${tags}</span>`:''}</span>${d!=null?`<span class="dist">${fmtKm(d)}</span>`:''}</div>`;
+}
+function agenda(){
+  let html='';let cur='';
+  html+='<div class="tl" style="padding-top:4px"></div>';
+  for(const e of EVENTS){
+    if(e[0]!==cur){cur=e[0];const n=EVENTS.filter(x=>x[0]===cur).length;html+=`<div class="month">${MONTHS[cur]}<span>${n} rendez-vous</span></div>`;}
+    html+=`<div class="tl"><div class="ev"><div class="d"><b>${e[6]?'~':''}${e[1]}</b><small>${e[2]}</small></div><div class="c"><b>${esc(e[3])}</b><small>${esc(e[4])}</small>
+      <span class="row"><span class="type">${e[5]}</span>${e[6]?'<span class="pill">date approximative</span>':''}<span style="margin-inline-start:auto;font-size:.66rem;color:var(--em)">${e[6]?'environ ':''}dans ${e[7]} j</span></span></div></div></div>`;
+  }
+  html+=`<div class="replays">… 7 autres rendez-vous jusqu'en 2027. Les rediffusions apparaîtront ici quand il y en aura (aucune en base aujourd'hui).</div>`;
+  return html;
+}
+function render(){
+  $('#live').hidden=!live;
+  $('#view').innerHTML=view==='lieux'?lieux():agenda();
+  document.querySelectorAll('.seg button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.v===view));
+  document.querySelectorAll('.states button').forEach(b=>b.setAttribute('aria-pressed',(b.dataset.live==='1')===live));
+  $('#explain').innerHTML = live
+    ? "<b>Direct en cours.</b> Le bandeau zaytoune apparaît au-dessus du prochain rendez-vous et disparaît à la fin du direct. Il n'y a plus d'onglet Directs à consulter pour vérifier."
+    : view==='lieux'
+      ? "<b>Vue Lieux.</b> Touchez un point doré de la carte pour filtrer par pays, ou « Près de moi » pour trier par distance. Chaque lieu montre ses rendez-vous, sa succession et ses figures."
+      : "<b>Vue Agenda.</b> Les rendez-vous groupés par mois, avec leur type et le compte à rebours. Une date approximative est marquée « ~ » et « environ »."
+  ;
+  if(view==='lieux') requestAnimationFrame(drawMap);
+}
+document.addEventListener('click',e=>{
+  const t=e.target.closest('button');
+  if(!t){return}
+  if(t.dataset.v){view=t.dataset.v;render();$('#scroll').scrollTop=0;}
+  else if(t.dataset.k){kind=t.dataset.k;near=false;render();}
+  else if(t.dataset.near){near=!near;country=null;render();}
+  else if(t.dataset.reset){country=null;render();}
+  else if(t.dataset.live!=null){live=t.dataset.live==='1';render();$('#scroll').scrollTop=0;}
+});
+document.addEventListener('click',e=>{
+  const cv=e.target.closest('canvas#map'); if(!cv||!cv._hits) return;
+  const r=cv.getBoundingClientRect(),mx=e.clientX-r.left,my=e.clientY-r.top;
+  const hit=cv._hits.find(([,x,y,rad])=>Math.hypot(mx-x,my-y)<=rad);
+  if(hit){country=country===hit[0]?null:hit[0];near=false;render();}
+});
+window.addEventListener('resize',()=>view==='lieux'&&drawMap());
+render();
+</script>

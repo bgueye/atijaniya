@@ -1,0 +1,324 @@
+<!doctype html>
+<html lang="fr">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Nouvel écran Figures</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Cormorant+Garamond:wght@500;600&family=Jost:wght@300;400;500;600&display=swap">
+<style>
+/* Layout : colonne de lecture ; maquette de téléphone à gauche, explications à droite
+   (empilées sur mobile) ; puis avant/après, décisions et limites. */
+:root{
+  --bg:#F3EEE2; --surface:#FFFDF8; --fg:#2B2620; --muted:#66625C; --line:rgba(140,122,91,.28);
+  --accent:#1C6E4A; --accent-soft:#E4EEE8; --gold:#9A7A2E; --gold-soft:#F1E6C9;
+  --z:#0F3D2E; --em:#1C6E4A; --go:#C9A24B; --gos:#F1E6C9; --pa:#F7F2E7; --ems:#E4EEE8;
+  --ink:#2B2620; --br:#8C7A5B; --off:#FFFDF8; --ink2:#66625C; --aline:rgba(140,122,91,.22);
+  --f-display:"Cormorant Garamond", Georgia, serif;
+  --f-ui:"Jost", "Segoe UI", system-ui, sans-serif;
+  --f-ar:"Amiri", "Traditional Arabic", serif;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#101a16; --surface:#17241f; --fg:#ECE6D8; --muted:#B5AE9F; --line:rgba(201,162,75,.22);
+  --accent:#6FC29A; --accent-soft:#1d3a2e; --gold:#D8B661; --gold-soft:#2f2a1b; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#101a16; --surface:#17241f; --fg:#ECE6D8; --muted:#B5AE9F; --line:rgba(201,162,75,.22);
+  --accent:#6FC29A; --accent-soft:#1d3a2e; --gold:#D8B661; --gold-soft:#2f2a1b; color-scheme:dark}
+
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--fg);font-family:var(--f-ui);font-size:16px;line-height:1.55;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:32px 64px}
+.wrap{max-width:1100px;margin:0 auto;display:flex;flex-direction:column;gap:56px}
+h1,h2{font-family:var(--f-display);font-weight:600;text-wrap:balance;margin:0;line-height:1.1}
+h1{font-size:clamp(2.2rem,5vw,3.1rem)} h2{font-size:1.9rem}
+h3{font-size:1.05rem;font-weight:600;margin:0}
+p{margin:0} code{font-size:.88em}
+.eyebrow{font-size:.78rem;letter-spacing:.12em;text-transform:uppercase;color:var(--gold);font-weight:500}
+.lede{font-size:1.1rem;color:var(--muted);max-width:66ch}
+header.top,section{display:flex;flex-direction:column;gap:16px}
+.diag,.decisions{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px}
+.diag article,.decisions article{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:16px 18px;display:flex;flex-direction:column;gap:6px;min-width:0}
+.diag p,.decisions p{font-size:.95rem;color:var(--muted)}
+.tag{font-size:.72rem;letter-spacing:.08em;text-transform:uppercase;font-weight:600;color:var(--accent)}
+.rec{font-size:.9rem;color:var(--accent);font-weight:500}
+
+.demo{display:grid;grid-template-columns:minmax(0,370px) minmax(0,1fr);gap:40px;align-items:start}
+@media (max-width:820px){.demo{grid-template-columns:1fr}}
+.phonecol{display:flex;flex-direction:column;gap:12px;align-items:center}
+.states{display:flex;flex-wrap:wrap;gap:8px;justify-content:center}
+.states button{font:inherit;font-size:.86rem;padding:7px 13px;border-radius:999px;border:1px solid var(--line);background:var(--surface);color:var(--fg);cursor:pointer}
+.states button[aria-pressed="true"]{background:var(--accent);color:var(--surface);border-color:var(--accent)}
+button:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+.phone{width:100%;max-width:360px;border-radius:34px;background:#1b1b1b;padding:10px;box-shadow:0 20px 50px -20px rgba(0,0,0,.45)}
+.screen{position:relative;height:760px;border-radius:26px;overflow:hidden;background:var(--pa);color:var(--ink);display:flex;flex-direction:column}
+.scroll{flex:1;overflow-y:auto;overflow-x:hidden;scrollbar-width:none;padding-bottom:18px}
+.scroll::-webkit-scrollbar{display:none}
+.appbar{display:flex;align-items:center;gap:10px;padding:12px 16px 8px;background:var(--pa)}
+.appbar b{font-family:var(--f-display);font-size:1.45rem;font-weight:600;flex:1;text-align:center}
+.appbar .ic{display:flex;gap:12px}
+.appbar .back{font:inherit;font-size:1.2rem;background:none;border:0;color:var(--ink);cursor:pointer;width:28px}
+.ico{width:20px;height:20px;border:1.6px solid currentColor;border-radius:50%}
+.ico.bell{border-radius:8px 8px 4px 4px}
+.nav{display:flex;justify-content:space-around;padding:8px 0 12px;background:var(--off);border-top:1px solid var(--aline);font-size:.62rem;color:var(--ink2)}
+.nav div{display:flex;flex-direction:column;align-items:center;gap:3px}
+.nav .on{color:var(--em);font-weight:600}
+.nav i{width:18px;height:18px;border:1.6px solid currentColor;border-radius:6px}
+
+.search{margin:4px 14px 0;display:flex;align-items:center;gap:8px;background:var(--off);border:1px solid var(--aline);border-radius:12px;padding:9px 12px;font-size:.82rem;color:var(--ink2)}
+/* Fondateur */
+.founder{margin:14px 14px 0;border-radius:20px;overflow:hidden;position:relative;background:radial-gradient(120% 100% at 100% 0%,#2a7a56 0%,var(--em) 35%,var(--z) 100%);color:var(--off);display:flex;min-height:168px}
+.founder .ph{width:118px;flex:none;background:linear-gradient(170deg,#6b5541,#2f2620 70%);display:grid;place-items:end center;font-size:.58rem;color:rgba(255,253,248,.45);padding-bottom:6px}
+.founder .tx{padding:14px 14px 12px;display:flex;flex-direction:column;gap:3px;min-width:0}
+.founder .e{font-size:.6rem;letter-spacing:.14em;text-transform:uppercase;color:var(--go)}
+.founder .ar{font-family:var(--f-ar);font-size:1.45rem;line-height:1.5;color:var(--gos);direction:rtl;text-align:right}
+.founder .fr{font-family:var(--f-display);font-size:1.3rem;font-weight:600;line-height:1.05}
+.founder .m{font-size:.68rem;color:rgba(247,242,231,.75)}
+.founder .chips{display:flex;gap:5px;flex-wrap:wrap;margin-top:auto}
+.founder .chips span{font-size:.6rem;padding:2px 8px;border-radius:999px;background:rgba(255,253,248,.14)}
+.sec-h{padding:20px 18px 8px;display:flex;justify-content:space-between;align-items:baseline}
+.sec-h h4{margin:0;font-family:var(--f-display);font-size:1.32rem;font-weight:600}
+.sec-h span{font-size:.72rem;color:var(--ink2)}
+.sec-h a{font-size:.74rem;color:var(--em);font-weight:500;text-decoration:none}
+/* Foyers */
+.foyers{display:flex;gap:10px;overflow-x:auto;padding:0 14px 4px;scrollbar-width:none}
+.foyers::-webkit-scrollbar{display:none}
+.foyer{flex:0 0 132px;border-radius:16px;background:var(--off);border:1px solid var(--aline);overflow:hidden;cursor:pointer;text-align:left;font:inherit;color:inherit;padding:0}
+.mosaic{display:grid;grid-template-columns:1fr 1fr;grid-template-rows:56px 56px;gap:2px;background:var(--aline)}
+.mosaic i{display:grid;place-items:center;font-style:normal;font-family:var(--f-ar);font-size:1.25rem}
+.mosaic i.p{background:linear-gradient(165deg,#7a624b,#33291f 75%)}
+.mosaic i.m{background:var(--ems);color:var(--em)}
+.mosaic i.m.g{background:var(--gos);color:#6d5520}
+.foyer .tx{padding:8px 10px 10px}
+.foyer b{font-weight:500;font-size:.86rem;display:block;line-height:1.2}
+.foyer small{font-size:.66rem;color:var(--ink2)}
+/* Grille */
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:0 14px}
+.fig{border-radius:16px;overflow:hidden;background:var(--off);border:1px solid var(--aline);display:flex;flex-direction:column}
+.fig .img{aspect-ratio:4/5;max-width:100%;position:relative;display:grid;place-items:end center;padding-bottom:6px;font-size:.56rem;color:rgba(255,253,248,.45)}
+.fig .img.p{background:linear-gradient(170deg,#7a624b,#33291f 70%)}
+.fig .img.m{background:var(--ems);place-items:center;padding:10px}
+.fig .img.m.g{background:var(--gos)}
+.fig .img.m span{font-family:var(--f-ar);font-size:1.15rem;line-height:1.6;text-align:center;direction:rtl;color:var(--em)}
+.fig .img.m.g span{color:#6d5520}
+.fig .img .badge{position:absolute;top:7px;left:7px;font-size:.56rem;letter-spacing:.06em;text-transform:uppercase;padding:2px 7px;border-radius:999px;background:rgba(255,253,248,.88);color:var(--em);font-weight:600}
+.fig .tx{padding:8px 10px 10px}
+.fig b{font-family:var(--f-display);font-size:1.02rem;font-weight:600;line-height:1.12;display:block}
+.fig small{font-size:.64rem;color:var(--ink2)}
+.more{margin:12px 14px 0;text-align:center;font-size:.78rem;color:var(--em);font-weight:500;border:1px solid rgba(28,110,74,.3);border-radius:12px;padding:9px}
+.admin{margin:18px 14px 0;font-size:.74rem;color:var(--ink2);display:flex;justify-content:space-between;border-top:1px solid var(--aline);padding-top:12px}
+/* Page d'un foyer */
+.fhead{margin:4px 14px 0;border-radius:18px;background:var(--off);border:1px solid var(--aline);padding:14px}
+.fhead .stats{display:flex;gap:16px;margin-top:8px}
+.fhead .stats div{display:flex;flex-direction:column}
+.fhead .stats b{font-family:var(--f-display);font-size:1.5rem;font-weight:600;color:var(--em);line-height:1}
+.fhead .stats small{font-size:.64rem;color:var(--ink2)}
+.fhead .e{font-size:.6rem;letter-spacing:.14em;text-transform:uppercase;color:var(--gold)}
+.fhead h5{margin:2px 0 0;font-family:var(--f-display);font-size:1.6rem;font-weight:600;line-height:1.05}
+.seg{margin:14px 14px 0;display:grid;grid-template-columns:1fr 1fr;background:rgba(140,122,91,.12);border-radius:12px;padding:3px}
+.seg button{font:inherit;font-size:.84rem;border:0;background:none;padding:8px;border-radius:10px;color:var(--ink2);cursor:pointer}
+.seg button[aria-pressed="true"]{background:var(--off);color:var(--ink);font-weight:500;box-shadow:0 1px 3px rgba(0,0,0,.08)}
+.tree{padding:14px 14px 0;display:flex;flex-direction:column}
+.node{position:relative;display:flex;align-items:center;gap:10px;padding:6px 0}
+.node .av{width:38px;height:38px;border-radius:50%;flex:none;display:grid;place-items:center;font-family:var(--f-ar);font-size:.9rem;border:2px solid var(--off);box-shadow:0 0 0 1px var(--aline)}
+.node .av.p{background:linear-gradient(170deg,#7a624b,#33291f 75%)}
+.node .av.ext{background:var(--pa);color:var(--ink2);font-family:var(--f-ui);font-size:.7rem;border-style:dashed}
+.node b{font-weight:500;font-size:.84rem;line-height:1.2;display:block}
+.node small{font-size:.64rem;color:var(--ink2)}
+.node.ext b{color:var(--ink2);font-weight:400}
+.lvl1{margin-inline-start:22px}.lvl2{margin-inline-start:44px}.lvl3{margin-inline-start:66px}
+.node::before{content:"";position:absolute;inset-inline-start:-14px;top:0;bottom:50%;border-inline-start:1.5px solid rgba(28,110,74,.35);border-bottom:1.5px solid rgba(28,110,74,.35);width:12px;border-end-start-radius:8px}
+.node.root::before{display:none}
+.tree .legend{font-size:.66rem;color:var(--ink2);margin-top:10px;line-height:1.4}
+
+.notes{display:flex;flex-direction:column;gap:16px;min-width:0}
+.nt{border-left:3px solid var(--gold);padding:2px 0 2px 16px;display:flex;flex-direction:column;gap:4px}
+.nt p{color:var(--muted);font-size:.95rem}
+.explain{background:var(--accent-soft);border-radius:12px;padding:14px 16px;font-size:.95rem}
+.tbl{overflow-x:auto;border:1px solid var(--line);border-radius:12px;background:var(--surface)}
+table{border-collapse:collapse;width:100%;min-width:600px;font-size:.92rem}
+th,td{text-align:left;padding:11px 14px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-size:.74rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:500}
+tr:last-child td{border-bottom:0}
+ul.plain{margin:0;padding-left:1.1em;display:flex;flex-direction:column;gap:8px;color:var(--muted);max-width:72ch}
+ul.plain b{color:var(--fg);font-weight:500}
+</style>
+
+<div class="wrap">
+  <header class="top">
+    <span class="eyebrow">At-Tijaniya · Onglet Figures · proposition du 1er novembre 2026</span>
+    <h1>Un écran Figures organisé par foyers, avec la silsila en image</h1>
+    <p class="lede">Aujourd'hui, une section « Fondateurs » qui contient une seule figure, puis 70 lignes identiques. La proposition met Cheikh Ahmed Tijani en tête, fait des sept foyers la porte d'entrée et montre qui a reçu de qui grâce aux liens de silsila déjà saisis.</p>
+  </header>
+
+  <section>
+    <span class="eyebrow">Constat, à partir du code et de la base</span>
+    <h2>Diagnostic</h2>
+    <div class="diag">
+      <article><span class="tag">Hiérarchie</span><h3>Une section pour une seule figure</h3><p>Sur 71 figures validées, une seule est classée « fondateur » : Cheikh Ahmed Tijani. Les 70 autres forment une liste unique sous « Familles religieuses ».</p></article>
+      <article><span class="tag">Navigation</span><h3>Les foyers ne sont que des filtres</h3><p>Sept puces au-dessus de la liste. Elles ne disent ni combien de figures compte chaque foyer, ni à quoi il ressemble.</p></article>
+      <article><span class="tag">Portraits</span><h3>Plus de la moitié sans portrait</h3><p>39 figures sur 71 n'ont pas de portrait : elles s'affichent avec une icône de personne générique. Aucune pour Aïn Madhi, 2 sur 14 pour Fès.</p></article>
+      <article><span class="tag">Richesse cachée</span><h3>La silsila reste dans chaque fiche</h3><p>46 liens maître → disciple sont en base, mais on ne les voit qu'un par un, dans l'onglet Silsila de chaque fiche.</p></article>
+    </div>
+  </section>
+
+  <section>
+    <span class="eyebrow">Maquette interactive</span>
+    <h2>L'écran proposé</h2>
+    <div class="demo">
+      <div class="phonecol">
+        <div class="states" role="group" aria-label="Écran">
+          <button type="button" data-s="home" aria-pressed="true">Toutes les figures</button>
+          <button type="button" data-s="foyer" aria-pressed="false">Foyer : Tivaouane</button>
+        </div>
+        <div class="phone"><div class="screen">
+          <div class="appbar" id="appbar"></div>
+          <div class="scroll" id="scroll"></div>
+          <div class="nav"><div><i></i>Accueil</div><div><i></i>Wird</div><div><i></i>Zawiyas</div><div class="on"><i></i>Figures</div><div><i></i>Communauté</div></div>
+        </div></div>
+        <p style="font-size:.8rem;color:var(--muted);text-align:center;max-width:360px">Les portraits sont remplacés par des aplats bruns : la maquette ne peut pas charger les photos de la base.</p>
+      </div>
+
+      <div class="notes">
+        <div class="explain" id="explain"></div>
+        <div class="nt"><h3>1. Le fondateur en tête</h3><p>Cheikh Ahmed Tijani a sa propre carte, avec son nom arabe, son année de naissance (1150 H) et le nombre de disciples rattachés à lui dans l'app. Elle remplace la section « Fondateurs » à une seule ligne.</p></div>
+        <div class="nt"><h3>2. Les foyers comme collections</h3><p>Une carte par foyer, faite d'une mosaïque de ses figures et de leur nombre. Elle remplace les puces de filtre et ouvre la page du foyer.</p></div>
+        <div class="nt"><h3>3. Une grille de portraits</h3><p>Deux colonnes, portrait en 4:5. Une figure sans portrait n'a plus d'icône générique : son nom arabe en Amiri sert d'image, comme la carte typographique de la figure de la semaine.</p></div>
+        <div class="nt"><h3>4. La page d'un foyer, avec sa silsila</h3><p>Ses chiffres, puis deux vues : Grille et Silsila. La vue Silsila dessine l'arbre maître → disciple à partir des liens existants, avec le maître venu d'un autre foyer en pointillés (El Hadj Oumar Tall pour Tivaouane). Toucher une figure ouvre sa fiche.</p></div>
+        <div class="nt"><h3>5. L'administration en bas</h3><p>Les trois boutons admin (à valider, créer, figure de la semaine) quittent le haut de l'écran pour une ligne en bas, comme sur l'écran Wird proposé.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <span class="eyebrow">Avant / après</span>
+    <h2>Ce qui change</h2>
+    <div class="tbl"><table>
+      <thead><tr><th>Élément</th><th>Aujourd'hui</th><th>Proposé</th></tr></thead>
+      <tbody>
+        <tr><td>Fondateur</td><td>Section à une ligne</td><td>Carte en tête</td></tr>
+        <tr><td>Foyers</td><td>Puces de filtre</td><td>Cartes-collections, puis une page par foyer</td></tr>
+        <tr><td>Liste</td><td>70 lignes, vignette de 56 px</td><td>Grille de portraits, 2 colonnes</td></tr>
+        <tr><td>Sans portrait</td><td>Icône de personne</td><td>Nom arabe en Amiri</td></tr>
+        <tr><td>Silsila</td><td>Dans chaque fiche, un maillon à la fois</td><td>Arbre du foyer, en plus de la fiche</td></tr>
+        <tr><td>Recherche</td><td>Champ en haut</td><td>Inchangée (français et arabe, translittérations tolérées)</td></tr>
+        <tr><td>Administration</td><td>Trois boutons en haut</td><td>Une ligne en bas</td></tr>
+      </tbody>
+    </table></div>
+  </section>
+
+  <section>
+    <span class="eyebrow">À trancher par vous</span>
+    <h2>Décisions</h2>
+    <div class="decisions">
+      <article><h3>Le foyer « Autre »</h3><p>10 figures sont rangées sous « Autre » (Sidi Ibrahim Riahi, Cheikh Amary Ndack Seck, la lignée de Nguidjilone…). En carte-collection, « Autre » paraît faible à côté des foyers nommés.</p><span class="rec">Recommandation : l'appeler « Autres foyers » et le placer en dernier.</span></article>
+      <article><h3>Ordre des foyers</h3><p>Par nombre de figures (Fès, Aïn Madhi, Omarienne…), par ordre historique (Fès et Aïn Madhi d'abord), ou en mettant d'abord le foyer du disciple connecté.</p><span class="rec">Recommandation : ordre historique, avec le foyer du disciple en premier s'il est renseigné.</span></article>
+      <article><h3>Vue Silsila par foyer</h3><p>Les liens de silsila sont historiques (maître → disciple), pas des liens de famille, et ne sont pas complets. L'arbre doit le dire pour ne pas passer pour une généalogie.</p><span class="rec">Recommandation : l'adopter avec la légende « Silsila historique, liens renseignés dans l'app ».</span></article>
+      <article><h3>Années de naissance</h3><p>Seules 14 figures ont une année, et plusieurs sont manifestement grégoriennes dans une colonne hégirienne (1885 pour Serigne Babacar Sy, 1831 pour Cheikh Amary Ndack Seck). Pas de tri ni de frise chronologique tant que ce n'est pas corrigé.</p><span class="rec">Recommandation : corriger ces années en base avant de les afficher ailleurs que sur la fiche.</span></article>
+    </div>
+  </section>
+
+  <section>
+    <span class="eyebrow">Limites</span>
+    <h2>Ce qui reste fragile</h2>
+    <ul class="plain">
+      <li><b>Foyers inégaux.</b> Tivaouane et Médina Baye ont tous leurs portraits ; Aïn Madhi n'en a aucun et seulement 2 liens de silsila. Sa page sera surtout typographique, et son arbre presque vide.</li>
+      <li><b>Grille plus longue.</b> 71 figures en deux colonnes défilent plus qu'une liste. D'où l'entrée par les foyers, et « Afficher tout » plutôt que la grille complète sur la page principale.</li>
+      <li><b>Arbre et arabe.</b> L'arbre s'inverse en arabe (branches à droite) ; il faut le vérifier sur téléphone avec des noms arabes longs.</li>
+      <li><b>Ce qui est solide :</b> foyers, portraits, liens de silsila, œuvres et liens figure–zawiya existent déjà ; aucune donnée nouvelle n'est nécessaire.</li>
+    </ul>
+  </section>
+</div>
+
+<script>
+const FOYERS=[ // [nom, nombre, portraits, tuiles de la mosaïque]
+ ["Fès",14,2,["p","p","m:الغالي","m:حرازم"]],
+ ["Aïn Madhi",12,0,["m:التجاني","m:الحبيب","m:علال","m:البشير"]],
+ ["Famille omarienne",12,2,["p","p","m:مونتاغا","m:هادي"]],
+ ["Tivaouane",9,9,["p","p","p","p"]],
+ ["Kaolack",8,7,["p","p","p","p"]],
+ ["Médina Baye",6,6,["p","p","p","p"]],
+ ["Autres foyers",10,5,["p","p","m:الرياحي","m:آن"]]
+];
+const ALL=[ // échantillon de la grille
+ ["El Hadj Malick Sy","الحاج مالك سي","Tivaouane",1],
+ ["El Hadj Ibrahima Niasse (Baye Niasse)","الحاج إبراهيم نياس","Médina Baye",1],
+ ["El Hadj Oumar Tall (Al-Foutiyou)","الحاج عمر الفوتي تال","Famille omarienne",1],
+ ["Sidi Mohamed El Habib Tidjani","سيدي محمد الحبيب التجاني","Aïn Madhi",0],
+ ["Mame Khalifa Niasse","محمد بن عبد الله نياس","Kaolack",1],
+ ["Sidi Ali Harazem Berrada","علي حرازم برادة","Fès",0]
+];
+const TIV=[ // [nom, arabe, portrait, niveau, note]
+ ["El Hadj Oumar Tall (Al-Foutiyou)","","ext",0,"Famille omarienne · maître de"],
+ ["Alpha Mayoro Wélé","ألفا مايورو ويلي",1,1,""],
+ ["El Hadj Malick Sy","الحاج مالك سي",1,2,"1271 H · 22 œuvres"],
+ ["Serigne Babacar Sy « Cheikhal Khalifa »","",1,3,""],
+ ["Serigne Mansour Sy « Balkhawmi »","",1,3,""],
+ ["Mame Abdoul Aziz Sy « Dabakh »","",1,3,""]
+];
+const TIV2=[ // disciples de Serigne Babacar Sy et de Serigne Mansour Sy Balkhawmi
+ ["Serigne Mansour Sy « Borom Daara Dji »","disciple de Serigne Babacar Sy"],
+ ["Serigne Abdoul Aziz Sy « Al Amine »","disciple de Serigne Babacar Sy"],
+ ["Cheikh Ahmed Tidiane Sy « Al Makhtoum »","disciple de Serigne Babacar Sy"],
+ ["Serigne Babacar Sy Mansour","disciple de Serigne Mansour Sy « Balkhawmi »"]
+];
+const TIVGRID=[["El Hadj Malick Sy","1271 H"],["Serigne Babacar Sy « Cheikhal Khalifa »",""],["Serigne Mansour Sy « Balkhawmi »",""],["Mame Abdoul Aziz Sy « Dabakh »",""],["Serigne Mansour Sy « Borom Daara Dji »",""],["Serigne Abdoul Aziz Sy « Al Amine »",""],["Cheikh Ahmed Tidiane Sy « Al Makhtoum »",""],["Serigne Babacar Sy Mansour",""],["Alpha Mayoro Wélé",""]];
+const $=s=>document.querySelector(s);
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+let screen='home', fview='silsila';
+
+function mosaic(t){return `<div class="mosaic">${t.map((x,i)=>x==='p'?'<i class="p"></i>':`<i class="m ${i%3?'g':''}">${esc(x.slice(2))}</i>`).join('')}</div>`}
+function figCard(fr,ar,foyer,p,i){
+  const img=p?`<div class="img p">portrait</div>`:`<div class="img m ${i%2?'g':''}"><span lang="ar">${esc(ar)}</span></div>`;
+  return `<div class="fig">${img}<div class="tx"><b>${esc(fr)}</b><small>${esc(foyer)}</small></div></div>`;
+}
+function home(){
+  return `<div class="search">⌕ Rechercher une figure, en français ou en arabe…</div>
+  <div class="founder"><div class="ph">portrait</div><div class="tx">
+    <span class="e">Fondateur de la Tariqa</span>
+    <span class="ar" lang="ar">الشيخ أحمد التجاني</span>
+    <span class="fr">Cheikh Ahmed Tijani</span>
+    <span class="m">Né en 1150 H · foyer de Fès</span>
+    <span class="chips"><span>7 disciples dans l'app</span><span>Silsila</span></span>
+  </div></div>
+  <div class="sec-h"><h4>Foyers</h4><span>7 foyers · 70 figures</span></div>
+  <div class="foyers">${FOYERS.map(([n,c,p,t])=>`<button type="button" class="foyer" data-foyer="${esc(n)}">${mosaic(t)}<div class="tx"><b>${esc(n)}</b><small>${c} figures</small></div></button>`).join('')}</div>
+  <div class="sec-h"><h4>Toutes les figures</h4><span>71</span></div>
+  <div class="grid">${ALL.map(([f,a,fo,p],i)=>figCard(f,a,fo,p,i)).join('')}</div>
+  <div class="more">Afficher les 71 figures</div>
+  <div class="admin"><span>Administration · à valider, créer, figure de la semaine</span><span>3 →</span></div>`;
+}
+function foyer(){
+  let body='';
+  if(fview==='silsila'){
+    body=`<div class="tree">`+TIV.map(([n,a,p,l,note],i)=>`<div class="node lvl${l} ${p==='ext'?'ext root':''} ${i===0?'root':''}"><span class="av ${p==='ext'?'ext':'p'}">${p==='ext'?'↗':''}</span><span><b>${esc(n)}</b>${note?`<small>${esc(note)}</small>`:''}</span></div>`).join('')
+      +TIV2.map(([n,note])=>`<div class="node lvl3" style="margin-inline-start:88px"><span class="av p"></span><span><b>${esc(n)}</b><small>${esc(note)}</small></span></div>`).join('')
+      +`<div class="legend">Silsila historique (maître → disciple), d'après les liens renseignés dans l'app. Ce n'est pas un arbre généalogique.</div></div>`;
+  } else {
+    body=`<div class="grid" style="padding-top:14px">${TIVGRID.map(([n,m])=>`<div class="fig"><div class="img p">portrait</div><div class="tx"><b>${esc(n)}</b><small>${m||'Tivaouane'}</small></div></div>`).join('')}</div>`;
+  }
+  return `<div class="fhead"><span class="e">Foyer</span><h5>Tivaouane</h5>
+    <div class="stats"><div><b>9</b><small>figures</small></div><div><b>9</b><small>portraits</small></div><div><b>9</b><small>liens de silsila</small></div><div><b>2</b><small>rendez-vous</small></div></div></div>
+    <div class="seg" role="group" aria-label="Vue"><button type="button" data-fv="grille" aria-pressed="${fview==='grille'}">Grille</button><button type="button" data-fv="silsila" aria-pressed="${fview==='silsila'}">Silsila</button></div>${body}`;
+}
+function render(){
+  $('#appbar').innerHTML = screen==='home'
+    ? `<span style="width:28px"></span><b>Figures</b><span class="ic"><i class="ico bell"></i><i class="ico"></i></span>`
+    : `<button type="button" class="back" data-back="1" aria-label="Retour">←</button><b>Tivaouane</b><span style="width:28px"></span>`;
+  $('#scroll').innerHTML = screen==='home'?home():foyer();
+  $('#scroll').scrollTop=0;
+  document.querySelectorAll('.states button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.s===screen));
+  $('#explain').innerHTML = screen==='home'
+    ? "<b>Toutes les figures.</b> Le fondateur en tête, puis les sept foyers en cartes défilantes (touchez « Tivaouane »), puis la grille. Les figures sans portrait, comme Sidi Mohamed El Habib Tidjani, s'affichent par leur nom arabe."
+    : fview==='silsila'
+      ? "<b>Foyer de Tivaouane, vue Silsila.</b> L'arbre part du maître extérieur au foyer (El Hadj Oumar Tall), passe par Alpha Mayoro Wélé et El Hadj Malick Sy, puis ses disciples et les leurs. Tout vient des liens déjà saisis en base."
+      : "<b>Foyer de Tivaouane, vue Grille.</b> Les 9 figures du foyer, toutes avec portrait.";
+}
+document.addEventListener('click',e=>{
+  const t=e.target.closest('button'); if(!t) return;
+  if(t.dataset.s){screen=t.dataset.s;render();}
+  else if(t.dataset.foyer){if(t.dataset.foyer==='Tivaouane'){screen='foyer';fview='silsila';render();}}
+  else if(t.dataset.back){screen='home';render();}
+  else if(t.dataset.fv){fview=t.dataset.fv;render();}
+});
+render();
+</script>

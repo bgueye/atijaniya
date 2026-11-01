@@ -1,0 +1,318 @@
+<!doctype html>
+<html lang="fr">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Nouvel écran Communauté</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Cormorant+Garamond:wght@500;600&family=Jost:wght@300;400;500;600&display=swap">
+<style>
+/* Layout : colonne de lecture ; maquette de téléphone à gauche, explications à droite
+   (empilées sur mobile) ; puis avant/après, décisions et limites. */
+:root{
+  --bg:#F3EEE2; --surface:#FFFDF8; --fg:#2B2620; --muted:#66625C; --line:rgba(140,122,91,.28);
+  --accent:#1C6E4A; --accent-soft:#E4EEE8; --gold:#9A7A2E; --gold-soft:#F1E6C9;
+  --z:#0F3D2E; --em:#1C6E4A; --go:#C9A24B; --gos:#F1E6C9; --pa:#F7F2E7; --ems:#E4EEE8;
+  --ink:#2B2620; --br:#8C7A5B; --off:#FFFDF8; --ink2:#66625C; --aline:rgba(140,122,91,.22);
+  --f-display:"Cormorant Garamond", Georgia, serif;
+  --f-ui:"Jost", "Segoe UI", system-ui, sans-serif;
+  --f-ar:"Amiri", "Traditional Arabic", serif;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#101a16; --surface:#17241f; --fg:#ECE6D8; --muted:#B5AE9F; --line:rgba(201,162,75,.22);
+  --accent:#6FC29A; --accent-soft:#1d3a2e; --gold:#D8B661; --gold-soft:#2f2a1b; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#101a16; --surface:#17241f; --fg:#ECE6D8; --muted:#B5AE9F; --line:rgba(201,162,75,.22);
+  --accent:#6FC29A; --accent-soft:#1d3a2e; --gold:#D8B661; --gold-soft:#2f2a1b; color-scheme:dark}
+
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--fg);font-family:var(--f-ui);font-size:16px;line-height:1.55;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:32px 64px}
+.wrap{max-width:1100px;margin:0 auto;display:flex;flex-direction:column;gap:56px}
+h1,h2{font-family:var(--f-display);font-weight:600;text-wrap:balance;margin:0;line-height:1.1}
+h1{font-size:clamp(2.2rem,5vw,3.1rem)} h2{font-size:1.9rem}
+h3{font-size:1.05rem;font-weight:600;margin:0}
+p{margin:0} code{font-size:.88em}
+.eyebrow{font-size:.78rem;letter-spacing:.12em;text-transform:uppercase;color:var(--gold);font-weight:500}
+.lede{font-size:1.1rem;color:var(--muted);max-width:66ch}
+header.top,section{display:flex;flex-direction:column;gap:16px}
+.diag,.decisions{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px}
+.diag article,.decisions article{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:16px 18px;display:flex;flex-direction:column;gap:6px;min-width:0}
+.diag p,.decisions p{font-size:.95rem;color:var(--muted)}
+.tag{font-size:.72rem;letter-spacing:.08em;text-transform:uppercase;font-weight:600;color:var(--accent)}
+.rec{font-size:.9rem;color:var(--accent);font-weight:500}
+.figs{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px}
+.figs div{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:12px 14px}
+.figs b{font-family:var(--f-display);font-size:2rem;font-weight:600;color:var(--accent);line-height:1;display:block;font-variant-numeric:tabular-nums}
+.figs span{font-size:.85rem;color:var(--muted)}
+
+.demo{display:grid;grid-template-columns:minmax(0,370px) minmax(0,1fr);gap:40px;align-items:start}
+@media (max-width:820px){.demo{grid-template-columns:1fr}}
+.phonecol{display:flex;flex-direction:column;gap:12px;align-items:center}
+.states{display:flex;flex-wrap:wrap;gap:8px;justify-content:center}
+.states button{font:inherit;font-size:.86rem;padding:7px 13px;border-radius:999px;border:1px solid var(--line);background:var(--surface);color:var(--fg);cursor:pointer}
+.states button[aria-pressed="true"]{background:var(--accent);color:var(--surface);border-color:var(--accent)}
+button:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+.phone{width:100%;max-width:360px;border-radius:34px;background:#1b1b1b;padding:10px;box-shadow:0 20px 50px -20px rgba(0,0,0,.45)}
+.screen{position:relative;height:760px;border-radius:26px;overflow:hidden;background:var(--pa);color:var(--ink);display:flex;flex-direction:column}
+.scroll{flex:1;overflow-y:auto;overflow-x:hidden;scrollbar-width:none;padding-bottom:18px}
+.scroll::-webkit-scrollbar{display:none}
+.appbar{display:flex;align-items:center;padding:12px 16px 8px;background:var(--pa)}
+.appbar b{font-family:var(--f-display);font-size:1.45rem;font-weight:600;flex:1;text-align:center;padding-left:40px}
+.appbar .ic{display:flex;gap:12px}
+.ico{width:20px;height:20px;border:1.6px solid currentColor;border-radius:50%}
+.ico.bell{border-radius:8px 8px 4px 4px}
+.nav{display:flex;justify-content:space-around;padding:8px 0 12px;background:var(--off);border-top:1px solid var(--aline);font-size:.62rem;color:var(--ink2)}
+.nav div{display:flex;flex-direction:column;align-items:center;gap:3px}
+.nav .on{color:var(--em);font-weight:600}
+.nav i{width:18px;height:18px;border:1.6px solid currentColor;border-radius:6px}
+
+.seg{margin:2px 14px 0;display:grid;grid-template-columns:repeat(3,1fr);background:rgba(140,122,91,.12);border-radius:12px;padding:3px}
+.seg button{font:inherit;font-size:.82rem;border:0;background:none;padding:8px 4px;border-radius:10px;color:var(--ink2);cursor:pointer;position:relative}
+.seg button[aria-pressed="true"]{background:var(--off);color:var(--ink);font-weight:500;box-shadow:0 1px 3px rgba(0,0,0,.08)}
+.seg .badge{display:inline-grid;place-items:center;min-width:17px;height:17px;border-radius:9px;background:var(--em);color:var(--off);font-size:.62rem;font-weight:600;margin-inline-start:4px;padding:0 4px}
+.scope{display:flex;gap:6px;padding:10px 14px 0}
+.scope button{font:inherit;font-size:.72rem;padding:6px 11px;border-radius:999px;border:1px solid rgba(140,122,91,.35);background:transparent;color:var(--ink2);cursor:pointer}
+.scope button[aria-pressed="true"]{background:var(--ink);color:var(--off);border-color:var(--ink)}
+
+.composer{margin:12px 14px 0;background:var(--off);border:1px solid var(--aline);border-radius:16px;padding:10px 12px;display:flex;align-items:center;gap:10px}
+.av{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;font-size:.8rem;font-weight:600;flex:none}
+.av.a{background:var(--ems);color:var(--em)} .av.b{background:var(--gos);color:#6d5520} .av.c{background:#E7E1D3;color:var(--br)}
+.composer span.ph{flex:1;font-size:.82rem;color:var(--ink2)}
+.composer .cam{width:32px;height:32px;border-radius:10px;background:var(--pa);display:grid;place-items:center;color:var(--em)}
+.unlock{margin:12px 14px 0;border-radius:16px;padding:14px;background:var(--z);color:var(--off);display:flex;flex-direction:column;gap:8px}
+.unlock .e{font-size:.6rem;letter-spacing:.14em;text-transform:uppercase;color:var(--go)}
+.unlock b{font-weight:500;font-size:.95rem;line-height:1.3}
+.unlock small{font-size:.72rem;color:rgba(247,242,231,.78);line-height:1.4}
+.unlock button{align-self:flex-start;font:inherit;font-size:.78rem;font-weight:500;border:0;border-radius:999px;padding:8px 14px;background:var(--go);color:var(--z);cursor:pointer}
+
+.post{margin:12px 14px 0;background:var(--off);border:1px solid var(--aline);border-radius:18px;overflow:hidden}
+.post .hd{display:flex;align-items:center;gap:10px;padding:12px 12px 8px}
+.post .hd b{font-weight:500;font-size:.84rem;display:block;line-height:1.2}
+.post .hd small{font-size:.66rem;color:var(--ink2)}
+.post .hd .more{margin-inline-start:auto;color:var(--ink2);font-size:1rem}
+.post .txt{padding:0 12px 10px;font-size:.84rem;line-height:1.5}
+.post .img{aspect-ratio:4/3;max-width:100%;background:linear-gradient(160deg,#c8b48a,#8c7a5b 55%,#5d4a3a);display:grid;place-items:center;color:rgba(255,253,248,.6);font-size:.62rem}
+.post .act{display:flex;gap:16px;padding:9px 12px;border-top:1px solid var(--aline);font-size:.74rem;color:var(--ink2)}
+.post .act .on{color:var(--em);font-weight:500}
+.ev{margin:12px 14px 0;border-radius:16px;background:var(--gos);padding:11px 12px;display:flex;align-items:center;gap:12px}
+.ev .d{width:46px;flex:none;text-align:center;line-height:1}
+.ev .d b{font-family:var(--f-display);font-size:1.5rem;font-weight:600;color:var(--em);display:block}
+.ev .d small{font-size:.58rem;letter-spacing:.08em;text-transform:uppercase;color:var(--ink2)}
+.ev .e{font-size:.58rem;letter-spacing:.12em;text-transform:uppercase;color:#6d5520}
+.ev b.t{font-weight:500;font-size:.84rem;line-height:1.25;display:block}
+.ev small.m{font-size:.66rem;color:var(--ink2)}
+.ex{margin:10px 14px 0;font-size:.62rem;color:var(--ink2);text-align:center}
+
+.sec-h{padding:18px 18px 8px;display:flex;justify-content:space-between;align-items:baseline}
+.sec-h h4{margin:0;font-family:var(--f-display);font-size:1.25rem;font-weight:600}
+.sec-h a{font-size:.74rem;color:var(--em);font-weight:500;text-decoration:none}
+.groups{display:flex;flex-direction:column;gap:10px;padding:0 14px}
+.group{background:var(--off);border:1px solid var(--aline);border-radius:16px;padding:12px;display:flex;flex-direction:column;gap:8px}
+.group .top{display:flex;gap:11px;align-items:flex-start}
+.group .gi{width:44px;height:44px;border-radius:13px;display:grid;place-items:center;font-family:var(--f-display);font-size:1.3rem;font-weight:600;flex:none}
+.group b{font-weight:500;font-size:.9rem;display:block;line-height:1.2}
+.group small{font-size:.68rem;color:var(--ink2)}
+.group .last{font-size:.72rem;color:var(--ink2);border-top:1px solid var(--aline);padding-top:7px;display:flex;justify-content:space-between;gap:8px}
+.stack{display:flex}
+.stack i{width:20px;height:20px;border-radius:50%;border:2px solid var(--off);margin-inline-start:-6px;font-style:normal;font-size:.55rem;display:grid;place-items:center;font-weight:600}
+.stack i:first-child{margin-inline-start:0}
+.join{margin-inline-start:auto;font:inherit;font-size:.72rem;font-weight:500;border-radius:999px;padding:6px 12px;cursor:pointer;border:1px solid rgba(28,110,74,.35);background:transparent;color:var(--em)}
+.join.on{background:var(--ems);border-color:transparent}
+.condisciples{margin:12px 14px 0;border-radius:16px;padding:12px 14px;background:var(--ems);display:flex;gap:12px;align-items:center}
+.condisciples b{font-weight:500;font-size:.88rem;display:block}
+.condisciples small{font-size:.68rem;color:var(--ink2);line-height:1.35;display:block}
+.conv{display:flex;flex-direction:column;padding:0 14px;gap:2px}
+.conv .row{display:flex;gap:11px;align-items:center;padding:10px 4px;border-bottom:1px solid var(--aline)}
+.conv b{font-weight:500;font-size:.86rem;display:block}
+.conv small{font-size:.72rem;color:var(--ink2);display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:190px}
+.conv .when{margin-inline-start:auto;text-align:right;font-size:.64rem;color:var(--ink2);display:flex;flex-direction:column;align-items:flex-end;gap:4px}
+.conv .dot{width:9px;height:9px;border-radius:50%;background:var(--em)}
+.newmsg{margin:14px 14px 0;font-size:.74rem;color:var(--ink2);line-height:1.45;background:var(--off);border:1px dashed rgba(140,122,91,.4);border-radius:14px;padding:11px 12px}
+
+.notes{display:flex;flex-direction:column;gap:16px;min-width:0}
+.nt{border-left:3px solid var(--gold);padding:2px 0 2px 16px;display:flex;flex-direction:column;gap:4px}
+.nt p{color:var(--muted);font-size:.95rem}
+.explain{background:var(--accent-soft);border-radius:12px;padding:14px 16px;font-size:.95rem}
+.tbl{overflow-x:auto;border:1px solid var(--line);border-radius:12px;background:var(--surface)}
+table{border-collapse:collapse;width:100%;min-width:600px;font-size:.92rem}
+th,td{text-align:left;padding:11px 14px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-size:.74rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:500}
+tr:last-child td{border-bottom:0}
+ul.plain{margin:0;padding-left:1.1em;display:flex;flex-direction:column;gap:8px;color:var(--muted);max-width:72ch}
+ul.plain b{color:var(--fg);font-weight:500}
+</style>
+
+<div class="wrap">
+  <header class="top">
+    <span class="eyebrow">At-Tijaniya · Onglet Communauté · proposition du 1er novembre 2026</span>
+    <h1>Un écran Communauté qui donne envie de participer, même quand il est encore calme</h1>
+    <p class="lede">Le problème de cet écran n'est pas d'abord graphique. La communauté démarre : peu de comptes, et la plupart ne peuvent pas publier. La proposition rend la participation évidente, réunit fil, groupes et messages au même niveau, et nourrit le fil avec les rendez-vous de la zawiya du disciple.</p>
+  </header>
+
+  <section>
+    <span class="eyebrow">L'activité réelle, au 1er novembre 2026</span>
+    <h2>Diagnostic</h2>
+    <div class="figs">
+      <div><b>16</b><span>comptes</span></div>
+      <div><b>4</b><span>rattachés à une zawiya, seuls à pouvoir publier</span></div>
+      <div><b>10</b><span>publications, dont 1 ces 30 derniers jours</span></div>
+      <div><b>1</b><span>commentaire</span></div>
+      <div><b>3</b><span>groupes, 5 adhésions</span></div>
+    </div>
+    <div class="diag">
+      <article><span class="tag">Participation</span><h3>Publier est bloqué pour 12 comptes sur 16</h3><p>Il faut être rattaché à une zawiya. Le disciple ne l'apprend qu'en touchant « Publier », par un message en bas de l'écran.</p></article>
+      <article><span class="tag">Fil vide</span><h3>Le fil paraît mort</h3><p>Une publication en un mois : un nouveau venu voit un fil figé et repart. Rien d'autre ne vient l'animer.</p></article>
+      <article><span class="tag">Hiérarchie</span><h3>Les messages cachés derrière une icône</h3><p>Fil et Groupes sont des onglets ; les messages privés sont une icône à côté, avec un badge.</p></article>
+      <article><span class="tag">Lien manquant</span><h3>« Retrouver mes condisciples » est dans le Profil</h3><p>C'est pourtant le cœur du projet communautaire : retrouver les disciples de son moqaddam. Il est rangé dans le Profil, loin de la Communauté.</p></article>
+    </div>
+  </section>
+
+  <section>
+    <span class="eyebrow">Maquette interactive</span>
+    <h2>L'écran proposé</h2>
+    <div class="demo">
+      <div class="phonecol">
+        <div class="states" role="group" aria-label="Situation du disciple">
+          <button type="button" data-u="rattache" aria-pressed="true">Disciple rattaché à Tivaouane</button>
+          <button type="button" data-u="libre" aria-pressed="false">Disciple sans zawiya</button>
+        </div>
+        <div class="phone"><div class="screen">
+          <div class="appbar"><b>Communauté</b><span class="ic"><i class="ico bell"></i><i class="ico"></i></span></div>
+          <div class="seg" role="group" aria-label="Vue">
+            <button type="button" data-v="fil" aria-pressed="true">Fil</button>
+            <button type="button" data-v="groupes" aria-pressed="false">Groupes</button>
+            <button type="button" data-v="messages" aria-pressed="false">Messages<span class="badge">2</span></button>
+          </div>
+          <div class="scroll" id="scroll"></div>
+          <div class="nav"><div><i></i>Accueil</div><div><i></i>Wird</div><div><i></i>Zawiyas</div><div><i></i>Figures</div><div class="on"><i></i>Communauté</div></div>
+        </div></div>
+        <p style="font-size:.8rem;color:var(--muted);text-align:center;max-width:360px">Les publications, groupes et messages de la maquette sont des exemples inventés, pas le contenu des disciples. Le rendez-vous de Tivaouane est réel.</p>
+      </div>
+
+      <div class="notes">
+        <div class="explain" id="explain"></div>
+        <div class="nt"><h3>1. Fil, Groupes, Messages au même niveau</h3><p>Un contrôle segmenté à trois entrées, avec le nombre de messages non lus. Les messages sortent de leur icône.</p></div>
+        <div class="nt"><h3>2. Publier en haut du fil, pas en bouton flottant</h3><p>Un champ « Partager avec la communauté » et un accès photo, comme dans les réseaux connus. Pour un disciple non rattaché, il devient une carte qui explique pourquoi et mène au réglage de la zawiya, au lieu d'un refus après coup.</p></div>
+        <div class="nt"><h3>3. « Toute la communauté » ou « Ma zawiya »</h3><p>Un filtre sur la zawiya de l'auteur, donnée déjà présente sur chaque publication.</p></div>
+        <div class="nt"><h3>4. Les rendez-vous de la zawiya dans le fil</h3><p>Entre les publications, les prochains évènements de la zawiya du disciple (tirés du calendrier existant) et un direct quand il y en a un. Le fil vit même quand personne ne publie.</p></div>
+        <div class="nt"><h3>5. Des groupes qui montrent leur vie</h3><p>Pastille de couleur, membres, zawiya ou région, dernière activité, et un bouton Rejoindre. Les groupes de la zawiya du disciple d'abord. En tête, une carte « Retrouver mes condisciples » qui mène au parcours existant, privé et sur adhésion.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <span class="eyebrow">Avant / après</span>
+    <h2>Ce qui change</h2>
+    <div class="tbl"><table>
+      <thead><tr><th>Élément</th><th>Aujourd'hui</th><th>Proposé</th></tr></thead>
+      <tbody>
+        <tr><td>Navigation</td><td>2 onglets + icône messages</td><td>Fil, Groupes, Messages en contrôle segmenté</td></tr>
+        <tr><td>Publier</td><td>Bouton flottant ; refus après coup sans zawiya</td><td>Champ en haut du fil ; carte explicative sans zawiya</td></tr>
+        <tr><td>Portée du fil</td><td>Tout le monde</td><td>Toute la communauté ou Ma zawiya</td></tr>
+        <tr><td>Fil calme</td><td>Liste figée</td><td>Rendez-vous de la zawiya et direct intercalés</td></tr>
+        <tr><td>Publications</td><td>Carte texte, image en dessous</td><td>Avatar, « disciple · zawiya », date relative, image pleine largeur</td></tr>
+        <tr><td>Groupes</td><td>Nom, lieu, membres</td><td>+ dernière activité, Rejoindre, ceux de ma zawiya d'abord</td></tr>
+        <tr><td>Condisciples</td><td>Dans le Profil</td><td>Aussi en tête des Groupes (même parcours privé)</td></tr>
+      </tbody>
+    </table></div>
+  </section>
+
+  <section>
+    <span class="eyebrow">À trancher par vous</span>
+    <h2>Décisions</h2>
+    <div class="decisions">
+      <article><h3>Rendez-vous dans le fil</h3><p>Le fil ne contiendrait plus seulement ce que les disciples publient. Les cartes de rendez-vous sont visuellement distinctes et viennent des évènements publics de la zawiya, rien de personnel.</p><span class="rec">Recommandation : les intercaler, au plus un toutes les trois publications.</span></article>
+      <article><h3>Condisciples dans la Communauté</h3><p>La lignée spirituelle est une donnée sensible : privée par défaut, mise en relation sur adhésion stricte, jamais d'annuaire. La carte n'affiche aucune donnée ; elle ouvre le parcours existant, qui garde toutes ses protections.</p><span class="rec">Recommandation : l'ajouter, avec la mention « Privé : rien n'est visible sans votre accord ».</span></article>
+      <article><h3>Règle de publication</h3><p>Exiger une zawiya bloque 12 comptes sur 16. La carte explicative facilite le rattachement sans changer la règle ; assouplir la règle est une autre décision, qui touche à la modération.</p><span class="rec">Recommandation : garder la règle, rendre le rattachement évident.</span></article>
+      <article><h3>Messages en troisième vue</h3><p>Les conversations privées passent au même rang que le fil. Elles restent soumises au réglage « Qui peut vous contacter » et à la fonction serveur qui ouvre une conversation.</p><span class="rec">Recommandation : l'adopter ; rien ne change côté confidentialité.</span></article>
+    </div>
+  </section>
+
+  <section>
+    <span class="eyebrow">Limites</span>
+    <h2>Ce qui reste fragile</h2>
+    <ul class="plain">
+      <li><b>Une nouvelle présentation ne crée pas d'activité.</b> Avec 10 publications, le fil restera court. Les rendez-vous intercalés et la carte de rattachement aident, mais l'activité dépendra surtout de l'arrivée de nouveaux disciples.</li>
+      <li><b>Dernière activité d'un groupe</b> et nombre de non-lus par groupe demandent des requêtes en plus de la liste actuelle.</li>
+      <li><b>« Ma zawiya »</b> n'a de sens que pour un disciple rattaché ; pour les autres, le filtre est masqué.</li>
+      <li><b>Ce qui est solide :</b> publications, zawiya de l'auteur, j'aime, commentaires, groupes, messages, signalement et blocage existent déjà ; aucune règle de confidentialité ne change.</li>
+    </ul>
+  </section>
+</div>
+
+<script>
+const $=s=>document.querySelector(s);
+let view='fil', user='rattache', scope='all';
+const POSTS=[
+ {a:'M',c:'a',name:'Moussa',z:'Zawiya de Tivaouane',t:'il y a 2 h',txt:"Belle Wazifa ce soir à la zawiya, qu'Allah accepte de nous tous.",img:true,likes:12,liked:true,com:3,mine:true},
+ {a:'A',c:'b',name:'Aïssatou',z:'Zawiya de Médina Baye (Kaolack)',t:'hier',txt:'Les préparatifs de la ziarra avancent. Les bénévoles sont les bienvenus samedi.',img:false,likes:5,liked:false,com:1,mine:false},
+ {a:'I',c:'c',name:'Ibrahima',z:'Zawiya de Tivaouane',t:'il y a 3 j',txt:'Photo du cercle de dhikr de vendredi.',img:true,likes:21,liked:false,com:4,mine:true}
+];
+function post(p){
+  return `<div class="post"><div class="hd"><span class="av ${p.c}">${p.a}</span><span><b>${p.name} · ${p.z}</b><small>${p.t}</small></span><span class="more">⋯</span></div>
+   <div class="txt">${p.txt}</div>${p.img?'<div class="img">photo</div>':''}
+   <div class="act"><span class="${p.liked?'on':''}">♥ ${p.likes}</span><span>💬 ${p.com}</span></div></div>`;
+}
+const EVENT=`<div class="ev"><div class="d"><b>~4</b><small>avr.</small></div><span><span class="e">Rendez-vous de votre zawiya</span><b class="t">Ziarra générale de Tivaouane 2027</b><small class="m">Zawiya de Tivaouane · date approximative</small></span></div>`;
+function fil(){
+  let h='';
+  if(user==='rattache'){
+    h+=`<div class="scope" role="group" aria-label="Portée"><button type="button" data-sc="all" aria-pressed="${scope==='all'}">Toute la communauté</button><button type="button" data-sc="mine" aria-pressed="${scope==='mine'}">Ma zawiya · Tivaouane</button></div>`;
+    h+=`<div class="composer"><span class="av a">B</span><span class="ph">Partager avec la communauté…</span><span class="cam">▣</span></div>`;
+  } else {
+    h+=`<div class="unlock"><span class="e">Pour publier</span><b>Rattachez votre profil à votre zawiya</b><small>Les publications sont réservées aux disciples rattachés à une zawiya. Vous pouvez déjà aimer, commenter et rejoindre des groupes.</small><button type="button">Choisir ma zawiya</button></div>`;
+  }
+  const list=POSTS.filter(p=>scope==='all'||p.mine);
+  h+=post(list[0]);
+  if(user==='rattache') h+=EVENT;
+  list.slice(1).forEach(p=>h+=post(p));
+  h+=`<div class="ex">Publications d'exemple</div>`;
+  return h;
+}
+function groupes(){
+  return `<div class="condisciples"><span style="font-size:1.3rem">⟡</span><span><b>Retrouver mes condisciples</b><small>Les disciples de votre moqaddam qui l'ont accepté. Privé : rien n'est visible sans votre accord.</small></span><span style="color:var(--em);font-weight:500;font-size:.76rem">Ouvrir →</span></div>
+  <div class="sec-h"><h4>${user==='rattache'?'Groupes de ma zawiya':'Groupes'}</h4><a href="#" onclick="return false">+ Créer</a></div>
+  <div class="groups">
+   <div class="group"><div class="top"><span class="gi" style="background:var(--ems);color:var(--em)">D</span><span style="min-width:0"><b>Dahira des jeunes de Tivaouane</b><small>Zawiya de Tivaouane · 24 membres</small></span><button type="button" class="join on">Membre</button></div>
+     <div class="last"><span>Nouveau message · il y a 1 h</span><span class="stack"><i style="background:var(--gos)">A</i><i style="background:var(--ems)">M</i><i style="background:#E7E1D3">F</i></span></div></div>
+   <div class="group"><div class="top"><span class="gi" style="background:var(--gos);color:#6d5520">W</span><span style="min-width:0"><b>Wazifa du jeudi, Dakar</b><small>Dakar · 11 membres</small></span><button type="button" class="join">Rejoindre</button></div>
+     <div class="last"><span>Direct passé · dimanche</span><span class="stack"><i style="background:var(--ems)">S</i><i style="background:var(--gos)">K</i></span></div></div>
+   <div class="group"><div class="top"><span class="gi" style="background:#E7E1D3;color:var(--br)">C</span><span style="min-width:0"><b>Cercle d'étude de Jawahir al-Ma'ani</b><small>En ligne · 7 membres</small></span><button type="button" class="join">Rejoindre</button></div>
+     <div class="last"><span>Calme depuis 2 semaines</span><span class="stack"><i style="background:var(--gos)">O</i></span></div></div>
+  </div>
+  <div class="ex">Groupes d'exemple</div>`;
+}
+function messages(){
+  return `<div class="sec-h"><h4>Conversations</h4><a href="#" onclick="return false">+ Nouveau</a></div>
+  <div class="conv">
+   <div class="row"><span class="av a">M</span><span><b>Moussa</b><small>Rendez-vous à la zawiya après l'Asr ?</small></span><span class="when">14:02<span class="dot"></span></span></div>
+   <div class="row"><span class="av b">A</span><span><b>Aïssatou</b><small>Merci pour l'information sur la ziarra.</small></span><span class="when">hier<span class="dot"></span></span></div>
+   <div class="row"><span class="av c">I</span><span><b>Ibrahima</b><small>Vous : Qu'Allah vous récompense.</small></span><span class="when">lun.</span></div>
+  </div>
+  <div class="newmsg">Une conversation ne s'ouvre qu'avec un disciple qui partage un groupe avec vous et l'accepte dans « Qui peut vous contacter ». Rien ne change par rapport à aujourd'hui.</div>
+  <div class="ex">Conversations d'exemple</div>`;
+}
+const EXPLAIN={
+  fil:{rattache:"<b>Fil, disciple rattaché.</b> Le champ de publication est en haut. Le filtre « Ma zawiya » ne garde que les publications de Tivaouane. Entre deux publications, un rendez-vous réel de sa zawiya.",
+       libre:"<b>Fil, disciple sans zawiya.</b> Au lieu d'un bouton qui refuse après coup, une carte explique la règle, dit ce qu'il peut déjà faire et mène au choix de sa zawiya."},
+  groupes:{rattache:"<b>Groupes.</b> En tête, la porte vers les condisciples, privée et sur adhésion. Puis les groupes de la zawiya du disciple, avec leur dernière activité et un bouton Rejoindre.",
+           libre:"<b>Groupes, disciple sans zawiya.</b> Mêmes groupes, sans tri par zawiya. Rejoindre un groupe ne demande pas de zawiya."},
+  messages:{rattache:"<b>Messages.</b> Les conversations privées au même rang que le fil, avec les non-lus marqués. Les règles d'ouverture d'une conversation ne changent pas.",
+            libre:"<b>Messages.</b> Identique pour tous les disciples connectés."}
+};
+function render(){
+  $('#scroll').innerHTML = view==='fil'?fil():view==='groupes'?groupes():messages();
+  $('#scroll').scrollTop=0;
+  document.querySelectorAll('.seg button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.v===view));
+  document.querySelectorAll('.states button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.u===user));
+  $('#explain').innerHTML=EXPLAIN[view][user];
+}
+document.addEventListener('click',e=>{
+  const t=e.target.closest('button'); if(!t) return;
+  if(t.dataset.v){view=t.dataset.v;render();}
+  else if(t.dataset.u){user=t.dataset.u;scope='all';render();}
+  else if(t.dataset.sc){scope=t.dataset.sc;render();}
+});
+render();
+</script>
