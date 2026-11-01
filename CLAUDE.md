@@ -94,6 +94,12 @@ réponse tronquée : la réponse s'ouvre en entier avec sa source. Bienfaits exc
 carrousel en arabe tant que leur texte arabe n'est pas saisi. Détail :
 `docs/09-journal-implementation-frontend.md`, entrée du 2026-11-01.
 
+## Refonte des autres écrans (maquettes du 2026-11-01)
+Maquettes de Wird, Zawiyas, Figures, Communauté et Profil dans `docs/maquettes/`, avec les
+décisions **validées par le porteur de projet le 2026-11-01** dans `docs/maquettes/README.md`.
+À lire avant de retoucher l'un de ces écrans. Implémenter un écran à la fois ; en cas de
+conflit, les règles de ce fichier priment sur la maquette.
+
 ## Contenu religieux — règle impérative
 Aucun texte de wird, biographie ou enseignement attribué ne doit être codé en dur ou publié
 sans provenir d'un document explicitement marqué "validé" dans `docs/01-perimetre-fonctionnel.md`.
