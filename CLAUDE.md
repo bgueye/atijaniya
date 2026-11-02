@@ -99,6 +99,8 @@ Maquettes de Wird, Zawiyas, Figures, Communauté et Profil dans `docs/maquettes/
 décisions **validées par le porteur de projet le 2026-11-01** dans `docs/maquettes/README.md`.
 À lire avant de retoucher l'un de ces écrans. Implémenter un écran à la fois ; en cas de
 conflit, les règles de ce fichier priment sur la maquette.
+Kit de composants commun (jetons, règles d'usage, 15 composants avec leur correspondance
+Flutter) : `docs/kit/README.md`. Les écrans sans maquette se mettent au thème avec ce kit.
 
 ## Contenu religieux — règle impérative
 Aucun texte de wird, biographie ou enseignement attribué ne doit être codé en dur ou publié

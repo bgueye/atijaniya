@@ -94,3 +94,11 @@ Recommandations de la maquette, **pas encore validées par le porteur de projet*
 formules de clôture à cocher, facultatives ; mode concentré jamais automatique (proposé
 une fois, puis au geste) ; traduction masquée par défaut dans le tasbih, activable dans
 « Aa » ; pas d'affichage de la durée de récitation pour l'instant.
+
+## Kit de composants (2026-11-02)
+
+Référence commune pour mettre tous les écrans au même thème : `docs/kit/` (guide
+`docs/kit/README.md`, jetons `docs/kit/tokens.json`, une fiche et un aperçu par composant dans
+`docs/kit/components/`). Chaque fiche dit si le widget Flutter existe déjà ou est à créer dans
+`lib/core/widgets/`. Pour tout écran sans maquette, appliquer le kit.
+

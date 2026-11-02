@@ -1,0 +1,51 @@
+<!-- @dsCard height=288 -->
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Kit At-Tijaniya</title>
+<style>
+  html, body { margin:0; height:100%; }
+  body { background:var(--parchment); color:var(--ink); font-family:var(--font-jost); overflow:hidden; }
+  .cover { position:relative; height:288px; width:960px; overflow:hidden; }
+  .art { position:absolute; top:0; left:480px; width:480px; height:288px; overflow:hidden; }
+  .art svg { display:block; width:480px; height:288px; }
+  .z { fill:var(--zaytoune); }
+  .em { fill:var(--emerald); }
+  .gs { fill:var(--gold_soft); }
+  .g { fill:var(--gold); }
+  .card { rx:var(--radius-card); }
+  .ros { fill:none; stroke:var(--gold_on_dark); stroke-width:1.5; }
+  .words { position:absolute; left:var(--space-24); bottom:var(--space-24); max-width:440px; }
+  .name { margin:0; font-family:var(--font-cormorant); font-size:72px; line-height:.95; font-weight:600; color:var(--ink); }
+  .tag { margin:var(--space-8) 0 0 2px; font-size:14px; line-height:20px; color:var(--secondary_ink); }
+</style>
+</head>
+<body>
+<div class="cover">
+<div class="art" aria-hidden="true">
+<svg viewBox="0 0 480 288" width="480" height="288">
+<!--
+  blocks      zaytoune 192×264 bled off the top (le fond de la pratique, l'identité) · gold_soft 128×224 bled off the right (le parchemin doré) · emerald 128×152 (l'action) · gold disc r24 (l'accent précieux, petit) — environ 40 % de 960×288
+  arrangement une haute dalle zaytoune avec satellites, bas alignés à space-24 du bord, gouttières space-16
+  pattern     la rosace à huit branches (deux carrés à 45° et un cercle), une seule fois, en filet gold_on_dark sur la dalle : « une seule occurrence par écran, trait fin » (design_tokens.yaml, iconography)
+  scales      côtés en multiples de space-8 ; gouttières space-16 ; coins radius-card ; disque = radius-pill
+-->
+<rect class="z card" x="16" y="-16" width="192" height="280" rx="16"/>
+<g transform="translate(112 120)">
+  <rect class="ros" x="-52" y="-52" width="104" height="104"/>
+  <rect class="ros" x="-52" y="-52" width="104" height="104" transform="rotate(45)"/>
+  <circle class="ros" r="34"/>
+</g>
+<rect class="em card" x="224" y="112" width="128" height="152" rx="16"/>
+<circle class="g" cx="288" cy="64" r="24"/>
+<rect class="gs card" x="368" y="32" width="128" height="232" rx="16"/>
+</svg>
+</div>
+<div class="words">
+<h1 class="name">Kit<br>At-Tijaniya</h1>
+<p class="tag">La charte d'interface de l'application</p>
+</div>
+</div>
+</body>
+</html>

@@ -1,0 +1,104 @@
+@import url("https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Cormorant+Garamond:wght@500;600;700&family=Jost:wght@400;500;600&display=swap");
+/* Kit At-Tijaniya : styles des aperçus. Valeurs reprises de lib/core/theme et des maquettes
+   validées ; toutes les couleurs passent par les jetons de tokens.json. */
+body{margin:0;background:var(--parchment);color:var(--ink);font-family:var(--font-jost);font-size:15px;line-height:1.5}
+.at-pad{padding:var(--space-16)}
+.at-row{display:flex;flex-wrap:wrap;gap:var(--space-8);align-items:center}
+.at-col{display:flex;flex-direction:column;gap:var(--space-12)}
+.at-dark{background:var(--zaytoune);color:var(--parchment)}
+
+/* Étiquette */
+.at-eyebrow{font-size:10.5px;letter-spacing:1.2px;text-transform:uppercase;font-weight:500;color:var(--secondary_ink)}
+.at-dark .at-eyebrow{color:var(--gold_on_dark)}
+
+/* Titre de section */
+.at-section{display:flex;align-items:baseline;justify-content:space-between;gap:var(--space-8);padding:var(--space-24) 2px var(--space-4)}
+.at-section h2{margin:0;font-family:var(--font-cormorant);font-size:22px;line-height:1.15;font-weight:600;color:var(--ink)}
+.at-section h2.ar{font-family:var(--font-amiri);font-size:20px;font-weight:700;line-height:1.4}
+.at-section a{font-size:14px;font-weight:500;color:var(--emerald);text-decoration:none}
+
+/* Carte */
+.at-card{background:var(--off_white);border:1px solid rgba(140,122,91,.2);border-radius:var(--radius-card);padding:var(--space-14)}
+.at-card.feature{border-radius:var(--radius-feature);border:0;box-shadow:var(--shadow-action)}
+.at-card h3{margin:0;font-family:var(--font-cormorant);font-size:18px;font-weight:600;line-height:1.2}
+.at-card p{margin:var(--space-4) 0 0;font-size:12.5px;color:var(--secondary_ink)}
+
+/* Liste groupée */
+.at-list{background:var(--off_white);border:1px solid rgba(140,122,91,.2);border-radius:var(--radius-card);overflow:hidden}
+.at-item{display:flex;align-items:center;gap:var(--space-12);padding:11px var(--space-12);min-height:48px}
+.at-item+.at-item{border-top:1px solid rgba(140,122,91,.2)}
+.at-ic{width:34px;height:34px;border-radius:10px;display:grid;place-items:center;flex:none;background:var(--emerald_soft);color:var(--emerald);font-size:16px}
+.at-ic.gold{background:var(--gold_soft);color:var(--ink)}
+.at-ic.neutral{background:var(--parchment);color:var(--bronze)}
+.at-item b{display:block;font-weight:500;font-size:14px;line-height:1.25}
+.at-item small{display:block;font-size:12.5px;color:var(--secondary_ink);line-height:1.3}
+.at-end{margin-inline-start:auto;display:flex;align-items:center;gap:6px;color:var(--bronze);white-space:nowrap}
+
+/* Pastilles d'état */
+.at-pill{display:inline-flex;align-items:center;gap:5px;font-size:12px;font-weight:500;padding:3px 9px;border-radius:var(--radius-pill);line-height:1.4}
+.at-pill.done{background:var(--emerald_soft);color:var(--emerald)}
+.at-pill.todo{background:var(--gold_soft);color:var(--ink)}
+.at-pill.neutral{background:var(--parchment);color:var(--secondary_ink);border:1px solid rgba(140,122,91,.3)}
+.at-pill.count{background:var(--emerald);color:var(--off_white);min-width:20px;justify-content:center}
+.at-dark .at-pill.on-dark{background:rgba(255,253,248,.12);color:var(--parchment)}
+.at-dark .at-pill.gold{background:var(--gold_on_dark);color:var(--zaytoune)}
+
+/* Boutons */
+.at-btn{font:inherit;font-size:14px;font-weight:500;border:0;cursor:pointer;min-height:48px;padding:0 20px;display:inline-flex;align-items:center;justify-content:center;gap:8px}
+.at-btn.primary{background:var(--emerald);color:var(--off_white);border-radius:var(--radius-pill)}
+.at-btn.block{background:var(--emerald);color:var(--off_white);border-radius:var(--radius-button);width:100%}
+.at-btn.tonal{background:var(--emerald_soft);color:var(--emerald);border-radius:var(--radius-pill)}
+.at-btn.outline{background:transparent;color:var(--emerald);border:1px solid var(--emerald);border-radius:var(--radius-pill)}
+.at-btn.text{background:none;color:var(--emerald);padding:0 8px}
+.at-btn.danger-link{background:none;color:var(--danger);font-size:13px;font-weight:400;padding:0 8px}
+.at-dark .at-btn.gold{background:var(--gold_on_dark);color:var(--zaytoune);border-radius:var(--radius-card);width:100%}
+
+/* Filtres */
+.at-chip{font:inherit;font-size:12.5px;min-height:48px;background:none;border:0;padding:0;cursor:pointer;display:inline-flex;align-items:center}
+.at-chip span{padding:6px 13px;border-radius:var(--radius-pill);border:1px solid rgba(140,122,91,.35);color:var(--secondary_ink)}
+.at-chip[aria-pressed="true"] span{background:var(--ink);border-color:var(--ink);color:var(--off_white);font-weight:500}
+
+/* Contrôle segmenté */
+.at-seg{display:grid;grid-auto-flow:column;grid-auto-columns:1fr;background:rgba(140,122,91,.12);border-radius:12px;padding:3px}
+.at-seg button{font:inherit;font-size:14px;border:0;background:none;min-height:42px;border-radius:10px;color:var(--secondary_ink);cursor:pointer}
+.at-seg button[aria-pressed="true"]{background:var(--off_white);color:var(--ink);font-weight:500;box-shadow:0 1px 3px rgba(43,38,32,.08)}
+.at-seg small{margin-inline-start:4px;color:var(--secondary_ink);font-weight:400}
+
+/* Bloc date */
+.at-date{width:54px;flex:none;border-radius:12px;background:var(--emerald_soft);color:var(--emerald);display:flex;flex-direction:column;align-items:center;padding:6px 0;line-height:1}
+.at-date b{font-family:var(--font-cormorant);font-size:24px;font-weight:600}
+.at-date small{font-size:10.5px;letter-spacing:.8px;text-transform:uppercase;margin-top:2px}
+
+/* Tuile de chiffre */
+.at-stat{background:var(--off_white);border:1px solid rgba(140,122,91,.2);border-radius:14px;padding:10px 12px;display:flex;flex-direction:column;gap:2px;min-width:96px}
+.at-stat b{font-family:var(--font-cormorant);font-size:28px;font-weight:600;line-height:1;color:var(--emerald)}
+.at-stat small{font-size:12px;color:var(--secondary_ink);line-height:1.3}
+.at-stat.dark{background:var(--zaytoune);border-color:var(--zaytoune)}
+.at-stat.dark b{color:var(--gold_on_dark)} .at-stat.dark small{color:var(--secondary_on_dark)}
+
+/* Bandeau de wird */
+.at-band{border-radius:var(--radius-feature) var(--radius-feature) 0 0;padding:12px 14px;position:relative;overflow:hidden;color:var(--off_white);min-height:84px}
+.at-band.lazim{background:var(--zaytoune)} .at-band.wazifa{background:var(--emerald)} .at-band.hadra{background:var(--gold_soft);color:var(--ink)}
+.at-band .fr{font-family:var(--font-cormorant);font-size:22px;font-weight:600;line-height:1.05}
+.at-band .freq{font-size:12px;opacity:.85}
+.at-band .ar{position:absolute;inset-inline-end:12px;top:-4px;font-family:var(--font-amiri);font-size:32px;line-height:1.6;color:var(--gold_on_dark)}
+.at-band.hadra .ar{color:var(--ink)}
+
+/* Feuille du bas */
+.at-sheet{background:var(--off_white);border-radius:22px 22px 0 0;padding:10px 20px 20px;box-shadow:0 -6px 20px rgba(43,38,32,.18);display:flex;flex-direction:column;gap:10px}
+.at-grab{width:36px;height:4px;border-radius:2px;background:rgba(140,122,91,.4);align-self:center}
+.at-source{font-size:12.5px;font-style:italic;color:var(--secondary_ink)}
+
+/* Avis */
+.at-notice{display:flex;gap:8px;align-items:flex-start;padding:12px;border-radius:12px;background:var(--emerald_soft);font-size:12.5px;color:var(--ink)}
+.at-notice.offline{background:var(--off_white);border:1px solid rgba(140,122,91,.2);align-items:center}
+.at-notice .ic{color:var(--emerald);font-size:16px;line-height:1}
+.at-notice.offline .ic{color:var(--bronze)}
+
+/* Badge de parrainage */
+.at-badge{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:500;padding:4px 10px;border-radius:var(--radius-pill);background:var(--zaytoune);color:var(--gold_soft)}
+.at-badge i{font-style:normal;width:14px;height:14px;border-radius:50%;border:1px solid var(--gold_on_dark);color:var(--gold_on_dark);font-size:9px;display:grid;place-items:center}
+.at-tip{font-size:12.5px;line-height:1.4;color:var(--secondary_ink);background:var(--parchment);border-radius:10px;padding:8px 10px;border:1px solid rgba(201,162,75,.45)}
+
+/* Arabe */
+.ar-text{font-family:var(--font-amiri);direction:rtl;line-height:1.8}
