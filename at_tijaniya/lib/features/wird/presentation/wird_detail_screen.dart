@@ -1,33 +1,49 @@
+// Guide d'un wird — refait le 2026-11-02. Pas de maquette propre
+// (`docs/maquettes/README.md`) : il reprend le bandeau, l'historique, le
+// rappel, les piliers et leurs nombres de `ecran-wird.html`, et l'affichage
+// des piliers et des clôtures de `ecran-pratique.html`. Décisions validées le
+// 2026-11-02 :
+// - pas de « Commencer » pour la Hadratou-l-Jouma hors vendredi (même règle
+//   que l'écran Wird) ; le guide reste lisible toute la semaine ;
+// - « Aa » ne règle que la taille de l'arabe (partagée avec le tasbih) :
+//   translittération et traduction restent toujours affichées, le guide étant
+//   le texte de référence ;
+// - piliers sur le fond sombre de l'écran de pratique, sans cartes blanches.
+//
+// Contenu religieux : les textes viennent exclusivement du corpus validé
+// (`lib/features/wird/data/wirds_content.dart`). Les récitations audio
+// viennent de Supabase (`wird_recitations`, `WirdPillarAudioController`) ;
+// la lecture audio est inchangée.
+
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../core/date/current_day.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_theme.dart';
+import '../../../core/widgets/content_text.dart';
+import '../../../core/widgets/section_title.dart';
 import '../../../l10n/app_localizations.dart';
 import '../domain/wird_models.dart';
+import '../domain/wird_overview.dart';
+import '../domain/wird_progress_stats.dart';
 import '../domain/wird_recitation.dart';
+import 'tasbih_reading_prefs_provider.dart';
+import 'tasbih_reading_sheet.dart';
 import 'tasbih_screen.dart';
 import 'wird_audio_controller.dart';
 import 'wird_audio_player_bar.dart';
+import 'wird_band.dart';
 import 'wird_display_name.dart';
 import 'wird_history_screen.dart';
 import 'wird_messages.dart';
-import 'wird_pillar_card.dart';
+import 'wird_overview_provider.dart';
+import 'wird_overview_widgets.dart';
 import 'wird_pillar_audio_controller.dart';
+import 'wird_pillar_card.dart';
 import 'wird_reminders_screen.dart';
-import '../../../core/widgets/content_text.dart';
 
-/// Guide d'un Wird — arabe, translittération, traduction, lecture séquencée,
-/// lecteur audio synchronisé au texte. Priorité P0
-/// (docs/03-architecture-ecrans.md).
-///
-/// Le contenu texte affiché ici provient exclusivement de
-/// `lib/features/wird/data/wirds_content.dart` (corpus validé) — voir la
-/// règle impérative en tête de ce fichier. Les récitations audio, elles,
-/// viennent de Supabase (`wird_recitations`, résolu par
-/// `WirdPillarAudioController` — docs/decision-gestion-audio-wirds.md) :
-/// tant qu'aucune n'est validée pour un pilier, le lecteur affiche un état
-/// "bientôt disponible" plutôt que de rester muet sans explication.
 class WirdDetailScreen extends ConsumerStatefulWidget {
   const WirdDetailScreen({super.key, required this.wird});
 
@@ -42,9 +58,9 @@ class _WirdDetailScreenState extends ConsumerState<WirdDetailScreen> {
 
   GlobalKey _keyFor(int index) => _pillarKeys.putIfAbsent(index, () => GlobalKey());
 
+  /// Fait défiler jusqu'au pilier en cours de lecture audio.
   void _scrollToPillar(int index) {
-    final key = _pillarKeys[index];
-    final pillarContext = key?.currentContext;
+    final pillarContext = _pillarKeys[index]?.currentContext;
     if (pillarContext == null) return;
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted) return;
@@ -57,9 +73,12 @@ class _WirdDetailScreenState extends ConsumerState<WirdDetailScreen> {
     });
   }
 
+  void _push(Widget screen) => Navigator.of(context).push(MaterialPageRoute(builder: (_) => screen));
+
   @override
   Widget build(BuildContext context) {
     final wird = widget.wird;
+    final l10n = AppLocalizations.of(context)!;
 
     ref.listen(wirdAudioControllerProvider(wird), (previous, next) {
       if (next.activePillarIndex != null && next.activePillarIndex != previous?.activePillarIndex) {
@@ -68,7 +87,7 @@ class _WirdDetailScreenState extends ConsumerState<WirdDetailScreen> {
       if (next.errorMessage != null && next.errorMessage != previous?.errorMessage) {
         ScaffoldMessenger.of(context)
           ..hideCurrentSnackBar()
-          ..showSnackBar(SnackBar(content: Text(wirdMessage(AppLocalizations.of(context)!, next.errorMessage!))));
+          ..showSnackBar(SnackBar(content: Text(wirdMessage(l10n, next.errorMessage!))));
         // Message consommé : la même erreur pourra s'afficher de nouveau.
         // Différé, pour ne pas modifier l'état pendant sa notification.
         final controller = ref.read(wirdAudioControllerProvider(wird).notifier);
@@ -81,12 +100,19 @@ class _WirdDetailScreenState extends ConsumerState<WirdDetailScreen> {
     final pillarAudio = ref.watch(wirdPillarAudioProvider(wird));
     final hasAnyAudio = pillarAudio.values.any((s) => s.recitation != null);
     final audioLoadFailed = pillarAudio.values.any((s) => s.availability == PillarAudioAvailability.loadFailed);
+    final arabicSize = ref.watch(tasbihReadingPrefsProvider).arabicSize - 4;
 
-    // Le titre d'AppBar (et tout autre widget qui lit Theme.of(context))
-    // doit passer par le thème immersif : sans ce wrapper, le titre hérite
-    // de AppBarTheme.titleTextStyle du thème clair ambiant (couleur `ink`
-    // explicite, donc prioritaire sur `foregroundColor`) et s'affiche en
-    // texte quasi noir sur le fond vert zaytoune — illisible.
+    // État du jour (complétions, session en pause, rappels) : tant qu'il
+    // n'est pas lu, le guide s'affiche sans série ni état plutôt que vide.
+    final now = ref.watch(clockProvider)();
+    final entry = ref.watch(wirdOverviewProvider).valueOrNull?.where((e) => e.wird.id == wird.id).firstOrNull ??
+        WirdOverviewEntry(
+          wird: wird,
+          stats: computeWirdProgressStats(frequency: wird.frequency, completionDates: const [], now: now),
+        );
+
+    // Thème immersif : sans lui, le titre et les boutons héritent des couleurs
+    // du thème clair ambiant, illisibles sur le zaytoune.
     return Theme(
       data: AppTheme.immersive,
       child: Scaffold(
@@ -94,33 +120,24 @@ class _WirdDetailScreenState extends ConsumerState<WirdDetailScreen> {
         appBar: AppBar(
           backgroundColor: AppColors.zaytoune,
           foregroundColor: AppColors.parchment,
+          systemOverlayStyle: SystemUiOverlayStyle.light,
           title: ContentText(wirdDisplayName(context, wird)),
           actions: [
-            IconButton(
-              icon: const Icon(Icons.insights_outlined),
-              tooltip: AppLocalizations.of(context)!.wirdDetailHistoryTooltip,
-              onPressed: () => Navigator.of(context).push(
-                MaterialPageRoute(builder: (_) => WirdHistoryScreen(wird: wird)),
-              ),
-            ),
-            IconButton(
-              icon: const Icon(Icons.notifications_active_outlined),
-              tooltip: AppLocalizations.of(context)!.wirdDetailRemindersTooltip,
-              onPressed: () => Navigator.of(context).push(
-                MaterialPageRoute(builder: (_) => WirdRemindersScreen(wird: wird)),
+            Semantics(
+              button: true,
+              label: l10n.wirdTasbihReadingSettings,
+              excludeSemantics: true,
+              child: TextButton(
+                style: TextButton.styleFrom(
+                  foregroundColor: AppColors.parchment,
+                  minimumSize: const Size(48, 48),
+                  shape: const CircleBorder(),
+                ),
+                onPressed: () => showTasbihReadingSheet(context, sizeOnly: true),
+                child: const Text('Aa', textDirection: TextDirection.ltr),
               ),
             ),
           ],
-        ),
-        floatingActionButton: FloatingActionButton.extended(
-          heroTag: 'wird_detail_tasbih',
-          backgroundColor: AppColors.goldOnDark,
-          foregroundColor: AppColors.ink,
-          icon: const Icon(Icons.touch_app),
-          label: Text(AppLocalizations.of(context)!.wirdDetailTasbihButton),
-          onPressed: () => Navigator.of(context).push(
-            MaterialPageRoute(builder: (_) => TasbihScreen(wird: wird)),
-          ),
         ),
         bottomNavigationBar: WirdAudioPlayerBar(
           wird: wird,
@@ -134,40 +151,46 @@ class _WirdDetailScreenState extends ConsumerState<WirdDetailScreen> {
         body: SafeArea(
           bottom: false,
           child: ListView(
-            // Bottom généreux : le FAB "Tasbih" flotte en permanence au-dessus
-            // de ce ListView (Scaffold ne réserve de la place que pour la
-            // bottomNavigationBar, pas pour un FAB) et masquait la fin du
-            // dernier pilier sans cette marge — constaté sur les 3 wirds lors
-            // de l'audit design pré-publication Play Store.
-            padding: const EdgeInsets.fromLTRB(20, 20, 20, 96),
+            padding: const EdgeInsets.fromLTRB(16, 4, 16, 24),
             children: [
-              ContentText(
-                wird.nameArabic,
-                textAlign: TextAlign.center,
-                style: AppTheme.sacredText(fontSize: 32, color: AppColors.goldOnDark),
+              // Identité du wird et son état du jour, comme sur sa carte.
+              // Filet or : le bandeau du Lazim est zaytoune, comme le fond de
+              // l'écran, et s'y confondait (vu sur capture).
+              Container(
+                foregroundDecoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(18),
+                  border: Border.all(color: AppColors.goldOnDark.withValues(alpha: 0.35)),
+                ),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(18),
+                  child: WirdBand(wird: wird, state: wirdStatePill(context, entry, now)),
+                ),
               ),
+              const SizedBox(height: 8),
+              _GuideActions(entry: entry, now: now, onPush: _push),
+              const SizedBox(height: 4),
+              WirdStreakLine(entry: entry, onDark: true),
               if (wird.conditionsNote != null) ...[
                 const SizedBox(height: 16),
-                _InfoBanner(text: wird.conditionsNote!),
+                _DarkNotice(text: wird.conditionsNote!),
               ],
               if (wird.repetitionsNote != null) ...[
                 const SizedBox(height: 8),
-                _InfoBanner(text: wird.repetitionsNote!, icon: Icons.repeat),
+                _DarkNotice(text: wird.repetitionsNote!, icon: Icons.repeat),
               ],
-              const SizedBox(height: 24),
-              Text(
-                AppLocalizations.of(context)!.wirdDetailPillarsTitle,
-                style: const TextStyle(
-                  color: AppColors.parchment,
-                  fontWeight: FontWeight.w600,
-                  fontSize: 16,
-                ),
+              SectionTitle(
+                l10n.wirdDetailPillarsTitle,
+                onDark: true,
+                padding: const EdgeInsetsDirectional.fromSTEB(2, 24, 0, 8),
               ),
-              const SizedBox(height: 12),
+              _PillarSummary(entry: entry),
+              const SizedBox(height: 14),
               for (var i = 0; i < wird.pillars.length; i++) ...[
                 WirdPillarCard(
                   key: _keyFor(i),
                   pillar: wird.pillars[i],
+                  number: i + 1,
+                  arabicSize: arabicSize,
                   availability: pillarAudio[i]?.availability ?? PillarAudioAvailability.noRecitation,
                   isActive: audioState.activePillarIndex == i,
                   isPlaying: audioState.activePillarIndex == i && audioState.isPlaying,
@@ -177,9 +200,6 @@ class _WirdDetailScreenState extends ConsumerState<WirdDetailScreen> {
                 ),
                 const SizedBox(height: 12),
               ],
-              // Espace pour ne pas laisser la barre de lecture masquer le
-              // dernier élément.
-              const SizedBox(height: 96),
             ],
           ),
         ),
@@ -188,8 +208,152 @@ class _WirdDetailScreenState extends ConsumerState<WirdDetailScreen> {
   }
 }
 
-class _InfoBanner extends StatelessWidget {
-  const _InfoBanner({required this.text, this.icon = Icons.info_outline});
+/// « Commencer » (ou « Reprendre ») ouvre le tasbih ; Historique et Rappel
+/// (avec son heure) à un toucher. Pas de « Commencer » pour la Hadra hors
+/// vendredi. À forte taille de texte, la rangée passe à la ligne.
+class _GuideActions extends StatelessWidget {
+  const _GuideActions({required this.entry, required this.now, required this.onPush});
+
+  final WirdOverviewEntry entry;
+  final DateTime now;
+  final void Function(Widget screen) onPush;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    final wird = entry.wird;
+    final time = reminderTimeLabel(entry.reminders, now);
+    return Wrap(
+      alignment: WrapAlignment.spaceBetween,
+      crossAxisAlignment: WrapCrossAlignment.center,
+      spacing: 8,
+      children: [
+        if (entry.canStart)
+          FilledButton.icon(
+            style: FilledButton.styleFrom(
+              backgroundColor: AppColors.goldOnDark,
+              foregroundColor: AppColors.zaytoune,
+              side: BorderSide.none,
+            ),
+            onPressed: () => onPush(TasbihScreen(wird: wird)),
+            icon: const Icon(Icons.touch_app_outlined, size: 18),
+            label: Text(entry.paused ? l10n.homeNextStepResume : l10n.homeNextStepStart),
+          ),
+        Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            _DarkIconAction(
+              icon: Icons.bar_chart_outlined,
+              label: l10n.wirdDetailHistoryTooltip,
+              onTap: () => onPush(WirdHistoryScreen(wird: wird)),
+            ),
+            _DarkIconAction(
+              icon: time == null ? Icons.notifications_none_outlined : Icons.notifications_active_outlined,
+              label: time ?? l10n.wirdReminderButton,
+              semanticsLabel: time == null ? l10n.wirdReminderButton : l10n.wirdReminderButtonAt(time),
+              onTap: () => onPush(WirdRemindersScreen(wird: wird)),
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+}
+
+class _DarkIconAction extends StatelessWidget {
+  const _DarkIconAction({required this.icon, required this.label, required this.onTap, this.semanticsLabel});
+
+  final IconData icon;
+  final String label;
+  final String? semanticsLabel;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return Semantics(
+      button: true,
+      label: semanticsLabel ?? label,
+      excludeSemantics: true,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(10),
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(minHeight: 48, minWidth: 56),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(icon, size: 19, color: AppColors.parchment),
+                const SizedBox(height: 2),
+                Text(
+                  label,
+                  textDirection: label.contains(':') ? TextDirection.ltr : null,
+                  style: TextStyle(fontSize: 11.5, color: AppColors.secondaryOnDark),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+/// Les piliers qui se répètent, en puces avec leur nombre : le wird en un
+/// coup d'œil avant le détail (intention et Fatiha n'en ont pas, comme sur
+/// la carte de l'écran Wird).
+class _PillarSummary extends StatelessWidget {
+  const _PillarSummary({required this.entry});
+
+  final WirdOverviewEntry entry;
+
+  @override
+  Widget build(BuildContext context) {
+    final arabic = Localizations.localeOf(context).languageCode == 'ar';
+    return Wrap(
+      spacing: 6,
+      runSpacing: 6,
+      children: [
+        for (final pillar in entry.chipPillars)
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(999),
+              border: Border.all(color: AppColors.parchment.withValues(alpha: 0.2)),
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Flexible(
+                  child: ContentText(
+                    pillar.labelFor(arabic: arabic),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: arabic
+                        ? AppTheme.sacredText(fontSize: 14, color: AppColors.parchment).copyWith(height: 1.4)
+                        : const TextStyle(fontSize: 12.5, color: AppColors.parchment),
+                  ),
+                ),
+                const SizedBox(width: 4),
+                Text(
+                  '×${pillar.repetitions}',
+                  textDirection: TextDirection.ltr,
+                  style: const TextStyle(fontSize: 12.5, fontWeight: FontWeight.w600, color: AppColors.goldOnDark),
+                ),
+              ],
+            ),
+          ),
+      ],
+    );
+  }
+}
+
+/// Note du corpus sur fond sombre (équivalent de `Notice.info` pour un écran
+/// de pratique) : texte en entier, jamais coupé.
+class _DarkNotice extends StatelessWidget {
+  const _DarkNotice({required this.text, this.icon = Icons.info_outline});
 
   final String text;
   final IconData icon;
@@ -199,9 +363,9 @@ class _InfoBanner extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: AppColors.parchment.withValues(alpha: 0.08),
+        color: AppColors.parchment.withValues(alpha: 0.06),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: AppColors.goldOnDark.withValues(alpha: 0.4)),
+        border: Border.all(color: AppColors.goldOnDark.withValues(alpha: 0.35)),
       ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -209,7 +373,7 @@ class _InfoBanner extends StatelessWidget {
           Icon(icon, color: AppColors.goldOnDark, size: 18),
           const SizedBox(width: 8),
           Expanded(
-            child: ContentText(text, style: const TextStyle(color: AppColors.parchment, fontSize: 13)),
+            child: ContentText(text, style: const TextStyle(color: AppColors.parchment, fontSize: 13.5, height: 1.4)),
           ),
         ],
       ),

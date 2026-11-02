@@ -41,6 +41,7 @@ import '../domain/wird_overview.dart';
 import 'tasbih_controller.dart';
 import 'tasbih_counter_panel.dart';
 import 'tasbih_reading_prefs_provider.dart';
+import 'tasbih_reading_sheet.dart';
 import 'wird_counter_feedback.dart';
 import 'wird_display_name.dart';
 import 'wird_history_screen.dart';
@@ -277,7 +278,7 @@ class _Header extends ConsumerWidget {
                   minimumSize: const Size(48, 48),
                   shape: const CircleBorder(),
                 ),
-                onPressed: () => _showReadingSheet(context),
+                onPressed: () => showTasbihReadingSheet(context),
                 child: const Text('Aa', textDirection: TextDirection.ltr),
               ),
             ),
@@ -292,72 +293,6 @@ class _Header extends ConsumerWidget {
       ),
     );
   }
-}
-
-/// Réglages de lecture (« Aa ») : taille de l'arabe, translittération,
-/// traduction. Gardés pour les prochaines fois.
-void _showReadingSheet(BuildContext context) {
-  showModalBottomSheet<void>(
-    context: context,
-    showDragHandle: true,
-    backgroundColor: AppColors.offWhite,
-    builder: (sheetContext) => Theme(
-      data: AppTheme.standard,
-      child: Consumer(
-        builder: (context, ref, _) {
-          final l10n = AppLocalizations.of(context)!;
-          final prefs = ref.watch(tasbihReadingPrefsProvider);
-          final notifier = ref.read(tasbihReadingPrefsProvider.notifier);
-          return SafeArea(
-            child: Padding(
-              padding: const EdgeInsets.fromLTRB(20, 0, 20, 16),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  Text(l10n.wirdTasbihReadingTitle,
-                      style: AppTheme.titleText(fontSize: 22, color: AppColors.ink, height: 1.2)),
-                  const SizedBox(height: 8),
-                  Row(
-                    children: [
-                      Expanded(child: Text(l10n.wirdTasbihArabicSize, style: const TextStyle(color: AppColors.ink))),
-                      IconButton(
-                        tooltip: l10n.wirdTasbihSmaller,
-                        onPressed: prefs.arabicSize > TasbihReadingPrefs.minArabicSize
-                            ? () => notifier.stepArabicSize(-1)
-                            : null,
-                        icon: const Icon(Icons.text_decrease),
-                      ),
-                      IconButton(
-                        tooltip: l10n.wirdTasbihLarger,
-                        onPressed: prefs.arabicSize < TasbihReadingPrefs.maxArabicSize
-                            ? () => notifier.stepArabicSize(1)
-                            : null,
-                        icon: const Icon(Icons.text_increase),
-                      ),
-                    ],
-                  ),
-                  SwitchListTile(
-                    contentPadding: EdgeInsets.zero,
-                    title: Text(l10n.wirdTasbihShowTransliteration),
-                    value: prefs.transliterationVisible(arabicInterface: _isArabic(context)),
-                    onChanged: notifier.setTransliteration,
-                  ),
-                  SwitchListTile(
-                    contentPadding: EdgeInsets.zero,
-                    title: Text(l10n.wirdTasbihShowTranslation),
-                    value: prefs.showTranslation,
-                    onChanged: notifier.setTranslation,
-                  ),
-                  Text(l10n.wirdTasbihReadingSaved, style: TextStyle(fontSize: 12.5, color: AppColors.secondaryInk)),
-                ],
-              ),
-            ),
-          );
-        },
-      ),
-    ),
-  );
 }
 
 /// Un segment par pilier — celui en cours se remplit au fil du comptage —,

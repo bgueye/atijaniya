@@ -31,7 +31,7 @@ maquette existante plutôt que d'en créer une autre.
 |---|---|
 | `HomeScreen` | `ecran-accueil.html` (proposition B) |
 | `WirdListScreen` | `ecran-wird.html` |
-| `WirdDetailScreen` (guide d'un wird) | pas de maquette propre : bandeau, historique, rappel, piliers et nombres de `ecran-wird.html` ; affichage des piliers et des clôtures de `ecran-pratique.html` |
+| `WirdDetailScreen` (guide d'un wird) | pas de maquette propre : bandeau, historique, rappel, piliers et nombres de `ecran-wird.html` ; affichage des piliers et des clôtures de `ecran-pratique.html` (**refait le 2026-11-02**, voir `docs/09`) |
 | `TasbihScreen`, `FreeWirdScreen` | `ecran-pratique.html` |
 | `KhadaraScreen` (onglet Zawiyas), `NearbyRecurringEventsScreen` (supprimé) | `ecran-zawiyas.html` |
 | `FiguresScreen` et page d'un foyer | `ecran-figures.html` |

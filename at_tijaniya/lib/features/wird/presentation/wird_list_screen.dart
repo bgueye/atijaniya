@@ -45,6 +45,7 @@ import 'wird_detail_screen.dart';
 import 'wird_history_screen.dart';
 import 'wird_icon.dart';
 import 'wird_overview_provider.dart';
+import 'wird_overview_widgets.dart';
 import 'wird_recitations_management_screen.dart';
 import 'wird_recitations_review_screen.dart';
 import 'wird_reminders_screen.dart';
@@ -319,7 +320,6 @@ class _WirdOverviewCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
     final wird = entry.wird;
     final weekly = wird.frequency == WirdFrequency.weekly;
     final session = entry.session;
@@ -334,7 +334,7 @@ class _WirdOverviewCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          WirdBand(wird: wird, state: _statePill(context, l10n)),
+          WirdBand(wird: wird, state: wirdStatePill(context, entry, now)),
           Padding(
             padding: const EdgeInsets.fromLTRB(14, 11, 14, 4),
             child: Column(
@@ -359,7 +359,7 @@ class _WirdOverviewCard extends StatelessWidget {
                   ),
                   const SizedBox(height: 9),
                 ],
-                _StreakLine(entry: entry),
+                WirdStreakLine(entry: entry),
                 const SizedBox(height: 6),
                 Divider(height: 1, color: AppColors.bronze.withValues(alpha: 0.2)),
                 _CardActions(entry: entry, now: now),
@@ -369,24 +369,6 @@ class _WirdOverviewCard extends StatelessWidget {
         ],
       ),
     );
-  }
-
-  /// État du jour sur le bandeau. Le bandeau de la Hadra est clair
-  /// (`gold_soft`) : ses pastilles sont celles des fonds clairs.
-  Widget _statePill(BuildContext context, AppLocalizations l10n) {
-    final lightBand = entry.wird.frequency == WirdFrequency.weekly;
-    if (entry.paused) {
-      return StatePill(l10n.wirdStatePaused, variant: lightBand ? StatePillVariant.todo : StatePillVariant.gold);
-    }
-    if (entry.doneToday) return StatePill(l10n.wirdStateDoneToday, variant: StatePillVariant.done);
-    if (!entry.applicableToday) {
-      // Hors vendredi : la date du prochain vendredi.
-      final locale = Localizations.localeOf(context).languageCode;
-      final date = DateFormat.MMMMEEEEd(locale).format(nextFriday(now));
-      return StatePill(date[0].toUpperCase() + date.substring(1), variant: StatePillVariant.neutral);
-    }
-    if (lightBand) return StatePill(l10n.homeWirdSubtitlePendingFridayToday, variant: StatePillVariant.neutral);
-    return StatePill(l10n.wirdStateTodoToday, variant: StatePillVariant.onDark);
   }
 }
 
@@ -479,56 +461,6 @@ class _PausedProgress extends StatelessWidget {
         ),
         const SizedBox(height: 4),
         ExcludeSemantics(child: ContentText(label, style: TextStyle(fontSize: 12, color: AppColors.secondaryInk))),
-      ],
-    );
-  }
-}
-
-/// Série : frise des 7 derniers jours et nombre de jours d'affilée pour un
-/// wird quotidien ; nombre de vendredis d'affilée pour la Hadra.
-class _StreakLine extends StatelessWidget {
-  const _StreakLine({required this.entry});
-
-  final WirdOverviewEntry entry;
-
-  @override
-  Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
-    final streak = entry.stats.currentStreak;
-    final weekly = entry.wird.frequency == WirdFrequency.weekly;
-    final unit = weekly
-        ? (streak == 1 ? l10n.wirdHistoryStreakFridaySingular : l10n.wirdHistoryStreakFridays)
-        : (streak == 1 ? l10n.wirdHistoryStreakDaySingular : l10n.wirdHistoryStreakDays);
-    final streakText =
-        Text('$streak $unit', style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w500, color: AppColors.ink));
-    if (weekly) {
-      // Pas de série à montrer avant le premier vendredi marqué.
-      return streak > 0
-          ? Align(alignment: AlignmentDirectional.centerStart, child: streakText)
-          : const SizedBox.shrink();
-    }
-    final days = entry.last7Days;
-    return Row(
-      children: [
-        ExcludeSemantics(
-          child: Row(
-            children: [
-              for (final on in days)
-                Container(
-                  width: 14,
-                  height: 5,
-                  margin: const EdgeInsetsDirectional.only(end: 3),
-                  decoration: BoxDecoration(
-                    color: on ? AppColors.emerald : AppColors.bronze.withValues(alpha: 0.22),
-                    borderRadius: BorderRadius.circular(3),
-                  ),
-                ),
-            ],
-          ),
-        ),
-        const SizedBox(width: 6),
-        Expanded(child: Text(l10n.wirdLast7Days, style: TextStyle(fontSize: 12, color: AppColors.secondaryInk))),
-        streakText,
       ],
     );
   }

@@ -18,7 +18,11 @@ class SectionTitle extends StatelessWidget {
     this.actionLabel,
     this.onAction,
     this.padding = const EdgeInsetsDirectional.fromSTEB(18, 24, 8, 4),
+    this.onDark = false,
   });
+
+  /// Sur `zaytoune` (écrans de pratique) : titre en blanc cassé, lien en or.
+  final bool onDark;
 
   final String text;
 
@@ -36,10 +40,11 @@ class SectionTitle extends StatelessWidget {
   /// Style du titre selon la langue : `titre-section` (Cormorant 22) en
   /// français, `titre-arabe` (Amiri 20, 700) en arabe — les deux polices de
   /// titre de la charte (design_tokens.yaml § typography).
-  static TextStyle styleFor(BuildContext context) {
+  static TextStyle styleFor(BuildContext context, {bool onDark = false}) {
+    final color = onDark ? AppColors.offWhite : AppColors.ink;
     return Localizations.localeOf(context).languageCode == 'ar'
-        ? AppTheme.sacredText(fontSize: 20, color: AppColors.ink).copyWith(fontWeight: FontWeight.w700, height: 1.4)
-        : AppTheme.titleText(fontSize: 22, color: AppColors.ink, height: 1.15);
+        ? AppTheme.sacredText(fontSize: 20, color: color).copyWith(fontWeight: FontWeight.w700, height: 1.4)
+        : AppTheme.titleText(fontSize: 22, color: color, height: 1.15);
   }
 
   @override
@@ -52,12 +57,12 @@ class SectionTitle extends StatelessWidget {
           Expanded(
             // Annoncé comme titre au lecteur d'écran (audit de l'accueil
             // P2-6) : permet de naviguer de section en section.
-            child: Semantics(header: true, child: Text(text, style: styleFor(context))),
+            child: Semantics(header: true, child: Text(text, style: styleFor(context, onDark: onDark))),
           ),
           if (actionLabel != null && onAction != null)
             TextButton(
               onPressed: onAction,
-              style: TextButton.styleFrom(foregroundColor: AppColors.emerald),
+              style: TextButton.styleFrom(foregroundColor: onDark ? AppColors.goldOnDark : AppColors.emerald),
               child: Text(actionLabel!),
             ),
         ],

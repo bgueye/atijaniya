@@ -1,7 +1,12 @@
-/// Carte d'un pilier dans le guide d'un wird : texte arabe, translittération,
-/// traduction, formules de clôture, conditions, texte intégral et bouton de
-/// lecture audio. Sortie de `wird_detail_screen.dart` (audit du 2026-10-25,
-/// P3-8), sans changement de comportement.
+/// Un pilier dans le guide d'un wird. Refait le 2026-11-02 dans le langage de
+/// l'écran de pratique (`docs/maquettes/ecran-pratique.html`), sur fond
+/// zaytoune : numéro, nom court et nombre, arabe en Amiri or, translittération,
+/// traduction et note, puis chaque formule de clôture dans son propre bloc,
+/// en entier. Les piliers récités une fois (Fatiha) sont déroulés verset par
+/// verset ; le texte long de Jawharatoul Kamal reste replié derrière « Texte
+/// intégral ». Le bouton de lecture audio du pilier est inchangé.
+///
+/// Tous les textes viennent du corpus validé (`wirds_content.dart`).
 library;
 
 import 'package:flutter/material.dart';
@@ -17,127 +22,170 @@ class WirdPillarCard extends StatelessWidget {
   const WirdPillarCard({
     super.key,
     required this.pillar,
+    required this.number,
     required this.availability,
     required this.isActive,
     required this.isPlaying,
     required this.isBuffering,
     required this.onTogglePlay,
+    this.arabicSize = 26,
   });
 
   final WirdPillar pillar;
+
+  /// Rang du pilier dans le wird, à partir de 1 (les piliers forment une
+  /// suite ordonnée, d'où le numéro).
+  final int number;
   final PillarAudioAvailability availability;
+
+  /// Pilier en cours de lecture audio : filet or.
   final bool isActive;
   final bool isPlaying;
   final bool isBuffering;
   final VoidCallback onTogglePlay;
 
+  /// Taille de l'arabe, réglée par « Aa » (même réglage que le tasbih).
+  final double arabicSize;
+
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    final arabicInterface = Localizations.localeOf(context).languageCode == 'ar';
+    final fullText = pillar.fullText;
+    // Fatiha : déroulée, verset par verset. Jawharatoul Kamal (long) : repliée.
+    final expandedVerses = fullText != null && pillar.repetitions == 1;
+
     return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.fromLTRB(14, 8, 8, 14),
       decoration: BoxDecoration(
-        color: AppColors.offWhite,
+        color: AppColors.parchment.withValues(alpha: 0.05),
         borderRadius: BorderRadius.circular(16),
-        border: isActive ? Border.all(color: AppColors.goldOnDark, width: 2) : null,
+        border: Border.all(
+          color: isActive ? AppColors.goldOnDark : AppColors.parchment.withValues(alpha: 0.12),
+          width: isActive ? 1.6 : 1,
+        ),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
+          // En-tête : numéro, nom court et nombre, lecture audio.
           Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              Container(
+                width: 26,
+                height: 26,
+                alignment: Alignment.center,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  border: Border.all(color: AppColors.goldOnDark.withValues(alpha: 0.6)),
+                ),
+                child: Text('$number', style: const TextStyle(fontSize: 12, color: AppColors.goldOnDark)),
+              ),
+              const SizedBox(width: 10),
+              Expanded(
+                child: Semantics(
+                  header: true,
+                  child: Row(
+                    children: [
+                      Flexible(
+                        child: ContentText(
+                          pillar.labelFor(arabic: arabicInterface),
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                          style: arabicInterface
+                              ? AppTheme.sacredText(fontSize: 17, color: AppColors.offWhite).copyWith(height: 1.4)
+                              : const TextStyle(fontSize: 15, fontWeight: FontWeight.w500, color: AppColors.offWhite),
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      // Toujours « ×100 », de gauche à droite.
+                      Text(
+                        '×${pillar.repetitions}',
+                        textDirection: TextDirection.ltr,
+                        style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600, color: AppColors.goldOnDark),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
               _AudioPillarButton(
                 availability: availability,
                 isPlaying: isPlaying,
                 isBuffering: isBuffering,
                 onPressed: onTogglePlay,
               ),
-              const SizedBox(width: 8),
-              Expanded(
-                child: Text(
-                  pillar.arabic,
-                  textAlign: TextAlign.right,
-                  textDirection: TextDirection.rtl,
-                  style: AppTheme.sacredText(fontSize: 22, color: AppColors.ink),
-                ),
-              ),
-              const SizedBox(width: 12),
-              _RepetitionBadge(count: pillar.repetitions),
             ],
-          ),
-          const SizedBox(height: 10),
-          ContentText(
-            pillar.transliteration,
-            style: TextStyle(
-              fontStyle: FontStyle.italic,
-              // Encre atténuée plutôt que bronze (4,09:1 sur blanc cassé,
-              // sous l'AA) : la translittération se lit, ce n'est pas une
-              // légende (audit du 2026-10-25, P2-6).
-              color: AppColors.secondaryInk,
-              fontSize: 15,
-            ),
           ),
           const SizedBox(height: 6),
-          ContentText(
-            pillar.translation,
-            style: const TextStyle(color: AppColors.ink, fontSize: 16),
-          ),
-          if (pillar.note != null) ...[
-            const SizedBox(height: 10),
-            ContentText(
-              pillar.note!,
-              style: TextStyle(fontSize: 12, color: AppColors.secondaryInk),
-            ),
+          if (pillar.note != null && expandedVerses) ...[
+            _Note(pillar.note!),
+            const SizedBox(height: 8),
           ],
-          if (pillar.closingFormulas != null)
-            for (final formula in pillar.closingFormulas!) ...[
+          if (expandedVerses)
+            for (var i = 0; i < fullText.length; i++)
+              _Verse(paragraph: fullText[i], number: i + 1, arabicSize: arabicSize)
+          else ...[
+            Text(
+              pillar.arabic,
+              textAlign: TextAlign.center,
+              textDirection: TextDirection.rtl,
+              style: AppTheme.sacredText(fontSize: arabicSize, color: AppColors.goldOnDark).copyWith(height: 1.7),
+            ),
+            const SizedBox(height: 6),
+            _Transliteration(pillar.transliteration),
+            const SizedBox(height: 4),
+            _Translation(pillar.translation),
+            if (pillar.note != null) ...[
               const SizedBox(height: 10),
-              _ClosingFormulaBlock(formula: formula),
+              _Note(pillar.note!),
             ],
+          ],
           if (pillar.conditions != null) ...[
-            const SizedBox(height: 10),
+            const SizedBox(height: 12),
+            // Conditions strictes (Jawharatoul Kamal) : avertissement, en or.
             Container(
-              padding: const EdgeInsets.all(10),
-              decoration: BoxDecoration(
-                color: AppColors.goldSoft,
-                borderRadius: BorderRadius.circular(10),
-              ),
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(color: AppColors.goldSoft, borderRadius: BorderRadius.circular(12)),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    AppLocalizations.of(context)!.wirdDetailStrictConditions,
-                    style: const TextStyle(fontWeight: FontWeight.w600, color: AppColors.ink, fontSize: 12),
+                    l10n.wirdDetailStrictConditions,
+                    style: const TextStyle(fontWeight: FontWeight.w600, color: AppColors.ink, fontSize: 13),
                   ),
                   const SizedBox(height: 4),
                   for (final c in pillar.conditions!)
                     Padding(
-                      padding: const EdgeInsets.only(top: 2),
-                      child: ContentText('• $c', style: const TextStyle(fontSize: 12, color: AppColors.ink)),
+                      padding: const EdgeInsets.only(top: 3),
+                      child:
+                          ContentText('• $c', style: const TextStyle(fontSize: 13, height: 1.4, color: AppColors.ink)),
                     ),
                 ],
               ),
             ),
           ],
-          if (pillar.fullText != null) ...[
-            const SizedBox(height: 8),
+          if (pillar.closingFormulas != null)
+            for (final formula in pillar.closingFormulas!) ...[
+              const SizedBox(height: 10),
+              _ClosingFormulaBlock(formula: formula, arabicSize: arabicSize - 4),
+            ],
+          if (fullText != null && !expandedVerses) ...[
+            const SizedBox(height: 4),
             Theme(
               data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
-              // `Material` transparent : sans lui, l'effet de toucher de la
-              // ligne se peignait sous le fond blanc de la carte, donc
-              // invisible, et Flutter le signalait à chaque reconstruction en
-              // débogage (passe sur émulateur du 2026-10-25, P3-9).
               child: Material(
                 type: MaterialType.transparency,
                 child: ExpansionTile(
                   tilePadding: EdgeInsets.zero,
+                  iconColor: AppColors.goldOnDark,
+                  collapsedIconColor: AppColors.goldOnDark,
                   title: Text(
-                    AppLocalizations.of(context)!.wirdDetailFullText,
-                    style: TextStyle(fontSize: 13, color: AppColors.emerald, fontWeight: FontWeight.w500),
+                    l10n.wirdDetailFullText,
+                    style: const TextStyle(fontSize: 14, color: AppColors.goldOnDark, fontWeight: FontWeight.w500),
                   ),
                   children: [
-                    for (final p in pillar.fullText!) _ParagraphBlock(paragraph: p),
+                    for (var i = 0; i < fullText.length; i++)
+                      _Verse(paragraph: fullText[i], number: null, arabicSize: arabicSize - 4),
                   ],
                 ),
               ),
@@ -149,51 +197,159 @@ class WirdPillarCard extends StatelessWidget {
   }
 }
 
-/// Une formule de clôture (`WirdPillar.closingFormulas`) — introduction
-/// française, puis arabe (police Amiri, RTL) et translittération dans leur
-/// propre bloc, jamais fondus dans la même phrase que le français (retour
-/// du porteur de projet, 2026-08-17 : le mélange arabe/français dans
-/// `note` empêchait une mise en forme correcte du texte arabe).
-class _ClosingFormulaBlock extends StatelessWidget {
-  const _ClosingFormulaBlock({required this.formula});
+class _Transliteration extends StatelessWidget {
+  const _Transliteration(this.text, {this.align = TextAlign.center});
 
-  final WirdClosingFormula formula;
+  final String text;
+  final TextAlign align;
+
+  // Caractères latins : toujours de gauche à droite.
+  @override
+  Widget build(BuildContext context) => Text(
+        text,
+        textAlign: align,
+        textDirection: TextDirection.ltr,
+        style: const TextStyle(fontStyle: FontStyle.italic, fontSize: 15, height: 1.45, color: AppColors.parchment),
+      );
+}
+
+class _Translation extends StatelessWidget {
+  const _Translation(this.text, {this.align = TextAlign.center});
+
+  final String text;
+  final TextAlign align;
+
+  @override
+  Widget build(BuildContext context) => Text(
+        text,
+        textAlign: align,
+        textDirection: TextDirection.ltr,
+        style: TextStyle(fontSize: 14.5, height: 1.45, color: AppColors.secondaryOnDark),
+      );
+}
+
+class _Note extends StatelessWidget {
+  const _Note(this.text);
+
+  final String text;
+
+  @override
+  Widget build(BuildContext context) => Text(
+        text,
+        textAlign: TextAlign.center,
+        textDirection: TextDirection.ltr,
+        style: TextStyle(fontSize: 13, height: 1.4, color: AppColors.secondaryOnDark),
+      );
+}
+
+/// Un verset (Fatiha, numéroté) ou un paragraphe d'un texte long : arabe,
+/// translittération, traduction.
+class _Verse extends StatelessWidget {
+  const _Verse({required this.paragraph, required this.number, required this.arabicSize});
+
+  final WirdParagraph paragraph;
+  final int? number;
+  final double arabicSize;
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        ContentText(formula.intro, style: TextStyle(fontSize: 12, color: AppColors.secondaryInk)),
-        const SizedBox(height: 4),
-        Text(
-          formula.arabic,
-          textAlign: TextAlign.right,
-          textDirection: TextDirection.rtl,
-          style: AppTheme.sacredText(fontSize: 17, color: AppColors.ink),
-        ),
-        if (formula.transliteration != null) ...[
-          const SizedBox(height: 2),
-          ContentText(
-            formula.transliteration!,
-            style: TextStyle(fontStyle: FontStyle.italic, fontSize: 12, color: AppColors.secondaryInk),
+    final number = this.number;
+    return Container(
+      padding: const EdgeInsets.symmetric(vertical: 8),
+      decoration: BoxDecoration(
+        border: number == null || number == 1
+            ? null
+            : Border(top: BorderSide(color: AppColors.parchment.withValues(alpha: 0.1))),
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          if (number != null)
+            Container(
+              width: 22,
+              height: 22,
+              margin: const EdgeInsetsDirectional.only(end: 10, top: 6),
+              alignment: Alignment.center,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                border: Border.all(color: AppColors.goldOnDark.withValues(alpha: 0.45)),
+              ),
+              child: Text('$number', style: const TextStyle(fontSize: 10.5, color: AppColors.goldOnDark)),
+            ),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Text(
+                  paragraph.arabic,
+                  textAlign: TextAlign.right,
+                  textDirection: TextDirection.rtl,
+                  style:
+                      AppTheme.sacredText(fontSize: arabicSize - 4, color: AppColors.goldOnDark).copyWith(height: 1.7),
+                ),
+                _Transliteration(paragraph.transliteration, align: TextAlign.left),
+                const SizedBox(height: 2),
+                _Translation(paragraph.translation, align: TextAlign.left),
+              ],
+            ),
           ),
         ],
-      ],
+      ),
     );
   }
 }
 
-/// Bouton de lecture individuel affiché sur chaque pilier — grisé et
-/// désactivé tant qu'aucune récitation validée n'existe pour ce pilier ;
-/// une icône de téléchargement quand elle existe mais n'est pas encore sur
-/// l'appareil (docs/decision-gestion-audio-wirds.md §4).
-///
-/// `IconButton` de 48 × 48 avec `tooltip` : la version précédente (un
-/// `InkWell` nu autour d'une icône de 22 à 26 px) n'avait ni libellé pour
-/// TalkBack, qui annonçait seulement « bouton », ni la zone tactile minimale
-/// d'Android (audits du 2026-10-04 et du 2026-10-25). Chaque état a son
-/// propre libellé : écouter, mettre en pause, télécharger, réessayer.
+/// Formule de clôture : introduction, arabe en Amiri, translittération quand
+/// le document source en fournit une — en entier, comme à l'étape de clôture
+/// du tasbih (sans case à cocher : le guide se lit).
+class _ClosingFormulaBlock extends StatelessWidget {
+  const _ClosingFormulaBlock({required this.formula, required this.arabicSize});
+
+  final WirdClosingFormula formula;
+  final double arabicSize;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      margin: const EdgeInsetsDirectional.only(end: 6),
+      padding: const EdgeInsets.fromLTRB(12, 10, 12, 12),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(color: AppColors.goldOnDark.withValues(alpha: 0.3)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Text(
+            formula.intro,
+            textDirection: TextDirection.ltr,
+            style: TextStyle(fontSize: 12.5, height: 1.35, color: AppColors.secondaryOnDark),
+          ),
+          const SizedBox(height: 4),
+          Text(
+            formula.arabic,
+            textAlign: TextAlign.center,
+            textDirection: TextDirection.rtl,
+            style: AppTheme.sacredText(fontSize: arabicSize, color: AppColors.goldOnDark).copyWith(height: 1.7),
+          ),
+          if (formula.transliteration != null) ...[
+            const SizedBox(height: 2),
+            Text(
+              formula.transliteration!,
+              textAlign: TextAlign.center,
+              textDirection: TextDirection.ltr,
+              style:
+                  const TextStyle(fontStyle: FontStyle.italic, fontSize: 14, height: 1.45, color: AppColors.parchment),
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+}
+
+/// Lecture audio d'un pilier : jouer, mettre en pause, télécharger,
+/// réessayer, ou « pas encore disponible ». Zone tactile de 48 dp.
 class _AudioPillarButton extends StatelessWidget {
   const _AudioPillarButton({
     required this.availability,
@@ -213,105 +369,36 @@ class _AudioPillarButton extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     if (availability == PillarAudioAvailability.noRecitation) {
-      // Pas d'action possible : une simple image annoncée, même encombrement
-      // que le bouton pour que le texte du pilier ne se décale pas.
       return Semantics(
-        // Nœud propre : sans lui, le libellé se fondait dans celui du texte
-        // du pilier voisin.
         container: true,
         label: l10n.wirdAudioPillarUnavailable,
         child: ConstrainedBox(
           constraints: _size,
-          child: Center(child: Icon(Icons.music_off, color: AppColors.bronze, size: 22)),
+          child: Center(child: Icon(Icons.music_off, color: AppColors.secondaryOnDark, size: 20)),
         ),
       );
     }
 
     final String tooltip;
     final Widget icon;
-    // `loadFailed` : la liste des récitations n'a pas pu être chargée ; même
-    // geste qu'après un téléchargement en échec, retenter.
     if (availability == PillarAudioAvailability.error || availability == PillarAudioAvailability.loadFailed) {
       tooltip = l10n.wirdAudioPillarRetry;
-      icon = Icon(Icons.error_outline, color: AppColors.bronze, size: 22);
+      icon = Icon(Icons.error_outline, color: AppColors.secondaryOnDark, size: 22);
     } else if (isBuffering) {
       tooltip = l10n.wirdAudioDownloading;
-      icon = SizedBox(
+      icon = const SizedBox(
         width: 22,
         height: 22,
-        child: CircularProgressIndicator(strokeWidth: 2, color: AppColors.emerald),
+        child: CircularProgressIndicator(strokeWidth: 2, color: AppColors.goldOnDark),
       );
     } else if (availability == PillarAudioAvailability.notDownloaded) {
       tooltip = l10n.wirdAudioPillarDownload;
-      icon = Icon(Icons.download_for_offline_outlined, color: AppColors.emerald, size: 26);
+      icon = const Icon(Icons.download_for_offline_outlined, color: AppColors.goldOnDark, size: 26);
     } else {
       tooltip = isPlaying ? l10n.wirdAudioPillarPause : l10n.wirdAudioPillarPlay;
-      icon = Icon(
-        isPlaying ? Icons.pause_circle_filled : Icons.play_circle_fill,
-        color: AppColors.emerald,
-        size: 26,
-      );
+      icon =
+          Icon(isPlaying ? Icons.pause_circle_filled : Icons.play_circle_fill, color: AppColors.goldOnDark, size: 26);
     }
-    return IconButton(
-      tooltip: tooltip,
-      padding: EdgeInsets.zero,
-      constraints: _size,
-      icon: icon,
-      onPressed: onPressed,
-    );
-  }
-}
-
-class _ParagraphBlock extends StatelessWidget {
-  const _ParagraphBlock({required this.paragraph});
-
-  final WirdParagraph paragraph;
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 14),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Text(
-            paragraph.arabic,
-            textAlign: TextAlign.right,
-            textDirection: TextDirection.rtl,
-            style: AppTheme.sacredText(fontSize: 18, color: AppColors.ink),
-          ),
-          const SizedBox(height: 6),
-          ContentText(
-            paragraph.transliteration,
-            style: TextStyle(fontStyle: FontStyle.italic, fontSize: 15, color: AppColors.secondaryInk),
-          ),
-          const SizedBox(height: 4),
-          ContentText(paragraph.translation, style: const TextStyle(fontSize: 16, color: AppColors.ink)),
-        ],
-      ),
-    );
-  }
-}
-
-class _RepetitionBadge extends StatelessWidget {
-  const _RepetitionBadge({required this.count});
-
-  final int count;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-      decoration: BoxDecoration(
-        color: AppColors.emeraldSoft,
-        borderRadius: BorderRadius.circular(20),
-      ),
-      child: Text(
-        '×$count',
-        // Toujours « ×100 » : en arabe le signe passait après le nombre.
-        textDirection: TextDirection.ltr,
-        style: TextStyle(color: AppColors.emerald, fontWeight: FontWeight.w600, fontSize: 13),
-      ),
-    );
+    return IconButton(tooltip: tooltip, padding: EdgeInsets.zero, constraints: _size, icon: icon, onPressed: onPressed);
   }
 }

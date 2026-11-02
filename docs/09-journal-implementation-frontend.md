@@ -3810,3 +3810,54 @@ suppression de `tasbih_beads_ring.dart`, remplacé par le nouveau compteur.
 
 **Reste** : le guide d'un wird (`WirdDetailScreen`)
 reste à refaire. **Pas encore validé sur téléphone.**
+
+## Refonte du guide d'un wird (2026-11-02)
+
+Demande du porteur de projet : refaire le guide d'un wird (`WirdDetailScreen`). Il n'a pas de
+maquette propre : il reprend le bandeau, l'historique, le rappel, les piliers et leurs
+nombres de `ecran-wird.html`, et l'affichage des piliers et des clôtures de
+`ecran-pratique.html`. Écarts listés puis validés avant de coder, avec trois décisions :
+- pas de « Commencer » pour la Hadratou-l-Jouma hors vendredi, comme sur l'écran Wird ;
+- « Aa » ne règle que la taille de l'arabe, partagée avec le tasbih ; translittération et
+  traduction restent toujours affichées, le guide étant le texte de référence ;
+- piliers sur le fond sombre de l'écran de pratique, sans cartes blanches.
+
+**Écran**
+- **En-tête** : `WirdBand` (couleur fixe du wird, avec un filet or pour que le bandeau
+  zaytoune du Lazim se détache du fond) et sa pastille d'état du jour.
+- **Actions** : « Commencer » ou « Reprendre » (tasbih), Historique, Rappel avec son heure.
+  Le bouton flottant « Tasbih », qui masquait la fin du dernier pilier, disparaît.
+- **Série** : frise des 7 derniers jours, ou vendredis d'affilée pour la Hadra.
+- **Notes du corpus** en entier, puis « Piliers obligatoires » avec le résumé des piliers et
+  leur nombre.
+- **Chaque pilier** (`WirdPillarCard`, refait) : numéro, nom court et nombre, arabe en Amiri
+  or à la taille réglée, translittération, traduction, note. Chaque formule de clôture est
+  dans son propre bloc, en entier. La Fatiha est déroulée verset par verset ; le texte long
+  de Jawharatoul Kamal reste replié. Les conditions strictes restent en encadré or. La
+  lecture audio est inchangée.
+
+**Mis en commun** : `wirdStatePill` et `WirdStreakLine` (`wird_overview_widgets.dart`, sortis
+de l'écran Wird) ; la feuille « Aa » (`tasbih_reading_sheet.dart`, avec `sizeOnly`) ;
+`SectionTitle(onDark: true)` pour les écrans sombres.
+
+**Références dans `docs/sources/`** : à la demande du porteur de projet (contenu tiré d'abord
+des ouvrages de `docs/sources/`), les références de chaque élément du guide sont proposées
+dans `docs/14-references-guide-wirds.md`, **pour validation, sans rien afficher dans
+l'app**.
+- **Source utilisée** : seule la traduction française de *Jawâhir al-Ma'ânî* (Ravane Mbaye,
+  Albouraq) a un texte exploitable. Le passage sur les wirds est aux pp. 340 à 346 ; les
+  pages du PDF correspondent aux pages imprimées, vérifié sur l'image.
+- **Les autres ouvrages** sont des scans sans texte, restés à lire page par page.
+- **Écart soulevé** : la Wazifa y compte **cent** Istighfâr « de quelque formule que ce
+  soit » (vérifié sur l'image de la p. 344), contre trente formules longues dans le corpus.
+  Rien n'est changé ; c'est au porteur de projet et au moqaddam référent de trancher.
+
+**Captures** : `test/wird_guide_captures_test.dart` produit le haut du guide pour le Lazim un
+jour ordinaire, la Wazifa en pause, la Hadra un dimanche et un vendredi, en français et en
+arabe. Corrigé grâce aux captures : le bandeau du Lazim se confondait avec le fond.
+
+**Tests** : `test/wird_guide_test.dart` (état, actions, résumé, Fatiha déroulée, clôtures en
+entier, Hadra sans « Commencer » hors vendredi, « Reprendre », « Aa » limité à la taille,
+noms arabes) ; `wird_detail_screen_test.dart` passe sans changement. `flutter analyze` sans
+remarque, 646 tests au vert (captures ignorées sans polices). **Pas encore validé sur
+téléphone.**
