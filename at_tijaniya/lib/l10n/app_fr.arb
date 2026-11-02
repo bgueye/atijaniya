@@ -1235,5 +1235,26 @@
   "@homeLiveNow": {
     "placeholders": { "title": { "type": "String" } }
   },
-  "homeDonationLine": "At-Tijaniya vit de vos dons"
+  "homeDonationLine": "At-Tijaniya vit de vos dons",
+  "wirdListMyWirds": "Mes wirds",
+  "wirdWeekTitle": "Cette semaine",
+  "wirdWeekSeeHistory": "Voir l'historique",
+  "wirdWeekDayMarked": "{day} : {wirds} marqué",
+  "@wirdWeekDayMarked": {"placeholders": {"day": {"type": "String"}, "wirds": {"type": "String"}}},
+  "wirdWeekDayNothing": "{day} : rien de marqué",
+  "@wirdWeekDayNothing": {"placeholders": {"day": {"type": "String"}}},
+  "wirdStateDoneToday": "Fait aujourd'hui",
+  "wirdStateTodoToday": "À faire aujourd'hui",
+  "wirdStatePaused": "En pause",
+  "wirdLast7Days": "7 derniers jours",
+  "wirdGuideButton": "Guide",
+  "wirdReminderButton": "Rappel",
+  "wirdReminderButtonAt": "Rappel à {time}",
+  "@wirdReminderButtonAt": {"placeholders": {"time": {"type": "String"}}},
+  "wirdBenefitsInFrench": "En français",
+  "wirdAdminLine": "Administration · audios des wirds",
+  "wirdHistoryPickTitle": "Historique de quel wird ?",
+  "wirdFreeOpen": "Ouvrir",
+  "wirdTileCount": "{count} fiches",
+  "@wirdTileCount": {"placeholders": {"count": {"type": "int"}}}
 }

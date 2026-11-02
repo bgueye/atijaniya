@@ -12,7 +12,7 @@ aplats : les maquettes ne chargent pas les photos de la base.
 | Écran | Fichier | Statut |
 |---|---|---|
 | Accueil | `ecran-accueil.html` (proposition B, la seconde maquette de la page) | **Implémenté** sur la branche `claude/attijaniya-homepage-redesign-elyti4`, voir `docs/09`, entrée du 2026-11-01 |
-| Wird | `ecran-wird.html` | Proposé, à implémenter |
+| Wird | `ecran-wird.html` | **Implémenté** le 2026-11-02 sur la branche `claude/attijaniya-homepage-redesign-elyti4`, voir `docs/09`, entrée du 2026-11-02 (le guide d'un wird reste à refaire) |
 | Zawiyas | `ecran-zawiyas.html` | Proposé, à implémenter (demande une colonne `country`, donc une migration) |
 | Figures | `ecran-figures.html` | Proposé, à implémenter |
 | Communauté | `ecran-communaute.html` | Proposé, à implémenter |

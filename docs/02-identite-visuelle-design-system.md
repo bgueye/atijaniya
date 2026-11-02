@@ -24,6 +24,12 @@ At-Tijaniya (التجانية) — évocateur de la tarikha, simple à mémorise
 Le vert zaytoune est réservé aux écrans de pratique (wirds, khadara en cours). Contraste
 texte parchemin sur fond zaytoune vérifié (> 7:1) ; prévoir un mode contraste renforcé.
 
+**Couleur fixe par wird** (décision du porteur de projet du 2026-11-01, sans nouveau jeton) :
+Lazim en zaytoune, Wazifa en émeraude, Hadratou-l-Jouma en `gold_soft` avec texte `ink` (or
+plein pour son losange dans le bandeau de la semaine). Portée par `WirdBand` et
+`wirdBandColors` (`lib/features/wird/presentation/wird_band.dart`) ; sur l'écran Wird
+depuis le 2026-11-02.
+
 ## Typographie
 
 | Rôle | Police | Usage |

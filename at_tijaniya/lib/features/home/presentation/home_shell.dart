@@ -19,6 +19,7 @@ import '../../profil/presentation/profil_screen.dart';
 import '../../profil/presentation/profile_providers.dart';
 import '../../wird/data/wird_notification_service.dart';
 import '../../wird/data/wirds_content.dart';
+import '../../wird/presentation/wird_overview_provider.dart';
 import '../../wird/presentation/wird_detail_screen.dart';
 import '../../wird/presentation/wird_list_screen.dart';
 import 'home_dashboard_provider.dart';
@@ -167,6 +168,8 @@ class _HomeShellState extends ConsumerState<HomeShell> {
     // démonté. Un wird terminé ou une session de tasbih avancée dans
     // un autre onglet doit se refléter dès le retour sur "Accueil".
     if (i == 0 && _index != 0) ref.invalidate(homeDashboardProvider);
+    // L'écran Wird, monté en permanence lui aussi (état du jour, séries).
+    if (i == 1 && _index != 1) ref.invalidate(wirdOverviewProvider);
     // Même raison pour les listes venues du réseau : ces providers ne
     // sont jamais libérés (onglets toujours montés), donc un direct
     // démarré ou terminé par quelqu'un d'autre, un évènement passé ou

@@ -150,8 +150,8 @@ class WirdRepairNote {
 /// Gardées ici, hors des widgets, pour être testées sans interface.
 class WirdRepairContent {
   WirdRepairContent({required List<WirdRepairCase> cases, required List<WirdRepairNote> notes})
-    : cases = [...cases]..sort((a, b) => a.orderIndex.compareTo(b.orderIndex)),
-      notes = [...notes]..sort((a, b) => a.orderIndex.compareTo(b.orderIndex));
+      : cases = [...cases]..sort((a, b) => a.orderIndex.compareTo(b.orderIndex)),
+        notes = [...notes]..sort((a, b) => a.orderIndex.compareTo(b.orderIndex));
 
   final List<WirdRepairCase> cases;
   final List<WirdRepairNote> notes;

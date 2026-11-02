@@ -6733,6 +6733,108 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'At-Tijaniya vit de vos dons'**
   String get homeDonationLine;
+
+  /// No description provided for @wirdListMyWirds.
+  ///
+  /// In fr, this message translates to:
+  /// **'Mes wirds'**
+  String get wirdListMyWirds;
+
+  /// No description provided for @wirdWeekTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Cette semaine'**
+  String get wirdWeekTitle;
+
+  /// No description provided for @wirdWeekSeeHistory.
+  ///
+  /// In fr, this message translates to:
+  /// **'Voir l\'historique'**
+  String get wirdWeekSeeHistory;
+
+  /// No description provided for @wirdWeekDayMarked.
+  ///
+  /// In fr, this message translates to:
+  /// **'{day} : {wirds} marqué'**
+  String wirdWeekDayMarked(String day, String wirds);
+
+  /// No description provided for @wirdWeekDayNothing.
+  ///
+  /// In fr, this message translates to:
+  /// **'{day} : rien de marqué'**
+  String wirdWeekDayNothing(String day);
+
+  /// No description provided for @wirdStateDoneToday.
+  ///
+  /// In fr, this message translates to:
+  /// **'Fait aujourd\'hui'**
+  String get wirdStateDoneToday;
+
+  /// No description provided for @wirdStateTodoToday.
+  ///
+  /// In fr, this message translates to:
+  /// **'À faire aujourd\'hui'**
+  String get wirdStateTodoToday;
+
+  /// No description provided for @wirdStatePaused.
+  ///
+  /// In fr, this message translates to:
+  /// **'En pause'**
+  String get wirdStatePaused;
+
+  /// No description provided for @wirdLast7Days.
+  ///
+  /// In fr, this message translates to:
+  /// **'7 derniers jours'**
+  String get wirdLast7Days;
+
+  /// No description provided for @wirdGuideButton.
+  ///
+  /// In fr, this message translates to:
+  /// **'Guide'**
+  String get wirdGuideButton;
+
+  /// No description provided for @wirdReminderButton.
+  ///
+  /// In fr, this message translates to:
+  /// **'Rappel'**
+  String get wirdReminderButton;
+
+  /// No description provided for @wirdReminderButtonAt.
+  ///
+  /// In fr, this message translates to:
+  /// **'Rappel à {time}'**
+  String wirdReminderButtonAt(String time);
+
+  /// No description provided for @wirdBenefitsInFrench.
+  ///
+  /// In fr, this message translates to:
+  /// **'En français'**
+  String get wirdBenefitsInFrench;
+
+  /// No description provided for @wirdAdminLine.
+  ///
+  /// In fr, this message translates to:
+  /// **'Administration · audios des wirds'**
+  String get wirdAdminLine;
+
+  /// No description provided for @wirdHistoryPickTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Historique de quel wird ?'**
+  String get wirdHistoryPickTitle;
+
+  /// No description provided for @wirdFreeOpen.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ouvrir'**
+  String get wirdFreeOpen;
+
+  /// No description provided for @wirdTileCount.
+  ///
+  /// In fr, this message translates to:
+  /// **'{count} fiches'**
+  String wirdTileCount(int count);
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

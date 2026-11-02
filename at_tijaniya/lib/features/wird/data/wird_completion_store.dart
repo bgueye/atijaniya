@@ -21,8 +21,7 @@ class WirdCompletionStore {
   /// Clé propre au compte connecté — voir `user_scoped_prefs.dart`.
   String _key(SharedPreferences prefs, String wirdId) => userScopedKey(prefs, 'wird_completions_$wirdId');
 
-  String _format(DateTime date) =>
-      '${date.year.toString().padLeft(4, '0')}-'
+  String _format(DateTime date) => '${date.year.toString().padLeft(4, '0')}-'
       '${date.month.toString().padLeft(2, '0')}-'
       '${date.day.toString().padLeft(2, '0')}';
 

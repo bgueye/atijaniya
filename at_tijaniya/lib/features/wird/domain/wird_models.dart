@@ -13,6 +13,8 @@ class WirdPillar {
     required this.transliteration,
     required this.translation,
     required this.repetitions,
+    this.shortName,
+    this.shortNameArabic,
     this.note,
     this.closingFormulas,
     this.fullText,
@@ -28,6 +30,18 @@ class WirdPillar {
   /// Nombre de répétitions. Représenté en texte plutôt qu'en entier pur
   /// lorsque le nombre dépend du foyer (voir [Wird.repetitionsNote]).
   final int repetitions;
+
+  /// Nom court du pilier pour une puce ou un libellé d'interface
+  /// (« Salatoul Fatihi », « Istighfar ») quand [transliteration] est le
+  /// texte entier de la formule. `null` : la translittération est déjà le nom.
+  final String? shortName;
+
+  /// Équivalent arabe de [shortName] (« صلاة الفاتح »), fourni par le porteur
+  /// de projet. `null` : le texte arabe [arabic] est déjà le nom.
+  final String? shortNameArabic;
+
+  /// Nom court dans la langue de l'interface (puces de l'écran Wird).
+  String labelFor({required bool arabic}) => arabic ? (shortNameArabic ?? this.arabic) : (shortName ?? transliteration);
 
   /// Précision complémentaire éventuelle, en français uniquement (ex. la
   /// mise en garde "propre à la Tariqa Tijaniyya" de Salatoul Fatihi) — ne
@@ -111,7 +125,6 @@ class WirdParagraph {
   final String transliteration;
   final String translation;
 }
-
 
 enum WirdFrequency { daily, weekly }
 

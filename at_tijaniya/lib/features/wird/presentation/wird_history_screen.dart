@@ -287,7 +287,8 @@ class _MonthGrid extends StatelessWidget {
             padding: const EdgeInsets.symmetric(vertical: 3),
             child: Row(
               children: [
-                for (final day in days.skip(week * 7).take(7)) Expanded(child: Center(child: _DayCell(status: day, today: stats.today))),
+                for (final day in days.skip(week * 7).take(7))
+                  Expanded(child: Center(child: _DayCell(status: day, today: stats.today))),
               ],
             ),
           ),
@@ -365,9 +366,8 @@ class _DayCell extends StatelessWidget {
       height: 40,
       // L'anneau doré d'aujourd'hui entoure la case quel que soit son état :
       // on voit à la fois "c'est aujourd'hui" et "c'est fait / pas encore".
-      decoration: isToday
-          ? BoxDecoration(shape: BoxShape.circle, border: Border.all(color: AppColors.gold, width: 2))
-          : null,
+      decoration:
+          isToday ? BoxDecoration(shape: BoxShape.circle, border: Border.all(color: AppColors.gold, width: 2)) : null,
       alignment: Alignment.center,
       child: Container(
         width: 31,

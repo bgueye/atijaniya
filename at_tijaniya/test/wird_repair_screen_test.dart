@@ -27,7 +27,8 @@ Widget _wrap(Widget child, {required WirdRepairContent content, Locale locale = 
       isAdminProvider.overrideWithValue(false),
       // La carte des Bienfaits lit aussi Supabase : sans contenu, elle reste
       // masquée et ne gêne pas ces tests.
-      tariqaBenefitsRowsProvider.overrideWith((ref) async => (sections: <Map<String, dynamic>>[], cards: <Map<String, dynamic>>[])),
+      tariqaBenefitsRowsProvider
+          .overrideWith((ref) async => (sections: <Map<String, dynamic>>[], cards: <Map<String, dynamic>>[])),
     ],
     child: MaterialApp(
       locale: locale,
@@ -90,7 +91,8 @@ WirdRepairContent _content({bool withDraft = false}) {
 void main() {
   group('carte de l\'écran Wirds', () {
     testWidgets('absente sans contenu (disciple, rien de validé)', (tester) async {
-      await tester.pumpWidget(_wrap(const Scaffold(body: WirdListScreen()), content: WirdRepairContent(cases: const [], notes: const [])));
+      await tester.pumpWidget(
+          _wrap(const Scaffold(body: WirdListScreen()), content: WirdRepairContent(cases: const [], notes: const [])));
       await tester.pumpAndSettle();
       expect(find.text('Rattraper son wird'), findsNothing);
     });
@@ -98,6 +100,8 @@ void main() {
     testWidgets('présente avec du contenu, et mentionne le brouillon', (tester) async {
       await tester.pumpWidget(_wrap(const Scaffold(body: WirdListScreen()), content: _content(withDraft: true)));
       await tester.pumpAndSettle();
+      // Tuile sous les cartes de wird depuis la refonte du 2026-11-02.
+      await tester.scrollUntilVisible(find.text('Rattraper son wird'), 200);
       expect(find.text('Rattraper son wird'), findsOneWidget);
       expect(find.text('Oubli, erreur ou interruption (Brouillon)'), findsOneWidget);
     });

@@ -147,9 +147,12 @@ class _ReminderTile extends StatelessWidget {
           SwitchListTile(
             contentPadding: EdgeInsets.zero,
             activeThumbColor: AppColors.emerald,
-            title: Text(_slotLabel(l10n, slot), style: const TextStyle(fontWeight: FontWeight.w600, color: AppColors.ink)),
+            title:
+                Text(_slotLabel(l10n, slot), style: const TextStyle(fontWeight: FontWeight.w600, color: AppColors.ink)),
             subtitle: Text(
-              slot.frequency == ReminderFrequency.weeklyFriday ? l10n.reminderFrequencyWeekly : l10n.reminderFrequencyDaily,
+              slot.frequency == ReminderFrequency.weeklyFriday
+                  ? l10n.reminderFrequencyWeekly
+                  : l10n.reminderFrequencyDaily,
               style: TextStyle(color: AppColors.bronze, fontSize: 12),
             ),
             value: setting.enabled,

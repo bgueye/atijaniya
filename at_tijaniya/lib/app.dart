@@ -17,6 +17,7 @@ import 'features/auth/domain/auth_error_message.dart';
 import 'features/auth/presentation/auth_screen.dart';
 import 'features/auth/presentation/reset_password_screen.dart';
 import 'features/home/presentation/home_dashboard_provider.dart';
+import 'features/wird/presentation/wird_overview_provider.dart';
 import 'features/home/presentation/home_shell.dart';
 import 'features/onboarding/data/onboarding_store.dart';
 import 'features/onboarding/presentation/language_selection_screen.dart';
@@ -176,7 +177,11 @@ class _AtTijaniyaAppState extends ConsumerState<AtTijaniyaApp> {
       // changement d'onglet.
       navigatorObservers: [
         _ReturnToRootObserver(() {
-          if (mounted) ref.invalidate(homeDashboardProvider);
+          if (mounted) {
+            ref.invalidate(homeDashboardProvider);
+            // Même raison pour l'écran Wird : état du jour, série, pause.
+            ref.invalidate(wirdOverviewProvider);
+          }
         }),
       ],
       title: 'At-Tijaniya',

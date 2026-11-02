@@ -102,6 +102,10 @@ avec les décisions **validées par le porteur de projet** dans `docs/maquettes/
 donne aussi la maquette de référence de chaque écran (une seule par écran).
 À lire avant de retoucher l'un de ces écrans. Implémenter un écran à la fois ; en cas de
 conflit, les règles de ce fichier priment sur la maquette.
+**Écran Wird refait le 2026-11-02** (maquette `ecran-wird.html`) : bandeau de la semaine,
+une carte par wird avec ses actions, logique dans `lib/features/wird/domain/wird_overview.dart` ;
+noms courts des piliers dans le corpus (`shortName`/`shortNameArabic`). Le guide d'un wird
+reste à refaire. Détail : `docs/09`, entrée du 2026-11-02.
 Kit de composants commun (jetons, règles d'usage, 15 composants avec leur correspondance
 Flutter) : `docs/kit/README.md`. Les écrans sans maquette se mettent au thème avec ce kit.
 Les composants existent depuis le 2026-11-02 dans `lib/core/widgets/` (`WirdBand` dans le

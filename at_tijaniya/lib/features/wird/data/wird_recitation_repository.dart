@@ -74,8 +74,7 @@ String buildWirdAudioPath({
 /// existante, sinon `max(contentVersion) + 1`.
 int nextContentVersionFor(List<WirdRecitationEntry> existing) {
   if (existing.isEmpty) return 1;
-  return existing.map((r) => r.contentVersion).reduce((a, b) => a > b ? a : b) +
-      1;
+  return existing.map((r) => r.contentVersion).reduce((a, b) => a > b ? a : b) + 1;
 }
 
 class WirdRecitationRepository {
@@ -84,8 +83,7 @@ class WirdRecitationRepository {
   /// Récitation par défaut validée de chaque pilier de [wirdKey]
   /// (`Wird.id`), indexée par position dans `Wird.pillars`. Un pilier sans
   /// récitation validée est absent du résultat.
-  Future<Map<int, WirdRecitation>> fetchRecitationsForWird(
-      String wirdKey) async {
+  Future<Map<int, WirdRecitation>> fetchRecitationsForWird(String wirdKey) async {
     final steps = await SupabaseConfig.client
         .from('wird_steps')
         .select('id, order_index, wirds!inner(key)')
@@ -101,8 +99,7 @@ class WirdRecitationRepository {
     // de brouillon dans l'écran normal du disciple.
     final recitations = await SupabaseConfig.client
         .from('wird_recitations')
-        .select(
-            'id, wird_step_id, audio_path, content_version, duration_seconds')
+        .select('id, wird_step_id, audio_path, content_version, duration_seconds')
         .inFilter('wird_step_id', stepIds)
         .eq('is_default', true)
         .eq('content_status', 'valide');
@@ -137,9 +134,7 @@ class WirdRecitationRepository {
         )
         .eq('content_status', 'brouillon')
         .order('created_at');
-    return (rows as List)
-        .map((row) => WirdRecitationDraft.fromRow(row as Map<String, dynamic>))
-        .toList();
+    return (rows as List).map((row) => WirdRecitationDraft.fromRow(row as Map<String, dynamic>)).toList();
   }
 
   /// Fait passer une récitation de "brouillon" à "valide" — délègue à la
@@ -152,8 +147,7 @@ class WirdRecitationRepository {
   /// reste soumise à `wird_recitations_admin_update`, donc no-op pour tout
   /// compte non-admin même si appelée par erreur.
   Future<void> validateRecitation(String recitationId) {
-    return SupabaseConfig.client.rpc('validate_wird_recitation',
-        params: {'p_recitation_id': recitationId});
+    return SupabaseConfig.client.rpc('validate_wird_recitation', params: {'p_recitation_id': recitationId});
   }
 
   /// Toutes les récitations (tout statut) des piliers de [wirdKey], pour
@@ -161,8 +155,7 @@ class WirdRecitationRepository {
   /// `wird_recitations_read_valid_or_admin` laisse un compte admin tout
   /// voir ; un compte non-admin qui appellerait cette méthode par erreur ne
   /// verrait que les lignes déjà `valide` (jamais les brouillons).
-  Future<List<WirdStepRecitations>> fetchAllRecitationsForWird(
-      String wirdKey) async {
+  Future<List<WirdStepRecitations>> fetchAllRecitationsForWird(String wirdKey) async {
     final steps = await SupabaseConfig.client
         .from('wird_steps')
         .select('id, order_index, wirds!inner(key)')
@@ -214,9 +207,7 @@ class WirdRecitationRepository {
     await SupabaseConfig.client.storage.from('wird-audio').uploadBinary(
           audioPath,
           bytes,
-          fileOptions: FileOptions(
-              contentType: wirdAudioContentTypeForExtension(extension),
-              upsert: false),
+          fileOptions: FileOptions(contentType: wirdAudioContentTypeForExtension(extension), upsert: false),
         );
     final row = await SupabaseConfig.client
         .from('wird_recitations')
@@ -243,16 +234,10 @@ class WirdRecitationRepository {
   /// L'ordre inverse ferait courir le risque qu'un échec du DELETE en base
   /// laisse une ligne (potentiellement valide+défaut) pointer vers un
   /// fichier déjà supprimé.
-  Future<void> deleteRecitation(
-      {required String recitationId, required String audioPath}) async {
-    await SupabaseConfig.client
-        .from('wird_recitations')
-        .delete()
-        .eq('id', recitationId);
+  Future<void> deleteRecitation({required String recitationId, required String audioPath}) async {
+    await SupabaseConfig.client.from('wird_recitations').delete().eq('id', recitationId);
     try {
-      await SupabaseConfig.client.storage
-          .from('wird-audio')
-          .remove([audioPath]);
+      await SupabaseConfig.client.storage.from('wird-audio').remove([audioPath]);
     } catch (_) {
       // Best-effort — voir commentaire ci-dessus.
     }
@@ -271,8 +256,7 @@ List<WirdStepRecitations> buildStepRecitations({
     final entry = WirdRecitationEntry.fromRow(row);
     recitationsByStepId.putIfAbsent(entry.wirdStepId, () => []).add(entry);
   }
-  final sortedSteps = [...steps]..sort(
-      (a, b) => (a['order_index'] as int).compareTo(b['order_index'] as int));
+  final sortedSteps = [...steps]..sort((a, b) => (a['order_index'] as int).compareTo(b['order_index'] as int));
   return [
     for (final step in sortedSteps)
       WirdStepRecitations(
@@ -291,8 +275,7 @@ Map<int, WirdRecitation> buildRecitationsByPillarIndex({
   required List<Map<String, dynamic>> recitations,
 }) {
   final recitationByStepId = {
-    for (final r in recitations)
-      r['wird_step_id'] as String: WirdRecitation.fromRow(r),
+    for (final r in recitations) r['wird_step_id'] as String: WirdRecitation.fromRow(r),
   };
   final result = <int, WirdRecitation>{};
   for (final step in steps) {

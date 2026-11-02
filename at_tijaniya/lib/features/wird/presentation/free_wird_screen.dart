@@ -42,9 +42,7 @@ class FreeWirdScreen extends ConsumerWidget {
           backgroundColor: AppColors.zaytoune,
           foregroundColor: AppColors.parchment,
           title: Text(
-            state.session != null && state.session!.label.isNotEmpty
-                ? state.session!.label
-                : l10n.wirdFreeTitle,
+            state.session != null && state.session!.label.isNotEmpty ? state.session!.label : l10n.wirdFreeTitle,
           ),
         ),
         body: SafeArea(

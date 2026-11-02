@@ -178,7 +178,8 @@ class _PillarProgress extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 8),
-          ContentText(label, style: TextStyle(color: AppColors.secondaryOnDark, fontSize: 13, fontWeight: FontWeight.w500)),
+          ContentText(label,
+              style: TextStyle(color: AppColors.secondaryOnDark, fontSize: 13, fontWeight: FontWeight.w500)),
         ],
       ),
     );
@@ -424,7 +425,11 @@ class _DonationNudgeState extends State<_DonationNudge> {
                 const SizedBox(width: 6),
                 Text(
                   AppLocalizations.of(context)!.wirdTasbihDonationNudge,
-                  style: TextStyle(color: AppColors.secondaryOnDark, fontSize: 12, decoration: TextDecoration.underline, decorationColor: AppColors.secondaryOnDark),
+                  style: TextStyle(
+                      color: AppColors.secondaryOnDark,
+                      fontSize: 12,
+                      decoration: TextDecoration.underline,
+                      decorationColor: AppColors.secondaryOnDark),
                 ),
               ],
             ),

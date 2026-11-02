@@ -41,57 +41,47 @@ const _salatoulFatihiArabic =
     'نَاصِرِ الْحَقِّ بِالْحَقِّ، وَالْهَادِي إِلَى صِرَاطِكَ الْمُسْتَقِيمِ، وَعَلَى آلِهِ حَقَّ قَدْرِهِ '
     'وَمِقْدَارِهِ الْعَظِيمِ';
 
-const _salatoulFatihiTranslit =
-    "Allahoumma salli 'ala sayyidina Mouhammadin-il-Fatihi lima oughliqa, "
+const _salatoulFatihiTranslit = "Allahoumma salli 'ala sayyidina Mouhammadin-il-Fatihi lima oughliqa, "
     "wal-Khatimi lima sabaqa, Nasiril-Haqqi bil-Haqqi, wal-Hadi ila "
     "Siratika-l-Moustaqim, wa 'ala alihi haqqa qadrihi wa miqdarihi-l-'Adhim";
 
-const _salatoulFatihiTranslation =
-    "Ô Allah, prie sur notre maître Muhammad l'Ouvreur de ce qui était "
+const _salatoulFatihiTranslation = "Ô Allah, prie sur notre maître Muhammad l'Ouvreur de ce qui était "
     "fermé, le Sceau de ce qui a précédé, celui qui secourt la vérité par "
     "la vérité, celui qui guide vers Ta voie droite, et sur sa famille, à "
     "la mesure de sa valeur et de son immense grandeur.";
 
 // Istighfar long (utilisé par la Wazifa et par la Hadratou-l-Jouma, qui
 // partagent le même texte selon docs/Hadratou-l-Jouma-Etapes-Detaillees.md).
-const _istighfarLongArabic =
-    'أَسْتَغْفِرُ اللَّهَ الْعَظِيمَ الَّذِي لَا إِلَهَ إِلَّا هُوَ الْحَيُّ الْقَيُّومُ';
-const _istighfarLongTranslit =
-    "Astaghfirullah al-'Adhim alladhi la ilaha illa Houwa-l-Hayyou-l-Qayyoum";
-const _istighfarLongTranslation =
-    "Je demande pardon à Allah, l'Immense, il n'y a de divinité que "
+const _istighfarLongArabic = 'أَسْتَغْفِرُ اللَّهَ الْعَظِيمَ الَّذِي لَا إِلَهَ إِلَّا هُوَ الْحَيُّ الْقَيُّومُ';
+const _istighfarLongTranslit = "Astaghfirullah al-'Adhim alladhi la ilaha illa Houwa-l-Hayyou-l-Qayyoum";
+const _istighfarLongTranslation = "Je demande pardon à Allah, l'Immense, il n'y a de divinité que "
     "Lui, le Vivant, le Subsistant par Lui-même.";
 
 // Versets de clôture réutilisés après plusieurs piliers, selon les 3
 // documents "Étapes Détaillées" (confirmés par tidjaniya.com).
 const _saffatClosingArabic =
     'سُبْحَانَ رَبِّكَ رَبِّ الْعِزَّةِ عَمَّا يَصِفُونَ وَسَلَامٌ عَلَى الْمُرْسَلِينَ وَالْحَمْدُ لِلَّهِ رَبِّ الْعَالَمِينَ';
-const _saffatClosingTranslit =
-    "Soubhana rabbika rabbi-l-'izzati 'amma yasifouna wa salamoun "
+const _saffatClosingTranslit = "Soubhana rabbika rabbi-l-'izzati 'amma yasifouna wa salamoun "
     "'ala-l-moursalina wa-l-hamdou li-Llahi rabbi-l-'alamin.";
 
 const _ahzabClosingArabic =
     'إِنَّ اللَّهَ وَمَلَائِكَتَهُ يُصَلُّونَ عَلَى النَّبِيِّ يَا أَيُّهَا الَّذِينَ آمَنُوا صَلُّوا عَلَيْهِ وَسَلِّمُوا تَسْلِيمًا';
-const _ahzabClosingTranslit =
-    "Innallaha wa mala-ikatahou yousalouna 'ala-n-Nabiyyi ya ayyouha-l-"
+const _ahzabClosingTranslit = "Innallaha wa mala-ikatahou yousalouna 'ala-n-Nabiyyi ya ayyouha-l-"
     "ladhina amanou sallou 'alayhi wa sallimou tasliman.";
 
 // Intention d'ouverture (niyya) — identique pour les 3 wirds. Texte arabe
 // complet sourcé sur tidjaniya.com (« Aoraad Tariqa Tijaniyya »).
 const _intentionPillar = WirdPillar(
-  arabic:
-      'اللَّهُمَّ إِنِّي نَوَيْتُ تِلَاوَةَ هَذَا الْوِرْدِ تَعْظِيمًا وَإِجْلَالًا لَكَ '
+  arabic: 'اللَّهُمَّ إِنِّي نَوَيْتُ تِلَاوَةَ هَذَا الْوِرْدِ تَعْظِيمًا وَإِجْلَالًا لَكَ '
       'وَابْتِغَاءَ مَرْضَاتِكَ وَقَصْدًا لِوَجْهِكَ الْكَرِيمِ، مُخْلِصًا لَكَ مِنْ أَجْلِكَ '
       'وَأَقُولُ بِإِمْدَادِكَ وَعَوْنِكَ وَحَوْلِكَ وَقُوَّتِكَ، وَمَا وَهَبْتَنِي مِنْ '
       'إِنْعَامِكَ وَتَوْفِيقِكَ مُسْتَعِينًا بِكَ',
-  transliteration:
-      "Allahoumma inni nawaytou tilawata hadha-l-wirdi ta'dhiman wa "
+  transliteration: "Allahoumma inni nawaytou tilawata hadha-l-wirdi ta'dhiman wa "
       "ijlalan laka wa btighaa mardatika wa qasdan li wajhika-l-karim, "
       "moukhlisan laka min ajlika wa aqoulou bi imdadika wa awnika wa "
       "hawlika wa qouwwatika, wa ma wahhabtani min in'amika wa tawfiqika "
       "mousta'inan bika.",
-  translation:
-      "Ô Allah, j'ai mis l'intention au travers de ce wird de proclamer "
+  translation: "Ô Allah, j'ai mis l'intention au travers de ce wird de proclamer "
       "Ton incommensurabilité et Ta magnificence, souhaitant par cela "
       "obtenir Ta satisfaction et ne recherchant que Ta noble Face ; en "
       "toute sincérité envers Toi et par Ta cause, reconnaissant Ton "
@@ -108,8 +98,7 @@ const _fatihaParagraphs = [
   WirdParagraph(
     arabic: 'بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ',
     transliteration: 'Bismi-Llahi r-Rahmani r-Rahim',
-    translation:
-        "Au nom d'Allah, le Tout Miséricordieux, le Très Miséricordieux.",
+    translation: "Au nom d'Allah, le Tout Miséricordieux, le Très Miséricordieux.",
   ),
   WirdParagraph(
     arabic: 'الْحَمْدُ لِلَّهِ رَبِّ الْعَالَمِينَ',
@@ -129,8 +118,7 @@ const _fatihaParagraphs = [
   WirdParagraph(
     arabic: 'إِيَّاكَ نَعْبُدُ وَإِيَّاكَ نَسْتَعِينُ',
     transliteration: "Iyyaka na'boudou wa iyyaka nasta'in",
-    translation:
-        "C'est Toi seul que nous adorons, et c'est Toi seul dont nous "
+    translation: "C'est Toi seul que nous adorons, et c'est Toi seul dont nous "
         "implorons secours.",
   ),
   WirdParagraph(
@@ -139,13 +127,10 @@ const _fatihaParagraphs = [
     translation: 'Guide-nous dans le droit chemin.',
   ),
   WirdParagraph(
-    arabic:
-        'صِرَاطَ الَّذِينَ أَنْعَمْتَ عَلَيْهِمْ غَيْرِ الْمَغْضُوبِ عَلَيْهِمْ وَلَا الضَّالِّينَ',
-    transliteration:
-        "Sirata-l-ladhina an'amta 'alayhim ghayri-l-maghdoubi 'alayhim "
+    arabic: 'صِرَاطَ الَّذِينَ أَنْعَمْتَ عَلَيْهِمْ غَيْرِ الْمَغْضُوبِ عَلَيْهِمْ وَلَا الضَّالِّينَ',
+    transliteration: "Sirata-l-ladhina an'amta 'alayhim ghayri-l-maghdoubi 'alayhim "
         "wa la-d-dallin",
-    translation:
-        'Le chemin de ceux que Tu as comblés de faveurs, non pas de ceux '
+    translation: 'Le chemin de ceux que Tu as comblés de faveurs, non pas de ceux '
         'qui ont encouru Ta colère, ni des égarés.',
   ),
 ];
@@ -155,8 +140,7 @@ const _fatihaPillar = WirdPillar(
   transliteration: 'Al-Fatiha',
   translation: "L'Ouverture",
   repetitions: 1,
-  note:
-      "Précédée du ta'awwudh (A'oudhou bi-Llahi mina ch-Chaytani r-Rajim) "
+  note: "Précédée du ta'awwudh (A'oudhou bi-Llahi mina ch-Chaytani r-Rajim) "
       "et de la basmala, clôturée par « Amine ».",
   fullText: _fatihaParagraphs,
 );
@@ -166,8 +150,7 @@ const lazim = Wird(
   nameArabic: 'اللازم',
   nameFrench: 'Lazim',
   frequency: WirdFrequency.daily,
-  conditionsNote:
-      'Oraison quotidienne obligatoire, matin et soir, sans exception. '
+  conditionsNote: 'Oraison quotidienne obligatoire, matin et soir, sans exception. '
       'Les formules ci-dessous doivent être récitées dans cet ordre.',
   pillars: [
     _intentionPillar,
@@ -175,6 +158,8 @@ const lazim = Wird(
     WirdPillar(
       arabic: 'أَسْتَغْفِرُ اللَّهَ',
       transliteration: 'Astaghfirullah',
+      shortName: 'Istighfar',
+      shortNameArabic: 'الاستغفار',
       translation: 'Je demande pardon à Allah.',
       repetitions: 100,
       closingFormulas: [
@@ -188,10 +173,11 @@ const lazim = Wird(
     WirdPillar(
       arabic: _salatoulFatihiArabic,
       transliteration: _salatoulFatihiTranslit,
+      shortName: 'Salatoul Fatihi',
+      shortNameArabic: 'صلاة الفاتح',
       translation: _salatoulFatihiTranslation,
       repetitions: 100,
-      note:
-          'Salatoul Fatihi — propre à la Tariqa Tijaniyya, ne doit pas être '
+      note: 'Salatoul Fatihi — propre à la Tariqa Tijaniyya, ne doit pas être '
           'remplacée par une autre salat pendant le Lazim.',
       closingFormulas: [
         WirdClosingFormula(
@@ -204,6 +190,7 @@ const lazim = Wird(
     WirdPillar(
       arabic: 'لَا إِلَهَ إِلَّا اللَّهُ',
       transliteration: 'La ilaha illAllah',
+      shortName: 'Hailala',
       translation: "Il n'y a de divinité qu'Allah.",
       repetitions: 100,
       closingFormulas: [
@@ -237,16 +224,14 @@ const _jawharatoulKamalParagraphs = [
         'بِمَرْكَزِ الْفُهُومِ وَالْمَعَانِي ❁ وَنُورِ الْأَكْوَانِ الْمُتَكَوِّنَةِ الْآدَمِي صَاحِبِ الْحَقِّ الرَّبَّانِي ❁ '
         'الْبَرْقِ الْأَسْطَعِ بِمُزُونِ الْأَرْبَاحِ الْمَالِئَةِ لِكُلِّ مُتَعَرِّضٍ مِنَ الْبُحُورِ وَالْأَوَانِي ❁ '
         'وَنُورِكَ اللَّامِعِ الَّذِي مَلَأْتَ بِهِ كَوْنَكَ الْحَائِطِ بِأَمْكِنَةِ الْمَكَانِي',
-    transliteration:
-        "Allahoumma salli wa sallim 'ala 'ayni-r-rahmati-r-rabbaniyyati "
+    transliteration: "Allahoumma salli wa sallim 'ala 'ayni-r-rahmati-r-rabbaniyyati "
         "wa-l-yaqoutati-l-moutahaqqiqati-l-ha'itati bi markazi-l-fouhoumi "
         "wa-l-ma'ani, wa nouri-l-akwani-l-moutakawwinati-l-adami "
         "sahibi-l-haqqi-r-rabbani, al-barqi-l-astha'i bi "
         "mouzouni-l-arbahi-l-mali'ati li koulli mouta'arridin mina-l-bouhouri "
         "wa-l-awani, wa nourika-l-lami'i-lladhi mala'ta bihi kawnaka-l-ha'iti "
         "bi amkinati-l-makani.",
-    translation:
-        "Ô Allah, prie et salue la source de la miséricorde divine, le "
+    translation: "Ô Allah, prie et salue la source de la miséricorde divine, le "
         "rubis authentique qui embrasse le centre des compréhensions et des "
         "sens, la lumière des univers créés, l'Adamique détenteur de la "
         "vérité divine, l'éclair le plus brillant dans les nuées "
@@ -258,12 +243,10 @@ const _jawharatoulKamalParagraphs = [
     arabic:
         'اللَّهُمَّ صَلِّ وَسَلِّمْ عَلَى عَيْنِ الْحَقِّ الَّتِي تَتَجَلَّى مِنْهَا عُرُوشُ الْحَقَائِقِ عَيْنِ الْمَعَارِفِ '
         'الْأَقْوَمِ صِرَاطِكَ التَّامِّ الْأَسْقَمِ',
-    transliteration:
-        "Allahoumma salli wa sallim 'ala 'ayni-l-haqqi-llati tatajalla minha "
+    transliteration: "Allahoumma salli wa sallim 'ala 'ayni-l-haqqi-llati tatajalla minha "
         "'ouroushou-l-haqa'iqi 'ayni-l-ma'arifi-l-aqwami "
         "siratika-t-tammi-l-asqam.",
-    translation:
-        "Ô Allah, prie et salue la source de la vérité d'où se "
+    translation: "Ô Allah, prie et salue la source de la vérité d'où se "
         "manifestent les trônes des réalités, la source des connaissances "
         "les plus droites, Ta voie complète et la plus droite.",
   ),
@@ -271,13 +254,11 @@ const _jawharatoulKamalParagraphs = [
     arabic:
         'اللَّهُمَّ صَلِّ وَسَلِّمْ عَلَى طَلْعَةِ الْحَقِّ بِالْحَقِّ الْكَنْزِ الْأَعْظَمِ إِفَاضَتِكَ مِنْكَ إِلَيْكَ '
         'إِحَاطَةِ النُّورِ الْمُطَلْسَمِ ❁ صَلَّى اللَّهُ عَلَيْهِ وَعَلَى آلِهِ صَلَاةً تُعَرِّفُنَا بِهَا إِيَّاهُ',
-    transliteration:
-        "Allahoumma salli wa sallim 'ala tal'ati-l-haqqi "
+    transliteration: "Allahoumma salli wa sallim 'ala tal'ati-l-haqqi "
         "bi-l-haqqi-l-kanzi-l-a'dhami ifadatika minka ilayka "
         "ihatati-n-nouri-l-moutalsami, salla-llahou 'alayhi wa 'ala alihi "
         "salatan tu'arrifouna biha iyyah.",
-    translation:
-        "Ô Allah, prie et salue la manifestation de la Vérité par la "
+    translation: "Ô Allah, prie et salue la manifestation de la Vérité par la "
         "Vérité, le plus grand trésor, Ton épanchement de Toi vers Toi, "
         "l'enveloppement de la lumière mystérieuse. Qu'Allah prie sur lui "
         "et sur sa famille, d'une prière par laquelle Tu nous fasses "
@@ -290,8 +271,7 @@ const wazifa = Wird(
   nameArabic: 'الوظيفة',
   nameFrench: 'Wazifa',
   frequency: WirdFrequency.daily,
-  conditionsNote:
-      "À réciter au moins une fois par jour (deux fois de préférence), en "
+  conditionsNote: "À réciter au moins une fois par jour (deux fois de préférence), en "
       "assemblée si possible. Durant la Wazifa, aucune autre prière sur le "
       "Prophète que Salatoul Fatihi et Jawharatoul Kamal ne doit être "
       "intercalée, sous peine d'invalider l'oraison.",
@@ -301,16 +281,19 @@ const wazifa = Wird(
     WirdPillar(
       arabic: _istighfarLongArabic,
       transliteration: _istighfarLongTranslit,
+      shortName: 'Istighfar',
+      shortNameArabic: 'الاستغفار',
       translation: _istighfarLongTranslation,
       repetitions: 30,
     ),
     WirdPillar(
       arabic: _salatoulFatihiArabic,
       transliteration: _salatoulFatihiTranslit,
+      shortName: 'Salatoul Fatihi',
+      shortNameArabic: 'صلاة الفاتح',
       translation: _salatoulFatihiTranslation,
       repetitions: 50,
-      note:
-          'Salatoul Fatihi — propre à la Tariqa Tijaniyya, ne doit pas être '
+      note: 'Salatoul Fatihi — propre à la Tariqa Tijaniyya, ne doit pas être '
           'remplacée par une autre salat pendant le Lazim ou la Wazifa.',
       closingFormulas: [
         WirdClosingFormula(
@@ -323,6 +306,7 @@ const wazifa = Wird(
     WirdPillar(
       arabic: 'لَا إِلَهَ إِلَّا اللَّهُ',
       transliteration: 'La ilaha illAllah',
+      shortName: 'Hailala',
       translation: "Il n'y a de divinité qu'Allah.",
       repetitions: 100,
       closingFormulas: [
@@ -373,11 +357,9 @@ const hadratouJouma = Wird(
   nameArabic: 'حضرة الجمعة',
   nameFrench: 'Hadratou-l-Jouma',
   frequency: WirdFrequency.weekly,
-  repetitionsNote:
-      '1000 répétitions du tahlil (valeur retenue pour le projet), puis 600 '
+  repetitionsNote: '1000 répétitions du tahlil (valeur retenue pour le projet), puis 600 '
       'répétitions du Nom Allah.',
-  conditionsNote:
-      "Dhikr collectif hebdomadaire, uniquement le vendredi entre l'Asr et "
+  conditionsNote: "Dhikr collectif hebdomadaire, uniquement le vendredi entre l'Asr et "
       "le Maghreb. Aucun rattrapage possible en cas de créneau manqué.",
   pillars: [
     _intentionPillar,
@@ -385,12 +367,16 @@ const hadratouJouma = Wird(
     WirdPillar(
       arabic: _istighfarLongArabic,
       transliteration: _istighfarLongTranslit,
+      shortName: 'Istighfar',
+      shortNameArabic: 'الاستغفار',
       translation: _istighfarLongTranslation,
       repetitions: 3,
     ),
     WirdPillar(
       arabic: _salatoulFatihiArabic,
       transliteration: _salatoulFatihiTranslit,
+      shortName: 'Salatoul Fatihi',
+      shortNameArabic: 'صلاة الفاتح',
       translation: _salatoulFatihiTranslation,
       repetitions: 3,
       closingFormulas: [
@@ -404,6 +390,7 @@ const hadratouJouma = Wird(
     WirdPillar(
       arabic: 'لَا إِلَهَ إِلَّا اللَّهُ',
       transliteration: 'La ilaha illAllah',
+      shortName: 'Hailala',
       translation: "Il n'y a de divinité qu'Allah.",
       repetitions: 1000,
       closingFormulas: [
@@ -422,8 +409,7 @@ const hadratouJouma = Wird(
       transliteration: 'Allah',
       translation: '« Allah » — récitation répétée du Nom suprême.',
       repetitions: 600,
-      note:
-          "Récitation répétée du Nom suprême, jusqu'à l'approche du "
+      note: "Récitation répétée du Nom suprême, jusqu'à l'approche du "
           "Maghreb — cible de 600 répétitions retenue par le porteur de "
           "projet (l'app ne calcule pas les horaires de prière en V1). La "
           "forme complète prévoit ensuite une clôture non comptée comme "
@@ -440,4 +426,11 @@ const hadratouJouma = Wird(
   ],
 );
 
+// Noms courts des piliers (`shortName`, `shortNameArabic`) : libellés des
+// puces de l'écran Wird (refonte du 2026-11-02). « Istighfar » et « Hailala »
+// sont des raccourcis d'interface validés par le porteur de projet le
+// 2026-11-01 ; « Salatoul Fatihi » est le nom déjà employé dans ce corpus ;
+// « صلاة الفاتح » et « الاستغفار » ont été fournis par le porteur de projet le
+// 2026-11-02. Les autres piliers gardent leur translittération et leur texte
+// arabe, qui sont déjà leur nom (Jawharatoul Kamal, Allah, لا إله إلا الله).
 const validatedWirds = [lazim, wazifa, hadratouJouma];

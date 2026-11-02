@@ -16,7 +16,8 @@ import 'wird_audio_controller.dart';
 /// au texte" (docs/03-architecture-ecrans.md) : surligne le pilier en cours
 /// dans la liste et avance automatiquement au suivant.
 class WirdAudioPlayerBar extends StatelessWidget {
-  const WirdAudioPlayerBar({super.key, 
+  const WirdAudioPlayerBar({
+    super.key,
     required this.wird,
     required this.state,
     required this.controller,
@@ -45,7 +46,9 @@ class WirdAudioPlayerBar extends StatelessWidget {
     final activeIndex = state.activePillarIndex;
     final isDownloading = activePillarAvailability == PillarAudioAvailability.downloading;
     final label = activeIndex != null
-        ? (isDownloading ? AppLocalizations.of(context)!.wirdAudioDownloading : wird.pillars[activeIndex].transliteration)
+        ? (isDownloading
+            ? AppLocalizations.of(context)!.wirdAudioDownloading
+            : wird.pillars[activeIndex].transliteration)
         : hasAnyAudio
             ? AppLocalizations.of(context)!.wirdAudioPlayLabel
             : audioLoadFailed
@@ -53,9 +56,8 @@ class WirdAudioPlayerBar extends StatelessWidget {
                 : AppLocalizations.of(context)!.wirdAudioSoonLabel;
     final position = state.position;
     final duration = state.duration ?? Duration.zero;
-    final progress = duration.inMilliseconds == 0
-        ? 0.0
-        : (position.inMilliseconds / duration.inMilliseconds).clamp(0.0, 1.0);
+    final progress =
+        duration.inMilliseconds == 0 ? 0.0 : (position.inMilliseconds / duration.inMilliseconds).clamp(0.0, 1.0);
 
     return SafeArea(
       top: false,
@@ -70,11 +72,13 @@ class WirdAudioPlayerBar extends StatelessWidget {
           children: [
             Row(
               children: [
-                IconButton(tooltip: AppLocalizations.of(context)!.a11yPrevious, 
+                IconButton(
+                  tooltip: AppLocalizations.of(context)!.a11yPrevious,
                   icon: const Icon(Icons.skip_previous, color: AppColors.parchment),
                   onPressed: hasAnyAudio && controller.hasPrevious ? controller.playPrevious : null,
                 ),
-                IconButton(tooltip: AppLocalizations.of(context)!.a11yPlayPause, 
+                IconButton(
+                  tooltip: AppLocalizations.of(context)!.a11yPlayPause,
                   iconSize: 34,
                   icon: Icon(
                     state.isPlaying ? Icons.pause_circle_filled : Icons.play_circle_fill,
@@ -82,7 +86,8 @@ class WirdAudioPlayerBar extends StatelessWidget {
                   ),
                   onPressed: controller.togglePlayPause,
                 ),
-                IconButton(tooltip: AppLocalizations.of(context)!.a11yNext, 
+                IconButton(
+                  tooltip: AppLocalizations.of(context)!.a11yNext,
                   icon: const Icon(Icons.skip_next, color: AppColors.parchment),
                   onPressed: hasAnyAudio && controller.hasNext ? controller.playNext : null,
                 ),
@@ -122,9 +127,7 @@ class WirdAudioPlayerBar extends StatelessWidget {
                   value: progress,
                   activeColor: AppColors.goldOnDark,
                   inactiveColor: AppColors.parchment.withValues(alpha: 0.2),
-                  onChanged: duration == Duration.zero
-                      ? null
-                      : (value) => controller.seek(duration * value),
+                  onChanged: duration == Duration.zero ? null : (value) => controller.seek(duration * value),
                 ),
               ),
           ],

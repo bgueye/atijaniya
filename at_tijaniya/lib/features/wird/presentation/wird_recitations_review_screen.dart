@@ -44,8 +44,7 @@ class WirdRecitationsReviewScreen extends ConsumerWidget {
             icon: const Icon(Icons.library_music_outlined),
             tooltip: l10n.wirdRecitationsReviewManageButton,
             onPressed: () => Navigator.of(context).push(
-              MaterialPageRoute(
-                  builder: (_) => const WirdRecitationsManagementScreen()),
+              MaterialPageRoute(builder: (_) => const WirdRecitationsManagementScreen()),
             ),
           ),
         ],
@@ -55,8 +54,7 @@ class WirdRecitationsReviewScreen extends ConsumerWidget {
       // wird », Conditions, Bienfaits, Paramètres et « Comprendre la Zawiya ».
       body: SafeArea(
         child: draftsAsync.when(
-          loading: () => Center(
-              child: CircularProgressIndicator(color: AppColors.emerald)),
+          loading: () => Center(child: CircularProgressIndicator(color: AppColors.emerald)),
           error: (error, stackTrace) => Center(
             child: Padding(
               padding: const EdgeInsets.all(24),
@@ -159,9 +157,7 @@ class _DraftCardState extends ConsumerState<_DraftCard> {
       _previewError = null;
     });
     try {
-      final bytes = await ref
-          .read(wirdRecitationRepositoryProvider)
-          .downloadAudioBytes(widget.draft.audioPath);
+      final bytes = await ref.read(wirdRecitationRepositoryProvider).downloadAudioBytes(widget.draft.audioPath);
       final dir = await getTemporaryDirectory();
       // Un fichier par récitation, avec sa vraie extension : un fichier
       // unique partagé entre les cartes faisait rejouer l'audio d'une autre.
@@ -172,8 +168,7 @@ class _DraftCardState extends ConsumerState<_DraftCard> {
       await _previewPlayer.play();
     } catch (_) {
       if (mounted) {
-        setState(
-            () => _previewError = widget.l10n.wirdRecitationsReviewPreviewError);
+        setState(() => _previewError = widget.l10n.wirdRecitationsReviewPreviewError);
       }
     } finally {
       if (mounted) setState(() => _isLoadingPreview = false);
@@ -188,13 +183,10 @@ class _DraftCardState extends ConsumerState<_DraftCard> {
         title: Text(l10n.wirdRecitationsReviewConfirmTitle),
         content: Text(l10n.wirdRecitationsReviewConfirmBody),
         actions: [
-          TextButton(
-              onPressed: () => Navigator.of(context).pop(false),
-              child: Text(l10n.wirdRecitationsReviewCancel)),
+          TextButton(onPressed: () => Navigator.of(context).pop(false), child: Text(l10n.wirdRecitationsReviewCancel)),
           TextButton(
             onPressed: () => Navigator.of(context).pop(true),
-            child: Text(l10n.wirdRecitationsReviewConfirmAction,
-                style: TextStyle(color: AppColors.emerald)),
+            child: Text(l10n.wirdRecitationsReviewConfirmAction, style: TextStyle(color: AppColors.emerald)),
           ),
         ],
       ),
@@ -206,15 +198,12 @@ class _DraftCardState extends ConsumerState<_DraftCard> {
     // 2026-10-04 et du 2026-10-25).
     setState(() => _busy = true);
     try {
-      await ref
-          .read(wirdRecitationRepositoryProvider)
-          .validateRecitation(widget.draft.id);
+      await ref.read(wirdRecitationRepositoryProvider).validateRecitation(widget.draft.id);
       ref.invalidate(draftWirdRecitationsProvider);
       if (!context.mounted) return;
       ScaffoldMessenger.of(context)
         ..hideCurrentSnackBar()
-        ..showSnackBar(
-            SnackBar(content: Text(l10n.wirdRecitationsReviewSuccess)));
+        ..showSnackBar(SnackBar(content: Text(l10n.wirdRecitationsReviewSuccess)));
     } catch (_) {
       if (!context.mounted) return;
       showErrorSnackBar(context, l10n.wirdRecitationsValidateError);
@@ -231,13 +220,10 @@ class _DraftCardState extends ConsumerState<_DraftCard> {
         title: Text(l10n.wirdRecitationsReviewDeleteConfirmTitle),
         content: Text(l10n.wirdRecitationsReviewDeleteConfirmBody),
         actions: [
-          TextButton(
-              onPressed: () => Navigator.of(context).pop(false),
-              child: Text(l10n.wirdRecitationsReviewCancel)),
+          TextButton(onPressed: () => Navigator.of(context).pop(false), child: Text(l10n.wirdRecitationsReviewCancel)),
           TextButton(
             onPressed: () => Navigator.of(context).pop(true),
-            child: Text(l10n.wirdRecitationsReviewDelete,
-                style: const TextStyle(color: AppColors.danger)),
+            child: Text(l10n.wirdRecitationsReviewDelete, style: const TextStyle(color: AppColors.danger)),
           ),
         ],
       ),
@@ -253,14 +239,12 @@ class _DraftCardState extends ConsumerState<_DraftCard> {
       if (!context.mounted) return;
       ScaffoldMessenger.of(context)
         ..hideCurrentSnackBar()
-        ..showSnackBar(
-            SnackBar(content: Text(l10n.wirdRecitationsReviewDeleteSuccess)));
+        ..showSnackBar(SnackBar(content: Text(l10n.wirdRecitationsReviewDeleteSuccess)));
     } catch (_) {
       if (!context.mounted) return;
       ScaffoldMessenger.of(context)
         ..hideCurrentSnackBar()
-        ..showSnackBar(
-            SnackBar(content: Text(l10n.wirdRecitationsReviewDeleteError)));
+        ..showSnackBar(SnackBar(content: Text(l10n.wirdRecitationsReviewDeleteError)));
     }
   }
 
@@ -281,19 +265,17 @@ class _DraftCardState extends ConsumerState<_DraftCard> {
                       height: 24,
                       child: Padding(
                         padding: const EdgeInsets.all(4),
-                        child: CircularProgressIndicator(
-                            strokeWidth: 2, color: AppColors.emerald),
+                        child: CircularProgressIndicator(strokeWidth: 2, color: AppColors.emerald),
                       ),
                     )
                   : StreamBuilder<PlayerState>(
                       stream: _previewPlayer.playerStateStream,
                       builder: (context, snapshot) {
                         final playing = snapshot.data?.playing ?? false;
-                        return IconButton(tooltip: AppLocalizations.of(context)!.a11yPlayPause, 
+                        return IconButton(
+                          tooltip: AppLocalizations.of(context)!.a11yPlayPause,
                           icon: Icon(
-                            playing
-                                ? Icons.pause_circle_filled
-                                : Icons.play_circle_fill,
+                            playing ? Icons.pause_circle_filled : Icons.play_circle_fill,
                             color: AppColors.emerald,
                           ),
                           onPressed: _togglePreview,
@@ -307,19 +289,15 @@ class _DraftCardState extends ConsumerState<_DraftCard> {
             if (_previewError != null)
               Padding(
                 padding: const EdgeInsets.only(bottom: 8),
-                child: ContentText(_previewError!,
-                    style:
-                        const TextStyle(color: AppColors.danger, fontSize: 12)),
+                child: ContentText(_previewError!, style: const TextStyle(color: AppColors.danger, fontSize: 12)),
               ),
             Row(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
                 TextButton.icon(
                   onPressed: _busy ? null : () => _confirmAndDelete(context),
-                  icon: const Icon(Icons.delete_outline,
-                      size: 18, color: AppColors.danger),
-                  label: Text(widget.l10n.wirdRecitationsReviewDelete,
-                      style: const TextStyle(color: AppColors.danger)),
+                  icon: const Icon(Icons.delete_outline, size: 18, color: AppColors.danger),
+                  label: Text(widget.l10n.wirdRecitationsReviewDelete, style: const TextStyle(color: AppColors.danger)),
                 ),
                 const SizedBox(width: 8),
                 OutlinedButton.icon(

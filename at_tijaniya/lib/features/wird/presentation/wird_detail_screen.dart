@@ -92,98 +92,97 @@ class _WirdDetailScreenState extends ConsumerState<WirdDetailScreen> {
       child: Scaffold(
         backgroundColor: AppColors.zaytoune,
         appBar: AppBar(
-        backgroundColor: AppColors.zaytoune,
-        foregroundColor: AppColors.parchment,
-        title: ContentText(wirdDisplayName(context, wird)),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.insights_outlined),
-            tooltip: AppLocalizations.of(context)!.wirdDetailHistoryTooltip,
-            onPressed: () => Navigator.of(context).push(
-              MaterialPageRoute(builder: (_) => WirdHistoryScreen(wird: wird)),
-            ),
-          ),
-          IconButton(
-            icon: const Icon(Icons.notifications_active_outlined),
-            tooltip: AppLocalizations.of(context)!.wirdDetailRemindersTooltip,
-            onPressed: () => Navigator.of(context).push(
-              MaterialPageRoute(builder: (_) => WirdRemindersScreen(wird: wird)),
-            ),
-          ),
-        ],
-      ),
-      floatingActionButton: FloatingActionButton.extended(
-        heroTag: 'wird_detail_tasbih',
-        backgroundColor: AppColors.goldOnDark,
-        foregroundColor: AppColors.ink,
-        icon: const Icon(Icons.touch_app),
-        label: Text(AppLocalizations.of(context)!.wirdDetailTasbihButton),
-        onPressed: () => Navigator.of(context).push(
-          MaterialPageRoute(builder: (_) => TasbihScreen(wird: wird)),
-        ),
-      ),
-      bottomNavigationBar: WirdAudioPlayerBar(
-        wird: wird,
-        state: audioState,
-        controller: audioController,
-        hasAnyAudio: hasAnyAudio,
-        audioLoadFailed: audioLoadFailed,
-        activePillarAvailability: audioState.activePillarIndex != null
-            ? pillarAudio[audioState.activePillarIndex]?.availability
-            : null,
-      ),
-      body: SafeArea(
-        bottom: false,
-        child: ListView(
-          // Bottom généreux : le FAB "Tasbih" flotte en permanence au-dessus
-          // de ce ListView (Scaffold ne réserve de la place que pour la
-          // bottomNavigationBar, pas pour un FAB) et masquait la fin du
-          // dernier pilier sans cette marge — constaté sur les 3 wirds lors
-          // de l'audit design pré-publication Play Store.
-          padding: const EdgeInsets.fromLTRB(20, 20, 20, 96),
-          children: [
-            ContentText(
-              wird.nameArabic,
-              textAlign: TextAlign.center,
-              style: AppTheme.sacredText(fontSize: 32, color: AppColors.goldOnDark),
-            ),
-            if (wird.conditionsNote != null) ...[
-              const SizedBox(height: 16),
-              _InfoBanner(text: wird.conditionsNote!),
-            ],
-            if (wird.repetitionsNote != null) ...[
-              const SizedBox(height: 8),
-              _InfoBanner(text: wird.repetitionsNote!, icon: Icons.repeat),
-            ],
-            const SizedBox(height: 24),
-            Text(
-              AppLocalizations.of(context)!.wirdDetailPillarsTitle,
-              style: const TextStyle(
-                color: AppColors.parchment,
-                fontWeight: FontWeight.w600,
-                fontSize: 16,
+          backgroundColor: AppColors.zaytoune,
+          foregroundColor: AppColors.parchment,
+          title: ContentText(wirdDisplayName(context, wird)),
+          actions: [
+            IconButton(
+              icon: const Icon(Icons.insights_outlined),
+              tooltip: AppLocalizations.of(context)!.wirdDetailHistoryTooltip,
+              onPressed: () => Navigator.of(context).push(
+                MaterialPageRoute(builder: (_) => WirdHistoryScreen(wird: wird)),
               ),
             ),
-            const SizedBox(height: 12),
-            for (var i = 0; i < wird.pillars.length; i++) ...[
-              WirdPillarCard(
-                key: _keyFor(i),
-                pillar: wird.pillars[i],
-                availability: pillarAudio[i]?.availability ?? PillarAudioAvailability.noRecitation,
-                isActive: audioState.activePillarIndex == i,
-                isPlaying: audioState.activePillarIndex == i && audioState.isPlaying,
-                isBuffering: audioState.activePillarIndex == i &&
-                    (audioState.isBuffering || pillarAudio[i]?.availability == PillarAudioAvailability.downloading),
-                onTogglePlay: () => audioController.playPillar(i),
+            IconButton(
+              icon: const Icon(Icons.notifications_active_outlined),
+              tooltip: AppLocalizations.of(context)!.wirdDetailRemindersTooltip,
+              onPressed: () => Navigator.of(context).push(
+                MaterialPageRoute(builder: (_) => WirdRemindersScreen(wird: wird)),
               ),
-              const SizedBox(height: 12),
-            ],
-            // Espace pour ne pas laisser la barre de lecture masquer le
-            // dernier élément.
-            const SizedBox(height: 96),
+            ),
           ],
         ),
-      ),
+        floatingActionButton: FloatingActionButton.extended(
+          heroTag: 'wird_detail_tasbih',
+          backgroundColor: AppColors.goldOnDark,
+          foregroundColor: AppColors.ink,
+          icon: const Icon(Icons.touch_app),
+          label: Text(AppLocalizations.of(context)!.wirdDetailTasbihButton),
+          onPressed: () => Navigator.of(context).push(
+            MaterialPageRoute(builder: (_) => TasbihScreen(wird: wird)),
+          ),
+        ),
+        bottomNavigationBar: WirdAudioPlayerBar(
+          wird: wird,
+          state: audioState,
+          controller: audioController,
+          hasAnyAudio: hasAnyAudio,
+          audioLoadFailed: audioLoadFailed,
+          activePillarAvailability:
+              audioState.activePillarIndex != null ? pillarAudio[audioState.activePillarIndex]?.availability : null,
+        ),
+        body: SafeArea(
+          bottom: false,
+          child: ListView(
+            // Bottom généreux : le FAB "Tasbih" flotte en permanence au-dessus
+            // de ce ListView (Scaffold ne réserve de la place que pour la
+            // bottomNavigationBar, pas pour un FAB) et masquait la fin du
+            // dernier pilier sans cette marge — constaté sur les 3 wirds lors
+            // de l'audit design pré-publication Play Store.
+            padding: const EdgeInsets.fromLTRB(20, 20, 20, 96),
+            children: [
+              ContentText(
+                wird.nameArabic,
+                textAlign: TextAlign.center,
+                style: AppTheme.sacredText(fontSize: 32, color: AppColors.goldOnDark),
+              ),
+              if (wird.conditionsNote != null) ...[
+                const SizedBox(height: 16),
+                _InfoBanner(text: wird.conditionsNote!),
+              ],
+              if (wird.repetitionsNote != null) ...[
+                const SizedBox(height: 8),
+                _InfoBanner(text: wird.repetitionsNote!, icon: Icons.repeat),
+              ],
+              const SizedBox(height: 24),
+              Text(
+                AppLocalizations.of(context)!.wirdDetailPillarsTitle,
+                style: const TextStyle(
+                  color: AppColors.parchment,
+                  fontWeight: FontWeight.w600,
+                  fontSize: 16,
+                ),
+              ),
+              const SizedBox(height: 12),
+              for (var i = 0; i < wird.pillars.length; i++) ...[
+                WirdPillarCard(
+                  key: _keyFor(i),
+                  pillar: wird.pillars[i],
+                  availability: pillarAudio[i]?.availability ?? PillarAudioAvailability.noRecitation,
+                  isActive: audioState.activePillarIndex == i,
+                  isPlaying: audioState.activePillarIndex == i && audioState.isPlaying,
+                  isBuffering: audioState.activePillarIndex == i &&
+                      (audioState.isBuffering || pillarAudio[i]?.availability == PillarAudioAvailability.downloading),
+                  onTogglePlay: () => audioController.playPillar(i),
+                ),
+                const SizedBox(height: 12),
+              ],
+              // Espace pour ne pas laisser la barre de lecture masquer le
+              // dernier élément.
+              const SizedBox(height: 96),
+            ],
+          ),
+        ),
       ),
     );
   }

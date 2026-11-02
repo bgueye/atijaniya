@@ -3480,4 +3480,63 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get homeDonationLine => 'At-Tijaniya vit de vos dons';
+
+  @override
+  String get wirdListMyWirds => 'Mes wirds';
+
+  @override
+  String get wirdWeekTitle => 'Cette semaine';
+
+  @override
+  String get wirdWeekSeeHistory => 'Voir l\'historique';
+
+  @override
+  String wirdWeekDayMarked(String day, String wirds) {
+    return '$day : $wirds marqué';
+  }
+
+  @override
+  String wirdWeekDayNothing(String day) {
+    return '$day : rien de marqué';
+  }
+
+  @override
+  String get wirdStateDoneToday => 'Fait aujourd\'hui';
+
+  @override
+  String get wirdStateTodoToday => 'À faire aujourd\'hui';
+
+  @override
+  String get wirdStatePaused => 'En pause';
+
+  @override
+  String get wirdLast7Days => '7 derniers jours';
+
+  @override
+  String get wirdGuideButton => 'Guide';
+
+  @override
+  String get wirdReminderButton => 'Rappel';
+
+  @override
+  String wirdReminderButtonAt(String time) {
+    return 'Rappel à $time';
+  }
+
+  @override
+  String get wirdBenefitsInFrench => 'En français';
+
+  @override
+  String get wirdAdminLine => 'Administration · audios des wirds';
+
+  @override
+  String get wirdHistoryPickTitle => 'Historique de quel wird ?';
+
+  @override
+  String get wirdFreeOpen => 'Ouvrir';
+
+  @override
+  String wirdTileCount(int count) {
+    return '$count fiches';
+  }
 }

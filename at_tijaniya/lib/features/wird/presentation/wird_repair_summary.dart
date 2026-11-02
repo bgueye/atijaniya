@@ -114,7 +114,8 @@ class RepairQuickAnswer extends StatelessWidget {
       children: [
         Icon(negative ? Icons.do_not_disturb_on_outlined : Icons.history, color: color, size: size * 0.8),
         SizedBox(width: size * 0.3),
-        Expanded(child: ContentText(note.textFor(isArabic), style: repairTitleStyle(isArabic, size: size, color: color))),
+        Expanded(
+            child: ContentText(note.textFor(isArabic), style: repairTitleStyle(isArabic, size: size, color: color))),
       ],
     );
   }
@@ -172,7 +173,8 @@ class RepairWirdSummary extends StatelessWidget {
                   Container(width: 36, height: 2, color: AppColors.gold),
                   const SizedBox(height: 12),
                 ],
-                if (intro != null) ContentText(intro.textFor(isArabic), style: repairContentStyle(isArabic, size: 14.5)),
+                if (intro != null)
+                  ContentText(intro.textFor(isArabic), style: repairContentStyle(isArabic, size: 14.5)),
                 if (timings.isNotEmpty || warning != null) const SizedBox(height: 6),
                 if (timings.isNotEmpty)
                   _Collapsible(
@@ -293,7 +295,8 @@ class RepairTimingTable extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(width: 10),
-                Expanded(child: ContentText(notes[i].textFor(isArabic), style: repairContentStyle(isArabic, size: 14.5))),
+                Expanded(
+                    child: ContentText(notes[i].textFor(isArabic), style: repairContentStyle(isArabic, size: 14.5))),
               ],
             ),
           ),

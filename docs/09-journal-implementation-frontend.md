@@ -3671,3 +3671,73 @@ et relues en français et en arabe.
 d'après les maquettes) ; `ImmersiveHeader` sera créé avec le premier écran de pratique refait.
 **Pas encore validé sur téléphone** (seul l'accueil change à l'écran : « À venir », hauteur
 des boutons).
+
+## Refonte de l'écran Wird (2026-11-02)
+
+Demande du porteur de projet : refaire l'onglet Wird (`WirdListScreen`) d'après sa maquette
+de référence `docs/maquettes/ecran-wird.html`, avec les décisions validées
+(`docs/maquettes/README.md`) et les composants du kit. Écarts listés puis validés avant de
+coder, avec quatre réponses :
+- noms courts des piliers ajoutés au corpus, dont « صلاة الفاتح » et « الاستغفار » fournis
+  par le porteur de projet ;
+- texte de la Hadratou-l-Jouma affiché en entier, jamais coupé, en français dans
+  l'interface arabe comme dans le guide ;
+- « Fait aujourd'hui » / « À faire aujourd'hui » plutôt que « ce matin », que l'app ne sait
+  pas distinguer ;
+- choix du wird pour l'historique depuis le bandeau de la semaine.
+
+**Écran, de haut en bas**
+- **Bandeau « Cette semaine »** : un point par wird quotidien, un losange or le vendredi
+  pour la Hadra. Semaine du lundi en français, du samedi en arabe, comme l'historique.
+  Affiché seulement après la première récitation enregistrée. Chaque jour annonce au
+  lecteur d'écran ce qui y est marqué, sans jamais dire « manqué ».
+- **Une carte par wird** :
+  - un `WirdBand` (couleur fixe, nom arabe, fréquence, `StatePill` d'état) ;
+  - les puces des piliers qui se répètent, avec leur nombre ; l'intention et la Fatiha
+    restent dans le guide ;
+  - la frise des 7 derniers jours et la série ;
+  - les actions : « Commencer » ouvre le tasbih, « Reprendre » quand une session est en
+    pause (avec sa barre et « Pilier 4 / 6 · Salatoul Fatihi — 18 / 50 »), puis « Guide »,
+    « Historique » et « Rappel » avec l'heure du prochain rappel activé.
+  Un wird fait aujourd'hui garde « Commencer » mais sa carte se replie (sans les piliers).
+  La Hadra hors vendredi annonce la date du prochain vendredi, sans « Commencer » ; le
+  vendredi, elle passe en tête.
+- **Wird libre** : en outil à bordure pointillée.
+- **« Comprendre et rattraper »** : en tuiles avec le nombre de fiches. Une tuile vide est
+  masquée ; la mention « Brouillon » reste pour l'admin ; en arabe, la tuile Bienfaits
+  porte « بالفرنسية ».
+- **Administration** : une seule ligne en bas, qui ouvre les deux écrans existants.
+
+**Code**
+- **Logique** : `domain/wird_overview.dart`, sans I/O (état du jour, actions, rappel,
+  ordre du vendredi, bandeau de la semaine).
+- **Chargement** : `wirdOverviewProvider`, qui lit les stores locaux existants ; aucune
+  nouvelle persistance. Il est rechargé à l'arrivée sur l'onglet (`HomeShell._selectTab`),
+  au retour sur l'écran racine (`app.dart`) et au passage de minuit.
+- **Corpus** : `WirdPillar.shortName`/`shortNameArabic` et `labelFor()`. Les noms courts
+  existaient déjà dans le corpus ou ont été validés ; aucun texte de wird n'a changé.
+- **Charte** : couleur fixe par wird inscrite dans `docs/02`.
+
+**Captures** : `test/wird_screen_captures_test.dart` produit les 3 états de la maquette
+(dimanche matin, dimanche soir avec la Wazifa en pause, vendredi), en français et en arabe,
+avec les vraies polices (outillage mis en commun dans `test/capture_support.dart`). Elles
+ont été comparées à la maquette, rendue dans les mêmes états par un navigateur sans
+interface. Écarts restants, tous voulus ou validés :
+- mentions « aujourd'hui » ;
+- texte entier de la Hadra ;
+- frise des 7 derniers jours qui finit aujourd'hui (la maquette montrait la semaine sous ce
+  libellé) ;
+- pas de nombre sur la ligne d'administration ;
+- libellés de progression existants (« Pilier 4 / 6 — 18 / 50 »).
+
+Corrigés grâce aux captures :
+- l'initiale du vendredi remontait dans le bandeau de la semaine ;
+- le titre de la barre d'app en arabe, dans le seul montage de capture.
+
+**Tests** : `test/wird_overview_test.dart` (logique, et les trois états à l'écran : états,
+puces, actions, ordre du vendredi, noms arabes, ligne d'administration) ;
+`wird_repair_screen_test.dart` fait désormais défiler l'écran jusqu'à la tuile.
+`flutter analyze` sans remarque, 636 tests au vert (captures ignorées sans polices).
+
+**Pas encore fait** : le guide d'un wird (`WirdDetailScreen`), qui emprunte à cette
+maquette et à celle de la pratique. **Pas encore validé sur téléphone.**

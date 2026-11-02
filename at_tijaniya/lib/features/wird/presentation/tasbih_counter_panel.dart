@@ -148,53 +148,53 @@ class TasbihCounterPanel extends StatelessWidget {
     final VoidCallback? onZoneTap = complete || voice ? null : onCount;
 
     return Column(
-        children: [
-          Expanded(
-            child: Semantics(
-              button: onZoneTap != null,
-              label: voice ? null : l10n.wirdFreeTapToCount,
-              value: '$count / $target',
-              // En mode voix, le disciple ne touche pas l'écran : sans région
-              // annoncée, un lecteur d'écran ne lui disait jamais où il en
-              // était (audit du 2026-10-25, P3-5). Pas en mode manuel, où
-              // chaque toucher serait doublé d'une annonce.
-              liveRegion: voice,
-              child: GestureDetector(
-                behavior: HitTestBehavior.opaque,
-                onTap: onZoneTap,
-                child: Column(
-                  children: [
-                    Expanded(
-                      child: LayoutBuilder(
-                        builder: (context, constraints) {
-                          final size = math.max(
-                            80.0,
-                            math.min(240.0, math.min(constraints.maxHeight - 12, constraints.maxWidth - 48)),
-                          );
-                          return Center(
-                            child: _Ring(count: count, target: target, complete: complete, size: size),
-                          );
-                        },
-                      ),
+      children: [
+        Expanded(
+          child: Semantics(
+            button: onZoneTap != null,
+            label: voice ? null : l10n.wirdFreeTapToCount,
+            value: '$count / $target',
+            // En mode voix, le disciple ne touche pas l'écran : sans région
+            // annoncée, un lecteur d'écran ne lui disait jamais où il en
+            // était (audit du 2026-10-25, P3-5). Pas en mode manuel, où
+            // chaque toucher serait doublé d'une annonce.
+            liveRegion: voice,
+            child: GestureDetector(
+              behavior: HitTestBehavior.opaque,
+              onTap: onZoneTap,
+              child: Column(
+                children: [
+                  Expanded(
+                    child: LayoutBuilder(
+                      builder: (context, constraints) {
+                        final size = math.max(
+                          80.0,
+                          math.min(240.0, math.min(constraints.maxHeight - 12, constraints.maxWidth - 48)),
+                        );
+                        return Center(
+                          child: _Ring(count: count, target: target, complete: complete, size: size),
+                        );
+                      },
                     ),
-                    SizedBox(
-                      height: complete ? 0 : statusHeight,
-                      child: complete ? null : _status(l10n, voice: voice, canListen: canListen, compact: compact),
-                    ),
-                  ],
-                ),
+                  ),
+                  SizedBox(
+                    height: complete ? 0 : statusHeight,
+                    child: complete ? null : _status(l10n, voice: voice, canListen: canListen, compact: compact),
+                  ),
+                ],
               ),
             ),
           ),
-          SizedBox(
-            // À la fin du compte, le bouton d'action occupe la place du statut
-            // et des commandes : la hauteur totale du socle ne change pas.
-            // Jamais moins de 104 : la phrase d'enchaînement et le bouton ne
-            // tenaient plus dans le socle resserré d'un petit écran.
-            height: complete ? math.max(104.0, statusHeight + controlsHeight) : controlsHeight,
-            child: complete ? _completion() : _controls(l10n),
-          ),
-        ],
+        ),
+        SizedBox(
+          // À la fin du compte, le bouton d'action occupe la place du statut
+          // et des commandes : la hauteur totale du socle ne change pas.
+          // Jamais moins de 104 : la phrase d'enchaînement et le bouton ne
+          // tenaient plus dans le socle resserré d'un petit écran.
+          height: complete ? math.max(104.0, statusHeight + controlsHeight) : controlsHeight,
+          child: complete ? _completion() : _controls(l10n),
+        ),
+      ],
     );
   }
 
@@ -224,7 +224,8 @@ class TasbihCounterPanel extends StatelessWidget {
             textAlign: TextAlign.center,
             maxLines: compact ? 1 : 2,
             overflow: TextOverflow.ellipsis,
-            style: TextStyle(color: failed ? AppColors.goldOnDark : AppColors.secondaryOnDark, fontSize: 13, height: 1.25),
+            style:
+                TextStyle(color: failed ? AppColors.goldOnDark : AppColors.secondaryOnDark, fontSize: 13, height: 1.25),
           ),
           if (canListen) ...[
             SizedBox(height: compact ? 2 : 6),
@@ -236,41 +237,41 @@ class TasbihCounterPanel extends StatelessWidget {
             FittedBox(
               fit: BoxFit.scaleDown,
               child: Semantics(
-              button: true,
-              child: GestureDetector(
-                behavior: HitTestBehavior.opaque,
-                onTap: isListening ? onStopListening : onStartListening,
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 5),
-                  child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-              decoration: BoxDecoration(
-                color: isListening ? Colors.transparent : AppColors.goldOnDark,
-                borderRadius: BorderRadius.circular(22),
-                border: Border.all(color: AppColors.goldOnDark),
-              ),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Icon(
-                    isListening ? Icons.pause : Icons.mic,
-                    size: 16,
-                    color: isListening ? AppColors.goldOnDark : AppColors.ink,
-                  ),
-                  const SizedBox(width: 6),
-                  Text(
-                    isListening ? l10n.wirdFreeStopListening : l10n.wirdFreeStartListening,
-                    style: TextStyle(
-                      fontSize: 13,
-                      fontWeight: FontWeight.w500,
-                      color: isListening ? AppColors.goldOnDark : AppColors.ink,
+                button: true,
+                child: GestureDetector(
+                  behavior: HitTestBehavior.opaque,
+                  onTap: isListening ? onStopListening : onStartListening,
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 5),
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                      decoration: BoxDecoration(
+                        color: isListening ? Colors.transparent : AppColors.goldOnDark,
+                        borderRadius: BorderRadius.circular(22),
+                        border: Border.all(color: AppColors.goldOnDark),
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(
+                            isListening ? Icons.pause : Icons.mic,
+                            size: 16,
+                            color: isListening ? AppColors.goldOnDark : AppColors.ink,
+                          ),
+                          const SizedBox(width: 6),
+                          Text(
+                            isListening ? l10n.wirdFreeStopListening : l10n.wirdFreeStartListening,
+                            style: TextStyle(
+                              fontSize: 13,
+                              fontWeight: FontWeight.w500,
+                              color: isListening ? AppColors.goldOnDark : AppColors.ink,
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
-                ],
-              ),
-                  ),
                 ),
-              ),
               ),
             ),
           ],
@@ -360,30 +361,30 @@ class _Ring extends StatelessWidget {
             child: Padding(
               padding: const EdgeInsets.all(6),
               child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              ContentText(
-                '$count',
-                style: TextStyle(
-                  color: AppColors.parchment,
-                  fontSize: size * 0.25,
-                  height: 1.05,
-                  fontWeight: FontWeight.w600,
-                  fontFeatures: const [FontFeature.tabularFigures()],
-                ),
-              ),
-              // Toujours de gauche à droite : en arabe, « / 100 » s'affichait
-              // « 100 / » sous le décompte.
-              Text(
-                '/ $target',
-                textDirection: TextDirection.ltr,
-                style: TextStyle(color: AppColors.secondaryOnDark, fontSize: math.max(14, size * 0.075)),
-              ),
-              if (complete) ...[
-                const SizedBox(height: 4),
-                Icon(Icons.check_circle, color: AppColors.goldOnDark, size: size * 0.11),
-              ],
-            ],
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  ContentText(
+                    '$count',
+                    style: TextStyle(
+                      color: AppColors.parchment,
+                      fontSize: size * 0.25,
+                      height: 1.05,
+                      fontWeight: FontWeight.w600,
+                      fontFeatures: const [FontFeature.tabularFigures()],
+                    ),
+                  ),
+                  // Toujours de gauche à droite : en arabe, « / 100 » s'affichait
+                  // « 100 / » sous le décompte.
+                  Text(
+                    '/ $target',
+                    textDirection: TextDirection.ltr,
+                    style: TextStyle(color: AppColors.secondaryOnDark, fontSize: math.max(14, size * 0.075)),
+                  ),
+                  if (complete) ...[
+                    const SizedBox(height: 4),
+                    Icon(Icons.check_circle, color: AppColors.goldOnDark, size: size * 0.11),
+                  ],
+                ],
               ),
             ),
           ),

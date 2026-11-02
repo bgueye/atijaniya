@@ -64,8 +64,7 @@ class TasbihState {
 // permanent sur n'importe quel autre wird ouvert ensuite. Sans risque pour la
 // reprise de session : `TasbihSessionStore` persiste la progression, `_load()`
 // la recharge à la recréation du contrôleur.
-final tasbihControllerProvider =
-    StateNotifierProvider.autoDispose.family<TasbihController, TasbihState, Wird>(
+final tasbihControllerProvider = StateNotifierProvider.autoDispose.family<TasbihController, TasbihState, Wird>(
   (ref, wird) => TasbihController(wird: wird),
 );
 
@@ -130,8 +129,7 @@ class TasbihController extends StateNotifier<TasbihState> with WidgetsBindingObs
   /// pilier normal.
   bool get usingAlternative => hasAlternative && state.session.useAlternative;
 
-  int get targetCount =>
-      usingAlternative ? currentPillar.alternative!.repetitions : currentPillar.repetitions;
+  int get targetCount => usingAlternative ? currentPillar.alternative!.repetitions : currentPillar.repetitions;
 
   /// Une formule longue (ex. Salatoul Fatihi, ~230 caractères) contient des
   /// pauses naturelles pour respirer qu'un silence trop court interprète à
@@ -144,8 +142,7 @@ class TasbihController extends StateNotifier<TasbihState> with WidgetsBindingObs
   /// `tasbih_voice_service.dart` pour pourquoi cette segmentation est faite
   /// côté Dart plutôt que via le paramètre natif `pauseFor`.
   Duration get _utteranceSilence {
-    final length =
-        usingAlternative ? currentPillar.alternative!.arabic.length : currentPillar.arabic.length;
+    final length = usingAlternative ? currentPillar.alternative!.arabic.length : currentPillar.arabic.length;
     if (length > 120) return const Duration(seconds: 8);
     if (length > 50) return const Duration(seconds: 5);
     if (length > 30) return const Duration(seconds: 3);
@@ -251,9 +248,7 @@ class TasbihController extends StateNotifier<TasbihState> with WidgetsBindingObs
     required int previousCount,
   }) async {
     final session = state.session;
-    if (state.wirdCompleted ||
-        session.pillarIndex != pillarIndex ||
-        session.useAlternative != useAlternative) {
+    if (state.wirdCompleted || session.pillarIndex != pillarIndex || session.useAlternative != useAlternative) {
       return;
     }
     final restored = (previousCount + session.currentCount).clamp(0, targetCount);

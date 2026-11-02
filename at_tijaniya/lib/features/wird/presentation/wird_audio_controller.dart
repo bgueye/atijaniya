@@ -68,8 +68,7 @@ class WirdAudioState {
 // aucun moyen de l'arrêter ailleurs — décision du porteur de projet du
 // 2026-10-25, en attendant une vraie lecture en arrière-plan
 // (`just_audio_background`, docs/decision-gestion-audio-wirds.md §5).
-final wirdAudioControllerProvider =
-    StateNotifierProvider.autoDispose.family<WirdAudioController, WirdAudioState, Wird>(
+final wirdAudioControllerProvider = StateNotifierProvider.autoDispose.family<WirdAudioController, WirdAudioState, Wird>(
   (ref, wird) {
     // Garde la disponibilité des piliers en vie aussi longtemps que le
     // lecteur, qui ne fait que la lire (`ref.read`).
@@ -107,8 +106,7 @@ class WirdAudioController extends StateNotifier<WirdAudioState> {
 
   bool get hasAnyAudio => _pillarAudio.values.any((s) => s.recitation != null);
 
-  bool get _metadataLoadFailed =>
-      _pillarAudio.values.any((s) => s.availability == PillarAudioAvailability.loadFailed);
+  bool get _metadataLoadFailed => _pillarAudio.values.any((s) => s.availability == PillarAudioAvailability.loadFailed);
 
   /// Redemande la liste des récitations après un échec hors ligne. `false`,
   /// avec un message, si elle reste inaccessible.
@@ -132,8 +130,7 @@ class WirdAudioController extends StateNotifier<WirdAudioState> {
     // « actif » : le toucher de nouveau basculait lecture/pause sur un lecteur
     // sans piste (ou sur celle du pilier précédent) au lieu de retenter le
     // téléchargement (audits du 2026-10-04 et du 2026-10-25).
-    if (index == state.activePillarIndex &&
-        _pillarAudio[index]?.availability == PillarAudioAvailability.downloaded) {
+    if (index == state.activePillarIndex && _pillarAudio[index]?.availability == PillarAudioAvailability.downloaded) {
       await togglePlayPause();
       return;
     }

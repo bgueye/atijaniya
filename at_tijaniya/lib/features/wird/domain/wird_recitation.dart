@@ -102,8 +102,7 @@ class WirdRecitationDraft {
       durationSeconds: row['duration_seconds'] as int?,
       wirdNameFrench: wird['name_fr'] as String,
       wirdKey: wird['key'] as String?,
-      pillarLabel: (step['transliteration'] as String?) ??
-          (step['arabic_text'] as String),
+      pillarLabel: (step['transliteration'] as String?) ?? (step['arabic_text'] as String),
     );
   }
 }

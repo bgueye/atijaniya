@@ -3445,4 +3445,63 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get homeDonationLine => 'التجانية تعيش بتبرعاتكم';
+
+  @override
+  String get wirdListMyWirds => 'أورادي';
+
+  @override
+  String get wirdWeekTitle => 'هذا الأسبوع';
+
+  @override
+  String get wirdWeekSeeHistory => 'عرض السجل';
+
+  @override
+  String wirdWeekDayMarked(String day, String wirds) {
+    return '$day: $wirds مسجَّل';
+  }
+
+  @override
+  String wirdWeekDayNothing(String day) {
+    return '$day: لا شيء مسجَّل';
+  }
+
+  @override
+  String get wirdStateDoneToday => 'تمّ اليوم';
+
+  @override
+  String get wirdStateTodoToday => 'للقيام اليوم';
+
+  @override
+  String get wirdStatePaused => 'متوقف مؤقتًا';
+
+  @override
+  String get wirdLast7Days => 'آخر 7 أيام';
+
+  @override
+  String get wirdGuideButton => 'الدليل';
+
+  @override
+  String get wirdReminderButton => 'تذكير';
+
+  @override
+  String wirdReminderButtonAt(String time) {
+    return 'تذكير على $time';
+  }
+
+  @override
+  String get wirdBenefitsInFrench => 'بالفرنسية';
+
+  @override
+  String get wirdAdminLine => 'الإدارة · تسجيلات الأوراد';
+
+  @override
+  String get wirdHistoryPickTitle => 'سجل أيّ ورد؟';
+
+  @override
+  String get wirdFreeOpen => 'فتح';
+
+  @override
+  String wirdTileCount(int count) {
+    return '$count بطاقة';
+  }
 }

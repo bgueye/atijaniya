@@ -191,7 +191,8 @@ class RepairAskMoqaddamPanel extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(width: 10),
-                    Expanded(child: ContentText(note.textFor(isArabic), style: repairContentStyle(isArabic, size: 14.5))),
+                    Expanded(
+                        child: ContentText(note.textFor(isArabic), style: repairContentStyle(isArabic, size: 14.5))),
                   ],
                 ),
               ),

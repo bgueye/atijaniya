@@ -39,8 +39,7 @@ class WirdReminderState {
   }
 }
 
-final wirdReminderControllerProvider =
-    StateNotifierProvider.family<WirdReminderController, WirdReminderState, Wird>(
+final wirdReminderControllerProvider = StateNotifierProvider.family<WirdReminderController, WirdReminderState, Wird>(
   (ref, wird) {
     // Dépend de la langue choisie : à un changement de langue, le contrôleur
     // est recréé et `_load()` reprogramme les rappels actifs avec le texte

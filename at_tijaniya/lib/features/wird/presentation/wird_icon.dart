@@ -13,4 +13,3 @@ IconData iconForWird(String id) {
     _ => Icons.self_improvement,
   };
 }
-

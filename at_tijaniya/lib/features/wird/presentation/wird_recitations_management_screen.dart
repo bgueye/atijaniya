@@ -44,8 +44,7 @@ class WirdRecitationsManagementScreen extends ConsumerWidget {
       // wird », Conditions, Bienfaits, Paramètres et « Comprendre la Zawiya ».
       body: SafeArea(
         child: stepsAsync.when(
-          loading: () => Center(
-              child: CircularProgressIndicator(color: AppColors.emerald)),
+          loading: () => Center(child: CircularProgressIndicator(color: AppColors.emerald)),
           error: (error, stackTrace) => Center(
             child: Padding(
               padding: const EdgeInsets.all(24),
@@ -55,12 +54,10 @@ class WirdRecitationsManagementScreen extends ConsumerWidget {
                   Icon(Icons.wifi_off, color: AppColors.bronze, size: 32),
                   const SizedBox(height: 12),
                   Text(l10n.wirdRecitationsManageLoadError,
-                      textAlign: TextAlign.center,
-                      style: TextStyle(color: AppColors.bronze)),
+                      textAlign: TextAlign.center, style: TextStyle(color: AppColors.bronze)),
                   const SizedBox(height: 12),
                   OutlinedButton(
-                    onPressed: () =>
-                        ref.invalidate(allWirdStepRecitationsProvider),
+                    onPressed: () => ref.invalidate(allWirdStepRecitationsProvider),
                     child: Text(l10n.wirdRecitationsReviewRetry),
                   ),
                 ],
@@ -75,11 +72,9 @@ class WirdRecitationsManagementScreen extends ConsumerWidget {
                   padding: const EdgeInsets.only(top: 8, bottom: 8),
                   // Nom arabe dans l'app en arabe (P3-4).
                   child: ContentText(wirdDisplayName(context, wird),
-                      style: const TextStyle(
-                          fontWeight: FontWeight.w600, fontSize: 18)),
+                      style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 18)),
                 ),
-                for (final step
-                    in stepsByWird[wird.id] ?? const <WirdStepRecitations>[])
+                for (final step in stepsByWird[wird.id] ?? const <WirdStepRecitations>[])
                   if (step.orderIndex - 1 < wird.pillars.length)
                     _PillarCard(
                       wird: wird,
@@ -98,11 +93,7 @@ class WirdRecitationsManagementScreen extends ConsumerWidget {
 }
 
 class _PillarCard extends ConsumerWidget {
-  const _PillarCard(
-      {required this.wird,
-      required this.pillar,
-      required this.step,
-      required this.l10n});
+  const _PillarCard({required this.wird, required this.pillar, required this.step, required this.l10n});
 
   final Wird wird;
   final WirdPillar pillar;
@@ -118,15 +109,12 @@ class _PillarCard extends ConsumerWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            ContentText(pillar.transliteration,
-                style: const TextStyle(fontWeight: FontWeight.w500)),
+            ContentText(pillar.transliteration, style: const TextStyle(fontWeight: FontWeight.w500)),
             const SizedBox(height: 8),
             if (step.recitations.isEmpty)
               Padding(
                 padding: const EdgeInsets.symmetric(vertical: 8),
-                child: Text(l10n.wirdRecitationsManageEmpty,
-                    style:
-                        TextStyle(color: AppColors.bronze, fontSize: 13)),
+                child: Text(l10n.wirdRecitationsManageEmpty, style: TextStyle(color: AppColors.bronze, fontSize: 13)),
               )
             else
               for (final entry in step.recitations)
@@ -135,10 +123,8 @@ class _PillarCard extends ConsumerWidget {
               alignment: AlignmentDirectional.centerStart,
               child: TextButton.icon(
                 onPressed: () => _openUploadSheet(context, ref),
-                icon: Icon(Icons.upload_file,
-                    size: 18, color: AppColors.emerald),
-                label: Text(l10n.wirdRecitationsManageAddButton,
-                    style: TextStyle(color: AppColors.emerald)),
+                icon: Icon(Icons.upload_file, size: 18, color: AppColors.emerald),
+                label: Text(l10n.wirdRecitationsManageAddButton, style: TextStyle(color: AppColors.emerald)),
               ),
             ),
           ],
@@ -151,8 +137,7 @@ class _PillarCard extends ConsumerWidget {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
-      builder: (_) =>
-          _UploadRecitationSheet(wird: wird, step: step, l10n: l10n),
+      builder: (_) => _UploadRecitationSheet(wird: wird, step: step, l10n: l10n),
     );
   }
 }
@@ -164,8 +149,7 @@ class _RecitationEntryTile extends ConsumerStatefulWidget {
   final AppLocalizations l10n;
 
   @override
-  ConsumerState<_RecitationEntryTile> createState() =>
-      _RecitationEntryTileState();
+  ConsumerState<_RecitationEntryTile> createState() => _RecitationEntryTileState();
 }
 
 class _RecitationEntryTileState extends ConsumerState<_RecitationEntryTile> {
@@ -205,9 +189,7 @@ class _RecitationEntryTileState extends ConsumerState<_RecitationEntryTile> {
       _previewError = null;
     });
     try {
-      final bytes = await ref
-          .read(wirdRecitationRepositoryProvider)
-          .downloadAudioBytes(widget.entry.audioPath);
+      final bytes = await ref.read(wirdRecitationRepositoryProvider).downloadAudioBytes(widget.entry.audioPath);
       final dir = await getTemporaryDirectory();
       // Un fichier par récitation — voir WirdRecitationsReviewScreen.
       final extension = widget.entry.audioPath.split('.').last;
@@ -217,8 +199,7 @@ class _RecitationEntryTileState extends ConsumerState<_RecitationEntryTile> {
       await _previewPlayer.play();
     } catch (_) {
       if (mounted) {
-        setState(() =>
-            _previewError = widget.l10n.wirdRecitationsReviewPreviewError);
+        setState(() => _previewError = widget.l10n.wirdRecitationsReviewPreviewError);
       }
     } finally {
       if (mounted) setState(() => _isLoadingPreview = false);
@@ -237,13 +218,10 @@ class _RecitationEntryTileState extends ConsumerState<_RecitationEntryTile> {
         title: Text(l10n.wirdRecitationsReviewConfirmTitle),
         content: Text(l10n.wirdRecitationsReviewConfirmBody),
         actions: [
-          TextButton(
-              onPressed: () => Navigator.of(context).pop(false),
-              child: Text(l10n.wirdRecitationsReviewCancel)),
+          TextButton(onPressed: () => Navigator.of(context).pop(false), child: Text(l10n.wirdRecitationsReviewCancel)),
           TextButton(
             onPressed: () => Navigator.of(context).pop(true),
-            child: Text(l10n.wirdRecitationsReviewConfirmAction,
-                style: TextStyle(color: AppColors.emerald)),
+            child: Text(l10n.wirdRecitationsReviewConfirmAction, style: TextStyle(color: AppColors.emerald)),
           ),
         ],
       ),
@@ -252,15 +230,12 @@ class _RecitationEntryTileState extends ConsumerState<_RecitationEntryTile> {
 
     setState(() => _validating = true);
     try {
-      await ref
-          .read(wirdRecitationRepositoryProvider)
-          .validateRecitation(widget.entry.id);
+      await ref.read(wirdRecitationRepositoryProvider).validateRecitation(widget.entry.id);
       ref.invalidate(allWirdStepRecitationsProvider);
       if (!mounted) return;
       ScaffoldMessenger.of(context)
         ..hideCurrentSnackBar()
-        ..showSnackBar(
-            SnackBar(content: Text(l10n.wirdRecitationsReviewSuccess)));
+        ..showSnackBar(SnackBar(content: Text(l10n.wirdRecitationsReviewSuccess)));
     } catch (_) {
       if (!mounted) return;
       showErrorSnackBar(context, l10n.wirdRecitationsValidateError);
@@ -271,8 +246,7 @@ class _RecitationEntryTileState extends ConsumerState<_RecitationEntryTile> {
 
   Future<void> _confirmAndDelete() async {
     final l10n = widget.l10n;
-    final isLiveDefault =
-        widget.entry.contentStatus == 'valide' && widget.entry.isDefault;
+    final isLiveDefault = widget.entry.contentStatus == 'valide' && widget.entry.isDefault;
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
@@ -281,13 +255,10 @@ class _RecitationEntryTileState extends ConsumerState<_RecitationEntryTile> {
             ? l10n.wirdRecitationsManageDeleteConfirmBodyLive
             : l10n.wirdRecitationsManageDeleteConfirmBodyDraft),
         actions: [
-          TextButton(
-              onPressed: () => Navigator.of(context).pop(false),
-              child: Text(l10n.wirdRecitationsReviewCancel)),
+          TextButton(onPressed: () => Navigator.of(context).pop(false), child: Text(l10n.wirdRecitationsReviewCancel)),
           TextButton(
             onPressed: () => Navigator.of(context).pop(true),
-            child: Text(l10n.wirdRecitationsReviewDelete,
-                style: const TextStyle(color: AppColors.danger)),
+            child: Text(l10n.wirdRecitationsReviewDelete, style: const TextStyle(color: AppColors.danger)),
           ),
         ],
       ),
@@ -303,14 +274,12 @@ class _RecitationEntryTileState extends ConsumerState<_RecitationEntryTile> {
       if (!mounted) return;
       ScaffoldMessenger.of(context)
         ..hideCurrentSnackBar()
-        ..showSnackBar(
-            SnackBar(content: Text(l10n.wirdRecitationsManageDeleteSuccess)));
+        ..showSnackBar(SnackBar(content: Text(l10n.wirdRecitationsManageDeleteSuccess)));
     } catch (_) {
       if (!mounted) return;
       ScaffoldMessenger.of(context)
         ..hideCurrentSnackBar()
-        ..showSnackBar(
-            SnackBar(content: Text(l10n.wirdRecitationsManageDeleteError)));
+        ..showSnackBar(SnackBar(content: Text(l10n.wirdRecitationsManageDeleteError)));
     }
   }
 
@@ -329,39 +298,31 @@ class _RecitationEntryTileState extends ConsumerState<_RecitationEntryTile> {
                   height: 24,
                   child: Padding(
                       padding: const EdgeInsets.all(4),
-                      child: CircularProgressIndicator(
-                          strokeWidth: 2, color: AppColors.emerald)),
+                      child: CircularProgressIndicator(strokeWidth: 2, color: AppColors.emerald)),
                 )
               : StreamBuilder<PlayerState>(
                   stream: _previewPlayer.playerStateStream,
                   builder: (context, snapshot) {
                     final playing = snapshot.data?.playing ?? false;
-                    return IconButton(tooltip: AppLocalizations.of(context)!.a11yPlayPause, 
-                      icon: Icon(
-                          playing
-                              ? Icons.pause_circle_filled
-                              : Icons.play_circle_fill,
-                          color: AppColors.emerald),
+                    return IconButton(
+                      tooltip: AppLocalizations.of(context)!.a11yPlayPause,
+                      icon:
+                          Icon(playing ? Icons.pause_circle_filled : Icons.play_circle_fill, color: AppColors.emerald),
                       onPressed: _togglePreview,
                     );
                   },
                 ),
           title: ContentText('${entry.reciterName} · v${entry.contentVersion}'),
           subtitle: Text(
-            isDraft
-                ? widget.l10n.wirdRecitationsManageStatusDraft
-                : widget.l10n.wirdRecitationsManageStatusValidated,
-            style: TextStyle(
-                color: isDraft ? AppColors.bronze : AppColors.emerald,
-                fontSize: 12),
+            isDraft ? widget.l10n.wirdRecitationsManageStatusDraft : widget.l10n.wirdRecitationsManageStatusValidated,
+            style: TextStyle(color: isDraft ? AppColors.bronze : AppColors.emerald, fontSize: 12),
           ),
           trailing: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
               if (isDraft)
                 IconButton(
-                  icon: Icon(Icons.check_circle_outline,
-                      color: AppColors.emerald),
+                  icon: Icon(Icons.check_circle_outline, color: AppColors.emerald),
                   tooltip: widget.l10n.wirdRecitationsManageValidate,
                   onPressed: _validating ? null : _validate,
                 ),
@@ -376,8 +337,7 @@ class _RecitationEntryTileState extends ConsumerState<_RecitationEntryTile> {
         if (_previewError != null)
           Padding(
             padding: const EdgeInsetsDirectional.only(start: 16, bottom: 8),
-            child: ContentText(_previewError!,
-                style: const TextStyle(color: AppColors.danger, fontSize: 12)),
+            child: ContentText(_previewError!, style: const TextStyle(color: AppColors.danger, fontSize: 12)),
           ),
       ],
     );
@@ -385,25 +345,21 @@ class _RecitationEntryTileState extends ConsumerState<_RecitationEntryTile> {
 }
 
 class _UploadRecitationSheet extends ConsumerStatefulWidget {
-  const _UploadRecitationSheet(
-      {required this.wird, required this.step, required this.l10n});
+  const _UploadRecitationSheet({required this.wird, required this.step, required this.l10n});
 
   final Wird wird;
   final WirdStepRecitations step;
   final AppLocalizations l10n;
 
   @override
-  ConsumerState<_UploadRecitationSheet> createState() =>
-      _UploadRecitationSheetState();
+  ConsumerState<_UploadRecitationSheet> createState() => _UploadRecitationSheetState();
 }
 
-class _UploadRecitationSheetState
-    extends ConsumerState<_UploadRecitationSheet> {
+class _UploadRecitationSheetState extends ConsumerState<_UploadRecitationSheet> {
   // Nom proposé par défaut dans la langue de l'app (il était en français en
   // dur, P3-4) ; l'admin le modifie librement, et il est enregistré tel
   // qu'il est saisi.
-  late final _reciterController =
-      TextEditingController(text: widget.l10n.wirdRecitationsManageDefaultReciter);
+  late final _reciterController = TextEditingController(text: widget.l10n.wirdRecitationsManageDefaultReciter);
   final _picker = WirdAudioPickerService();
 
   PlatformFile? _pickedFile;
@@ -433,8 +389,7 @@ class _UploadRecitationSheetState
     final bytes = file.bytes;
     final extension = wirdAudioExtensionFromPath(file.name);
     if (bytes == null || extension == null) {
-      setState(
-          () => _errorMessage = widget.l10n.wirdRecitationsManageUploadError);
+      setState(() => _errorMessage = widget.l10n.wirdRecitationsManageUploadError);
       return;
     }
 
@@ -459,8 +414,7 @@ class _UploadRecitationSheetState
       Navigator.of(context).pop();
       ScaffoldMessenger.of(context)
         ..hideCurrentSnackBar()
-        ..showSnackBar(SnackBar(
-            content: Text(widget.l10n.wirdRecitationsManageUploadSuccess)));
+        ..showSnackBar(SnackBar(content: Text(widget.l10n.wirdRecitationsManageUploadSuccess)));
     } catch (_) {
       if (!mounted) return;
       setState(() {
@@ -478,23 +432,20 @@ class _UploadRecitationSheetState
       // barre de navigation système (3 boutons) — `viewInsets.bottom` seul
       // ne couvre que le clavier, jamais la zone système.
       child: Padding(
-        padding: EdgeInsets.fromLTRB(
-            16, 16, 16, MediaQuery.of(context).viewInsets.bottom + 16),
+        padding: EdgeInsets.fromLTRB(16, 16, 16, MediaQuery.of(context).viewInsets.bottom + 16),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             TextField(
               controller: _reciterController,
-              decoration: InputDecoration(
-                  labelText: l10n.wirdRecitationsManageUploadReciterLabel),
+              decoration: InputDecoration(labelText: l10n.wirdRecitationsManageUploadReciterLabel),
             ),
             const SizedBox(height: 12),
             OutlinedButton.icon(
               onPressed: _pickFile,
               icon: const Icon(Icons.audio_file),
-              label: Text(
-                  _pickedFileName ?? l10n.wirdRecitationsManageUploadPickFile),
+              label: Text(_pickedFileName ?? l10n.wirdRecitationsManageUploadPickFile),
             ),
             if (_pickedFileName != null)
               Padding(
@@ -505,14 +456,11 @@ class _UploadRecitationSheetState
                 ),
               ),
             const SizedBox(height: 8),
-            Text(l10n.wirdRecitationsManageUploadHint,
-                style: TextStyle(fontSize: 12, color: AppColors.bronze)),
+            Text(l10n.wirdRecitationsManageUploadHint, style: TextStyle(fontSize: 12, color: AppColors.bronze)),
             if (_errorMessage != null)
               Padding(
                 padding: const EdgeInsets.only(top: 8),
-                child: ContentText(_errorMessage!,
-                    style:
-                        const TextStyle(color: AppColors.danger, fontSize: 12)),
+                child: ContentText(_errorMessage!, style: const TextStyle(color: AppColors.danger, fontSize: 12)),
               ),
             const SizedBox(height: 16),
             FilledButton(
@@ -521,8 +469,7 @@ class _UploadRecitationSheetState
                   ? const SizedBox(
                       width: 20,
                       height: 20,
-                      child: CircularProgressIndicator(
-                          strokeWidth: 2, color: AppColors.offWhite))
+                      child: CircularProgressIndicator(strokeWidth: 2, color: AppColors.offWhite))
                   : Text(l10n.wirdRecitationsManageUploadSubmit),
             ),
           ],

@@ -1195,5 +1195,22 @@
   "homeDiscoverLoadError": "تعذّر تحميل هذه المحتويات.",
   "homeSectionUpcoming": "قادم",
   "homeLiveNow": "مباشر · {title}",
-  "homeDonationLine": "التجانية تعيش بتبرعاتكم"
+  "homeDonationLine": "التجانية تعيش بتبرعاتكم",
+  "wirdListMyWirds": "أورادي",
+  "wirdWeekTitle": "هذا الأسبوع",
+  "wirdWeekSeeHistory": "عرض السجل",
+  "wirdWeekDayMarked": "{day}: {wirds} مسجَّل",
+  "wirdWeekDayNothing": "{day}: لا شيء مسجَّل",
+  "wirdStateDoneToday": "تمّ اليوم",
+  "wirdStateTodoToday": "للقيام اليوم",
+  "wirdStatePaused": "متوقف مؤقتًا",
+  "wirdLast7Days": "آخر 7 أيام",
+  "wirdGuideButton": "الدليل",
+  "wirdReminderButton": "تذكير",
+  "wirdReminderButtonAt": "تذكير على {time}",
+  "wirdBenefitsInFrench": "بالفرنسية",
+  "wirdAdminLine": "الإدارة · تسجيلات الأوراد",
+  "wirdHistoryPickTitle": "سجل أيّ ورد؟",
+  "wirdFreeOpen": "فتح",
+  "wirdTileCount": "{count} بطاقة"
 }
