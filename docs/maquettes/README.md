@@ -19,6 +19,7 @@ aplats : les maquettes ne chargent pas les photos de la base.
 | Profil | `ecran-profil.html` | Proposé, à implémenter |
 | Pratique des wirds (tasbih) | `ecran-pratique.html` | Proposé, à implémenter (décisions validées) |
 | Écrans de détail (figure, zawiya, évènement) | `ecrans-detail.html` | Proposé, à implémenter (décisions validées le 2026-11-02) |
+| Parcours d'entrée (démarrage, langue, découverte, rappels, entrée, compte) | `parcours-entree.html` | Proposé le 2026-11-02 ; **décisions pas encore validées** |
 
 ## Un écran, une seule maquette
 
@@ -37,6 +38,7 @@ maquette existante plutôt que d'en créer une autre.
 | `CommunauteScreen`, `ConversationsScreen` | `ecran-communaute.html` |
 | `ProfilScreen`, `SettingsScreen` (absorbé), `PrivacySettingsScreen` (résumé) | `ecran-profil.html` |
 | `FigureDetailScreen`, `ZawiyaDetailScreen`, `EventDetailScreen` | `ecrans-detail.html` |
+| `SplashScreen`, `LanguageSelectionScreen`, `OnboardingScreen`, `AuthScreen`, `ResetPasswordScreen` | `parcours-entree.html` |
 | tous les autres écrans | pas de maquette : appliquer le kit `docs/kit/` |
 
 ## Décisions actées par le porteur de projet (2026-11-01)
@@ -134,4 +136,18 @@ s'interrompt ; portrait plein cadre, en-tête typographique pour les figures san
 pas de « Ajouter à mon agenda » sur un évènement pour l'instant.
 Le guide d'un wird a été retiré de cette maquette le 2026-11-02 : il était déjà couvert par
 `ecran-wird.html` et `ecran-pratique.html`.
+
+## Parcours d'entrée (maquette du 2026-11-02) — décisions en attente
+
+Recommandations de la maquette, **pas encore validées par le porteur de projet** :
+« Découvrir sans compte » au même rang que « Créer un compte » ; étape « Rappels »
+facultative dans l'entrée, avec la demande d'autorisation des notifications à ce moment ;
+« Nom affiché » (avec la mention « Visible par la communauté sur vos publications. Un prénom
+suffit. ») au lieu de « Nom complet », même champ `display_name` ; trois écrans de
+découverte avec un aperçu de l'app au lieu de quatre écrans d'icônes.
+
+Correction du 2026-11-02, dans cette maquette et dans `ecran-profil.html` : la liste de ce
+qu'apporte un compte ne promet plus « vos séries et votre historique rattachés à votre
+compte ». Ces données sont enregistrées sur le téléphone seulement, avec ou sans compte
+(`wird_completion_store.dart`, politique de confidentialité).
 
