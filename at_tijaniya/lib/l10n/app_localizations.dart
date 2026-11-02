@@ -6835,6 +6835,174 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'{count} fiches'**
   String wirdTileCount(int count);
+
+  /// No description provided for @wirdTasbihQuit.
+  ///
+  /// In fr, this message translates to:
+  /// **'Quitter (la session est gardée)'**
+  String get wirdTasbihQuit;
+
+  /// No description provided for @wirdTasbihReadingSettings.
+  ///
+  /// In fr, this message translates to:
+  /// **'Réglages de lecture'**
+  String get wirdTasbihReadingSettings;
+
+  /// No description provided for @wirdTasbihMoreActions.
+  ///
+  /// In fr, this message translates to:
+  /// **'Autres actions'**
+  String get wirdTasbihMoreActions;
+
+  /// No description provided for @wirdTasbihReadingTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Lecture'**
+  String get wirdTasbihReadingTitle;
+
+  /// No description provided for @wirdTasbihArabicSize.
+  ///
+  /// In fr, this message translates to:
+  /// **'Taille de l\'arabe'**
+  String get wirdTasbihArabicSize;
+
+  /// No description provided for @wirdTasbihSmaller.
+  ///
+  /// In fr, this message translates to:
+  /// **'Réduire l\'arabe'**
+  String get wirdTasbihSmaller;
+
+  /// No description provided for @wirdTasbihLarger.
+  ///
+  /// In fr, this message translates to:
+  /// **'Agrandir l\'arabe'**
+  String get wirdTasbihLarger;
+
+  /// No description provided for @wirdTasbihShowTransliteration.
+  ///
+  /// In fr, this message translates to:
+  /// **'Translittération'**
+  String get wirdTasbihShowTransliteration;
+
+  /// No description provided for @wirdTasbihShowTranslation.
+  ///
+  /// In fr, this message translates to:
+  /// **'Traduction'**
+  String get wirdTasbihShowTranslation;
+
+  /// No description provided for @wirdTasbihReadingSaved.
+  ///
+  /// In fr, this message translates to:
+  /// **'Gardé pour les prochaines fois.'**
+  String get wirdTasbihReadingSaved;
+
+  /// No description provided for @wirdTasbihNext.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ensuite : {name}'**
+  String wirdTasbihNext(String name);
+
+  /// No description provided for @wirdTasbihNextClosing.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ensuite : clôture'**
+  String get wirdTasbihNextClosing;
+
+  /// No description provided for @wirdTasbihNextEnd.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ensuite : fin du wird'**
+  String get wirdTasbihNextEnd;
+
+  /// No description provided for @wirdTasbihClosingAhead.
+  ///
+  /// In fr, this message translates to:
+  /// **'À {count} : la clôture, affichée en entier'**
+  String wirdTasbihClosingAhead(int count);
+
+  /// No description provided for @wirdTasbihFocus.
+  ///
+  /// In fr, this message translates to:
+  /// **'Concentré'**
+  String get wirdTasbihFocus;
+
+  /// No description provided for @wirdTasbihFocusExit.
+  ///
+  /// In fr, this message translates to:
+  /// **'Afficher le texte'**
+  String get wirdTasbihFocusExit;
+
+  /// No description provided for @wirdTasbihFocusHint.
+  ///
+  /// In fr, this message translates to:
+  /// **'Longue série : glissez vers le bas pour ne garder que le compteur.'**
+  String get wirdTasbihFocusHint;
+
+  /// No description provided for @wirdTasbihFocusOf.
+  ///
+  /// In fr, this message translates to:
+  /// **'sur {target}'**
+  String wirdTasbihFocusOf(int target);
+
+  /// No description provided for @wirdTasbihClosingNow.
+  ///
+  /// In fr, this message translates to:
+  /// **'{count} / {target} · récitez maintenant la clôture'**
+  String wirdTasbihClosingNow(int count, int target);
+
+  /// No description provided for @wirdTasbihFinishNamed.
+  ///
+  /// In fr, this message translates to:
+  /// **'Terminer le {wird}'**
+  String wirdTasbihFinishNamed(String wird);
+
+  /// No description provided for @wirdTasbihOnceDone.
+  ///
+  /// In fr, this message translates to:
+  /// **'Récitée · pilier suivant'**
+  String get wirdTasbihOnceDone;
+
+  /// No description provided for @wirdTasbihEndTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'{wird} accompli'**
+  String wirdTasbihEndTitle(String wird);
+
+  /// No description provided for @wirdTasbihEndPillars.
+  ///
+  /// In fr, this message translates to:
+  /// **'piliers récités'**
+  String get wirdTasbihEndPillars;
+
+  /// No description provided for @wirdTasbihEndNextReminder.
+  ///
+  /// In fr, this message translates to:
+  /// **'Prochain rappel à {time}.'**
+  String wirdTasbihEndNextReminder(String time);
+
+  /// No description provided for @wirdTasbihBack.
+  ///
+  /// In fr, this message translates to:
+  /// **'Retour'**
+  String get wirdTasbihBack;
+
+  /// No description provided for @wirdTasbihSeeHistory.
+  ///
+  /// In fr, this message translates to:
+  /// **'Voir mon historique'**
+  String get wirdTasbihSeeHistory;
+
+  /// No description provided for @wirdTasbihResetPillar.
+  ///
+  /// In fr, this message translates to:
+  /// **'Réinitialiser le pilier'**
+  String get wirdTasbihResetPillar;
+
+  /// No description provided for @wirdTasbihFormulaDone.
+  ///
+  /// In fr, this message translates to:
+  /// **'récitée'**
+  String get wirdTasbihFormulaDone;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

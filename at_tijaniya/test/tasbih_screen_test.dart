@@ -1,8 +1,10 @@
-// Vérifie la présentation du Tasbih revue le 2026-10-06 : le compteur reste
-// visible sans défiler même sur un pilier au texte long et un petit écran,
-// toute la partie basse compte une répétition, et un pilier suivi d'une
-// formule de clôture n'enchaîne plus tout seul. Les wirds viennent du corpus
-// validé ; aucun texte religieux n'est écrit ici.
+// Vérifie l'écran de pratique (revu le 2026-10-06, refait le 2026-11-02
+// d'après `docs/maquettes/ecran-pratique.html`) : le compteur reste visible
+// sans défiler même sur un pilier au texte long et un petit écran, toute la
+// partie basse compte une répétition, la clôture s'affiche en plein écran et
+// n'enchaîne pas toute seule, les piliers récités une fois s'affichent en
+// entier, « Réinitialiser » est dans le menu « ⋯ ». Les wirds viennent du
+// corpus validé ; aucun texte religieux n'est écrit ici.
 
 import 'dart:convert';
 
@@ -66,8 +68,8 @@ void main() {
     await tester.pumpWidget(_wrap(lazim));
     await tester.pumpAndSettle();
 
-    expect(find.text('Pilier 4 / 5'), findsOneWidget);
-    for (final text in ['0', '/ 100', 'Toucher pour compter', 'Corriger -1', 'Réinitialiser']) {
+    expect(find.text('Pilier 4 / 5 · Salatoul Fatihi ×100'), findsOneWidget);
+    for (final text in ['0', '/ 100', 'Toucher pour compter', 'Corriger -1', 'Concentré']) {
       final rect = tester.getRect(find.text(text));
       expect(rect.bottom, lessThanOrEqualTo(screen.height), reason: '« $text » doit tenir dans l\'écran');
       expect(rect.top, greaterThan(screen.height / 3), reason: '« $text » appartient à la partie basse');
@@ -75,8 +77,9 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 
-  testWidgets('le compteur garde la même place d\'un pilier court à un pilier long', (tester) async {
-    _seed(lazim, pillarIndex: 1);
+  testWidgets('la lecture prend la place de son texte : un texte court laisse plus de place au compteur',
+      (tester) async {
+    _seed(lazim, pillarIndex: 2); // Astaghfirullah, texte court
     await tester.pumpWidget(_wrap(lazim));
     await tester.pumpAndSettle();
     final shortTop = tester.getRect(find.text('Toucher pour compter')).top;
@@ -85,7 +88,9 @@ void main() {
     await tester.pumpWidget(const SizedBox());
     await tester.pumpWidget(_wrap(lazim));
     await tester.pumpAndSettle();
-    expect(tester.getRect(find.text('Toucher pour compter')).top, shortTop);
+    final longRect = tester.getRect(find.text('Toucher pour compter'));
+    expect(shortTop, lessThan(longRect.top));
+    expect(longRect.bottom, lessThanOrEqualTo(screen.height));
   });
 
   testWidgets('toute la partie basse compte, pas seulement le cercle', (tester) async {
@@ -115,7 +120,7 @@ void main() {
     await tester.pumpAndSettle();
     expect(tester.takeException(), isNull);
 
-    for (final text in ['0', '/ 100', 'Toucher pour compter', 'Corriger -1', 'Réinitialiser']) {
+    for (final text in ['0', '/ 100', 'Toucher pour compter', 'Corriger -1', 'Concentré']) {
       final rect = tester.getRect(find.text(text));
       expect(rect.bottom, lessThanOrEqualTo(landscape.height), reason: "« $text » doit tenir dans l'écran");
       expect(rect.left, greaterThan(landscape.width / 2), reason: '« $text » est du côté du compteur');
@@ -137,7 +142,7 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.textContaining('Micro indisponible'), findsNothing);
     expect(find.text('1'), findsOneWidget);
-    expect(tester.getRect(find.text('Réinitialiser')).bottom, lessThanOrEqualTo(landscape.height));
+    expect(tester.getRect(find.text('Corriger -1')).bottom, lessThanOrEqualTo(landscape.height));
   });
 
   testWidgets("avec une clôture à réciter, le pilier n'enchaîne pas tout seul", (tester) async {
@@ -148,23 +153,28 @@ void main() {
     await tester.tap(find.text('Toucher pour compter'));
     await tester.pump();
 
-    final closing = lazim.pillars[longPillar].closingFormulas!.first;
-    expect(find.text(closing.intro), findsOneWidget);
+    // Étape de clôture en plein écran : chaque formule en entier.
+    expect(find.text('100 / 100 · récitez maintenant la clôture'), findsOneWidget);
+    for (final formula in lazim.pillars[longPillar].closingFormulas!) {
+      expect(find.text(formula.intro), findsOneWidget);
+      expect(find.text(formula.arabic), findsOneWidget);
+    }
     expect(find.text('Pilier suivant'), findsOneWidget);
     expect(find.text('Pilier suivant dans un instant…'), findsNothing);
 
     // Bien au-delà de l'ancien délai d'enchaînement.
     await tester.pump(const Duration(seconds: 10));
-    expect(find.text('Pilier 4 / 5'), findsOneWidget);
+    expect(find.textContaining('Pilier 4 / 5'), findsOneWidget);
 
     await tester.tap(find.text('Pilier suivant'));
     await tester.pumpAndSettle();
-    expect(find.text('Pilier 5 / 5'), findsOneWidget);
+    expect(find.textContaining('Pilier 5 / 5'), findsOneWidget);
   });
 
   testWidgets("sans clôture, le pilier suivant arrive après un instant", (tester) async {
-    _seed(lazim, pillarIndex: 0);
-    await tester.pumpWidget(_wrap(lazim));
+    // Istighfar de la Wazifa (×30), sans formule de clôture.
+    _seed(wazifa, pillarIndex: 2, count: 29);
+    await tester.pumpWidget(_wrap(wazifa));
     await tester.pumpAndSettle();
 
     await tester.tap(find.text('Toucher pour compter'));
@@ -173,6 +183,85 @@ void main() {
 
     await tester.pump(const Duration(seconds: 3));
     await tester.pumpAndSettle();
-    expect(find.text('Pilier 2 / 5'), findsOneWidget);
+    expect(find.textContaining('Pilier 4 / 6'), findsOneWidget);
+  });
+
+  testWidgets('la Fatiha s\'affiche en entier, verset par verset, avec un seul bouton', (tester) async {
+    _seed(lazim, pillarIndex: 1);
+    await tester.pumpWidget(_wrap(lazim));
+    await tester.pumpAndSettle();
+
+    final verses = lazim.pillars[1].fullText!;
+    expect(find.text(verses.first.arabic), findsOneWidget);
+    expect(find.text('Toucher pour compter'), findsNothing, reason: 'pas de compteur pour un seul toucher');
+    expect(find.text('Ensuite : Istighfar ×100'), findsOneWidget);
+
+    await tester.tap(find.text('Récitée · pilier suivant'));
+    await tester.pumpAndSettle();
+    expect(find.text('Pilier 3 / 5 · Istighfar ×100'), findsOneWidget);
+  });
+
+  testWidgets('« Réinitialiser » est dans le menu « ⋯ », avec « Annuler »', (tester) async {
+    _seed(lazim, pillarIndex: 2, count: 12);
+    await tester.pumpWidget(_wrap(lazim));
+    await tester.pumpAndSettle();
+    expect(find.text('Réinitialiser'), findsNothing);
+
+    await tester.tap(find.byTooltip('Autres actions'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Réinitialiser le pilier'));
+    await tester.pumpAndSettle();
+    expect(find.text('0'), findsOneWidget);
+
+    await tester.tap(find.text('Annuler'));
+    await tester.pumpAndSettle();
+    expect(find.text('12'), findsOneWidget);
+  });
+
+  testWidgets('mode concentré : ouvert par le bouton, tout l\'écran compte, « Afficher le texte » en sort',
+      (tester) async {
+    _seed(lazim, pillarIndex: 4, count: 10);
+    await tester.pumpWidget(_wrap(lazim));
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.text('Concentré'));
+    await tester.pumpAndSettle();
+    expect(find.text('sur 100'), findsOneWidget);
+    await tester.tapAt(const Offset(180, 300));
+    await tester.pump();
+    expect(find.text('11'), findsOneWidget);
+
+    await tester.tap(find.text('Afficher le texte'));
+    await tester.pumpAndSettle();
+    expect(find.text('/ 100'), findsOneWidget);
+  });
+
+  testWidgets('« Aa » : traduction masquée par défaut, affichée sur demande', (tester) async {
+    _seed(lazim, pillarIndex: 2);
+    await tester.pumpWidget(_wrap(lazim));
+    await tester.pumpAndSettle();
+    final translation = lazim.pillars[2].translation;
+    expect(find.text(translation), findsNothing);
+
+    await tester.tap(find.bySemanticsLabel('Réglages de lecture'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Traduction'));
+    await tester.pumpAndSettle();
+    await tester.tapAt(const Offset(180, 40)); // ferme la feuille
+    await tester.pumpAndSettle();
+    expect(find.text(translation), findsOneWidget);
+  });
+
+  testWidgets('fin du wird : titre, piliers récités, retour', (tester) async {
+    _seed(lazim, pillarIndex: 4, count: 100);
+    await tester.pumpWidget(_wrap(lazim));
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.text('Terminer le Lazim'));
+    await tester.pumpAndSettle();
+    expect(find.text('Lazim accompli'), findsOneWidget);
+    expect(find.text('5/5'), findsOneWidget);
+    expect(find.text('Retour'), findsOneWidget);
+    expect(find.text('Voir mon historique'), findsOneWidget);
   });
 }

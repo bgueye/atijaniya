@@ -32,6 +32,7 @@ final String? captureSkipReason =
 /// `setUpAll`, seulement si [captureSkipReason] est `null`).
 Future<void> setUpCaptureFonts() async {
   GoogleFonts.config.allowRuntimeFetching = false;
+  AppTheme.debugFontFallback = const ['NotoSansArabic'];
   await _loadFonts(captureFontsDir!);
   final assets = _googleFontsAssets(captureFontsDir!);
   google_fonts_base.assetManifest = _FontsManifest(assets);
@@ -94,33 +95,10 @@ class _FontsManifest implements AssetManifest {
   List<AssetMetadata>? getAssetVariants(String key) => null;
 }
 
-ThemeData captureTheme() {
-  final theme = AppTheme.standard;
-  // Repli arabe pour les libellés en Jost, comme le fait Android avec sa
-  // police système. Le moteur de test n'a pas de repli système : sans cette
-  // liste, un libellé arabe en Jost ne s'affiche pas du tout.
-  const fallback = ['NotoSansArabic'];
-  // Le style de texte d'un bouton remplace celui du thème au lieu de s'y
-  // fusionner : il faut lui ajouter le repli à part.
-  ButtonStyle? withFallback(ButtonStyle? style) {
-    final label = style?.textStyle?.resolve(const {});
-    if (style == null || label == null) return style;
-    return style.copyWith(textStyle: WidgetStatePropertyAll(label.copyWith(fontFamilyFallback: fallback)));
-  }
-
-  return theme.copyWith(
-    textTheme: theme.textTheme.apply(fontFamilyFallback: fallback),
-    primaryTextTheme: theme.primaryTextTheme.apply(fontFamilyFallback: fallback),
-    filledButtonTheme: FilledButtonThemeData(style: withFallback(theme.filledButtonTheme.style)),
-    outlinedButtonTheme: OutlinedButtonThemeData(style: withFallback(theme.outlinedButtonTheme.style)),
-    textButtonTheme: TextButtonThemeData(style: withFallback(theme.textButtonTheme.style)),
-    elevatedButtonTheme: ElevatedButtonThemeData(style: withFallback(theme.elevatedButtonTheme.style)),
-    // Titre de la barre d'app : style à part, lui aussi sans repli.
-    appBarTheme: theme.appBarTheme.copyWith(
-      titleTextStyle: theme.appBarTheme.titleTextStyle?.copyWith(fontFamilyFallback: fallback),
-    ),
-  );
-}
+/// Thème des captures : le thème de l'app, dont le texte d'interface reçoit
+/// Noto Sans Arabic en repli (`AppTheme.debugFontFallback`, posé par
+/// [setUpCaptureFonts]) — comme le fait Android avec sa police système.
+ThemeData captureTheme() => AppTheme.standard;
 
 Future<void> captureToFile(WidgetTester tester, Finder finder, String name) async {
   final boundary = tester.renderObject<RenderRepaintBoundary>(finder);

@@ -89,8 +89,7 @@ void main() {
     expect(find.text('/ 33'), findsNothing);
   });
 
-  testWidgets('Formulaire accessible : zones tactiles de 48 dp, pastilles et champ « cible » annoncés',
-      (tester) async {
+  testWidgets('Formulaire accessible : zones tactiles de 48 dp, pastilles et champ « cible » annoncés', (tester) async {
     final handle = tester.ensureSemantics();
     await tester.pumpWidget(_wrap(const FreeWirdScreen()));
     await tester.pumpAndSettle();
@@ -168,8 +167,11 @@ void main() {
     }
     expect(find.text('5'), findsOneWidget);
 
-    // Toucher de travers sur « Réinitialiser » : remise à zéro immédiate,
+    // « Réinitialiser » : remise à zéro immédiate,
     // avec un message qui propose d'annuler.
+    // « Réinitialiser » est dans le menu « ⋯ » depuis le 2026-11-02.
+    await tester.tap(find.byTooltip('Autres actions'));
+    await tester.pumpAndSettle();
     await tester.tap(find.text('Réinitialiser'));
     await tester.pumpAndSettle();
     expect(find.text('0'), findsOneWidget);
@@ -179,7 +181,7 @@ void main() {
       // La carte du message (son `Material`), pas le `SnackBar` entier, dont
       // le rectangle inclut la marge.
       tester.getRect(find.descendant(of: find.byType(SnackBar), matching: find.byType(Material)).first).bottom,
-      lessThanOrEqualTo(tester.getRect(find.text('Réinitialiser')).top),
+      lessThanOrEqualTo(tester.getRect(find.text('Corriger -1')).top),
     );
 
     // Le disciple continue de réciter avant de remarquer l'erreur.

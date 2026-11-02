@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../l10n/app_localizations.dart';
 import '../domain/tasbih_session.dart' show TasbihMode;
-import 'tasbih_beads_ring.dart';
+import 'tasbih_counter_dial.dart';
 import 'voice_error_message.dart';
 import '../../../core/widgets/content_text.dart';
 
@@ -88,7 +88,7 @@ class TasbihCounterPanel extends StatelessWidget {
     required this.onModeChanged,
     required this.onCount,
     required this.onUndo,
-    required this.onReset,
+    this.onReset,
     required this.isListening,
     required this.voiceSupported,
     required this.voiceError,
@@ -97,6 +97,8 @@ class TasbihCounterPanel extends StatelessWidget {
     required this.completeAction,
     this.completeHint,
     this.extraAction,
+    this.onFocus,
+    this.onSwipeDown,
   });
 
   final int count;
@@ -108,7 +110,18 @@ class TasbihCounterPanel extends StatelessWidget {
   /// Une répétition comptée au toucher (mode manuel).
   final VoidCallback onCount;
   final VoidCallback onUndo;
-  final VoidCallback onReset;
+
+  /// « Réinitialiser » dans la rangée de commandes. `null` : l'écran le
+  /// propose ailleurs (menu « ⋯ » depuis la refonte du 2026-11-02, où il
+  /// n'est plus à un toucher de travers de « Corriger −1 »).
+  final VoidCallback? onReset;
+
+  /// Bouton « Concentré » de la rangée de commandes (écran de pratique d'un
+  /// wird). `null` : pas de bouton.
+  final VoidCallback? onFocus;
+
+  /// Glisser vers le bas sur la zone de comptage (ouvre le mode concentré).
+  final VoidCallback? onSwipeDown;
 
   final bool isListening;
   final bool voiceSupported;
@@ -162,6 +175,11 @@ class TasbihCounterPanel extends StatelessWidget {
             child: GestureDetector(
               behavior: HitTestBehavior.opaque,
               onTap: onZoneTap,
+              onVerticalDragEnd: onSwipeDown == null
+                  ? null
+                  : (details) {
+                      if ((details.primaryVelocity ?? 0) > 250) onSwipeDown!();
+                    },
               child: Column(
                 children: [
                   Expanded(
@@ -313,13 +331,20 @@ class TasbihCounterPanel extends StatelessWidget {
             ),
           ),
           _ModeToggle(mode: mode, onChanged: onModeChanged, l10n: l10n),
-          Expanded(
-            child: _PanelAction(
-              icon: Icons.replay,
-              label: l10n.wirdFreeReset,
-              onPressed: count == 0 ? null : onReset,
-            ),
-          ),
+          if (onReset != null)
+            Expanded(
+              child: _PanelAction(
+                icon: Icons.replay,
+                label: l10n.wirdFreeReset,
+                onPressed: count == 0 ? null : onReset,
+              ),
+            )
+          else if (onFocus != null)
+            Expanded(
+              child: _PanelAction(icon: Icons.open_in_full, label: l10n.wirdTasbihFocus, onPressed: onFocus),
+            )
+          else
+            const Spacer(),
           if (extraAction != null) extraAction!,
         ],
       ),
@@ -339,7 +364,7 @@ class _Ring extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return TasbihBeadsRing(
+    return TasbihCounterDial(
       count: count,
       target: target,
       size: size,

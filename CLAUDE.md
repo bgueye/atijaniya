@@ -106,6 +106,11 @@ conflit, les règles de ce fichier priment sur la maquette.
 une carte par wird avec ses actions, logique dans `lib/features/wird/domain/wird_overview.dart` ;
 noms courts des piliers dans le corpus (`shortName`/`shortNameArabic`). Le guide d'un wird
 reste à refaire. Détail : `docs/09`, entrée du 2026-11-02.
+**Écran de pratique (tasbih) refait le 2026-11-02** (maquette `ecran-pratique.html`) : repères
+nommés, réglages « Aa » gardés sur l'appareil, compteur à l'échelle du nombre
+(`tasbih_counter_dial.dart`), mode concentré jamais automatique, clôture en plein écran,
+intention et Fatiha en entier, écran de fin. `AppTheme.debugFontFallback` ne sert qu'aux
+captures de test : toujours `null` dans l'app.
 Kit de composants commun (jetons, règles d'usage, 15 composants avec leur correspondance
 Flutter) : `docs/kit/README.md`. Les écrans sans maquette se mettent au thème avec ce kit.
 Les composants existent depuis le 2026-11-02 dans `lib/core/widgets/` (`WirdBand` dans le

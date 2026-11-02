@@ -120,6 +120,9 @@ class TasbihController extends StateNotifier<TasbihState> with WidgetsBindingObs
 
   WirdPillar get currentPillar => wird.pillars[state.session.pillarIndex];
 
+  /// Index du pilier en cours (lu par l'écran sans passer par `state`).
+  int get pillarIndex => state.session.pillarIndex;
+
   /// `true` si ce pilier propose une récitation alternative (ex.
   /// Jawharatoul Kamal / 20 Salatoul Fatihi si les conditions ne sont pas
   /// réunies) — voir [WirdPillar.alternative].
@@ -262,6 +265,19 @@ class TasbihController extends StateNotifier<TasbihState> with WidgetsBindingObs
       _scheduleAutoAdvance();
     }
   }
+
+  /// Pilier récité une seule fois (intention, Fatiha) : « Récitée · pilier
+  /// suivant » le marque fait et passe au suivant d'un seul geste, sans
+  /// anneau pour un unique toucher (refonte du 2026-11-02).
+  Future<void> completeOncePillar() async {
+    final done = state.session.copyWith(currentCount: targetCount);
+    state = state.copyWith(session: done);
+    await nextPillar();
+  }
+
+  /// `true` pour un pilier récité une fois, sans clôture ni alternative :
+  /// l'écran l'affiche en entier avec un seul bouton.
+  bool get isOncePillar => targetCount == 1 && !hasClosingToRecite && !hasAlternative;
 
   /// Passe au pilier suivant, ou termine le wird si c'était le dernier.
   Future<void> nextPillar() async {

@@ -71,7 +71,12 @@ const _ahzabClosingTranslit = "Innallaha wa mala-ikatahou yousalouna 'ala-n-Nabi
 
 // Intention d'ouverture (niyya) — identique pour les 3 wirds. Texte arabe
 // complet sourcé sur tidjaniya.com (« Aoraad Tariqa Tijaniyya »).
+// Nom court « Intention » / « النية » : simple libellé d'interface (repères de
+// l'écran de pratique, refonte du 2026-11-02), pas un texte du wird — le
+// texte de l'intention lui-même est ci-dessous, inchangé.
 const _intentionPillar = WirdPillar(
+  shortName: 'Intention',
+  shortNameArabic: 'النية',
   arabic: 'اللَّهُمَّ إِنِّي نَوَيْتُ تِلَاوَةَ هَذَا الْوِرْدِ تَعْظِيمًا وَإِجْلَالًا لَكَ '
       'وَابْتِغَاءَ مَرْضَاتِكَ وَقَصْدًا لِوَجْهِكَ الْكَرِيمِ، مُخْلِصًا لَكَ مِنْ أَجْلِكَ '
       'وَأَقُولُ بِإِمْدَادِكَ وَعَوْنِكَ وَحَوْلِكَ وَقُوَّتِكَ، وَمَا وَهَبْتَنِي مِنْ '

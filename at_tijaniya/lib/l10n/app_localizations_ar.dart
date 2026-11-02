@@ -3504,4 +3504,102 @@ class AppLocalizationsAr extends AppLocalizations {
   String wirdTileCount(int count) {
     return '$count بطاقة';
   }
+
+  @override
+  String get wirdTasbihQuit => 'خروج (تُحفظ الجلسة)';
+
+  @override
+  String get wirdTasbihReadingSettings => 'إعدادات القراءة';
+
+  @override
+  String get wirdTasbihMoreActions => 'إجراءات أخرى';
+
+  @override
+  String get wirdTasbihReadingTitle => 'القراءة';
+
+  @override
+  String get wirdTasbihArabicSize => 'حجم الخط العربي';
+
+  @override
+  String get wirdTasbihSmaller => 'تصغير الخط العربي';
+
+  @override
+  String get wirdTasbihLarger => 'تكبير الخط العربي';
+
+  @override
+  String get wirdTasbihShowTransliteration => 'النقل الصوتي';
+
+  @override
+  String get wirdTasbihShowTranslation => 'الترجمة';
+
+  @override
+  String get wirdTasbihReadingSaved => 'يُحفظ للمرات القادمة.';
+
+  @override
+  String wirdTasbihNext(String name) {
+    return 'التالي: $name';
+  }
+
+  @override
+  String get wirdTasbihNextClosing => 'التالي: الختم';
+
+  @override
+  String get wirdTasbihNextEnd => 'التالي: نهاية الورد';
+
+  @override
+  String wirdTasbihClosingAhead(int count) {
+    return 'عند $count: الختم، يُعرض كاملًا';
+  }
+
+  @override
+  String get wirdTasbihFocus => 'تركيز';
+
+  @override
+  String get wirdTasbihFocusExit => 'إظهار النص';
+
+  @override
+  String get wirdTasbihFocusHint => 'سلسلة طويلة: اسحب إلى الأسفل لإبقاء العدّاد وحده.';
+
+  @override
+  String wirdTasbihFocusOf(int target) {
+    return 'من $target';
+  }
+
+  @override
+  String wirdTasbihClosingNow(int count, int target) {
+    return '$count / $target · اقرأ الآن الختم';
+  }
+
+  @override
+  String wirdTasbihFinishNamed(String wird) {
+    return 'إنهاء $wird';
+  }
+
+  @override
+  String get wirdTasbihOnceDone => 'تمّت القراءة · الركن التالي';
+
+  @override
+  String wirdTasbihEndTitle(String wird) {
+    return 'تمّ $wird';
+  }
+
+  @override
+  String get wirdTasbihEndPillars => 'أركان مقروءة';
+
+  @override
+  String wirdTasbihEndNextReminder(String time) {
+    return 'التذكير القادم على $time.';
+  }
+
+  @override
+  String get wirdTasbihBack => 'رجوع';
+
+  @override
+  String get wirdTasbihSeeHistory => 'عرض سجلي';
+
+  @override
+  String get wirdTasbihResetPillar => 'إعادة تعيين الركن';
+
+  @override
+  String get wirdTasbihFormulaDone => 'مقروءة';
 }

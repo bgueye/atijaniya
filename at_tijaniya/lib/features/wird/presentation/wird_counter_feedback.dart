@@ -25,6 +25,19 @@ import 'package:vibration/vibration.dart';
 final AudioPlayer _sfxPlayer = AudioPlayer();
 bool _sfxLoaded = false;
 
+/// Vibration d'un toucher de comptage (refonte du 2026-11-02, maquette de
+/// l'écran de pratique) : plus marquée à chaque dizaine et sur les trois
+/// dernières répétitions, pour sentir où l'on en est sans regarder l'écran.
+/// [count] est le compte après ce toucher.
+void tasbihTapHaptic(int count, int target) {
+  final marked = count % 10 == 0 || (target - count) < 3;
+  if (marked) {
+    HapticFeedback.mediumImpact();
+  } else {
+    HapticFeedback.lightImpact();
+  }
+}
+
 Future<void> playWirdCounterCompleteFeedback() async {
   unawaited(_vibrate());
   unawaited(_beep());

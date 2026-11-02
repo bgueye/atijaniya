@@ -3741,3 +3741,70 @@ puces, actions, ordre du vendredi, noms arabes, ligne d'administration) ;
 
 **Pas encore fait** : le guide d'un wird (`WirdDetailScreen`), qui emprunte à cette
 maquette et à celle de la pratique. **Pas encore validé sur téléphone.**
+
+## Refonte de l'écran de pratique (2026-11-02)
+
+Demande du porteur de projet : refaire l'écran de pratique d'un wird (`TasbihScreen`) d'après
+sa maquette de référence `docs/maquettes/ecran-pratique.html`, avec les décisions validées
+et les composants du kit. Écarts listés puis validés avant de coder, avec trois réponses :
+- le wird libre reçoit les changements communs du panneau de comptage (compteur à
+  l'échelle, Réinitialiser dans « ⋯ », vibrations), sans rien d'autre ;
+- l'écran de fin propose « Retour » (vers l'écran d'où l'on vient) et « Voir mon
+  historique » ;
+- l'écran de fin n'affiche que le prochain rappel, sans reformuler le texte du corpus.
+
+**Écran**
+- **En-tête** : ✕ (la session reste gardée), nom du wird et nom arabe, « Aa » et « ⋯ ».
+- **Repères nommés** : le segment du pilier en cours se remplit ; dessous, « Pilier 5 / 5
+  · Hailala ×100 » et « Ensuite : … » (pilier suivant, clôture ou fin du wird).
+- **Lecture** : elle prend la hauteur de son texte, en laissant au moins 280 à 360 px au
+  compteur ; au-delà, elle défile. En paysage, la disposition côte à côte reste.
+- **Réglages « Aa »** : taille de l'arabe de 22 à 40, translittération (affichée en
+  français, masquée en arabe par défaut) et traduction (masquée par défaut). Gardés sur
+  l'appareil, propres au compte (`tasbih_reading_prefs_store.dart`).
+- **Compteur** (`tasbih_counter_dial.dart`) : une perle par récitation jusqu'à 50, une
+  graduation par récitation jusqu'à 100 (plus longue à chaque dizaine, avec un repère sur la
+  dernière comptée), un arc par centaine au-delà. Vibration plus marquée à chaque dizaine et
+  sur les trois dernières (`tasbihTapHaptic`).
+- **Mode concentré** : une ligne d'arabe, le chiffre en grand, une barre ; tout l'écran
+  compte, « Afficher le texte » en sort. Jamais automatique : bouton « Concentré », geste
+  vers le bas, et une bulle proposée une seule fois sur une série de 100 ou plus. En mode
+  voix, l'écoute reste visible et se commande depuis cet écran.
+- **Clôture** : à la fin du compte, les formules s'affichent en plein écran, chacune en
+  entier. Les cocher est facultatif ; la suivante s'éclaire, et « Terminer » ou « Pilier
+  suivant » reste toujours possible. L'enchaînement n'est jamais automatique.
+- **Piliers récités une fois** (intention, Fatiha) : le texte complet, la Fatiha verset par
+  verset (`fullText` du corpus), et un seul bouton « Récitée · pilier suivant »
+  (`TasbihController.completeOncePillar`).
+- **« Réinitialiser le pilier »** dans le menu « ⋯ », avec l'« Annuler » existant.
+- **Écran de fin** : rosace en filigrane, sceau doré, « Lazim accompli », nom arabe,
+  piliers récités, série en cours, prochain rappel, « Retour », « Voir mon historique ».
+  Le rappel de don reste, discret.
+- **Corpus** : nom court de l'intention (« Intention » / « النية »), simple libellé
+  d'interface. Le texte de l'intention ne change pas.
+
+**Captures** : `test/practice_screen_captures_test.dart` produit les 5 états de la maquette
+(Fatiha, comptage, mode concentré, clôture, fin), en français et en arabe, comparés à la
+maquette rendue dans les mêmes états.
+
+Corrigés grâce aux captures :
+- la bulle du mode concentré réapparaissait à chaque ouverture, parce qu'elle était
+  décidée avant la lecture des réglages (`TasbihReadingPrefs.loaded`) ;
+- pendant la clôture, le repère annonçait encore « Ensuite : clôture » ;
+- les chiffres de l'écran de fin débordaient sur un petit téléphone (passés en `Wrap`) ;
+- la rosace se voyait à travers les tuiles de chiffres.
+
+Pour que les captures couvrent aussi les écrans qui posent leur propre thème,
+`AppTheme.debugFontFallback` (réservé aux tests, toujours `null` dans l'app) ajoute la police
+arabe de repli à tout le texte d'interface. Limite connue des captures : le « ᵉ » de
+« 100ᵉ » n'existe pas dans Jost et sort vide ; sur téléphone, la police système le fournit.
+
+**Tests** : `tasbih_screen_test.dart` est repris et complété (lecture à la hauteur de son
+texte, clôture en plein écran, Fatiha en entier, Réinitialiser dans « ⋯ » avec Annuler,
+mode concentré, traduction par « Aa », écran de fin) ; `free_wird_screen_test.dart` passe
+par le menu « ⋯ ». `flutter analyze` sans remarque, 641 tests au vert (captures ignorées sans
+polices).
+
+**Reste** : `tasbih_beads_ring.dart` n'est plus utilisé (remplacé par le nouveau compteur),
+à supprimer avec l'accord du porteur de projet. Le guide d'un wird (`WirdDetailScreen`)
+reste à refaire. **Pas encore validé sur téléphone.**

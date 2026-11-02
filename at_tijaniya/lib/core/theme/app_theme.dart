@@ -14,6 +14,15 @@ import 'app_colors.dart';
 class AppTheme {
   AppTheme._();
 
+  /// Polices de repli ajoutées à tout le texte d'interface, pour les tests de
+  /// capture seulement (`test/capture_support.dart`). Le moteur de test n'a
+  /// pas de police système de repli : sans elle, un libellé arabe en Jost ne
+  /// s'affichait pas, y compris sur les écrans qui posent leur propre thème
+  /// (`AppTheme.immersive` de l'écran de pratique). Toujours `null` dans
+  /// l'app, où le téléphone fournit sa police arabe.
+  @visibleForTesting
+  static List<String>? debugFontFallback;
+
   /// Thème "standard" — fond ivoire parchemin. Utilisé sur tous les écrans
   /// sauf les écrans de pratique (Wird, Khadara en direct), qui utilisent
   /// [immersive].
@@ -107,6 +116,7 @@ class AppTheme {
       textTheme: uiTextTheme.apply(
         bodyColor: onSurface,
         displayColor: onSurface,
+        fontFamilyFallback: debugFontFallback,
       ),
       appBarTheme: AppBarTheme(
         backgroundColor: surface,
@@ -119,7 +129,7 @@ class AppTheme {
           color: onSurface,
           fontWeight: FontWeight.w600,
           fontSize: 22,
-        ),
+        ).copyWith(fontFamilyFallback: debugFontFallback),
       ),
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
@@ -210,7 +220,8 @@ class AppTheme {
 
   /// Libellé des boutons (`libelle` du kit : Jost 14, 500). Un getter et non
   /// une constante : `GoogleFonts.jost` déclenche le chargement de la police.
-  static TextStyle get _buttonLabel => GoogleFonts.jost(fontSize: 14, fontWeight: FontWeight.w500);
+  static TextStyle get _buttonLabel =>
+      GoogleFonts.jost(fontSize: 14, fontWeight: FontWeight.w500).copyWith(fontFamilyFallback: debugFontFallback);
 
   /// Style réservé aux textes religieux et titres arabes (Amiri).
   /// JAMAIS pour un libellé d'interface générique (bouton, menu, onglet).

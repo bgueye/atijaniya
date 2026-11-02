@@ -7,8 +7,10 @@ import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../core/widgets/keep_screen_on.dart';
 import '../../../l10n/app_localizations.dart';
+import '../domain/free_wird_session.dart';
 import 'free_wird_controller.dart';
 import 'tasbih_counter_panel.dart';
+import 'wird_counter_feedback.dart';
 import '../../../core/widgets/content_text.dart';
 
 /// Wird libre — compteur paramétré par le disciple (nom + cible), en plus
@@ -44,6 +46,22 @@ class FreeWirdScreen extends ConsumerWidget {
           title: Text(
             state.session != null && state.session!.label.isNotEmpty ? state.session!.label : l10n.wirdFreeTitle,
           ),
+          // « Réinitialiser » dans le menu « ⋯ » (refonte du 2026-11-02) : à
+          // côté de « Corriger −1 », un toucher de travers effaçait le compte.
+          actions: [
+            if (state.session != null && !state.completed)
+              PopupMenuButton<void>(
+                tooltip: l10n.wirdTasbihMoreActions,
+                icon: const Icon(Icons.more_horiz),
+                itemBuilder: (_) => [
+                  PopupMenuItem(
+                    enabled: state.session!.currentCount > 0,
+                    onTap: () => _resetFreeCounter(context, state.session!, controller),
+                    child: Text(l10n.wirdFreeReset),
+                  ),
+                ],
+              ),
+          ],
         ),
         body: SafeArea(
           child: state.loading
@@ -286,21 +304,10 @@ class _CounterBody extends StatelessWidget {
           mode: session.mode,
           onModeChanged: controller.setMode,
           onCount: () {
-            HapticFeedback.lightImpact();
+            tasbihTapHaptic(session.currentCount + 1, session.target);
             controller.increment();
           },
           onUndo: controller.undo,
-          onReset: () {
-            controller.resetCount();
-            showCounterResetSnackBar(
-              context,
-              onUndo: () => controller.restoreCount(
-                label: session.label,
-                target: session.target,
-                previousCount: session.currentCount,
-              ),
-            );
-          },
           isListening: state.isListening,
           voiceSupported: state.voiceSupported,
           voiceError: state.voiceError,
@@ -364,4 +371,17 @@ class _CompletedView extends StatelessWidget {
       ),
     );
   }
+}
+
+/// Remise à zéro du compteur libre, avec « Annuler » (menu « ⋯ »).
+void _resetFreeCounter(BuildContext context, FreeWirdSession session, FreeWirdController controller) {
+  controller.resetCount();
+  showCounterResetSnackBar(
+    context,
+    onUndo: () => controller.restoreCount(
+      label: session.label,
+      target: session.target,
+      previousCount: session.currentCount,
+    ),
+  );
 }

@@ -3539,4 +3539,102 @@ class AppLocalizationsFr extends AppLocalizations {
   String wirdTileCount(int count) {
     return '$count fiches';
   }
+
+  @override
+  String get wirdTasbihQuit => 'Quitter (la session est gardée)';
+
+  @override
+  String get wirdTasbihReadingSettings => 'Réglages de lecture';
+
+  @override
+  String get wirdTasbihMoreActions => 'Autres actions';
+
+  @override
+  String get wirdTasbihReadingTitle => 'Lecture';
+
+  @override
+  String get wirdTasbihArabicSize => 'Taille de l\'arabe';
+
+  @override
+  String get wirdTasbihSmaller => 'Réduire l\'arabe';
+
+  @override
+  String get wirdTasbihLarger => 'Agrandir l\'arabe';
+
+  @override
+  String get wirdTasbihShowTransliteration => 'Translittération';
+
+  @override
+  String get wirdTasbihShowTranslation => 'Traduction';
+
+  @override
+  String get wirdTasbihReadingSaved => 'Gardé pour les prochaines fois.';
+
+  @override
+  String wirdTasbihNext(String name) {
+    return 'Ensuite : $name';
+  }
+
+  @override
+  String get wirdTasbihNextClosing => 'Ensuite : clôture';
+
+  @override
+  String get wirdTasbihNextEnd => 'Ensuite : fin du wird';
+
+  @override
+  String wirdTasbihClosingAhead(int count) {
+    return 'À $count : la clôture, affichée en entier';
+  }
+
+  @override
+  String get wirdTasbihFocus => 'Concentré';
+
+  @override
+  String get wirdTasbihFocusExit => 'Afficher le texte';
+
+  @override
+  String get wirdTasbihFocusHint => 'Longue série : glissez vers le bas pour ne garder que le compteur.';
+
+  @override
+  String wirdTasbihFocusOf(int target) {
+    return 'sur $target';
+  }
+
+  @override
+  String wirdTasbihClosingNow(int count, int target) {
+    return '$count / $target · récitez maintenant la clôture';
+  }
+
+  @override
+  String wirdTasbihFinishNamed(String wird) {
+    return 'Terminer le $wird';
+  }
+
+  @override
+  String get wirdTasbihOnceDone => 'Récitée · pilier suivant';
+
+  @override
+  String wirdTasbihEndTitle(String wird) {
+    return '$wird accompli';
+  }
+
+  @override
+  String get wirdTasbihEndPillars => 'piliers récités';
+
+  @override
+  String wirdTasbihEndNextReminder(String time) {
+    return 'Prochain rappel à $time.';
+  }
+
+  @override
+  String get wirdTasbihBack => 'Retour';
+
+  @override
+  String get wirdTasbihSeeHistory => 'Voir mon historique';
+
+  @override
+  String get wirdTasbihResetPillar => 'Réinitialiser le pilier';
+
+  @override
+  String get wirdTasbihFormulaDone => 'récitée';
 }
