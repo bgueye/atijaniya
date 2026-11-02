@@ -96,7 +96,8 @@ carrousel en arabe tant que leur texte arabe n'est pas saisi. Détail :
 
 ## Refonte des autres écrans (maquettes du 2026-11-01)
 Maquettes de Wird, Zawiyas, Figures, Communauté et Profil (2026-11-01), de la pratique des
-wirds et des écrans de détail figure, zawiya et évènement (2026-11-02) dans `docs/maquettes/`,
+wirds, des écrans de détail figure, zawiya et évènement, et du parcours d'entrée (2026-11-02)
+dans `docs/maquettes/`,
 avec les décisions **validées par le porteur de projet** dans `docs/maquettes/README.md`, qui
 donne aussi la maquette de référence de chaque écran (une seule par écran).
 À lire avant de retoucher l'un de ces écrans. Implémenter un écran à la fois ; en cas de

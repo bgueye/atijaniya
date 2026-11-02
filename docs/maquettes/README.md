@@ -19,7 +19,7 @@ aplats : les maquettes ne chargent pas les photos de la base.
 | Profil | `ecran-profil.html` | Proposé, à implémenter |
 | Pratique des wirds (tasbih) | `ecran-pratique.html` | Proposé, à implémenter (décisions validées) |
 | Écrans de détail (figure, zawiya, évènement) | `ecrans-detail.html` | Proposé, à implémenter (décisions validées le 2026-11-02) |
-| Parcours d'entrée (démarrage, langue, découverte, rappels, entrée, compte) | `parcours-entree.html` | Proposé le 2026-11-02 ; **décisions pas encore validées** |
+| Parcours d'entrée (démarrage, langue, découverte, rappels, entrée, compte) | `parcours-entree.html` | Proposé, à implémenter (décisions validées le 2026-11-02) |
 
 ## Un écran, une seule maquette
 
@@ -137,14 +137,17 @@ pas de « Ajouter à mon agenda » sur un évènement pour l'instant.
 Le guide d'un wird a été retiré de cette maquette le 2026-11-02 : il était déjà couvert par
 `ecran-wird.html` et `ecran-pratique.html`.
 
-## Parcours d'entrée (maquette du 2026-11-02) — décisions en attente
+## Parcours d'entrée (maquette du 2026-11-02) — décisions validées
 
-Recommandations de la maquette, **pas encore validées par le porteur de projet** :
+Recommandations de la maquette, **validées par le porteur de projet le 2026-11-02** ; elles
+font foi pour l'implémentation :
 « Découvrir sans compte » au même rang que « Créer un compte » ; étape « Rappels »
 facultative dans l'entrée, avec la demande d'autorisation des notifications à ce moment ;
 « Nom affiché » (avec la mention « Visible par la communauté sur vos publications. Un prénom
 suffit. ») au lieu de « Nom complet », même champ `display_name` ; trois écrans de
 découverte avec un aperçu de l'app au lieu de quatre écrans d'icônes.
+Reste à fixer avec le porteur de projet : l'heure proposée par défaut pour le rappel du soir
+du Lazim (le code règle aujourd'hui 07:00 pour tous les rappels quotidiens).
 
 Correction du 2026-11-02, dans cette maquette et dans `ecran-profil.html` : la liste de ce
 qu'apporte un compte ne promet plus « vos séries et votre historique rattachés à votre
