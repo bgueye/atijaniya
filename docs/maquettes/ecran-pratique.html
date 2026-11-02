@@ -1,0 +1,398 @@
+<!doctype html>
+<html lang="fr">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Nouvel écran de pratique</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Cormorant+Garamond:wght@500;600&family=Jost:wght@300;400;500;600&display=swap">
+<style>
+/* Layout : colonne de lecture ; maquette de téléphone à gauche (parcours d'un pilier à la
+   fin du wird), explications à droite ; puis avant/après, décisions et limites. */
+:root{
+  --bg:#F3EEE2; --surface:#FFFDF8; --fg:#2B2620; --muted:#66625C; --line:rgba(140,122,91,.28);
+  --accent:#1C6E4A; --accent-soft:#E4EEE8; --gold:#9A7A2E; --gold-soft:#F1E6C9;
+  /* Jetons de l'app, thème immersif (fixes) */
+  --z:#0F3D2E; --z2:#16483A; --em:#1C6E4A; --go:#C9A24B; --gos:#F1E6C9; --pa:#F7F2E7;
+  --off:#FFFDF8; --sec:rgba(247,242,231,.74); --hair:rgba(201,162,75,.35);
+  --f-display:"Cormorant Garamond", Georgia, serif;
+  --f-ui:"Jost", "Segoe UI", system-ui, sans-serif;
+  --f-ar:"Amiri", "Traditional Arabic", serif;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#101a16; --surface:#17241f; --fg:#ECE6D8; --muted:#B5AE9F; --line:rgba(201,162,75,.22);
+  --accent:#6FC29A; --accent-soft:#1d3a2e; --gold:#D8B661; --gold-soft:#2f2a1b; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#101a16; --surface:#17241f; --fg:#ECE6D8; --muted:#B5AE9F; --line:rgba(201,162,75,.22);
+  --accent:#6FC29A; --accent-soft:#1d3a2e; --gold:#D8B661; --gold-soft:#2f2a1b; color-scheme:dark}
+
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--fg);font-family:var(--f-ui);font-size:16px;line-height:1.55;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:32px 64px}
+.wrap{max-width:1100px;margin:0 auto;display:flex;flex-direction:column;gap:56px}
+h1,h2{font-family:var(--f-display);font-weight:600;text-wrap:balance;margin:0;line-height:1.1}
+h1{font-size:clamp(2.2rem,5vw,3.1rem)} h2{font-size:1.9rem}
+h3{font-size:1.05rem;font-weight:600;margin:0}
+p{margin:0} code{font-size:.88em}
+.eyebrow{font-size:.78rem;letter-spacing:.12em;text-transform:uppercase;color:var(--gold);font-weight:500}
+.lede{font-size:1.1rem;color:var(--muted);max-width:66ch}
+header.top,section{display:flex;flex-direction:column;gap:16px}
+.diag,.decisions{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px}
+.diag article,.decisions article{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:16px 18px;display:flex;flex-direction:column;gap:6px;min-width:0}
+.diag p,.decisions p{font-size:.95rem;color:var(--muted)}
+.tag{font-size:.72rem;letter-spacing:.08em;text-transform:uppercase;font-weight:600;color:var(--accent)}
+.tag.warn{color:#8A4B12}
+.rec{font-size:.9rem;color:var(--accent);font-weight:500}
+
+.demo{display:grid;grid-template-columns:minmax(0,370px) minmax(0,1fr);gap:40px;align-items:start}
+@media (max-width:820px){.demo{grid-template-columns:1fr}}
+.phonecol{display:flex;flex-direction:column;gap:12px;align-items:center}
+.states{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;max-width:380px}
+.states button{font:inherit;font-size:.82rem;padding:6px 12px;border-radius:999px;border:1px solid var(--line);background:var(--surface);color:var(--fg);cursor:pointer}
+.states button[aria-pressed="true"]{background:var(--accent);color:var(--surface);border-color:var(--accent)}
+button:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+.phone{width:100%;max-width:360px;border-radius:34px;background:#1b1b1b;padding:10px;box-shadow:0 20px 50px -20px rgba(0,0,0,.45)}
+.screen{position:relative;height:760px;border-radius:26px;overflow:hidden;background:var(--z);color:var(--pa);display:flex;flex-direction:column;user-select:none}
+
+/* En-tête */
+.top{display:flex;align-items:center;gap:8px;padding:12px 12px 6px}
+.top .x,.top .aa{font:inherit;width:36px;height:36px;border-radius:50%;border:0;background:rgba(255,253,248,.08);color:var(--pa);cursor:pointer;font-size:.9rem}
+.top .t{flex:1;text-align:center;line-height:1.15}
+.top .t b{font-family:var(--f-display);font-size:1.3rem;font-weight:600;display:block}
+.top .t small{font-size:.66rem;color:var(--sec)}
+.steps{display:flex;gap:4px;padding:4px 16px 0}
+.steps i{flex:1;height:4px;border-radius:2px;background:rgba(247,242,231,.16);position:relative;overflow:hidden}
+.steps i.done{background:var(--go)}
+.steps i.cur::after{content:"";position:absolute;inset:0;width:var(--p,0%);background:var(--go)}
+.pchip{display:flex;justify-content:space-between;align-items:baseline;padding:8px 16px 0;font-size:.7rem;color:var(--sec)}
+.pchip b{color:var(--pa);font-weight:500;font-size:.78rem}
+
+/* Réglages de lecture */
+.aapanel{position:absolute;top:56px;right:12px;z-index:5;background:var(--off);color:#2B2620;border-radius:16px;padding:12px 14px;width:220px;box-shadow:0 14px 30px rgba(0,0,0,.35);display:flex;flex-direction:column;gap:10px;font-size:.78rem}
+.aapanel .r{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.aapanel .sz{display:flex;gap:4px}
+.aapanel .sz button{font:inherit;width:30px;height:28px;border-radius:8px;border:1px solid rgba(140,122,91,.35);background:none;cursor:pointer}
+.tg{width:34px;height:20px;border-radius:10px;background:rgba(140,122,91,.3);position:relative;border:0;cursor:pointer;flex:none}
+.tg::after{content:"";position:absolute;top:2px;left:2px;width:16px;height:16px;border-radius:50%;background:#fff;transition:left .15s}
+.tg[aria-pressed="true"]{background:var(--em)} .tg[aria-pressed="true"]::after{left:16px}
+
+/* Lecture */
+.reading{padding:14px 20px 6px;text-align:center;display:flex;flex-direction:column;gap:8px;overflow-y:auto;scrollbar-width:none}
+.reading::-webkit-scrollbar{display:none}
+.ar{font-family:var(--f-ar);color:var(--go);direction:rtl;line-height:1.75}
+.tr{font-style:italic;font-size:.9rem;line-height:1.45}
+.fr{font-size:.82rem;line-height:1.45;color:var(--sec)}
+.next{font-size:.66rem;color:var(--sec);text-align:center;padding:4px 0 0}
+.next b{color:var(--pa);font-weight:500}
+
+/* Comptage : toute la moitié basse est la zone de toucher */
+.tap{flex:1;position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;border-top:1px solid var(--hair);background:rgba(247,242,231,.035)}
+.tap:active .dial{transform:scale(.985)}
+.dial{position:relative;width:230px;height:230px;transition:transform .08s}
+.dial canvas{width:230px;height:230px;display:block}
+.dial .c{position:absolute;inset:0;display:grid;place-items:center;text-align:center;line-height:1}
+.dial .c b{font-size:3.6rem;font-weight:500;color:var(--off);font-variant-numeric:tabular-nums;display:block}
+.dial .c small{font-size:.9rem;color:var(--sec)}
+.hint{font-size:.72rem;color:var(--sec);margin-top:6px}
+.ripple{position:absolute;width:12px;height:12px;border-radius:50%;background:rgba(201,162,75,.35);pointer-events:none;animation:rip .5s ease-out forwards}
+@keyframes rip{to{transform:scale(18);opacity:0}}
+@media (prefers-reduced-motion:reduce){.ripple{display:none}}
+.ctrl{display:flex;align-items:center;justify-content:space-between;padding:8px 18px 14px}
+.ctrl button{font:inherit;font-size:.68rem;color:var(--sec);background:none;border:0;display:flex;flex-direction:column;align-items:center;gap:2px;cursor:pointer;min-width:56px}
+.ctrl .ico{font-size:1.1rem;color:var(--pa)}
+.mode{display:flex;border:1px solid var(--hair);border-radius:999px;padding:3px}
+.mode span{width:46px;height:34px;border-radius:999px;display:grid;place-items:center;font-size:.9rem}
+.mode span.on{background:var(--go);color:var(--z)}
+
+/* Concentré */
+.focus{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;cursor:pointer;position:relative;background:radial-gradient(70% 50% at 50% 45%,rgba(28,110,74,.35),transparent 70%)}
+.focus .big{font-size:6rem;font-weight:300;color:var(--off);line-height:1;font-variant-numeric:tabular-nums}
+.focus .of{font-size:.95rem;color:var(--sec)}
+.focus .line{font-family:var(--f-ar);font-size:1.5rem;color:var(--go);direction:rtl}
+.focus .bar{width:62%;height:4px;border-radius:2px;background:rgba(247,242,231,.15);overflow:hidden}
+.focus .bar i{display:block;height:100%;background:var(--go)}
+.focus .leave{position:absolute;bottom:16px;font:inherit;font-size:.72rem;color:var(--sec);background:rgba(255,253,248,.08);border:0;border-radius:999px;padding:7px 14px;cursor:pointer}
+
+/* Clôture */
+.closing{flex:1;overflow-y:auto;padding:6px 16px 0;display:flex;flex-direction:column;gap:10px;scrollbar-width:none}
+.closing::-webkit-scrollbar{display:none}
+.donechip{display:flex;align-items:center;gap:8px;justify-content:center;font-size:.76rem;color:var(--go);padding:6px 0}
+.donechip i{font-style:normal;width:20px;height:20px;border-radius:50%;background:var(--go);color:var(--z);display:grid;place-items:center;font-size:.7rem}
+.formula{border-radius:16px;background:rgba(255,253,248,.06);border:1px solid var(--hair);padding:12px 12px 10px;text-align:center;display:flex;flex-direction:column;gap:6px;cursor:pointer;transition:opacity .2s}
+.formula .in{font-size:.7rem;color:var(--sec);display:flex;justify-content:space-between;gap:8px;text-align:start}
+.formula .ck{width:22px;height:22px;border-radius:50%;border:1.5px solid var(--hair);flex:none;display:grid;place-items:center;font-size:.7rem}
+.formula.ok{opacity:.55}
+.formula.ok .ck{background:var(--go);border-color:var(--go);color:var(--z)}
+.formula.cur{border-color:var(--go);background:rgba(201,162,75,.1)}
+.cta{margin:10px 16px 14px;font:inherit;font-size:.92rem;font-weight:500;border:0;border-radius:16px;padding:14px;background:var(--go);color:var(--z);cursor:pointer}
+.cta.off{background:rgba(255,253,248,.1);color:var(--sec)}
+
+/* Pilier à une récitation */
+.once{flex:1;overflow-y:auto;padding:4px 18px 0;scrollbar-width:none}
+.once::-webkit-scrollbar{display:none}
+.verse{display:flex;gap:10px;align-items:flex-start;padding:8px 0;border-bottom:1px solid rgba(201,162,75,.15)}
+.verse .n{width:22px;height:22px;border-radius:50%;border:1px solid var(--hair);font-size:.6rem;display:grid;place-items:center;color:var(--go);flex:none;margin-top:6px}
+.verse .ar{font-size:1.35rem;flex:1;text-align:right}
+.pre{font-size:.74rem;color:var(--sec);text-align:center;padding:4px 0 6px;line-height:1.45}
+
+/* Fin */
+.end{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;padding:20px;text-align:center;position:relative;overflow:hidden}
+.end canvas{position:absolute;inset:0;width:100%;height:100%;opacity:.16}
+.end .seal{width:96px;height:96px;border-radius:50%;border:2px solid var(--go);display:grid;place-items:center;color:var(--go);font-size:2rem;position:relative}
+.end h5{margin:0;font-family:var(--f-display);font-size:1.9rem;font-weight:600;position:relative}
+.end .ar2{font-family:var(--f-ar);font-size:1.3rem;color:var(--go);position:relative}
+.end .stats{display:flex;gap:10px;position:relative}
+.end .stats div{background:rgba(255,253,248,.07);border-radius:14px;padding:10px 12px;min-width:86px}
+.end .stats b{font-family:var(--f-display);font-size:1.6rem;font-weight:600;display:block;line-height:1;color:var(--go)}
+.end .stats small{font-size:.64rem;color:var(--sec)}
+.end .note{font-size:.74rem;color:var(--sec);position:relative;max-width:260px}
+.end .btns{display:flex;flex-direction:column;gap:8px;width:100%;position:relative}
+.end .btns span{border-radius:14px;padding:12px;font-size:.86rem;font-weight:500}
+.end .btns .p{background:var(--go);color:var(--z)}
+.end .btns .s{background:rgba(255,253,248,.08)}
+
+.notes{display:flex;flex-direction:column;gap:16px;min-width:0}
+.nt{border-left:3px solid var(--gold);padding:2px 0 2px 16px;display:flex;flex-direction:column;gap:4px}
+.nt p{color:var(--muted);font-size:.95rem}
+.explain{background:var(--accent-soft);border-radius:12px;padding:14px 16px;font-size:.95rem}
+.tbl{overflow-x:auto;border:1px solid var(--line);border-radius:12px;background:var(--surface)}
+table{border-collapse:collapse;width:100%;min-width:600px;font-size:.92rem}
+th,td{text-align:left;padding:11px 14px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-size:.74rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:500}
+tr:last-child td{border-bottom:0}
+ul.plain{margin:0;padding-left:1.1em;display:flex;flex-direction:column;gap:8px;color:var(--muted);max-width:72ch}
+ul.plain b{color:var(--fg);font-weight:500}
+</style>
+
+<div class="wrap">
+  <header class="top" style="padding:0">
+    <span class="eyebrow">At-Tijaniya · Écrans de pratique (Tasbih) · proposition du 2 novembre 2026</span>
+    <h1>Un écran de pratique qui suit le disciple pilier par pilier, jusqu'à la dernière formule</h1>
+    <p class="lede">L'écran actuel est déjà sobre et bien construit : immersif, compteur central, vibration, voix, reprise après une pause. Ses défauts apparaissent aux moments-clés : la Fatiha n'est pas affichée, les formules de clôture sont coupées au moment où il faut les réciter, et l'anneau ne correspond pas au nombre à atteindre. La proposition garde l'esprit et corrige ces moments.</p>
+  </header>
+
+  <section>
+    <span class="eyebrow">Ce que montrent vos captures et le code</span>
+    <h2>Diagnostic</h2>
+    <div class="diag">
+      <article><span class="tag warn">Le plus important</span><h3>La clôture est coupée au moment de la réciter</h3><p>À 100/100 du dernier pilier du Lazim, trois formules doivent être récitées. La zone de lecture n'occupe que la moitié haute : la 2ᵉ formule est coupée par le compteur et la 3ᵉ (As-Saffat) est invisible sans faire défiler une petite zone.</p></article>
+      <article><span class="tag warn">Texte absent</span><h3>La Fatiha n'est pas affichée</h3><p>Au pilier 2, l'écran montre « سورة الفاتحة », « Al-Fatiha » et une note. Le texte complet existe dans le contenu validé (versets, translittération, traduction) mais n'est visible que dans le guide.</p></article>
+      <article><span class="tag">Compteur</span><h3>Un anneau de 33 perles pour tout</h3><p>33 perles que l'on compte 1, 30, 100 ou 1000 fois. Pour la Fatiha (1 fois), un anneau entier pour un seul toucher ; pour 30, la 1ʳᵉ perle s'allume à 1/30 et l'on croit compter des perles.</p></article>
+      <article><span class="tag">Espace</span><h3>Moitié haute vide, ou débordante</h3><p>La lecture garde la même hauteur quel que soit le texte : un grand vide sous l'Istighfar, un texte coupé sous les longues formules. Et seule la moitié basse compte les touchers.</p></article>
+      <article><span class="tag">Repères</span><h3>« Pilier 3 / 6 » sans nom</h3><p>On sait où l'on en est, pas ce que c'est ni ce qui vient après.</p></article>
+      <article><span class="tag">Lecture</span><h3>Pas de réglage de lecture</h3><p>Taille de l'arabe fixe, traduction jamais montrée dans le tasbih. Pour un disciple âgé ou débutant, c'est souvent ce qui manque le plus.</p></article>
+    </div>
+  </section>
+
+  <section>
+    <span class="eyebrow">Maquette interactive</span>
+    <h2>Le parcours proposé, sur la fin du Lazim</h2>
+    <p class="lede">Touchez la moitié basse de l'écran pour compter. À 100, la clôture s'ouvre d'elle-même. Les textes arabes, translittérations et traductions sont ceux du contenu validé (<code>wirds_content.dart</code>).</p>
+    <div class="demo">
+      <div class="phonecol">
+        <div class="states" role="group" aria-label="Étape">
+          <button type="button" data-s="once" aria-pressed="false">Fatiha (×1)</button>
+          <button type="button" data-s="count" aria-pressed="true">Comptage</button>
+          <button type="button" data-s="focus" aria-pressed="false">Mode concentré</button>
+          <button type="button" data-s="closing" aria-pressed="false">Clôture</button>
+          <button type="button" data-s="end" aria-pressed="false">Fin du wird</button>
+        </div>
+        <div class="phone"><div class="screen" id="screen"></div></div>
+        <p style="font-size:.8rem;color:var(--muted);text-align:center;max-width:360px">La série de jours et l'heure du prochain rappel sur l'écran de fin sont des exemples.</p>
+      </div>
+      <div class="notes">
+        <div class="explain" id="explain"></div>
+        <div class="nt"><h3>1. Des repères nommés</h3><p>Sous la barre de progression : le pilier en cours avec son nom et son nombre, et le suivant (« Ensuite : Salatoul Fatihi ×100 »). Le segment du pilier en cours se remplit au fil du comptage.</p></div>
+        <div class="nt"><h3>2. La lecture prend la place qu'il lui faut</h3><p>Le partage n'est plus fixe : un texte court laisse plus de place au compteur, un texte long en prend davantage. Le bouton « Aa » règle la taille de l'arabe et affiche ou masque translittération et traduction ; le choix est gardé pour les fois suivantes.</p></div>
+        <div class="nt"><h3>3. Un compteur à l'échelle du nombre</h3><p>Une perle par récitation jusqu'à 50 (Istighfar ×30, Jawharatoul Kamal ×12, ×3 de la Hadra) ; un cadran de 100 graduations pour 100 ; un arc avec les centaines pour 600 et 1000. Une vibration plus marquée à chaque dizaine, et aux trois dernières.</p></div>
+        <div class="nt"><h3>4. Mode concentré</h3><p>Pour les longues séries : le texte se réduit à une ligne, le chiffre grandit, tout l'écran compte. Il s'active d'un geste (glisser vers le bas) et se quitte d'un toucher sur « Afficher le texte ».</p></div>
+        <div class="nt"><h3>5. Une vraie étape de clôture</h3><p>Le pilier atteint son nombre : le compteur se réduit à une pastille, et les formules de clôture prennent tout l'écran, l'une après l'autre. On touche chacune une fois récitée ; la suivante s'éclaire. Plus rien n'est coupé.</p></div>
+        <div class="nt"><h3>6. Les piliers récités une fois</h3><p>Intention et Fatiha s'affichent en entier, verset par verset, avec un seul bouton « Récitée ». Pas d'anneau pour un seul toucher.</p></div>
+        <div class="nt"><h3>7. Une fin qui récompense sans exagérer</h3><p>Sceau doré, nom du wird en arabe, série en cours, pilier par pilier coché, et le rappel suivant. Le message de don actuel reste, discret.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <span class="eyebrow">Avant / après</span>
+    <h2>Ce qui change</h2>
+    <div class="tbl"><table>
+      <thead><tr><th>Élément</th><th>Aujourd'hui</th><th>Proposé</th></tr></thead>
+      <tbody>
+        <tr><td>Repères</td><td>« Pilier 3 / 6 » et segments</td><td>Nom et nombre du pilier, pilier suivant, segment qui se remplit</td></tr>
+        <tr><td>Partage lecture / compteur</td><td>Fixe, environ moitié-moitié</td><td>Selon la longueur du texte</td></tr>
+        <tr><td>Lecture</td><td>Arabe 28 pt et translittération</td><td>Taille réglable ; translittération et traduction à afficher ou masquer</td></tr>
+        <tr><td>Compteur</td><td>33 perles quel que soit le nombre</td><td>Perles (≤ 50), cadran (100), arc par centaines (600, 1000)</td></tr>
+        <tr><td>Zone de toucher</td><td>Moitié basse</td><td>Moitié basse ; tout l'écran en mode concentré</td></tr>
+        <tr><td>Clôture</td><td>Formules au-dessus du compteur, coupées</td><td>Étape plein écran, formules à cocher une par une</td></tr>
+        <tr><td>Fatiha, intention</td><td>Titre et note, anneau pour 1</td><td>Texte complet, bouton « Récitée »</td></tr>
+        <tr><td>Réinitialiser</td><td>Au même rang que « Corriger −1 »</td><td>Dans le menu « ⋯ », avec l'annulation actuelle</td></tr>
+        <tr><td>Fin</td><td>« Wird terminé », retour au guide</td><td>Sceau, série, piliers cochés, rappel suivant</td></tr>
+      </tbody>
+    </table></div>
+  </section>
+
+  <section>
+    <span class="eyebrow">À trancher par vous</span>
+    <h2>Décisions</h2>
+    <div class="decisions">
+      <article><h3>Formules de clôture à cocher</h3><p>Cocher chaque formule aide à ne pas perdre le fil, mais ajoute des touchers. « Terminer » reste possible sans tout cocher.</p><span class="rec">Recommandation : cases facultatives, la suivante s'éclaire seule.</span></article>
+      <article><h3>Mode concentré</h3><p>Masquer le texte pendant les longues séries (Hailala ×1000, Allah ×600) aide la concentration, mais le disciple qui lit en récitant doit pouvoir le refuser.</p><span class="rec">Recommandation : jamais automatique ; proposé une fois par une bulle, puis au geste.</span></article>
+      <article><h3>Traduction pendant la récitation</h3><p>Elle est validée et déjà dans le guide. L'afficher dans le tasbih est utile aux débutants, distrayant pour d'autres.</p><span class="rec">Recommandation : masquée par défaut, activable dans « Aa ».</span></article>
+      <article><h3>Durée de la récitation</h3><p>L'écran de fin pourrait afficher le temps passé. L'app ne l'enregistre pas aujourd'hui (la session ne garde que sa dernière modification) ; c'est une donnée locale de plus, et certains ne veulent pas chronométrer leur wird.</p><span class="rec">Recommandation : ne pas l'afficher pour l'instant.</span></article>
+    </div>
+  </section>
+
+  <section>
+    <span class="eyebrow">Limites</span>
+    <h2>Ce qui reste fragile</h2>
+    <ul class="plain">
+      <li><b>Mode voix.</b> La reconnaissance vocale actuelle reste telle quelle ; en mode concentré elle fonctionne, mais un retour visuel de l'écoute doit rester visible.</li>
+      <li><b>Paysage.</b> La disposition côte à côte actuelle est conservée ; l'étape de clôture y passe sur toute la largeur.</li>
+      <li><b>Arabe.</b> En interface arabe, la translittération est masquée par défaut ; les formules et versets sont déjà en arabe.</li>
+      <li><b>Ce qui est solide :</b> aucun texte nouveau, aucune donnée en base ; les sessions en pause, l'avance automatique, la vibration de fin, la voix et l'écran maintenu allumé existent déjà.</li>
+    </ul>
+  </section>
+</div>
+
+<script>
+const T={
+  hailalaAr:'لَا إِلَهَ إِلَّا اللَّهُ', hailalaTr:'La ilaha illAllah', hailalaFr:"Il n'y a de divinité qu'Allah.",
+  closings:[
+    {in:'Après la 100ᵉ récitation, ajouter une fois :',ar:'سَيِّدُنَا مُحَمَّدٌ رَسُولُ اللَّهِ عَلَيْهِ سَلَامُ اللَّهِ',tr:"Sayyidounâ Mouhammadoun Rasoûlou-Llâhi 'alayhi salâmou-Llâh"},
+    {in:'Puis (Sourate Al-Ahzab, 33:56) :',ar:'إِنَّ اللَّهَ وَمَلَائِكَتَهُ يُصَلُّونَ عَلَى النَّبِيِّ يَا أَيُّهَا الَّذِينَ آمَنُوا صَلُّوا عَلَيْهِ وَسَلِّمُوا تَسْلِيمًا',tr:"Innallaha wa mala-ikatahou yousalouna 'ala-n-Nabiyyi ya ayyouha-l-ladhina amanou sallou 'alayhi wa sallimou tasliman."},
+    {in:'Puis, en clôture finale (Sourate As-Saffat, 37:180-182) :',ar:'سُبْحَانَ رَبِّكَ رَبِّ الْعِزَّةِ عَمَّا يَصِفُونَ وَسَلَامٌ عَلَى الْمُرْسَلِينَ وَالْحَمْدُ لِلَّهِ رَبِّ الْعَالَمِينَ',tr:"Soubhana rabbika rabbi-l-'izzati 'amma yasifouna wa salamoun 'ala-l-moursalina wa-l-hamdou li-Llahi rabbi-l-'alamin."}
+  ],
+  fatiha:[
+    'بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ','الْحَمْدُ لِلَّهِ رَبِّ الْعَالَمِينَ','الرَّحْمَٰنِ الرَّحِيمِ','مَالِكِ يَوْمِ الدِّينِ',
+    'إِيَّاكَ نَعْبُدُ وَإِيَّاكَ نَسْتَعِينُ','اهْدِنَا الصِّرَاطَ الْمُسْتَقِيمَ','صِرَاطَ الَّذِينَ أَنْعَمْتَ عَلَيْهِمْ غَيْرِ الْمَغْضُوبِ عَلَيْهِمْ وَلَا الضَّالِّينَ'
+  ],
+  fatihaTr:["Bismi-Llahi r-Rahmani r-Rahim","Al-hamdou li-Llahi rabbi-l-'alamin","Ar-Rahmani r-Rahim","Maliki yawmi-d-din","Iyyaka na'boudou wa iyyaka nasta'in","Ihdina-s-sirata-l-moustaqim","Sirata-l-ladhina an'amta 'alayhim ghayri-l-maghdoubi 'alayhim wa la-d-dallin"]
+};
+const PILLARS=['Intention','Fatiha','Istighfar ×100','Salatoul Fatihi ×100','Hailala ×100'];
+let scene='count', count=94, arSize=30, showTr=true, showFr=false, aa=false, ticks=[false,false,false];
+const $=s=>document.querySelector(s);
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+
+function header(cur,pct,label,next){
+  return `<div class="top"><button type="button" class="x" aria-label="Quitter, la session est gardée">✕</button>
+    <span class="t"><b>Lazim</b><small>اللازم</small></span>
+    <button type="button" class="aa" data-aa="1" aria-label="Réglages de lecture">Aa</button></div>
+   <div class="steps">${PILLARS.map((_,i)=>`<i class="${i<cur?'done':i===cur?'cur':''}" style="--p:${i===cur?pct:0}%"></i>`).join('')}</div>
+   <div class="pchip"><span>Pilier ${cur+1} / 5 · <b>${label}</b></span><span>${next}</span></div>`+(aa?aaPanel():'');
+}
+function aaPanel(){
+  return `<div class="aapanel"><b style="font-weight:600">Lecture</b>
+   <div class="r"><span>Taille de l'arabe</span><span class="sz"><button type="button" data-sz="-1">A−</button><button type="button" data-sz="1">A+</button></span></div>
+   <div class="r"><span>Translittération</span><button type="button" class="tg" data-tg="tr" aria-pressed="${showTr}"></button></div>
+   <div class="r"><span>Traduction</span><button type="button" class="tg" data-tg="fr" aria-pressed="${showFr}"></button></div>
+   <span style="font-size:.66rem;color:#66625C">Gardé pour les prochaines fois.</span></div>`;
+}
+function drawDial(){
+  const cv=$('#dial'); if(!cv) return;
+  const dpr=window.devicePixelRatio||1,S=230; cv.width=S*dpr;cv.height=S*dpr;
+  const x=cv.getContext('2d');x.scale(dpr,dpr);
+  const c=S/2,R=104;
+  for(let i=0;i<100;i++){
+    const a=-Math.PI/2+i*2*Math.PI/100, on=i<count, ten=i%10===9;
+    const r1=R-(ten?12:7), r2=R;
+    x.strokeStyle=on?'#C9A24B':'rgba(247,242,231,0.18)'; x.lineWidth=ten?2.6:1.8; x.lineCap='round';
+    x.beginPath();x.moveTo(c+r1*Math.cos(a),c+r1*Math.sin(a));x.lineTo(c+r2*Math.cos(a),c+r2*Math.sin(a));x.stroke();
+  }
+  if(count>0&&count<100){const a=-Math.PI/2+(count-0.5)*2*Math.PI/100;x.fillStyle='#F1E6C9';x.beginPath();x.arc(c+(R+9)*Math.cos(a),c+(R+9)*Math.sin(a),4,0,Math.PI*2);x.fill();}
+}
+function countScene(){
+  return header(4,count,'Hailala ×100','Ensuite : clôture')+`
+   <div class="reading" style="max-height:${showFr?220:190}px">
+     <div class="ar" style="font-size:${arSize+4}px">${T.hailalaAr}</div>
+     ${showTr?`<div class="tr">${T.hailalaTr}</div>`:''}${showFr?`<div class="fr">${T.hailalaFr}</div>`:''}
+     <div class="next">À 100 : <b>3 formules de clôture</b>, affichées en grand</div>
+   </div>
+   <div class="tap" id="tap" role="button" aria-label="Toucher pour compter, ${count} sur 100">
+     <div class="dial"><canvas id="dial"></canvas><div class="c"><div><b>${count}</b><small>/ 100</small></div></div></div>
+     <div class="hint">Toucher n'importe où ici · vibration à chaque dizaine</div>
+   </div>
+   <div class="ctrl"><button type="button" data-undo="1"><span class="ico">↶</span>−1</button>
+     <span class="mode"><span class="on">☝</span><span>🎙</span></span>
+     <button type="button" data-s="focus"><span class="ico">⤢</span>Concentré</button></div>`;
+}
+function focusScene(){
+  return `<div class="top"><button type="button" class="x">✕</button><span class="t"><b>Lazim</b><small>Pilier 5 / 5 · Hailala</small></span><span style="width:36px"></span></div>
+   <div class="focus" id="tap" role="button" aria-label="Toucher pour compter, ${count} sur 100">
+     <div class="line">${T.hailalaAr}</div>
+     <div class="big">${count}</div><div class="of">sur 100</div>
+     <div class="bar"><i style="width:${count}%"></i></div>
+     <button type="button" class="leave" data-s="count">Afficher le texte</button>
+   </div>`;
+}
+function closingScene(){
+  const cur=ticks.findIndex(t=>!t);
+  return header(4,100,'Hailala ×100','Ensuite : fin du wird')+`
+   <div class="donechip"><i>✓</i>100 / 100 · récitez maintenant la clôture</div>
+   <div class="closing">${T.closings.map((f,i)=>`<div class="formula ${ticks[i]?'ok':''} ${i===cur?'cur':''}" data-f="${i}" role="button" aria-pressed="${ticks[i]}">
+      <span class="in"><span>${esc(f.in)}</span><span class="ck">${ticks[i]?'✓':''}</span></span>
+      <div class="ar" style="font-size:${arSize-4}px">${f.ar}</div>${showTr?`<div class="tr" style="font-size:.8rem">${esc(f.tr)}</div>`:''}</div>`).join('')}</div>
+   <button type="button" class="cta ${ticks.every(Boolean)?'':'off'}" data-s="end">✓ Terminer le Lazim</button>`;
+}
+function onceScene(){
+  return header(1,0,'Fatiha ×1','Ensuite : Istighfar ×100')+`
+   <div class="pre">Précédée du ta'awwudh (A'oudhou bi-Llahi mina ch-Chaytani r-Rajim) et de la basmala, clôturée par « Amine ».</div>
+   <div class="once">${T.fatiha.map((v,i)=>`<div class="verse"><span class="n">${i+1}</span><span style="flex:1;text-align:right"><div class="ar" style="font-size:${arSize-6}px">${v}</div>${showTr?`<div class="tr" style="font-size:.74rem;text-align:left;direction:ltr">${esc(T.fatihaTr[i])}</div>`:''}</span></div>`).join('')}</div>
+   <button type="button" class="cta" data-s="count">✓ Récitée · pilier suivant</button>`;
+}
+function endScene(){
+  return `<div class="end"><canvas id="ros"></canvas>
+    <div class="seal">✓</div><h5>Lazim accompli</h5><div class="ar2">اللازم</div>
+    <div class="stats"><div><b>5/5</b><small>piliers</small></div><div><b>8</b><small>jours de suite</small></div></div>
+    <div class="note">Le Lazim se récite matin et soir. Prochain rappel aujourd'hui à 18:30.</div>
+    <div class="btns"><span class="p">Retour à l'accueil</span><span class="s">Voir mon historique</span></div></div>`;
+}
+const EXPLAIN={
+  once:"<b>Pilier récité une fois (Fatiha).</b> Les versets s'affichent en entier, numérotés, avec leur translittération : c'est le texte validé du guide, absent du tasbih aujourd'hui. Un seul bouton pour passer au pilier suivant.",
+  count:"<b>Comptage.</b> Touchez la zone basse : le cadran a 100 graduations, une plus longue à chaque dizaine. À 100, la clôture s'ouvre. Essayez « Aa » pour régler la lecture.",
+  focus:"<b>Mode concentré.</b> Une ligne de texte, un grand chiffre, tout l'écran compte. Pour les longues séries, en particulier les 1000 Hailala et 600 « Allah » de la Hadratou-l-Jouma.",
+  closing:"<b>Clôture.</b> Les trois formules du Lazim, en entier, sans rien de coupé. Touchez chacune une fois récitée : la suivante s'éclaire. « Terminer » reste possible à tout moment.",
+  end:"<b>Fin du wird.</b> Un écran calme : sceau, série, rappel suivant, retour. Le wird est enregistré dans l'historique comme aujourd'hui."
+};
+function render(){
+  const sc=$('#screen');
+  sc.innerHTML = scene==='count'?countScene():scene==='focus'?focusScene():scene==='closing'?closingScene():scene==='once'?onceScene():endScene();
+  document.querySelectorAll('.states button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.s===scene));
+  $('#explain').innerHTML=EXPLAIN[scene];
+  if(scene==='count') drawDial();
+  if(scene==='end') drawRosace();
+}
+function drawRosace(){
+  const cv=$('#ros');if(!cv)return;const w=cv.clientWidth,h=cv.clientHeight,d=window.devicePixelRatio||1;
+  cv.width=w*d;cv.height=h*d;const x=cv.getContext('2d');x.scale(d,d);x.strokeStyle='#C9A24B';x.lineWidth=1.4;
+  const c=[w/2,h*0.3],R=150;
+  for(let k=0;k<2;k++){x.beginPath();for(let i=0;i<=4;i++){const a=i*Math.PI/2+k*Math.PI/4;const p=[c[0]+R*Math.cos(a),c[1]+R*Math.sin(a)];i?x.lineTo(...p):x.moveTo(...p);}x.stroke();}
+  x.beginPath();x.arc(c[0],c[1],R*0.55,0,Math.PI*2);x.stroke();x.beginPath();x.arc(c[0],c[1],R*1.1,0,Math.PI*2);x.stroke();
+}
+function tapAt(e){
+  if(count>=100) return;
+  count++;
+  const z=e.currentTarget, r=z.getBoundingClientRect(), d=document.createElement('span');
+  d.className='ripple';d.style.left=(e.clientX-r.left-6)+'px';d.style.top=(e.clientY-r.top-6)+'px';z.appendChild(d);setTimeout(()=>d.remove(),520);
+  if(navigator.vibrate){try{navigator.vibrate(count%10===0||count>97?40:12)}catch(_){}}
+  if(count>=100){ticks=[false,false,false];setTimeout(()=>{scene='closing';render();},450);}
+  if(scene==='count'){$('.dial .c b').textContent=count;drawDial();$('#tap').setAttribute('aria-label',`Toucher pour compter, ${count} sur 100`);}
+  else {$('.focus .big').textContent=count;$('.focus .bar i').style.width=count+'%';}
+}
+document.addEventListener('click',e=>{
+  const tap=e.target.closest('#tap');
+  const b=e.target.closest('button,[data-f]');
+  if(b){
+    if(b.dataset.s){scene=b.dataset.s;aa=false;if(scene==='count'||scene==='focus'){if(count>=100)count=94;}if(scene==='closing')ticks=[false,false,false];render();return;}
+    if(b.dataset.aa){aa=!aa;render();return;}
+    if(b.dataset.sz){arSize=Math.min(40,Math.max(22,arSize+2*Number(b.dataset.sz)));render();return;}
+    if(b.dataset.tg){if(b.dataset.tg==='tr')showTr=!showTr;else showFr=!showFr;render();return;}
+    if(b.dataset.undo){count=Math.max(0,count-1);render();return;}
+    if(b.dataset.f!=null){const i=+b.dataset.f;ticks[i]=!ticks[i];render();return;}
+    return;
+  }
+  if(tap){ if(aa){aa=false;render();return;} tapAt({currentTarget:tap,clientX:e.clientX,clientY:e.clientY}); }
+});
+window.addEventListener('resize',()=>{if(scene==='count')drawDial();});
+render();
+</script>

@@ -17,6 +17,7 @@ aplats : les maquettes ne chargent pas les photos de la base.
 | Figures | `ecran-figures.html` | Proposé, à implémenter |
 | Communauté | `ecran-communaute.html` | Proposé, à implémenter |
 | Profil | `ecran-profil.html` | Proposé, à implémenter |
+| Pratique des wirds (tasbih) | `ecran-pratique.html` | Proposé le 2026-11-02 ; **décisions pas encore validées** |
 
 ## Décisions actées par le porteur de projet (2026-11-01)
 
@@ -86,3 +87,10 @@ et les faire valider. Après, comparer des captures de test (vraies polices, fra
 arabe, chaque état de la maquette) à la maquette. Les règles de `CLAUDE.md` priment sur la
 maquette en cas de conflit (jetons de couleur, Amiri réservé au texte religieux et aux
 titres arabes, aucun contenu religieux inventé, confidentialité de la lignée).
+
+## Pratique des wirds (maquette du 2026-11-02) — décisions en attente
+
+Recommandations de la maquette, **pas encore validées par le porteur de projet** :
+formules de clôture à cocher, facultatives ; mode concentré jamais automatique (proposé
+une fois, puis au geste) ; traduction masquée par défaut dans le tasbih, activable dans
+« Aa » ; pas d'affichage de la durée de récitation pour l'instant.
