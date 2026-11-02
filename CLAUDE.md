@@ -95,8 +95,10 @@ carrousel en arabe tant que leur texte arabe n'est pas saisi. Détail :
 `docs/09-journal-implementation-frontend.md`, entrée du 2026-11-01.
 
 ## Refonte des autres écrans (maquettes du 2026-11-01)
-Maquettes de Wird, Zawiyas, Figures, Communauté et Profil dans `docs/maquettes/`, avec les
-décisions **validées par le porteur de projet le 2026-11-01** dans `docs/maquettes/README.md`.
+Maquettes de Wird, Zawiyas, Figures, Communauté et Profil (2026-11-01), de la pratique des
+wirds et des écrans de détail figure, zawiya et évènement (2026-11-02) dans `docs/maquettes/`,
+avec les décisions **validées par le porteur de projet** dans `docs/maquettes/README.md`, qui
+donne aussi la maquette de référence de chaque écran (une seule par écran).
 À lire avant de retoucher l'un de ces écrans. Implémenter un écran à la fois ; en cas de
 conflit, les règles de ce fichier priment sur la maquette.
 Kit de composants commun (jetons, règles d'usage, 15 composants avec leur correspondance

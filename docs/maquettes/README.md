@@ -17,8 +17,8 @@ aplats : les maquettes ne chargent pas les photos de la base.
 | Figures | `ecran-figures.html` | Proposé, à implémenter |
 | Communauté | `ecran-communaute.html` | Proposé, à implémenter |
 | Profil | `ecran-profil.html` | Proposé, à implémenter |
-| Pratique des wirds (tasbih) | `ecran-pratique.html` | Proposé le 2026-11-02 ; **décisions pas encore validées** |
-| Écrans de détail (figure, zawiya, évènement) | `ecrans-detail.html` | Proposé le 2026-11-02 ; **décisions pas encore validées** |
+| Pratique des wirds (tasbih) | `ecran-pratique.html` | Proposé, à implémenter (décisions validées) |
+| Écrans de détail (figure, zawiya, évènement) | `ecrans-detail.html` | Proposé, à implémenter (décisions validées le 2026-11-02) |
 
 ## Un écran, une seule maquette
 
@@ -108,9 +108,10 @@ arabe, chaque état de la maquette) à la maquette. Les règles de `CLAUDE.md` p
 maquette en cas de conflit (jetons de couleur, Amiri réservé au texte religieux et aux
 titres arabes, aucun contenu religieux inventé, confidentialité de la lignée).
 
-## Pratique des wirds (maquette du 2026-11-02) — décisions en attente
+## Pratique des wirds (maquette du 2026-11-02) — décisions validées
 
-Recommandations de la maquette, **pas encore validées par le porteur de projet** :
+Recommandations de la maquette, **validées par le porteur de projet** (confirmé le
+2026-11-02) ; elles font foi pour l'implémentation :
 formules de clôture à cocher, facultatives ; mode concentré jamais automatique (proposé
 une fois, puis au geste) ; traduction masquée par défaut dans le tasbih, activable dans
 « Aa » ; pas d'affichage de la durée de récitation pour l'instant.
@@ -122,9 +123,10 @@ Référence commune pour mettre tous les écrans au même thème : `docs/kit/` (
 `docs/kit/components/`). Chaque fiche dit si le widget Flutter existe déjà ou est à créer dans
 `lib/core/widgets/`. Pour tout écran sans maquette, appliquer le kit.
 
-## Écrans de détail (maquette du 2026-11-02) — décisions en attente
+## Écrans de détail (maquette du 2026-11-02) — décisions validées
 
-Recommandations de la maquette, **pas encore validées par le porteur de projet** :
+Recommandations de la maquette, **validées par le porteur de projet le 2026-11-02** ; elles
+font foi pour l'implémentation :
 succession des khalifes et figures liées affichées aussi sur la fiche d'une zawiya (lecture
 seule ; l'ajout de liens reste côté figure, pour l'admin) ; silsila remontée jusqu'au
 Cheikh sur la fiche d'une figure, avec « maillons suivants non renseignés » quand la chaîne
