@@ -114,7 +114,12 @@ captures de test : toujours `null` dans l'app.
 foyers en cartes (ordre historique, foyer du disciple d'abord, « Autres foyers » en dernier),
 grille de portraits (nom arabe à défaut), page d'un foyer avec l'arbre de sa silsila
 historique (`figure_foyers.dart`, légende « ce n'est pas un arbre généalogique »). Années de
-naissance toujours absentes hors de la fiche, en attendant leur correction en base.
+naissance toujours absentes, en attendant leur correction en base.
+**Fiches de détail refaites le 2026-11-02** (maquette `ecrans-detail.html`) : figure (portrait
+plein cadre ou en-tête typographique, chiffres-clés, sommaire et « Aa » de la biographie,
+silsila jusqu'au Cheikh), zawiya (fondateur, succession avec le khalife actuel, figures liées,
+en lecture seule) et évènement (la date d'abord, lieu cliquable, note de date, direct à place
+fixe). Pas d'année de naissance, y compris sur la fiche d'une figure.
 **Profil refait le 2026-11-02** (maquette `ecran-profil.html`) : carte d'identité, « Ma pratique »
 (chiffres du téléphone, masquables), « Mon chemin spirituel » et « Confidentialité » qui
 disent l'état de chaque élément sans jamais son contenu, « Application » (langue, contraste,

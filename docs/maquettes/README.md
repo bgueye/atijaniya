@@ -18,7 +18,7 @@ aplats : les maquettes ne chargent pas les photos de la base.
 | Communauté | `ecran-communaute.html` | Proposé, à implémenter |
 | Profil | `ecran-profil.html` | **Implémenté** le 2026-11-02 sur la branche `claude/attijaniya-homepage-redesign-elyti4` (écran Paramètres supprimé), voir `docs/09` |
 | Pratique des wirds (tasbih) | `ecran-pratique.html` | **Implémenté** le 2026-11-02 sur la branche `claude/attijaniya-homepage-redesign-elyti4`, voir `docs/09`, entrée « Refonte de l'écran de pratique » |
-| Écrans de détail (figure, zawiya, évènement) | `ecrans-detail.html` | Proposé, à implémenter (décisions validées le 2026-11-02) |
+| Écrans de détail (figure, zawiya, évènement) | `ecrans-detail.html` | **Implémenté** le 2026-11-02 sur la branche `claude/attijaniya-homepage-redesign-elyti4`, voir `docs/09` (carte du fondateur claire, pas zaytoune : CLAUDE.md prime) |
 | Parcours d'entrée (démarrage, langue, découverte, rappels, entrée, compte) | `parcours-entree.html` | Proposé, à implémenter (décisions validées le 2026-11-02) |
 
 ## Un écran, une seule maquette

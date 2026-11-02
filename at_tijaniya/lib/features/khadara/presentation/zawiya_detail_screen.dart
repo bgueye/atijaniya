@@ -2,16 +2,23 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-import '../../../core/network/network_errors.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_theme.dart';
+import '../../../core/widgets/date_block.dart';
+import '../../../core/widgets/directional_chevron.dart';
+import '../../../core/widgets/eyebrow.dart';
+import '../../../core/widgets/notice.dart';
+import '../../../core/widgets/section_title.dart';
+import '../../../core/widgets/state_pill.dart';
+import '../../figures/domain/figure_models.dart';
+import '../../figures/presentation/figure_cards.dart';
 import '../../../l10n/app_localizations.dart';
 import '../domain/contact_links.dart';
 import '../domain/khadara_errors.dart';
 import '../domain/khadara_models.dart';
 import 'event_detail_screen.dart';
 import 'khadara_format.dart';
-import '../../figures/presentation/figures_providers.dart' show linkedZawiyasForFigureProvider;
+import '../../figures/presentation/figures_providers.dart';
 import 'khadara_providers.dart';
 import 'open_in_maps.dart';
 import 'zawiya_form_screen.dart';
@@ -89,10 +96,13 @@ class _ZawiyaDetailScreenState extends ConsumerState<ZawiyaDetailScreen> {
     final zawiya = _zawiya;
     final canManage = ref.watch(canManageZawiyasProvider);
     final upcoming = ref.watch(eventsForZawiyaProvider(zawiya.id));
+    final successions = ref.watch(successionsForZawiyaProvider(zawiya.id)).valueOrNull ?? const <ZawiyaSuccession>[];
+    final linkedFigures = ref.watch(figuresForZawiyaProvider(zawiya.id)).valueOrNull ?? const <Figure>[];
+    final founder = successions.isEmpty ? null : successions.first;
+    final hasPlace = zawiya.hasLocation || zawiya.addressText != null;
+    const sectionPadding = EdgeInsetsDirectional.fromSTEB(2, 24, 0, 8);
 
     return Scaffold(
-      // Pas de titre dans la barre : le nom est en tête de la fiche, en
-      // entier (voir plus bas).
       appBar: AppBar(
         actions: canManage
             ? [
@@ -103,11 +113,7 @@ class _ZawiyaDetailScreenState extends ConsumerState<ZawiyaDetailScreen> {
                 ),
                 IconButton(
                   icon: _deleting
-                      ? const SizedBox(
-                          width: 18,
-                          height: 18,
-                          child: CircularProgressIndicator(strokeWidth: 2),
-                        )
+                      ? const SizedBox(width: 18, height: 18, child: CircularProgressIndicator(strokeWidth: 2))
                       : const Icon(Icons.delete_outline),
                   tooltip: l10n.khadaraDeleteZawiyaTooltip,
                   onPressed: _deleting ? null : _confirmDelete,
@@ -115,136 +121,374 @@ class _ZawiyaDetailScreenState extends ConsumerState<ZawiyaDetailScreen> {
               ]
             : null,
       ),
-      // `SafeArea` : sans elle, le bas de l'écran passait sous la barre de
-      // navigation Android (3 boutons) — même défaut que sur « Rattraper son
-      // wird », Conditions, Bienfaits, Paramètres et « Comprendre la Zawiya ».
       body: SafeArea(
         child: ListView(
-          padding: const EdgeInsets.all(20),
+          padding: const EdgeInsets.fromLTRB(16, 0, 16, 24),
           children: [
-            // Nom du lieu en titre de la fiche, sur autant de lignes qu'il le
-            // faut. Il n'était que dans la barre de titre, sur une ligne :
-            // « Zawiya Tijaniyya d'El Maghrabilin, Le Caire (Égypte) » ne
-            // tenait pas, et à 200 % même « Zawiya d'Aïn Madhi » était coupé,
-            // sans aucun moyen de lire la suite (audit Zawiyas du 2026-10-25,
-            // P2-5). Cormorant, police des titres et des noms de la charte.
+            // En-tête clair : une zawiya n'est pas un écran de pratique
+            // (pas de zaytoune, CLAUDE.md § Design system).
+            Eyebrow(zawiyaKindLabel(zawiya.kind, l10n)),
+            const SizedBox(height: 2),
             Semantics(
               header: true,
-              child: ContentText(zawiya.name, style: AppTheme.titleText(fontSize: 26, color: AppColors.ink)),
+              child:
+                  ContentText(zawiya.name, style: AppTheme.titleText(fontSize: 28, color: AppColors.ink, height: 1.15)),
             ),
-            const SizedBox(height: 8),
-            Row(
-              children: [
-                Icon(zawiyaKindIcon(zawiya.kind), size: 18, color: AppColors.emerald),
-                const SizedBox(width: 8),
-                Text(
-                  zawiyaKindLabel(zawiya.kind, l10n),
-                  style: TextStyle(fontWeight: FontWeight.w600, fontSize: 13, color: AppColors.secondaryInk),
-                ),
-              ],
-            ),
-            const SizedBox(height: 12),
             if (zawiya.description != null) ...[
+              const SizedBox(height: 10),
               ContentText(
-                zawiya.description!,
-                style: const TextStyle(color: AppColors.ink, fontSize: 16, height: 1.4),
-              ),
-              const SizedBox(height: 16),
+                  alignToContent: true,
+                  zawiya.description!,
+                  style: const TextStyle(color: AppColors.ink, fontSize: 15.5, height: 1.5)),
             ],
             if (zawiya.addressText != null) ...[
-              _InfoRow(icon: Icons.place_outlined, label: l10n.khadaraAddressLabel, text: zawiya.addressText!),
-              const SizedBox(height: 8),
-            ],
-            if (zawiya.contactInfo != null) ...[
-              _InfoRow(icon: Icons.call_outlined, label: l10n.khadaraContactLabel, text: zawiya.contactInfo!),
-              // Un bouton par numéro ou adresse repéré dans le texte libre
-              // (audit Zawiyas du 2026-10-25, P3-1) ; le texte, remarques
-              // comprises, reste affiché au-dessus.
-              _ContactActions(links: extractContactLinks(zawiya.contactInfo!)),
-              const SizedBox(height: 8),
-            ],
-            // Bouton Maps avec des coordonnées, ou à défaut l'adresse (recherche
-            // texte, comme pour un évènement) : 6 lieux sur 34 n'ont pas de
-            // coordonnées mais tous ont une adresse, et n'avaient aucun bouton
-            // (audit Zawiyas du 2026-10-25, P2-3).
-            if (zawiya.hasLocation || zawiya.addressText != null) ...[
-              const SizedBox(height: 12),
-              // Juste au-dessus du bouton : c'est en suivant l'itinéraire que
-              // l'approximation compte (audit Zawiyas du 2026-10-25, P2-2).
-              if (zawiya.hasLocation && zawiya.coordinatesApproximate) ...[
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Icon(Icons.info_outline, size: 18, color: AppColors.bronze),
-                    const SizedBox(width: 8),
-                    Expanded(
-                      child: Text(
-                        l10n.khadaraApproximateLocation,
-                        style: TextStyle(color: AppColors.secondaryInk, fontSize: 13),
-                      ),
+              const SizedBox(height: 10),
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Icon(Icons.place_outlined, size: 18, color: AppColors.bronze),
+                  const SizedBox(width: 6),
+                  Expanded(
+                    child: Semantics(
+                      label: '${l10n.khadaraAddressLabel}, ${zawiya.addressText}',
+                      excludeSemantics: true,
+                      child: ContentText(zawiya.addressText!,
+                          style: TextStyle(fontSize: 14, height: 1.4, color: AppColors.secondaryInk)),
                     ),
-                  ],
-                ),
-                const SizedBox(height: 8),
-              ],
-              OutlinedButton.icon(
-                onPressed: () => openInMaps(
-                  context,
-                  latitude: zawiya.latitude,
-                  longitude: zawiya.longitude,
-                  addressText: zawiya.addressText,
-                ),
-                icon: const Icon(Icons.map_outlined),
-                label: Text(l10n.khadaraOpenInMaps),
+                  ),
+                ],
               ),
             ],
-            const SizedBox(height: 28),
-            Text(
-              l10n.khadaraUpcomingEventsAtZawiya,
-              style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 16, color: AppColors.ink),
-            ),
-            const SizedBox(height: 8),
+            if (zawiya.hasLocation && zawiya.coordinatesApproximate) ...[
+              const SizedBox(height: 8),
+              Notice.info(l10n.khadaraApproximateLocation),
+            ],
+            if (hasPlace) ...[
+              const SizedBox(height: 14),
+              Wrap(
+                spacing: 8,
+                runSpacing: 8,
+                children: [
+                  FilledButton.icon(
+                    onPressed: () => openInMaps(
+                      context,
+                      latitude: zawiya.latitude,
+                      longitude: zawiya.longitude,
+                      addressText: zawiya.addressText,
+                    ),
+                    icon: const Icon(Icons.map_outlined, size: 18),
+                    label: Text(l10n.khadaraOpenInMaps),
+                  ),
+                  OutlinedButton.icon(
+                    onPressed: () => openInMaps(
+                      context,
+                      latitude: zawiya.latitude,
+                      longitude: zawiya.longitude,
+                      addressText: zawiya.addressText,
+                      directions: true,
+                    ),
+                    icon: const Icon(Icons.directions_outlined, size: 18),
+                    label: Text(l10n.zawiyaDetailItinerary),
+                  ),
+                ],
+              ),
+            ],
+            if (zawiya.contactInfo != null) ...[
+              const SizedBox(height: 16),
+              _InfoRow(icon: Icons.call_outlined, label: l10n.khadaraContactLabel, text: zawiya.contactInfo!),
+              _ContactActions(links: extractContactLinks(zawiya.contactInfo!)),
+            ],
+            SectionTitle(l10n.zawiyaDetailUpcoming, padding: sectionPadding),
             upcoming.when(
               loading: () => Padding(
                 padding: const EdgeInsets.symmetric(vertical: 16),
                 child: Center(child: CircularProgressIndicator(color: AppColors.emerald)),
               ),
-              // Message selon la cause (hors ligne ou autre) et « Réessayer » :
-              // seul un texte s'affichait, sans moyen de relancer (audit
-              // Zawiyas du 2026-10-25, P3-3).
-              error: (err, st) => Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    isNetworkError(err) ? l10n.khadaraOfflineError : l10n.khadaraLoadError,
-                    style: TextStyle(color: AppColors.secondaryInk),
-                  ),
-                  const SizedBox(height: 8),
-                  OutlinedButton(
-                    onPressed: () => ref.invalidate(upcomingEventsProvider),
-                    child: Text(l10n.khadaraRetry),
-                  ),
-                ],
+              // Message selon la cause et « Réessayer » (audit Zawiyas du
+              // 2026-10-25, P3-3).
+              error: (err, st) => Notice.fromError(
+                err,
+                message: l10n.khadaraLoadError,
+                onRetry: () => ref.invalidate(upcomingEventsProvider),
               ),
               data: (events) => events.isEmpty
-                  ? Text(l10n.khadaraNoUpcomingEventsAtZawiya, style: TextStyle(color: AppColors.secondaryInk))
-                  : Column(
-                      children: [
-                        for (final event in events)
-                          Card(
-                            child: ListTile(
-                              leading: Icon(khadaraEventTypeIcon(event.type), color: AppColors.emerald),
-                              title: ContentText(event.title),
-                              subtitle: Text(formatKhadaraEventSchedule(event, l10n)),
-                              onTap: () => Navigator.of(context).push(
-                                MaterialPageRoute(builder: (_) => EventDetailScreen(event: event)),
-                              ),
-                            ),
-                          ),
-                      ],
+                  ? Notice.info(l10n.khadaraNoUpcomingEventsAtZawiya)
+                  : Card(
+                      margin: EdgeInsets.zero,
+                      clipBehavior: Clip.antiAlias,
+                      child: Column(
+                        children: [
+                          for (var i = 0; i < events.length; i++) ...[
+                            if (i > 0) Divider(height: 1, color: AppColors.bronze.withValues(alpha: 0.2)),
+                            _EventRow(event: events[i]),
+                          ],
+                        ],
+                      ),
                     ),
             ),
+            // Fondateur, succession et figures liées : en lecture seule, les
+            // liens se gèrent depuis la fiche d'une figure, par l'admin
+            // (décision validée du 2026-11-02). Une section vide n'apparaît
+            // pas.
+            if (founder != null) ...[
+              SectionTitle(l10n.zawiyaDetailFounder, padding: sectionPadding),
+              _FounderCard(succession: founder),
+            ],
+            for (final succession in successions)
+              if (succession.links.isNotEmpty) ...[
+                SectionTitle(
+                  l10n.zawiyaDetailSuccessionTitle(_roleLabel(succession.role, l10n)),
+                  padding: sectionPadding,
+                ),
+                _SuccessionList(succession: succession),
+              ],
+            if (linkedFigures.isNotEmpty) ...[
+              SectionTitle(l10n.zawiyaDetailLinkedFigures, padding: sectionPadding),
+              SizedBox(
+                height: 118,
+                child: ListView.separated(
+                  scrollDirection: Axis.horizontal,
+                  itemCount: linkedFigures.length,
+                  separatorBuilder: (_, __) => const SizedBox(width: 12),
+                  itemBuilder: (context, i) => _FigureFace(figure: linkedFigures[i]),
+                ),
+              ),
+            ],
           ],
+        ),
+      ),
+    );
+  }
+}
+
+/// Rôle d'une succession, en minuscules dans le titre (« Succession des
+/// khalifes ») ; l'arabe n'a pas de casse.
+String _roleLabel(SuccessionRole role, AppLocalizations l10n) {
+  final label = switch (role) {
+    SuccessionRole.khalife => l10n.figureSuccessionRoleKhalife,
+    SuccessionRole.mokaddem => l10n.figureSuccessionRoleMokaddem,
+    SuccessionRole.imam => l10n.figureSuccessionRoleImam,
+  };
+  return label.toLowerCase();
+}
+
+/// Ouvre la fiche d'une figure connue par son identifiant : prise dans la
+/// liste déjà chargée, sinon lue en base.
+Future<void> _openFigureById(BuildContext context, WidgetRef ref, String figureId) async {
+  final known = ref.read(figuresProvider).valueOrNull?.where((f) => f.id == figureId).firstOrNull;
+  final figure = known ?? await ref.read(figuresRepositoryProvider).fetchFigureById(figureId);
+  if (!context.mounted) return;
+  openFigure(context, figure);
+}
+
+/// Un rendez-vous de la zawiya : bloc date (« ~ » si approximatif), titre et
+/// horaire. Ouvre l'évènement.
+class _EventRow extends StatelessWidget {
+  const _EventRow({required this.event});
+
+  final KhadaraEvent event;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    final date = event.isRecurring ? (nextOccurrence(event) ?? event.startsAt) : event.startsAt;
+    return InkWell(
+      onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => EventDetailScreen(event: event))),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+        child: Row(
+          children: [
+            DateBlock(date: date, approximate: event.showsApproximateDate),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  ContentText(event.title,
+                      style: const TextStyle(fontSize: 14.5, fontWeight: FontWeight.w500, color: AppColors.ink)),
+                  const SizedBox(height: 2),
+                  ContentText(formatKhadaraEventSchedule(event, l10n),
+                      style: TextStyle(fontSize: 12.5, color: AppColors.secondaryInk)),
+                ],
+              ),
+            ),
+            DirectionalChevron(color: AppColors.bronze),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+/// Le fondateur de la zawiya, tiré de sa succession : une carte qui ouvre sa
+/// fiche.
+class _FounderCard extends ConsumerWidget {
+  const _FounderCard({required this.succession});
+
+  final ZawiyaSuccession succession;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
+    final arabic = Localizations.localeOf(context).languageCode == 'ar';
+    final name = arabic
+        ? (succession.founderNameAr ?? succession.founderNameFr ?? '')
+        : (succession.founderNameFr ?? succession.founderNameAr ?? '');
+    return Card(
+      margin: EdgeInsets.zero,
+      clipBehavior: Clip.antiAlias,
+      child: InkWell(
+        onTap: () => _openFigureById(context, ref, succession.founderFigureId),
+        child: Padding(
+          padding: const EdgeInsets.all(14),
+          child: Row(
+            children: [
+              Container(
+                width: 44,
+                height: 44,
+                decoration: BoxDecoration(color: AppColors.goldSoft, borderRadius: BorderRadius.circular(12)),
+                child: const Icon(Icons.auto_awesome_outlined, color: AppColors.ink, size: 22),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Eyebrow(l10n.zawiyaDetailFounder),
+                    ContentText(
+                      name,
+                      style: arabic
+                          ? AppTheme.sacredText(fontSize: 18, color: AppColors.ink).copyWith(height: 1.4)
+                          : AppTheme.titleText(fontSize: 20, color: AppColors.ink, height: 1.2),
+                    ),
+                    Text(l10n.zawiyaDetailSeeFiche, style: TextStyle(fontSize: 12.5, color: AppColors.emerald)),
+                  ],
+                ),
+              ),
+              DirectionalChevron(color: AppColors.bronze),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+/// Une succession, maillon par maillon : rang, nom et période (texte de la
+/// base, « depuis 2017 » pour le khalife actuel). Chaque nom ouvre sa fiche.
+class _SuccessionList extends ConsumerWidget {
+  const _SuccessionList({required this.succession});
+
+  final ZawiyaSuccession succession;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
+    final arabic = Localizations.localeOf(context).languageCode == 'ar';
+    final links = succession.links;
+    // Le dernier khalife de la liste est l'actuel, marqué en or comme dans la
+    // maquette ; pas pour les mokaddems et imams, dont la liste n'est pas
+    // forcément une succession à un seul titulaire.
+    final markCurrent = succession.role == SuccessionRole.khalife;
+    return Card(
+      margin: EdgeInsets.zero,
+      clipBehavior: Clip.antiAlias,
+      child: Column(
+        children: [
+          for (var i = 0; i < succession.links.length; i++) ...[
+            if (i > 0)
+              Padding(
+                padding: const EdgeInsetsDirectional.only(start: 56),
+                child: Divider(height: 1, color: AppColors.bronze.withValues(alpha: 0.2)),
+              ),
+            InkWell(
+              onTap: () => _openFigureById(context, ref, succession.links[i].khalifaFigureId),
+              child: ConstrainedBox(
+                constraints: const BoxConstraints(minHeight: 48),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+                  child: Row(
+                    children: [
+                      Container(
+                        width: 28,
+                        height: 28,
+                        alignment: Alignment.center,
+                        decoration: BoxDecoration(
+                          color: markCurrent && i == links.length - 1 ? AppColors.goldSoft : AppColors.emeraldSoft,
+                          shape: BoxShape.circle,
+                        ),
+                        child: Text(
+                          '${i + 1}',
+                          style: TextStyle(
+                            fontSize: 12.5,
+                            color: markCurrent && i == links.length - 1 ? AppColors.ink : AppColors.emerald,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 14),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            ContentText(
+                              arabic ? succession.links[i].khalifaNameAr : succession.links[i].khalifaNameFr,
+                              style: arabic
+                                  ? AppTheme.sacredText(fontSize: 16, color: AppColors.ink).copyWith(height: 1.4)
+                                  : const TextStyle(fontSize: 14.5, fontWeight: FontWeight.w500, color: AppColors.ink),
+                            ),
+                            if (succession.links[i].periodText != null)
+                              ContentText(succession.links[i].periodText!,
+                                  style: TextStyle(fontSize: 12.5, color: AppColors.secondaryInk)),
+                          ],
+                        ),
+                      ),
+                      if (markCurrent && i == links.length - 1) ...[
+                        StatePill(l10n.zawiyaDetailCurrent, variant: StatePillVariant.gold),
+                        const SizedBox(width: 6),
+                      ],
+                      DirectionalChevron(color: AppColors.bronze),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+}
+
+/// Une figure liée : portrait rond (ou nom arabe) et nom. Ouvre sa fiche.
+class _FigureFace extends StatelessWidget {
+  const _FigureFace({required this.figure});
+
+  final Figure figure;
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      width: 84,
+      child: Semantics(
+        button: true,
+        label: figureDisplayName(context, figure),
+        excludeSemantics: true,
+        child: InkWell(
+          onTap: () => openFigure(context, figure),
+          borderRadius: BorderRadius.circular(12),
+          child: Column(
+            children: [
+              ClipOval(child: SizedBox(width: 64, height: 64, child: FigureImage(figure: figure, arabicSize: 11))),
+              const SizedBox(height: 6),
+              ContentText(
+                figureDisplayName(context, figure),
+                textAlign: TextAlign.center,
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+                style: const TextStyle(fontSize: 12, height: 1.3, color: AppColors.ink),
+              ),
+            ],
+          ),
         ),
       ),
     );

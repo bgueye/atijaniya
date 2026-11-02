@@ -321,6 +321,40 @@ class FiguresRepository {
     return rows.map((row) => Zawiya.fromRow(row['zawiyas'] as Map<String, dynamic>)).toList();
   }
 
+  /// Figures liées à une zawiya (`figure_zawiyas`), pour la fiche de la
+  /// zawiya (refonte des fiches du 2026-11-02, lecture seule : les liens se
+  /// gèrent depuis la fiche d'une figure). La RLS de `figures` ne renvoie que
+  /// les fiches validées : une figure en brouillon n'apparaît pas (son embed
+  /// revient vide, d'où le filtre).
+  Future<List<Figure>> fetchFiguresForZawiya(String zawiyaId) async {
+    final rows = await SupabaseConfig.client.from('figure_zawiyas').select('figures(*)').eq('zawiya_id', zawiyaId);
+    return [
+      for (final row in rows)
+        if (row['figures'] != null) Figure.fromRow(row['figures'] as Map<String, dynamic>),
+    ];
+  }
+
+  /// Successions (`figure_zawiya_khalifas`) rangées sous une zawiya — la même
+  /// lecture que [fetchSuccessionsForFigure], mais par zawiya, pour sa fiche
+  /// (refonte du 2026-11-02, lecture seule).
+  Future<List<ZawiyaSuccession>> fetchSuccessionsForZawiya(String zawiyaId) async {
+    final linkRows = await SupabaseConfig.client
+        .from('figure_zawiya_khalifas')
+        .select('*, zawiyas(name)')
+        .eq('zawiya_id', zawiyaId)
+        .order('order_index');
+    if (linkRows.isEmpty) return [];
+    final figureIds = {
+      for (final row in linkRows) ...[row['khalifa_figure_id'] as String, row['founder_figure_id'] as String],
+    }.toList();
+    final figureRows = await SupabaseConfig.client
+        .from('figures')
+        .select('id, name_ar, name_fr, category, portrait_url')
+        .inFilter('id', figureIds);
+    final figuresById = {for (final row in figureRows) row['id'] as String: row};
+    return groupSuccessions(linkRows, figuresById);
+  }
+
   /// Réservé par RLS (`figure_zawiyas_admin_write`) à un compte admin.
   Future<void> linkZawiya({required String figureId, required String zawiyaId}) async {
     await SupabaseConfig.client.from('figure_zawiyas').insert({'figure_id': figureId, 'zawiya_id': zawiyaId});

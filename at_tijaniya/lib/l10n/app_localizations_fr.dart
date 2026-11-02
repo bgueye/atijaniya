@@ -3847,4 +3847,102 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get figuresSearchResults => 'Résultats';
+
+  @override
+  String eventDetailCountdown(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Dans environ $count jours',
+      one: 'Demain',
+      zero: 'Aujourd\'hui',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get eventDetailDateApproximate => 'Date approximative';
+
+  @override
+  String get eventDetailPlace => 'Le lieu';
+
+  @override
+  String get eventDetailAbout => 'À propos';
+
+  @override
+  String get eventDetailDateToConfirm => 'Date à confirmer.';
+
+  @override
+  String get eventDetailLive => 'Direct';
+
+  @override
+  String get eventDetailNoLive => 'Pas de direct pour l\'instant';
+
+  @override
+  String get eventDetailNoLiveHint => 'Il apparaîtra ici dès qu\'il commence.';
+
+  @override
+  String get zawiyaDetailUpcoming => 'Prochains rendez-vous';
+
+  @override
+  String get zawiyaDetailFounder => 'Fondateur';
+
+  @override
+  String get zawiyaDetailSeeFiche => 'Voir sa fiche';
+
+  @override
+  String zawiyaDetailSuccessionTitle(String role) {
+    return 'Succession des $role';
+  }
+
+  @override
+  String get zawiyaDetailLinkedFigures => 'Figures liées';
+
+  @override
+  String get zawiyaDetailItinerary => 'Itinéraire';
+
+  @override
+  String get zawiyaDetailCurrent => 'Actuel';
+
+  @override
+  String get figureFactWorks => 'œuvres';
+
+  @override
+  String get figureFactDisciples => 'disciples dans l\'app';
+
+  @override
+  String get figureFactPlaces => 'lieux liés';
+
+  @override
+  String figureBioMeta(int sections, int minutes) {
+    String _temp0 = intl.Intl.pluralLogic(
+      sections,
+      locale: localeName,
+      other: '$sections sections',
+      one: '1 section',
+    );
+    return '$_temp0 · environ $minutes min';
+  }
+
+  @override
+  String get figureTabWorks => 'Œuvres';
+
+  @override
+  String get figureTabPlaces => 'Lieux';
+
+  @override
+  String get figureSilsilaIncomplete => 'Maillons suivants non renseignés';
+
+  @override
+  String get figureSilsilaDisciplesTitle => 'Ses disciples dans l\'app';
+
+  @override
+  String get figureSilsilaChainLegend =>
+      'Silsila historique, du Cheikh à cette figure, puis ses disciples renseignés dans l\'app. Elle suit les liens enregistrés et peut être incomplète.';
+
+  @override
+  String get figureSilsilaThisFiche => 'Cette fiche';
+
+  @override
+  String get figureTextSize => 'Taille du texte';
 }

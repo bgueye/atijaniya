@@ -3999,3 +3999,74 @@ du portrait, recherche, administration, arabe, page d'un foyer), sur
 `test/figures_test_support.dart`. Les tests des anciennes puces de foyer sont retirés avec
 elles. `flutter analyze` sans remarque, 656 tests au vert (captures ignorées sans polices).
 **Pas encore validé sur téléphone.**
+
+## Refonte des fiches de détail : figure, zawiya, évènement (2026-11-02)
+
+Demande du porteur de projet : refaire les trois fiches de détail d'après leur maquette de
+référence `docs/maquettes/ecrans-detail.html`, avec les décisions validées et le kit. Écarts
+listés puis validés avant de coder : pas d'année de naissance, pas de lettrine, « Aa » à trois
+paliers gardé sur le téléphone, barre d'onglets accrochée conservée (Biographie / Silsila /
+Œuvres / Lieux), succession et figures liées en lecture seule sur la fiche d'une zawiya (les
+liens restent gérés depuis la fiche d'une figure, par l'admin), silsila jusqu'au Cheikh avec
+« Maillons suivants non renseignés » quand elle s'interrompt, portrait plein cadre ou en-tête
+typographique, pas d'« Ajouter à mon agenda ».
+
+**Fiche d'un évènement** (`event_detail_screen.dart`)
+- En-tête « la date d'abord » : grand bloc date (prochaine occurrence pour un évènement
+  récurrent, « ~ » si approximative), type en pastille, titre, horaire, compte à rebours
+  « Dans environ N jours » et pastille « Date approximative ».
+- « Le lieu » : ligne qui ouvre la fiche de la zawiya (avant, simple texte), puis Maps.
+- « À propos » : la description, puis la note de date de la base dans un encadré « Date à
+  confirmer. » au lieu de se perdre dans la description.
+- « Direct » : place fixe, « Pas de direct pour l'instant » quand il n'y en a pas ; rejoindre
+  et démarrer suivent les mêmes règles qu'avant.
+- **Bug corrigé grâce au test** : le compte à rebours perdait un jour en traversant le
+  passage à l'heure d'été (deux minuits locaux à 23 h d'écart, `inDays` arrondi vers le bas).
+  Il compte désormais des jours de calendrier en UTC.
+
+**Fiche d'une zawiya** (`zawiya_detail_screen.dart`)
+- En-tête clair (`Eyebrow` du type de lieu, titre, description, adresse), Maps et
+  « Itinéraire » (`openInMaps(directions: true)`, lien d'itinéraire Google Maps).
+- « Prochains rendez-vous » avec le `DateBlock` du kit ; erreurs par `Notice.fromError`.
+- **Nouveau** : fondateur, succession par rôle (périodes de la base, khalife actuel marqué
+  « Actuel » en or, seulement pour les khalifes), figures liées en portraits ronds. Requêtes
+  `fetchSuccessionsForZawiya` et `fetchFiguresForZawiya` (`figures_repository.dart`), en
+  lecture seule ; chaque nom ouvre sa fiche.
+- **Écart assumé** : la maquette met la carte du fondateur en zaytoune. CLAUDE.md réserve le
+  zaytoune aux écrans de pratique et à l'accueil, et ses règles priment : la carte est claire,
+  avec une pastille dorée.
+
+**Fiche d'une figure** (`figure_detail_screen.dart`)
+- En-tête : portrait plein cadre avec les noms sur un dégradé zaytoune, ou sans portrait, le
+  nom arabe en grand sur zaytoune avec la rosace en filigrane. Le vert clair codé en dur
+  (`0xFFCFE0D6`) est remplacé par les jetons. Boutons sur fond rond, lisibles sur une photo ;
+  « Changer le portrait » garde son libellé lu par TalkBack. Sur un écran bas (paysage), en-tête
+  resserré et chiffres masqués, pour que la biographie reste visible.
+- Trois `StatTile` (œuvres, disciples dans l'app, lieux liés), chacune ouvre son onglet.
+- Biographie : sommaire des intertitres en puces (un toucher amène à la section), « N sections
+  · environ M min », « Aa » sur trois paliers (`biography_text_scale.dart`, stockage local, sans
+  erreur si le stockage manque). Intertitres saisis en capitales affichés en casse de phrase.
+- Silsila : mention « Maillons suivants non renseignés » quand la chaîne ne commence pas par
+  le fondateur, puis les disciples renseignés dans l'app en puces, et la légende de la maquette.
+- Tous les outils de l'admin sont conservés.
+
+**Captures** : `test/detail_screens_captures_test.dart` produit les quatre onglets de la fiche
+d'El Hadj Malick Sy (sans portrait), la Zawiya de Tivaouane et la Ziarra générale 2027, en
+français et en arabe, sur `test/detail_screens_test_support.dart` (noms et périodes de la
+maquette, textes de remplissage). Elles ont été comparées à la maquette. Corrigés grâce aux
+captures :
+- l'en-tête typographique qui ne prenait pas toute la largeur ;
+- le titre « Disciples » en Cormorant en arabe, donc sans lettres ;
+- une coche sur le compte à rebours, alors que rien n'est fait ;
+- les textes français de la base rangés à droite en arabe.
+
+**Tests** : `test/detail_screens_test.dart` est nouveau. La fiche d'un évènement n'avait aucun
+test. Il couvre :
+- évènement : compte à rebours, note, direct vide, lien vers le lieu ;
+- zawiya : succession, « Actuel », figures liées, fondateur cliquable ;
+- figure : chiffres-clés, sommaire, « Aa », onglet ouvert par une tuile, disciples.
+
+Les tests existants sont adaptés aux changements voulus (onglets renommés, nom français plus
+en capitales, intertitres en casse de phrase, couleur du foyer, libellé « Adresse » devenu
+sémantique). `flutter analyze` ne signale rien, et 660 tests passent (captures ignorées sans
+polices). **Pas encore validé sur téléphone.**

@@ -3811,4 +3811,102 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get figuresSearchResults => 'النتائج';
+
+  @override
+  String eventDetailCountdown(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'بعد نحو $count يومًا',
+      one: 'غدًا',
+      zero: 'اليوم',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get eventDetailDateApproximate => 'تاريخ تقريبي';
+
+  @override
+  String get eventDetailPlace => 'المكان';
+
+  @override
+  String get eventDetailAbout => 'نبذة';
+
+  @override
+  String get eventDetailDateToConfirm => 'التاريخ في انتظار التأكيد.';
+
+  @override
+  String get eventDetailLive => 'البث المباشر';
+
+  @override
+  String get eventDetailNoLive => 'لا يوجد بث مباشر حاليًا';
+
+  @override
+  String get eventDetailNoLiveHint => 'سيظهر هنا فور بدئه.';
+
+  @override
+  String get zawiyaDetailUpcoming => 'المواعيد القادمة';
+
+  @override
+  String get zawiyaDetailFounder => 'المؤسس';
+
+  @override
+  String get zawiyaDetailSeeFiche => 'عرض صفحته';
+
+  @override
+  String zawiyaDetailSuccessionTitle(String role) {
+    return 'تعاقب $role';
+  }
+
+  @override
+  String get zawiyaDetailLinkedFigures => 'شخصيات مرتبطة';
+
+  @override
+  String get zawiyaDetailItinerary => 'المسار';
+
+  @override
+  String get zawiyaDetailCurrent => 'الحالي';
+
+  @override
+  String get figureFactWorks => 'مؤلفات';
+
+  @override
+  String get figureFactDisciples => 'مريدون في التطبيق';
+
+  @override
+  String get figureFactPlaces => 'أماكن مرتبطة';
+
+  @override
+  String figureBioMeta(int sections, int minutes) {
+    String _temp0 = intl.Intl.pluralLogic(
+      sections,
+      locale: localeName,
+      other: '$sections أقسام',
+      one: 'قسم واحد',
+    );
+    return '$_temp0 · نحو $minutes دقيقة';
+  }
+
+  @override
+  String get figureTabWorks => 'المؤلفات';
+
+  @override
+  String get figureTabPlaces => 'الأماكن';
+
+  @override
+  String get figureSilsilaIncomplete => 'الحلقات التالية غير مُدخلة';
+
+  @override
+  String get figureSilsilaDisciplesTitle => 'مريدوه في التطبيق';
+
+  @override
+  String get figureSilsilaChainLegend =>
+      'سلسلة تاريخية من الشيخ إلى هذه الشخصية، ثم مريدوه المدخلون في التطبيق. تتبع الروابط المسجلة وقد تكون ناقصة.';
+
+  @override
+  String get figureSilsilaThisFiche => 'هذه الصفحة';
+
+  @override
+  String get figureTextSize => 'حجم النص';
 }

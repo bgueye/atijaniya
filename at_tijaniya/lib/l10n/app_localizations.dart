@@ -7333,6 +7333,162 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'Résultats'**
   String get figuresSearchResults;
+
+  /// No description provided for @eventDetailCountdown.
+  ///
+  /// In fr, this message translates to:
+  /// **'{count, plural, =0{Aujourd\'hui} =1{Demain} other{Dans environ {count} jours}}'**
+  String eventDetailCountdown(int count);
+
+  /// No description provided for @eventDetailDateApproximate.
+  ///
+  /// In fr, this message translates to:
+  /// **'Date approximative'**
+  String get eventDetailDateApproximate;
+
+  /// No description provided for @eventDetailPlace.
+  ///
+  /// In fr, this message translates to:
+  /// **'Le lieu'**
+  String get eventDetailPlace;
+
+  /// No description provided for @eventDetailAbout.
+  ///
+  /// In fr, this message translates to:
+  /// **'À propos'**
+  String get eventDetailAbout;
+
+  /// No description provided for @eventDetailDateToConfirm.
+  ///
+  /// In fr, this message translates to:
+  /// **'Date à confirmer.'**
+  String get eventDetailDateToConfirm;
+
+  /// No description provided for @eventDetailLive.
+  ///
+  /// In fr, this message translates to:
+  /// **'Direct'**
+  String get eventDetailLive;
+
+  /// No description provided for @eventDetailNoLive.
+  ///
+  /// In fr, this message translates to:
+  /// **'Pas de direct pour l\'instant'**
+  String get eventDetailNoLive;
+
+  /// No description provided for @eventDetailNoLiveHint.
+  ///
+  /// In fr, this message translates to:
+  /// **'Il apparaîtra ici dès qu\'il commence.'**
+  String get eventDetailNoLiveHint;
+
+  /// No description provided for @zawiyaDetailUpcoming.
+  ///
+  /// In fr, this message translates to:
+  /// **'Prochains rendez-vous'**
+  String get zawiyaDetailUpcoming;
+
+  /// No description provided for @zawiyaDetailFounder.
+  ///
+  /// In fr, this message translates to:
+  /// **'Fondateur'**
+  String get zawiyaDetailFounder;
+
+  /// No description provided for @zawiyaDetailSeeFiche.
+  ///
+  /// In fr, this message translates to:
+  /// **'Voir sa fiche'**
+  String get zawiyaDetailSeeFiche;
+
+  /// No description provided for @zawiyaDetailSuccessionTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Succession des {role}'**
+  String zawiyaDetailSuccessionTitle(String role);
+
+  /// No description provided for @zawiyaDetailLinkedFigures.
+  ///
+  /// In fr, this message translates to:
+  /// **'Figures liées'**
+  String get zawiyaDetailLinkedFigures;
+
+  /// No description provided for @zawiyaDetailItinerary.
+  ///
+  /// In fr, this message translates to:
+  /// **'Itinéraire'**
+  String get zawiyaDetailItinerary;
+
+  /// No description provided for @zawiyaDetailCurrent.
+  ///
+  /// In fr, this message translates to:
+  /// **'Actuel'**
+  String get zawiyaDetailCurrent;
+
+  /// No description provided for @figureFactWorks.
+  ///
+  /// In fr, this message translates to:
+  /// **'œuvres'**
+  String get figureFactWorks;
+
+  /// No description provided for @figureFactDisciples.
+  ///
+  /// In fr, this message translates to:
+  /// **'disciples dans l\'app'**
+  String get figureFactDisciples;
+
+  /// No description provided for @figureFactPlaces.
+  ///
+  /// In fr, this message translates to:
+  /// **'lieux liés'**
+  String get figureFactPlaces;
+
+  /// No description provided for @figureBioMeta.
+  ///
+  /// In fr, this message translates to:
+  /// **'{sections, plural, =1{1 section} other{{sections} sections}} · environ {minutes} min'**
+  String figureBioMeta(int sections, int minutes);
+
+  /// No description provided for @figureTabWorks.
+  ///
+  /// In fr, this message translates to:
+  /// **'Œuvres'**
+  String get figureTabWorks;
+
+  /// No description provided for @figureTabPlaces.
+  ///
+  /// In fr, this message translates to:
+  /// **'Lieux'**
+  String get figureTabPlaces;
+
+  /// No description provided for @figureSilsilaIncomplete.
+  ///
+  /// In fr, this message translates to:
+  /// **'Maillons suivants non renseignés'**
+  String get figureSilsilaIncomplete;
+
+  /// No description provided for @figureSilsilaDisciplesTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ses disciples dans l\'app'**
+  String get figureSilsilaDisciplesTitle;
+
+  /// No description provided for @figureSilsilaChainLegend.
+  ///
+  /// In fr, this message translates to:
+  /// **'Silsila historique, du Cheikh à cette figure, puis ses disciples renseignés dans l\'app. Elle suit les liens enregistrés et peut être incomplète.'**
+  String get figureSilsilaChainLegend;
+
+  /// No description provided for @figureSilsilaThisFiche.
+  ///
+  /// In fr, this message translates to:
+  /// **'Cette fiche'**
+  String get figureSilsilaThisFiche;
+
+  /// No description provided for @figureTextSize.
+  ///
+  /// In fr, this message translates to:
+  /// **'Taille du texte'**
+  String get figureTextSize;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

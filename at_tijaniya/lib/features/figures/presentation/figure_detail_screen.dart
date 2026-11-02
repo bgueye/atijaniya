@@ -22,12 +22,17 @@ import '../domain/figure_errors.dart';
 import '../domain/figure_models.dart';
 import 'figure_citation_form_screen.dart';
 import 'figure_form_screen.dart';
+import 'biography_text_scale.dart';
+import 'figure_cards.dart' show figureDisplayName, openFigure;
 import 'figure_portrait.dart';
 import 'figure_khalifa_form_screen.dart';
 import 'figure_silsila_form_screen.dart';
 import 'figure_work_form_screen.dart';
 import 'figures_providers.dart';
 import '../../../core/widgets/content_text.dart';
+import '../../../core/widgets/filter_chips.dart';
+import '../../../core/widgets/notice.dart';
+import '../../../core/widgets/stat_tile.dart';
 import '../../../core/widgets/directional_chevron.dart';
 
 /// Biographie détaillée d'une figure — en-tête immersif (rosace + noms) et
@@ -211,8 +216,8 @@ class _FigureDetailScreenState extends ConsumerState<FigureDetailScreen> {
       tabs: [
         Tab(text: l10n.figureBiographySectionTitle),
         Tab(text: l10n.figureTabSilsila),
-        Tab(text: l10n.figureCitationsSectionTitle),
-        Tab(text: l10n.figureZawiyaSectionTitle),
+        Tab(text: l10n.figureTabWorks),
+        Tab(text: l10n.figureTabPlaces),
       ],
     );
 
@@ -274,6 +279,7 @@ class _FigureDetailScreenState extends ConsumerState<FigureDetailScreen> {
                             deleteTooltip: l10n.figureDeleteTooltip,
                           ),
                         ),
+                        SliverToBoxAdapter(child: _FigureFacts(figure: figure)),
                         // Dépublication : proposée à l'admin seulement pour une figure
                         // actuellement publiée (présente dans la liste des figures
                         // valides), jamais pour un brouillon ouvert depuis la review.
@@ -387,6 +393,16 @@ class _TabScrollView extends StatelessWidget {
   }
 }
 
+/// En-tête de la fiche (refonte du 2026-11-02, maquette `ecrans-detail.html`,
+/// décision validée) :
+/// - avec un portrait : le portrait en plein cadre, noms arabe et français
+///   posés dessus sur un dégradé zaytoune ;
+/// - sans portrait : un en-tête typographique, le nom arabe en grand sur
+///   zaytoune avec la rosace en filigrane, comme la carte de la figure de la
+///   semaine.
+/// Couleurs prises dans les jetons (le sous-titre utilisait un vert clair
+/// codé en dur, `0xFFCFE0D6`, hors `design_tokens.yaml`). Pas d'année de
+/// naissance : plusieurs années en base sont encore fausses (décision validée).
 class _FigureHero extends StatelessWidget {
   const _FigureHero({
     required this.figure,
@@ -401,211 +417,205 @@ class _FigureHero extends StatelessWidget {
   });
 
   final Figure figure;
-
-  /// Modifier/supprimer la fiche elle-même (nom, catégorie, biographie...)
-  /// — distinct de [onChangePortrait] (juste l'image). Même règle
-  /// d'accès : admin uniquement.
   final bool deleting;
   final VoidCallback onEdit;
   final VoidCallback onDelete;
   final String editTooltip;
   final String deleteTooltip;
-
-  /// Action "Changer le portrait" réservée à un admin (`profiles.is_admin`)
-  /// — un statut "Mouqaddam vérifié" n'accorde aucune permission technique
-  /// (CLAUDE.md), même règle que le bouton "Contenu à valider" de
-  /// `figures_screen.dart`.
   final bool isAdmin;
   final bool changingPortrait;
   final VoidCallback onChangePortrait;
 
-  /// Teinte du sous-titre français — spécifique à ce dégradé sombre, absente
-  /// de `design_tokens.yaml` (qui ne couvre que la palette de marque, pas
-  /// les variantes décoratives ponctuelles de la maquette).
-  static const _subtitleColor = Color(0xFFCFE0D6);
-
-  static const _portraitPlaceholder = Icon(Icons.person_outline, color: AppColors.parchment, size: 32);
-
   @override
   Widget build(BuildContext context) {
-    return Container(
-      // `width: double.infinity` explicite : sans lui, ce conteneur hérite du
-      // centrage par défaut du `Column` parent (`crossAxisAlignment.center`)
-      // et se réduit à la largeur de son contenu (les noms) au lieu de
-      // couvrir toute la largeur de l'écran comme un bandeau.
-      width: double.infinity,
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
-          colors: [AppColors.zaytoune, AppColors.emerald],
+    final l10n = AppLocalizations.of(context)!;
+    final url = figure.portraitUrl;
+    final hasPortrait = url != null && url.isNotEmpty;
+    // Écran bas (téléphone couché) : en-tête resserré, pour que le début de
+    // l'onglet reste visible à l'ouverture, même avec le texte agrandi
+    // (audit Figures du 2026-10-25, P1).
+    final compact = MediaQuery.sizeOf(context).height < 500;
+    final foyer = figure.foyer == null || figure.foyer == Foyer.autre
+        ? null
+        : l10n.figureDetailFoyer(foyerLabel(figure.foyer!, l10n));
+
+    final names = Column(
+      crossAxisAlignment: hasPortrait ? CrossAxisAlignment.start : CrossAxisAlignment.center,
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Text(
+          figure.nameArabic,
+          textDirection: TextDirection.rtl,
+          textAlign: hasPortrait ? TextAlign.start : TextAlign.center,
+          style: AppTheme.sacredText(fontSize: compact ? 22 : (hasPortrait ? 26 : 34), color: AppColors.goldOnDark)
+              .copyWith(fontWeight: FontWeight.w700, height: 1.45),
         ),
-      ),
-      // `SafeArea` : ne sert plus qu'aux marges latérales (encoche en
-      // paysage) — la barre de statut est prise en charge par le bandeau
-      // fixe de `FigureDetailScreen`, qui retire le padding haut.
-      child: SafeArea(
-        bottom: false,
-        // Hauteur laissée libre (pas de `SizedBox` à hauteur fixe) : le
-        // padding vertical ci-dessous fixe la hauteur perçue, et le contenu
-        // grandit avec la taille du texte.
+        ContentText(
+          figure.nameFrench,
+          textAlign: hasPortrait ? TextAlign.start : TextAlign.center,
+          style: AppTheme.titleText(fontSize: compact ? 20 : 24, color: AppColors.offWhite, height: 1.15),
+        ),
+        if (foyer != null) ...[
+          const SizedBox(height: 4),
+          Text(foyer, style: TextStyle(color: AppColors.secondaryOnDark, fontSize: 13)),
+        ],
+      ],
+    );
+
+    final Widget body;
+    if (hasPortrait) {
+      body = SizedBox(
+        height: compact ? 200 : 340,
+        child: Stack(
+          fit: StackFit.expand,
+          children: [
+            FigurePortraitFill(url: url, errorPlaceholder: const ColoredBox(color: AppColors.zaytoune)),
+            // Dégradé zaytoune sous les noms, pour qu'ils restent lisibles sur
+            // n'importe quelle photo.
+            DecoratedBox(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  stops: const [0.35, 1],
+                  colors: [AppColors.zaytoune.withValues(alpha: 0), AppColors.zaytoune.withValues(alpha: 0.94)],
+                ),
+              ),
+            ),
+            PositionedDirectional(start: 20, end: 20, bottom: 18, child: names),
+          ],
+        ),
+      );
+    } else {
+      body = Container(
+        width: double.infinity,
+        color: AppColors.zaytoune,
+        // Écran bas : les noms passent à côté du bouton retour (et des
+        // boutons de l'admin) au lieu de dessous.
+        padding: compact
+            ? EdgeInsetsDirectional.fromSTEB(60, 8, isAdmin ? 170 : 60, 12)
+            : const EdgeInsets.fromLTRB(24, 56, 24, 28),
         child: Stack(
           alignment: Alignment.center,
           children: [
-            const Positioned(
-              top: 4,
-              child: Opacity(
-                opacity: 0.12,
-                child: SizedBox(width: 110, height: 110, child: CustomPaint(painter: RosacePainter())),
-              ),
+            // Rosace en filigrane, une seule fois sur l'écran.
+            const Opacity(
+              opacity: 0.12,
+              child: SizedBox(width: 150, height: 150, child: CustomPaint(painter: RosacePainter())),
             ),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 22),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  if (figure.portraitUrl != null || isAdmin) ...[
-                    // Libellé pour l'admin, seul à pouvoir toucher le
-                    // portrait : TalkBack annonçait un bouton sans nom
-                    // (audit Figures du 2026-10-25, P3-7). Pour un disciple,
-                    // le portrait reste une image décorative, le nom suit.
-                    Semantics(
-                      container: isAdmin,
-                      button: isAdmin,
-                      label: isAdmin ? AppLocalizations.of(context)!.figureChangePortrait : null,
-                      child: GestureDetector(
-                        onTap: isAdmin ? onChangePortrait : null,
-                        child: Stack(
-                          clipBehavior: Clip.none,
-                          children: [
-                            Container(
-                              width: 72,
-                              height: 72,
-                              decoration: BoxDecoration(
-                                shape: BoxShape.circle,
-                                color: AppColors.parchment.withValues(alpha: 0.2),
-                              ),
-                              // Portrait introuvable ou absent : même icône (voir
-                              // `FigurePortrait`, audit Figures du 2026-10-25, P2-5).
-                              child: figure.portraitUrl == null
-                                  ? _portraitPlaceholder
-                                  : FigurePortrait(
-                                      url: figure.portraitUrl!,
-                                      size: 72,
-                                      circle: true,
-                                      errorPlaceholder: _portraitPlaceholder,
-                                    ),
-                            ),
-                            if (changingPortrait)
-                              // Voile zaytoune et indicateur `goldOnDark`, les
-                              // couleurs des fonds sombres de la charte, plutôt
-                              // que `Colors.black45`/`Colors.white` en dur (audit
-                              // Figures du 2026-10-25, P3-8).
-                              Positioned.fill(
-                                child: CircleAvatar(
-                                  backgroundColor: AppColors.zaytoune.withValues(alpha: 0.7),
-                                  child: const SizedBox(
-                                    width: 20,
-                                    height: 20,
-                                    child: CircularProgressIndicator(strokeWidth: 2, color: AppColors.goldOnDark),
-                                  ),
-                                ),
-                              )
-                            else if (isAdmin)
-                              PositionedDirectional(
-                                end: -2,
-                                bottom: -2,
-                                child: Container(
-                                  padding: const EdgeInsets.all(4),
-                                  // `goldOnDark` et non `gold` : en contraste
-                                  // renforcé, l'or assombri ne détachait plus
-                                  // le crayon zaytoune, sur l'en-tête vert
-                                  // (constaté sur émulateur le 2026-10-25).
-                                  decoration: const BoxDecoration(color: AppColors.goldOnDark, shape: BoxShape.circle),
-                                  child: const Icon(Icons.edit, size: 14, color: AppColors.zaytoune),
-                                ),
-                              ),
-                          ],
+            names,
+          ],
+        ),
+      );
+    }
+
+    // Boutons sur l'image : un rond sombre derrière chaque icône, lisible sur
+    // une photo claire comme sur le zaytoune.
+    Widget roundButton(Widget child) => DecoratedBox(
+          decoration: BoxDecoration(color: AppColors.zaytoune.withValues(alpha: 0.55), shape: BoxShape.circle),
+          child: child,
+        );
+
+    return Stack(
+      children: [
+        body,
+        PositionedDirectional(top: 4, start: 4, child: roundButton(const BackButton(color: AppColors.parchment))),
+        if (isAdmin)
+          PositionedDirectional(
+            top: 4,
+            end: 4,
+            child: Row(
+              children: [
+                roundButton(
+                  changingPortrait
+                      ? const Padding(
+                          padding: EdgeInsets.all(14),
+                          child: SizedBox(
+                            width: 20,
+                            height: 20,
+                            child: CircularProgressIndicator(strokeWidth: 2, color: AppColors.goldOnDark),
+                          ),
+                        )
+                      // Annoncé « Changer le portrait » par TalkBack (une
+                      // infobulle seule n'est pas un libellé).
+                      : Semantics(
+                          button: true,
+                          label: l10n.figureChangePortrait,
+                          onTap: onChangePortrait,
+                          excludeSemantics: true,
+                          child: IconButton(
+                            icon: const Icon(Icons.photo_camera_outlined, color: AppColors.parchment),
+                            tooltip: l10n.figureChangePortrait,
+                            onPressed: onChangePortrait,
+                          ),
                         ),
-                      ),
-                    ),
-                    const SizedBox(height: 10),
-                  ],
-                  Text(
-                    figure.nameArabic,
-                    textDirection: TextDirection.rtl,
-                    textAlign: TextAlign.center,
-                    // `.copyWith(fontWeight: bold)` plutôt que de changer
-                    // `AppTheme.sacredText` : cette fonction est partagée par
-                    // tout le texte religieux/arabe de l'app (wirds, tasbih,
-                    // silsila...), la mettre en gras partout dépasserait la
-                    // demande "le nom de la figure en gras" (2026-09-27).
-                    style: AppTheme.sacredText(fontSize: 22, color: AppColors.goldSoft)
-                        .copyWith(fontWeight: FontWeight.bold),
-                  ),
-                  const SizedBox(height: 6),
-                  ContentText(
-                    figure.nameFrench.toUpperCase(),
-                    textAlign: TextAlign.center,
-                    // Cormorant Garamond (`AppTheme.titleText`) — même police
-                    // que le titre d'une œuvre plus bas dans cet écran :
-                    // `design_tokens.yaml` la réserve aux "noms de figures"
-                    // (audit design pré-publication Play Store). Le premier
-                    // correctif, par `fontFamily`, ne s'appliquait pas : voir
-                    // `AppTheme.titleText`.
-                    style: AppTheme.titleText(
-                        color: _subtitleColor, fontSize: 12, fontWeight: FontWeight.bold, letterSpacing: 1.4),
-                  ),
-                  // Foyer affiché depuis le 2026-10-18 (il n'était visible que
-                  // dans le formulaire admin). « Autre » n'apprend rien au
-                  // disciple : on ne l'affiche pas.
-                  if (figure.foyer != null && figure.foyer != Foyer.autre) ...[
-                    const SizedBox(height: 8),
-                    Text(
-                      AppLocalizations.of(context)!
-                          .figureDetailFoyer(foyerLabel(figure.foyer!, AppLocalizations.of(context)!)),
-                      textAlign: TextAlign.center,
-                      // `goldSoft`, comme le nom arabe au-dessus (audit
-                      // Figures du 2026-10-25) : ce texte tombe sur le bas
-                      // émeraude du dégradé, où l'or standard ne donne que
-                      // 2,59:1 (2,03:1 en mode renforcé) ; `goldSoft` y
-                      // atteint 5,00:1 et ne varie pas avec le mode renforcé.
-                      style: const TextStyle(color: AppColors.goldSoft, fontSize: 13, fontWeight: FontWeight.w500),
-                    ),
-                  ],
-                ],
-              ),
-            ),
-            const PositionedDirectional(
-              top: 4,
-              start: 4,
-              child: BackButton(color: AppColors.parchment),
-            ),
-            if (isAdmin)
-              PositionedDirectional(
-                top: 4,
-                end: 4,
-                child: Row(
-                  children: [
-                    IconButton(
-                      icon: const Icon(Icons.edit_outlined, color: AppColors.parchment),
-                      tooltip: editTooltip,
-                      onPressed: deleting ? null : onEdit,
-                    ),
-                    IconButton(
-                      icon: deleting
-                          ? const SizedBox(
-                              width: 18,
-                              height: 18,
-                              child: CircularProgressIndicator(strokeWidth: 2, color: AppColors.parchment),
-                            )
-                          : const Icon(Icons.delete_outline, color: AppColors.parchment),
-                      tooltip: deleteTooltip,
-                      onPressed: deleting ? null : onDelete,
-                    ),
-                  ],
                 ),
-              ),
+                const SizedBox(width: 4),
+                roundButton(IconButton(
+                  icon: const Icon(Icons.edit_outlined, color: AppColors.parchment),
+                  tooltip: editTooltip,
+                  onPressed: deleting ? null : onEdit,
+                )),
+                const SizedBox(width: 4),
+                roundButton(IconButton(
+                  icon: deleting
+                      ? const SizedBox(
+                          width: 18,
+                          height: 18,
+                          child: CircularProgressIndicator(strokeWidth: 2, color: AppColors.parchment),
+                        )
+                      : const Icon(Icons.delete_outline, color: AppColors.parchment),
+                  tooltip: deleteTooltip,
+                  onPressed: deleting ? null : onDelete,
+                )),
+              ],
+            ),
+          ),
+      ],
+    );
+  }
+}
+
+/// Trois chiffres sous l'en-tête — œuvres, disciples dans l'app, lieux liés —,
+/// chacun ouvrant l'onglet concerné.
+class _FigureFacts extends ConsumerWidget {
+  const _FigureFacts({required this.figure});
+
+  final Figure figure;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
+    final links = ref.watch(silsilaLinksProvider).valueOrNull;
+    final places = ref.watch(linkedZawiyasForFigureProvider(figure.id)).valueOrNull;
+    final disciples = links?.where((l) => l.parentFigureId == figure.id).length;
+    void open(int tab) => DefaultTabController.of(context).animateTo(tab);
+    // Écran bas : les onglets suffisent, les chiffres cacheraient le début de
+    // la biographie.
+    if (MediaQuery.sizeOf(context).height < 500) return const SizedBox.shrink();
+
+    Widget fact(String value, String label, int tab) => Expanded(
+          child: Semantics(
+            button: true,
+            child: InkWell(
+              onTap: () => open(tab),
+              borderRadius: BorderRadius.circular(14),
+              child: StatTile(value: value, label: label),
+            ),
+          ),
+        );
+
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(16, 14, 16, 4),
+      child: IntrinsicHeight(
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            fact('${figure.works?.length ?? 0}', l10n.figureFactWorks, 2),
+            const SizedBox(width: 8),
+            fact(disciples == null ? '–' : '$disciples', l10n.figureFactDisciples, 1),
+            const SizedBox(width: 8),
+            fact(places == null ? '–' : '${places.length}', l10n.figureFactPlaces, 3),
           ],
         ),
       ),
@@ -637,32 +647,105 @@ class _PendingTab extends StatelessWidget {
   }
 }
 
-class _BiographyTab extends StatelessWidget {
+/// Biographie (refonte du 2026-11-02) : un sommaire des intertitres en puces
+/// (un toucher amène à la section), le nombre de sections et la durée de
+/// lecture estimée, et « Aa » pour la taille du texte (trois paliers, gardés
+/// sur l'appareil). Le texte reste celui de la base, en entier.
+class _BiographyTab extends ConsumerStatefulWidget {
   const _BiographyTab({required this.figure});
 
   final Figure figure;
 
   @override
+  ConsumerState<_BiographyTab> createState() => _BiographyTabState();
+}
+
+class _BiographyTabState extends ConsumerState<_BiographyTab> {
+  final Map<int, GlobalKey> _sectionKeys = {};
+  int? _selected;
+
+  void _goTo(int index) {
+    setState(() => _selected = index);
+    final sectionContext = _sectionKeys[index]?.currentContext;
+    if (sectionContext == null) return;
+    Scrollable.ensureVisible(sectionContext, duration: const Duration(milliseconds: 300), alignment: 0.05);
+  }
+
+  @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-    final biography = figure.biography;
+    final biography = widget.figure.biography;
     if (biography == null || biography.isEmpty) {
       return _PendingTab(message: l10n.figureBiographyPending);
     }
+    final scale = ref.watch(biographyTextScaleProvider);
     // Les biographies n'existent qu'en français : l'interface en arabe le
-    // dit en tête d'onglet, comme « Bienfaits de la Tijaniyya » (audit
-    // Figures du 2026-10-25, P2-3). Seulement si le texte est bien latin,
-    // pour ne rien affirmer de faux le jour où une biographie arabe existera.
+    // dit en tête d'onglet (audit Figures du 2026-10-25, P2-3), seulement si
+    // le texte est bien latin.
     final first = biography.first;
     final showFrenchOnly = Directionality.of(context) == TextDirection.rtl &&
         contentDirection(first.heading ?? first.translation) == TextDirection.ltr;
+    final headings = <int, String>{
+      for (var i = 0; i < biography.length; i++)
+        if (biography[i].heading != null) i: biography[i].heading!,
+    };
+    // Environ 1 000 signes par minute de lecture.
+    final characters = biography.fold<int>(
+      0,
+      (sum, p) => sum + p.translation.length + (p.heading?.length ?? 0) + (p.arabic?.length ?? 0),
+    );
+    final minutes = (characters / 1000).ceil().clamp(1, 999);
+
     return _TabScrollView(
       children: [
         if (showFrenchOnly) ...[
           Text(l10n.figureBiographyFrenchOnly, style: TextStyle(color: AppColors.secondaryInk, fontSize: 13.5)),
           const SizedBox(height: 12),
         ],
-        for (final paragraph in biography) _BiographyParagraph(paragraph: paragraph)
+        // Sommaire : seulement s'il y a des intertitres (une biographie sans
+        // intertitre n'en a pas).
+        if (headings.length > 1) ...[
+          Wrap(
+            spacing: 6,
+            runSpacing: 0,
+            children: [
+              for (final entry in headings.entries)
+                FilterPill(
+                  label: _headingText(entry.value),
+                  selected: _selected == entry.key,
+                  onTap: () => _goTo(entry.key),
+                ),
+            ],
+          ),
+          const SizedBox(height: 6),
+        ],
+        Row(
+          children: [
+            Expanded(
+              child: Text(
+                l10n.figureBioMeta(headings.isEmpty ? 1 : headings.length, minutes),
+                style: TextStyle(fontSize: 12.5, color: AppColors.secondaryInk),
+              ),
+            ),
+            // Taille du texte : trois paliers, en boucle.
+            Semantics(
+              button: true,
+              label: l10n.figureTextSize,
+              excludeSemantics: true,
+              child: TextButton(
+                onPressed: () => ref.read(biographyTextScaleProvider.notifier).next(),
+                style: TextButton.styleFrom(minimumSize: const Size(48, 48)),
+                child: const Text('Aa', textDirection: TextDirection.ltr),
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 4),
+        for (var i = 0; i < biography.length; i++)
+          KeyedSubtree(
+            key: _sectionKeys.putIfAbsent(i, () => GlobalKey()),
+            child: _BiographyParagraph(paragraph: biography[i], scale: scale),
+          ),
       ],
     );
   }
@@ -804,6 +887,12 @@ class _SilsilaTabState extends ConsumerState<_SilsilaTab> {
               ),
               const SizedBox(height: 12),
             ],
+            // La chaîne ne remonte pas jusqu'au Cheikh : un maillon n'est pas
+            // renseigné dans l'app (décision validée du 2026-11-02).
+            if (chain.isNotEmpty && chain.first.category != FigureCategory.founder) ...[
+              Notice.info(l10n.figureSilsilaIncomplete, icon: Icons.more_vert),
+              const _SilsilaConnector(),
+            ],
             if (chain.isEmpty)
               Text(l10n.figureSilsilaPending, style: TextStyle(color: AppColors.secondaryInk))
             else
@@ -815,6 +904,10 @@ class _SilsilaTabState extends ConsumerState<_SilsilaTab> {
                 ),
                 if (i != chain.length - 1) const _SilsilaConnector(),
               ],
+            _SilsilaDisciples(figure: widget.figure),
+            const SizedBox(height: 14),
+            Text(l10n.figureSilsilaChainLegend,
+                style: TextStyle(fontSize: 12, height: 1.4, color: AppColors.secondaryInk)),
           ],
         );
       },
@@ -2047,19 +2140,21 @@ class _KhalifaNodeState extends ConsumerState<_KhalifaNode> with _OpensFigureDet
 }
 
 class _BiographyParagraph extends StatelessWidget {
-  const _BiographyParagraph({required this.paragraph});
+  const _BiographyParagraph({required this.paragraph, this.scale = 1.0});
 
   final FigureBiographyParagraph paragraph;
+
+  /// Taille du texte choisie par « Aa » (`biographyTextScaleProvider`).
+  final double scale;
 
   /// Intertitre d'une biographie (audit Figures du 2026-10-25, P2-2) :
   /// Cormorant Garamond, police des titres français de la charte
   /// (`design_tokens.yaml` § titles_fr, « H1, H2 »), en émeraude pour se
   /// détacher de l'encre du texte courant.
-  static final _headingStyle = AppTheme.titleText(fontSize: 18, letterSpacing: 0.4, color: AppColors.emerald);
 
   @override
   Widget build(BuildContext context) {
-    final heading = paragraph.heading;
+    final heading = paragraph.heading == null ? null : _headingText(paragraph.heading!);
     return Padding(
       padding: const EdgeInsets.only(bottom: 14),
       child: Column(
@@ -2076,7 +2171,14 @@ class _BiographyParagraph extends StatelessWidget {
               // début de ses lignes, et non à droite comme les libellés
               // (audit Figures du 2026-10-25, P2-3). Le titre suit son
               // paragraphe.
-              child: Semantics(header: true, child: ContentText(heading, alignToContent: true, style: _headingStyle)),
+              child: Semantics(
+                header: true,
+                child: ContentText(
+                  heading,
+                  alignToContent: true,
+                  style: AppTheme.titleText(fontSize: 18 * scale, letterSpacing: 0.4, color: AppColors.emerald),
+                ),
+              ),
             ),
             if (paragraph.translation.isNotEmpty) const SizedBox(height: 6),
           ],
@@ -2085,7 +2187,7 @@ class _BiographyParagraph extends StatelessWidget {
               paragraph.arabic!,
               textAlign: TextAlign.right,
               textDirection: TextDirection.rtl,
-              style: AppTheme.sacredText(fontSize: 18, color: AppColors.ink),
+              style: AppTheme.sacredText(fontSize: 18 * scale, color: AppColors.ink),
             ),
             const SizedBox(height: 6),
           ],
@@ -2093,13 +2195,13 @@ class _BiographyParagraph extends StatelessWidget {
             ContentText(
               paragraph.transliteration!,
               alignToContent: true,
-              style: TextStyle(fontStyle: FontStyle.italic, fontSize: 15, color: AppColors.secondaryInk),
+              style: TextStyle(fontStyle: FontStyle.italic, fontSize: 15 * scale, color: AppColors.secondaryInk),
             ),
             const SizedBox(height: 4),
           ],
           if (paragraph.translation.isNotEmpty)
             ContentText(paragraph.translation,
-                alignToContent: true, style: const TextStyle(color: AppColors.ink, fontSize: 16)),
+                alignToContent: true, style: TextStyle(color: AppColors.ink, fontSize: 16 * scale, height: 1.55)),
         ],
       ),
     );
@@ -2168,4 +2270,66 @@ class _CitationCard extends StatelessWidget {
       ),
     );
   }
+}
+
+/// Disciples de la figure renseignés dans l'app (liens de silsila dont elle
+/// est le maître), en puces qui ouvrent leur fiche.
+class _SilsilaDisciples extends ConsumerWidget {
+  const _SilsilaDisciples({required this.figure});
+
+  final Figure figure;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
+    final links = ref.watch(silsilaLinksProvider).valueOrNull ?? const <FigureSilsilaLink>[];
+    final published = ref.watch(figuresProvider).valueOrNull ?? const <Figure>[];
+    final byId = {for (final f in published) f.id: f};
+    final disciples = [
+      for (final link in links)
+        if (link.parentFigureId == figure.id && byId.containsKey(link.figureId)) byId[link.figureId]!
+    ];
+    if (disciples.isEmpty) return const SizedBox.shrink();
+    return Padding(
+      padding: const EdgeInsets.only(top: 20),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Semantics(
+            header: true,
+            child: Text(
+              l10n.figureSilsilaDisciplesTitle,
+              // Titre arabe en Amiri : Cormorant n'a pas de glyphes arabes.
+              style: Localizations.localeOf(context).languageCode == 'ar'
+                  ? AppTheme.sacredText(fontSize: 18, color: AppColors.ink).copyWith(height: 1.4)
+                  : AppTheme.titleText(fontSize: 19, color: AppColors.ink, height: 1.2),
+            ),
+          ),
+          const SizedBox(height: 6),
+          Wrap(
+            spacing: 6,
+            runSpacing: 0,
+            children: [
+              for (final disciple in disciples)
+                FilterPill(
+                  label: figureDisplayName(context, disciple),
+                  selected: false,
+                  onTap: () => openFigure(context, disciple),
+                ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+/// Les intertitres sont saisis en capitales en base : « NAISSANCE ET
+/// ORIGINES » s'affiche « Naissance et origines », en titre comme dans le
+/// sommaire (maquette du 2026-11-02). Un intertitre déjà en casse normale, ou
+/// en arabe, reste tel quel.
+String _headingText(String text) {
+  if (text != text.toUpperCase() || text == text.toLowerCase()) return text;
+  final lower = text.toLowerCase();
+  return lower[0].toUpperCase() + lower.substring(1);
 }

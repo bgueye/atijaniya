@@ -20,6 +20,7 @@ Future<void> openInMaps(
   double? latitude,
   double? longitude,
   String? addressText,
+  bool directions = false,
 }) async {
   assert(
     (latitude != null && longitude != null) || (addressText != null && addressText.trim().isNotEmpty),
@@ -29,7 +30,11 @@ Future<void> openInMaps(
   final message = AppLocalizations.of(context)!.khadaraOpenInMapsError;
   final query =
       (latitude != null && longitude != null) ? '$latitude,$longitude' : Uri.encodeComponent(addressText!.trim());
-  final uri = Uri.parse('https://www.google.com/maps/search/?api=1&query=$query');
+  // [directions] : l'itinéraire jusqu'au lieu (fiche d'une zawiya, refonte du
+  // 2026-11-02) plutôt que sa simple position.
+  final uri = Uri.parse(directions
+      ? 'https://www.google.com/maps/dir/?api=1&destination=$query'
+      : 'https://www.google.com/maps/search/?api=1&query=$query');
   // `launchUrl` renvoie `false` quand rien ne sait ouvrir le lien, mais peut
   // aussi lever (plateforme qui refuse, profil restreint) : les deux cas
   // donnent le même message au lieu d'une exception non rattrapée (audit

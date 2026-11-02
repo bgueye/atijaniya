@@ -164,7 +164,9 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(tester.takeException(), isNull);
-    for (final value in ['Quartier de test, ville de test', '+221 00 000 00 00', 'Adresse', 'Contact']) {
+    // « Adresse » n'est plus un libellé visible depuis la refonte du
+    // 2026-11-02 (icône de lieu, libellé lu par TalkBack seulement).
+    for (final value in ['Quartier de test, ville de test', '+221 00 000 00 00', 'Contact']) {
       final paragraph = tester.renderObject<RenderParagraph>(
         find.descendant(of: find.text(value), matching: find.byType(RichText)),
       );

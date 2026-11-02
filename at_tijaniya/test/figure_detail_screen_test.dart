@@ -100,7 +100,7 @@ void main() {
 
     // Onglet "Citations" — TabBarView ne construit que la page active,
     // il faut donc basculer d'onglet avant de chercher son contenu.
-    await tester.tap(find.text('Citations'));
+    await tester.tap(find.text('Œuvres'));
     await tester.pumpAndSettle();
     expect(find.text('Citation de test.'), findsOneWidget);
     expect(find.text('— Source de test'), findsOneWidget);
@@ -109,7 +109,7 @@ void main() {
     expect(tester.widget<Text>(find.text('— Source de test')).style?.color, AppColors.secondaryInk);
 
     // Onglet "Zawiya" (ex-"Ziyaras") — sous-section "Évènements liés".
-    await tester.tap(find.text('Zawiya'));
+    await tester.tap(find.text('Lieux'));
     await tester.pumpAndSettle();
     expect(find.text('Évènement de test lié'), findsOneWidget);
   });
@@ -133,10 +133,12 @@ void main() {
     await tester.pumpWidget(_wrap(const FigureDetailScreen(figure: figure)));
     await tester.pumpAndSettle();
 
-    expect(find.text('PREMIER TITRE DE TEST'), findsOneWidget);
+    // Intertitre saisi en capitales, affiché en casse de phrase depuis la
+    // refonte du 2026-11-02.
+    expect(find.text('Premier titre de test'), findsOneWidget);
     expect(
-      tester.getSemantics(find.text('PREMIER TITRE DE TEST')),
-      matchesSemantics(label: 'PREMIER TITRE DE TEST', isHeader: true),
+      tester.getSemantics(find.text('Premier titre de test')),
+      matchesSemantics(label: 'Premier titre de test', isHeader: true),
     );
     expect(
       tester.getSemantics(find.text('Texte sous le premier titre.')),
@@ -192,7 +194,7 @@ void main() {
       ],
     ));
     await tester.pumpAndSettle();
-    await tester.tap(find.text('Zawiya'));
+    await tester.tap(find.text('Lieux'));
     await tester.pumpAndSettle();
     await tester.scrollUntilVisible(find.text('Maillon en brouillon'), 200, scrollable: find.byType(Scrollable).last);
 
@@ -255,11 +257,15 @@ void main() {
       ],
     ));
     await tester.pumpAndSettle();
-    await tester.tap(find.text('Zawiya'));
+    await tester.tap(find.text('Lieux'));
     await tester.pumpAndSettle();
 
     expect(find.text('Réessayer'), findsNWidgets(2));
     await tester.tap(find.text('Réessayer').first);
+    await tester.pumpAndSettle();
+    // Les chiffres-clés sous l'en-tête (refonte du 2026-11-02) poussent le
+    // second bouton sous le bas de la fenêtre de test.
+    await tester.ensureVisible(find.text('Réessayer'));
     await tester.pumpAndSettle();
     await tester.tap(find.text('Réessayer'));
     await tester.pumpAndSettle();
@@ -359,7 +365,12 @@ void main() {
     final firstParagraph = find.textContaining('Paragraphe de test numéro 1,');
     // Dès l'ouverture, avec l'en-tête encore affiché, le début de la
     // biographie est visible.
-    expect(firstParagraph.hitTestable(), findsOneWidget);
+    // Ses premières lignes, plus exactement : depuis la refonte du 2026-11-02
+    // (ligne « sections · durée » et « Aa » au-dessus), le paragraphe agrandi
+    // dépasse le bas de l'écran ; ses deux premières lignes (2 × ~30 px à
+    // 200 %) doivent rester visibles.
+    final screenHeight = tester.view.physicalSize.height / tester.view.devicePixelRatio;
+    expect(tester.getRect(firstParagraph).top + 60, lessThanOrEqualTo(screenHeight));
 
     // En-tête entièrement défilé, onglet encore en haut de son contenu.
     // Contrôleur externe plutôt qu'un glisser, qui peut lancer un défilement
@@ -371,7 +382,7 @@ void main() {
 
     // Le nom n'est plus à l'écran, les onglets sont accrochés en haut
     // (bandeau de barre de statut nul dans le test)...
-    expect(find.text('FIGURE EN PAYSAGE').hitTestable(), findsNothing);
+    expect(find.text('Figure en paysage').hitTestable(), findsNothing);
     final tabBarRect = tester.getRect(find.byType(TabBar));
     expect(tabBarRect.top, 0);
     // ... et le premier paragraphe commence sous eux, pas dessous : c'est le
@@ -381,8 +392,9 @@ void main() {
 
   // Audit Figures du 2026-10-25 (P1) : en mode renforcé, l'or assombri
   // (pensé pour les fonds clairs) tombait à 2,03:1 sur le bas émeraude de
-  // l'en-tête et à 2,41:1 sur zaytoune. Le foyer passe à `goldSoft`, la
-  // mention « Fondateur » à `goldOnDark`, deux couleurs fixes.
+  // l'en-tête et à 2,41:1 sur zaytoune. Le foyer passe à une couleur fixe
+  // (`secondaryOnDark` depuis la refonte des fiches du 2026-11-02, 6,7:1 sur
+  // zaytoune), la mention « Fondateur » à `goldOnDark`.
   testWidgets('FigureDetailScreen garde le foyer et « Fondateur » lisibles sur fond vert en mode renforcé',
       (tester) async {
     AppColors.setHighContrast(true);
@@ -417,9 +429,9 @@ void main() {
 
     Color? colorOf(Finder finder) => tester.widget<Text>(finder).style?.color;
 
-    expect(colorOf(find.textContaining('Foyer : ')), AppColors.goldSoft);
+    expect(colorOf(find.textContaining('Foyer : ')), AppColors.secondaryOnDark);
 
-    await tester.tap(find.text('Zawiya'));
+    await tester.tap(find.text('Lieux'));
     await tester.pumpAndSettle();
     await tester.scrollUntilVisible(find.text('Fondateur'), 200, scrollable: find.byType(Scrollable).last);
     expect(colorOf(find.text('Fondateur')), AppColors.goldOnDark);
@@ -483,7 +495,7 @@ void main() {
     ));
     await tester.pumpAndSettle();
 
-    await tester.tap(find.text('Zawiya'));
+    await tester.tap(find.text('Lieux'));
     await tester.pumpAndSettle();
     await tester.scrollUntilVisible(find.text('Maillon consulté'), 200, scrollable: find.byType(Scrollable).last);
 
@@ -547,7 +559,7 @@ void main() {
         ],
       ));
       await tester.pumpAndSettle();
-      await tester.tap(find.text('Zawiya'));
+      await tester.tap(find.text('Lieux'));
       await tester.pumpAndSettle();
       await tester.scrollUntilVisible(find.text('Maillon cible'), 200, scrollable: find.byType(Scrollable).last);
     }
@@ -604,7 +616,7 @@ void main() {
       await tester.tap(find.text('Maillon cible'));
       await tester.pumpAndSettle();
       expect(find.byType(FigureDetailScreen, skipOffstage: false), findsNWidgets(2));
-      expect(find.text('MAILLON CIBLE'), findsOneWidget);
+      expect(find.text('Maillon cible'), findsOneWidget);
     });
 
     testWidgets('double toucher pendant le chargement : une seule fiche ouverte', (tester) async {

@@ -1,7 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import 'package:intl/intl.dart' show DateFormat;
+
 import '../../../core/theme/app_colors.dart';
+import '../../../core/theme/app_theme.dart';
+import '../../../core/widgets/list_group.dart';
+import '../../../core/widgets/section_title.dart';
+import '../../../core/widgets/state_pill.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../mouqaddam/presentation/mouqaddam_providers.dart';
 import '../../profil/presentation/profile_providers.dart';
@@ -14,6 +20,7 @@ import 'live_stream_providers.dart';
 import 'live_stream_screen.dart';
 import 'open_in_maps.dart';
 import 'start_live_stream_screen.dart';
+import 'zawiya_detail_screen.dart';
 import '../../../core/widgets/content_text.dart';
 
 /// Détail d'un évènement Khadara — lieu, date, description, et
@@ -81,16 +88,24 @@ class _EventDetailScreenState extends ConsumerState<EventDetailScreen> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
+    final event = _event;
     final canManage = canManageEvent(
-      _event,
+      event,
       userId: ref.watch(currentUserIdProvider),
       isAdmin: ref.watch(isAdminProvider),
       managedZawiyaId: ref.watch(myManagedZawiyaIdProvider),
     );
+    // La fiche du lieu, si la zawiya est connue (liste déjà chargée par
+    // l'onglet Zawiyas ; sinon, le lieu reste une ligne sans lien).
+    final zawiya = event.zawiyaId == null
+        ? null
+        : ref.watch(zawiyasProvider).valueOrNull?.where((z) => z.id == event.zawiyaId).firstOrNull;
+    final address = event.addressText ?? zawiya?.addressText;
+    final note = event.dateNote?.trim();
+    const sectionPadding = EdgeInsetsDirectional.fromSTEB(2, 24, 0, 8);
 
     return Scaffold(
       appBar: AppBar(
-        title: ContentText(_event.title),
         actions: canManage
             ? [
                 IconButton(
@@ -100,11 +115,7 @@ class _EventDetailScreenState extends ConsumerState<EventDetailScreen> {
                 ),
                 IconButton(
                   icon: _deleting
-                      ? const SizedBox(
-                          width: 18,
-                          height: 18,
-                          child: CircularProgressIndicator(strokeWidth: 2),
-                        )
+                      ? const SizedBox(width: 18, height: 18, child: CircularProgressIndicator(strokeWidth: 2))
                       : const Icon(Icons.delete_outline),
                   tooltip: l10n.khadaraDeleteEventTooltip,
                   onPressed: _deleting ? null : _confirmDelete,
@@ -112,87 +123,69 @@ class _EventDetailScreenState extends ConsumerState<EventDetailScreen> {
               ]
             : null,
       ),
-      // `SafeArea` : évite que le bouton Démarrer un direct se retrouve
-      // masqué sous la barre de navigation Android (3 boutons).
       body: SafeArea(
         child: ListView(
-          padding: const EdgeInsets.all(20),
+          padding: const EdgeInsets.fromLTRB(16, 0, 16, 24),
           children: [
-            if (_event.imageUrl != null) ...[
+            _EventHero(event: event),
+            if (event.imageUrl != null) ...[
+              const SizedBox(height: 14),
               ClipRRect(
-                borderRadius: BorderRadius.circular(14),
+                borderRadius: BorderRadius.circular(16),
                 child: Image.network(
-                  _event.imageUrl!,
-                  // cacheWidth seul (pas cacheHeight) préserve le ratio —
-                  // plafonne le décodage à la largeur d'écran réelle plutôt
-                  // que la résolution native de la photo, potentiellement
-                  // bien plus grande pour un simple bandeau de couverture.
+                  event.imageUrl!,
                   cacheWidth: (MediaQuery.of(context).size.width * MediaQuery.of(context).devicePixelRatio).round(),
-                  // Pas de hauteur fixe : la largeur remplit l'écran et la
-                  // hauteur s'ajuste au ratio réel de la photo, plutôt que de
-                  // recadrer/deviner une hauteur qui coupe une partie de
-                  // l'image selon son orientation.
                   width: double.infinity,
                   fit: BoxFit.fitWidth,
                   errorBuilder: (context, error, stackTrace) => const SizedBox.shrink(),
                 ),
               ),
-              const SizedBox(height: 16),
             ],
-            Chip(
-              avatar: Icon(khadaraEventTypeIcon(_event.type), size: 18, color: AppColors.emerald),
-              label: Text(khadaraEventTypeLabel(_event.type, l10n)),
-              backgroundColor: AppColors.emeraldSoft,
-            ),
-            const SizedBox(height: 16),
-            _InfoRow(
-              icon: Icons.schedule,
-              // Récurrent ou date approximative : libellé centralisé (pas
-              // d'heure de fin affichée sur une date incertaine).
-              text: _event.isRecurring || _event.showsApproximateDate
-                  ? formatKhadaraEventSchedule(_event, l10n)
-                  : (_event.endsAt == null
-                      ? formatKhadaraDateTime(_event.startsAt)
-                      : '${formatKhadaraDateTime(_event.startsAt)} → ${formatKhadaraDateTime(_event.endsAt!)}'),
-            ),
-            if (_event.isRecurring && formatKhadaraNextOccurrence(_event, l10n) != null) ...[
-              const SizedBox(height: 8),
-              _InfoRow(icon: Icons.event_available_outlined, text: formatKhadaraNextOccurrence(_event, l10n)!),
+            if (event.zawiyaName != null || address != null) ...[
+              SectionTitle(l10n.eventDetailPlace, padding: sectionPadding),
+              // Le lieu mène à sa fiche (refonte du 2026-11-02 : avant, le nom
+              // de la zawiya n'était qu'un texte).
+              ListGroup(items: [
+                ListGroupItem(
+                  icon: zawiya == null ? Icons.place_outlined : zawiyaKindIcon(zawiya.kind),
+                  title: event.zawiyaName ?? address!,
+                  subtitle: event.zawiyaName == null ? null : address,
+                  onTap: zawiya == null
+                      ? null
+                      : () => Navigator.of(context)
+                          .push(MaterialPageRoute(builder: (_) => ZawiyaDetailScreen(zawiya: zawiya))),
+                ),
+              ]),
             ],
-            if (_event.dateNote != null && _event.dateNote!.trim().isNotEmpty) ...[
-              const SizedBox(height: 8),
-              _InfoRow(icon: Icons.info_outline, text: _event.dateNote!),
-            ],
-            if (_event.zawiyaName != null) ...[
-              const SizedBox(height: 8),
-              _InfoRow(icon: Icons.mosque_outlined, text: _event.zawiyaName!),
-            ],
-            if (_event.addressText != null && _event.addressText!.trim().isNotEmpty) ...[
-              const SizedBox(height: 8),
-              _InfoRow(icon: Icons.place_outlined, text: _event.addressText!),
-            ],
-            if (_event.description != null) ...[
-              const SizedBox(height: 20),
-              ContentText(
-                _event.description!,
-                style: const TextStyle(color: AppColors.ink, fontSize: 16, height: 1.4),
-              ),
-            ],
-            if (_event.hasMapsTarget) ...[
-              const SizedBox(height: 24),
-              OutlinedButton.icon(
+            if (event.hasMapsTarget) ...[
+              const SizedBox(height: 12),
+              FilledButton.icon(
                 onPressed: () => openInMaps(
                   context,
-                  latitude: _event.latitude,
-                  longitude: _event.longitude,
-                  addressText: _event.addressText,
+                  latitude: event.latitude,
+                  longitude: event.longitude,
+                  addressText: event.addressText,
                 ),
-                icon: const Icon(Icons.map_outlined),
+                icon: const Icon(Icons.map_outlined, size: 18),
                 label: Text(l10n.khadaraOpenInMaps),
               ),
             ],
-            const SizedBox(height: 24),
-            _LiveStreamSection(event: _event, l10n: l10n),
+            if (event.description != null || (note != null && note.isNotEmpty)) ...[
+              SectionTitle(l10n.eventDetailAbout, padding: sectionPadding),
+              if (event.description != null)
+                ContentText(
+                    alignToContent: true,
+                    event.description!,
+                    style: const TextStyle(color: AppColors.ink, fontSize: 15.5, height: 1.5)),
+              // La note qui explique comment la date est fixée, mise en avant
+              // au lieu de se perdre dans la description.
+              if (note != null && note.isNotEmpty) ...[
+                const SizedBox(height: 12),
+                _DateNote(note: note),
+              ],
+            ],
+            SectionTitle(l10n.eventDetailLive, padding: sectionPadding),
+            _LiveStreamSection(event: event, l10n: l10n),
           ],
         ),
       ),
@@ -200,11 +193,147 @@ class _EventDetailScreenState extends ConsumerState<EventDetailScreen> {
   }
 }
 
-/// Rejoindre le direct en cours pour cet évènement, ou en démarrer un —
-/// invisible tant que le direct n'est pas encore chargé ou en erreur (pas
-/// de reprise dédiée ici, `khadaraLoadError` de l'onglet Directs couvre
-/// déjà ce cas ailleurs) : ne bloque jamais la lecture du reste de la
-/// fiche évènement.
+/// En-tête : la date d'abord. Grand bloc date (la prochaine occurrence pour
+/// un évènement récurrent), type en pastille, titre, jour et heure, compte à
+/// rebours et, si c'est le cas, « Date approximative ».
+class _EventHero extends StatelessWidget {
+  const _EventHero({required this.event});
+
+  final KhadaraEvent event;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    final locale = Localizations.localeOf(context).languageCode;
+    final now = DateTime.now();
+    final date = event.isRecurring ? (nextOccurrence(event, from: now) ?? event.startsAt) : event.startsAt;
+    // Jours de calendrier comptés en UTC : en heure locale, un passage à
+    // l'heure d'été donne 23 h de moins et `inDays` perdait un jour.
+    final days =
+        DateTime.utc(date.year, date.month, date.day).difference(DateTime.utc(now.year, now.month, now.day)).inDays;
+    final schedule = event.isRecurring || event.showsApproximateDate
+        ? formatKhadaraEventSchedule(event, l10n)
+        : (event.endsAt == null
+            ? formatKhadaraDateTime(event.startsAt)
+            : '${formatKhadaraDateTime(event.startsAt)} → ${formatKhadaraDateTime(event.endsAt!)}');
+
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: AppColors.offWhite,
+        borderRadius: BorderRadius.circular(18),
+        border: Border.all(color: AppColors.bronze.withValues(alpha: 0.2)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Bloc date en grand : jour, mois et année, chiffres latins.
+              Semantics(
+                label: DateFormat.yMMMMd(locale).format(date),
+                excludeSemantics: true,
+                child: Container(
+                  width: 76,
+                  padding: const EdgeInsets.symmetric(vertical: 10),
+                  decoration: BoxDecoration(color: AppColors.emeraldSoft, borderRadius: BorderRadius.circular(14)),
+                  child: Column(
+                    children: [
+                      Text(
+                        '${event.showsApproximateDate ? '~' : ''}${date.day}',
+                        textDirection: TextDirection.ltr,
+                        style: AppTheme.titleText(fontSize: 38, color: AppColors.emerald, height: 1),
+                      ),
+                      const SizedBox(height: 2),
+                      Text(
+                        DateFormat.yMMM(locale).format(date),
+                        textAlign: TextAlign.center,
+                        style: TextStyle(fontSize: 11.5, color: AppColors.emerald),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              const SizedBox(width: 14),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    StatePill(khadaraEventTypeLabel(event.type, l10n), variant: StatePillVariant.todo),
+                    const SizedBox(height: 6),
+                    Semantics(
+                      header: true,
+                      child: ContentText(
+                        event.title,
+                        style: AppTheme.titleText(fontSize: 23, color: AppColors.ink, height: 1.15),
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    ContentText(schedule, style: TextStyle(fontSize: 13, height: 1.35, color: AppColors.secondaryInk)),
+                  ],
+                ),
+              ),
+            ],
+          ),
+          if (days >= 0 || event.showsApproximateDate) ...[
+            const SizedBox(height: 12),
+            Wrap(
+              spacing: 8,
+              runSpacing: 6,
+              children: [
+                if (days >= 0) StatePill(l10n.eventDetailCountdown(days), variant: StatePillVariant.neutral),
+                if (event.showsApproximateDate)
+                  StatePill(l10n.eventDetailDateApproximate, variant: StatePillVariant.todo),
+              ],
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+}
+
+/// « Date à confirmer. » et le texte de la base qui explique comment la date
+/// est fixée.
+class _DateNote extends StatelessWidget {
+  const _DateNote({required this.note});
+
+  final String note;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    return Container(
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(color: AppColors.goldSoft, borderRadius: BorderRadius.circular(12)),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Icon(Icons.event_note_outlined, size: 18, color: AppColors.ink),
+          const SizedBox(width: 8),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(l10n.eventDetailDateToConfirm,
+                    style: const TextStyle(fontSize: 13.5, fontWeight: FontWeight.w600, color: AppColors.ink)),
+                const SizedBox(height: 2),
+                ContentText(
+                    alignToContent: true,
+                    note,
+                    style: const TextStyle(fontSize: 13.5, height: 1.45, color: AppColors.ink)),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+/// Direct : rejoindre s'il est en cours, le démarrer pour qui en a le droit
+/// (mêmes règles qu'avant), sinon une place fixe qui dit qu'il apparaîtra ici.
 class _LiveStreamSection extends ConsumerWidget {
   const _LiveStreamSection({required this.event, required this.l10n});
 
@@ -213,59 +342,43 @@ class _LiveStreamSection extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final streamAsync = ref.watch(latestStreamForEventProvider(event.id));
+    final stream = ref.watch(latestStreamForEventProvider(event.id)).valueOrNull;
     final myUserId = ref.watch(currentUserIdProvider);
-
-    return streamAsync.maybeWhen(
-      data: (stream) {
-        final isActive = stream != null && stream.status != LiveStreamStatus.ended;
-        if (isActive) {
-          return FilledButton.icon(
-            onPressed: () => Navigator.of(context).push(
-              MaterialPageRoute(builder: (_) => LiveStreamScreen(stream: stream)),
-            ),
-            icon: const Icon(Icons.podcasts),
-            label: Text(l10n.khadaraJoinLive),
-          );
-        }
-        // Démarrer un direct public : admin, créateur de l'évènement, ou
-        // mouqaddam confirmé de la zawiya de l'évènement — reflet de la
-        // policy `streams_authenticated_create` (audit du 2026-10-04, S05d ;
-        // auparavant tout compte connecté, avec notification à tous).
-        final managedZawiyaId = ref.watch(myManagedZawiyaIdProvider);
-        final canStart = myUserId != null &&
-            (ref.watch(isAdminProvider) ||
-                myUserId == event.createdBy ||
-                (managedZawiyaId != null && managedZawiyaId == event.zawiyaId));
-        if (!canStart) return const SizedBox.shrink();
-        return OutlinedButton.icon(
-          onPressed: () => Navigator.of(context).push(
-            MaterialPageRoute(
-                builder: (_) => StartLiveStreamScreen.forEvent(eventId: event.id, contextTitle: event.title)),
-          ),
-          icon: const Icon(Icons.podcasts_outlined),
-          label: Text(l10n.khadaraStartLive),
-        );
-      },
-      orElse: () => const SizedBox.shrink(),
-    );
-  }
-}
-
-class _InfoRow extends StatelessWidget {
-  const _InfoRow({required this.icon, required this.text});
-
-  final IconData icon;
-  final String text;
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
+    if (stream != null && stream.status != LiveStreamStatus.ended) {
+      return FilledButton.icon(
+        onPressed: () =>
+            Navigator.of(context).push(MaterialPageRoute(builder: (_) => LiveStreamScreen(stream: stream))),
+        icon: const Icon(Icons.podcasts),
+        label: Text(l10n.khadaraJoinLive),
+      );
+    }
+    final managedZawiyaId = ref.watch(myManagedZawiyaIdProvider);
+    final canStart = myUserId != null &&
+        (ref.watch(isAdminProvider) ||
+            myUserId == event.createdBy ||
+            (managedZawiyaId != null && managedZawiyaId == event.zawiyaId));
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        Icon(icon, size: 18, color: AppColors.bronze),
-        const SizedBox(width: 8),
-        Expanded(child: ContentText(text, style: const TextStyle(color: AppColors.ink))),
+        ListGroup(items: [
+          ListGroupItem(
+            icon: Icons.podcasts_outlined,
+            tone: ListGroupTone.sacred,
+            title: l10n.eventDetailNoLive,
+            subtitle: l10n.eventDetailNoLiveHint,
+          ),
+        ]),
+        if (canStart) ...[
+          const SizedBox(height: 10),
+          OutlinedButton.icon(
+            onPressed: () => Navigator.of(context).push(
+              MaterialPageRoute(
+                  builder: (_) => StartLiveStreamScreen.forEvent(eventId: event.id, contextTitle: event.title)),
+            ),
+            icon: const Icon(Icons.podcasts_outlined, size: 18),
+            label: Text(l10n.khadaraStartLive),
+          ),
+        ],
       ],
     );
   }

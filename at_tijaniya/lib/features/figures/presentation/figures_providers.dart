@@ -65,6 +65,16 @@ final successionsForFigureProvider = FutureProvider.autoDispose.family<List<Zawi
   return ref.watch(figuresRepositoryProvider).fetchSuccessionsForFigure(figureId);
 });
 
+/// Figures liées à une zawiya et successions rangées sous elle — fiche de la
+/// zawiya (refonte des fiches du 2026-11-02), en lecture seule.
+final figuresForZawiyaProvider = FutureProvider.autoDispose.family<List<Figure>, String>((ref, zawiyaId) {
+  return ref.watch(figuresRepositoryProvider).fetchFiguresForZawiya(zawiyaId);
+});
+
+final successionsForZawiyaProvider = FutureProvider.autoDispose.family<List<ZawiyaSuccession>, String>((ref, zawiyaId) {
+  return ref.watch(figuresRepositoryProvider).fetchSuccessionsForZawiya(zawiyaId);
+});
+
 /// Épinglage admin ("Figure de la semaine") pour une semaine donnée —
 /// `family` sur le lundi de la semaine (voir `weekStartFor`) pour que
 /// l'écran admin puisse consulter/préparer une semaine autre que la

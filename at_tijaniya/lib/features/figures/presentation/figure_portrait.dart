@@ -45,3 +45,30 @@ class FigurePortrait extends StatelessWidget {
     return circle ? ClipOval(child: image) : ClipRRect(borderRadius: BorderRadius.circular(borderRadius), child: image);
   }
 }
+
+/// Portrait qui remplit tout son cadre (en-tête plein cadre de la fiche,
+/// refonte du 2026-11-02), recadré vers le haut, décodé à la largeur du cadre.
+/// [errorPlaceholder] prend sa place si l'image ne charge pas.
+class FigurePortraitFill extends StatelessWidget {
+  const FigurePortraitFill({super.key, required this.url, required this.errorPlaceholder});
+
+  final String url;
+  final Widget errorPlaceholder;
+
+  @override
+  Widget build(BuildContext context) {
+    return LayoutBuilder(
+      builder: (context, constraints) => Image.network(
+        url,
+        fit: BoxFit.cover,
+        alignment: Alignment.topCenter,
+        width: constraints.maxWidth,
+        height: constraints.maxHeight,
+        cacheWidth: constraints.maxWidth.isFinite
+            ? (constraints.maxWidth * MediaQuery.devicePixelRatioOf(context)).round()
+            : null,
+        errorBuilder: (context, error, stackTrace) => errorPlaceholder,
+      ),
+    );
+  }
+}
