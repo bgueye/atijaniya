@@ -2418,7 +2418,7 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get settingsNotificationsBody =>
-      'Les rappels de récitation se gèrent depuis chaque Wird (icône cloche sur l\'écran du Wird).';
+      'Les rappels de récitation se règlent depuis chaque wird (bouton Rappel de sa carte, onglet Wird).';
 
   @override
   String get settingsPrivacySection => 'Confidentialité';
@@ -3637,4 +3637,133 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get wirdTasbihFormulaDone => 'récitée';
+
+  @override
+  String get profileChooseZawiya => 'Choisir ma zawiya';
+
+  @override
+  String get profileBioEmpty => 'Ajoutez quelques mots sur vous.';
+
+  @override
+  String get profileEditAction => 'Modifier';
+
+  @override
+  String get profilePracticeTitle => 'Ma pratique';
+
+  @override
+  String get profilePracticeOnDevice => 'Sur cet appareil';
+
+  @override
+  String get profilePracticeNote =>
+      'Enregistrés sur ce téléphone seulement, visibles de vous seul : ils repartent de zéro après une réinstallation ou sur un autre appareil.';
+
+  @override
+  String profileStatMonth(String month) {
+    return 'wirds marqués en $month';
+  }
+
+  @override
+  String get profilePathTitle => 'Mon chemin spirituel';
+
+  @override
+  String get profileSensitiveData => 'Données sensibles';
+
+  @override
+  String get profileLineageEmptySubtitle => 'Le moqaddam qui vous a transmis le wird';
+
+  @override
+  String get profileLineageFilled => 'Renseignée';
+
+  @override
+  String get profileStateToFill => 'À renseigner';
+
+  @override
+  String get profileStatePrivate => 'Privée';
+
+  @override
+  String get profileStateVisibleToCondisciples => 'Visible des condisciples';
+
+  @override
+  String get profileStateVisible => 'Visible';
+
+  @override
+  String get profileStateOn => 'Activé';
+
+  @override
+  String get profileStateOff => 'Désactivé';
+
+  @override
+  String get profileMatchesAfterLineage => 'Après avoir renseigné votre lignée';
+
+  @override
+  String profileMatchesCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count correspondances',
+      one: '1 correspondance',
+      zero: 'Aucune correspondance',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String profileRequestsPending(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count en attente',
+      one: '1 en attente',
+      zero: 'Aucune en attente',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get profileIjazaSubtitle => 'Jusqu\'à Cheikh Ahmed Tijani';
+
+  @override
+  String get profileBecomeMouqaddamSubtitle => 'Par parrainage d\'un mouqaddam dont le parrainage est confirmé';
+
+  @override
+  String get profileLineageVisibility => 'Visibilité de ma lignée';
+
+  @override
+  String get profileAppTitle => 'Application';
+
+  @override
+  String get profileShowPracticeStats => 'Afficher mes chiffres de pratique';
+
+  @override
+  String get profileAboutAndPolicy => 'À propos et politique de confidentialité';
+
+  @override
+  String get profileAdminTitle => 'Administration';
+
+  @override
+  String get profileAdminOnly => 'Admin seulement';
+
+  @override
+  String get profileReportsToHandle => 'À traiter';
+
+  @override
+  String get profileGuestTitle => 'Créez votre compte';
+
+  @override
+  String get profileGuestBenefit1 => 'Un profil avec votre nom affiché et votre zawiya, pour publier dans le fil';
+
+  @override
+  String get profileGuestBenefit2 => 'Rejoindre des groupes, aimer et commenter, écrire aux disciples';
+
+  @override
+  String get profileGuestBenefit3 => 'Retrouver vos condisciples, en privé et seulement si vous l\'acceptez';
+
+  @override
+  String get profileGuestHaveAccount => 'J\'ai déjà un compte · Se connecter';
+
+  @override
+  String get profileContactEveryoneShort => 'Tout le monde';
+
+  @override
+  String get profileContactMatchesShort => 'Correspondances';
 }

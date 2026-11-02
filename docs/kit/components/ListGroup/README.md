@@ -17,4 +17,7 @@ l'élément de fin (chevron, `StatePill`, interrupteur, compteur).
 - Un réglage simple (langue, contraste) se change dans la ligne, sans écran intermédiaire.
 
 **Flutter** : existe, `ListGroup`, `ListGroupItem` et `ListGroupTone`
-(`lib/core/widgets/list_group.dart`, 2026-11-02).
+(`lib/core/widgets/list_group.dart`, 2026-11-02). L'élément de fin prend sa largeur naturelle,
+bornée à 55 % de la ligne (`fixedTrailing: true` pour une commande compacte comme FR / عربي) ;
+`ListGroup(framed: false)` donne les lignes sans la carte, pour un cadre pointillé
+(`DashedBorder`).

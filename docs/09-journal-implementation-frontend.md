@@ -3889,3 +3889,63 @@ téléphone.**
 - **Décision du porteur de projet** : pour l'Istighfar de la Wazifa, le projet ne retient que
   trente avec la formule longue. La référence affichée devient « *Munyat al-Murîd*, p. 18
   (trente avec la formule longue) », sans la forme à cent ni la page de *Jawâhir* qui la donne.
+
+## Refonte du Profil (2026-11-02)
+
+Demande du porteur de projet : refaire le Profil d'après sa maquette de référence
+`docs/maquettes/ecran-profil.html`, avec les décisions validées et les composants du kit.
+Écarts listés puis validés avant de coder, avec deux réponses :
+- les trois chiffres de pratique (voir plus bas) et leur réglage dans « Application » ;
+- « Disponible comme parrain » résumé comme les autres lignes (valeur et toucher vers
+  l'écran Confidentialité), sans interrupteur dans le Profil.
+
+**Écran** (`profil_screen.dart`, réécrit)
+- **Carte d'identité** : avatar de 72 px avec son bouton photo, nom en Cormorant, « Modifier »,
+  zawiya en pastille ou « ＋ Choisir ma zawiya » (ouvre la modification du profil),
+  `SponsorshipBadge`, bio ou invitation.
+- **« Ma pratique »** (`practice_stats.dart`, données de `wirdOverviewProvider`) :
+  - la plus courte série des wirds quotidiens ;
+  - les wirds marqués ce mois-ci ;
+  - les vendredis de la Hadra ;
+  - la mention qu'ils sont propres au téléphone ;
+  - « Voir l'historique » (choix du wird, `showWirdHistoryPicker`, rendu public) ;
+  - masquables par « Afficher mes chiffres de pratique », gardé par compte.
+- **« Mon chemin spirituel »** : chaque ligne dit son état, jamais son contenu ; le nom du
+  moqaddam n'apparaît pas.
+  - lignée : « À renseigner », ou « Renseignée » avec « Privée » / « Visible des
+    condisciples » ;
+  - condisciples : nombre de correspondances ;
+  - parrainage confirmé : demandes en attente, et silsila « Privée » / « Visible » ;
+  - sinon, « Devenir Mouqaddam » discret, en dernière ligne.
+- **« Confidentialité »** : résumé des valeurs actuelles (Qui peut vous contacter, Visibilité
+  de ma lignée, Disponible comme parrain, Disciples bloqués), qui mène à l'écran
+  Confidentialité existant.
+- **« Application »** : Langue (FR / عربي) et Contraste renforcé sur place, aussi sans compte ;
+  chiffres de pratique, note sur les rappels (texte mis à jour : bouton Rappel de la carte du
+  wird), don, À propos et politique de confidentialité.
+- **Administration** : cadre pointillé, admin seulement, avec le nombre de signalements.
+- **Sortie** : « Se déconnecter » en bouton, « Supprimer mon compte » en lien discret séparé
+  (même confirmation renforcée, dialogue repris tel quel), version de l'app.
+- **Sans compte** : carte « Créez votre compte » avec ce qu'un compte apporte, sans promettre
+  de séries rattachées au compte (correction du 2026-11-02), puis « Application ».
+- **Écran Paramètres supprimé** (`settings_screen.dart`, décision validée) : il n'était ouvert
+  que depuis le Profil.
+
+**Kit** :
+- `DashedBorder` (`core/widgets/dashed_border.dart`), partagé avec le wird libre ;
+- `ListGroup(framed: false)` ;
+- l'élément de fin d'une ligne prend sa largeur naturelle, bornée à 55 % de la ligne, avec
+  `fixedTrailing` pour une commande compacte. Sur 420 px, le choix de la langue et « Uniquement
+  les correspondances » débordaient, puis les valeurs se coupaient (vu en test et sur capture).
+  Le résumé dit désormais « Correspondances » / « Tout le monde », comme la maquette.
+
+**Captures** : `test/profil_captures_test.dart` produit les 4 états de la maquette (sans
+compte, disciple, parrainage confirmé, admin), en français et en arabe, comparés à la maquette
+rendue dans les mêmes états. Corrigés grâce aux captures :
+- les valeurs coupées et rangées au début de leur zone ;
+- « Modifier » sur une ligne à lui, au lieu d'être en haut à droite de la carte.
+
+**Tests** : `test/profil_screen_test.dart` (calcul des chiffres, les quatre états, jamais le
+contenu de la lignée, jamais « vérifié », masquage des chiffres, arabe), sur le montage commun
+`test/profil_test_support.dart`. `flutter analyze` sans remarque, 654 tests au vert (captures
+ignorées sans polices). **Pas encore validé sur téléphone.**

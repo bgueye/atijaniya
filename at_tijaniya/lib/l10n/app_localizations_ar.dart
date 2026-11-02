@@ -2397,7 +2397,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get settingsNotificationsSection => 'الإشعارات';
 
   @override
-  String get settingsNotificationsBody => 'تُدار تذكيرات الترديد من داخل كل ورد (أيقونة الجرس في شاشة الورد).';
+  String get settingsNotificationsBody => 'تُضبط تذكيرات الترديد من داخل كل ورد (زر التذكير في بطاقته، تبويب الورد).';
 
   @override
   String get settingsPrivacySection => 'الخصوصية';
@@ -3602,4 +3602,133 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get wirdTasbihFormulaDone => 'مقروءة';
+
+  @override
+  String get profileChooseZawiya => 'اختيار زاويتي';
+
+  @override
+  String get profileBioEmpty => 'أضف بضع كلمات عنك.';
+
+  @override
+  String get profileEditAction => 'تعديل';
+
+  @override
+  String get profilePracticeTitle => 'ممارستي';
+
+  @override
+  String get profilePracticeOnDevice => 'على هذا الجهاز';
+
+  @override
+  String get profilePracticeNote =>
+      'محفوظة على هذا الهاتف فقط ولا يراها غيرك: تعود إلى الصفر بعد إعادة التثبيت أو على جهاز آخر.';
+
+  @override
+  String profileStatMonth(String month) {
+    return 'أوراد مسجّلة في $month';
+  }
+
+  @override
+  String get profilePathTitle => 'طريقي الروحي';
+
+  @override
+  String get profileSensitiveData => 'بيانات حساسة';
+
+  @override
+  String get profileLineageEmptySubtitle => 'المقدّم الذي لقّنك الورد';
+
+  @override
+  String get profileLineageFilled => 'مُدخلة';
+
+  @override
+  String get profileStateToFill => 'للإكمال';
+
+  @override
+  String get profileStatePrivate => 'خاصة';
+
+  @override
+  String get profileStateVisibleToCondisciples => 'مرئية للإخوان';
+
+  @override
+  String get profileStateVisible => 'مرئي';
+
+  @override
+  String get profileStateOn => 'مفعّل';
+
+  @override
+  String get profileStateOff => 'معطّل';
+
+  @override
+  String get profileMatchesAfterLineage => 'بعد إدخال سلسلتك';
+
+  @override
+  String profileMatchesCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count مطابقات',
+      one: 'مطابقة واحدة',
+      zero: 'لا توجد مطابقات',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String profileRequestsPending(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count في الانتظار',
+      one: 'طلب في الانتظار',
+      zero: 'لا شيء في الانتظار',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get profileIjazaSubtitle => 'إلى الشيخ أحمد التجاني';
+
+  @override
+  String get profileBecomeMouqaddamSubtitle => 'عبر تزكية من مقدّم مؤكَّدة تزكيته';
+
+  @override
+  String get profileLineageVisibility => 'ظهور سلسلتي';
+
+  @override
+  String get profileAppTitle => 'التطبيق';
+
+  @override
+  String get profileShowPracticeStats => 'إظهار أرقام ممارستي';
+
+  @override
+  String get profileAboutAndPolicy => 'حول التطبيق وسياسة الخصوصية';
+
+  @override
+  String get profileAdminTitle => 'الإدارة';
+
+  @override
+  String get profileAdminOnly => 'للمشرف فقط';
+
+  @override
+  String get profileReportsToHandle => 'للمعالجة';
+
+  @override
+  String get profileGuestTitle => 'أنشئ حسابك';
+
+  @override
+  String get profileGuestBenefit1 => 'ملف باسمك المعروض وزاويتك، للنشر في الصفحة';
+
+  @override
+  String get profileGuestBenefit2 => 'الانضمام إلى المجموعات، والإعجاب والتعليق، ومراسلة المريدين';
+
+  @override
+  String get profileGuestBenefit3 => 'العثور على إخوانك في الورد، بخصوصية وبموافقتك فقط';
+
+  @override
+  String get profileGuestHaveAccount => 'لديّ حساب · تسجيل الدخول';
+
+  @override
+  String get profileContactEveryoneShort => 'الجميع';
+
+  @override
+  String get profileContactMatchesShort => 'المطابقات';
 }

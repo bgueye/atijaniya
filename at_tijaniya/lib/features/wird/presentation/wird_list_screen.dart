@@ -23,6 +23,7 @@ import '../../../core/date/current_day.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../core/widgets/content_text.dart';
+import '../../../core/widgets/dashed_border.dart';
 import '../../../core/widgets/directional_chevron.dart';
 import '../../../core/widgets/eyebrow.dart';
 import '../../../core/widgets/list_group.dart';
@@ -221,11 +222,7 @@ class _WeekStrip extends StatelessWidget {
     return done.isEmpty ? l10n.wirdWeekDayNothing(date) : l10n.wirdWeekDayMarked(date, done.join(', '));
   }
 
-  void _pickHistory(BuildContext context) => _showWirdPicker(
-        context,
-        title: AppLocalizations.of(context)!.wirdHistoryPickTitle,
-        onPick: (wird) => _push(context, WirdHistoryScreen(wird: wird)),
-      );
+  void _pickHistory(BuildContext context) => showWirdHistoryPicker(context);
 }
 
 class _WeekDayCell extends StatelessWidget {
@@ -584,8 +581,7 @@ class _FreeWirdTool extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-    return CustomPaint(
-      painter: _DashedBorderPainter(color: AppColors.bronze.withValues(alpha: 0.45), radius: 16),
+    return DashedBorder(
       child: Material(
         color: Colors.transparent,
         borderRadius: BorderRadius.circular(16),
@@ -624,30 +620,6 @@ class _FreeWirdTool extends StatelessWidget {
       ),
     );
   }
-}
-
-class _DashedBorderPainter extends CustomPainter {
-  const _DashedBorderPainter({required this.color, required this.radius});
-
-  final Color color;
-  final double radius;
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    final paint = Paint()
-      ..color = color
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 1.5;
-    final path = Path()..addRRect(RRect.fromRectAndRadius(Offset.zero & size, Radius.circular(radius)).deflate(0.75));
-    for (final metric in path.computeMetrics()) {
-      for (var d = 0.0; d < metric.length; d += 9) {
-        canvas.drawPath(metric.extractPath(d, (d + 5).clamp(0, metric.length)), paint);
-      }
-    }
-  }
-
-  @override
-  bool shouldRepaint(_DashedBorderPainter oldDelegate) => oldDelegate.color != color;
 }
 
 /// « Comprendre et rattraper » : Rattraper en tuile large (zaytoune, écran de
@@ -914,6 +886,14 @@ class _AdminLine extends StatelessWidget {
     );
   }
 }
+
+/// Choix du wird dont ouvrir l'historique (il existe wird par wird) : depuis
+/// le bandeau de la semaine et depuis « Ma pratique » sur le Profil.
+void showWirdHistoryPicker(BuildContext context) => _showWirdPicker(
+      context,
+      title: AppLocalizations.of(context)!.wirdHistoryPickTitle,
+      onPick: (wird) => _push(context, WirdHistoryScreen(wird: wird)),
+    );
 
 /// Choix d'un wird (historique) : l'historique existe wird par wird.
 void _showWirdPicker(BuildContext context, {required String title, required void Function(Wird wird) onPick}) {

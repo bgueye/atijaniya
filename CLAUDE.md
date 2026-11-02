@@ -110,6 +110,10 @@ nommés, réglages « Aa » gardés sur l'appareil, compteur à l'échelle du no
 (`tasbih_counter_dial.dart`), mode concentré jamais automatique, clôture en plein écran,
 intention et Fatiha en entier, écran de fin. `AppTheme.debugFontFallback` ne sert qu'aux
 captures de test : toujours `null` dans l'app.
+**Profil refait le 2026-11-02** (maquette `ecran-profil.html`) : carte d'identité, « Ma pratique »
+(chiffres du téléphone, masquables), « Mon chemin spirituel » et « Confidentialité » qui
+disent l'état de chaque élément sans jamais son contenu, « Application » (langue, contraste,
+aussi sans compte), administration à part. **L'écran Paramètres n'existe plus.**
 **Guide d'un wird refait le 2026-11-02** (bandeau, actions et série de l'écran Wird, piliers
 et clôtures de l'écran de pratique). Références des wirds dans `docs/sources/` : `docs/14-references-guide-wirds.md`. Celles de la
 traduction de *Jawâhir*, de son édition arabe et de *Munyat al-Murîd* sont validées et affichées

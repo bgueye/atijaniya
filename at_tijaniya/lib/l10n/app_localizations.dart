@@ -4763,7 +4763,7 @@ abstract class AppLocalizations {
   /// No description provided for @settingsNotificationsBody.
   ///
   /// In fr, this message translates to:
-  /// **'Les rappels de récitation se gèrent depuis chaque Wird (icône cloche sur l\'écran du Wird).'**
+  /// **'Les rappels de récitation se règlent depuis chaque wird (bouton Rappel de sa carte, onglet Wird).'**
   String get settingsNotificationsBody;
 
   /// No description provided for @settingsPrivacySection.
@@ -7003,6 +7003,222 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'récitée'**
   String get wirdTasbihFormulaDone;
+
+  /// No description provided for @profileChooseZawiya.
+  ///
+  /// In fr, this message translates to:
+  /// **'Choisir ma zawiya'**
+  String get profileChooseZawiya;
+
+  /// No description provided for @profileBioEmpty.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ajoutez quelques mots sur vous.'**
+  String get profileBioEmpty;
+
+  /// No description provided for @profileEditAction.
+  ///
+  /// In fr, this message translates to:
+  /// **'Modifier'**
+  String get profileEditAction;
+
+  /// No description provided for @profilePracticeTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ma pratique'**
+  String get profilePracticeTitle;
+
+  /// No description provided for @profilePracticeOnDevice.
+  ///
+  /// In fr, this message translates to:
+  /// **'Sur cet appareil'**
+  String get profilePracticeOnDevice;
+
+  /// No description provided for @profilePracticeNote.
+  ///
+  /// In fr, this message translates to:
+  /// **'Enregistrés sur ce téléphone seulement, visibles de vous seul : ils repartent de zéro après une réinstallation ou sur un autre appareil.'**
+  String get profilePracticeNote;
+
+  /// No description provided for @profileStatMonth.
+  ///
+  /// In fr, this message translates to:
+  /// **'wirds marqués en {month}'**
+  String profileStatMonth(String month);
+
+  /// No description provided for @profilePathTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Mon chemin spirituel'**
+  String get profilePathTitle;
+
+  /// No description provided for @profileSensitiveData.
+  ///
+  /// In fr, this message translates to:
+  /// **'Données sensibles'**
+  String get profileSensitiveData;
+
+  /// No description provided for @profileLineageEmptySubtitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Le moqaddam qui vous a transmis le wird'**
+  String get profileLineageEmptySubtitle;
+
+  /// No description provided for @profileLineageFilled.
+  ///
+  /// In fr, this message translates to:
+  /// **'Renseignée'**
+  String get profileLineageFilled;
+
+  /// No description provided for @profileStateToFill.
+  ///
+  /// In fr, this message translates to:
+  /// **'À renseigner'**
+  String get profileStateToFill;
+
+  /// No description provided for @profileStatePrivate.
+  ///
+  /// In fr, this message translates to:
+  /// **'Privée'**
+  String get profileStatePrivate;
+
+  /// No description provided for @profileStateVisibleToCondisciples.
+  ///
+  /// In fr, this message translates to:
+  /// **'Visible des condisciples'**
+  String get profileStateVisibleToCondisciples;
+
+  /// No description provided for @profileStateVisible.
+  ///
+  /// In fr, this message translates to:
+  /// **'Visible'**
+  String get profileStateVisible;
+
+  /// No description provided for @profileStateOn.
+  ///
+  /// In fr, this message translates to:
+  /// **'Activé'**
+  String get profileStateOn;
+
+  /// No description provided for @profileStateOff.
+  ///
+  /// In fr, this message translates to:
+  /// **'Désactivé'**
+  String get profileStateOff;
+
+  /// No description provided for @profileMatchesAfterLineage.
+  ///
+  /// In fr, this message translates to:
+  /// **'Après avoir renseigné votre lignée'**
+  String get profileMatchesAfterLineage;
+
+  /// No description provided for @profileMatchesCount.
+  ///
+  /// In fr, this message translates to:
+  /// **'{count, plural, =0{Aucune correspondance} =1{1 correspondance} other{{count} correspondances}}'**
+  String profileMatchesCount(int count);
+
+  /// No description provided for @profileRequestsPending.
+  ///
+  /// In fr, this message translates to:
+  /// **'{count, plural, =0{Aucune en attente} =1{1 en attente} other{{count} en attente}}'**
+  String profileRequestsPending(int count);
+
+  /// No description provided for @profileIjazaSubtitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Jusqu\'à Cheikh Ahmed Tijani'**
+  String get profileIjazaSubtitle;
+
+  /// No description provided for @profileBecomeMouqaddamSubtitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Par parrainage d\'un mouqaddam dont le parrainage est confirmé'**
+  String get profileBecomeMouqaddamSubtitle;
+
+  /// No description provided for @profileLineageVisibility.
+  ///
+  /// In fr, this message translates to:
+  /// **'Visibilité de ma lignée'**
+  String get profileLineageVisibility;
+
+  /// No description provided for @profileAppTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Application'**
+  String get profileAppTitle;
+
+  /// No description provided for @profileShowPracticeStats.
+  ///
+  /// In fr, this message translates to:
+  /// **'Afficher mes chiffres de pratique'**
+  String get profileShowPracticeStats;
+
+  /// No description provided for @profileAboutAndPolicy.
+  ///
+  /// In fr, this message translates to:
+  /// **'À propos et politique de confidentialité'**
+  String get profileAboutAndPolicy;
+
+  /// No description provided for @profileAdminTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Administration'**
+  String get profileAdminTitle;
+
+  /// No description provided for @profileAdminOnly.
+  ///
+  /// In fr, this message translates to:
+  /// **'Admin seulement'**
+  String get profileAdminOnly;
+
+  /// No description provided for @profileReportsToHandle.
+  ///
+  /// In fr, this message translates to:
+  /// **'À traiter'**
+  String get profileReportsToHandle;
+
+  /// No description provided for @profileGuestTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Créez votre compte'**
+  String get profileGuestTitle;
+
+  /// No description provided for @profileGuestBenefit1.
+  ///
+  /// In fr, this message translates to:
+  /// **'Un profil avec votre nom affiché et votre zawiya, pour publier dans le fil'**
+  String get profileGuestBenefit1;
+
+  /// No description provided for @profileGuestBenefit2.
+  ///
+  /// In fr, this message translates to:
+  /// **'Rejoindre des groupes, aimer et commenter, écrire aux disciples'**
+  String get profileGuestBenefit2;
+
+  /// No description provided for @profileGuestBenefit3.
+  ///
+  /// In fr, this message translates to:
+  /// **'Retrouver vos condisciples, en privé et seulement si vous l\'acceptez'**
+  String get profileGuestBenefit3;
+
+  /// No description provided for @profileGuestHaveAccount.
+  ///
+  /// In fr, this message translates to:
+  /// **'J\'ai déjà un compte · Se connecter'**
+  String get profileGuestHaveAccount;
+
+  /// No description provided for @profileContactEveryoneShort.
+  ///
+  /// In fr, this message translates to:
+  /// **'Tout le monde'**
+  String get profileContactEveryoneShort;
+
+  /// No description provided for @profileContactMatchesShort.
+  ///
+  /// In fr, this message translates to:
+  /// **'Correspondances'**
+  String get profileContactMatchesShort;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {
