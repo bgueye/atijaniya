@@ -3766,4 +3766,85 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get profileContactMatchesShort => 'Correspondances';
+
+  @override
+  String get figuresFoyerOthers => 'Autres foyers';
+
+  @override
+  String figuresCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count figures',
+      one: '1 figure',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get figuresFounderEyebrow => 'Fondateur de la Tariqa';
+
+  @override
+  String figuresFounderDisciples(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count disciples rattachés dans l\'app',
+      one: '1 disciple rattaché dans l\'app',
+      zero: 'Aucun disciple rattaché dans l\'app',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get figuresFoyersTitle => 'Foyers';
+
+  @override
+  String get figuresAllTitle => 'Toutes les figures';
+
+  @override
+  String figuresShowAll(int count) {
+    return 'Afficher les $count figures';
+  }
+
+  @override
+  String get figuresShowLess => 'Afficher moins';
+
+  @override
+  String get figuresAdminLine => 'Administration · à valider, créer, figure de la semaine';
+
+  @override
+  String get figuresStatFigures => 'figures';
+
+  @override
+  String get figuresStatPortraits => 'portraits';
+
+  @override
+  String get figuresStatLinks => 'liens de silsila';
+
+  @override
+  String get figuresViewGrid => 'Grille';
+
+  @override
+  String get figuresViewSilsila => 'Silsila';
+
+  @override
+  String get figuresSilsilaLegend =>
+      'Silsila historique (maître → disciple), d\'après les liens renseignés dans l\'app. Ce n\'est pas un arbre généalogique.';
+
+  @override
+  String figuresSilsilaExternal(String foyer) {
+    return '$foyer · maître venu d\'un autre foyer';
+  }
+
+  @override
+  String figuresSilsilaDiscipleOf(String name) {
+    return 'disciple de $name';
+  }
+
+  @override
+  String get figuresSilsilaEmpty => 'Aucun lien de silsila n\'est encore renseigné pour ce foyer.';
+
+  @override
+  String get figuresSearchResults => 'Résultats';
 }

@@ -7219,6 +7219,120 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'Correspondances'**
   String get profileContactMatchesShort;
+
+  /// No description provided for @figuresFoyerOthers.
+  ///
+  /// In fr, this message translates to:
+  /// **'Autres foyers'**
+  String get figuresFoyerOthers;
+
+  /// No description provided for @figuresCount.
+  ///
+  /// In fr, this message translates to:
+  /// **'{count, plural, =1{1 figure} other{{count} figures}}'**
+  String figuresCount(int count);
+
+  /// No description provided for @figuresFounderEyebrow.
+  ///
+  /// In fr, this message translates to:
+  /// **'Fondateur de la Tariqa'**
+  String get figuresFounderEyebrow;
+
+  /// No description provided for @figuresFounderDisciples.
+  ///
+  /// In fr, this message translates to:
+  /// **'{count, plural, =0{Aucun disciple rattaché dans l\'app} =1{1 disciple rattaché dans l\'app} other{{count} disciples rattachés dans l\'app}}'**
+  String figuresFounderDisciples(int count);
+
+  /// No description provided for @figuresFoyersTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Foyers'**
+  String get figuresFoyersTitle;
+
+  /// No description provided for @figuresAllTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Toutes les figures'**
+  String get figuresAllTitle;
+
+  /// No description provided for @figuresShowAll.
+  ///
+  /// In fr, this message translates to:
+  /// **'Afficher les {count} figures'**
+  String figuresShowAll(int count);
+
+  /// No description provided for @figuresShowLess.
+  ///
+  /// In fr, this message translates to:
+  /// **'Afficher moins'**
+  String get figuresShowLess;
+
+  /// No description provided for @figuresAdminLine.
+  ///
+  /// In fr, this message translates to:
+  /// **'Administration · à valider, créer, figure de la semaine'**
+  String get figuresAdminLine;
+
+  /// No description provided for @figuresStatFigures.
+  ///
+  /// In fr, this message translates to:
+  /// **'figures'**
+  String get figuresStatFigures;
+
+  /// No description provided for @figuresStatPortraits.
+  ///
+  /// In fr, this message translates to:
+  /// **'portraits'**
+  String get figuresStatPortraits;
+
+  /// No description provided for @figuresStatLinks.
+  ///
+  /// In fr, this message translates to:
+  /// **'liens de silsila'**
+  String get figuresStatLinks;
+
+  /// No description provided for @figuresViewGrid.
+  ///
+  /// In fr, this message translates to:
+  /// **'Grille'**
+  String get figuresViewGrid;
+
+  /// No description provided for @figuresViewSilsila.
+  ///
+  /// In fr, this message translates to:
+  /// **'Silsila'**
+  String get figuresViewSilsila;
+
+  /// No description provided for @figuresSilsilaLegend.
+  ///
+  /// In fr, this message translates to:
+  /// **'Silsila historique (maître → disciple), d\'après les liens renseignés dans l\'app. Ce n\'est pas un arbre généalogique.'**
+  String get figuresSilsilaLegend;
+
+  /// No description provided for @figuresSilsilaExternal.
+  ///
+  /// In fr, this message translates to:
+  /// **'{foyer} · maître venu d\'un autre foyer'**
+  String figuresSilsilaExternal(String foyer);
+
+  /// No description provided for @figuresSilsilaDiscipleOf.
+  ///
+  /// In fr, this message translates to:
+  /// **'disciple de {name}'**
+  String figuresSilsilaDiscipleOf(String name);
+
+  /// No description provided for @figuresSilsilaEmpty.
+  ///
+  /// In fr, this message translates to:
+  /// **'Aucun lien de silsila n\'est encore renseigné pour ce foyer.'**
+  String get figuresSilsilaEmpty;
+
+  /// No description provided for @figuresSearchResults.
+  ///
+  /// In fr, this message translates to:
+  /// **'Résultats'**
+  String get figuresSearchResults;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

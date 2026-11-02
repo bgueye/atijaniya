@@ -3731,4 +3731,84 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get profileContactMatchesShort => 'المطابقات';
+
+  @override
+  String get figuresFoyerOthers => 'فروع أخرى';
+
+  @override
+  String figuresCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count شخصيات',
+      one: 'شخصية واحدة',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get figuresFounderEyebrow => 'مؤسس الطريقة';
+
+  @override
+  String figuresFounderDisciples(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count مريدين مرتبطين في التطبيق',
+      one: 'مريد واحد مرتبط في التطبيق',
+      zero: 'لا مريد مرتبط في التطبيق',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get figuresFoyersTitle => 'الفروع';
+
+  @override
+  String get figuresAllTitle => 'كل الشخصيات';
+
+  @override
+  String figuresShowAll(int count) {
+    return 'عرض الشخصيات الـ$count';
+  }
+
+  @override
+  String get figuresShowLess => 'عرض أقل';
+
+  @override
+  String get figuresAdminLine => 'الإدارة · قيد التحقق، إضافة، شخصية الأسبوع';
+
+  @override
+  String get figuresStatFigures => 'شخصيات';
+
+  @override
+  String get figuresStatPortraits => 'صور';
+
+  @override
+  String get figuresStatLinks => 'روابط السلسلة';
+
+  @override
+  String get figuresViewGrid => 'شبكة';
+
+  @override
+  String get figuresViewSilsila => 'السلسلة';
+
+  @override
+  String get figuresSilsilaLegend => 'سلسلة تاريخية (شيخ ← مريد)، بحسب الروابط المدخلة في التطبيق. وليست شجرة نسب.';
+
+  @override
+  String figuresSilsilaExternal(String foyer) {
+    return '$foyer · شيخ من فرع آخر';
+  }
+
+  @override
+  String figuresSilsilaDiscipleOf(String name) {
+    return 'مريد $name';
+  }
+
+  @override
+  String get figuresSilsilaEmpty => 'لم يُدخل بعدُ أي رابط سلسلة لهذا الفرع.';
+
+  @override
+  String get figuresSearchResults => 'النتائج';
 }

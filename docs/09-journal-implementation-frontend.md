@@ -3949,3 +3949,53 @@ rendue dans les mêmes états. Corrigés grâce aux captures :
 contenu de la lignée, jamais « vérifié », masquage des chiffres, arabe), sur le montage commun
 `test/profil_test_support.dart`. `flutter analyze` sans remarque, 654 tests au vert (captures
 ignorées sans polices). **Pas encore validé sur téléphone.**
+
+## Refonte de l'onglet Figures (2026-11-02)
+
+Demande du porteur de projet : refaire l'onglet Figures d'après sa maquette de référence
+`docs/maquettes/ecran-figures.html`, avec les décisions validées et les composants du kit.
+Écarts listés puis validés avant de coder, avec trois réponses :
+- ordre historique des foyers : Fès, Aïn Madhi, famille omarienne, Tivaouane, Kaolack,
+  Médina Baye, puis « Autres foyers » ; le foyer du disciple d'abord, lu dans sa lignée
+  déclarée (sert seulement à l'ordre d'affichage sur son téléphone) ;
+- pas de chiffre « rendez-vous » sur la page d'un foyer : l'app ne sait pas à quel foyer
+  appartient une zawiya ;
+- la page d'un foyer s'ouvre sur la Grille, la Silsila étant à un toucher.
+
+**Page principale** (`figures_screen.dart`, réécrit)
+- **Recherche** : inchangée ; ses résultats s'affichent en grille.
+- **Carte du fondateur** : image, `Eyebrow`, nom arabe en Amiri, nom français en Cormorant,
+  foyer, nombre de disciples rattachés dans l'app (liens de silsila). **Pas d'année de
+  naissance** (décision validée).
+- **Foyers** : cartes-collections défilantes (`FoyerCollectionCard`, mosaïque de quatre
+  figures, portraits d'abord) ; « Autre » devient « Autres foyers » dans cet onglet seulement.
+- **Toutes les figures** : grille de portraits en 4:5 (`FigureGrid`), six figures puis
+  « Afficher les N figures ». Sans portrait, ou si l'image ne charge pas, le nom arabe en
+  Amiri sert d'image (`FigureImage`), sur deux tons doux en alternance stable. Plus d'icône de
+  personne générique.
+- **Administration** : une ligne en bas avec le nombre de brouillons, qui ouvre les trois
+  écrans existants (à valider, créer, figure de la semaine).
+
+**Page d'un foyer** (`foyer_screen.dart`, nouveau)
+- `Eyebrow` « Foyer », titre (Amiri en arabe), trois `StatTile` (figures, portraits, liens
+  de silsila), `SegmentedSwitch` Grille / Silsila.
+- **Vue Silsila** : arbre maître → disciple construit à partir des liens validés
+  (`buildFoyerSilsilaTree`, `figure_foyers.dart`). Le maître venu d'un autre foyer est en
+  tête, encadré en pointillés (pour Tivaouane : El Hadj Oumar Tall). Retrait directionnel
+  (inversé en arabe), profondeur affichée bornée à 4, légende « Silsila historique… Ce n'est
+  pas un arbre généalogique. ». Un foyer sans lien le dit.
+
+**Captures** : `test/figures_captures_test.dart` produit la page principale, Tivaouane en
+Grille et en Silsila, en français et en arabe, avec des figures factices sans portrait (comme
+la maquette). Elles ont été comparées à la maquette rendue dans les mêmes états. Corrigés
+grâce aux captures :
+- le titre du foyer en Cormorant en arabe, sans lettres arabes ;
+- les noms de la grille en Jost au lieu du Cormorant du kit ;
+- les aplats presque tous de la même couleur.
+
+**Tests** : `test/figures_screen_test.dart` est réécrit (ordre des foyers, disciples du
+fondateur, arbre de Tivaouane et foyer sans lien, fondateur sans année, nom arabe à la place
+du portrait, recherche, administration, arabe, page d'un foyer), sur
+`test/figures_test_support.dart`. Les tests des anciennes puces de foyer sont retirés avec
+elles. `flutter analyze` sans remarque, 656 tests au vert (captures ignorées sans polices).
+**Pas encore validé sur téléphone.**

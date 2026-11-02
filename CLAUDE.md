@@ -110,6 +110,11 @@ nommés, réglages « Aa » gardés sur l'appareil, compteur à l'échelle du no
 (`tasbih_counter_dial.dart`), mode concentré jamais automatique, clôture en plein écran,
 intention et Fatiha en entier, écran de fin. `AppTheme.debugFontFallback` ne sert qu'aux
 captures de test : toujours `null` dans l'app.
+**Onglet Figures refait le 2026-11-02** (maquette `ecran-figures.html`) : fondateur en tête,
+foyers en cartes (ordre historique, foyer du disciple d'abord, « Autres foyers » en dernier),
+grille de portraits (nom arabe à défaut), page d'un foyer avec l'arbre de sa silsila
+historique (`figure_foyers.dart`, légende « ce n'est pas un arbre généalogique »). Années de
+naissance toujours absentes hors de la fiche, en attendant leur correction en base.
 **Profil refait le 2026-11-02** (maquette `ecran-profil.html`) : carte d'identité, « Ma pratique »
 (chiffres du téléphone, masquables), « Mon chemin spirituel » et « Confidentialité » qui
 disent l'état de chaque élément sans jamais son contenu, « Application » (langue, contraste,

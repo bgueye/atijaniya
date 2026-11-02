@@ -1,50 +1,53 @@
+// Onglet Figures — refait le 2026-11-02 d'après la maquette de référence
+// `docs/maquettes/ecran-figures.html`, décisions validées dans
+// `docs/maquettes/README.md` :
+// - le fondateur en tête, dans sa propre carte (sans année de naissance : les
+//   années ne s'affichent pas hors de la fiche tant qu'elles ne sont pas
+//   corrigées en base) ;
+// - les foyers en cartes-collections, dans l'ordre historique, le foyer du
+//   disciple en premier s'il est renseigné, « Autres foyers » en dernier ;
+// - une grille de portraits ; sans portrait, le nom arabe sert d'image ;
+// - la page d'un foyer (`foyer_screen.dart`), avec sa silsila ;
+// - l'administration en une ligne, en bas.
+//
+// IMPORTANT (CLAUDE.md — contenu religieux ; docs/01 § 8) : les figures
+// viennent de la table `figures`, que la RLS ne renvoie qu'une fois validées.
+// Si aucune n'existe, l'écran le dit plutôt que d'inventer un contenu.
+//
+// Recherche par nom (audit Figures du 2026-10-25, P2-1) inchangée : français
+// et arabe, translittérations tolérées (`figure_search.dart`).
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_theme.dart';
+import '../../../core/widgets/content_text.dart';
+import '../../../core/widgets/directional_chevron.dart';
+import '../../../core/widgets/eyebrow.dart';
+import '../../../core/widgets/list_group.dart';
+import '../../../core/widgets/list_search_field.dart';
+import '../../../core/widgets/notice.dart';
+import '../../../core/widgets/section_title.dart';
+import '../../../core/widgets/state_pill.dart';
 import '../../../l10n/app_localizations.dart';
-import '../../lineage/domain/lineage_models.dart' show Foyer;
-import '../../lineage/presentation/foyer_label.dart';
+import '../../lineage/presentation/lineage_providers.dart';
+import '../../profil/presentation/profile_providers.dart';
+import '../domain/figure_foyers.dart';
 import '../domain/figure_models.dart';
 import '../domain/figure_search.dart';
 import 'featured_figure_admin_screen.dart';
-import 'figure_detail_screen.dart';
+import 'figure_cards.dart';
 import 'figure_form_screen.dart';
-import 'figure_portrait.dart';
 import 'figures_providers.dart';
 import 'figures_review_screen.dart';
-import '../../profil/presentation/profile_providers.dart';
-import '../../../core/widgets/directional_chevron.dart';
-import '../../../core/widgets/content_text.dart';
-import '../../../core/widgets/list_search_field.dart';
-import '../../../core/widgets/justified_choice_chips.dart';
+import 'foyer_screen.dart';
 
-/// Liste des figures — fondateurs et familles religieuses. Priorité P1
-/// (docs/03-architecture-ecrans.md).
-///
-/// IMPORTANT (CLAUDE.md — contenu religieux ; docs/01-perimetre-fonctionnel.md
-/// § 8) : contrairement au module Wirds, ce contenu provient de la table
-/// Supabase `figures` (voir `figure_models.dart`) — la RLS ne renvoie que
-/// les lignes `content_status = 'valide'`, filtrées côté serveur. Si aucune
-/// figure validée n'existe encore, l'écran affiche un état vide honnête
-/// plutôt qu'un contenu inventé.
-///
-/// Bouton "Contenu à valider" affiché uniquement si `isAdminProvider` vaut
-/// `true` — seul chemin de l'app vers `FiguresReviewScreen` (relecture des
-/// brouillons avant publication). "Mouqaddam vérifié" n'accorde aucun droit
-/// ici, voir la note dans `figures_review_screen.dart`.
-///
-/// Filtre par foyer en tête de liste depuis le 2026-10-18 : avant, le foyer
-/// d'une figure était saisi par l'admin mais invisible pour le disciple, et
-/// 46 fiches sur 70 étaient en « Autre ». Seuls les foyers présents dans la
-/// liste sont proposés.
-///
-/// Recherche par nom au-dessus du filtre depuis l'audit Figures du
-/// 2026-10-25 (P2-1) : il fallait douze défilements pour atteindre certaines
-/// fiches. Elle se combine au foyer choisi ; la logique (normalisation,
-/// variantes de translittération) est dans `figure_search.dart`.
+/// Nombre de figures de l'aperçu « Toutes les figures » sur la page
+/// principale ; le reste s'affiche à la demande (la grille entière défilerait
+/// longtemps : l'entrée naturelle, ce sont les foyers).
+const _previewCount = 6;
+
 class FiguresScreen extends ConsumerStatefulWidget {
   const FiguresScreen({super.key});
 
@@ -53,10 +56,8 @@ class FiguresScreen extends ConsumerStatefulWidget {
 }
 
 class _FiguresScreenState extends ConsumerState<FiguresScreen> {
-  /// Foyer choisi ; `null` : tous.
-  Foyer? _foyer;
-
   final _searchController = TextEditingController();
+  bool _showAll = false;
 
   @override
   void dispose() {
@@ -68,327 +69,266 @@ class _FiguresScreenState extends ConsumerState<FiguresScreen> {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     final figuresAsync = ref.watch(figuresProvider);
-    final isAdmin = ref.watch(isAdminProvider);
+    final allFigures = figuresAsync.valueOrNull;
 
-    return Column(
-      children: [
-        if (isAdmin)
-          Padding(
-            padding: const EdgeInsets.fromLTRB(16, 12, 16, 0),
-            child: Wrap(
-              spacing: 8,
-              runSpacing: 8,
-              children: [
-                OutlinedButton.icon(
-                  onPressed: () => Navigator.of(context).push(
-                    MaterialPageRoute(builder: (_) => const FiguresReviewScreen()),
-                  ),
-                  icon: const Icon(Icons.fact_check_outlined, size: 18),
-                  label: Text(l10n.figuresReviewButton),
-                ),
-                OutlinedButton.icon(
-                  onPressed: () => Navigator.of(context).push(
-                    MaterialPageRoute(builder: (_) => const FigureFormScreen()),
-                  ),
-                  icon: const Icon(Icons.add, size: 18),
-                  label: Text(l10n.figuresCreateButton),
-                ),
-                OutlinedButton.icon(
-                  onPressed: () => Navigator.of(context).push(
-                    MaterialPageRoute(builder: (_) => const FeaturedFigureAdminScreen()),
-                  ),
-                  icon: const Icon(Icons.push_pin_outlined, size: 18),
-                  label: Text(l10n.featuredFigureAdminButton),
-                ),
-              ],
+    if (allFigures == null) {
+      if (figuresAsync.hasError) {
+        return Padding(
+          padding: const EdgeInsets.all(16),
+          child: Notice.fromError(
+            figuresAsync.error!,
+            message: l10n.figuresLoadError,
+            onRetry: () => ref.invalidate(figuresProvider),
+          ),
+        );
+      }
+      return Center(child: CircularProgressIndicator(color: AppColors.emerald));
+    }
+    if (allFigures.isEmpty) {
+      return Padding(
+        padding: const EdgeInsets.all(16),
+        child: Notice.info('${l10n.figuresEmptyTitle}\n${l10n.figuresEmptyBody}'),
+      );
+    }
+
+    final isArabic = Localizations.localeOf(context).languageCode == 'ar';
+    // Liens de silsila : seulement pour le nombre de disciples du fondateur ;
+    // sans eux, la carte du fondateur s'affiche sans ce chiffre.
+    final links = ref.watch(silsilaLinksProvider).valueOrNull;
+    // Foyer du disciple, lu dans sa lignée : ne sert qu'à l'ordre des foyers
+    // sur son téléphone, rien n'est montré à personne.
+    final userId = ref.watch(currentUserIdProvider);
+    final userFoyer = userId == null ? null : ref.watch(myLineageProvider).valueOrNull?.foyer;
+    final query = _searchController.text.trim();
+    String? captionFor(Figure f) => f.foyer == null ? null : figuresFoyerLabel(f.foyer!, l10n);
+    List<Figure> sorted(List<Figure> list) => isArabic ? sortFiguresByArabicName(list) : list;
+
+    final founders = allFigures.where((f) => f.category == FigureCategory.founder).toList();
+    final foyers = orderedFoyers(allFigures, userFoyer: userFoyer);
+
+    final children = <Widget>[
+      ListSearchField(
+        controller: _searchController,
+        onChanged: () => setState(() {}),
+        hint: l10n.figuresSearchHint,
+        clearTooltip: l10n.figuresSearchClear,
+      ),
+    ];
+
+    if (query.isNotEmpty) {
+      // Recherche : les résultats en grille, sans le reste de la page.
+      final results = sorted(searchFigures(allFigures, query));
+      children.addAll([
+        SectionTitle(l10n.figuresSearchResults, padding: const EdgeInsetsDirectional.fromSTEB(2, 20, 0, 8)),
+        if (results.isEmpty)
+          Notice.info(l10n.figuresSearchNoResult(query))
+        else
+          FigureGrid(figures: results, captionFor: captionFor),
+      ]);
+    } else {
+      final everyone = sorted(allFigures);
+      final shown = _showAll ? everyone : everyone.take(_previewCount).toList();
+      children.addAll([
+        for (final founder in founders) ...[
+          const SizedBox(height: 14),
+          _FounderCard(
+            figure: founder,
+            disciples: links == null ? null : discipleCount(founder.id, links),
+            foyer: founder.foyer == null ? null : figuresFoyerLabel(founder.foyer!, l10n),
+          ),
+        ],
+        if (foyers.isNotEmpty) ...[
+          SectionTitle(
+            l10n.figuresFoyersTitle,
+            padding: const EdgeInsetsDirectional.fromSTEB(2, 24, 0, 8),
+          ),
+          SizedBox(
+            height: 156 + 64,
+            child: ListView.separated(
+              scrollDirection: Axis.horizontal,
+              clipBehavior: Clip.none,
+              itemCount: foyers.length,
+              separatorBuilder: (_, __) => const SizedBox(width: 10),
+              itemBuilder: (context, i) {
+                final foyer = foyers[i];
+                return FoyerCollectionCard(
+                  label: figuresFoyerLabel(foyer, l10n),
+                  figures: allFigures.where((f) => f.foyer == foyer).toList(),
+                  onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => FoyerScreen(foyer: foyer))),
+                );
+              },
             ),
           ),
-        Expanded(
-          child: figuresAsync.when(
-            loading: () => Center(child: CircularProgressIndicator(color: AppColors.emerald)),
-            error: (error, stackTrace) => Center(
-              child: Padding(
-                padding: const EdgeInsets.all(24),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Icon(Icons.wifi_off, color: AppColors.bronze, size: 32),
-                    const SizedBox(height: 12),
-                    Text(l10n.figuresLoadError,
-                        textAlign: TextAlign.center, style: TextStyle(color: AppColors.secondaryInk)),
-                    const SizedBox(height: 12),
-                    OutlinedButton(
-                      onPressed: () => ref.invalidate(figuresProvider),
-                      child: Text(l10n.figuresRetry),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-            data: (allFigures) {
-              if (allFigures.isEmpty) {
-                return _EmptyState(title: l10n.figuresEmptyTitle, body: l10n.figuresEmptyBody);
-              }
-              final foyers = foyersPresentIn(allFigures);
-              // Un foyer choisi qui n'existe plus dans la liste (fiche
-              // modifiée entre-temps) revient à « Tous » plutôt qu'à une
-              // liste vide sans puce sélectionnée.
-              final foyer = foyers.contains(_foyer) ? _foyer : null;
-              final query = _searchController.text.trim();
-              final matching = searchFigures(filterFiguresByFoyer(allFigures, foyer), query);
-              // En arabe, tri sur le nom arabe, qui sert aussi de titre aux
-              // cartes (voir `_FigureTile`) ; la base trie sur le nom
-              // français (audit Figures du 2026-10-25, P2-8).
-              final isArabic = Localizations.localeOf(context).languageCode == 'ar';
-              final figures = isArabic ? sortFiguresByArabicName(matching) : matching;
-              final founders = figures.where((f) => f.category == FigureCategory.founder).toList();
-              final families = figures.where((f) => f.category == FigureCategory.religiousFamily).toList();
-
-              // Tirer pour actualiser (audit Figures du 2026-10-25, P3-3) :
-              // `figuresProvider` reste en cache toute la session, et une
-              // fiche dépubliée restait listée jusqu'au redémarrage. La liste
-              // en place reste affichée pendant le rechargement.
-              return RefreshIndicator(
-                color: AppColors.emerald,
-                onRefresh: () => ref.refresh(figuresProvider.future),
-                child: ListView(
-                  // Défilable même quand la liste tient dans l'écran : sans
-                  // défilement possible, le geste d'actualisation ne part pas.
-                  physics: const AlwaysScrollableScrollPhysics(),
-                  padding: const EdgeInsets.all(16),
-                  children: [
-                    ListSearchField(
-                      controller: _searchController,
-                      onChanged: () => setState(() {}),
-                      hint: l10n.figuresSearchHint,
-                      clearTooltip: l10n.figuresSearchClear,
-                    ),
-                    const SizedBox(height: 12),
-                    // Inutile de filtrer quand toutes les fiches ont le même
-                    // foyer (ou aucun).
-                    if (foyers.length > 1) ...[
-                      _FoyerFilter(
-                        foyers: foyers,
-                        selected: foyer,
-                        onSelected: (value) => setState(() => _foyer = value),
-                      ),
-                      const SizedBox(height: 4),
-                    ],
-                    if (figures.isEmpty)
-                      Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 32),
-                        // Une recherche sans résultat le dit, avec la saisie,
-                        // plutôt que de laisser croire que le foyer est vide.
-                        child: Text(
-                          query.isNotEmpty ? l10n.figuresSearchNoResult(query) : l10n.figuresNoneForFoyer,
-                          textAlign: TextAlign.center,
-                          style: TextStyle(color: AppColors.secondaryInk),
-                        ),
-                      ),
-                    if (founders.isNotEmpty) ...[
-                      _SectionHeader(title: l10n.figuresSectionFounders),
-                      for (final figure in founders) _FigureTile(figure: figure),
-                      const SizedBox(height: 16),
-                    ],
-                    if (families.isNotEmpty) ...[
-                      _SectionHeader(title: l10n.figuresSectionFamilies),
-                      for (final figure in families) _FigureTile(figure: figure),
-                    ],
-                  ],
-                ),
-              );
-            },
-          ),
+        ],
+        SectionTitle(
+          l10n.figuresAllTitle,
+          padding: const EdgeInsetsDirectional.fromSTEB(2, 24, 0, 8),
         ),
-      ],
+        FigureGrid(figures: shown, captionFor: captionFor),
+        if (everyone.length > _previewCount)
+          Padding(
+            padding: const EdgeInsets.only(top: 8),
+            child: OutlinedButton(
+              onPressed: () => setState(() => _showAll = !_showAll),
+              child: Text(_showAll ? l10n.figuresShowLess : l10n.figuresShowAll(everyone.length)),
+            ),
+          ),
+      ]);
+    }
+
+    if (ref.watch(isAdminProvider)) {
+      children.addAll([const SizedBox(height: 20), const _AdminLine()]);
+    }
+
+    // Tirer pour actualiser (audit Figures du 2026-10-25, P3-3) : la liste
+    // reste en cache toute la session ; elle reste affichée pendant le
+    // rechargement.
+    return RefreshIndicator(
+      color: AppColors.emerald,
+      onRefresh: () async {
+        ref.invalidate(silsilaLinksProvider);
+        // La liste en place reste affichée pendant le rechargement.
+        final _ = await ref.refresh(figuresProvider.future);
+      },
+      child: ListView(
+        physics: const AlwaysScrollableScrollPhysics(),
+        padding: const EdgeInsets.fromLTRB(16, 12, 16, 24),
+        children: children,
+      ),
     );
   }
 }
 
-/// Puces de foyer, sur deux lignes justifiées (demande du porteur de projet
-/// du 2026-10-25 ; trois lignes en drapeau auparavant) : avec jusqu'à huit
-/// choix, une seule ligne (comme le filtre des zawiyas, qui n'en a que
-/// quatre) obligerait à réduire le texte ou à faire défiler, et un foyer
-/// caché hors de l'écran serait manqué. Retour à la ligne libre si deux
-/// lignes ne suffisent pas (voir `JustifiedChoiceChips`, partagé avec l'onglet Zawiyas).
-class _FoyerFilter extends StatelessWidget {
-  const _FoyerFilter({required this.foyers, required this.selected, required this.onSelected});
+/// Carte du fondateur de la Tariqa : portrait, nom arabe en Amiri, nom
+/// français en Cormorant, foyer et nombre de disciples rattachés dans l'app.
+/// Pas d'année de naissance (décision validée du 2026-11-02).
+class _FounderCard extends StatelessWidget {
+  const _FounderCard({required this.figure, required this.disciples, required this.foyer});
 
-  final List<Foyer> foyers;
-  final Foyer? selected;
-  final ValueChanged<Foyer?> onSelected;
+  final Figure figure;
+  final int? disciples;
+  final String? foyer;
 
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-    return JustifiedChoiceChips<Foyer?>(
-      rows: 2,
-      options: [
-        (null, l10n.figuresFoyerFilterAll),
-        for (final foyer in foyers) (foyer, foyerLabel(foyer, l10n)),
-      ],
-      selected: selected,
-      onSelected: onSelected,
-    );
-  }
-}
-
-class _EmptyState extends StatelessWidget {
-  const _EmptyState({required this.title, required this.body});
-
-  final String title;
-  final String body;
-
-  @override
-  Widget build(BuildContext context) {
-    return Center(
-      child: Padding(
-        padding: const EdgeInsets.all(24),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(Icons.auto_stories_outlined, color: AppColors.bronze, size: 40),
-            const SizedBox(height: 16),
-            ContentText(title, style: Theme.of(context).textTheme.headlineSmall, textAlign: TextAlign.center),
-            const SizedBox(height: 8),
-            ContentText(body, textAlign: TextAlign.center, style: TextStyle(color: AppColors.secondaryInk)),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class _SectionHeader extends StatelessWidget {
-  const _SectionHeader({required this.title});
-
-  final String title;
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 12),
-      // `header: true` : annoncé comme titre par les lecteurs d'écran (audit
-      // Figures du 2026-10-25, P2-2).
-      child: Semantics(
-        header: true,
-        child: ContentText(
-          title,
-          style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 16, color: AppColors.ink),
-        ),
-      ),
-    );
-  }
-}
-
-/// Carte figure — portrait + nom FR + nom AR uniquement (le résumé reste sur
-/// `FigureDetailScreen`), le nom de la langue de l'interface en titre. Chaque nom tient sur sa propre ligne avec ellipsis :
-/// contrairement à l'ancien `ListTile` (titre + sous-titre + nom arabe en
-/// `trailing` sans largeur contrainte), un nom long ne peut plus déborder ni
-/// écraser le reste de la carte. Nom FR en Cormorant Garamond — police dédiée
-/// "noms de figures" du design system (design/design_tokens.yaml), jamais
-/// utilisée jusqu'ici sur cet écran.
-class _FigureTile extends StatelessWidget {
-  const _FigureTile({required this.figure});
-
-  final Figure figure;
-
-  static final _placeholder = Icon(Icons.person_outline, color: AppColors.emerald);
-
-  /// Nom français : en titre (encre, 18 pt) ou en second (émeraude, 16 pt).
-  /// 2 lignes en titre plutôt qu'1 : un nom tronqué à 1 ligne masquait
-  /// parfois l'épithète qui différencie deux figures proches (ex. deux
-  /// "Cheikh Ahmed Tidiane Sy") — constaté à l'audit design pré-publication
-  /// Play Store, alors que des cartes similaires (Khadara) passaient déjà à
-  /// la ligne sans souci.
-  Widget _frenchName({required bool title}) {
-    return ContentText(
-      figure.nameFrench,
-      maxLines: title ? 2 : 1,
-      overflow: TextOverflow.ellipsis,
-      style: GoogleFonts.cormorantGaramond(
-        fontWeight: FontWeight.w600,
-        fontSize: title ? 18 : 16,
-        color: title ? AppColors.ink : AppColors.emerald,
-      ),
-    );
-  }
-
-  /// Nom arabe, en Amiri (noms propres arabes, `design_tokens.yaml`) : en
-  /// titre (encre, 18 pt, 2 lignes) ou en second (émeraude, 16 pt).
-  Widget _arabicName({required bool title}) {
-    return Text(
-      figure.nameArabic,
-      maxLines: title ? 2 : 1,
-      overflow: TextOverflow.ellipsis,
-      textAlign: TextAlign.right,
-      textDirection: TextDirection.rtl,
-      style: AppTheme.sacredText(fontSize: title ? 18 : 16, color: title ? AppColors.ink : AppColors.emerald),
-    );
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final isArabic = Localizations.localeOf(context).languageCode == 'ar';
-    return Card(
-      child: InkWell(
-        borderRadius: BorderRadius.circular(16),
-        onTap: () => Navigator.of(context).push(
-          MaterialPageRoute(builder: (_) => FigureDetailScreen(figure: figure)),
-        ),
-        child: Padding(
-          padding: const EdgeInsets.all(12),
-          child: Row(
-            children: [
-              Container(
-                width: 56,
-                height: 56,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(12),
-                  color: AppColors.emeraldSoft,
+    final disciples = this.disciples;
+    return Semantics(
+      button: true,
+      child: Card(
+        margin: EdgeInsets.zero,
+        clipBehavior: Clip.antiAlias,
+        child: InkWell(
+          onTap: () => openFigure(context, figure),
+          child: IntrinsicHeight(
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                SizedBox(width: 112, child: FigureImage(figure: figure, arabicSize: 18)),
+                Expanded(
+                  child: Padding(
+                    padding: const EdgeInsets.fromLTRB(14, 12, 12, 12),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Eyebrow(l10n.figuresFounderEyebrow),
+                        const SizedBox(height: 4),
+                        Text(
+                          figure.nameArabic,
+                          textDirection: TextDirection.rtl,
+                          style: AppTheme.sacredText(fontSize: 22, color: AppColors.emerald).copyWith(height: 1.4),
+                        ),
+                        ContentText(
+                          figure.nameFrench,
+                          style: AppTheme.titleText(fontSize: 21, color: AppColors.ink, height: 1.15),
+                        ),
+                        if (foyer != null) ...[
+                          const SizedBox(height: 4),
+                          Text(foyer!, style: TextStyle(fontSize: 12.5, color: AppColors.secondaryInk)),
+                        ],
+                        if (disciples != null && disciples > 0) ...[
+                          const SizedBox(height: 8),
+                          StatePill(l10n.figuresFounderDisciples(disciples), variant: StatePillVariant.done),
+                        ],
+                      ],
+                    ),
+                  ),
                 ),
-                // Bordure en avant-plan : elle reste visible par-dessus la
-                // photo, comme du temps de l'ancienne `DecorationImage`.
-                foregroundDecoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(12),
-                  border: Border.all(color: AppColors.gold.withValues(alpha: 0.45)),
-                ),
-                // Portrait introuvable ou absent : même icône (voir
-                // `FigurePortrait`).
-                child: figure.portraitUrl == null
-                    ? _placeholder
-                    : FigurePortrait(
-                        url: figure.portraitUrl!,
-                        size: 56,
-                        borderRadius: 12,
-                        errorPlaceholder: _placeholder,
-                      ),
-              ),
-              const SizedBox(width: 14),
-              Expanded(
-                child: Column(
-                  // stretch (pas start) : sans ça chaque Text se dimensionne à
-                  // sa propre largeur (shrink-wrap) et `textAlign: right` sur
-                  // le nom arabe ci-dessous n'a alors aucun effet visible —
-                  // il n'y a jamais de largeur excédentaire à droite pour
-                  // aligner le texte dedans.
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  mainAxisSize: MainAxisSize.min,
-                  // En arabe, le nom arabe devient le titre et le nom
-                  // français passe en second, comme dans la liste des wirds
-                  // (audit Figures du 2026-10-25, P2-8). Le titre garde
-                  // 2 lignes, le second nom 1.
-                  children: isArabic
-                      ? [_arabicName(title: true), const SizedBox(height: 3), _frenchName(title: false)]
-                      : [_frenchName(title: true), const SizedBox(height: 3), _arabicName(title: false)],
-                ),
-              ),
-              const SizedBox(width: 8),
-              DirectionalChevron(size: 16, color: AppColors.bronze.withValues(alpha: 0.6)),
-            ],
+              ],
+            ),
           ),
         ),
       ),
+    );
+  }
+}
+
+/// Administration, admin seulement : une ligne en bas (à valider, créer,
+/// figure de la semaine), au lieu de trois boutons en haut. Le statut de
+/// mouqaddam n'accorde aucun droit ici.
+class _AdminLine extends ConsumerWidget {
+  const _AdminLine();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
+    final drafts = ref.watch(draftFiguresProvider).valueOrNull?.length;
+    void open(BuildContext sheetContext, Widget screen) {
+      Navigator.of(sheetContext).pop();
+      Navigator.of(context).push(MaterialPageRoute(builder: (_) => screen));
+    }
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        Divider(height: 1, color: AppColors.bronze.withValues(alpha: 0.2)),
+        InkWell(
+          onTap: () => showModalBottomSheet<void>(
+            context: context,
+            showDragHandle: true,
+            backgroundColor: AppColors.offWhite,
+            builder: (sheetContext) => SafeArea(
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+                child: ListGroup(items: [
+                  ListGroupItem(
+                    icon: Icons.fact_check_outlined,
+                    tone: ListGroupTone.sacred,
+                    title: l10n.figuresReviewButton,
+                    trailing: drafts != null && drafts > 0 ? StatePill.count(drafts) : null,
+                    showChevron: true,
+                    onTap: () => open(sheetContext, const FiguresReviewScreen()),
+                  ),
+                  ListGroupItem(
+                    icon: Icons.add,
+                    tone: ListGroupTone.sacred,
+                    title: l10n.figuresCreateButton,
+                    onTap: () => open(sheetContext, const FigureFormScreen()),
+                  ),
+                  ListGroupItem(
+                    icon: Icons.push_pin_outlined,
+                    tone: ListGroupTone.sacred,
+                    title: l10n.featuredFigureAdminButton,
+                    onTap: () => open(sheetContext, const FeaturedFigureAdminScreen()),
+                  ),
+                ]),
+              ),
+            ),
+          ),
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(minHeight: 48),
+            child: Row(
+              children: [
+                Expanded(
+                  child: Text(l10n.figuresAdminLine, style: TextStyle(fontSize: 13, color: AppColors.secondaryInk)),
+                ),
+                if (drafts != null && drafts > 0) ...[StatePill.count(drafts), const SizedBox(width: 4)],
+                DirectionalChevron(color: AppColors.bronze, size: 20),
+              ],
+            ),
+          ),
+        ),
+      ],
     );
   }
 }

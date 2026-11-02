@@ -14,7 +14,7 @@ aplats : les maquettes ne chargent pas les photos de la base.
 | Accueil | `ecran-accueil.html` (proposition B, la seconde maquette de la page) | **Implémenté** sur la branche `claude/attijaniya-homepage-redesign-elyti4`, voir `docs/09`, entrée du 2026-11-01 |
 | Wird | `ecran-wird.html` | **Implémenté** le 2026-11-02 sur la branche `claude/attijaniya-homepage-redesign-elyti4`, voir `docs/09`, entrée du 2026-11-02 (le guide d'un wird reste à refaire) |
 | Zawiyas | `ecran-zawiyas.html` | Proposé, à implémenter (demande une colonne `country`, donc une migration) |
-| Figures | `ecran-figures.html` | Proposé, à implémenter |
+| Figures | `ecran-figures.html` | **Implémenté** le 2026-11-02 sur la branche `claude/attijaniya-homepage-redesign-elyti4`, voir `docs/09` |
 | Communauté | `ecran-communaute.html` | Proposé, à implémenter |
 | Profil | `ecran-profil.html` | **Implémenté** le 2026-11-02 sur la branche `claude/attijaniya-homepage-redesign-elyti4` (écran Paramètres supprimé), voir `docs/09` |
 | Pratique des wirds (tasbih) | `ecran-pratique.html` | **Implémenté** le 2026-11-02 sur la branche `claude/attijaniya-homepage-redesign-elyti4`, voir `docs/09`, entrée « Refonte de l'écran de pratique » |
