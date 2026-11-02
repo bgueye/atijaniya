@@ -1,0 +1,392 @@
+<!doctype html>
+<html lang="fr">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Écrans de détail At-Tijaniya</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Cormorant+Garamond:wght@500;600&family=Jost:wght@300;400;500;600&display=swap">
+<style>
+/* Layout : colonne de lecture ; maquette de téléphone à gauche avec navigation entre les
+   quatre fiches, explications à droite ; puis avant/après, décisions et limites.
+   Couleurs de l'app : jetons du kit (docs/kit/tokens.json). */
+:root{
+  --bg:#F3EEE2; --surface:#FFFDF8; --fg:#2B2620; --muted:#66625C; --line:rgba(140,122,91,.28);
+  --accent:#1C6E4A; --accent-soft:#E4EEE8; --gold:#9A7A2E; --gold-soft:#F1E6C9;
+  --z:#0F3D2E; --em:#1C6E4A; --go:#C9A24B; --gos:#F1E6C9; --pa:#F7F2E7; --ems:#E4EEE8;
+  --ink:#2B2620; --br:#8C7A5B; --off:#FFFDF8; --ink2:rgba(43,38,32,.72); --son:rgba(247,242,231,.74); --hair:rgba(140,122,91,.2);
+  --f-display:"Cormorant Garamond", Georgia, serif;
+  --f-ui:"Jost", "Segoe UI", system-ui, sans-serif;
+  --f-ar:"Amiri", "Traditional Arabic", serif;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#101a16; --surface:#17241f; --fg:#ECE6D8; --muted:#B5AE9F; --line:rgba(201,162,75,.22);
+  --accent:#6FC29A; --accent-soft:#1d3a2e; --gold:#D8B661; --gold-soft:#2f2a1b; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#101a16; --surface:#17241f; --fg:#ECE6D8; --muted:#B5AE9F; --line:rgba(201,162,75,.22);
+  --accent:#6FC29A; --accent-soft:#1d3a2e; --gold:#D8B661; --gold-soft:#2f2a1b; color-scheme:dark}
+
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--fg);font-family:var(--f-ui);font-size:16px;line-height:1.55;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:32px 64px}
+.wrap{max-width:1100px;margin:0 auto;display:flex;flex-direction:column;gap:56px}
+h1,h2{font-family:var(--f-display);font-weight:600;text-wrap:balance;margin:0;line-height:1.1}
+h1{font-size:clamp(2.2rem,5vw,3.1rem)} h2{font-size:1.9rem}
+h3{font-size:1.05rem;font-weight:600;margin:0}
+p{margin:0} code{font-size:.88em}
+.eyebrow{font-size:.78rem;letter-spacing:.12em;text-transform:uppercase;color:var(--gold);font-weight:500}
+.lede{font-size:1.1rem;color:var(--muted);max-width:66ch}
+header.top,section{display:flex;flex-direction:column;gap:16px}
+.diag,.decisions{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px}
+.diag article,.decisions article{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:16px 18px;display:flex;flex-direction:column;gap:6px;min-width:0}
+.diag p,.decisions p{font-size:.95rem;color:var(--muted)}
+.tag{font-size:.72rem;letter-spacing:.08em;text-transform:uppercase;font-weight:600;color:var(--accent)}
+.tag.warn{color:#8A4B12}
+.rec{font-size:.9rem;color:var(--accent);font-weight:500}
+
+.demo{display:grid;grid-template-columns:minmax(0,370px) minmax(0,1fr);gap:40px;align-items:start}
+@media (max-width:820px){.demo{grid-template-columns:1fr}}
+.phonecol{display:flex;flex-direction:column;gap:12px;align-items:center}
+.states{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;max-width:380px}
+.states button{font:inherit;font-size:.82rem;padding:6px 12px;border-radius:999px;border:1px solid var(--line);background:var(--surface);color:var(--fg);cursor:pointer}
+.states button[aria-pressed="true"]{background:var(--accent);color:var(--surface);border-color:var(--accent)}
+button:focus-visible,[data-go]:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+.phone{width:100%;max-width:360px;border-radius:34px;background:#1b1b1b;padding:10px;box-shadow:0 20px 50px -20px rgba(0,0,0,.45)}
+.screen{position:relative;height:780px;border-radius:26px;overflow:hidden;background:var(--pa);color:var(--ink);display:flex;flex-direction:column}
+.scroll{flex:1;overflow-y:auto;overflow-x:hidden;scrollbar-width:none;padding-bottom:20px}
+.scroll::-webkit-scrollbar{display:none}
+[data-go]{cursor:pointer}
+
+/* Barre flottante sur un en-tête */
+.fbar{position:absolute;top:10px;left:10px;right:10px;display:flex;justify-content:space-between;z-index:3}
+.fbar span{width:36px;height:36px;border-radius:50%;background:rgba(15,61,46,.45);color:var(--off);display:grid;place-items:center;font-size:.95rem;backdrop-filter:blur(4px)}
+
+/* Fiche figure */
+.fhero{position:relative;height:300px;background:linear-gradient(170deg,#7a624b,#33291f 70%);color:var(--off);display:flex;align-items:flex-end}
+.fhero::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(15,61,46,0) 30%,rgba(15,61,46,.95) 100%)}
+.fhero .ph{position:absolute;top:40%;left:50%;transform:translate(-50%,-50%);font-size:.62rem;color:rgba(255,253,248,.45)}
+.fhero .tx{position:relative;z-index:1;padding:0 18px 16px;width:100%}
+.fhero .ar{font-family:var(--f-ar);font-size:1.7rem;color:var(--go);direction:rtl;text-align:right;line-height:1.5}
+.fhero .fr{font-family:var(--f-display);font-size:1.9rem;font-weight:600;line-height:1.02}
+.fhero .m{font-size:.74rem;color:var(--son);margin-top:4px}
+.facts{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;padding:12px 14px 0}
+.fact{background:var(--off);border:1px solid var(--hair);border-radius:14px;padding:9px 10px;cursor:pointer}
+.fact b{font-family:var(--f-display);font-size:1.5rem;font-weight:600;color:var(--em);line-height:1;display:block}
+.fact small{font-size:.66rem;color:var(--ink2);line-height:1.25;display:block}
+.seg{position:sticky;top:0;z-index:2;margin:12px 0 0;padding:8px 14px;background:var(--pa)}
+.seg div{display:grid;grid-auto-flow:column;grid-auto-columns:1fr;background:rgba(140,122,91,.12);border-radius:12px;padding:3px}
+.seg button{font:inherit;font-size:.76rem;border:0;background:none;min-height:36px;border-radius:10px;color:var(--ink2);cursor:pointer}
+.seg button[aria-pressed="true"]{background:var(--off);color:var(--ink);font-weight:500;box-shadow:0 1px 3px rgba(43,38,32,.08)}
+.toc{display:flex;gap:6px;overflow-x:auto;padding:4px 14px 2px;scrollbar-width:none}
+.toc::-webkit-scrollbar{display:none}
+.toc span{font-size:.66rem;white-space:nowrap;padding:5px 10px;border-radius:999px;border:1px solid rgba(140,122,91,.35);color:var(--ink2)}
+.toc span.on{background:var(--ink);color:var(--off);border-color:var(--ink)}
+.read{padding:6px 18px 0}
+.read .meta{display:flex;justify-content:space-between;font-size:.66rem;color:var(--ink2);padding:6px 0 4px}
+.read h4{margin:14px 0 6px;font-family:var(--f-display);font-size:1.25rem;font-weight:600;line-height:1.15}
+.read p{font-size:.88rem;line-height:1.65;margin-bottom:10px}
+.read p:first-of-type::first-letter{font-family:var(--f-display);font-size:2.6rem;float:left;line-height:.9;padding:4px 6px 0 0;color:var(--em)}
+.chain{padding:10px 18px 0;display:flex;flex-direction:column}
+.link{display:flex;gap:12px;align-items:center;position:relative;padding:7px 0}
+.link .av{width:40px;height:40px;border-radius:50%;flex:none;background:linear-gradient(170deg,#7a624b,#33291f 75%);border:2px solid var(--off);box-shadow:0 0 0 1px var(--hair);display:grid;place-items:center;font-family:var(--f-ar);font-size:.8rem;color:var(--em)}
+.link .av.m{background:var(--ems)}
+.link.me .av{box-shadow:0 0 0 2px var(--go)}
+.link b{font-weight:500;font-size:.84rem;display:block;line-height:1.2}
+.link small{font-size:.64rem;color:var(--ink2)}
+.link:not(:last-child)::after{content:"";position:absolute;left:19px;top:47px;height:14px;border-left:1.5px solid rgba(28,110,74,.4)}
+.link.me b{color:var(--em)}
+.disc{display:flex;gap:6px;flex-wrap:wrap;padding:4px 0 0 52px}
+.disc span{font-size:.66rem;padding:4px 9px;border-radius:999px;background:var(--off);border:1px solid var(--hair);cursor:pointer}
+.legend{font-size:.64rem;color:var(--ink2);padding:10px 18px 0;line-height:1.4}
+
+/* Section + carte + listes (kit) */
+.sh{padding:20px 18px 8px;display:flex;justify-content:space-between;align-items:baseline}
+.sh h4{margin:0;font-family:var(--f-display);font-size:1.25rem;font-weight:600}
+.sh span{font-size:.7rem;color:var(--ink2)}
+.list{margin:0 14px;background:var(--off);border:1px solid var(--hair);border-radius:16px;overflow:hidden}
+.item{display:flex;align-items:center;gap:12px;padding:10px 12px;min-height:48px}
+.item+.item{border-top:1px solid var(--hair)}
+.item .ic{width:34px;height:34px;border-radius:10px;display:grid;place-items:center;flex:none;background:var(--ems);color:var(--em);font-size:.9rem}
+.item .ic.g{background:var(--gos);color:var(--ink)}
+.item b{font-weight:500;font-size:.84rem;display:block;line-height:1.25}
+.item small{font-size:.66rem;color:var(--ink2);display:block}
+.item .end{margin-inline-start:auto;color:var(--br);font-size:.9rem}
+.date{width:46px;flex:none;border-radius:12px;background:var(--ems);color:var(--em);display:flex;flex-direction:column;align-items:center;padding:5px 0;line-height:1}
+.date b{font-family:var(--f-display);font-size:1.3rem;font-weight:600}
+.date small{font-size:.56rem;letter-spacing:.08em;text-transform:uppercase}
+.pill{display:inline-block;font-size:.6rem;padding:2px 8px;border-radius:999px;font-weight:500}
+.pill.todo{background:var(--gos);color:var(--ink)} .pill.done{background:var(--ems);color:var(--em)} .pill.n{background:var(--pa);color:var(--ink2);border:1px solid var(--hair)}
+
+/* Fiche zawiya */
+.zhero{background:var(--off);border-bottom:1px solid var(--hair);padding:56px 18px 16px;position:relative}
+.zhero .e{font-size:.62rem;letter-spacing:.14em;text-transform:uppercase;color:var(--ink2)}
+.zhero h5{margin:2px 0 6px;font-family:var(--f-display);font-size:1.9rem;font-weight:600;line-height:1.05}
+.zhero p{font-size:.84rem;line-height:1.55}
+.zhero .addr{font-size:.74rem;color:var(--ink2);margin-top:8px}
+.acts{display:flex;gap:8px;padding:12px 14px 0}
+.btn{font:inherit;font-size:.8rem;font-weight:500;border:0;border-radius:999px;padding:0 15px;min-height:40px;cursor:pointer;display:inline-flex;align-items:center;gap:6px}
+.btn.p{background:var(--em);color:var(--off)} .btn.o{background:transparent;color:var(--em);border:1px solid rgba(28,110,74,.4)}
+.founder{margin:0 14px;border-radius:16px;background:var(--z);color:var(--off);display:flex;gap:12px;align-items:center;padding:12px}
+.founder .av{width:52px;height:52px;border-radius:50%;background:linear-gradient(170deg,#7a624b,#33291f 75%);border:2px solid var(--go);flex:none}
+.founder .e{font-size:.58rem;letter-spacing:.12em;text-transform:uppercase;color:var(--go)}
+.founder b{font-family:var(--f-display);font-size:1.15rem;font-weight:600;display:block}
+.founder small{font-size:.66rem;color:var(--son)}
+.succ{margin:0 14px;background:var(--off);border:1px solid var(--hair);border-radius:16px;padding:6px 12px}
+.srow{display:grid;grid-template-columns:18px 1fr auto;gap:10px;align-items:center;padding:8px 0;position:relative}
+.srow+.srow{border-top:1px solid var(--hair)}
+.srow i{width:10px;height:10px;border-radius:50%;background:var(--ems);border:2px solid var(--em);justify-self:center}
+.srow.now i{background:var(--go);border-color:var(--go)}
+.srow b{font-weight:500;font-size:.8rem;line-height:1.25}
+.srow small{font-size:.64rem;color:var(--ink2);white-space:nowrap}
+.faces{display:flex;gap:10px;overflow-x:auto;padding:0 14px;scrollbar-width:none}
+.faces::-webkit-scrollbar{display:none}
+.face{flex:0 0 74px;text-align:center;font-size:.62rem;line-height:1.25;cursor:pointer}
+.face i{display:block;width:64px;height:64px;margin:0 auto 5px;border-radius:50%;background:linear-gradient(170deg,#7a624b,#33291f 75%);border:2px solid var(--off);box-shadow:0 0 0 1px var(--hair)}
+
+/* Fiche évènement */
+.ehero{background:var(--z);color:var(--off);padding:58px 18px 18px;position:relative;overflow:hidden}
+.ehero .big{display:flex;gap:14px;align-items:center}
+.ehero .bd{width:76px;height:84px;border-radius:16px;background:rgba(255,253,248,.08);border:1px solid rgba(201,162,75,.4);display:flex;flex-direction:column;align-items:center;justify-content:center;line-height:1;flex:none}
+.ehero .bd b{font-family:var(--f-display);font-size:2.4rem;font-weight:600;color:var(--go)}
+.ehero .bd small{font-size:.62rem;letter-spacing:.1em;text-transform:uppercase;color:var(--son)}
+.ehero h5{margin:0;font-family:var(--f-display);font-size:1.5rem;font-weight:600;line-height:1.1}
+.ehero .m{font-size:.72rem;color:var(--son);margin-top:6px}
+.ehero .cd{margin-top:14px;display:flex;gap:8px;flex-wrap:wrap}
+.ehero .cd span{font-size:.66rem;padding:4px 10px;border-radius:999px;background:rgba(255,253,248,.1)}
+.ehero .cd span.g{background:var(--go);color:var(--z);font-weight:600}
+.desc{padding:4px 18px 0;font-size:.86rem;line-height:1.6}
+.note{margin:12px 14px 0;font-size:.74rem;line-height:1.45;background:var(--gos);border-radius:12px;padding:10px 12px}
+
+/* Guide du wird */
+.gband{background:var(--z);color:var(--off);padding:56px 18px 18px;position:relative;overflow:hidden}
+.gband .ar{font-family:var(--f-ar);font-size:2.4rem;color:var(--go);line-height:1.4}
+.gband .fr{font-family:var(--f-display);font-size:1.6rem;font-weight:600;line-height:1}
+.gband .m{font-size:.72rem;color:var(--son);margin-top:4px}
+.gband .chips{display:flex;gap:6px;margin-top:12px;flex-wrap:wrap}
+.gband .chips span{font-size:.68rem;padding:5px 11px;border-radius:999px;background:rgba(255,253,248,.1);cursor:pointer}
+.gband canvas{position:absolute;right:-30px;top:-20px;width:150px;height:150px;opacity:.14}
+.cond{margin:12px 14px 0;font-size:.78rem;line-height:1.5;background:var(--off);border:1px solid var(--hair);border-radius:14px;padding:11px 12px}
+.cond b{font-weight:500}
+.steps{margin:0 14px;display:flex;flex-direction:column;gap:8px}
+.step{background:var(--off);border:1px solid var(--hair);border-radius:16px;overflow:hidden}
+.step .h{display:flex;align-items:center;gap:10px;padding:10px 12px;cursor:pointer}
+.step .n{width:26px;height:26px;border-radius:50%;background:var(--ems);color:var(--em);display:grid;place-items:center;font-size:.72rem;font-weight:600;flex:none}
+.step .h b{font-weight:500;font-size:.84rem;display:block;line-height:1.2}
+.step .h small{font-size:.64rem;color:var(--ink2)}
+.step .x{margin-inline-start:auto;font-size:.66rem;font-weight:600;color:var(--em);background:var(--ems);border-radius:999px;padding:3px 9px}
+.step .b{padding:0 14px 12px;text-align:center;border-top:1px solid var(--hair)}
+.step .b .ar{font-family:var(--f-ar);font-size:1.35rem;color:var(--em);direction:rtl;line-height:1.8;padding-top:8px}
+.step .b .tr{font-style:italic;font-size:.8rem;line-height:1.45}
+.step .b .tl{font-size:.74rem;color:var(--ink2);line-height:1.45;margin-top:4px}
+.step .b .cl{font-size:.66rem;color:var(--ink2);margin-top:8px;text-align:left}
+.cta{position:absolute;left:14px;right:14px;bottom:14px;z-index:4;font:inherit;font-size:.92rem;font-weight:500;border:0;border-radius:16px;padding:14px;background:var(--go);color:var(--z);box-shadow:0 8px 20px -8px rgba(15,61,46,.5)}
+
+.notes{display:flex;flex-direction:column;gap:16px;min-width:0}
+.nt{border-left:3px solid var(--gold);padding:2px 0 2px 16px;display:flex;flex-direction:column;gap:4px}
+.nt p{color:var(--muted);font-size:.95rem}
+.explain{background:var(--accent-soft);border-radius:12px;padding:14px 16px;font-size:.95rem}
+.tbl{overflow-x:auto;border:1px solid var(--line);border-radius:12px;background:var(--surface)}
+table{border-collapse:collapse;width:100%;min-width:600px;font-size:.92rem}
+th,td{text-align:left;padding:11px 14px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-size:.74rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:500}
+tr:last-child td{border-bottom:0}
+ul.plain{margin:0;padding-left:1.1em;display:flex;flex-direction:column;gap:8px;color:var(--muted);max-width:72ch}
+ul.plain b{color:var(--fg);font-weight:500}
+</style>
+
+<div class="wrap">
+  <header class="top">
+    <span class="eyebrow">At-Tijaniya · Écrans de détail · proposition du 2 novembre 2026</span>
+    <h1>Des fiches qui se répondent : une figure mène à sa zawiya, la zawiya à ses rendez-vous</h1>
+    <p class="lede">Quatre fiches refaites avec le kit : une figure, une zawiya, un évènement et le guide d'un wird. Chacune met en tête ce qu'on vient y chercher, et toutes sont reliées entre elles, ce qui n'est pas le cas aujourd'hui. Les textes viennent de la base (El Hadj Malick Sy, Zawiya de Tivaouane, Ziarra générale 2027) et du corpus validé des wirds.</p>
+  </header>
+
+  <section>
+    <span class="eyebrow">Constat, à partir du code et de la base</span>
+    <h2>Diagnostic</h2>
+    <div class="diag">
+      <article><span class="tag warn">Impasses</span><h3>La fiche d'une zawiya ignore sa succession et ses figures</h3><p>La succession des khalifes de Tivaouane (7, de 1922 à aujourd'hui) et les 8 figures liées ne sont visibles que depuis la fiche d'une figure. Ouverte depuis l'onglet Zawiyas, la fiche de Tivaouane n'en dit rien.</p></article>
+      <article><span class="tag warn">Impasses</span><h3>Un évènement ne mène pas à sa zawiya</h3><p>Le détail de la Ziarra générale affiche le nom de la zawiya, sans lien vers sa fiche. On ne peut pas aller de l'évènement au lieu, puis à son fondateur.</p></article>
+      <article><span class="tag">Lecture</span><h3>Une biographie de 8 900 signes sans repères</h3><p>Celle d'El Hadj Malick Sy compte 11 sections. On les lit d'un bloc, sans sommaire, sans savoir où l'on en est.</p></article>
+      <article><span class="tag">Charte</span><h3>Des couleurs hors jetons</h3><p>L'en-tête de la fiche figure utilise un vert clair codé en dur (<code>0xFFCFE0D6</code>) pour ses sous-titres, en dehors de <code>design_tokens.yaml</code>.</p></article>
+      <article><span class="tag">Guide du wird</span><h3>Les piliers en longues cartes</h3><p>Le guide empile des cartes complètes. Pour retrouver un pilier, il faut tout faire défiler ; historique et rappels sont deux icônes sans libellé dans la barre.</p></article>
+    </div>
+  </section>
+
+  <section>
+    <span class="eyebrow">Maquette interactive</span>
+    <h2>Les quatre fiches</h2>
+    <p class="lede">Changez de fiche avec les boutons, ou touchez les liens dans l'écran : une zawiya, un khalife, un rendez-vous. Dans le guide, touchez un pilier pour l'ouvrir.</p>
+    <div class="demo">
+      <div class="phonecol">
+        <div class="states" role="group" aria-label="Fiche">
+          <button type="button" data-s="figure" aria-pressed="true">Figure</button>
+          <button type="button" data-s="zawiya" aria-pressed="false">Zawiya</button>
+          <button type="button" data-s="event" aria-pressed="false">Évènement</button>
+          <button type="button" data-s="guide" aria-pressed="false">Guide du wird</button>
+        </div>
+        <div class="phone"><div class="screen" id="screen"></div></div>
+        <p style="font-size:.8rem;color:var(--muted);text-align:center;max-width:360px">Les portraits sont remplacés par des aplats bruns. Noms, dates, textes et nombres viennent de la base ou du corpus validé, sauf la série et les heures de rappel du guide (exemples). Les textes longs sont abrégés (« … ») dans la maquette ; l'app les affiche en entier.</p>
+      </div>
+      <div class="notes" id="notes"></div>
+    </div>
+  </section>
+
+  <section>
+    <span class="eyebrow">Avant / après</span>
+    <h2>Ce qui change</h2>
+    <div class="tbl"><table>
+      <thead><tr><th>Fiche</th><th>Aujourd'hui</th><th>Proposé</th></tr></thead>
+      <tbody>
+        <tr><td>Figure</td><td>En-tête vert, petit portrait, 4 onglets, biographie d'un bloc</td><td>Portrait plein cadre, chiffres-clés, sommaire de la biographie, silsila jusqu'au Cheikh, lieux liés</td></tr>
+        <tr><td>Zawiya</td><td>Nom, description, adresse, Maps, rendez-vous</td><td>+ fondateur, succession des khalifes, figures liées, rendez-vous datés</td></tr>
+        <tr><td>Évènement</td><td>Image, date, description, Maps, direct</td><td>Date en grand, compte à rebours, lien vers la zawiya, note de date mise en avant</td></tr>
+        <tr><td>Guide du wird</td><td>Longues cartes de piliers, bouton flottant, icônes sans libellé</td><td>Bandeau du wird, piliers en étapes repliables, historique et rappel nommés, « Commencer » fixe en bas</td></tr>
+        <tr><td>Liens entre fiches</td><td>Figure → zawiya seulement</td><td>Figure ↔ zawiya ↔ évènement, khalifes et disciples cliquables</td></tr>
+      </tbody>
+    </table></div>
+  </section>
+
+  <section>
+    <span class="eyebrow">À trancher par vous</span>
+    <h2>Décisions</h2>
+    <div class="decisions">
+      <article><h3>Succession et figures sur la fiche zawiya</h3><p>Les données existent (tables <code>figure_zawiya_khalifas</code> et <code>figure_zawiyas</code>) ; il s'agit de les afficher aussi côté zawiya, en lecture.</p><span class="rec">Recommandation : l'adopter ; l'ajout et la suppression de liens restent côté figure, pour l'admin.</span></article>
+      <article><h3>Silsila complète sur la fiche figure</h3><p>La chaîne se remonte maillon par maillon grâce aux liens historiques (El Hadj Malick Sy → Alpha Mayoro Wélé → El Hadj Oumar Tall → Cheikh Mohammed al-Ghali → Cheikh Ahmed Tijani). Un maillon absent coupe la chaîne : elle s'arrête alors avec la mention « maillons suivants non renseignés ».</p><span class="rec">Recommandation : l'adopter, avec cette mention quand la chaîne s'interrompt.</span></article>
+      <article><h3>Portrait plein cadre</h3><p>Il met en valeur les 32 figures qui ont un portrait. Les 39 autres auraient un en-tête typographique (nom arabe en grand sur zaytoune), comme la carte de la figure de la semaine.</p><span class="rec">Recommandation : l'adopter, avec la variante typographique.</span></article>
+      <article><h3>« Ajouter à mon agenda » sur un évènement</h3><p>Utile pour une ziarra, mais demande une extension pour écrire dans le calendrier du téléphone, et la plupart des dates sont approximatives.</p><span class="rec">Recommandation : pas maintenant ; y revenir quand les dates seront confirmées.</span></article>
+    </div>
+  </section>
+
+  <section>
+    <span class="eyebrow">Limites</span>
+    <h2>Ce qui reste fragile</h2>
+    <ul class="plain">
+      <li><b>Fiches inégales.</b> Tivaouane a une succession complète et 8 figures ; beaucoup de lieux n'ont ni l'une ni les autres. Les sections vides ne s'affichent pas, mais ces fiches resteront courtes.</li>
+      <li><b>Sommaire de biographie.</b> Il s'appuie sur les intertitres en capitales (301 sections sur 526 en ont, selon l'audit du 2026-10-25) ; une biographie sans intertitre n'aura pas de sommaire.</li>
+      <li><b>Silsila par liens historiques.</b> Une figure peut avoir plusieurs maîtres ; la chaîne suit le premier lien enregistré, comme l'onglet Silsila actuel.</li>
+      <li><b>Autres fiches.</b> Groupe, publication, conversation et direct ne sont pas maquettés : le kit suffit (en-tête, liste groupée, pastilles, boutons).</li>
+      <li><b>Ce qui est solide :</b> aucune donnée nouvelle ; toutes les relations affichées existent déjà en base.</li>
+    </ul>
+  </section>
+</div>
+
+<script>
+const $=s=>document.querySelector(s);
+let scene='figure', tab='bio', openStep=4;
+const BIO=[
+ ['NAISSANCE ET ORIGINES',"Né en 1855 à Gaya (Gaé, quartier de Deuw Fall), près de Dagana, dans le Walo (nord du Sénégal), d'ascendance du Fouta Toro par son grand-père Demba Bouna Sy, peule et wolof. Fils d'Ousmane Sy et de Sokhna Fatimata (Fawade) Wélé, il naît orphelin de père : Ousmane Sy avait quitté ce bas monde au Djoloff avant sa naissance, en laissant une bibliothèque et des consignes pour son éducation, dont celle de donner à l'enfant le nom de son maître Malick Sow de Gaya. Il est élevé par sa mère et par son oncle maternel Alpha Mayoro Wélé. Par les Mbacké, il est le cousin de Cheikh Ahmadou Bamba."],
+ ['FORMATION',"Il apprend le Coran dès l'âge de six ans, auprès de son oncle Mayoro Wale (Alpha Mayoro Wélé), puis parcourt pendant près de vingt-cinq ans, selon ses biographes, les grands foyers de savoir du Walo, du Djoloff, du Fouta, du Ndiambour et du Cayor (Saldé auprès d'Abdou Bitèye, Thiarène, Saint-Louis, Taïba Sèye, etc.), ainsi que la Mauritanie, pour étudier la grammaire, le tajwid, le droit (fiqh), la théologie et l'exégèse. Il devient professeur d'arabe à l'âge de 18 ans."]
+];
+const TOC=['Naissance et origines','Formation','Du travail de la terre au pèlerinage','Parcours et fondation du foyer de Tivaouane',"Face à l'administration coloniale",'Relations avec les autres grands foyers tijanis','Le Gamou','Rappel à Dieu et postérité','Paroles et enseignements','Ziara et dates commémoratives','Sources consultées'];
+const SUCC=[['Serigne Babacar Sy « Cheikhal Khalifa »','1922–1957'],['Serigne Mansour Sy « Balkhawmi »','25–29 mars 1957'],['Mame Abdoul Aziz Sy « Dabakh »','1957–1997'],['Serigne Mansour Sy « Borom Daara Dji »','1997–2012'],['Cheikh Ahmed Tidiane Sy « Al Makhtoum »','2012–2017'],['Serigne Abdoul Aziz Sy « Al Amine »','mars–sept. 2017'],['Serigne Babacar Sy Mansour','depuis 2017']];
+const PLACES=[['Zawiya de Tivaouane','Zawiya · Tivaouane, Thiès','zawiya'],['Zawiya El Hadj Malick Sy de Dakar','Zawiya · Dakar',''],['Zawiya El Hadj Malick Sy de Saint-Louis','Zawiya · Saint-Louis',''],["Mosquée d'El Hadj Malick Sy de Gaaya",'Mosquée · Gaé, Dagana',''],['Fass-Diacksao','Lieu saint · Thiès',''],['Ndiarndé','Lieu saint',''],['Zawiya Seydi El Hadji Malick Sy de New York','Zawiya · New York','']];
+const PILL=[
+ {n:'Intention',x:'×1',ar:'اللَّهُمَّ إِنِّي نَوَيْتُ تِلَاوَةَ هَذَا الْوِرْدِ…',tr:"Allahoumma inni nawaytou tilawata hadha-l-wirdi…",tl:'Ô Allah, j\'ai mis l\'intention au travers de ce wird de proclamer Ton incommensurabilité et Ta magnificence…'},
+ {n:'Fatiha',x:'×1',ar:'سُورَةُ الْفَاتِحَةِ',tr:'Al-Fatiha',tl:"Précédée du ta'awwudh (A'oudhou bi-Llahi mina ch-Chaytani r-Rajim) et de la basmala, clôturée par « Amine »."},
+ {n:'Istighfar',x:'×100',ar:'أَسْتَغْفِرُ اللَّهَ',tr:'Astaghfirullah',tl:'Je demande pardon à Allah.',cl:'Clôture : Sourate As-Saffat, 37:180-182'},
+ {n:'Salatoul Fatihi',x:'×100',ar:'اللَّهُمَّ صَلِّ عَلَى سَيِّدِنَا مُحَمَّدٍ الْفَاتِحِ لِمَا أُغْلِقَ…',tr:"Allahoumma salli 'ala sayyidina Mouhammadin-il-Fatihi lima oughliqa…",tl:"Ô Allah, prie sur notre maître Muhammad l'Ouvreur de ce qui était fermé…",cl:'Clôture : Sourate As-Saffat, 37:180-182'},
+ {n:'Hailala',x:'×100',ar:'لَا إِلَهَ إِلَّا اللَّهُ',tr:'La ilaha illAllah',tl:"Il n'y a de divinité qu'Allah.",cl:'Clôture : 3 formules (Sayyidounâ Mouhammadoun…, Al-Ahzab 33:56, As-Saffat 37:180-182)'}
+];
+
+function figure(){
+  let body='';
+  if(tab==='bio'){
+    body=`<div class="toc">${TOC.map((t,i)=>`<span class="${i===0?'on':''}">${t}</span>`).join('')}</div>
+     <div class="read"><div class="meta"><span>11 sections · environ 7 min</span><span>Aa</span></div>
+     ${BIO.map(([h,p])=>`<h4>${h.charAt(0)+h.slice(1).toLowerCase()}</h4><p>${p}</p>`).join('')}
+     <p style="color:var(--ink2);font-size:.74rem">… la suite de la biographie (9 sections)</p></div>`;
+  } else if(tab==='silsila'){
+    const chain=[['Cheikh Ahmed Tijani','Fondateur · Fès','p'],['Cheikh Sidi Mohammed al-Ghali','Fès',''],["El Hadj Oumar Tall (Al-Foutiyou)",'Famille omarienne','p'],['Alpha Mayoro Wélé','Tivaouane','p'],['El Hadj Malick Sy','cette fiche','p']];
+    body=`<div class="chain">${chain.map(([n,m,p],i)=>`<div class="link ${i===chain.length-1?'me':''}" ${i<chain.length-1?'data-go="figure"':''}><span class="av ${p?'':'m'}">${p?'':'ع'}</span><span><b>${n}</b><small>${m}</small></span></div>`).join('')}
+     <div class="disc">${['Serigne Babacar Sy « Cheikhal Khalifa »','Serigne Mansour Sy « Balkhawmi »','Mame Abdoul Aziz Sy « Dabakh »','Thierno Seydou Nourou Tall'].map(n=>`<span data-go="figure">${n}</span>`).join('')}</div></div>
+     <div class="legend">Silsila historique, du Cheikh à cette figure, puis ses disciples renseignés dans l'app. Elle suit les liens enregistrés et peut être incomplète.</div>`;
+  } else if(tab==='oeuvres'){
+    body=`<div class="sh"><h4>Œuvres</h4><span>22</span></div><div class="list">${['Khilasou-z-Zahab','Ifham al-Munkir al-Jani','Kifayatou-r-Raghibin','Wassilatoul Mouna'].map(w=>`<div class="item"><span class="ic g">❦</span><span><b>${w}</b></span><span class="end">›</span></div>`).join('')}<div class="item"><span style="font-size:.76rem;color:var(--em);font-weight:500">Voir les 22 œuvres</span></div></div>`;
+  } else {
+    body=`<div class="sh"><h4>Lieux liés</h4><span>7</span></div><div class="list">${PLACES.map(([n,m,go])=>`<div class="item" ${go?'data-go="zawiya"':''}><span class="ic">⌂</span><span><b>${n}</b><small>${m}</small></span><span class="end">›</span></div>`).join('')}</div>`;
+  }
+  return `<div class="scroll"><div class="fhero"><span class="ph">portrait</span><div class="tx">
+     <div class="ar">الحاج مالك سي</div><div class="fr">El Hadj Malick Sy</div><div class="m">Né en 1271 H · Foyer de Tivaouane</div></div></div>
+     <div class="fbar"><span>←</span><span>⋯</span></div>
+     <div class="facts"><div class="fact" data-tab="oeuvres"><b>22</b><small>œuvres</small></div><div class="fact" data-tab="silsila"><b>4</b><small>disciples dans l'app</small></div><div class="fact" data-tab="lieux"><b>7</b><small>lieux liés</small></div></div>
+     <div class="seg"><div>${[['bio','Biographie'],['silsila','Silsila'],['oeuvres','Œuvres'],['lieux','Lieux']].map(([k,l])=>`<button type="button" data-tab="${k}" aria-pressed="${tab===k}">${l}</button>`).join('')}</div></div>
+     ${body}</div>`;
+}
+function zawiya(){
+  return `<div class="scroll"><div class="zhero"><div class="e">Zawiya · Sénégal</div><h5>Zawiya de Tivaouane</h5>
+     <p>Foyer tijani fondé par El Hadj Malick Sy, qui s'y installe définitivement vers 1902. Ville sainte de la Tijaniyya au Sénégal, elle accueille chaque année l'un des plus grands rassemblements du pays lors du Gamou (Mawlid).</p>
+     <div class="addr">⌖ Tivaouane, région de Thiès, Sénégal</div></div>
+     <div class="fbar"><span style="background:rgba(43,38,32,.08);color:var(--ink)">←</span><span style="background:rgba(43,38,32,.08);color:var(--ink)">⋯</span></div>
+     <div class="acts"><button type="button" class="btn p">⌖ Ouvrir dans Maps</button><button type="button" class="btn o">Itinéraire</button></div>
+     <div class="sh"><h4>Prochains rendez-vous</h4><span>2</span></div>
+     <div class="list"><div class="item" data-go="event"><span class="date"><b>~4</b><small>avr.</small></span><span><b>Ziarra générale de Tivaouane 2027</b><small>Date approximative</small></span><span class="end">›</span></div>
+       <div class="item"><span class="date"><b>~14</b><small>août</small></span><span><b>Gamou (Mawlid) de Tivaouane 2027</b><small>Date approximative</small></span><span class="end">›</span></div></div>
+     <div class="sh"><h4>Fondateur</h4></div>
+     <div class="founder" data-go="figure"><span class="av"></span><span><span class="e">Fondateur</span><b>El Hadj Malick Sy</b><small>Voir sa fiche</small></span></div>
+     <div class="sh"><h4>Succession des khalifes</h4><span>7</span></div>
+     <div class="succ">${SUCC.map(([n,p],i)=>`<div class="srow ${i===SUCC.length-1?'now':''}" data-go="figure"><i></i><b>${n}</b><small>${p}</small></div>`).join('')}</div>
+     <div class="sh"><h4>Figures liées</h4><span>8</span></div>
+     <div class="faces">${['El Hadj Malick Sy','Serigne Babacar Sy','Serigne Mansour Sy','Mame Abdoul Aziz Sy','Serigne Babacar Sy Mansour'].map(n=>`<div class="face" data-go="figure"><i></i>${n}</div>`).join('')}</div></div>`;
+}
+function event(){
+  return `<div class="scroll"><div class="ehero"><div class="big"><div class="bd"><b>~4</b><small>avr. 2027</small></div><div>
+     <span class="pill todo">Ziyara</span><h5 style="margin-top:6px">Ziarra générale de Tivaouane 2027</h5><div class="m">Dimanche, vers le 4 avril 2027 · 09:00</div></div></div>
+     <div class="cd"><span class="g">Dans environ 153 jours</span><span>Date approximative</span></div></div>
+     <div class="fbar"><span>←</span><span>⋯</span></div>
+     <div class="sh"><h4>Le lieu</h4></div>
+     <div class="list"><div class="item" data-go="zawiya"><span class="ic">⌂</span><span><b>Zawiya de Tivaouane</b><small>Tivaouane, région de Thiès, Sénégal</small></span><span class="end">›</span></div></div>
+     <div class="acts"><button type="button" class="btn p">⌖ Ouvrir dans Maps</button></div>
+     <div class="sh"><h4>À propos</h4></div>
+     <div class="desc">Ziarra générale instituée en 1930 par Serigne Babacar Sy, premier khalife d'El Hadj Malick Sy, pour renouveler le pacte entre les disciples et le khalife.</div>
+     <div class="note"><b style="font-weight:600">Date à confirmer.</b> Date approximative : un dimanche, au lendemain de la commémoration de la disparition de Serigne Babacar Sy (12 avril 2026, 20 avril 2025). Date 2027 à confirmer.</div>
+     <div class="sh"><h4>Direct</h4></div>
+     <div class="list"><div class="item"><span class="ic g">◉</span><span><b>Pas de direct pour l'instant</b><small>Il apparaîtra ici dès qu'il commence.</small></span></div></div></div>`;
+}
+function guide(){
+  return `<div class="scroll" style="padding-bottom:84px"><div class="gband"><canvas id="ros"></canvas>
+     <div class="fbar" style="top:10px"><span>←</span><span>⋯</span></div>
+     <div class="ar">اللازم</div><div class="fr">Lazim</div><div class="m">Quotidien · matin et soir · 5 piliers</div>
+     <div class="chips"><span>▥ Historique · 7 jours de suite</span><span>⏰ Rappels 06:30 et 18:30</span></div></div>
+     <div class="cond"><b>Conditions.</b> Oraison quotidienne obligatoire, matin et soir, sans exception. Les formules ci-dessous doivent être récitées dans cet ordre.</div>
+     <div class="sh"><h4>Les piliers</h4><span>dans l'ordre</span></div>
+     <div class="steps">${PILL.map((p,i)=>`<div class="step"><div class="h" data-step="${i}"><span class="n">${i+1}</span><span><b>${p.n}</b><small>${i===openStep?'Touchez pour replier':'Touchez pour lire'}</small></span><span class="x">${p.x}</span></div>
+       ${i===openStep?`<div class="b"><div class="ar">${p.ar}</div><div class="tr">${p.tr}</div><div class="tl">${p.tl}</div>${p.cl?`<div class="cl">${p.cl}</div>`:''}</div>`:''}</div>`).join('')}</div></div>
+     <button type="button" class="cta">Commencer le tasbih</button>`;
+}
+const NOTES={
+ figure:`<div class="explain"><b>Fiche d'El Hadj Malick Sy.</b> Touchez « Silsila » pour voir la chaîne jusqu'au Cheikh, ou « Lieux » puis « Zawiya de Tivaouane ».</div>
+  <div class="nt"><h3>Portrait plein cadre</h3><p>Le portrait occupe l'en-tête, nom arabe et français posés dessus sur un dégradé zaytoune. Sans portrait : en-tête typographique.</p></div>
+  <div class="nt"><h3>Trois chiffres qui mènent quelque part</h3><p>Œuvres, disciples, lieux : chaque tuile ouvre l'onglet concerné.</p></div>
+  <div class="nt"><h3>Une biographie qui se lit</h3><p>Sommaire des 11 sections en puces (la puce suit la lecture), durée de lecture, taille du texte, lettrine, intertitres en Cormorant. Le texte est celui de la base, en entier.</p></div>
+  <div class="nt"><h3>La silsila jusqu'au Cheikh</h3><p>Reconstituée à partir des liens historiques existants, puis les disciples de la figure. Chaque maillon ouvre sa fiche.</p></div>`,
+ zawiya:`<div class="explain"><b>Fiche de la Zawiya de Tivaouane.</b> Touchez la Ziarra générale, le fondateur ou un khalife.</div>
+  <div class="nt"><h3>Ce qui manquait : fondateur, succession, figures</h3><p>Les 7 khalifes de 1922 à aujourd'hui avec leurs périodes, le khalife actuel marqué en or, et les figures liées en portraits ronds. Tout existait déjà en base, visible seulement depuis une figure.</p></div>
+  <div class="nt"><h3>Rendez-vous datés</h3><p>Bloc date du kit, « ~ » pour une date approximative.</p></div>
+  <div class="nt"><h3>Une fiche claire, pas zaytoune</h3><p>Une zawiya n'est pas un écran de pratique : fond clair, seule la carte du fondateur est en zaytoune pour le distinguer.</p></div>`,
+ event:`<div class="explain"><b>Ziarra générale de Tivaouane 2027.</b> Touchez « Zawiya de Tivaouane » pour aller au lieu.</div>
+  <div class="nt"><h3>La date d'abord</h3><p>Bloc date en grand, jour et heure, compte à rebours « dans environ 153 jours ». La date approximative est dite deux fois, en pastille et dans la note.</p></div>
+  <div class="nt"><h3>La note de date mise en avant</h3><p>Le texte de la base qui explique comment la date est fixée passe dans un encadré « Date à confirmer » au lieu de se perdre dans la description.</p></div>
+  <div class="nt"><h3>Le lieu, cliquable</h3><p>La zawiya devient une ligne qui ouvre sa fiche ; Maps reste à côté. Le direct a sa place fixe, même vide.</p></div>`,
+ guide:`<div class="explain"><b>Guide du Lazim.</b> Touchez un pilier pour l'ouvrir ou le replier.</div>
+  <div class="nt"><h3>Le bandeau du wird</h3><p>Couleur fixe du Lazim (zaytoune), nom arabe, fréquence, nombre de piliers. Historique et rappels deviennent deux pastilles nommées, avec la série et les heures, au lieu de deux icônes sans libellé.</p></div>
+  <div class="nt"><h3>Les piliers en étapes</h3><p>Numéro, nom, nombre ; on ouvre le pilier qu'on veut relire (arabe, translittération, traduction, clôture). Le texte reste celui du corpus validé, en entier une fois ouvert.</p></div>
+  <div class="nt"><h3>« Commencer le tasbih » toujours visible</h3><p>Bouton or fixe en bas, au lieu du bouton flottant qui masquait la fin des cartes.</p></div>`
+};
+function drawRos(){const cv=$('#ros');if(!cv)return;const d=window.devicePixelRatio||1,s=150;cv.width=s*d;cv.height=s*d;const x=cv.getContext('2d');x.scale(d,d);x.strokeStyle='#C9A24B';x.lineWidth=1.5;const c=75,R=60;
+ for(let k=0;k<2;k++){x.beginPath();for(let i=0;i<=4;i++){const a=i*Math.PI/2+k*Math.PI/4;const p=[c+R*Math.cos(a),c+R*Math.sin(a)];i?x.lineTo(...p):x.moveTo(...p);}x.stroke();}
+ x.beginPath();x.arc(c,c,R*.55,0,Math.PI*2);x.stroke();}
+function render(){
+  $('#screen').innerHTML = scene==='figure'?figure():scene==='zawiya'?zawiya():scene==='event'?event():guide();
+  $('#notes').innerHTML=NOTES[scene];
+  document.querySelectorAll('.states button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.s===scene));
+  if(scene==='guide') drawRos();
+}
+document.addEventListener('click',e=>{
+  const s=e.target.closest('[data-s]'); if(s){scene=s.dataset.s;tab='bio';render();return;}
+  const t=e.target.closest('[data-tab]'); if(t){tab=t.dataset.tab;render();const sc=$('.scroll');if(sc)sc.scrollTop=300;return;}
+  const st=e.target.closest('[data-step]'); if(st){const i=+st.dataset.step;openStep=openStep===i?-1:i;render();return;}
+  const g=e.target.closest('[data-go]'); if(g){scene=g.dataset.go;tab='bio';render();return;}
+});
+render();
+</script>

@@ -18,6 +18,7 @@ aplats : les maquettes ne chargent pas les photos de la base.
 | Communauté | `ecran-communaute.html` | Proposé, à implémenter |
 | Profil | `ecran-profil.html` | Proposé, à implémenter |
 | Pratique des wirds (tasbih) | `ecran-pratique.html` | Proposé le 2026-11-02 ; **décisions pas encore validées** |
+| Écrans de détail (figure, zawiya, évènement, guide d'un wird) | `ecrans-detail.html` | Proposé le 2026-11-02 ; **décisions pas encore validées** |
 
 ## Décisions actées par le porteur de projet (2026-11-01)
 
@@ -101,4 +102,13 @@ Référence commune pour mettre tous les écrans au même thème : `docs/kit/` (
 `docs/kit/README.md`, jetons `docs/kit/tokens.json`, une fiche et un aperçu par composant dans
 `docs/kit/components/`). Chaque fiche dit si le widget Flutter existe déjà ou est à créer dans
 `lib/core/widgets/`. Pour tout écran sans maquette, appliquer le kit.
+
+## Écrans de détail (maquette du 2026-11-02) — décisions en attente
+
+Recommandations de la maquette, **pas encore validées par le porteur de projet** :
+succession des khalifes et figures liées affichées aussi sur la fiche d'une zawiya (lecture
+seule ; l'ajout de liens reste côté figure, pour l'admin) ; silsila remontée jusqu'au
+Cheikh sur la fiche d'une figure, avec « maillons suivants non renseignés » quand la chaîne
+s'interrompt ; portrait plein cadre, en-tête typographique pour les figures sans portrait ;
+pas de « Ajouter à mon agenda » sur un évènement pour l'instant.
 
