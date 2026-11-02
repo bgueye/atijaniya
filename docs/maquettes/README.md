@@ -18,7 +18,26 @@ aplats : les maquettes ne chargent pas les photos de la base.
 | Communauté | `ecran-communaute.html` | Proposé, à implémenter |
 | Profil | `ecran-profil.html` | Proposé, à implémenter |
 | Pratique des wirds (tasbih) | `ecran-pratique.html` | Proposé le 2026-11-02 ; **décisions pas encore validées** |
-| Écrans de détail (figure, zawiya, évènement, guide d'un wird) | `ecrans-detail.html` | Proposé le 2026-11-02 ; **décisions pas encore validées** |
+| Écrans de détail (figure, zawiya, évènement) | `ecrans-detail.html` | Proposé le 2026-11-02 ; **décisions pas encore validées** |
+
+## Un écran, une seule maquette
+
+Chaque écran Flutter a **une seule** maquette de référence. Avant d'en proposer une
+nouvelle, vérifier ici que l'écran n'est pas déjà couvert ; s'il l'est, compléter la
+maquette existante plutôt que d'en créer une autre.
+
+| Écran Flutter | Maquette de référence |
+|---|---|
+| `HomeScreen` | `ecran-accueil.html` (proposition B) |
+| `WirdListScreen` | `ecran-wird.html` |
+| `WirdDetailScreen` (guide d'un wird) | pas de maquette propre : bandeau, historique, rappel, piliers et nombres de `ecran-wird.html` ; affichage des piliers et des clôtures de `ecran-pratique.html` |
+| `TasbihScreen`, `FreeWirdScreen` | `ecran-pratique.html` |
+| `KhadaraScreen` (onglet Zawiyas), `NearbyRecurringEventsScreen` (supprimé) | `ecran-zawiyas.html` |
+| `FiguresScreen` et page d'un foyer | `ecran-figures.html` |
+| `CommunauteScreen`, `ConversationsScreen` | `ecran-communaute.html` |
+| `ProfilScreen`, `SettingsScreen` (absorbé), `PrivacySettingsScreen` (résumé) | `ecran-profil.html` |
+| `FigureDetailScreen`, `ZawiyaDetailScreen`, `EventDetailScreen` | `ecrans-detail.html` |
+| tous les autres écrans | pas de maquette : appliquer le kit `docs/kit/` |
 
 ## Décisions actées par le porteur de projet (2026-11-01)
 
@@ -111,4 +130,6 @@ seule ; l'ajout de liens reste côté figure, pour l'admin) ; silsila remontée 
 Cheikh sur la fiche d'une figure, avec « maillons suivants non renseignés » quand la chaîne
 s'interrompt ; portrait plein cadre, en-tête typographique pour les figures sans portrait ;
 pas de « Ajouter à mon agenda » sur un évènement pour l'instant.
+Le guide d'un wird a été retiré de cette maquette le 2026-11-02 : il était déjà couvert par
+`ecran-wird.html` et `ecran-pratique.html`.
 

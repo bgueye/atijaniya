@@ -157,30 +157,6 @@ button:focus-visible,[data-go]:focus-visible{outline:2px solid var(--gold);outli
 .desc{padding:4px 18px 0;font-size:.86rem;line-height:1.6}
 .note{margin:12px 14px 0;font-size:.74rem;line-height:1.45;background:var(--gos);border-radius:12px;padding:10px 12px}
 
-/* Guide du wird */
-.gband{background:var(--z);color:var(--off);padding:56px 18px 18px;position:relative;overflow:hidden}
-.gband .ar{font-family:var(--f-ar);font-size:2.4rem;color:var(--go);line-height:1.4}
-.gband .fr{font-family:var(--f-display);font-size:1.6rem;font-weight:600;line-height:1}
-.gband .m{font-size:.72rem;color:var(--son);margin-top:4px}
-.gband .chips{display:flex;gap:6px;margin-top:12px;flex-wrap:wrap}
-.gband .chips span{font-size:.68rem;padding:5px 11px;border-radius:999px;background:rgba(255,253,248,.1);cursor:pointer}
-.gband canvas{position:absolute;right:-30px;top:-20px;width:150px;height:150px;opacity:.14}
-.cond{margin:12px 14px 0;font-size:.78rem;line-height:1.5;background:var(--off);border:1px solid var(--hair);border-radius:14px;padding:11px 12px}
-.cond b{font-weight:500}
-.steps{margin:0 14px;display:flex;flex-direction:column;gap:8px}
-.step{background:var(--off);border:1px solid var(--hair);border-radius:16px;overflow:hidden}
-.step .h{display:flex;align-items:center;gap:10px;padding:10px 12px;cursor:pointer}
-.step .n{width:26px;height:26px;border-radius:50%;background:var(--ems);color:var(--em);display:grid;place-items:center;font-size:.72rem;font-weight:600;flex:none}
-.step .h b{font-weight:500;font-size:.84rem;display:block;line-height:1.2}
-.step .h small{font-size:.64rem;color:var(--ink2)}
-.step .x{margin-inline-start:auto;font-size:.66rem;font-weight:600;color:var(--em);background:var(--ems);border-radius:999px;padding:3px 9px}
-.step .b{padding:0 14px 12px;text-align:center;border-top:1px solid var(--hair)}
-.step .b .ar{font-family:var(--f-ar);font-size:1.35rem;color:var(--em);direction:rtl;line-height:1.8;padding-top:8px}
-.step .b .tr{font-style:italic;font-size:.8rem;line-height:1.45}
-.step .b .tl{font-size:.74rem;color:var(--ink2);line-height:1.45;margin-top:4px}
-.step .b .cl{font-size:.66rem;color:var(--ink2);margin-top:8px;text-align:left}
-.cta{position:absolute;left:14px;right:14px;bottom:14px;z-index:4;font:inherit;font-size:.92rem;font-weight:500;border:0;border-radius:16px;padding:14px;background:var(--go);color:var(--z);box-shadow:0 8px 20px -8px rgba(15,61,46,.5)}
-
 .notes{display:flex;flex-direction:column;gap:16px;min-width:0}
 .nt{border-left:3px solid var(--gold);padding:2px 0 2px 16px;display:flex;flex-direction:column;gap:4px}
 .nt p{color:var(--muted);font-size:.95rem}
@@ -198,7 +174,7 @@ ul.plain b{color:var(--fg);font-weight:500}
   <header class="top">
     <span class="eyebrow">At-Tijaniya · Écrans de détail · proposition du 2 novembre 2026</span>
     <h1>Des fiches qui se répondent : une figure mène à sa zawiya, la zawiya à ses rendez-vous</h1>
-    <p class="lede">Quatre fiches refaites avec le kit : une figure, une zawiya, un évènement et le guide d'un wird. Chacune met en tête ce qu'on vient y chercher, et toutes sont reliées entre elles, ce qui n'est pas le cas aujourd'hui. Les textes viennent de la base (El Hadj Malick Sy, Zawiya de Tivaouane, Ziarra générale 2027) et du corpus validé des wirds.</p>
+    <p class="lede">Trois fiches refaites avec le kit : une figure, une zawiya et un évènement. Chacune met en tête ce qu'on vient y chercher, et toutes sont reliées entre elles, ce qui n'est pas le cas aujourd'hui. Les textes viennent de la base (El Hadj Malick Sy, Zawiya de Tivaouane, Ziarra générale 2027). Le guide d'un wird n'est pas repris ici : il suit les maquettes Wird (bandeau, historique, rappel, piliers et nombres) et Pratique (piliers nommés, textes en entier, clôtures).</p>
   </header>
 
   <section>
@@ -209,24 +185,22 @@ ul.plain b{color:var(--fg);font-weight:500}
       <article><span class="tag warn">Impasses</span><h3>Un évènement ne mène pas à sa zawiya</h3><p>Le détail de la Ziarra générale affiche le nom de la zawiya, sans lien vers sa fiche. On ne peut pas aller de l'évènement au lieu, puis à son fondateur.</p></article>
       <article><span class="tag">Lecture</span><h3>Une biographie de 8 900 signes sans repères</h3><p>Celle d'El Hadj Malick Sy compte 11 sections. On les lit d'un bloc, sans sommaire, sans savoir où l'on en est.</p></article>
       <article><span class="tag">Charte</span><h3>Des couleurs hors jetons</h3><p>L'en-tête de la fiche figure utilise un vert clair codé en dur (<code>0xFFCFE0D6</code>) pour ses sous-titres, en dehors de <code>design_tokens.yaml</code>.</p></article>
-      <article><span class="tag">Guide du wird</span><h3>Les piliers en longues cartes</h3><p>Le guide empile des cartes complètes. Pour retrouver un pilier, il faut tout faire défiler ; historique et rappels sont deux icônes sans libellé dans la barre.</p></article>
     </div>
   </section>
 
   <section>
     <span class="eyebrow">Maquette interactive</span>
-    <h2>Les quatre fiches</h2>
-    <p class="lede">Changez de fiche avec les boutons, ou touchez les liens dans l'écran : une zawiya, un khalife, un rendez-vous. Dans le guide, touchez un pilier pour l'ouvrir.</p>
+    <h2>Les trois fiches</h2>
+    <p class="lede">Changez de fiche avec les boutons, ou touchez les liens dans l'écran : une zawiya, un khalife, un rendez-vous.</p>
     <div class="demo">
       <div class="phonecol">
         <div class="states" role="group" aria-label="Fiche">
           <button type="button" data-s="figure" aria-pressed="true">Figure</button>
           <button type="button" data-s="zawiya" aria-pressed="false">Zawiya</button>
           <button type="button" data-s="event" aria-pressed="false">Évènement</button>
-          <button type="button" data-s="guide" aria-pressed="false">Guide du wird</button>
         </div>
         <div class="phone"><div class="screen" id="screen"></div></div>
-        <p style="font-size:.8rem;color:var(--muted);text-align:center;max-width:360px">Les portraits sont remplacés par des aplats bruns. Noms, dates, textes et nombres viennent de la base ou du corpus validé, sauf la série et les heures de rappel du guide (exemples). Les textes longs sont abrégés (« … ») dans la maquette ; l'app les affiche en entier.</p>
+        <p style="font-size:.8rem;color:var(--muted);text-align:center;max-width:360px">Les portraits sont remplacés par des aplats bruns. Noms, dates, textes et nombres viennent de la base ou du corpus validé. Les textes longs sont abrégés (« … ») dans la maquette ; l'app les affiche en entier.</p>
       </div>
       <div class="notes" id="notes"></div>
     </div>
@@ -241,7 +215,6 @@ ul.plain b{color:var(--fg);font-weight:500}
         <tr><td>Figure</td><td>En-tête vert, petit portrait, 4 onglets, biographie d'un bloc</td><td>Portrait plein cadre, chiffres-clés, sommaire de la biographie, silsila jusqu'au Cheikh, lieux liés</td></tr>
         <tr><td>Zawiya</td><td>Nom, description, adresse, Maps, rendez-vous</td><td>+ fondateur, succession des khalifes, figures liées, rendez-vous datés</td></tr>
         <tr><td>Évènement</td><td>Image, date, description, Maps, direct</td><td>Date en grand, compte à rebours, lien vers la zawiya, note de date mise en avant</td></tr>
-        <tr><td>Guide du wird</td><td>Longues cartes de piliers, bouton flottant, icônes sans libellé</td><td>Bandeau du wird, piliers en étapes repliables, historique et rappel nommés, « Commencer » fixe en bas</td></tr>
         <tr><td>Liens entre fiches</td><td>Figure → zawiya seulement</td><td>Figure ↔ zawiya ↔ évènement, khalifes et disciples cliquables</td></tr>
       </tbody>
     </table></div>
@@ -273,7 +246,7 @@ ul.plain b{color:var(--fg);font-weight:500}
 
 <script>
 const $=s=>document.querySelector(s);
-let scene='figure', tab='bio', openStep=4;
+let scene='figure', tab='bio';
 const BIO=[
  ['NAISSANCE ET ORIGINES',"Né en 1855 à Gaya (Gaé, quartier de Deuw Fall), près de Dagana, dans le Walo (nord du Sénégal), d'ascendance du Fouta Toro par son grand-père Demba Bouna Sy, peule et wolof. Fils d'Ousmane Sy et de Sokhna Fatimata (Fawade) Wélé, il naît orphelin de père : Ousmane Sy avait quitté ce bas monde au Djoloff avant sa naissance, en laissant une bibliothèque et des consignes pour son éducation, dont celle de donner à l'enfant le nom de son maître Malick Sow de Gaya. Il est élevé par sa mère et par son oncle maternel Alpha Mayoro Wélé. Par les Mbacké, il est le cousin de Cheikh Ahmadou Bamba."],
  ['FORMATION',"Il apprend le Coran dès l'âge de six ans, auprès de son oncle Mayoro Wale (Alpha Mayoro Wélé), puis parcourt pendant près de vingt-cinq ans, selon ses biographes, les grands foyers de savoir du Walo, du Djoloff, du Fouta, du Ndiambour et du Cayor (Saldé auprès d'Abdou Bitèye, Thiarène, Saint-Louis, Taïba Sèye, etc.), ainsi que la Mauritanie, pour étudier la grammaire, le tajwid, le droit (fiqh), la théologie et l'exégèse. Il devient professeur d'arabe à l'âge de 18 ans."]
@@ -281,13 +254,6 @@ const BIO=[
 const TOC=['Naissance et origines','Formation','Du travail de la terre au pèlerinage','Parcours et fondation du foyer de Tivaouane',"Face à l'administration coloniale",'Relations avec les autres grands foyers tijanis','Le Gamou','Rappel à Dieu et postérité','Paroles et enseignements','Ziara et dates commémoratives','Sources consultées'];
 const SUCC=[['Serigne Babacar Sy « Cheikhal Khalifa »','1922–1957'],['Serigne Mansour Sy « Balkhawmi »','25–29 mars 1957'],['Mame Abdoul Aziz Sy « Dabakh »','1957–1997'],['Serigne Mansour Sy « Borom Daara Dji »','1997–2012'],['Cheikh Ahmed Tidiane Sy « Al Makhtoum »','2012–2017'],['Serigne Abdoul Aziz Sy « Al Amine »','mars–sept. 2017'],['Serigne Babacar Sy Mansour','depuis 2017']];
 const PLACES=[['Zawiya de Tivaouane','Zawiya · Tivaouane, Thiès','zawiya'],['Zawiya El Hadj Malick Sy de Dakar','Zawiya · Dakar',''],['Zawiya El Hadj Malick Sy de Saint-Louis','Zawiya · Saint-Louis',''],["Mosquée d'El Hadj Malick Sy de Gaaya",'Mosquée · Gaé, Dagana',''],['Fass-Diacksao','Lieu saint · Thiès',''],['Ndiarndé','Lieu saint',''],['Zawiya Seydi El Hadji Malick Sy de New York','Zawiya · New York','']];
-const PILL=[
- {n:'Intention',x:'×1',ar:'اللَّهُمَّ إِنِّي نَوَيْتُ تِلَاوَةَ هَذَا الْوِرْدِ…',tr:"Allahoumma inni nawaytou tilawata hadha-l-wirdi…",tl:'Ô Allah, j\'ai mis l\'intention au travers de ce wird de proclamer Ton incommensurabilité et Ta magnificence…'},
- {n:'Fatiha',x:'×1',ar:'سُورَةُ الْفَاتِحَةِ',tr:'Al-Fatiha',tl:"Précédée du ta'awwudh (A'oudhou bi-Llahi mina ch-Chaytani r-Rajim) et de la basmala, clôturée par « Amine »."},
- {n:'Istighfar',x:'×100',ar:'أَسْتَغْفِرُ اللَّهَ',tr:'Astaghfirullah',tl:'Je demande pardon à Allah.',cl:'Clôture : Sourate As-Saffat, 37:180-182'},
- {n:'Salatoul Fatihi',x:'×100',ar:'اللَّهُمَّ صَلِّ عَلَى سَيِّدِنَا مُحَمَّدٍ الْفَاتِحِ لِمَا أُغْلِقَ…',tr:"Allahoumma salli 'ala sayyidina Mouhammadin-il-Fatihi lima oughliqa…",tl:"Ô Allah, prie sur notre maître Muhammad l'Ouvreur de ce qui était fermé…",cl:'Clôture : Sourate As-Saffat, 37:180-182'},
- {n:'Hailala',x:'×100',ar:'لَا إِلَهَ إِلَّا اللَّهُ',tr:'La ilaha illAllah',tl:"Il n'y a de divinité qu'Allah.",cl:'Clôture : 3 formules (Sayyidounâ Mouhammadoun…, Al-Ahzab 33:56, As-Saffat 37:180-182)'}
-];
 
 function figure(){
   let body='';
@@ -343,17 +309,6 @@ function event(){
      <div class="sh"><h4>Direct</h4></div>
      <div class="list"><div class="item"><span class="ic g">◉</span><span><b>Pas de direct pour l'instant</b><small>Il apparaîtra ici dès qu'il commence.</small></span></div></div></div>`;
 }
-function guide(){
-  return `<div class="scroll" style="padding-bottom:84px"><div class="gband"><canvas id="ros"></canvas>
-     <div class="fbar" style="top:10px"><span>←</span><span>⋯</span></div>
-     <div class="ar">اللازم</div><div class="fr">Lazim</div><div class="m">Quotidien · matin et soir · 5 piliers</div>
-     <div class="chips"><span>▥ Historique · 7 jours de suite</span><span>⏰ Rappels 06:30 et 18:30</span></div></div>
-     <div class="cond"><b>Conditions.</b> Oraison quotidienne obligatoire, matin et soir, sans exception. Les formules ci-dessous doivent être récitées dans cet ordre.</div>
-     <div class="sh"><h4>Les piliers</h4><span>dans l'ordre</span></div>
-     <div class="steps">${PILL.map((p,i)=>`<div class="step"><div class="h" data-step="${i}"><span class="n">${i+1}</span><span><b>${p.n}</b><small>${i===openStep?'Touchez pour replier':'Touchez pour lire'}</small></span><span class="x">${p.x}</span></div>
-       ${i===openStep?`<div class="b"><div class="ar">${p.ar}</div><div class="tr">${p.tr}</div><div class="tl">${p.tl}</div>${p.cl?`<div class="cl">${p.cl}</div>`:''}</div>`:''}</div>`).join('')}</div></div>
-     <button type="button" class="cta">Commencer le tasbih</button>`;
-}
 const NOTES={
  figure:`<div class="explain"><b>Fiche d'El Hadj Malick Sy.</b> Touchez « Silsila » pour voir la chaîne jusqu'au Cheikh, ou « Lieux » puis « Zawiya de Tivaouane ».</div>
   <div class="nt"><h3>Portrait plein cadre</h3><p>Le portrait occupe l'en-tête, nom arabe et français posés dessus sur un dégradé zaytoune. Sans portrait : en-tête typographique.</p></div>
@@ -367,25 +322,16 @@ const NOTES={
  event:`<div class="explain"><b>Ziarra générale de Tivaouane 2027.</b> Touchez « Zawiya de Tivaouane » pour aller au lieu.</div>
   <div class="nt"><h3>La date d'abord</h3><p>Bloc date en grand, jour et heure, compte à rebours « dans environ 153 jours ». La date approximative est dite deux fois, en pastille et dans la note.</p></div>
   <div class="nt"><h3>La note de date mise en avant</h3><p>Le texte de la base qui explique comment la date est fixée passe dans un encadré « Date à confirmer » au lieu de se perdre dans la description.</p></div>
-  <div class="nt"><h3>Le lieu, cliquable</h3><p>La zawiya devient une ligne qui ouvre sa fiche ; Maps reste à côté. Le direct a sa place fixe, même vide.</p></div>`,
- guide:`<div class="explain"><b>Guide du Lazim.</b> Touchez un pilier pour l'ouvrir ou le replier.</div>
-  <div class="nt"><h3>Le bandeau du wird</h3><p>Couleur fixe du Lazim (zaytoune), nom arabe, fréquence, nombre de piliers. Historique et rappels deviennent deux pastilles nommées, avec la série et les heures, au lieu de deux icônes sans libellé.</p></div>
-  <div class="nt"><h3>Les piliers en étapes</h3><p>Numéro, nom, nombre ; on ouvre le pilier qu'on veut relire (arabe, translittération, traduction, clôture). Le texte reste celui du corpus validé, en entier une fois ouvert.</p></div>
-  <div class="nt"><h3>« Commencer le tasbih » toujours visible</h3><p>Bouton or fixe en bas, au lieu du bouton flottant qui masquait la fin des cartes.</p></div>`
+  <div class="nt"><h3>Le lieu, cliquable</h3><p>La zawiya devient une ligne qui ouvre sa fiche ; Maps reste à côté. Le direct a sa place fixe, même vide.</p></div>`
 };
-function drawRos(){const cv=$('#ros');if(!cv)return;const d=window.devicePixelRatio||1,s=150;cv.width=s*d;cv.height=s*d;const x=cv.getContext('2d');x.scale(d,d);x.strokeStyle='#C9A24B';x.lineWidth=1.5;const c=75,R=60;
- for(let k=0;k<2;k++){x.beginPath();for(let i=0;i<=4;i++){const a=i*Math.PI/2+k*Math.PI/4;const p=[c+R*Math.cos(a),c+R*Math.sin(a)];i?x.lineTo(...p):x.moveTo(...p);}x.stroke();}
- x.beginPath();x.arc(c,c,R*.55,0,Math.PI*2);x.stroke();}
 function render(){
-  $('#screen').innerHTML = scene==='figure'?figure():scene==='zawiya'?zawiya():scene==='event'?event():guide();
+  $('#screen').innerHTML = scene==='figure'?figure():scene==='zawiya'?zawiya():event();
   $('#notes').innerHTML=NOTES[scene];
   document.querySelectorAll('.states button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.s===scene));
-  if(scene==='guide') drawRos();
 }
 document.addEventListener('click',e=>{
   const s=e.target.closest('[data-s]'); if(s){scene=s.dataset.s;tab='bio';render();return;}
   const t=e.target.closest('[data-tab]'); if(t){tab=t.dataset.tab;render();const sc=$('.scroll');if(sc)sc.scrollTop=300;return;}
-  const st=e.target.closest('[data-step]'); if(st){const i=+st.dataset.step;openStep=openStep===i?-1:i;render();return;}
   const g=e.target.closest('[data-go]'); if(g){scene=g.dataset.go;tab='bio';render();return;}
 });
 render();
