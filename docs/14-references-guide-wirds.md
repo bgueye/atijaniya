@@ -10,8 +10,10 @@ pas le corpus : un écart se tranche par le porteur de projet et le moqaddam ré
 1. **Validé et affiché** (2026-11-02) : les références de la traduction française de
    *Jawâhir* marquées « Concorde » dans la première version de ce document (champ
    `source` des piliers, ligne « Source : … » sous chaque pilier du guide).
-2. **Nouveau, à valider** : l'édition arabe de *Jawâhir* et *Munyat al-Murîd*, lues page
-   par page ensuite. Rien de cette partie n'est affiché dans l'app.
+2. **Validé et affiché** (2026-11-02, dans un second temps) : l'édition arabe de *Jawâhir*
+   et *Munyat al-Murîd*, lues page par page, pour les trois ajouts listés en fin de
+   document. Les autres éléments marqués « Nouveau » restent de l'information, non
+   affichée.
 
 ## Ouvrages
 
@@ -66,13 +68,16 @@ Abréviations : **JF** = *Jawâhir*, trad. Mbaye ; **JA** = *Jawâhir*, édition
 | Clôture Al-Ahzab (33:56) | Coran, 33:56 ; cité dans JF pp. 1431 et 1461 |
 | Fatiha | Coran, sourate 1. **Affiché** |
 
-## Ce que je propose d'afficher en plus, après validation
+## Ajouts validés et affichés (2026-11-02)
 
-- Istighfar de la Wazifa : « *Munyat al-Murîd*, p. 18 (cent avec une formule courte,
-  trente avec la formule longue) ».
+- Istighfar de la Wazifa : « *Munyat al-Murîd*, p. 18 (trente avec la formule longue) ».
+  **Décision du porteur de projet (2026-11-02)** : le projet ne retient que trente avec la
+  formule longue ; la forme « cent avec une formule courte » n'est ni proposée ni citée
+  dans l'app.
 - Jawharatoul Kamal : ajouter « *Munyat al-Murîd*, p. 18 » (douze, conditions et
   remplacement).
 - Les piliers du Lazim : ajouter l'édition arabe, « *Jawâhir*, éd. arabe, pp. 251-252 ».
 
+Tous trois sont dans le champ `source` du corpus et s'affichent sous les piliers du guide.
 Les éléments sans source trouvée (Allah ×600, texte exact de l'intention et de la
 formule « Sayyidunâ Muhammad… ») gardent leur source actuelle.

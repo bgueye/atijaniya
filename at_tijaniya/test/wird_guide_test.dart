@@ -133,19 +133,18 @@ void main() {
     expect(find.text('Translittération'), findsNothing);
   });
 
-  testWidgets("références validées sous les piliers ; aucune pour l'Istighfar de la Wazifa (écart à trancher)",
-      (tester) async {
+  testWidgets("références validées sous les piliers, dont l'Istighfar de la Wazifa (Munyat al-Murîd)", (tester) async {
     tall(tester);
     await tester.pumpWidget(_wrap(lazim, sundayMorning()));
     await tester.pumpAndSettle();
-    expect(find.text("Source : Jawâhir al-Ma'ânî, trad. R. Mbaye, p. 340"), findsNWidgets(3));
+    expect(find.text("Source : Jawâhir al-Ma'ânî, trad. R. Mbaye, p. 340 ; éd. arabe, pp. 251-252"), findsNWidgets(3));
     expect(find.text('Source : Coran, sourate 1 (Al-Fatiha)'), findsOneWidget);
 
     await tester.pumpWidget(const SizedBox());
     await tester.pumpWidget(_wrap(wazifa, sundayMorning()));
     await tester.pumpAndSettle();
     expect(find.text("Source : Jawâhir al-Ma'ânî, trad. R. Mbaye, p. 344"), findsNWidgets(2));
-    expect(wazifa.pillars[2].source, isNull);
+    expect(find.text('Source : Munyat al-Murîd, p. 18 (trente avec la formule longue)'), findsOneWidget);
   });
 
   testWidgets('en arabe : noms courts arabes dans le résumé', (tester) async {

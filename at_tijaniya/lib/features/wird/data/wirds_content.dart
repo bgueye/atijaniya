@@ -165,7 +165,7 @@ const lazim = Wird(
       arabic: 'أَسْتَغْفِرُ اللَّهَ',
       transliteration: 'Astaghfirullah',
       shortName: 'Istighfar',
-      source: "Jawâhir al-Ma'ânî, trad. R. Mbaye, p. 340",
+      source: "Jawâhir al-Ma'ânî, trad. R. Mbaye, p. 340 ; éd. arabe, pp. 251-252",
       shortNameArabic: 'الاستغفار',
       translation: 'Je demande pardon à Allah.',
       repetitions: 100,
@@ -181,7 +181,7 @@ const lazim = Wird(
       arabic: _salatoulFatihiArabic,
       transliteration: _salatoulFatihiTranslit,
       shortName: 'Salatoul Fatihi',
-      source: "Jawâhir al-Ma'ânî, trad. R. Mbaye, p. 340",
+      source: "Jawâhir al-Ma'ânî, trad. R. Mbaye, p. 340 ; éd. arabe, pp. 251-252",
       shortNameArabic: 'صلاة الفاتح',
       translation: _salatoulFatihiTranslation,
       repetitions: 100,
@@ -199,7 +199,7 @@ const lazim = Wird(
       arabic: 'لَا إِلَهَ إِلَّا اللَّهُ',
       transliteration: 'La ilaha illAllah',
       shortName: 'Hailala',
-      source: "Jawâhir al-Ma'ânî, trad. R. Mbaye, p. 340",
+      source: "Jawâhir al-Ma'ânî, trad. R. Mbaye, p. 340 ; éd. arabe, pp. 251-252",
       translation: "Il n'y a de divinité qu'Allah.",
       repetitions: 100,
       closingFormulas: [
@@ -292,6 +292,7 @@ const wazifa = Wird(
       transliteration: _istighfarLongTranslit,
       shortName: 'Istighfar',
       shortNameArabic: 'الاستغفار',
+      source: "Munyat al-Murîd, p. 18 (trente avec la formule longue)",
       translation: _istighfarLongTranslation,
       repetitions: 30,
     ),
@@ -335,7 +336,8 @@ const wazifa = Wird(
     WirdPillar(
       arabic: 'جَوْهَرَةُ الْكَمَالِ',
       transliteration: 'Jawharatoul Kamal',
-      source: "Jawâhir al-Ma'ânî, trad. R. Mbaye, p. 344 ; ablution à l'eau, p. 346",
+      source:
+          "Jawâhir al-Ma'ânî, trad. R. Mbaye, p. 344 ; ablution à l'eau, p. 346 ; Munyat al-Murîd, p. 18 (douze, conditions et remplacement)",
       translation: '« La Perle de la Perfection » — prière spéciale sur le Prophète ﷺ.',
       repetitions: 12,
       note: "Si les conditions ne sont pas réunies, remplacer par 20 récitations supplémentaires de Salatoul Fatihi.",
@@ -449,6 +451,9 @@ const hadratouJouma = Wird(
 // arabe, qui sont déjà leur nom (Jawharatoul Kamal, Allah, لا إله إلا الله).
 // Références (`source`) : validées par le porteur de projet le 2026-11-02 à partir de
 // `docs/14-references-guide-wirds.md` — seulement les éléments qui concordent avec les
-// ouvrages de `docs/sources/`. L'Istighfar de la Wazifa (100 dans *Jawâhir*, 30 ici)
-// n'en a pas tant que l'écart n'est pas tranché.
+// ouvrages de `docs/sources/` ; complétées le même jour par l'édition arabe de *Jawâhir*
+// et *Munyat al-Murîd*, validées elles aussi. L'Istighfar de la Wazifa (100 dans *Jawâhir*,
+// 30 ici) est éclairé par *Munyat* p. 18 : 100 avec une formule courte, 30 avec la longue.
+// Décision du porteur de projet du 2026-11-02 : le projet ne retient que trente avec la
+// formule longue ; la référence affichée ne mentionne que cette forme.
 const validatedWirds = [lazim, wazifa, hadratouJouma];

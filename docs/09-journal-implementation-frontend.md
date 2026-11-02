@@ -3881,3 +3881,11 @@ téléphone.**
 - **Statut** : ces nouvelles références sont proposées dans `docs/14` et **restent à valider**.
 - **Tests** : `wird_guide_test.dart` vérifie les références sous les piliers et leur absence
   sur l'Istighfar de la Wazifa. 647 tests au vert.
+- **Ajouts validés** (même jour) : le porteur de projet a validé les références des sources
+  arabes proposées en fin de `docs/14`. Elles sont dans le corpus et affichées : l'édition
+  arabe de *Jawâhir* (pp. 251-252) sur les piliers du Lazim ; *Munyat al-Murîd* p. 18 (et
+  *Jawâhir*, éd. arabe, p. 255) sur l'Istighfar de la Wazifa ; *Munyat* p. 18 sur
+  Jawharatoul Kamal. Test mis à jour.
+- **Décision du porteur de projet** : pour l'Istighfar de la Wazifa, le projet ne retient que
+  trente avec la formule longue. La référence affichée devient « *Munyat al-Murîd*, p. 18
+  (trente avec la formule longue) », sans la forme à cent ni la page de *Jawâhir* qui la donne.
