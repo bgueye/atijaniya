@@ -143,6 +143,7 @@ const _fatihaParagraphs = [
 const _fatihaPillar = WirdPillar(
   arabic: 'سُورَةُ الْفَاتِحَةِ',
   transliteration: 'Al-Fatiha',
+  source: "Coran, sourate 1 (Al-Fatiha)",
   translation: "L'Ouverture",
   repetitions: 1,
   note: "Précédée du ta'awwudh (A'oudhou bi-Llahi mina ch-Chaytani r-Rajim) "
@@ -164,6 +165,7 @@ const lazim = Wird(
       arabic: 'أَسْتَغْفِرُ اللَّهَ',
       transliteration: 'Astaghfirullah',
       shortName: 'Istighfar',
+      source: "Jawâhir al-Ma'ânî, trad. R. Mbaye, p. 340",
       shortNameArabic: 'الاستغفار',
       translation: 'Je demande pardon à Allah.',
       repetitions: 100,
@@ -179,6 +181,7 @@ const lazim = Wird(
       arabic: _salatoulFatihiArabic,
       transliteration: _salatoulFatihiTranslit,
       shortName: 'Salatoul Fatihi',
+      source: "Jawâhir al-Ma'ânî, trad. R. Mbaye, p. 340",
       shortNameArabic: 'صلاة الفاتح',
       translation: _salatoulFatihiTranslation,
       repetitions: 100,
@@ -196,6 +199,7 @@ const lazim = Wird(
       arabic: 'لَا إِلَهَ إِلَّا اللَّهُ',
       transliteration: 'La ilaha illAllah',
       shortName: 'Hailala',
+      source: "Jawâhir al-Ma'ânî, trad. R. Mbaye, p. 340",
       translation: "Il n'y a de divinité qu'Allah.",
       repetitions: 100,
       closingFormulas: [
@@ -295,6 +299,7 @@ const wazifa = Wird(
       arabic: _salatoulFatihiArabic,
       transliteration: _salatoulFatihiTranslit,
       shortName: 'Salatoul Fatihi',
+      source: "Jawâhir al-Ma'ânî, trad. R. Mbaye, p. 344",
       shortNameArabic: 'صلاة الفاتح',
       translation: _salatoulFatihiTranslation,
       repetitions: 50,
@@ -312,6 +317,7 @@ const wazifa = Wird(
       arabic: 'لَا إِلَهَ إِلَّا اللَّهُ',
       transliteration: 'La ilaha illAllah',
       shortName: 'Hailala',
+      source: "Jawâhir al-Ma'ânî, trad. R. Mbaye, p. 344",
       translation: "Il n'y a de divinité qu'Allah.",
       repetitions: 100,
       closingFormulas: [
@@ -329,6 +335,7 @@ const wazifa = Wird(
     WirdPillar(
       arabic: 'جَوْهَرَةُ الْكَمَالِ',
       transliteration: 'Jawharatoul Kamal',
+      source: "Jawâhir al-Ma'ânî, trad. R. Mbaye, p. 344 ; ablution à l'eau, p. 346",
       translation: '« La Perle de la Perfection » — prière spéciale sur le Prophète ﷺ.',
       repetitions: 12,
       note: "Si les conditions ne sont pas réunies, remplacer par 20 récitations supplémentaires de Salatoul Fatihi.",
@@ -396,6 +403,8 @@ const hadratouJouma = Wird(
       arabic: 'لَا إِلَهَ إِلَّا اللَّهُ',
       transliteration: 'La ilaha illAllah',
       shortName: 'Hailala',
+      source:
+          "Jawâhir al-Ma'ânî, trad. R. Mbaye, p. 346 (la source ne fixe pas de nombre ; 1000 retenu pour le projet)",
       translation: "Il n'y a de divinité qu'Allah.",
       repetitions: 1000,
       closingFormulas: [
@@ -438,4 +447,8 @@ const hadratouJouma = Wird(
 // « صلاة الفاتح » et « الاستغفار » ont été fournis par le porteur de projet le
 // 2026-11-02. Les autres piliers gardent leur translittération et leur texte
 // arabe, qui sont déjà leur nom (Jawharatoul Kamal, Allah, لا إله إلا الله).
+// Références (`source`) : validées par le porteur de projet le 2026-11-02 à partir de
+// `docs/14-references-guide-wirds.md` — seulement les éléments qui concordent avec les
+// ouvrages de `docs/sources/`. L'Istighfar de la Wazifa (100 dans *Jawâhir*, 30 ici)
+// n'en a pas tant que l'écart n'est pas tranché.
 const validatedWirds = [lazim, wazifa, hadratouJouma];

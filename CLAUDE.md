@@ -111,9 +111,11 @@ nommés, réglages « Aa » gardés sur l'appareil, compteur à l'échelle du no
 intention et Fatiha en entier, écran de fin. `AppTheme.debugFontFallback` ne sert qu'aux
 captures de test : toujours `null` dans l'app.
 **Guide d'un wird refait le 2026-11-02** (bandeau, actions et série de l'écran Wird, piliers
-et clôtures de l'écran de pratique). Références des wirds dans `docs/sources/` proposées dans
-`docs/14-references-guide-wirds.md` : **à valider, rien n'est affiché dans l'app**, et un
-écart y est soulevé (Istighfar de la Wazifa : 100 dans *Jawâhir*, 30 dans le corpus).
+et clôtures de l'écran de pratique). Références des wirds dans `docs/sources/` : `docs/14-references-guide-wirds.md`. Celles de la
+traduction de *Jawâhir* sont validées et affichées sous les piliers (champ `source` du corpus) ;
+celles de l'édition arabe et de *Munyat al-Murîd* restent **à valider**. L'écart sur
+l'Istighfar de la Wazifa (100 dans *Jawâhir*, 30 dans le corpus) est levé par *Munyat* p. 18 :
+100 avec une formule courte, 30 avec la formule longue.
 Pour le contenu religieux et ses références, consulter d'abord `docs/sources/`.
 Kit de composants commun (jetons, règles d'usage, 15 composants avec leur correspondance
 Flutter) : `docs/kit/README.md`. Les écrans sans maquette se mettent au thème avec ce kit.

@@ -3861,3 +3861,23 @@ entier, Hadra sans « Commencer » hors vendredi, « Reprendre », « Aa » limi
 noms arabes) ; `wird_detail_screen_test.dart` passe sans changement. `flutter analyze` sans
 remarque, 646 tests au vert (captures ignorées sans polices). **Pas encore validé sur
 téléphone.**
+
+### Suite (2026-11-02) : références affichées, sources arabes lues
+
+- **Références affichées** : le porteur de projet a validé les références « Concorde » de
+  `docs/14`. Elles sont dans le corpus (`WirdPillar.source`) et s'affichent sous l'en-tête de
+  chaque pilier du guide (« Source : *Jawâhir al-Ma'ânî*, trad. R. Mbaye, p. 340 »). La Fatiha
+  porte « Coran, sourate 1 ». L'Istighfar de la Wazifa n'a pas de référence affichée tant que
+  la nouvelle n'est pas validée.
+- **Sources arabes lues sur l'image des pages** (`pypdfium2` installé dans le dossier
+  temporaire de la session, rien dans le projet) : *Jawâhir*, édition arabe, pp. 251 à 256, et
+  *Munyat al-Murîd*, pp. 15 à 19. Elles confirment la plupart des éléments, donnent une source
+  aux conditions de Jawharatoul Kamal, à son remplacement par 20 Salatoul Fatihi, à la clôture
+  As-Saffat après chaque centaine et à l'absence de rattrapage de la Hadra.
+- **Écart levé** : *Munyat* p. 18 précise que l'Istighfar de la Wazifa se dit cent fois avec
+  une formule courte, ou trente avec la formule longue du corpus.
+- **Jawharatoul Kamal** : onze dans l'édition arabe de *Jawâhir*, une de plus ajoutée du
+  vivant du Cheikh selon *Munyat*, d'où les douze du corpus.
+- **Statut** : ces nouvelles références sont proposées dans `docs/14` et **restent à valider**.
+- **Tests** : `wird_guide_test.dart` vérifie les références sous les piliers et leur absence
+  sur l'Istighfar de la Wazifa. 647 tests au vert.

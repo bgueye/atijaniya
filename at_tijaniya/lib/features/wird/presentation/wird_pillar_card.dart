@@ -116,6 +116,18 @@ class WirdPillarCard extends StatelessWidget {
               ),
             ],
           ),
+          // Référence dans les ouvrages (validée, `docs/14`) : discrète, sous
+          // l'en-tête. En français dans les deux langues, comme les notes.
+          if (pillar.source != null)
+            Padding(
+              padding: const EdgeInsetsDirectional.only(start: 36, end: 8, bottom: 2),
+              child: Text(
+                l10n.wirdRepairSource(pillar.source!),
+                textDirection: TextDirection.ltr,
+                style: TextStyle(
+                    fontSize: 12, height: 1.35, fontStyle: FontStyle.italic, color: AppColors.secondaryOnDark),
+              ),
+            ),
           const SizedBox(height: 6),
           if (pillar.note != null && expandedVerses) ...[
             _Note(pillar.note!),

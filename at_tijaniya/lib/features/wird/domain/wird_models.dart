@@ -15,6 +15,7 @@ class WirdPillar {
     required this.repetitions,
     this.shortName,
     this.shortNameArabic,
+    this.source,
     this.note,
     this.closingFormulas,
     this.fullText,
@@ -39,6 +40,12 @@ class WirdPillar {
   /// Équivalent arabe de [shortName] (« صلاة الفاتح »), fourni par le porteur
   /// de projet. `null` : le texte arabe [arabic] est déjà le nom.
   final String? shortNameArabic;
+
+  /// Référence du pilier dans les ouvrages de `docs/sources/` (ouvrage et page),
+  /// affichée sous son en-tête dans le guide. Validée par le porteur de projet
+  /// (`docs/14-references-guide-wirds.md`) ; `null` quand aucune source n'a été
+  /// trouvée ou qu'un écart reste à trancher.
+  final String? source;
 
   /// Nom court dans la langue de l'interface (puces de l'écran Wird).
   String labelFor({required bool arabic}) => arabic ? (shortNameArabic ?? this.arabic) : (shortName ?? transliteration);
