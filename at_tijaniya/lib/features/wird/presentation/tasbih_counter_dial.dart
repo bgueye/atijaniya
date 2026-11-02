@@ -1,6 +1,6 @@
 // Compteur à l'échelle du nombre à atteindre (refonte du 2026-11-02, maquette
 // `docs/maquettes/ecran-pratique.html`, point 3). Remplace l'anneau de 33
-// perles (`tasbih_beads_ring.dart`), qui représentait une proportion : pour
+// perles (`tasbih_beads_ring.dart`, supprimé), qui représentait une proportion : pour
 // 30 répétitions, la première perle s'allumait à 1/30 et l'on croyait
 // compter des perles ; pour la Fatiha (1 fois), un anneau entier pour un seul
 // toucher.

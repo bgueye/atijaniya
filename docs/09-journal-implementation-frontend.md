@@ -3805,6 +3805,8 @@ mode concentré, traduction par « Aa », écran de fin) ; `free_wird_screen_tes
 par le menu « ⋯ ». `flutter analyze` sans remarque, 641 tests au vert (captures ignorées sans
 polices).
 
-**Reste** : `tasbih_beads_ring.dart` n'est plus utilisé (remplacé par le nouveau compteur),
-à supprimer avec l'accord du porteur de projet. Le guide d'un wird (`WirdDetailScreen`)
+**Validé ensuite par le porteur de projet** : nom court « النية » de l'intention ;
+suppression de `tasbih_beads_ring.dart`, remplacé par le nouveau compteur.
+
+**Reste** : le guide d'un wird (`WirdDetailScreen`)
 reste à refaire. **Pas encore validé sur téléphone.**
