@@ -4,6 +4,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/date/current_day.dart';
 import '../../../core/date/hijri_date.dart';
 import '../../../core/theme/app_colors.dart';
+import '../../../core/widgets/network_section.dart';
+import '../../../core/widgets/section_title.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../donation/data/donation_feature_flag.dart';
 import '../../donation/presentation/donation_screen.dart';
@@ -20,8 +22,6 @@ import 'home_dashboard_provider.dart';
 import 'home_discover_section.dart';
 import 'home_featured_figure_card.dart';
 import 'home_header.dart';
-import 'home_section_title.dart';
-import 'home_sections.dart';
 import 'home_upcoming_section.dart';
 
 /// Accueil — refonte du 2026-11-01 (proposition B retenue par le porteur de
@@ -123,10 +123,10 @@ class HomeScreen extends ConsumerWidget {
           // La figure de la semaine peut ne pas exister (aucune éligible) : la
           // section n'apparaît alors pas, sauf erreur ou chargement.
           if (featuredFigureAsync.valueOrNull != null || !featuredFigureAsync.hasValue) ...[
-            HomeSectionTitle(l10n.homeSectionFeaturedFigure),
+            SectionTitle(l10n.homeSectionFeaturedFigure),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16),
-              child: HomeNetworkSection<FeaturedFigure?>(
+              child: NetworkSection<FeaturedFigure?>(
                 value: featuredFigureAsync,
                 placeholderHeight: 200,
                 errorMessage: l10n.homeFigureLoadError,
@@ -139,7 +139,7 @@ class HomeScreen extends ConsumerWidget {
               ),
             ),
           ],
-          HomeSectionTitle(l10n.homeSectionUpcoming),
+          SectionTitle(l10n.homeSectionUpcoming),
           HomeUpcomingSection(
             eventsAsync: eventsAsync,
             now: now,
@@ -208,7 +208,7 @@ class _ActionPlaceholder extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Semantics(
-      label: AppLocalizations.of(context)!.homeSectionLoading,
+      label: AppLocalizations.of(context)!.sectionLoading,
       child: Container(
         height: 120,
         decoration: BoxDecoration(color: AppColors.offWhite, borderRadius: BorderRadius.circular(18)),
@@ -235,7 +235,7 @@ class _DashboardErrorState extends StatelessWidget {
           const SizedBox(height: 8),
           Text(l10n.homeLoadError, textAlign: TextAlign.center, style: TextStyle(color: AppColors.secondaryInk)),
           const SizedBox(height: 8),
-          OutlinedButton(onPressed: onRetry, child: Text(l10n.homeRetry)),
+          OutlinedButton(onPressed: onRetry, child: Text(l10n.commonRetry)),
         ],
       ),
     );
@@ -262,7 +262,8 @@ class _DonationLine extends StatelessWidget {
             children: [
               Icon(Icons.favorite_outline, color: AppColors.gold, size: 18),
               const SizedBox(width: 8),
-              Expanded(child: Text(l10n.homeDonationLine, style: TextStyle(fontSize: 13, color: AppColors.secondaryInk))),
+              Expanded(
+                  child: Text(l10n.homeDonationLine, style: TextStyle(fontSize: 13, color: AppColors.secondaryInk))),
               TextButton(
                 onPressed: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const DonationScreen())),
                 style: TextButton.styleFrom(foregroundColor: AppColors.emerald),

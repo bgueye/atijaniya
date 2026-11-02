@@ -15,5 +15,6 @@ condition, choix rapide (« Tout voir » vers trois pages).
 - Source en `secondaire` italique (pas d'italique en arabe).
 - Deux boutons : « Fermer » (texte) et l'action principale (`emerald`).
 
-**Flutter** : `showModalBottomSheet` avec `showDragHandle: true` ; modèle dans
-`home_discover_section.dart` (`_showSheet`).
+**Flutter** : existe, `showContentSheet` (`lib/core/widgets/content_sheet.dart`, 2026-11-02),
+extrait de `home_discover_section.dart`. La source se passe à part (`source:`) pour recevoir
+son style.

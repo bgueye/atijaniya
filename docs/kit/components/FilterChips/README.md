@@ -14,6 +14,6 @@ Bienfaits ; Tous / Zawiyas / Lieux saints / Mosquée ; Toute la communauté / Ma
 - Masquer une option vide plutôt que de la griser, sauf si le disciple doit voir qu'il n'y a
   rien (cas de « Rattraper son wird »).
 
-**Flutter** : modèle dans `home_discover_section.dart` (`_FilterChip`) ; à déplacer dans
-`lib/core/widgets/filter_chips.dart`. `JustifiedChoiceChips` reste pour les filtres sur
+**Flutter** : existe, `FilterChips` et `FilterChipItem` (`lib/core/widgets/filter_chips.dart`,
+2026-11-02), déplacé de `home_discover_section.dart`. `JustifiedChoiceChips` reste pour les filtres sur
 deux lignes (foyers, types de lieux).

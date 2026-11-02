@@ -12,5 +12,5 @@ elle est approximative.
 - Date approximative : « ~ » devant le jour, et la mention en clair ailleurs dans la ligne.
 - Mois abrégé dans la langue de l'interface ; chiffres latins.
 
-**Flutter** : modèle dans `home_upcoming_section.dart` (`_EventRow`) ; à extraire dans
-`lib/core/widgets/date_block.dart`.
+**Flutter** : existe, `DateBlock` (`lib/core/widgets/date_block.dart`, 2026-11-02), utilisé par
+« À venir » sur l'accueil.

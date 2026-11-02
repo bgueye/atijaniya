@@ -12,6 +12,7 @@ import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../core/theme/rosace_painter.dart';
 import '../../../core/widgets/content_text.dart';
+import '../../../core/widgets/eyebrow.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../wird/domain/wird_models.dart';
 import '../../wird/presentation/free_wird_screen.dart';
@@ -168,7 +169,8 @@ class HomeDayRing extends StatelessWidget {
                     Text(
                       '$done/${statuses.length}',
                       textDirection: TextDirection.ltr,
-                      style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w500, color: AppColors.offWhite, height: 1),
+                      style: const TextStyle(
+                          fontSize: 18, fontWeight: FontWeight.w500, color: AppColors.offWhite, height: 1),
                     ),
                     const SizedBox(height: 2),
                     Text(
@@ -341,8 +343,7 @@ class HomeActionCard extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisSize: MainAxisSize.min,
       children: [
-        Text(eyebrow.toUpperCase(),
-            style: TextStyle(fontSize: 10.5, letterSpacing: 1.2, color: AppColors.secondaryInk, fontWeight: FontWeight.w500)),
+        Eyebrow(eyebrow),
         const SizedBox(height: 2),
         DefaultTextStyle.merge(style: const TextStyle(color: AppColors.ink), child: title),
         const SizedBox(height: 2),
@@ -371,7 +372,9 @@ class HomeActionCard extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             if (large) ...[
-              Row(crossAxisAlignment: CrossAxisAlignment.start, children: [chip, const SizedBox(width: 12), Expanded(child: text)]),
+              Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [chip, const SizedBox(width: 12), Expanded(child: text)]),
               const SizedBox(height: 10),
               Align(alignment: AlignmentDirectional.centerEnd, child: button),
             ] else
@@ -389,7 +392,12 @@ class HomeActionCard extends StatelessWidget {
                     onTap: () => openWird(status.wird),
                   ),
                 if (step != null)
-                  _WirdPill(label: l10n.homeQuickTasbihLabel, arabic: false, done: false, dashed: true, onTap: openFreeTasbih),
+                  _WirdPill(
+                      label: l10n.homeQuickTasbihLabel,
+                      arabic: false,
+                      done: false,
+                      dashed: true,
+                      onTap: openFreeTasbih),
               ],
             ),
           ],
@@ -401,7 +409,8 @@ class HomeActionCard extends StatelessWidget {
 
 /// Pastille d'un wird du jour : 48 dp de zone tactile pour un dessin de 32.
 class _WirdPill extends StatelessWidget {
-  const _WirdPill({required this.label, required this.arabic, required this.done, required this.onTap, this.dashed = false});
+  const _WirdPill(
+      {required this.label, required this.arabic, required this.done, required this.onTap, this.dashed = false});
 
   final String label;
 
@@ -430,9 +439,7 @@ class _WirdPill extends StatelessWidget {
               decoration: BoxDecoration(
                 color: done ? AppColors.emeraldSoft : null,
                 borderRadius: BorderRadius.circular(999),
-                border: done
-                    ? null
-                    : Border.all(color: AppColors.bronze.withValues(alpha: dashed ? 0.45 : 0.3)),
+                border: done ? null : Border.all(color: AppColors.bronze.withValues(alpha: dashed ? 0.45 : 0.3)),
               ),
               child: Row(
                 mainAxisSize: MainAxisSize.min,

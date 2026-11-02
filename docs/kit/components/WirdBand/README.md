@@ -11,4 +11,5 @@ Bandeau d'identité d'un wird : sa couleur, son nom français, sa fréquence, so
 - Nom arabe en Amiri, `gold_on_dark` (en `ink` sur `gold_soft`) ; il vient de `nameArabic`.
 - Nom français en Cormorant 22 ; fréquence en 12.
 
-**Flutter** : à créer dans `lib/features/wird/presentation/wird_band.dart` (spécifique au module Wird).
+**Flutter** : existe, `WirdBand` et `wirdBandColors` (`lib/features/wird/presentation/wird_band.dart`,
+2026-11-02), spécifique au module Wird.

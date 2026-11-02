@@ -16,4 +16,5 @@ l'élément de fin (chevron, `StatePill`, interrupteur, compteur).
 - Une donnée sensible s'affiche par son état (« Privée »), jamais par son contenu.
 - Un réglage simple (langue, contraste) se change dans la ligne, sans écran intermédiaire.
 
-**Flutter** : à créer dans `lib/core/widgets/list_group.dart` (`ListGroup`, `ListGroupItem`).
+**Flutter** : existe, `ListGroup`, `ListGroupItem` et `ListGroupTone`
+(`lib/core/widgets/list_group.dart`, 2026-11-02).

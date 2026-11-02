@@ -19,5 +19,9 @@ suppression, et la variante or des écrans de pratique.
 - 48 dp de haut minimum ; à 200 % de texte, le bouton passe sous le texte qu'il accompagne.
 - Une action destructrice demande confirmation et utilise `danger`.
 
-**Flutter** : `FilledButton`, `FilledButton.tonal`, `OutlinedButton`, `TextButton`. Le thème n'a
-qu'un `elevatedButtonTheme` (rayon 12) : ajouter un `filledButtonTheme` en pilule `emerald`.
+**Flutter** : existe (2026-11-02). `primary` : `FilledButton` ; `block` : `ElevatedButton` en
+pleine largeur ; `tonal` : `FilledButton.tonal` avec `style: AppButtonStyles.tonal` ; `outline` :
+`OutlinedButton` ; `text` : `TextButton` — tous thémés dans `AppTheme` (pilule, Jost 14 500,
+48 dp). `danger-link` : `DangerLinkButton` ; `gold` : `PracticeButton`
+(`lib/core/widgets/app_buttons.dart`). Ne pas passer un `TextStyle` sans police dans
+`styleFrom(textStyle: …)` : il remplace celui du thème et le libellé perd Jost.

@@ -3607,3 +3607,67 @@ session à l'autre (hors ligne au démarrage : section « Impossible de charger 
 « Réessayer ») ; pas d'aimantation carte par carte au défilement ; « Tout voir » sur
 « Pour vous » ouvre un choix entre les trois pages plutôt que l'onglet Wird. **Pas encore
 validé sur téléphone.**
+
+## Composants communs du kit (2026-11-02)
+
+Demande du porteur de projet : créer dans `lib/core/widgets/` les composants décrits dans
+`docs/kit/`, en suivant chaque fiche de `docs/kit/components/`. Plan validé avant de coder,
+avec quatre décisions : le thème des boutons s'applique à toute l'app, `DateBlock` prend le
+fond `emerald_soft` de la fiche (changement visible sur « À venir »), `WirdBand` reste dans
+le module Wird, et les captures ne sont pas versionnées.
+
+**Créés** (`lib/core/widgets/`) : `Eyebrow`, `SectionTitle`, `FilterChips`/`FilterPill`,
+`DateBlock`, `StatePill` (`done`, `todo`, `neutral`, `count`, `onDark`, `gold`), `StatTile`,
+`SegmentedSwitch` (deux ou trois vues, vérifié par assertion), `ListGroup`/`ListGroupItem`,
+`Notice` (`info`, `error`, `fromError`), `NetworkSection`/`SectionNote`, `showContentSheet`,
+`DangerLinkButton`, `PracticeButton` et `AppButtonStyles.tonal`. Hors de `core` :
+`WirdBand` (`features/wird/presentation/wird_band.dart`).
+
+**Déplacés depuis l'accueil** : `HomeSectionTitle` → `SectionTitle`, `HomeNetworkSection` et
+`HomeSectionNotice` → `NetworkSection` et `SectionNote` (`home_section_title.dart` et
+`home_sections.dart` supprimés), `_FilterChip`, `_showSheet` et le bloc date de `_EventRow`.
+L'accueil utilise désormais ces composants ; l'étiquette en capitales, recopiée trois fois
+avec des tailles qui avaient divergé, passe par `Eyebrow`. La liste vide de « À venir »
+devient une `Notice.info`, comme dans la fiche. `EmptyNotice` reste, en raccourci vers
+`Notice.info`. Clés de traduction rendues génériques : `homeSectionLoading`,
+`homeSectionStale`, `homeSectionOfflineStale`, `homeRetry`, `homeDiscoverClose` et
+`homeDiscoverOpenPage` deviennent `sectionLoading`, `sectionStale`, `sectionOfflineStale`,
+`commonRetry`, `commonClose` et `commonOpenFullPage` (y compris dans la messagerie, le
+blocage et l'écran des zawiyas des mouqaddams, qui utilisaient déjà `homeRetry`).
+
+**Thème** : `filledButtonTheme`, `outlinedButtonTheme` et `textButtonTheme` ajoutés (pilule,
+libellé Jost 14 en 500, 48 dp de haut minimum ; contour émeraude pour `OutlinedButton`).
+Conséquence voulue sur toute l'app : les `FilledButton` passent de 40 à 48 dp, les
+`OutlinedButton` ont un contour émeraude au lieu de bronze. Le thème des `FilledButton` ne
+porte pas de couleur : il s'applique aussi à `FilledButton.tonal`, qui sortait en émeraude
+plein ; le tonal du kit passe par `AppButtonStyles.tonal`.
+
+**Captures** : `test/kit_captures_test.dart` produit une image par composant et par langue
+(26 au total) avec les vraies polices (Jost, Cormorant Garamond, Amiri, servies à
+`google_fonts` comme des assets) et Noto Sans Arabic en repli, à la place de la police
+système du téléphone. C'est ce qui manquait le 2026-11-01 pour vérifier l'arabe. Ignoré sans
+`KIT_FONTS_DIR` et `KIT_CAPTURES_DIR` (mode d'emploi en tête du fichier). Défauts trouvés et
+corrigés grâce aux captures :
+- `ListGroup` s'étirait sur toute la hauteur disponible ;
+- en arabe, le filet de `ListGroup` partait du mauvais côté : le retrait d'un `Divider` ne
+  suit pas le sens de lecture, remplacé par un retrait directionnel ;
+- `FilledButton.tonal` sortait en émeraude plein (voir Thème) ;
+- `DangerLinkButton` perdait Jost : le `textStyle` d'un bouton remplace celui du thème au
+  lieu de s'y fusionner. Même piège pour tout `styleFrom(textStyle: TextStyle(...))` sans
+  police.
+
+Le `ElevatedButton` existant apparaît sur les captures avec un contour noir : c'est son ombre
+telle que le moteur de test la dessine, sans lien avec ce travail.
+
+**Tests** : `test/kit_widgets_test.dart` vérifie les règles des fiches qui se testent sans
+regarder l'écran : titres annoncés, cibles de 48 dp, état « choisi » annoncé, coche et nombre
+des pastilles, « ~ » et chiffres latins de `DateBlock`, au plus trois vues dans
+`SegmentedSwitch`, message hors ligne commun, dernier contenu gardé avec sa mention, feuille
+du bas, hauteur des boutons, couleurs fixes des bandeaux de wird. `flutter analyze` sans
+remarque, 625 tests au vert (les 26 captures ignorées sans polices) ; captures produites
+et relues en français et en arabe.
+
+**Pas encore fait** : aucun autre écran n'utilise encore ces composants (un écran à la fois,
+d'après les maquettes) ; `ImmersiveHeader` sera créé avec le premier écran de pratique refait.
+**Pas encore validé sur téléphone** (seul l'accueil change à l'écran : « À venir », hauteur
+des boutons).

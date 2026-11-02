@@ -12,5 +12,5 @@ Petite étiquette en capitales au-dessus d'un titre, pour dire de quoi il s'agit
 - Jamais seule : toujours suivie d'un titre.
 - Pas d'Amiri, même en arabe (c'est un libellé d'interface).
 
-**Flutter** : à créer dans `lib/core/widgets/eyebrow.dart` (`Eyebrow`). Le style est aujourd'hui
-répété dans `home_header.dart` et `home_discover_section.dart`.
+**Flutter** : existe, `Eyebrow` (`lib/core/widgets/eyebrow.dart`, 2026-11-02), `onDark: true` sur
+`zaytoune`.

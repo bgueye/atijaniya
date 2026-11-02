@@ -9,7 +9,12 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_theme.dart';
+import '../../../core/widgets/content_sheet.dart';
 import '../../../core/widgets/content_text.dart';
+import '../../../core/widgets/eyebrow.dart';
+import '../../../core/widgets/filter_chips.dart';
+import '../../../core/widgets/notice.dart';
+import '../../../core/widgets/section_title.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../tariqa_benefits/domain/tariqa_benefits_models.dart';
 import '../../tariqa_benefits/presentation/tariqa_benefits_providers.dart';
@@ -23,7 +28,6 @@ import '../../wird/presentation/wird_repair_providers.dart';
 import '../../wird/presentation/wird_repair_screen.dart';
 import '../../wird/presentation/wird_repair_styles.dart';
 import '../domain/home_discover.dart';
-import 'home_section_title.dart';
 
 class HomeDiscoverSection extends ConsumerStatefulWidget {
   const HomeDiscoverSection({
@@ -112,31 +116,18 @@ class _HomeDiscoverSectionState extends ConsumerState<HomeDiscoverSection> {
     if (!anyValue && allFailed) {
       body = Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16),
-        child: Card(
-          margin: EdgeInsets.zero,
-          child: Padding(
-            padding: const EdgeInsets.fromLTRB(16, 8, 8, 8),
-            child: Row(
-              children: [
-                Expanded(
-                  child: Text(l10n.homeDiscoverLoadError, style: TextStyle(color: AppColors.secondaryInk, fontSize: 13)),
-                ),
-                TextButton(
-                  onPressed: () {
-                    ref.invalidate(wirdRepairContentProvider);
-                    ref.invalidate(tariqaConditionsProvider);
-                    ref.invalidate(tariqaBenefitsRowsProvider);
-                  },
-                  child: Text(l10n.homeRetry),
-                ),
-              ],
-            ),
-          ),
+        child: Notice.error(
+          l10n.homeDiscoverLoadError,
+          onRetry: () {
+            ref.invalidate(wirdRepairContentProvider);
+            ref.invalidate(tariqaConditionsProvider);
+            ref.invalidate(tariqaBenefitsRowsProvider);
+          },
         ),
       );
     } else if (!anyValue) {
       body = Semantics(
-        label: l10n.homeSectionLoading,
+        label: l10n.sectionLoading,
         child: Container(
           height: 180,
           margin: const EdgeInsets.symmetric(horizontal: 16),
@@ -189,23 +180,16 @@ class _HomeDiscoverSectionState extends ConsumerState<HomeDiscoverSection> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        HomeSectionTitle(
+        SectionTitle(
           l10n.homeDiscoverTitle,
           actionLabel: anyValue ? l10n.homeSeeAll : null,
           onAction: () => _openAll(context, filter),
         ),
         if (anyValue && filters.length > 1)
-          SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
-            padding: const EdgeInsets.fromLTRB(16, 0, 16, 6),
-            child: Row(
-              children: [
-                for (final (family, label) in filters) ...[
-                  _FilterChip(label: label, selected: family == filter, onTap: () => _select(family)),
-                  const SizedBox(width: 6),
-                ],
-              ],
-            ),
+          FilterChips<DiscoverFamily?>(
+            items: [for (final (family, label) in filters) FilterChipItem(value: family, label: label)],
+            selected: filter,
+            onSelected: _select,
           ),
         body,
       ],
@@ -259,49 +243,6 @@ class _HomeDiscoverSectionState extends ConsumerState<HomeDiscoverSection> {
           },
         );
     }
-  }
-}
-
-class _FilterChip extends StatelessWidget {
-  const _FilterChip({required this.label, required this.selected, required this.onTap});
-
-  final String label;
-  final bool selected;
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    return Semantics(
-      button: true,
-      selected: selected,
-      child: InkWell(
-        onTap: onTap,
-        borderRadius: BorderRadius.circular(999),
-        child: ConstrainedBox(
-          constraints: const BoxConstraints(minHeight: 48, minWidth: 48),
-          child: Center(
-            widthFactor: 1,
-            child: AnimatedContainer(
-              duration: const Duration(milliseconds: 180),
-              padding: const EdgeInsets.symmetric(horizontal: 13, vertical: 6),
-              decoration: BoxDecoration(
-                color: selected ? AppColors.ink : Colors.transparent,
-                borderRadius: BorderRadius.circular(999),
-                border: Border.all(color: selected ? AppColors.ink : AppColors.bronze.withValues(alpha: 0.35)),
-              ),
-              child: Text(
-                label,
-                style: TextStyle(
-                  fontSize: 12.5,
-                  color: selected ? AppColors.offWhite : AppColors.secondaryInk,
-                  fontWeight: selected ? FontWeight.w500 : FontWeight.w400,
-                ),
-              ),
-            ),
-          ),
-        ),
-      ),
-    );
   }
 }
 
@@ -404,12 +345,14 @@ class _DiscoverCardView extends StatelessWidget {
           onTap: () => _showCaseSheet(context, repairCase),
           children: [
             if (isArabic)
-              ContentText(repairCase.situationAr, style: AppTheme.sacredText(fontSize: 19, color: AppColors.ink).copyWith(height: 1.5))
+              ContentText(repairCase.situationAr,
+                  style: AppTheme.sacredText(fontSize: 19, color: AppColors.ink).copyWith(height: 1.5))
             else ...[
               ContentText(repairCase.situationFr,
                   maxLines: 4,
                   overflow: TextOverflow.ellipsis,
-                  style: const TextStyle(fontSize: 15.5, fontWeight: FontWeight.w500, color: AppColors.ink, height: 1.3)),
+                  style:
+                      const TextStyle(fontSize: 15.5, fontWeight: FontWeight.w500, color: AppColors.ink, height: 1.3)),
               Text(
                 repairCase.situationAr,
                 textDirection: TextDirection.rtl,
@@ -463,12 +406,15 @@ class _DiscoverCardView extends StatelessWidget {
     final l10n = AppLocalizations.of(context)!;
     final isArabic = repairIsArabic(context);
     final source = repairCase.sourceFor(isArabic);
-    _showSheet(
+    final page = WirdRepairScreen(initialWird: repairCase.wird == RepairWird.all ? RepairWird.lazim : repairCase.wird);
+    showContentSheet(
       context,
       eyebrow: l10n.homeDiscoverCaseEyebrow(_kindLabel(l10n, repairCase.kind)),
-      openPage: WirdRepairScreen(initialWird: repairCase.wird == RepairWird.all ? RepairWird.lazim : repairCase.wird),
+      onOpenFullPage: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => page)),
+      source: source != null && source.isNotEmpty ? l10n.wirdRepairSource(source) : null,
       children: [
-        ContentText(repairCase.situationFor(isArabic), style: repairContentStyle(isArabic, weight: FontWeight.w600, size: 16)),
+        ContentText(repairCase.situationFor(isArabic),
+            style: repairContentStyle(isArabic, weight: FontWeight.w600, size: 16)),
         if (!isArabic)
           Text(repairCase.situationAr,
               textDirection: TextDirection.rtl,
@@ -476,16 +422,6 @@ class _DiscoverCardView extends StatelessWidget {
               style: AppTheme.sacredText(fontSize: 17, color: AppColors.emerald).copyWith(height: 1.5)),
         const SizedBox(height: 4),
         ContentText(repairCase.actionFor(isArabic), style: repairContentStyle(isArabic, size: 15)),
-        if (source != null && source.isNotEmpty)
-          ContentText(
-            l10n.wirdRepairSource(source),
-            style: TextStyle(
-              fontSize: isArabic ? 13 : 12.5,
-              fontStyle: isArabic ? FontStyle.normal : FontStyle.italic,
-              color: AppColors.secondaryInk,
-              height: 1.4,
-            ),
-          ),
       ],
     );
   }
@@ -493,56 +429,12 @@ class _DiscoverCardView extends StatelessWidget {
   void _showConditionSheet(BuildContext context, TariqaCondition condition) {
     final l10n = AppLocalizations.of(context)!;
     final isArabic = repairIsArabic(context);
-    _showSheet(
+    showContentSheet(
       context,
       eyebrow: l10n.homeDiscoverConditionEyebrow(_categoryLabel(l10n, condition.category)),
-      openPage: const TariqaConditionsScreen(),
+      onOpenFullPage: () =>
+          Navigator.of(context).push(MaterialPageRoute(builder: (_) => const TariqaConditionsScreen())),
       children: [ContentText(_conditionText(condition, isArabic), style: repairContentStyle(isArabic, size: 15.5))],
-    );
-  }
-
-  void _showSheet(BuildContext context,
-      {required String eyebrow, required Widget openPage, required List<Widget> children}) {
-    final l10n = AppLocalizations.of(context)!;
-    showModalBottomSheet<void>(
-      context: context,
-      isScrollControlled: true,
-      showDragHandle: true,
-      backgroundColor: AppColors.offWhite,
-      builder: (sheetContext) => SafeArea(
-        child: ConstrainedBox(
-          constraints: BoxConstraints(maxHeight: MediaQuery.sizeOf(sheetContext).height * 0.85),
-          child: SingleChildScrollView(
-            padding: const EdgeInsets.fromLTRB(20, 0, 20, 16),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                Text(eyebrow.toUpperCase(),
-                    style: TextStyle(fontSize: 11, letterSpacing: 1.1, color: AppColors.secondaryInk, fontWeight: FontWeight.w500)),
-                const SizedBox(height: 10),
-                for (final child in children) ...[child, const SizedBox(height: 8)],
-                const SizedBox(height: 8),
-                Wrap(
-                  alignment: WrapAlignment.end,
-                  spacing: 8,
-                  runSpacing: 8,
-                  children: [
-                    TextButton(onPressed: () => Navigator.of(sheetContext).pop(), child: Text(l10n.homeDiscoverClose)),
-                    FilledButton(
-                      style: FilledButton.styleFrom(backgroundColor: AppColors.emerald, foregroundColor: AppColors.offWhite),
-                      onPressed: () {
-                        Navigator.of(sheetContext).pop();
-                        Navigator.of(context).push(MaterialPageRoute(builder: (_) => openPage));
-                      },
-                      child: Text(l10n.homeDiscoverOpenPage),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ),
-        ),
-      ),
     );
   }
 }
@@ -574,7 +466,6 @@ class _CardShell extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final background = dark ? AppColors.zaytoune : AppColors.offWhite;
-    final eyebrowColor = dark ? AppColors.goldOnDark : AppColors.secondaryInk;
     final lineColor = dark ? AppColors.goldOnDark.withValues(alpha: 0.25) : AppColors.bronze.withValues(alpha: 0.2);
     final footerColor = dark ? AppColors.goldSoft : AppColors.emerald;
     final arrow = Directionality.of(context) == TextDirection.rtl ? '←' : '→';
@@ -605,12 +496,7 @@ class _CardShell extends StatelessWidget {
                   ),
                   const SizedBox(width: 8),
                   Expanded(
-                    child: ContentText(
-                      eyebrow.toUpperCase(),
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                      style: TextStyle(fontSize: 10.5, letterSpacing: 1, color: eyebrowColor, fontWeight: FontWeight.w500),
-                    ),
+                    child: Eyebrow(eyebrow, onDark: dark, maxLines: 2),
                   ),
                 ],
               ),

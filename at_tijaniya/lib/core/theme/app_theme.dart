@@ -136,6 +136,51 @@ class AppTheme {
           side: isLight ? null : BorderSide(color: AppColors.secondaryOnDark),
         ),
       ),
+      // Boutons du kit de composants (docs/kit/components/Button, 2026-11-02).
+      // Avant, seul `elevatedButtonTheme` existait : les `FilledButton`,
+      // `OutlinedButton` et `TextButton` gardaient les valeurs Material (40 dp
+      // de haut, police du `textTheme` sans graisse), et chaque écran
+      // recopiait son `styleFrom` pour s'en approcher.
+      // - `FilledButton` : l'action principale, en pilule émeraude ;
+      // - `OutlinedButton` : l'alternative, en pilule à contour émeraude ;
+      // - `TextButton` : l'action discrète (« Fermer », « Tout voir »).
+      // Tous : libellé Jost 14 en 500 (jamais Amiri) et 48 dp de haut minimum.
+      // Sur fond sombre, les couleurs restent celles de Material, comme avant :
+      // les écrans de pratique ont leurs propres boutons (`PracticeButton`).
+      filledButtonTheme: FilledButtonThemeData(
+        // Pas de couleurs ici : ce thème s'applique aussi à
+        // `FilledButton.tonal`, qui serait sorti en émeraude plein (vu sur
+        // capture). Le bouton plein prend déjà l'émeraude du `colorScheme`
+        // (`primary`/`onPrimary`) ; le tonal du kit passe par
+        // `AppButtonStyles.tonal` (`core/widgets/app_buttons.dart`).
+        style: FilledButton.styleFrom(
+          textStyle: _buttonLabel,
+          minimumSize: const Size(64, 48),
+          padding: const EdgeInsets.symmetric(horizontal: 20),
+          shape: const StadiumBorder(),
+          // Même filet parchemin que le bouton surélevé sur fond sombre (audit
+          // du 2026-10-25, P3-11) : l'émeraude ne s'y détache pas.
+          side: isLight ? null : BorderSide(color: AppColors.secondaryOnDark),
+        ),
+      ),
+      outlinedButtonTheme: OutlinedButtonThemeData(
+        style: OutlinedButton.styleFrom(
+          foregroundColor: isLight ? AppColors.emerald : null,
+          textStyle: _buttonLabel,
+          minimumSize: const Size(64, 48),
+          padding: const EdgeInsets.symmetric(horizontal: 20),
+          shape: const StadiumBorder(),
+          side: isLight ? BorderSide(color: AppColors.emerald) : null,
+        ),
+      ),
+      textButtonTheme: TextButtonThemeData(
+        style: TextButton.styleFrom(
+          foregroundColor: isLight ? AppColors.emerald : null,
+          textStyle: _buttonLabel,
+          minimumSize: const Size(48, 48),
+          padding: const EdgeInsets.symmetric(horizontal: 8),
+        ),
+      ),
       cardTheme: CardThemeData(
         color: brightness == Brightness.light ? AppColors.offWhite : AppColors.zaytoune,
         elevation: 0,
@@ -162,6 +207,10 @@ class AppTheme {
       ),
     );
   }
+
+  /// Libellé des boutons (`libelle` du kit : Jost 14, 500). Un getter et non
+  /// une constante : `GoogleFonts.jost` déclenche le chargement de la police.
+  static TextStyle get _buttonLabel => GoogleFonts.jost(fontSize: 14, fontWeight: FontWeight.w500);
 
   /// Style réservé aux textes religieux et titres arabes (Amiri).
   /// JAMAIS pour un libellé d'interface générique (bouton, menu, onglet).

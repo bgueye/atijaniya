@@ -14,5 +14,5 @@ d'action qui chevauche un en-tête.
 - Pas d'ombre sauf `feature`. Pas de bordure colorée sur un seul côté.
 - Une carte ne contient qu'une action principale.
 
-**Flutter** : `Card` avec le `cardTheme` d'`AppTheme` (déjà conforme). Variante `feature` : voir
+**Flutter** : `Card` avec le `cardTheme` d'`AppTheme` (déjà conforme, pas de composant dédié). Variante `feature` : voir
 `HomeActionCard` (`home_header.dart`).

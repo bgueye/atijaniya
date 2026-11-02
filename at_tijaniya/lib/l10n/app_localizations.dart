@@ -740,23 +740,23 @@ abstract class AppLocalizations {
   /// **'Impossible de charger la figure de la semaine.'**
   String get homeFigureLoadError;
 
-  /// No description provided for @homeSectionOfflineStale.
+  /// No description provided for @sectionOfflineStale.
   ///
   /// In fr, this message translates to:
   /// **'Hors ligne : dernières informations reçues.'**
-  String get homeSectionOfflineStale;
+  String get sectionOfflineStale;
 
-  /// No description provided for @homeSectionStale.
+  /// No description provided for @sectionStale.
   ///
   /// In fr, this message translates to:
   /// **'Mise à jour impossible : dernières informations reçues.'**
-  String get homeSectionStale;
+  String get sectionStale;
 
-  /// No description provided for @homeSectionLoading.
+  /// No description provided for @sectionLoading.
   ///
   /// In fr, this message translates to:
   /// **'Chargement'**
-  String get homeSectionLoading;
+  String get sectionLoading;
 
   /// No description provided for @homeLoadError.
   ///
@@ -764,11 +764,11 @@ abstract class AppLocalizations {
   /// **'Impossible de charger votre tableau de bord.'**
   String get homeLoadError;
 
-  /// No description provided for @homeRetry.
+  /// No description provided for @commonRetry.
   ///
   /// In fr, this message translates to:
   /// **'Réessayer'**
-  String get homeRetry;
+  String get commonRetry;
 
   /// No description provided for @homeStatusAllDone.
   ///
@@ -6698,17 +6698,17 @@ abstract class AppLocalizations {
   /// **'Lire'**
   String get homeDiscoverRead;
 
-  /// No description provided for @homeDiscoverOpenPage.
+  /// No description provided for @commonOpenFullPage.
   ///
   /// In fr, this message translates to:
   /// **'Ouvrir la page complète'**
-  String get homeDiscoverOpenPage;
+  String get commonOpenFullPage;
 
-  /// No description provided for @homeDiscoverClose.
+  /// No description provided for @commonClose.
   ///
   /// In fr, this message translates to:
   /// **'Fermer'**
-  String get homeDiscoverClose;
+  String get commonClose;
 
   /// No description provided for @homeDiscoverLoadError.
   ///

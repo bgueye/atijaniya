@@ -108,4 +108,7 @@ d'écart, le code fait foi et ce kit doit être corrigé.
 | couleurs | `AppColors.<nom en camelCase>` (`off_white` → `AppColors.offWhite`) |
 | `titre-*` | `AppTheme.titleText(...)` |
 | `texte-*`, `titre-arabe` | `AppTheme.sacredText(...)` |
-| composants | `lib/core/widgets/` ; chaque fiche dit si le widget existe ou est à créer |
+| composants | `lib/core/widgets/` (sauf `WirdBand`, dans le module Wird) ; chaque fiche donne le widget |
+
+Captures de chaque composant en français et en arabe, avec les vraies polices :
+`test/kit_captures_test.dart` (mode d'emploi en tête du fichier ; images hors dépôt).

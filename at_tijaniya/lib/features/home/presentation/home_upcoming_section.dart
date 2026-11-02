@@ -6,19 +6,19 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:intl/intl.dart' show DateFormat;
 
 import '../../../core/theme/app_colors.dart';
-import '../../../core/theme/app_theme.dart';
 import '../../../core/widgets/content_text.dart';
+import '../../../core/widgets/date_block.dart';
 import '../../../core/widgets/directional_chevron.dart';
+import '../../../core/widgets/network_section.dart';
+import '../../../core/widgets/notice.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../khadara/domain/khadara_models.dart';
 import '../../khadara/presentation/event_detail_screen.dart';
 import '../../khadara/presentation/khadara_format.dart';
 import '../../khadara/presentation/live_stream_providers.dart';
 import '../../khadara/presentation/live_stream_screen.dart';
-import 'home_sections.dart';
 
 /// Nombre d'évènements montrés : assez pour voir ce qui vient, sans faire de
 /// l'accueil un calendrier (le calendrier complet est dans l'onglet Zawiyas).
@@ -46,13 +46,13 @@ class HomeUpcomingSection extends ConsumerWidget {
             _LiveBanner(stream: live.first),
             const SizedBox(height: 10),
           ],
-          HomeNetworkSection<List<KhadaraEvent>>(
+          NetworkSection<List<KhadaraEvent>>(
             value: eventsAsync,
             placeholderHeight: 72,
             errorMessage: l10n.homeEventsLoadError,
             onRetry: onRetry,
             builder: (events) => events.isEmpty
-                ? HomeSectionNotice(l10n.homeEventsEmpty)
+                ? Notice.info(l10n.homeEventsEmpty, icon: Icons.event_outlined)
                 : _EventList(events: events.take(_maxEvents).toList(), now: now),
           ),
         ],
@@ -134,7 +134,6 @@ class _EventRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-    final locale = Localizations.localeOf(context).languageCode;
     final date = event.isRecurring ? (nextOccurrence(event, from: now) ?? event.startsAt) : event.startsAt;
     final zawiya = event.zawiyaName;
     return InkWell(
@@ -144,23 +143,9 @@ class _EventRow extends StatelessWidget {
         child: Row(
           children: [
             // Jour et mois : l'information principale d'un évènement. Une date
-            // approximative est précédée de « ~ » et dite en clair dessous.
-            SizedBox(
-              width: 46,
-              child: Column(
-                children: [
-                  Text(
-                    '${event.showsApproximateDate ? '~' : ''}${date.day}',
-                    textDirection: TextDirection.ltr,
-                    style: AppTheme.titleText(fontSize: 24, color: AppColors.emerald, height: 1),
-                  ),
-                  Text(
-                    DateFormat.MMM(locale).format(date).toUpperCase(),
-                    style: TextStyle(fontSize: 10.5, letterSpacing: 0.8, color: AppColors.secondaryInk),
-                  ),
-                ],
-              ),
-            ),
+            // approximative est précédée de « ~ » et dite en clair dessous
+            // (`formatKhadaraEventSchedule`).
+            DateBlock(date: date, approximate: event.showsApproximateDate),
             const SizedBox(width: 12),
             Expanded(
               child: Column(
@@ -172,7 +157,8 @@ class _EventRow extends StatelessWidget {
                       style: const TextStyle(fontSize: 14.5, fontWeight: FontWeight.w500, color: AppColors.ink)),
                   const SizedBox(height: 2),
                   ContentText(
-                    [if (zawiya != null && zawiya.isNotEmpty) zawiya, formatKhadaraEventSchedule(event, l10n)].join(' · '),
+                    [if (zawiya != null && zawiya.isNotEmpty) zawiya, formatKhadaraEventSchedule(event, l10n)]
+                        .join(' · '),
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
                     style: TextStyle(fontSize: 12, color: AppColors.secondaryInk),

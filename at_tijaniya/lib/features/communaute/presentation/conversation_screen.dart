@@ -124,7 +124,7 @@ class _ConversationScreenState extends ConsumerState<ConversationScreen> {
                     Text(l10n.communityMessagesLoadError, style: TextStyle(color: AppColors.secondaryInk)),
                     TextButton(
                       onPressed: () => ref.invalidate(conversationMessagesProvider(widget.conversationId)),
-                      child: Text(l10n.homeRetry),
+                      child: Text(l10n.commonRetry),
                     ),
                   ],
                 ),

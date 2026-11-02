@@ -14,4 +14,5 @@ sa barre d'app et la carte de rattrapage (exception actée). Nulle part ailleurs
 - Barre d'état en clair (`SystemUiOverlayStyle.light`).
 
 **Flutter** : `HomeHeader` (`home_header.dart`) pour l'accueil ; `AppTheme.immersive` pour les
-écrans de pratique.
+écrans de pratique. Pas encore de composant commun : à créer avec le premier écran de pratique
+refait (décision du 2026-11-02).

@@ -14,5 +14,7 @@ quand une section n'a pas pu se charger (« Pas de connexion internet… » + «
 - Une section en erreur n'empêche pas le reste de l'écran de s'afficher.
 - Le dernier contenu reçu reste affiché avec « Hors ligne : dernières informations reçues. »
 
-**Flutter** : `EmptyNotice` (`lib/core/widgets/empty_notice.dart`) pour l'information ;
-`HomeNetworkSection` (`home_sections.dart`) pour chargement, erreur et hors ligne, à généraliser.
+**Flutter** : existe (2026-11-02). `Notice.info`, `Notice.error`, `Notice.fromError`
+(`lib/core/widgets/notice.dart`) ; `NetworkSection` (`lib/core/widgets/network_section.dart`,
+ex-`HomeNetworkSection`) pour chargement, erreur et hors ligne. `EmptyNotice` reste, comme
+raccourci vers `Notice.info`.

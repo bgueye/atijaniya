@@ -340,19 +340,19 @@ class AppLocalizationsFr extends AppLocalizations {
   String get homeFigureLoadError => 'Impossible de charger la figure de la semaine.';
 
   @override
-  String get homeSectionOfflineStale => 'Hors ligne : dernières informations reçues.';
+  String get sectionOfflineStale => 'Hors ligne : dernières informations reçues.';
 
   @override
-  String get homeSectionStale => 'Mise à jour impossible : dernières informations reçues.';
+  String get sectionStale => 'Mise à jour impossible : dernières informations reçues.';
 
   @override
-  String get homeSectionLoading => 'Chargement';
+  String get sectionLoading => 'Chargement';
 
   @override
   String get homeLoadError => 'Impossible de charger votre tableau de bord.';
 
   @override
-  String get homeRetry => 'Réessayer';
+  String get commonRetry => 'Réessayer';
 
   @override
   String get homeStatusAllDone => 'Tous les wirds du jour sont accomplis';
@@ -3462,10 +3462,10 @@ class AppLocalizationsFr extends AppLocalizations {
   String get homeDiscoverRead => 'Lire';
 
   @override
-  String get homeDiscoverOpenPage => 'Ouvrir la page complète';
+  String get commonOpenFullPage => 'Ouvrir la page complète';
 
   @override
-  String get homeDiscoverClose => 'Fermer';
+  String get commonClose => 'Fermer';
 
   @override
   String get homeDiscoverLoadError => 'Impossible de charger ces contenus.';

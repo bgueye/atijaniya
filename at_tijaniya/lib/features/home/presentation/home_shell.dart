@@ -107,9 +107,8 @@ class _HomeShellState extends ConsumerState<HomeShell> {
           backgroundColor: _index == 0 ? AppColors.zaytoune : null,
           foregroundColor: _index == 0 ? AppColors.offWhite : null,
           systemOverlayStyle: _index == 0 ? SystemUiOverlayStyle.light : null,
-          titleTextStyle: _index == 0
-              ? Theme.of(context).appBarTheme.titleTextStyle?.copyWith(color: AppColors.offWhite)
-              : null,
+          titleTextStyle:
+              _index == 0 ? Theme.of(context).appBarTheme.titleTextStyle?.copyWith(color: AppColors.offWhite) : null,
           title: Text(_titleFor(_index, l10n)),
           actions: [
             if (isSignedIn)

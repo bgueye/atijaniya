@@ -337,19 +337,19 @@ class AppLocalizationsAr extends AppLocalizations {
   String get homeFigureLoadError => 'تعذّر تحميل شخصية الأسبوع.';
 
   @override
-  String get homeSectionOfflineStale => 'دون اتصال: آخر المعلومات المستلمة.';
+  String get sectionOfflineStale => 'دون اتصال: آخر المعلومات المستلمة.';
 
   @override
-  String get homeSectionStale => 'تعذّر التحديث: آخر المعلومات المستلمة.';
+  String get sectionStale => 'تعذّر التحديث: آخر المعلومات المستلمة.';
 
   @override
-  String get homeSectionLoading => 'جارٍ التحميل';
+  String get sectionLoading => 'جارٍ التحميل';
 
   @override
   String get homeLoadError => 'تعذّر تحميل لوحتك.';
 
   @override
-  String get homeRetry => 'إعادة المحاولة';
+  String get commonRetry => 'إعادة المحاولة';
 
   @override
   String get homeStatusAllDone => 'جميع أوراد اليوم أُنجزت';
@@ -3427,10 +3427,10 @@ class AppLocalizationsAr extends AppLocalizations {
   String get homeDiscoverRead => 'قراءة';
 
   @override
-  String get homeDiscoverOpenPage => 'فتح الصفحة كاملة';
+  String get commonOpenFullPage => 'فتح الصفحة كاملة';
 
   @override
-  String get homeDiscoverClose => 'إغلاق';
+  String get commonClose => 'إغلاق';
 
   @override
   String get homeDiscoverLoadError => 'تعذّر تحميل هذه المحتويات.';

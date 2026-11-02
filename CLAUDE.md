@@ -104,6 +104,9 @@ donne aussi la maquette de référence de chaque écran (une seule par écran).
 conflit, les règles de ce fichier priment sur la maquette.
 Kit de composants commun (jetons, règles d'usage, 15 composants avec leur correspondance
 Flutter) : `docs/kit/README.md`. Les écrans sans maquette se mettent au thème avec ce kit.
+Les composants existent depuis le 2026-11-02 dans `lib/core/widgets/` (`WirdBand` dans le
+module Wird) : les réutiliser plutôt que recopier un style ; captures FR/AR avec les vraies
+polices par `test/kit_captures_test.dart`.
 
 ## Contenu religieux — règle impérative
 Aucun texte de wird, biographie ou enseignement attribué ne doit être codé en dur ou publié

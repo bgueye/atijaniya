@@ -12,5 +12,6 @@ Bascule entre deux ou trois vues d'un même écran, avec leur nombre facultatif.
 - Trois vues au plus ; au-delà, revoir l'écran.
 - Les non-lus s'affichent en `StatePill` `count`.
 
-**Flutter** : à créer dans `lib/core/widgets/segmented_switch.dart` (le `SegmentedButton` de
-Material a un rendu trop différent).
+**Flutter** : existe, `SegmentedSwitch` et `SegmentedSwitchItem`
+(`lib/core/widgets/segmented_switch.dart`, 2026-11-02). Le `SegmentedButton` de Material a un
+rendu trop différent.

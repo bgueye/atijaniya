@@ -77,7 +77,7 @@ class AdminMouqaddamZawiyasScreen extends ConsumerWidget {
                   const SizedBox(height: 12),
                   OutlinedButton(
                     onPressed: () => ref.invalidate(_managedMouqaddamsProvider),
-                    child: Text(l10n.homeRetry),
+                    child: Text(l10n.commonRetry),
                   ),
                 ],
               ),

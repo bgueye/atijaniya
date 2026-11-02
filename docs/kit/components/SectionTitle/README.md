@@ -14,5 +14,5 @@ du lien.
 - Le lien est un `TextButton` en `emerald`, 48 dp de haut.
 - Écart `space-24` au-dessus, `space-4` en dessous.
 
-**Flutter** : existe sous le nom `HomeSectionTitle` (`lib/features/home/presentation/home_section_title.dart`) ;
-à déplacer dans `lib/core/widgets/section_title.dart` sous le nom `SectionTitle`.
+**Flutter** : existe, `SectionTitle` (`lib/core/widgets/section_title.dart`, 2026-11-02),
+ex-`HomeSectionTitle`.

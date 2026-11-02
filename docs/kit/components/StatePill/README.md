@@ -15,4 +15,5 @@ Pastille qui dit l'état d'une chose : fait, à faire, privé, nombre, date appr
 
 **Règles** : un mot ou deux ; un état se dit aussi en texte, jamais par la couleur seule.
 
-**Flutter** : à créer dans `lib/core/widgets/state_pill.dart` (`StatePill`).
+**Flutter** : existe, `StatePill` et `StatePill.count` (`lib/core/widgets/state_pill.dart`,
+2026-11-02). La coche de `done` est une icône, pas le caractère « ✓ » (absent de Jost).

@@ -12,4 +12,4 @@ chiffres d'une page (« 9 figures », « 34 lieux »). Par rangées de deux ou t
 - Variante `dark` (`zaytoune`, nombre `gold_on_dark`) pour le chiffre le plus important d'une rangée.
 - Jamais de chiffre décoratif : chaque nombre vient des données.
 
-**Flutter** : à créer dans `lib/core/widgets/stat_tile.dart` (`StatTile`).
+**Flutter** : existe, `StatTile` (`lib/core/widgets/stat_tile.dart`, 2026-11-02).
