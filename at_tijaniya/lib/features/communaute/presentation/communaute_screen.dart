@@ -206,7 +206,12 @@ class _FeedView extends ConsumerWidget {
 
     return RefreshIndicator(
       color: AppColors.emerald,
-      onRefresh: () => ref.refresh(communityFeedProvider.future),
+      // Les rendez-vous intercalés sont relus avec le fil (audit du
+      // 2026-11-03 : un rendez-vous passé pouvait y rester).
+      onRefresh: () {
+        ref.invalidate(upcomingEventsProvider);
+        return ref.refresh(communityFeedProvider.future);
+      },
       child: feed.when(
         // « Voir plus » recharge le fil avec une page de plus, sans le
         // remplacer par l'indicateur de chargement.

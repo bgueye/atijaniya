@@ -82,6 +82,7 @@ class ZawiyasSchematicMap extends StatelessWidget {
           LayoutBuilder(builder: (context, constraints) {
             final size = Size(constraints.maxWidth, constraints.maxWidth * _aspect);
             final base = Theme.of(context).textTheme.bodySmall ?? const TextStyle();
+            final outerDirection = Directionality.of(context);
             // Dessin géographique : l'ouest reste à gauche en arabe aussi.
             return Directionality(
               textDirection: TextDirection.ltr,
@@ -137,8 +138,12 @@ class ZawiyasSchematicMap extends StatelessWidget {
                       ),
                     ),
                     // Nœuds du lecteur d'écran, un par point, de 48 dp ; ils
-                    // laissent passer le doigt au détecteur ci-dessus.
-                    for (final point in inside) _semanticsTarget(point, _project(point.country, size), language, l10n),
+                    // laissent passer le doigt au détecteur ci-dessus (une
+                    // boîte vide ne capte aucun toucher). Libellés dans le
+                    // sens de la langue, le dessin étant forcé de gauche à
+                    // droite.
+                    for (final point in inside)
+                      _semanticsTarget(point, _project(point.country, size), language, l10n, outerDirection),
                   ],
                 ),
               ),
@@ -194,21 +199,29 @@ class ZawiyasSchematicMap extends StatelessWidget {
     return bestDistance <= 24 ? best : null;
   }
 
-  Widget _semanticsTarget(CountryPoint point, Offset center, String language, AppLocalizations l10n) {
+  /// Pas d'`IgnorePointer` autour : depuis Flutter 3.8, il bloque aussi les
+  /// actions du lecteur d'écran (le double toucher de TalkBack n'agissait
+  /// pas ; audit du 2026-11-03).
+  Widget _semanticsTarget(
+    CountryPoint point,
+    Offset center,
+    String language,
+    AppLocalizations l10n,
+    TextDirection textDirection,
+  ) {
     const side = 48.0;
     return Positioned(
       left: center.dx - side / 2,
       top: center.dy - side / 2,
       width: side,
       height: side,
-      child: IgnorePointer(
-        child: Semantics(
-          button: true,
-          selected: selectedCountry == point.country.code,
-          label: l10n.khadaraMapCountry(point.country.name(language), point.count),
-          onTap: () => onCountryTap(point.country.code),
-          child: const SizedBox.expand(),
-        ),
+      child: Semantics(
+        button: true,
+        selected: selectedCountry == point.country.code,
+        label: l10n.khadaraMapCountry(point.country.name(language), point.count),
+        textDirection: textDirection,
+        onTap: () => onCountryTap(point.country.code),
+        child: const SizedBox.expand(),
       ),
     );
   }

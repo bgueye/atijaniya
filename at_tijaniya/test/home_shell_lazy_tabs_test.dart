@@ -15,13 +15,19 @@ import 'package:at_tijaniya/features/figures/presentation/figures_screen.dart';
 import 'package:at_tijaniya/features/home/presentation/home_screen.dart';
 import 'package:at_tijaniya/features/home/presentation/home_shell.dart';
 import 'package:at_tijaniya/features/khadara/presentation/khadara_providers.dart';
+import 'package:at_tijaniya/features/khadara/domain/khadara_models.dart';
 import 'package:at_tijaniya/features/khadara/presentation/khadara_screen.dart';
+import 'package:at_tijaniya/features/khadara/presentation/live_stream_providers.dart';
 import 'package:at_tijaniya/features/profil/presentation/profile_providers.dart';
 import 'package:at_tijaniya/features/wird/presentation/wird_list_screen.dart';
 import 'package:at_tijaniya/l10n/app_localizations.dart';
 
-Widget _shell() => ProviderScope(
+Widget _shell({int Function()? onLiveFetch}) => ProviderScope(
       overrides: [
+        allLiveStreamsProvider.overrideWith((ref) async {
+          onLiveFetch?.call();
+          return const <LiveStream>[];
+        }),
         clockProvider.overrideWithValue(() => DateTime(2026, 10, 26, 9, 0)),
         currentUserIdProvider.overrideWithValue(null),
         upcomingEventsProvider.overrideWith((ref) async => const []),
@@ -83,6 +89,25 @@ void main() {
 
     // Depuis l'accueil, le retour est laissé au système (fermeture de l'app).
     expect(await tester.binding.handlePopRoute(), isFalse);
+    await tester.pumpWidget(const SizedBox());
+  });
+
+  // Audit des écrans refaits du 2026-11-03 : le bandeau « En direct » de
+  // l'accueil n'était relu qu'à l'arrivée sur l'onglet Zawiyas ; il pouvait
+  // annoncer un direct terminé.
+  testWidgets("le direct est relu au retour sur l'accueil", (tester) async {
+    SharedPreferences.setMockInitialValues({});
+    var fetches = 0;
+    await tester.pumpWidget(_shell(onLiveFetch: () => ++fetches));
+    await tester.pumpAndSettle();
+    final initial = fetches;
+    expect(initial, greaterThan(0));
+
+    await tester.tap(find.text('Wird'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Accueil'));
+    await tester.pumpAndSettle();
+    expect(fetches, greaterThan(initial));
     await tester.pumpWidget(const SizedBox());
   });
 }

@@ -4391,3 +4391,24 @@ Tests : `test/detail_screens_audit_test.dart` (règle du titulaire actuel, évè
 zawiya avec période close et lacune, fiche d'un évènement passé et à venir). `flutter analyze` ne
 signale rien et les 719 tests passent. Pas encore validé sur téléphone.
 
+## Audit des écrans refaits, étape 2 : carte des Zawiyas et rechargements (2026-11-03)
+
+Suite de `docs/audits/2026-11-03-ecrans-refaits.md` :
+- **Carte schématique des Zawiyas** : les nœuds du lecteur d'écran (un par pays) n'étaient plus sous
+  `IgnorePointer`, qui bloque aussi les actions du lecteur d'écran depuis Flutter 3.8 : le double
+  toucher de TalkBack ne filtrait pas la liste. Une boîte vide ne capte aucun toucher, le doigt va
+  toujours au détecteur du point le plus proche. Libellés annoncés dans le sens de la langue (le
+  dessin reste forcé de gauche à droite). Le nouveau test passe par l'action sémantique
+  (`tester.semantics.tap`) ; vérifié qu'il échoue avec l'ancien code.
+- **Rechargements à l'arrivée sur un onglet** (`home_shell.dart`) :
+  - accueil : le direct en cours (`allLiveStreamsProvider`), qui n'était relu que sur Zawiyas —
+    l'accueil pouvait annoncer un direct terminé ;
+  - Communauté : la liste des conversations (`conversationsProvider`), gardée en vie par la
+    pastille des non-lus depuis la refonte et jamais relue, et les rendez-vous intercalés dans le fil
+    (`upcomingEventsProvider`), relus aussi par le geste d'actualisation du fil.
+
+Tests : `home_shell_lazy_tabs_test.dart` (direct relu au retour sur l'accueil),
+`khadara_screen_test.dart` (action du lecteur d'écran sur un pays). `flutter analyze` ne signale
+rien et les 721 tests passent. Non vérifié sur téléphone, en particulier avec TalkBack. Limite
+inchangée : sans Realtime, la pastille des non-lus ne bouge pas tant qu'on reste sur l'onglet.
+

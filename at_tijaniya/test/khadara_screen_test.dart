@@ -286,6 +286,22 @@ void main() {
       expect(_place('Lieu guinéen'), findsNothing);
     });
 
+    // Audit des écrans refaits du 2026-11-03 : sous `IgnorePointer`, les
+    // nœuds de la carte n'avaient pas d'action pour le lecteur d'écran ; un
+    // vrai toucher passait, pas le double toucher de TalkBack.
+    testWidgets("carte : l'action du lecteur d'écran sur un pays filtre la liste", (tester) async {
+      _tall(tester);
+      final semantics = tester.ensureSemantics();
+      await tester.pumpWidget(_wrap());
+      await tester.pumpAndSettle();
+
+      tester.semantics.tap(find.semantics.byLabel('Mali · 1 lieu'));
+      await tester.pumpAndSettle();
+      expect(_place('Zawiya de Ségou (Mali)'), findsOneWidget);
+      expect(_place('Zawiya de Médina Baye (Kaolack)'), findsNothing);
+      semantics.dispose();
+    });
+
     testWidgets('un grand groupe se replie à cinq lieux, « Voir les N autres » le déplie', (tester) async {
       _tall(tester);
       await tester.pumpWidget(_wrap(zawiyas: _manySenegal, events: const []));

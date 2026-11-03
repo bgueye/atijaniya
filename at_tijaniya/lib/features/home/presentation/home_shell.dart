@@ -8,6 +8,7 @@ import '../../../l10n/app_localizations.dart';
 import '../../communaute/presentation/communaute_screen.dart';
 import '../../communaute/presentation/community_providers.dart';
 import '../../communaute/presentation/groups_providers.dart';
+import '../../communaute/presentation/messages_providers.dart';
 import '../../figures/presentation/figures_screen.dart';
 import '../../khadara/presentation/khadara_providers.dart';
 import '../../khadara/presentation/khadara_screen.dart';
@@ -177,7 +178,13 @@ class _HomeShellState extends ConsumerState<HomeShell> {
     // l'app. On recharge à l'arrivée sur l'onglet ; l'ancien contenu
     // reste affiché pendant le rechargement.
     if (i != _index) {
-      if (i == 0 || i == 2) ref.invalidate(upcomingEventsProvider);
+      // Accueil, Zawiyas et Communauté (rendez-vous intercalés dans le fil,
+      // audit du 2026-11-03) affichent les rendez-vous à venir.
+      if (i == 0 || i == 2 || i == 4) ref.invalidate(upcomingEventsProvider);
+      // Bandeau « En direct » : sur l'accueil comme sur Zawiyas (audit du
+      // 2026-11-03 : il n'était rechargé que sur Zawiyas, et l'accueil
+      // pouvait annoncer un direct terminé).
+      if (i == 0) ref.invalidate(allLiveStreamsProvider);
       // Les lieux aussi, depuis l'audit Zawiyas du 2026-10-25 (P3-2) :
       // un lieu ajouté ou modifié par l'admin n'apparaissait qu'au
       // redémarrage.
@@ -193,6 +200,10 @@ class _HomeShellState extends ConsumerState<HomeShell> {
       if (i == 4) {
         ref.invalidate(communityFeedProvider);
         ref.invalidate(groupsProvider);
+        // Pastille des non-lus et vue Messages : depuis la refonte (vue de
+        // l'onglet au lieu d'un écran poussé), la pastille garde la liste en
+        // vie et elle n'était plus relue (audit du 2026-11-03).
+        ref.invalidate(conversationsProvider);
       }
     }
     setState(() {
