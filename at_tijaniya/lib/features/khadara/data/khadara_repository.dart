@@ -6,6 +6,7 @@ library;
 
 import '../../../core/supabase/supabase_config.dart';
 import '../domain/khadara_models.dart';
+import '../domain/zawiyas_overview.dart';
 
 class KhadaraRepository {
   const KhadaraRepository();
@@ -27,6 +28,7 @@ class KhadaraRepository {
     String? addressText,
     String? contactInfo,
     bool coordinatesApproximate = false,
+    String? country,
   }) async {
     final row = await SupabaseConfig.client
         .from('zawiyas')
@@ -39,6 +41,9 @@ class KhadaraRepository {
           'address_text': addressText,
           'contact_info': contactInfo,
           'coordinates_approximate': coordinatesApproximate,
+          // Code ISO à deux lettres (contrainte `zawiyas_country_iso_check`),
+          // migration du 2026-11-03.
+          'country': country,
         })
         .select()
         .single();
@@ -55,6 +60,7 @@ class KhadaraRepository {
     String? addressText,
     String? contactInfo,
     bool coordinatesApproximate = false,
+    String? country,
   }) async {
     final row = await SupabaseConfig.client
         .from('zawiyas')
@@ -67,6 +73,9 @@ class KhadaraRepository {
           'address_text': addressText,
           'contact_info': contactInfo,
           'coordinates_approximate': coordinatesApproximate,
+          // Code ISO à deux lettres (contrainte `zawiyas_country_iso_check`),
+          // migration du 2026-11-03.
+          'country': country,
         })
         .eq('id', id)
         .select()
@@ -94,6 +103,34 @@ class KhadaraRepository {
   /// occurrence réelle côté client (`sortByNextOccurrence`) plutôt que par
   /// `starts_at` brut, qui ne reflète pas la bonne date pour un évènement
   /// récurrent.
+  /// Successions et figures liées, comptées par lieu, pour les étiquettes
+  /// des cartes de l'écran Zawiyas (refonte du 2026-11-03). Deux requêtes
+  /// légères (une colonne chacune, quelques dizaines de lignes) plutôt
+  /// qu'une vue en base. Elles ne comptent que ce que la RLS laisse lire,
+  /// comme la fiche du lieu :
+  /// - `figure_zawiya_khalifas` n'expose que les maillons dont la figure est
+  ///   publiée (`figure_zawiya_khalifas_read_valid_or_admin`) ;
+  /// - `figure_zawiyas` est lisible en entier, d'où la jointure `!inner` sur
+  ///   `figures`, dont la RLS écarte les brouillons : un lien vers une
+  ///   figure non publiée n'est pas compté.
+  Future<ZawiyaLinkCounts> fetchZawiyaLinkCounts() async {
+    final client = SupabaseConfig.client;
+    final (successionRows, figureRows) = await (
+      client.from('figure_zawiya_khalifas').select('zawiya_id'),
+      client.from('figure_zawiyas').select('zawiya_id, figures!inner(id)'),
+    ).wait;
+    Map<String, int> count(List<Map<String, dynamic>> rows) {
+      final counts = <String, int>{};
+      for (final row in rows) {
+        final id = row['zawiya_id'] as String?;
+        if (id != null) counts[id] = (counts[id] ?? 0) + 1;
+      }
+      return counts;
+    }
+
+    return ZawiyaLinkCounts(succession: count(successionRows), figures: count(figureRows));
+  }
+
   Future<List<KhadaraEvent>> fetchUpcomingEvents() async {
     final now = DateTime.now();
     final nowIso = now.toUtc().toIso8601String();

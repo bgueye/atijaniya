@@ -695,12 +695,6 @@ class AppLocalizationsAr extends AppLocalizations {
   String get tariqaConditionFormSaveError => 'تعذّر حفظ التعديل.';
 
   @override
-  String get khadaraEventsTab => 'المناسبات';
-
-  @override
-  String get khadaraZawiyasTab => 'الدليل';
-
-  @override
   String get khadaraNoEvents => 'لا توجد مناسبات قادمة حاليًا.';
 
   @override
@@ -723,11 +717,6 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get khadaraApproximateLocation => 'موقع تقريبي: قد تبعد العلامة بضعة كيلومترات عن المكان.';
-
-  @override
-  String khadaraApproximateDistance(String distance) {
-    return 'حوالي $distance';
-  }
 
   @override
   String get khadaraEventTypeZiyara => 'زيارة';
@@ -1014,9 +1003,6 @@ class AppLocalizationsAr extends AppLocalizations {
   }
 
   @override
-  String get khadaraUnderstandingTooltip => 'فهم الزاوية';
-
-  @override
   String get khadaraUnderstandingTitle => 'فهم الزاوية';
 
   @override
@@ -1032,22 +1018,6 @@ class AppLocalizationsAr extends AppLocalizations {
   String get khadaraUnderstandingDraftBanner => 'مسودة غير منشورة — مرئية لك فقط كمشرف، في انتظار التحقق منها.';
 
   @override
-  String get khadaraNearbyRecurringTooltip => 'أقرب حضرة';
-
-  @override
-  String get khadaraNearbyRecurringTitle => 'أقرب حضرة';
-
-  @override
-  String get khadaraNearbyRecurringEmpty => 'لم يتم العثور على أي مناسبة متكررة في مكان محدد الموقع.';
-
-  @override
-  String get khadaraLocationServiceDisabled => 'تحديد الموقع معطّل على هذا الجهاز. فعّله للعثور على أقرب مناسبة.';
-
-  @override
-  String get khadaraLocationPermissionDenied =>
-      'تم رفض الوصول إلى الموقع. فعّله من إعدادات الجهاز للعثور على أقرب مناسبة.';
-
-  @override
   String get khadaraLocationOpenSettings => 'فتح الإعدادات';
 
   @override
@@ -1057,19 +1027,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get khadaraLiveTab => 'البث المباشر';
 
   @override
-  String get khadaraLiveNowSection => 'مباشر الآن';
-
-  @override
   String get khadaraReplaysSection => 'إعادة البث';
-
-  @override
-  String get khadaraNoLiveNow => 'لا يوجد بث مباشر حاليًا.';
-
-  @override
-  String get khadaraNoReplays => 'لا توجد إعادة بث حتى الآن.';
-
-  @override
-  String get khadaraLiveBadge => 'مباشر';
 
   @override
   String get khadaraJoinLive => 'الانضمام إلى البث المباشر';
@@ -4109,4 +4067,225 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get resetPasswordSameRule => 'متطابقتان';
+
+  @override
+  String get khadaraViewPlaces => 'الأماكن';
+
+  @override
+  String get khadaraViewAgenda => 'المواعيد';
+
+  @override
+  String get khadaraNextEyebrow => 'الموعد القادم';
+
+  @override
+  String get khadaraNextSee => 'عرض';
+
+  @override
+  String get khadaraNextDirections => 'الطريق';
+
+  @override
+  String khadaraNextCountdown(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'بعد $count يومًا',
+      one: 'غدًا',
+      zero: 'اليوم',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String khadaraAgendaInDays(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'بعد $count يومًا',
+      one: 'غدًا',
+      zero: 'اليوم',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String khadaraAgendaInDaysApprox(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'بعد نحو $count يومًا',
+      one: 'غدًا تقريبًا',
+      zero: 'اليوم تقريبًا',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String khadaraAgendaMonthCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count موعدًا',
+      few: '$count مواعيد',
+      two: 'موعدان',
+      one: 'موعد واحد',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String khadaraLiveBannerTitle(String title) {
+    return 'مباشر · $title';
+  }
+
+  @override
+  String get khadaraLiveWatch => 'مشاهدة';
+
+  @override
+  String get khadaraFilterNearMe => 'بالقرب مني';
+
+  @override
+  String khadaraFilterWithCount(String label, int count) {
+    return '$label · $count';
+  }
+
+  @override
+  String khadaraMapCaption(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'الطريقة · $count بلدًا',
+      few: 'الطريقة · $count بلدان',
+      two: 'الطريقة · بلدان',
+      one: 'الطريقة · بلد واحد',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get khadaraMapSemantics => 'خريطة تخطيطية للأماكن حسب البلد. المس بلدًا لتصفية القائمة.';
+
+  @override
+  String khadaraMapCountry(String country, int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count مكانًا',
+      few: '$count أماكن',
+      two: 'مكانان',
+      one: 'مكان واحد',
+    );
+    return '$country · $_temp0';
+  }
+
+  @override
+  String get khadaraMapOutside => 'خارج الخريطة:';
+
+  @override
+  String get khadaraMapClearCountry => 'عرض كل البلدان';
+
+  @override
+  String khadaraPlacesCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count مكانًا',
+      few: '$count أماكن',
+      two: 'مكانان',
+      one: 'مكان واحد',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get khadaraCountryUnknown => 'بلد غير محدد';
+
+  @override
+  String khadaraShowMorePlaces(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'عرض $count مكانًا آخر',
+      few: 'عرض $count أماكن أخرى',
+      two: 'عرض المكانين الآخرين',
+      one: 'عرض المكان الآخر',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get khadaraNearestTitle => 'الأقرب إليك';
+
+  @override
+  String get khadaraNearestFrom => 'من موقعك';
+
+  @override
+  String khadaraNearestUnlocated(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count مكانًا بلا إحداثيات غير مرتّب.',
+      few: '$count أماكن بلا إحداثيات غير مرتّبة.',
+      two: 'مكانان بلا إحداثيات غير مرتّبين.',
+      one: 'مكان واحد بلا إحداثيات غير مرتّب.',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get khadaraNearestLocating => 'جارٍ تحديد موقعك…';
+
+  @override
+  String khadaraNearestApproxDistance(String distance) {
+    return '~$distance';
+  }
+
+  @override
+  String get khadaraNearServiceDisabled => 'تحديد الموقع معطّل على هذا الجهاز. فعّله لترتيب الأماكن حسب المسافة.';
+
+  @override
+  String get khadaraNearPermissionDenied =>
+      'تم رفض الوصول إلى الموقع. اسمح به في إعدادات الجهاز لترتيب الأماكن حسب المسافة.';
+
+  @override
+  String khadaraPlaceUpcoming(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count موعدًا قادمًا',
+      few: '$count مواعيد قادمة',
+      two: 'موعدان قادمان',
+      one: 'موعد قادم',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String khadaraPlaceSuccession(int count) {
+    return 'التعاقب · $count';
+  }
+
+  @override
+  String khadaraPlaceFigures(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count شخصية',
+      few: '$count شخصيات',
+      two: 'شخصيتان',
+      one: 'شخصية واحدة',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get khadaraUnderstandingCardBody => 'الصفحة التي تشرح ما هي الزاوية';
+
+  @override
+  String get khadaraUnderstandingCardAction => 'قراءة';
+
+  @override
+  String get zawiyaFormCountryLabel => 'البلد';
+
+  @override
+  String get zawiyaFormCountryNone => 'غير محدد';
 }

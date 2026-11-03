@@ -69,7 +69,7 @@ String? formatKhadaraNextOccurrence(KhadaraEvent event, AppLocalizations l10n, {
 }
 
 /// "850 m" en dessous d'un kilomètre, "3,2 km" au-delà — utilisé par
-/// `NearbyRecurringEventsScreen`. Virgule plutôt que point : cohérent avec
+/// « Près de moi » (écran Zawiyas). Virgule plutôt que point : cohérent avec
 /// l'usage courant en français, l'arabe utilisé dans l'app affichant
 /// aussi les chiffres latins ailleurs (voir `formatKhadaraDateTime`).
 String formatKhadaraDistance(double km) {

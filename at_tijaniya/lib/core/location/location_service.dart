@@ -1,6 +1,7 @@
-/// Position de l'utilisateur pour "Trouver l'évènement récurrent le plus
-/// proche" (module Khadara, `nearby_recurring_events_screen.dart`) — seul
-/// usage de la géolocalisation dans l'app à ce jour. Permission "quand l'app
+/// Position de l'utilisateur pour le filtre « Près de moi » de l'écran
+/// Zawiyas (`khadara_screen.dart`, depuis le 2026-11-03 ; avant, l'écran
+/// « Trouver l'évènement récurrent le plus proche », supprimé) — seul usage
+/// de la géolocalisation dans l'app à ce jour. Permission "quand l'app
 /// est utilisée" uniquement, précision approximative (`LocationAccuracy.low`,
 /// `ACCESS_COARSE_LOCATION` côté Android) : suffisant pour classer des
 /// zawiyas généralement distantes de plusieurs kilomètres, pas besoin d'une

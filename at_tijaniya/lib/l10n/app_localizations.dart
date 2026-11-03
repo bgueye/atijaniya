@@ -1424,18 +1424,6 @@ abstract class AppLocalizations {
   /// **'Impossible d\'enregistrer la modification.'**
   String get tariqaConditionFormSaveError;
 
-  /// No description provided for @khadaraEventsTab.
-  ///
-  /// In fr, this message translates to:
-  /// **'Évènements'**
-  String get khadaraEventsTab;
-
-  /// No description provided for @khadaraZawiyasTab.
-  ///
-  /// In fr, this message translates to:
-  /// **'Annuaire'**
-  String get khadaraZawiyasTab;
-
   /// No description provided for @khadaraNoEvents.
   ///
   /// In fr, this message translates to:
@@ -1483,12 +1471,6 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'Emplacement approximatif : l\'épingle peut se trouver à quelques kilomètres du lieu.'**
   String get khadaraApproximateLocation;
-
-  /// No description provided for @khadaraApproximateDistance.
-  ///
-  /// In fr, this message translates to:
-  /// **'environ {distance}'**
-  String khadaraApproximateDistance(String distance);
 
   /// No description provided for @khadaraEventTypeZiyara.
   ///
@@ -2030,12 +2012,6 @@ abstract class AppLocalizations {
   /// **'Aucun lieu ne correspond à « {query} ».'**
   String khadaraSearchNoResult(String query);
 
-  /// No description provided for @khadaraUnderstandingTooltip.
-  ///
-  /// In fr, this message translates to:
-  /// **'Comprendre la Zawiya'**
-  String get khadaraUnderstandingTooltip;
-
   /// No description provided for @khadaraUnderstandingTitle.
   ///
   /// In fr, this message translates to:
@@ -2066,36 +2042,6 @@ abstract class AppLocalizations {
   /// **'Brouillon non publié — visible uniquement par toi en tant qu\'admin, en attente de validation.'**
   String get khadaraUnderstandingDraftBanner;
 
-  /// No description provided for @khadaraNearbyRecurringTooltip.
-  ///
-  /// In fr, this message translates to:
-  /// **'La Hadra la plus proche'**
-  String get khadaraNearbyRecurringTooltip;
-
-  /// No description provided for @khadaraNearbyRecurringTitle.
-  ///
-  /// In fr, this message translates to:
-  /// **'La Hadra la plus proche'**
-  String get khadaraNearbyRecurringTitle;
-
-  /// No description provided for @khadaraNearbyRecurringEmpty.
-  ///
-  /// In fr, this message translates to:
-  /// **'Aucun évènement récurrent dans un lieu géolocalisé n\'a été trouvé.'**
-  String get khadaraNearbyRecurringEmpty;
-
-  /// No description provided for @khadaraLocationServiceDisabled.
-  ///
-  /// In fr, this message translates to:
-  /// **'La localisation est désactivée sur cet appareil. Activez-la pour trouver l\'évènement le plus proche.'**
-  String get khadaraLocationServiceDisabled;
-
-  /// No description provided for @khadaraLocationPermissionDenied.
-  ///
-  /// In fr, this message translates to:
-  /// **'L\'accès à la position a été refusé. Autorisez-le dans les réglages de l\'appareil pour trouver l\'évènement le plus proche.'**
-  String get khadaraLocationPermissionDenied;
-
   /// No description provided for @khadaraLocationOpenSettings.
   ///
   /// In fr, this message translates to:
@@ -2114,35 +2060,11 @@ abstract class AppLocalizations {
   /// **'Directs'**
   String get khadaraLiveTab;
 
-  /// No description provided for @khadaraLiveNowSection.
-  ///
-  /// In fr, this message translates to:
-  /// **'En direct maintenant'**
-  String get khadaraLiveNowSection;
-
   /// No description provided for @khadaraReplaysSection.
   ///
   /// In fr, this message translates to:
   /// **'Rediffusions'**
   String get khadaraReplaysSection;
-
-  /// No description provided for @khadaraNoLiveNow.
-  ///
-  /// In fr, this message translates to:
-  /// **'Aucun direct en cours actuellement.'**
-  String get khadaraNoLiveNow;
-
-  /// No description provided for @khadaraNoReplays.
-  ///
-  /// In fr, this message translates to:
-  /// **'Aucune rediffusion pour le moment.'**
-  String get khadaraNoReplays;
-
-  /// No description provided for @khadaraLiveBadge.
-  ///
-  /// In fr, this message translates to:
-  /// **'En direct'**
-  String get khadaraLiveBadge;
 
   /// No description provided for @khadaraJoinLive.
   ///
@@ -7795,6 +7717,216 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'Identiques'**
   String get resetPasswordSameRule;
+
+  /// No description provided for @khadaraViewPlaces.
+  ///
+  /// In fr, this message translates to:
+  /// **'Lieux'**
+  String get khadaraViewPlaces;
+
+  /// No description provided for @khadaraViewAgenda.
+  ///
+  /// In fr, this message translates to:
+  /// **'Agenda'**
+  String get khadaraViewAgenda;
+
+  /// No description provided for @khadaraNextEyebrow.
+  ///
+  /// In fr, this message translates to:
+  /// **'Prochain rendez-vous'**
+  String get khadaraNextEyebrow;
+
+  /// No description provided for @khadaraNextSee.
+  ///
+  /// In fr, this message translates to:
+  /// **'Voir'**
+  String get khadaraNextSee;
+
+  /// No description provided for @khadaraNextDirections.
+  ///
+  /// In fr, this message translates to:
+  /// **'Itinéraire'**
+  String get khadaraNextDirections;
+
+  /// No description provided for @khadaraNextCountdown.
+  ///
+  /// In fr, this message translates to:
+  /// **'{count, plural, =0{Aujourd\'hui} =1{Demain} other{Dans {count} jours}}'**
+  String khadaraNextCountdown(int count);
+
+  /// No description provided for @khadaraAgendaInDays.
+  ///
+  /// In fr, this message translates to:
+  /// **'{count, plural, =0{aujourd\'hui} =1{demain} other{dans {count} j}}'**
+  String khadaraAgendaInDays(int count);
+
+  /// No description provided for @khadaraAgendaInDaysApprox.
+  ///
+  /// In fr, this message translates to:
+  /// **'{count, plural, =0{aujourd\'hui, environ} =1{demain, environ} other{environ dans {count} j}}'**
+  String khadaraAgendaInDaysApprox(int count);
+
+  /// No description provided for @khadaraAgendaMonthCount.
+  ///
+  /// In fr, this message translates to:
+  /// **'{count, plural, =1{1 rendez-vous} other{{count} rendez-vous}}'**
+  String khadaraAgendaMonthCount(int count);
+
+  /// No description provided for @khadaraLiveBannerTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'En direct · {title}'**
+  String khadaraLiveBannerTitle(String title);
+
+  /// No description provided for @khadaraLiveWatch.
+  ///
+  /// In fr, this message translates to:
+  /// **'Regarder'**
+  String get khadaraLiveWatch;
+
+  /// No description provided for @khadaraFilterNearMe.
+  ///
+  /// In fr, this message translates to:
+  /// **'Près de moi'**
+  String get khadaraFilterNearMe;
+
+  /// No description provided for @khadaraFilterWithCount.
+  ///
+  /// In fr, this message translates to:
+  /// **'{label} · {count}'**
+  String khadaraFilterWithCount(String label, int count);
+
+  /// No description provided for @khadaraMapCaption.
+  ///
+  /// In fr, this message translates to:
+  /// **'{count, plural, =1{La Tariqa · 1 pays} other{La Tariqa · {count} pays}}'**
+  String khadaraMapCaption(int count);
+
+  /// No description provided for @khadaraMapSemantics.
+  ///
+  /// In fr, this message translates to:
+  /// **'Carte schématique des lieux par pays. Touchez un pays pour filtrer la liste.'**
+  String get khadaraMapSemantics;
+
+  /// No description provided for @khadaraMapCountry.
+  ///
+  /// In fr, this message translates to:
+  /// **'{country} · {count, plural, =1{1 lieu} other{{count} lieux}}'**
+  String khadaraMapCountry(String country, int count);
+
+  /// No description provided for @khadaraMapOutside.
+  ///
+  /// In fr, this message translates to:
+  /// **'Hors carte :'**
+  String get khadaraMapOutside;
+
+  /// No description provided for @khadaraMapClearCountry.
+  ///
+  /// In fr, this message translates to:
+  /// **'Afficher tous les pays'**
+  String get khadaraMapClearCountry;
+
+  /// No description provided for @khadaraPlacesCount.
+  ///
+  /// In fr, this message translates to:
+  /// **'{count, plural, =1{1 lieu} other{{count} lieux}}'**
+  String khadaraPlacesCount(int count);
+
+  /// No description provided for @khadaraCountryUnknown.
+  ///
+  /// In fr, this message translates to:
+  /// **'Pays non renseigné'**
+  String get khadaraCountryUnknown;
+
+  /// No description provided for @khadaraShowMorePlaces.
+  ///
+  /// In fr, this message translates to:
+  /// **'{count, plural, =1{Voir l\'autre lieu} other{Voir les {count} autres}}'**
+  String khadaraShowMorePlaces(int count);
+
+  /// No description provided for @khadaraNearestTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Les plus proches'**
+  String get khadaraNearestTitle;
+
+  /// No description provided for @khadaraNearestFrom.
+  ///
+  /// In fr, this message translates to:
+  /// **'depuis votre position'**
+  String get khadaraNearestFrom;
+
+  /// No description provided for @khadaraNearestUnlocated.
+  ///
+  /// In fr, this message translates to:
+  /// **'{count, plural, =1{1 lieu sans coordonnées n\'est pas classé.} other{{count} lieux sans coordonnées ne sont pas classés.}}'**
+  String khadaraNearestUnlocated(int count);
+
+  /// No description provided for @khadaraNearestLocating.
+  ///
+  /// In fr, this message translates to:
+  /// **'Recherche de votre position…'**
+  String get khadaraNearestLocating;
+
+  /// No description provided for @khadaraNearestApproxDistance.
+  ///
+  /// In fr, this message translates to:
+  /// **'~{distance}'**
+  String khadaraNearestApproxDistance(String distance);
+
+  /// No description provided for @khadaraNearServiceDisabled.
+  ///
+  /// In fr, this message translates to:
+  /// **'La localisation est désactivée sur cet appareil. Activez-la pour classer les lieux par distance.'**
+  String get khadaraNearServiceDisabled;
+
+  /// No description provided for @khadaraNearPermissionDenied.
+  ///
+  /// In fr, this message translates to:
+  /// **'L\'accès à la position a été refusé. Autorisez-le dans les réglages de l\'appareil pour classer les lieux par distance.'**
+  String get khadaraNearPermissionDenied;
+
+  /// No description provided for @khadaraPlaceUpcoming.
+  ///
+  /// In fr, this message translates to:
+  /// **'{count, plural, =1{1 rendez-vous à venir} other{{count} rendez-vous à venir}}'**
+  String khadaraPlaceUpcoming(int count);
+
+  /// No description provided for @khadaraPlaceSuccession.
+  ///
+  /// In fr, this message translates to:
+  /// **'Succession · {count}'**
+  String khadaraPlaceSuccession(int count);
+
+  /// No description provided for @khadaraPlaceFigures.
+  ///
+  /// In fr, this message translates to:
+  /// **'{count, plural, =1{1 figure} other{{count} figures}}'**
+  String khadaraPlaceFigures(int count);
+
+  /// No description provided for @khadaraUnderstandingCardBody.
+  ///
+  /// In fr, this message translates to:
+  /// **'La page qui explique ce qu\'est une zawiya'**
+  String get khadaraUnderstandingCardBody;
+
+  /// No description provided for @khadaraUnderstandingCardAction.
+  ///
+  /// In fr, this message translates to:
+  /// **'Lire'**
+  String get khadaraUnderstandingCardAction;
+
+  /// No description provided for @zawiyaFormCountryLabel.
+  ///
+  /// In fr, this message translates to:
+  /// **'Pays'**
+  String get zawiyaFormCountryLabel;
+
+  /// No description provided for @zawiyaFormCountryNone.
+  ///
+  /// In fr, this message translates to:
+  /// **'Non renseigné'**
+  String get zawiyaFormCountryNone;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

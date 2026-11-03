@@ -133,6 +133,12 @@ seule fois, `wird_reminder_bulk.dart`), écran d'entrée `WelcomeScreen` (créer
 découvrir sans compte, se connecter) à la place de la connexion, sur parchemin ; « Nom affiché »,
 règles du mot de passe cochées en direct, renvoi de l'e-mail avec délai. Heures par défaut des
 rappels : Lazim 07:00/19:00, Wazifa 18:00, Jouma 17:00 (`WirdReminderSetting.defaultHourFor`).
+**Onglet Zawiyas refait le 2026-11-03** (maquette `ecran-zawiyas.html`) : direct en bandeau
+seulement pendant un direct, prochain rendez-vous, vues Lieux (par défaut) et Agenda ; lieux
+groupés par pays (`zawiyas.country`, code ISO, migration du 2026-11-03, noms dans
+`zawiya_countries.dart`), carte schématique sur fond clair, « Près de moi » (remplace l'écran de
+l'évènement récurrent le plus proche, supprimé), Agenda par mois. Logique dans
+`lib/features/khadara/domain/zawiyas_overview.dart`.
 **Profil refait le 2026-11-02** (maquette `ecran-profil.html`) : carte d'identité, « Ma pratique »
 (chiffres du téléphone, masquables), « Mon chemin spirituel » et « Confidentialité » qui
 disent l'état de chaque élément sans jamais son contenu, « Application » (langue, contraste,

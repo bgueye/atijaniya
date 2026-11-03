@@ -4280,3 +4280,90 @@ et attend désormais l'écran d'entrée là où il attendait la connexion. Les t
 l'authentification sont adaptés (`onBack`, prénom, gouttière du contrôle segmenté).
 `flutter analyze` ne signale rien et les 685 tests passent (captures ignorées sans polices).
 **Pas encore validé sur téléphone**, notamment la demande d'autorisation des notifications.
+
+## Refonte de l'écran Zawiyas (2026-11-03)
+
+Demande du porteur de projet : refaire l'onglet Zawiyas (`KhadaraScreen`) d'après sa maquette de
+référence `docs/maquettes/ecran-zawiyas.html`, avec les décisions validées le 2026-11-01 et le kit.
+Écarts listés puis validés avant de coder ; points tranchés le 2026-11-03 :
+- **pays d'un lieu** : colonne `zawiyas.country`, code ISO 3166-1 alpha-2, noms français et arabes
+  dans l'app (`zawiya_countries.dart`) ;
+- **carte schématique sur fond clair**, et non zaytoune comme dans la maquette : CLAUDE.md réserve
+  ce vert à la pratique, au direct et à l'accueil ;
+- **suppression de `NearbyRecurringEventsScreen`** et de son test (« Près de moi » le remplace) ;
+  le calcul `findNearbyRecurringEvents` reste, pour un retour dans l'Agenda quand des évènements
+  récurrents existeront ;
+- **groupes de plus de six lieux repliés à cinq**, « Voir les N autres » (le Sénégal en compte 18).
+
+**Migration** `database/migrations/2026-11-03_zawiyas_country.sql`, appliquée sur le projet live
+(`zawiyas_country`) avec l'accord du porteur de projet : colonne `country`, contrainte
+`zawiyas_country_iso_check` (`^[A-Z]{2}$`), pré-remplissage des 34 lieux d'après l'adresse, relu par
+le porteur de projet (Latmingué, dont l'adresse ne dit que « Latmingué », placé au Sénégal d'après
+ses coordonnées). Résultat vérifié en base : 34 lieux, 12 pays, 18 au Sénégal ; contrainte
+vérifiée par un scénario annulé (code en minuscules refusé). RLS inchangée, pas de privilège de
+colonne sur `zawiyas` ; une ancienne version de l'app ignore la colonne. Section 12 de
+`schema.sql` complétée.
+
+**Structure** : direct en cours en bandeau, prochain rendez-vous, puis deux vues dans le
+`SegmentedSwitch` du kit, Lieux (par défaut) et Agenda, avec leur nombre. Les trois onglets
+(Annuaire, Évènements, Directs) et le menu ⋮ disparaissent.
+- **Direct** : bandeau zaytoune (permis pour la khadara en direct) seulement pendant un direct,
+  « En direct · titre », plateforme, « Regarder ». Point or fixe : pas de pulsation sans fin.
+- **Prochain rendez-vous** : `DateBlock` (« ~25 »), titre, lieu, « Date approximative »
+  (`StatePill`), compte à rebours (« Dans environ 52 jours »), « Voir » et « Itinéraire »,
+  seulement si l'évènement ou son lieu a des coordonnées (pas Taïba Niassène).
+- **Lieux** : recherche ; types avec leur nombre (« Zawiyas · 27 ») ; « Près de moi » ; carte
+  schématique (`zawiyas_schematic_map.dart`) ; lieux groupés par pays, du plus fourni au moins
+  fourni, « Pays non renseigné » en dernier ; « Comprendre la Zawiya » en bas.
+- **Carte d'un lieu** : icône du type, nom, type et adresse sur deux lignes, et ce que le lieu
+  contient : « N rendez-vous à venir », « Succession · N », « N figures ». Comptes par
+  `fetchZawiyaLinkCounts` (deux requêtes d'une colonne, sans vue en base), limités par la RLS
+  comme la fiche : maillons de succession des figures publiées, liens vers des figures publiées
+  (jointure `figures!inner`). Pas de colonne ville : l'adresse reste affichée.
+- **Carte schématique** : un point par pays, à une position fixe par pays (le Niger et le Burkina
+  Faso n'ont aucun lieu géolocalisé), taille selon le nombre de lieux ; toucher un point filtre la
+  liste, une puce « Pays ✕ » retire le filtre ; pays hors cadre cités dessous (« États-Unis
+  (1) »). Le toucher va au point le plus proche ; chaque point a un nœud de 48 dp pour le lecteur
+  d'écran.
+- **Près de moi** : la position n'est demandée qu'au toucher du filtre ; lieux géolocalisés
+  classés par distance (« ~ » devant une distance sur coordonnées approximatives), « N lieux sans
+  coordonnées ne sont pas classés » ; refus et localisation coupée gérés comme dans l'ancien écran
+  (réglages, « Réessayer »), avec un message propre à cet usage.
+- **Agenda** : rendez-vous groupés par mois (« Décembre 2026 · 1 rendez-vous »), date en
+  `DateBlock`, type, « Date approximative », « environ dans 52 j » ; tous les rendez-vous, sans le
+  « … 7 autres » de la maquette ; rediffusions en bas, seulement s'il y en a (aucune en base).
+- Boutons d'administration inchangés, selon la vue : « Ajouter un lieu » (admin) sur Lieux,
+  « Créer un évènement » (admin ou mouqaddam avec zawiya attribuée) sur Agenda. Tirer pour
+  actualiser recharge tout ; hors ligne et erreur distingués.
+- **Formulaire d'un lieu** : champ « Pays », liste fermée ; un code saisi en SQL hors de la liste
+  reste proposé, pour ne pas l'effacer à l'enregistrement.
+
+**Logique pure** : `lib/features/khadara/domain/zawiyas_overview.dart` (groupes, points, distance,
+mois de l'Agenda, compte à rebours en jours de calendrier, faits d'un lieu).
+
+**Puces justifiées** (`JustifiedChoiceChips`) : avec les nombres, les quatre types ne tiennent plus
+sur une ligne en français ; une ligne qui ne tient pas passe désormais sur deux lignes justifiées
+et équilibrées avant le retour à la ligne libre, qui laissait « Mosquées · 1 » seule dessous (le
+défaut écarté par le porteur de projet le 2026-10-01).
+
+**Captures** : `test/zawiyas_captures_test.dart`, six états en français et en arabe (premier écran,
+direct en cours, Lieux en entier, Lieux filtrés sur le Mali, Près de moi depuis Dakar, Agenda),
+avec les 34 lieux et les 17 rendez-vous de la base au 2026-11-03. Comparées à la maquette ;
+corrigés grâce aux captures :
+- noms de pays de la carte écrits à droite du point, qui passaient sous le point voisin (Sénégal
+  et Mali, Maroc et Algérie) : écrits dessous, centrés ;
+- zone tactile de la Guinée qui recouvrait le point du Mali (toucher le Mali choisissait la
+  Guinée) : un seul détecteur, qui choisit le point le plus proche ;
+- pays hors carte affichés sans police (`textStyle` du bouton qui remplaçait celui du thème) ;
+- puce « Mosquées · 1 » seule sur sa ligne ;
+- ombre de la carte « Prochain rendez-vous » rognée en bande grise, et filet recouvert par sa
+  bande du bas.
+
+**Tests** : `test/khadara_screen_test.dart` réécrit (en-tête, groupes et faits, carte et filtre par
+pays, repli des groupes, recherche, puces, cibles de 48 dp, hors ligne, admin, Près de moi, refus
+définitif, Agenda, rediffusions, arabe) ; `test/zawiyas_overview_test.dart` nouveau.
+`test/nearby_recurring_events_screen_test.dart` supprimé avec son écran ; clés de traduction
+devenues inutiles retirées (anciens onglets, recherche récurrente). `flutter analyze` ne signale
+rien et les 712 tests passent (captures ignorées sans polices). **Pas encore validé sur
+téléphone**, notamment « Près de moi » (permission de localisation) et le toucher des points de la
+carte.

@@ -448,7 +448,9 @@ pour la récurrence et la proximité géographique) :
   n'a pas de coordonnées, est simplement exclu plutôt que de planter — cohérent avec le
   constat qu'une bonne partie des zawiyas n'ont pas encore leurs coordonnées saisies (voir
   plus haut, chaînes de khalifas manquantes). Accessible depuis une icône dans l'en-tête de
-  la page Zawiyas.
+  la page Zawiyas. **Écran supprimé le 2026-11-03** (refonte de l'onglet Zawiyas) : remplacé
+  par le filtre « Près de moi », qui classe les lieux ; le calcul reste pour un retour dans
+  l'Agenda (voir `docs/09`).
 
 **Non fait, volontairement hors périmètre de cette demande** : pas de sélection de
 coordonnées sur une carte pour un évènement indépendant (reste un champ adresse texte

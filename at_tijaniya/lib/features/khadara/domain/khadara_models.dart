@@ -68,11 +68,18 @@ class Zawiya {
     this.addressText,
     this.contactInfo,
     this.coordinatesApproximate = false,
+    this.country,
   });
 
   final String id;
   final String name;
   final ZawiyaKind kind;
+
+  /// `zawiyas.country` (migration du 2026-11-03) : code ISO 3166-1 alpha-2,
+  /// renseigné par l'admin. Groupe l'annuaire par pays et place le lieu sur
+  /// la carte schématique ; nom affiché par `zawiya_countries.dart`. `null`
+  /// si non renseigné ou si la colonne manque.
+  final String? country;
   final String? description;
   final double? latitude;
   final double? longitude;
@@ -98,6 +105,7 @@ class Zawiya {
       addressText: row['address_text'] as String?,
       contactInfo: row['contact_info'] as String?,
       coordinatesApproximate: row['coordinates_approximate'] as bool? ?? false,
+      country: row['country'] as String?,
     );
   }
 }

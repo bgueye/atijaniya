@@ -5,6 +5,7 @@ import '../../profil/presentation/profile_providers.dart';
 import '../data/guide_page_repository.dart';
 import '../data/khadara_repository.dart';
 import '../domain/khadara_models.dart';
+import '../domain/zawiyas_overview.dart';
 
 final khadaraRepositoryProvider = Provider<KhadaraRepository>((ref) => const KhadaraRepository());
 
@@ -65,3 +66,12 @@ final canCreateEventProvider = Provider<bool>((ref) {
 /// direct de `zawiyas_admin_write`/`_update`/`_delete` (`is_admin`
 /// uniquement, aucune exception mouqaddam contrairement aux évènements).
 final canManageZawiyasProvider = Provider<bool>((ref) => ref.watch(isAdminProvider));
+
+/// Successions et figures liées, comptées par lieu, pour les cartes de
+/// l'écran Zawiyas (refonte du 2026-11-03). Lié au compte : un admin compte
+/// aussi les brouillons (RLS), un disciple non. En cas d'échec, l'écran
+/// affiche les lieux sans ces étiquettes plutôt qu'une erreur.
+final zawiyaLinkCountsProvider = FutureProvider<ZawiyaLinkCounts>((ref) {
+  ref.watch(currentUserIdProvider);
+  return ref.watch(khadaraRepositoryProvider).fetchZawiyaLinkCounts();
+});

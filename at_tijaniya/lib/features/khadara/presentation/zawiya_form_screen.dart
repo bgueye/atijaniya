@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../l10n/app_localizations.dart';
 import '../domain/khadara_models.dart';
+import '../domain/zawiya_countries.dart';
 import '../domain/zawiya_coordinates.dart';
 import 'khadara_format.dart';
 import '../../figures/presentation/figures_providers.dart' show linkedZawiyasForFigureProvider;
@@ -37,6 +38,11 @@ class _ZawiyaFormScreenState extends ConsumerState<ZawiyaFormScreen> {
 
   ZawiyaKind _kind = ZawiyaKind.zawiya;
 
+  /// `zawiyas.country`, code ISO à deux lettres (migration du 2026-11-03).
+  /// `null` : non renseigné, le lieu va dans « Pays non renseigné » de
+  /// l'annuaire et n'apparaît pas sur la carte.
+  String? _country;
+
   /// `zawiyas.coordinates_approximate` (audit Zawiyas du 2026-10-25, P2-2).
   bool _coordinatesApproximate = false;
   bool _saving = false;
@@ -48,6 +54,7 @@ class _ZawiyaFormScreenState extends ConsumerState<ZawiyaFormScreen> {
     final zawiya = widget.zawiya;
     if (zawiya != null) {
       _kind = zawiya.kind;
+      _country = zawiya.country;
       _nameController.text = zawiya.name;
       _descriptionController.text = zawiya.description ?? '';
       _addressController.text = zawiya.addressText ?? '';
@@ -110,6 +117,7 @@ class _ZawiyaFormScreenState extends ConsumerState<ZawiyaFormScreen> {
           addressText: addressText.isEmpty ? null : addressText,
           contactInfo: contactText.isEmpty ? null : contactText,
           coordinatesApproximate: _coordinatesApproximate,
+          country: _country,
         );
       } else {
         saved = await repo.updateZawiya(
@@ -122,6 +130,7 @@ class _ZawiyaFormScreenState extends ConsumerState<ZawiyaFormScreen> {
           addressText: addressText.isEmpty ? null : addressText,
           contactInfo: contactText.isEmpty ? null : contactText,
           coordinatesApproximate: _coordinatesApproximate,
+          country: _country,
         );
       }
       ref.invalidate(zawiyasProvider);
@@ -177,6 +186,28 @@ class _ZawiyaFormScreenState extends ConsumerState<ZawiyaFormScreen> {
                       DropdownMenuItem<ZawiyaKind>(value: kind, child: Text(zawiyaKindLabel(kind, l10n))),
                   ],
                   onChanged: (value) => setState(() => _kind = value ?? ZawiyaKind.zawiya),
+                ),
+                const SizedBox(height: 16),
+                // Liste fermée (`zawiya_countries.dart`) plutôt qu'un texte
+                // libre : la contrainte de la base n'accepte qu'un code ISO,
+                // et le nom s'affiche traduit. Un code saisi en SQL et absent
+                // de la liste reste proposé, pour ne pas l'effacer à
+                // l'enregistrement.
+                DropdownButtonFormField<String?>(
+                  initialValue: _country,
+                  isExpanded: true,
+                  decoration: InputDecoration(labelText: l10n.zawiyaFormCountryLabel),
+                  items: [
+                    DropdownMenuItem<String?>(value: null, child: Text(l10n.zawiyaFormCountryNone)),
+                    if (_country != null && zawiyaCountryByCode(_country) == null)
+                      DropdownMenuItem<String?>(value: _country, child: Text(_country!)),
+                    for (final country in zawiyaCountries)
+                      DropdownMenuItem<String?>(
+                        value: country.code,
+                        child: Text(country.name(Localizations.localeOf(context).languageCode)),
+                      ),
+                  ],
+                  onChanged: (value) => setState(() => _country = value),
                 ),
                 const SizedBox(height: 16),
                 TextFormField(

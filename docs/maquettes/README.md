@@ -13,7 +13,7 @@ aplats : les maquettes ne chargent pas les photos de la base.
 |---|---|---|
 | Accueil | `ecran-accueil.html` (proposition B, la seconde maquette de la page) | **Implémenté** sur la branche `claude/attijaniya-homepage-redesign-elyti4`, voir `docs/09`, entrée du 2026-11-01 |
 | Wird | `ecran-wird.html` | **Implémenté** le 2026-11-02 sur la branche `claude/attijaniya-homepage-redesign-elyti4`, voir `docs/09`, entrée du 2026-11-02 (le guide d'un wird reste à refaire) |
-| Zawiyas | `ecran-zawiyas.html` | Proposé, à implémenter (demande une colonne `country`, donc une migration) |
+| Zawiyas | `ecran-zawiyas.html` | **Implémenté** le 2026-11-03 sur la branche `claude/attijaniya-homepage-redesign-elyti4`, voir `docs/09` (colonne `country` ajoutée par migration validée ; carte schématique sur fond clair, pas zaytoune : CLAUDE.md prime ; groupes de plus de six lieux repliés) |
 | Figures | `ecran-figures.html` | **Implémenté** le 2026-11-02 sur la branche `claude/attijaniya-homepage-redesign-elyti4`, voir `docs/09` |
 | Communauté | `ecran-communaute.html` | **Implémenté** le 2026-11-02 sur la branche `claude/attijaniya-homepage-redesign-elyti4`, voir `docs/09` (carte « Pour publier » or doux, pas zaytoune : CLAUDE.md prime ; sans « dernière activité » des groupes ni « + Nouveau » message) |
 | Profil | `ecran-profil.html` | **Implémenté** le 2026-11-02 sur la branche `claude/attijaniya-homepage-redesign-elyti4` (écran Paramètres supprimé), voir `docs/09` |
@@ -72,6 +72,9 @@ ces 7 derniers jours ; bienfaits exclus du carrousel en arabe.
 - « Près de moi » remplace la recherche d'évènement récurrent le plus proche ; celle-ci
   pourra revenir dans l'Agenda quand des évènements récurrents existeront.
 - Vue Lieux ouverte par défaut.
+- Précisions du 2026-11-03 : pays en code ISO à deux lettres (noms traduits dans l'app),
+  pré-remplissage relu ; carte sur fond clair ; écran de recherche récurrente supprimé ;
+  groupes de plus de six lieux repliés à cinq.
 
 **Figures**
 - Foyer « Autre » renommé « Autres foyers » et placé en dernier.

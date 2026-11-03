@@ -27,7 +27,8 @@ class JustifiedChoiceChips<T> extends StatelessWidget {
   final T selected;
   final ValueChanged<T> onSelected;
 
-  /// Nombre de lignes visées : 1 ou 2.
+  /// Nombre de lignes visées : 1 ou 2. Avec 1, deux lignes justifiées si la
+  /// ligne ne tient pas, puis le retour à la ligne libre en dernier recours.
   final int rows;
 
   /// Écart entre deux puces, en largeur comme entre deux lignes.
@@ -92,12 +93,17 @@ class JustifiedChoiceChips<T> extends StatelessWidget {
               return width;
             }(),
         ];
-        final rowStarts = rows == 1
-            ? (_rowWidth(widths, 0, widths.length) <= constraints.maxWidth ? [0] : null)
-            : switch (splitChipsInTwoRows(widths, constraints.maxWidth, spacing: _spacing)) {
-                final split? => [0, split],
-                null => null,
-              };
+        // Une ligne demandée qui ne tient pas : deux lignes justifiées et
+        // équilibrées avant le repli en `Wrap`, qui laissait la dernière puce
+        // seule sous les autres (« Mosquées · 1 » de l'écran Zawiyas, une fois
+        // les nombres ajoutés aux libellés le 2026-11-03 ; même défaut que le
+        // porteur de projet avait écarté le 2026-10-01).
+        final twoRows = switch (splitChipsInTwoRows(widths, constraints.maxWidth, spacing: _spacing)) {
+          final split? => [0, split],
+          null => null,
+        };
+        final rowStarts =
+            rows == 1 ? (_rowWidth(widths, 0, widths.length) <= constraints.maxWidth ? [0] : twoRows) : twoRows;
 
         // Repli : ne tient pas sur le nombre de lignes demandé.
         if (rowStarts == null) {
