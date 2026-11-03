@@ -183,7 +183,12 @@ class TasbihController extends StateNotifier<TasbihState> with WidgetsBindingObs
     // Écran quitté pendant la lecture du stockage (`.autoDispose`) : écrire
     // l'état lèverait une `StateError` (audit du 2026-10-25, P3-2).
     if (!mounted) return;
-    if (saved != null && saved.pillarIndex < wird.pillars.length) {
+    // Session de la Hadratou-l-Jouma d'un autre jour : dépassée, la
+    // récitation repart du début (audit du 2026-11-03). Elle n'est pas
+    // effacée ici : la première sauvegarde la remplace.
+    final resumable = saved != null &&
+        isTasbihSessionResumable(saved, weekly: wird.frequency == WirdFrequency.weekly, now: DateTime.now());
+    if (saved != null && resumable && saved.pillarIndex < wird.pillars.length) {
       state = state.copyWith(session: saved, loadingSession: false);
     } else {
       state = state.copyWith(loadingSession: false);

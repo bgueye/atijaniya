@@ -100,7 +100,7 @@ final homeDashboardProvider = FutureProvider.autoDispose<HomeDashboardData>((ref
     for (final s in statuses)
       if (s.doneToday) s.wird.id
   };
-  final resumable = pickResumableSession(sessions);
+  final resumable = pickResumableSession(sessions, now: now, doneWirdIds: doneIds);
   final nextReminder = pickNextReminderToday(reminders, now: now, doneWirdIds: doneIds);
   return HomeDashboardData(
     statuses: statuses,

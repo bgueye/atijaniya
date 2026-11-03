@@ -76,9 +76,11 @@ class WirdListScreen extends ConsumerWidget {
     final now = ref.watch(clockProvider)();
     // Données locales (complétions, sessions, rappels) : tant qu'elles ne
     // sont pas lues, ou si leur lecture échoue, les cartes s'affichent sans
-    // état plutôt que de laisser l'écran vide — le guide et le tasbih restent
-    // accessibles.
-    final loaded = ref.watch(wirdOverviewProvider).valueOrNull;
+    // état ni série (`known: false`) plutôt que de laisser l'écran vide — le
+    // guide et le tasbih restent accessibles. Un échec est journalisé.
+    final overview = ref.watch(wirdOverviewProvider);
+    if (overview.hasError) debugPrint('Wird : lecture des données locales impossible (${overview.error})');
+    final loaded = overview.valueOrNull;
     final entries = orderForToday(
       loaded ??
           [
@@ -86,6 +88,7 @@ class WirdListScreen extends ConsumerWidget {
               WirdOverviewEntry(
                 wird: wird,
                 stats: computeWirdProgressStats(frequency: wird.frequency, completionDates: const [], now: now),
+                known: false,
               ),
           ],
       now,

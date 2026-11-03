@@ -109,6 +109,7 @@ class _WirdDetailScreenState extends ConsumerState<WirdDetailScreen> {
         WirdOverviewEntry(
           wird: wird,
           stats: computeWirdProgressStats(frequency: wird.frequency, completionDates: const [], now: now),
+          known: false,
         );
 
     // Thème immersif : sans lui, le titre et les boutons héritent des couleurs

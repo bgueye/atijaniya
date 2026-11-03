@@ -74,11 +74,26 @@ class HomeResumableSession {
 /// `TasbihController.increment`/`nextPillar` : la première sauvegarde a
 /// toujours `currentCount >= 1` ou `pillarIndex >= 1`), donc toute entrée
 /// non nulle ici est déjà "en cours" au sens utile du terme.
-HomeResumableSession? pickResumableSession(List<({Wird wird, TasbihSession? session})> loaded) {
+///
+/// Audit du 2026-11-03 : la plus récente était choisie avant d'écarter les
+/// wirds déjà faits ([doneWirdIds]) et les sessions qu'on ne peut plus
+/// reprendre (Hadra d'un autre vendredi, `isTasbihSessionResumable`) ;
+/// `pickNextStep` l'écartait ensuite, et un Lazim en pause n'était plus
+/// proposé. Le filtre passe donc avant le choix.
+HomeResumableSession? pickResumableSession(
+  List<({Wird wird, TasbihSession? session})> loaded, {
+  DateTime? now,
+  Set<String> doneWirdIds = const {},
+}) {
+  final today = now ?? DateTime.now();
   HomeResumableSession? best;
   for (final entry in loaded) {
     final session = entry.session;
     if (session == null) continue;
+    if (doneWirdIds.contains(entry.wird.id)) continue;
+    if (!isTasbihSessionResumable(session, weekly: entry.wird.frequency == WirdFrequency.weekly, now: today)) {
+      continue;
+    }
     if (best == null || session.updatedAt.isAfter(best.session.updatedAt)) {
       best = HomeResumableSession(wird: entry.wird, session: session);
     }

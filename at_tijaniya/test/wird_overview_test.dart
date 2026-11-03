@@ -26,11 +26,14 @@ import 'package:at_tijaniya/l10n/app_localizations.dart';
 
 import 'wird_overview_fixtures.dart';
 
-Widget _wrap(WirdMockupState state, {Locale locale = const Locale('fr'), bool admin = false}) {
+Widget _wrap(WirdMockupState state, {Locale locale = const Locale('fr'), bool admin = false, Object? loadError}) {
   return ProviderScope(
     overrides: [
       clockProvider.overrideWithValue(() => state.now),
-      wirdOverviewProvider.overrideWith((ref) async => state.entries),
+      wirdOverviewProvider.overrideWith((ref) async {
+        if (loadError != null) throw loadError;
+        return state.entries;
+      }),
       isAdminProvider.overrideWithValue(admin),
       wirdRepairContentProvider.overrideWith((ref) async => WirdRepairContent(cases: const [], notes: const [])),
       tariqaConditionsProvider.overrideWith((ref) async => const <TariqaCondition>[]),
@@ -209,5 +212,18 @@ void main() {
       expect(find.text('Récitations à valider'), findsOneWidget);
       expect(find.text('Gestion des récitations audio'), findsOneWidget);
     });
+  });
+
+  // Audit des écrans refaits du 2026-11-03 : sans données locales lues, les
+  // cartes annonçaient « À faire aujourd'hui » et « 0 jours d'affilée ».
+  testWidgets("données locales illisibles : ni état ni série inventés, actions gardées", (tester) async {
+    _tall(tester);
+    await tester.pumpWidget(_wrap(sundayMorning(), loadError: StateError('stockage illisible')));
+    await tester.pumpAndSettle();
+
+    expect(find.text("À faire aujourd'hui"), findsNothing);
+    expect(find.textContaining("d'affilée"), findsNothing);
+    expect(find.widgetWithText(FilledButton, 'Commencer'), findsNWidgets(2));
+    expect(find.widgetWithText(OutlinedButton, 'Guide'), findsNWidgets(3));
   });
 }

@@ -185,3 +185,4 @@ Les points les plus graves :
 |---|---|
 | 1. Fiches de détail | **fait** le 2026-11-03 (« Actuel » selon la période, liste incomplète, évènement passé ; voir `docs/09`) |
 | 2. Carte des Zawiyas au lecteur d'écran, rechargement du direct et des non-lus | **fait** le 2026-11-03 (voir `docs/09`) |
+| 3. Sessions en pause (accueil, Wird, tasbih), état inconnu du Wird | **fait** le 2026-11-03 (voir `docs/09`) |

@@ -4412,3 +4412,27 @@ Tests : `home_shell_lazy_tabs_test.dart` (direct relu au retour sur l'accueil),
 rien et les 721 tests passent. Non vérifié sur téléphone, en particulier avec TalkBack. Limite
 inchangée : sans Realtime, la pastille des non-lus ne bouge pas tant qu'on reste sur l'onglet.
 
+## Audit des écrans refaits, étape 3 : sessions en pause et état inconnu du Wird (2026-11-03)
+
+Suite de `docs/audits/2026-11-03-ecrans-refaits.md`. Une règle commune, `isTasbihSessionResumable`
+(`tasbih_session.dart`) : une session de la Hadratou-l-Jouma ne se reprend que le jour où elle a été
+commencée (le créneau est passé ensuite, sans rattrapage) ; un wird quotidien garde sa session d'un
+jour à l'autre, comme avant.
+- **Onglet Wird et guide** (`WirdOverviewEntry.paused`) : une Hadra en pause ne revient plus le
+  vendredi suivant avec le compte de la semaine précédente ; la session d'un jour précédent d'un wird
+  déjà fait aujourd'hui ne masque plus « Fait aujourd'hui » (la carte se replie). Une pause du jour
+  reste proposée, même le wird déjà fait (Lazim du soir).
+- **Tasbih** : une session de Hadra d'un autre jour n'est pas reprise ; la récitation repart du début,
+  et la première sauvegarde remplace l'ancienne (rien n'est effacé à l'ouverture).
+- **Accueil** (`pickResumableSession`) : les wirds déjà faits et les sessions qu'on ne peut plus
+  reprendre sont écartés avant le choix de la plus récente. Avant, une Hadra en pause plus récente
+  qu'un Lazim en pause empêchait de proposer « Reprendre » pour le Lazim le samedi.
+- **État inconnu** (`WirdOverviewEntry.known`) : avant la lecture des données locales, ou si elle
+  échoue, les cartes du Wird et le guide n'affichent ni état du jour ni série (ils annonçaient « À
+  faire aujourd'hui » et « 0 jours d'affilée ») ; les actions restent. L'échec est journalisé
+  (`debugPrint`).
+
+Tests : `test/tasbih_sessions_audit_test.dart` (règle, onglet Wird, accueil) et un test d'écran dans
+`wird_overview_test.dart` (données illisibles). `flutter analyze` ne signale rien et les 732 tests
+passent. Pas encore validé sur téléphone.
+

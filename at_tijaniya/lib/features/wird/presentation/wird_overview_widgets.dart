@@ -16,8 +16,11 @@ import '../domain/wird_overview.dart';
 /// aujourd'hui, ou la date du prochain vendredi pour la Hadra. Le bandeau de
 /// la Hadra est clair (`gold_soft`) : ses pastilles sont celles des fonds
 /// clairs.
-Widget wirdStatePill(BuildContext context, WirdOverviewEntry entry, DateTime now) {
+Widget? wirdStatePill(BuildContext context, WirdOverviewEntry entry, DateTime now) {
   final l10n = AppLocalizations.of(context)!;
+  // État inconnu (données locales pas encore lues) : rien plutôt qu'un état
+  // inventé.
+  if (!entry.known) return null;
   final lightBand = entry.wird.frequency == WirdFrequency.weekly;
   if (entry.paused) {
     return StatePill(l10n.wirdStatePaused, variant: lightBand ? StatePillVariant.todo : StatePillVariant.gold);
@@ -43,6 +46,8 @@ class WirdStreakLine extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Série inconnue tant que les données locales ne sont pas lues.
+    if (!entry.known) return const SizedBox.shrink();
     final l10n = AppLocalizations.of(context)!;
     final streak = entry.stats.currentStreak;
     final weekly = entry.wird.frequency == WirdFrequency.weekly;

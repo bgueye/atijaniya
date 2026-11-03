@@ -12,6 +12,19 @@ library;
 
 enum TasbihMode { manual, voice }
 
+/// `true` si [session] peut encore être reprise à la date [now]. Une session
+/// de la Hadratou-l-Jouma ([weekly]) ne vaut que le jour où elle a été
+/// commencée : le créneau (« uniquement le vendredi entre l'Asr et le
+/// Maghreb ») est passé ensuite, et aucun rattrapage n'est possible. Avant
+/// l'audit du 2026-11-03, une Hadra laissée en pause revenait le vendredi
+/// suivant avec le compte de la semaine précédente. Un wird quotidien garde
+/// sa session d'un jour à l'autre, comme avant.
+bool isTasbihSessionResumable(TasbihSession session, {required bool weekly, required DateTime now}) {
+  if (!weekly) return true;
+  final at = session.updatedAt;
+  return at.year == now.year && at.month == now.month && at.day == now.day;
+}
+
 class TasbihSession {
   const TasbihSession({
     required this.wirdId,

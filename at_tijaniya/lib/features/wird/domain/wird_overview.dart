@@ -20,7 +20,14 @@ class WirdOverviewEntry {
     required this.stats,
     this.session,
     this.reminders = const [],
+    this.known = true,
   });
+
+  /// `false` pour une carte affichée avant la lecture des données locales
+  /// (ou si elle échoue) : l'état du jour et la série ne sont pas connus,
+  /// et ne sont pas affichés (audit du 2026-11-03 : la carte annonçait « À
+  /// faire aujourd'hui » et « 0 jours d'affilée » même si le wird était fait).
+  final bool known;
 
   final Wird wird;
   final WirdProgressStats stats;
@@ -48,9 +55,17 @@ class WirdOverviewEntry {
   /// la carte annonce le prochain vendredi.
   bool get doneToday => applicableToday && stats.completedDays.contains(stats.today);
 
-  /// Session en pause à reprendre. Une session de la Hadra laissée un
-  /// vendredi n'est pas proposée les autres jours (le créneau est passé).
-  bool get paused => session != null && canStart;
+  /// Session en pause à reprendre. Une session de la Hadra n'est proposée que
+  /// le jour même (`isTasbihSessionResumable`) ; la session d'un jour
+  /// précédent d'un wird déjà fait aujourd'hui est dépassée, elle ne masque
+  /// pas « Fait aujourd'hui » (audit du 2026-11-03).
+  bool get paused {
+    final session = this.session;
+    if (session == null || !canStart) return false;
+    if (!isTasbihSessionResumable(session, weekly: _weekly, now: stats.today)) return false;
+    if (doneToday && session.updatedAt.isBefore(stats.today)) return false;
+    return true;
+  }
 
   /// Carte repliée (sans ses piliers) : wird fait aujourd'hui et rien en
   /// pause — la carte garde sa série et toutes ses actions.
