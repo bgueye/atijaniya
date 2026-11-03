@@ -131,7 +131,7 @@ class _FindDisciplesCard extends ConsumerWidget {
 
   Future<void> _open(BuildContext context, WidgetRef ref) async {
     if (ref.read(currentUserIdProvider) == null) {
-      ref.read(signInRequestProvider.notifier).state++;
+      requestSignIn(ref);
       return;
     }
     // Lue au toucher seulement, pour choisir l'écran : rien n'en est affiché.

@@ -15,7 +15,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get languageChoiceTitle => 'اختر لغتك';
 
   @override
-  String get languageChoiceSubtitle => 'يمكنك تغييرها في أي وقت من الإعدادات.';
+  String get languageChoiceSubtitle => 'يمكنك تغييرها في أي وقت من الملف الشخصي.';
 
   @override
   String get languageFrench => 'Français';
@@ -95,12 +95,6 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get authSignupSubtitle => 'انضم إلى الجماعة وابدأ في أداء أورادك.';
-
-  @override
-  String get authFullNameLabel => 'الاسم الكامل';
-
-  @override
-  String get authFullNameRequired => 'الاسم الكامل إلزامي.';
 
   @override
   String get authEmailLabel => 'البريد الإلكتروني';
@@ -2677,7 +2671,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get mouqaddamSearchPrompt => 'اكتب حرفين على الأقل من اسم المقدَّم الذي تبحث عنه.';
 
   @override
-  String get resetPasswordCancel => 'إلغاء والعودة إلى تسجيل الدخول';
+  String get resetPasswordCancel => 'التخلي وتسجيل الخروج';
 
   @override
   String get sponsorshipBadgeLabel => 'كفالة مؤكدة';
@@ -4033,4 +4027,86 @@ class AppLocalizationsAr extends AppLocalizations {
     );
     return '$_temp0';
   }
+
+  @override
+  String get splashTagline => 'ممارسة الطريقة التجانية، كل يوم';
+
+  @override
+  String get onboardingPreviewDisciples => 'إخوان الورد، بخصوصية';
+
+  @override
+  String get remindersOnboardingTitle => 'تذكيرات أورادك';
+
+  @override
+  String get remindersOnboardingBody => 'إشعار في الوقت الذي تختاره، كل يوم. يمكنك تغيير كل شيء من صفحة كل ورد.';
+
+  @override
+  String get remindersOnboardingLater => 'لاحقًا';
+
+  @override
+  String remindersOnboardingActivate(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'تفعيل $count تذكيرًا',
+      few: 'تفعيل $count تذكيرات',
+      two: 'تفعيل تذكيرين',
+      one: 'تفعيل تذكير واحد',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get welcomeTagline => 'وردك، زاويتك، جماعتك';
+
+  @override
+  String get welcomeGuest => 'الاكتشاف دون حساب';
+
+  @override
+  String get welcomeNote =>
+      'دون حساب، يمكنك الوصول إلى الأوراد والأعلام والزوايا. وبحساب أو دونه، تبقى ممارستك (السلاسل والسجل) على هذا الهاتف.';
+
+  @override
+  String get authBack => 'رجوع';
+
+  @override
+  String get authDisplayNameLabel => 'الاسم المعروض';
+
+  @override
+  String get authDisplayNameHint => 'يظهر للجماعة في منشوراتك. يكفي الاسم الأول.';
+
+  @override
+  String get authDisplayNameRequired => 'الاسم المعروض مطلوب.';
+
+  @override
+  String get authShowPassword => 'إظهار';
+
+  @override
+  String get authHidePassword => 'إخفاء';
+
+  @override
+  String get authPasswordRuleLetters => 'حروف ورقم واحد على الأقل (يُنصح به)';
+
+  @override
+  String get authRuleMet => 'مستوفى';
+
+  @override
+  String get authRuleUnmet => 'غير مستوفى';
+
+  @override
+  String get authCheckEmailSentTo => 'أرسلنا رابط تأكيد إلى';
+
+  @override
+  String get authCheckEmailOpen => 'افتحه لتفعيل حسابك، ثم سجّل الدخول.';
+
+  @override
+  String authResendIn(int seconds) {
+    return 'إعادة الإرسال · بعد $seconds ث';
+  }
+
+  @override
+  String get resetPasswordConfirmShort => 'تأكيد';
+
+  @override
+  String get resetPasswordSameRule => 'متطابقتان';
 }

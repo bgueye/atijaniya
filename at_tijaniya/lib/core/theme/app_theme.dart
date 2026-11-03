@@ -135,7 +135,7 @@ class AppTheme {
         style: ElevatedButton.styleFrom(
           backgroundColor: AppColors.emerald,
           foregroundColor: AppColors.offWhite,
-          textStyle: GoogleFonts.jost(fontWeight: FontWeight.w500),
+          textStyle: GoogleFonts.jost(fontWeight: FontWeight.w500).copyWith(fontFamilyFallback: debugFontFallback),
           padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
           // Fond sombre : l'émeraude ne se détache pas du zaytoune (1,96:1,

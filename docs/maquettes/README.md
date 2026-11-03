@@ -19,7 +19,7 @@ aplats : les maquettes ne chargent pas les photos de la base.
 | Profil | `ecran-profil.html` | **Implémenté** le 2026-11-02 sur la branche `claude/attijaniya-homepage-redesign-elyti4` (écran Paramètres supprimé), voir `docs/09` |
 | Pratique des wirds (tasbih) | `ecran-pratique.html` | **Implémenté** le 2026-11-02 sur la branche `claude/attijaniya-homepage-redesign-elyti4`, voir `docs/09`, entrée « Refonte de l'écran de pratique » |
 | Écrans de détail (figure, zawiya, évènement) | `ecrans-detail.html` | **Implémenté** le 2026-11-02 sur la branche `claude/attijaniya-homepage-redesign-elyti4`, voir `docs/09` (carte du fondateur claire, pas zaytoune : CLAUDE.md prime) |
-| Parcours d'entrée (démarrage, langue, découverte, rappels, entrée, compte) | `parcours-entree.html` | Proposé, à implémenter (décisions validées le 2026-11-02) |
+| Parcours d'entrée (démarrage, langue, découverte, rappels, entrée, compte) | `parcours-entree.html` | **Implémenté** le 2026-11-03 sur la branche `claude/attijaniya-homepage-redesign-elyti4`, voir `docs/09` (entrée sur parchemin, pas zaytoune : CLAUDE.md prime ; rendez-vous de la base dans la découverte ; sans animation de la rosace) |
 
 ## Un écran, une seule maquette
 
@@ -146,8 +146,10 @@ facultative dans l'entrée, avec la demande d'autorisation des notifications à 
 « Nom affiché » (avec la mention « Visible par la communauté sur vos publications. Un prénom
 suffit. ») au lieu de « Nom complet », même champ `display_name` ; trois écrans de
 découverte avec un aperçu de l'app au lieu de quatre écrans d'icônes.
-Reste à fixer avec le porteur de projet : l'heure proposée par défaut pour le rappel du soir
-du Lazim (le code règle aujourd'hui 07:00 pour tous les rappels quotidiens).
+Heures par défaut des rappels fixées par le porteur de projet le 2026-11-03 : Lazim 07:00 et
+19:00, Wazifa 18:00, Hadratou-l-Jouma 17:00 le vendredi (`WirdReminderSetting.defaultHourFor`,
+mêmes heures dans l'étape « Rappels » et dans le guide d'un wird ; avant, 07:00 pour tous les
+rappels quotidiens).
 
 Correction du 2026-11-02, dans cette maquette et dans `ecran-profil.html` : la liste de ce
 qu'apporte un compte ne promet plus « vos séries et votre historique rattachés à votre

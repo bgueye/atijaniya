@@ -15,7 +15,7 @@ class AppLocalizationsFr extends AppLocalizations {
   String get languageChoiceTitle => 'Choisissez votre langue';
 
   @override
-  String get languageChoiceSubtitle => 'Vous pourrez la changer à tout moment dans les paramètres.';
+  String get languageChoiceSubtitle => 'Vous pourrez la changer à tout moment depuis le Profil.';
 
   @override
   String get languageFrench => 'Français';
@@ -97,12 +97,6 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get authSignupSubtitle => 'Rejoignez la communauté et commencez à réciter vos wirds.';
-
-  @override
-  String get authFullNameLabel => 'Nom complet';
-
-  @override
-  String get authFullNameRequired => 'Le nom complet est obligatoire.';
 
   @override
   String get authEmailLabel => 'E-mail';
@@ -2702,7 +2696,7 @@ class AppLocalizationsFr extends AppLocalizations {
   String get mouqaddamSearchPrompt => 'Saisissez au moins deux lettres du nom du mouqaddam que vous cherchez.';
 
   @override
-  String get resetPasswordCancel => 'Annuler et revenir à la connexion';
+  String get resetPasswordCancel => 'Abandonner et me déconnecter';
 
   @override
   String get sponsorshipBadgeLabel => 'Parrainage confirmé';
@@ -4063,4 +4057,85 @@ class AppLocalizationsFr extends AppLocalizations {
   String communityTimeDays(int count) {
     return 'il y a $count j';
   }
+
+  @override
+  String get splashTagline => 'La pratique de la Tijaniyya, au quotidien';
+
+  @override
+  String get onboardingPreviewDisciples => 'Condisciples, en privé';
+
+  @override
+  String get remindersOnboardingTitle => 'Vos rappels de wird';
+
+  @override
+  String get remindersOnboardingBody =>
+      'Une notification à l\'heure choisie, chaque jour. Vous pourrez tout changer depuis chaque wird.';
+
+  @override
+  String get remindersOnboardingLater => 'Plus tard';
+
+  @override
+  String remindersOnboardingActivate(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Activer $count rappels',
+      one: 'Activer 1 rappel',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get welcomeTagline => 'Votre pratique, votre zawiya, votre communauté';
+
+  @override
+  String get welcomeGuest => 'Découvrir sans compte';
+
+  @override
+  String get welcomeNote =>
+      'Sans compte, la pratique, les figures et les zawiyas sont accessibles. Avec ou sans compte, votre pratique (séries, historique) reste sur ce téléphone.';
+
+  @override
+  String get authBack => 'Retour';
+
+  @override
+  String get authDisplayNameLabel => 'Nom affiché';
+
+  @override
+  String get authDisplayNameHint => 'Visible par la communauté sur vos publications. Un prénom suffit.';
+
+  @override
+  String get authDisplayNameRequired => 'Le nom affiché est obligatoire.';
+
+  @override
+  String get authShowPassword => 'Afficher';
+
+  @override
+  String get authHidePassword => 'Masquer';
+
+  @override
+  String get authPasswordRuleLetters => 'Des lettres et au moins un chiffre (conseillé)';
+
+  @override
+  String get authRuleMet => 'respectée';
+
+  @override
+  String get authRuleUnmet => 'non respectée';
+
+  @override
+  String get authCheckEmailSentTo => 'Nous avons envoyé un lien de confirmation à';
+
+  @override
+  String get authCheckEmailOpen => 'Ouvrez-le pour activer votre compte, puis connectez-vous.';
+
+  @override
+  String authResendIn(int seconds) {
+    return 'Renvoyer l\'e-mail · dans $seconds s';
+  }
+
+  @override
+  String get resetPasswordConfirmShort => 'Confirmer';
+
+  @override
+  String get resetPasswordSameRule => 'Identiques';
 }

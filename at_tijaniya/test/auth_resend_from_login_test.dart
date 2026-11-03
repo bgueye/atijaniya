@@ -55,7 +55,7 @@ Future<void> _signIn(WidgetTester tester, _FakeAuth auth) async {
       GlobalWidgetsLocalizations.delegate,
       GlobalCupertinoLocalizations.delegate,
     ],
-    home: AuthScreen(onAuthenticated: () {}, onContinueAsGuest: () {}, auth: auth),
+    home: AuthScreen(onAuthenticated: () {}, onBack: () {}, auth: auth),
   ));
   await tester.pumpAndSettle();
   await tester.enterText(find.byType(TextFormField).first, 'disciple@example.com');

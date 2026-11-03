@@ -31,7 +31,7 @@ List<(Iterable<String>?, TextInputAction?)> _fields(WidgetTester tester) => test
 
 void main() {
   testWidgets('connexion : e-mail puis mot de passe, OK lance la connexion', (tester) async {
-    await tester.pumpWidget(_app(AuthScreen(onAuthenticated: () {}, onContinueAsGuest: () {})));
+    await tester.pumpWidget(_app(AuthScreen(onAuthenticated: () {}, onBack: () {})));
     await tester.pumpAndSettle();
     expect(find.byType(AutofillGroup), findsOneWidget);
     expect(_fields(tester), [
@@ -47,12 +47,12 @@ void main() {
   });
 
   testWidgets('inscription : nom, e-mail, nouveau mot de passe', (tester) async {
-    await tester.pumpWidget(_app(AuthScreen(onAuthenticated: () {}, onContinueAsGuest: () {})));
+    await tester.pumpWidget(_app(AuthScreen(onAuthenticated: () {}, onBack: () {})));
     await tester.pumpAndSettle();
     await tester.tap(find.text('Créer un compte'));
     await tester.pumpAndSettle();
     expect(_fields(tester), [
-      (const [AutofillHints.name], TextInputAction.next),
+      (const [AutofillHints.givenName], TextInputAction.next),
       (const [AutofillHints.email], TextInputAction.next),
       (const [AutofillHints.newPassword], TextInputAction.done),
     ]);
@@ -87,7 +87,7 @@ void main() {
           GlobalWidgetsLocalizations.delegate,
           GlobalCupertinoLocalizations.delegate,
         ],
-        home: AuthScreen(onAuthenticated: () {}, onContinueAsGuest: () {}),
+        home: AuthScreen(onAuthenticated: () {}, onBack: () {}),
       ));
       await tester.pumpAndSettle();
       await expectLater(tester, meetsGuideline(androidTapTargetGuideline));

@@ -16,11 +16,13 @@ import 'core/theme/locale_controller.dart';
 import 'features/auth/domain/auth_error_message.dart';
 import 'features/auth/presentation/auth_screen.dart';
 import 'features/auth/presentation/reset_password_screen.dart';
+import 'features/auth/presentation/welcome_screen.dart';
 import 'features/home/presentation/home_dashboard_provider.dart';
 import 'features/wird/presentation/wird_overview_provider.dart';
 import 'features/home/presentation/home_shell.dart';
 import 'features/onboarding/data/onboarding_store.dart';
 import 'features/onboarding/presentation/language_selection_screen.dart';
+import 'features/onboarding/presentation/onboarding_reminders_screen.dart';
 import 'features/onboarding/presentation/onboarding_screen.dart';
 import 'features/profil/presentation/profile_providers.dart';
 import 'features/splash/presentation/splash_screen.dart';
@@ -38,9 +40,12 @@ class _ReturnToRootObserver extends NavigatorObserver {
   }
 }
 
-/// Orchestre le parcours P0/P1 : Splash -> Choix de langue -> Onboarding
-/// (une seule fois, voir `OnboardingStore`) -> Auth (ou mode invité) ->
-/// HomeShell. Flutter déduit automatiquement la directionnalité RTL de la
+/// Orchestre le parcours P0/P1 : Splash -> Choix de langue -> Découverte puis
+/// Rappels (une seule fois, voir `OnboardingStore`) -> Entrée (créer un
+/// compte, découvrir sans compte, se connecter) -> Compte -> HomeShell.
+/// Parcours refait le 2026-11-03 d'après `docs/maquettes/parcours-entree.html` :
+/// l'écran d'entrée ([WelcomeScreen]) remplace l'écran de connexion comme
+/// porte d'entrée sans session, et l'étape « Rappels » suit la découverte. Flutter déduit automatiquement la directionnalité RTL de la
 /// Locale (ar), donc aucune gestion manuelle du sens de lecture n'est
 /// nécessaire ici.
 class AtTijaniyaApp extends ConsumerStatefulWidget {
@@ -50,11 +55,28 @@ class AtTijaniyaApp extends ConsumerStatefulWidget {
   ConsumerState<AtTijaniyaApp> createState() => _AtTijaniyaAppState();
 }
 
-enum _Step { splash, language, onboarding, auth, resetPassword, home }
+enum _Step { splash, language, onboarding, reminders, welcome, auth, resetPassword, home }
 
 class _AtTijaniyaAppState extends ConsumerState<AtTijaniyaApp> {
   _Step _step = _Step.splash;
   final _onboardingStore = const OnboardingStore();
+
+  /// Étape Compte : ouverte sur « Créer un compte » plutôt que « Connexion ».
+  bool _authSignUp = false;
+
+  /// Étape Compte ouverte depuis l'app par un invité (Profil, Communauté,
+  /// lien expiré) : « Retour » le ramène dans l'app, et non à l'écran
+  /// d'entrée qu'il avait déjà quitté.
+  bool _authBackToHome = false;
+
+  /// Passe à l'étape Compte, dans le mode demandé.
+  void _openAuth({required bool signUp, required bool backToHome}) {
+    setState(() {
+      _authSignUp = signUp;
+      _authBackToHome = backToHome;
+      _step = _Step.auth;
+    });
+  }
 
   /// Réinitialisation de mot de passe en attente (audit du 2026-10-04, S50).
   /// La session ouverte par le lien reçu par e-mail est une session
@@ -115,7 +137,9 @@ class _AtTijaniyaAppState extends ConsumerState<AtTijaniyaApp> {
       final event = next.valueOrNull?.event;
       if (event == AuthChangeEvent.signedOut && _step == _Step.home && mounted) {
         _navigatorKey.currentState?.popUntil((route) => route.isFirst);
-        setState(() => _step = _Step.auth);
+        // L'écran d'entrée, comme au lancement sans session : il propose de
+        // se reconnecter comme de continuer sans compte.
+        setState(() => _step = _Step.welcome);
         // Session expirée (rafraîchissement refusé) : le disciple revenait à
         // la connexion sans savoir pourquoi (audit de l'authentification du
         // 2026-10-27, P3-4). Une déconnexion voulue n'a pas de message.
@@ -152,7 +176,9 @@ class _AtTijaniyaAppState extends ConsumerState<AtTijaniyaApp> {
     ref.listen(signInRequestProvider, (previous, next) {
       if (!mounted || _step != _Step.home) return;
       _navigatorKey.currentState?.popUntil((route) => route.isFirst);
-      setState(() => _step = _Step.auth);
+      // Directement le formulaire, dans le mode demandé : l'écran qui a
+      // demandé la connexion a déjà dit ce qu'apporte un compte.
+      _openAuth(signUp: ref.read(signUpRequestedProvider), backToHome: true);
     });
 
     return MaterialApp(
@@ -223,11 +249,24 @@ class _AtTijaniyaAppState extends ConsumerState<AtTijaniyaApp> {
         });
         return const LanguageSelectionScreen();
       case _Step.onboarding:
-        return OnboardingScreen(onFinished: () => setState(() => _step = _Step.auth));
+        return OnboardingScreen(onFinished: () => setState(() => _step = _Step.reminders));
+      case _Step.reminders:
+        // Étape facultative, vue une seule fois, juste après la découverte.
+        return OnboardingRemindersScreen(onFinished: () => setState(() => _step = _Step.welcome));
+      case _Step.welcome:
+        return WelcomeScreen(
+          onCreateAccount: () => _openAuth(signUp: true, backToHome: false),
+          onSignIn: () => _openAuth(signUp: false, backToHome: false),
+          onGuest: () => setState(() => _step = _Step.home),
+        );
       case _Step.auth:
         return AuthScreen(
+          // Clé du mode : passer de « Créer un compte » à « Se connecter »
+          // depuis l'entrée recrée l'écran dans le bon onglet.
+          key: ValueKey('auth-$_authSignUp'),
+          initialSignUp: _authSignUp,
           onAuthenticated: () => setState(() => _step = _Step.home),
-          onContinueAsGuest: () => setState(() => _step = _Step.home),
+          onBack: () => setState(() => _step = _authBackToHome ? _Step.home : _Step.welcome),
         );
       case _Step.resetPassword:
         return ResetPasswordScreen(
@@ -243,7 +282,7 @@ class _AtTijaniyaAppState extends ConsumerState<AtTijaniyaApp> {
             try {
               await SupabaseConfig.client.auth.signOut();
             } catch (_) {}
-            if (mounted) setState(() => _step = _Step.auth);
+            if (mounted) setState(() => _step = _Step.welcome);
           },
         );
       case _Step.home:
@@ -254,7 +293,8 @@ class _AtTijaniyaAppState extends ConsumerState<AtTijaniyaApp> {
   void _showAuthLinkExpired() {
     if (ref.read(currentUserIdProvider) == null && _step == _Step.home) {
       _navigatorKey.currentState?.popUntil((route) => route.isFirst);
-      setState(() => _step = _Step.auth);
+      // La connexion, d'où l'on redemande un lien (le message le dit).
+      _openAuth(signUp: false, backToHome: true);
     }
     _showAuthMessage((l10n) => l10n.authLinkExpired);
   }
@@ -329,6 +369,6 @@ class _AtTijaniyaAppState extends ConsumerState<AtTijaniyaApp> {
       setState(() => _step = _Step.home);
       return;
     }
-    setState(() => _step = seen ? _Step.auth : _Step.onboarding);
+    setState(() => _step = seen ? _Step.welcome : _Step.onboarding);
   }
 }

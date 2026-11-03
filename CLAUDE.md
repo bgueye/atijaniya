@@ -126,6 +126,13 @@ rattachement à une zawiya (règle de publication inchangée) ; filtre « Ma zaw
 rendez-vous publics de la zawiya intercalés (au plus un toutes les trois publications) ; carte
 « Retrouver mes condisciples » en tête des Groupes, sans aucune donnée de lignée. Pas de
 « dernière activité » des groupes (RLS) ni de « + Nouveau » message (pas d'annuaire).
+**Parcours d'entrée refait le 2026-11-03** (maquette `parcours-entree.html`) : langue choisie
+puis enregistrée par « Continuer », trois écrans de découverte avec aperçu (rendez-vous réels de
+la base, jamais en dur), étape « Rappels » facultative et vue une fois (autorisation demandée une
+seule fois, `wird_reminder_bulk.dart`), écran d'entrée `WelcomeScreen` (créer un compte,
+découvrir sans compte, se connecter) à la place de la connexion, sur parchemin ; « Nom affiché »,
+règles du mot de passe cochées en direct, renvoi de l'e-mail avec délai. Heures par défaut des
+rappels : Lazim 07:00/19:00, Wazifa 18:00, Jouma 17:00 (`WirdReminderSetting.defaultHourFor`).
 **Profil refait le 2026-11-02** (maquette `ecran-profil.html`) : carte d'identité, « Ma pratique »
 (chiffres du téléphone, masquables), « Mon chemin spirituel » et « Confidentialité » qui
 disent l'état de chaque élément sans jamais son contenu, « Application » (langue, contraste,

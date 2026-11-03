@@ -4160,3 +4160,123 @@ Les tests de la Communauté visaient le bouton flottant, les onglets et l'icône
 ils sont adaptés au champ de publication, au segment Messages et à la carte de rattachement.
 `flutter analyze` ne signale rien et les 669 tests passent (captures ignorées sans polices).
 **Pas encore validé sur téléphone.**
+
+## Refonte du parcours d'entrée (2026-11-03)
+
+Demande du porteur de projet : refaire le parcours d'entrée (démarrage, langue, découverte,
+rappels, entrée, compte, boîte mail, nouveau mot de passe) d'après sa maquette de référence
+`docs/maquettes/parcours-entree.html`, avec les décisions validées le 2026-11-02 et le kit.
+Écarts listés puis validés avant de coder. Quatre points tranchés le 2026-11-03 :
+- **heures par défaut des rappels** : Lazim 07:00 et 19:00, Wazifa 18:00, Hadratou-l-Jouma
+  17:00 le vendredi (point laissé ouvert par `docs/maquettes/README.md`) ;
+- **en-tête de l'écran d'entrée sur parchemin**, logo clair, et non sur zaytoune comme dans la
+  maquette : CLAUDE.md réserve ce vert à la pratique et à l'accueil ;
+- **aperçu Zawiyas de la découverte** : les trois prochains rendez-vous de la base, et non ceux
+  de la maquette écrits en dur, qui seraient périmés en quelques semaines ;
+- **démarrage** : le fondu court est gardé, sans l'animation de la rosace, pour ne pas
+  rallonger un démarrage raccourci par l'audit du 2026-10-26.
+
+**Parcours** (`app.dart`) : Splash → Langue → Découverte → Rappels (une seule fois, comme la
+découverte) → **Entrée** → Compte. Sans session, l'écran d'entrée (`WelcomeScreen`) remplace
+l'écran de connexion comme porte d'entrée, au lancement comme après une déconnexion. Un invité
+qui demande à se connecter depuis l'app (Profil, Communauté, lien expiré) arrive directement
+sur le formulaire, et « Retour » le ramène dans l'app. Le Profil ouvre « Créer un compte » ou
+« Connexion » selon le bouton touché (`requestSignIn(ref, signUp:)`).
+
+**Démarrage** : nom de l'app et « La pratique de la Tijaniyya, au quotidien » sous le logo.
+
+**Langue** (`language_selection_screen.dart`, réécrit)
+- Titre dans les deux langues, deux cartes avec une phrase de l'app dans leur langue
+  (« Vos wirds, guidés pas à pas » / « أورادك، خطوة بخطوة ») et une coche.
+- Toucher une carte la sélectionne et passe l'écran dans cette langue, sens de lecture
+  compris (`Localizations.override`) ; « Continuer » enregistre. Avant, toucher un bouton
+  enregistrait et quittait l'écran. Par défaut, l'arabe si le téléphone est en arabe.
+- Note « depuis le Profil » au lieu de « dans les paramètres » (écran supprimé).
+
+**Découverte** (`onboarding_screen.dart`, réécrit) : trois écrans au lieu de quatre, chacun
+avec un aperçu dessiné de l'app ; textes actuels des fichiers de traduction, « Bienvenue sur
+At-Tijaniya » en étiquette du premier écran.
+- Wird : les bandeaux des trois wirds (`WirdBand` du kit), Lazim « Fait ».
+- Zawiyas : les trois prochains rendez-vous non hebdomadaires de `upcomingEventsProvider`.
+  Hors ligne ou en attendant, des lignes vides de même forme, jamais un rendez-vous inventé.
+- Communauté : une publication anonyme (« Disciple »), puis Groupes, Messages, « Condisciples,
+  en privé ».
+
+**Rappels** (`onboarding_reminders_screen.dart`, nouveau ; `wird_reminder_bulk.dart`, nouveau)
+- Les quatre créneaux de l'app à leur heure par défaut, avec la couleur de chaque wird ; les
+  rappels quotidiens cochés, celui du vendredi au choix. « Activer N rappels » demande
+  l'autorisation des notifications **une seule fois** (sur Android 13 et plus, un refus ne peut
+  plus être redemandé par l'app), puis programme et enregistre les créneaux dans le même
+  stockage que le guide d'un wird, qui les relit tels quels.
+- « Plus tard » passe sans rien demander. Un refus ou un échec est dit une fois, et le
+  parcours continue.
+- `enableWirdReminders` écrit directement dans `WirdReminderStore` plutôt que par
+  `WirdReminderController` : le chargement asynchrone de ce dernier pouvait repasser derrière
+  une activation faite juste après sa création.
+- `WirdReminderSetting.defaultHourFor` : les heures validées servent aussi au guide d'un wird
+  (avant, 07:00 pour tous les rappels quotidiens, y compris celui du soir).
+
+**Entrée** (`welcome_screen.dart`, nouveau) : « Bienvenue », « Votre pratique, votre zawiya,
+votre communauté », les trois raisons de créer un compte reprises mot pour mot de la carte
+invité du Profil, puis « Créer un compte », « Découvrir sans compte » (un vrai bouton, au même
+rang) et « J'ai déjà un compte · Se connecter ». En bas, ce qui est accessible sans compte, et
+le rappel que la pratique reste sur le téléphone, avec ou sans compte.
+
+**Compte** (`auth_screen.dart`, réécrit sans changer la logique d'authentification)
+- « Retour », y compris par le retour système (`PopScope`) ; l'ancien lien « Continuer sans
+  compte » disparaît, l'entrée le porte désormais.
+- Contrôle Connexion / Créer un compte : `SegmentedSwitch` du kit, à la place du contrôle
+  maison.
+- **« Nom affiché »** avec « Visible par la communauté sur vos publications. Un prénom
+  suffit. », même `display_name` ; autoremplissage par le prénom.
+- « Afficher » / « Masquer » en toutes lettres (`PasswordVisibilityButton`, infobulle et
+  lecteur d'écran gardent « Afficher le mot de passe »).
+- Règles du mot de passe cochées pendant la saisie (`PasswordRulesList`) : « 8 caractères
+  minimum », qui bloque, et « Des lettres et au moins un chiffre (conseillé) », un simple
+  conseil. « Créer un compte » reste grisé sous 8 caractères ; la mention de confidentialité
+  passe avant le bouton.
+- Boîte mail : écran à part entière, adresse mise en évidence, « Renvoyer l'e-mail · dans
+  N s ». Le délai (60 s, celui de Supabase) part après l'inscription et après chaque renvoi :
+  le bouton ne tombe plus sur « Trop de tentatives ».
+
+**Nouveau mot de passe** : mêmes règles cochées, « Identiques » qui se coche quand les deux
+saisies correspondent, « Enregistrer » grisé sous 8 caractères, « Abandonner et me
+déconnecter », qui mène à l'écran d'entrée.
+
+**Titres** : `entryTitleStyle` passe en Amiri en arabe (Cormorant n'a pas de glyphes arabes),
+comme les titres des fiches de détail.
+
+**Correction du thème** : le libellé des boutons pleine largeur (`elevatedButtonTheme`) n'avait
+pas la police de secours des captures (`debugFontFallback`), et restait vide en arabe dans les
+captures. Sans effet dans l'app, où cette police de secours est toujours `null`.
+
+**Captures** : `test/parcours_entree_captures_test.dart` produit les douze états (démarrage,
+langue, langue avec l'arabe sélectionné, trois écrans de découverte, rappels, entrée, création
+de compte remplie, connexion, boîte mail, nouveau mot de passe), en français et en arabe. Les
+logos y sont lus depuis `assets/branding/` par un bundle de test, `flutter test` ne fournissant
+pas le catalogue des assets. Nom et adresse d'exemple repris de la maquette. Comparées à la
+maquette ; corrigés grâce aux captures :
+- les titres arabes de l'entrée, de la découverte et des rappels, qui n'avaient pas de glyphes ;
+- l'aperçu des wirds, qui débordait de sa hauteur fixe ;
+- l'écran du nouveau mot de passe, centré au lieu de commencer en haut.
+
+Limite connue des captures : le texte arabe inscrit dans le logo SVG du démarrage n'a pas de
+police dans l'environnement de test, et s'y affiche en carrés. Le logo n'a pas changé.
+
+**Tests** : `test/parcours_entree_test.dart` est nouveau. Il couvre :
+- les heures par défaut des rappels ;
+- la langue sélectionnée avant d'être enregistrée, et l'écran qui passe en arabe ;
+- les trois écrans de découverte, « Passer », et l'aperçu des rendez-vous sans les
+  hebdomadaires ;
+- les rappels : sélection par défaut, « Plus tard », refus des notifications, activation
+  groupée (une seule demande, heures par défaut, réglages relus par le guide) ;
+- l'écran d'entrée et ses trois choix ;
+- « Nom affiché », le bouton grisé et les règles cochées, « Retour », la boîte mail et son
+  délai de renvoi ;
+- le nouveau mot de passe.
+
+`app_startup_test.dart` couvre le parcours découverte → rappels → entrée → compte → retour,
+et attend désormais l'écran d'entrée là où il attendait la connexion. Les tests de
+l'authentification sont adaptés (`onBack`, prénom, gouttière du contrôle segmenté).
+`flutter analyze` ne signale rien et les 685 tests passent (captures ignorées sans polices).
+**Pas encore validé sur téléphone**, notamment la demande d'autorisation des notifications.

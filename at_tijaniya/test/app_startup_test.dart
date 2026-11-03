@@ -15,10 +15,13 @@ import 'package:at_tijaniya/app.dart';
 import 'package:at_tijaniya/core/date/current_day.dart';
 import 'package:at_tijaniya/core/theme/locale_controller.dart';
 import 'package:at_tijaniya/features/auth/presentation/auth_screen.dart';
+import 'package:at_tijaniya/features/auth/presentation/welcome_screen.dart';
 import 'package:at_tijaniya/features/figures/presentation/figures_providers.dart';
 import 'package:at_tijaniya/features/home/presentation/home_shell.dart';
 import 'package:at_tijaniya/features/khadara/presentation/khadara_providers.dart';
 import 'package:at_tijaniya/features/onboarding/presentation/language_selection_screen.dart';
+import 'package:at_tijaniya/features/onboarding/presentation/onboarding_reminders_screen.dart';
+import 'package:at_tijaniya/features/onboarding/presentation/onboarding_screen.dart';
 import 'package:at_tijaniya/features/profil/data/profile_repository.dart';
 import 'package:at_tijaniya/features/profil/presentation/profile_providers.dart';
 
@@ -70,13 +73,42 @@ void main() {
     expect(find.byType(LanguageSelectionScreen), findsOneWidget);
   });
 
-  testWidgets('langue connue, invité : connexion directement, sans écran de langue', (tester) async {
+  // Refonte du parcours d'entrée (2026-11-03) : sans session, l'écran
+  // d'entrée remplace l'écran de connexion.
+  testWidgets("langue connue, invité : écran d'entrée directement, sans écran de langue", (tester) async {
     SharedPreferences.setMockInitialValues({'onboarding_seen': true});
     await tester.pumpWidget(_app(savedLocale: const Locale('fr')));
     await tester.pump(const Duration(milliseconds: 450));
     await tester.pumpAndSettle();
     expect(find.byType(LanguageSelectionScreen), findsNothing);
+    expect(find.byType(WelcomeScreen), findsOneWidget);
+  });
+
+  // Refonte du parcours d'entrée (2026-11-03) : découverte, rappels, puis
+  // l'écran d'entrée ; « Retour » depuis le compte y ramène.
+  testWidgets('premier passage : découverte, rappels, entrée, compte, retour', (tester) async {
+    SharedPreferences.setMockInitialValues({});
+    await tester.pumpWidget(_app(savedLocale: const Locale('fr')));
+    await tester.pump(const Duration(milliseconds: 450));
+    await tester.pumpAndSettle();
+    expect(find.byType(OnboardingScreen), findsOneWidget);
+
+    await tester.tap(find.text('Passer'));
+    await tester.pumpAndSettle();
+    expect(find.byType(OnboardingRemindersScreen), findsOneWidget);
+
+    await tester.tap(find.text('Plus tard'));
+    await tester.pumpAndSettle();
+    expect(find.byType(WelcomeScreen), findsOneWidget);
+
+    await tester.tap(find.text('Créer un compte'));
+    await tester.pumpAndSettle();
     expect(find.byType(AuthScreen), findsOneWidget);
+    expect(find.text('Nom affiché'), findsOneWidget);
+
+    await tester.tap(find.text('Retour'));
+    await tester.pumpAndSettle();
+    expect(find.byType(WelcomeScreen), findsOneWidget);
   });
 
   testWidgets('langue connue, compte connecté : accueil directement', (tester) async {
@@ -108,7 +140,7 @@ void main() {
 
     testWidgets("invité sur l'accueil : message et retour à la connexion", (tester) async {
       final states = await start(tester);
-      await tester.tap(find.text('Continuer sans compte'));
+      await tester.tap(find.text('Découvrir sans compte'));
       await tester.pumpAndSettle();
       expect(find.byType(HomeShell), findsOneWidget);
 
@@ -119,11 +151,11 @@ void main() {
       await tester.pumpWidget(const SizedBox());
     });
 
-    testWidgets('sur la connexion : message, écran inchangé', (tester) async {
+    testWidgets("sur l'écran d'entrée : message, écran inchangé", (tester) async {
       final states = await start(tester);
       states.addError(expired);
       await tester.pumpAndSettle();
-      expect(find.byType(AuthScreen), findsOneWidget);
+      expect(find.byType(WelcomeScreen), findsOneWidget);
       expect(find.text(message), findsOneWidget);
       await tester.pumpWidget(const SizedBox());
     });
@@ -140,7 +172,7 @@ void main() {
   // Audit de l'authentification du 2026-10-27, P2-4 : la déconnexion et la
   // suppression de compte ne font plus leur propre `pop` ; c'est app.dart qui
   // vide la pile sur `signedOut`, y compris les écrans ouverts par-dessus.
-  testWidgets('déconnexion depuis un écran ouvert sur l\'accueil : retour à la connexion', (tester) async {
+  testWidgets("déconnexion depuis un écran ouvert sur l'accueil : retour à l'écran d'entrée", (tester) async {
     SharedPreferences.setMockInitialValues({'onboarding_seen': true});
     final states = StreamController<AuthState>.broadcast();
     addTearDown(states.close);
@@ -158,7 +190,7 @@ void main() {
     states.add(const AuthState(AuthChangeEvent.signedOut, null));
     await tester.pumpAndSettle();
     expect(find.text('Profil ouvert'), findsNothing);
-    expect(find.byType(AuthScreen), findsOneWidget);
+    expect(find.byType(WelcomeScreen), findsOneWidget);
     await tester.pumpWidget(const SizedBox());
   });
 
@@ -178,7 +210,7 @@ void main() {
 
       states.add(AuthState(AuthChangeEvent.signedOut, null, signOutReason: reason));
       await tester.pumpAndSettle();
-      expect(find.byType(AuthScreen), findsOneWidget);
+      expect(find.byType(WelcomeScreen), findsOneWidget);
       expect(find.text('Votre session a expiré. Reconnectez-vous pour retrouver votre compte.'),
           explained ? findsOneWidget : findsNothing);
       await tester.pumpWidget(const SizedBox());

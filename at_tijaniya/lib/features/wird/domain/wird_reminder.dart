@@ -33,12 +33,30 @@ class WirdReminderSetting {
     required this.minute,
   });
 
+  /// Réglage d'un créneau jamais touché : désactivé, à l'heure par défaut du
+  /// créneau ([defaultHourFor]).
   factory WirdReminderSetting.defaultFor(WirdReminderSlot slot) => WirdReminderSetting(
         slotId: slot.id,
         enabled: false,
-        hour: slot.frequency == ReminderFrequency.weeklyFriday ? 17 : 7,
+        hour: defaultHourFor(slot),
         minute: 0,
       );
+
+  /// Heure proposée par défaut pour un créneau. Heures validées par le
+  /// porteur de projet le 2026-11-03, avec la refonte du parcours d'entrée
+  /// (maquette `parcours-entree.html`) : Lazim 07:00 le matin et 19:00 le
+  /// soir, Wazifa 18:00, Hadratou-l-Jouma 17:00 le vendredi. Avant, tous les
+  /// rappels quotidiens partaient de 07:00, y compris celui du soir. Les
+  /// mêmes heures servent à l'étape « Rappels » de l'entrée et au guide d'un
+  /// wird, pour que les deux endroits disent la même chose.
+  static int defaultHourFor(WirdReminderSlot slot) {
+    return switch (slot.id) {
+      'lazim_morning' => 7,
+      'lazim_evening' => 19,
+      'wazifa_daily' => 18,
+      _ => slot.frequency == ReminderFrequency.weeklyFriday ? 17 : 7,
+    };
+  }
 
   final String slotId;
   final bool enabled;

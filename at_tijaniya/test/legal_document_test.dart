@@ -78,7 +78,7 @@ void main() {
   });
 
   testWidgets("l'inscription ouvre la politique ; plus de conditions d'utilisation", (tester) async {
-    await tester.pumpWidget(_app(AuthScreen(onAuthenticated: () {}, onContinueAsGuest: () {})));
+    await tester.pumpWidget(_app(AuthScreen(onAuthenticated: () {}, onBack: () {})));
     await tester.pumpAndSettle();
     await tester.tap(find.text('Créer un compte'));
     await tester.pumpAndSettle();

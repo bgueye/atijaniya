@@ -105,7 +105,7 @@ class _MessagesView extends ConsumerWidget {
         icon: Icons.mail_outline,
         message: l10n.communityMessagesGuest,
         actionLabel: l10n.communityGuestAction,
-        onAction: () => ref.read(signInRequestProvider.notifier).state++,
+        onAction: () => requestSignIn(ref),
       );
     }
     return const ConversationsList();
@@ -170,7 +170,7 @@ class _FeedView extends ConsumerWidget {
           title: l10n.communityGuestTitle,
           body: l10n.communityGuestBody,
           action: l10n.communityGuestAction,
-          onAction: () => ref.read(signInRequestProvider.notifier).state++,
+          onAction: () => requestSignIn(ref),
         )
       else if (profile != null && profile.zawiyaId == null)
         // La règle (zawiya requise) dite d'emblée, avec ce qu'il peut déjà

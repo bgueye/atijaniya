@@ -7,6 +7,7 @@ import '../../../core/theme/app_colors.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../../core/widgets/content_text.dart';
 import '../domain/auth_error_message.dart';
+import 'auth_widgets.dart';
 
 /// Message affiché quand le nouveau mot de passe est refusé (audit de
 /// l'authentification du 2026-10-27, P2-3). Toutes les erreurs donnaient
@@ -37,6 +38,11 @@ String resetPasswordErrorMessage(Object error, AppLocalizations l10n) {
 /// valide pour appeler `updateUser` : une fois le mot de passe changé, le
 /// disciple est donc directement connecté, pas besoin de repasser par
 /// l'écran de connexion.
+///
+/// Mis au kit le 2026-11-03 (maquette `parcours-entree.html`) : les règles de
+/// la création de compte, cochées pendant la saisie, et « Identiques » qui se
+/// coche quand les deux champs correspondent ; « Enregistrer » grisé sous 8
+/// caractères ; « Abandonner et me déconnecter » mène à l'écran d'entrée.
 class ResetPasswordScreen extends StatefulWidget {
   const ResetPasswordScreen({super.key, required this.onDone, required this.onCancel});
 
@@ -96,9 +102,14 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
       filled: true,
       fillColor: AppColors.offWhite,
       border:
-          OutlineInputBorder(borderRadius: BorderRadius.circular(8), borderSide: BorderSide(color: AppColors.bronze)),
+          OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide(color: AppColors.bronze)),
     );
   }
+
+  /// Bouton afficher/masquer, le même sur les deux champs : il agit sur les
+  /// deux à la fois.
+  Widget _visibilityButton() =>
+      PasswordVisibilityButton(obscured: _obscured, onPressed: () => setState(() => _obscured = !_obscured));
 
   @override
   Widget build(BuildContext context) {
@@ -106,7 +117,8 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
     return Scaffold(
       backgroundColor: AppColors.parchment,
       body: SafeArea(
-        child: Center(
+        child: Align(
+          alignment: Alignment.topCenter,
           child: SingleChildScrollView(
             padding: const EdgeInsets.all(24),
             child: Form(
@@ -115,13 +127,13 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Text(
-                    l10n.resetPasswordTitle,
-                    style: const TextStyle(color: AppColors.zaytoune, fontSize: 22, fontWeight: FontWeight.w600),
+                  Semantics(
+                    header: true,
+                    child: Text(l10n.resetPasswordTitle, style: entryTitleStyle(context, fontSize: 28)),
                   ),
-                  const SizedBox(height: 8),
+                  const SizedBox(height: 6),
                   Text(l10n.resetPasswordSubtitle,
-                      style: TextStyle(color: AppColors.secondaryInk, fontSize: 13, height: 1.4)),
+                      style: TextStyle(color: AppColors.secondaryInk, fontSize: 14, height: 1.45)),
                   const SizedBox(height: 24),
                   // Autoremplissage et clavier (audit de l'authentification du
                   // 2026-10-27, P2-1) ; la confirmation a son propre bouton
@@ -136,15 +148,8 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                           textInputAction: TextInputAction.next,
                           obscureText: _obscured,
                           enabled: !_submitting,
-                          decoration: _fieldDecoration(l10n.authPasswordLabel).copyWith(
-                            suffixIcon: IconButton(
-                              // Libellé de l'action réelle, selon l'état (P3-3).
-                              tooltip: _obscured ? l10n.a11yShowPassword : l10n.a11yHidePassword,
-                              icon: Icon(_obscured ? Icons.visibility_outlined : Icons.visibility_off_outlined,
-                                  color: AppColors.bronze),
-                              onPressed: () => setState(() => _obscured = !_obscured),
-                            ),
-                          ),
+                          decoration:
+                              _fieldDecoration(l10n.authPasswordLabel).copyWith(suffixIcon: _visibilityButton()),
                           validator: (value) {
                             final text = value ?? '';
                             if (text.isEmpty) return l10n.authPasswordRequired;
@@ -152,9 +157,12 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                             return null;
                           },
                         ),
-                        const SizedBox(height: 6),
-                        Text(l10n.authPasswordMinCharsHint,
-                            style: TextStyle(color: AppColors.secondaryInk, fontSize: 11)),
+                        // Règles cochées pendant la saisie (mêmes que la
+                        // création de compte).
+                        ValueListenableBuilder<TextEditingValue>(
+                          valueListenable: _passwordController,
+                          builder: (context, value, _) => PasswordRulesList(rules: newPasswordRules(value.text, l10n)),
+                        ),
                         const SizedBox(height: 14),
                         TextFormField(
                           controller: _confirmController,
@@ -163,18 +171,24 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                           autofillHints: const [AutofillHints.newPassword],
                           textInputAction: TextInputAction.done,
                           onFieldSubmitted: (_) => _submitting ? null : _submit(),
-                          decoration: _fieldDecoration(l10n.resetPasswordConfirmLabel).copyWith(
-                            suffixIcon: IconButton(
-                              tooltip: _obscured ? l10n.a11yShowPassword : l10n.a11yHidePassword,
-                              icon: Icon(_obscured ? Icons.visibility_outlined : Icons.visibility_off_outlined,
-                                  color: AppColors.bronze),
-                              onPressed: () => setState(() => _obscured = !_obscured),
-                            ),
-                          ),
+                          decoration: _fieldDecoration(l10n.resetPasswordConfirmShort)
+                              .copyWith(suffixIcon: _visibilityButton()),
                           validator: (value) {
                             if (value != _passwordController.text) return l10n.resetPasswordMismatch;
                             return null;
                           },
+                        ),
+                        // « Identiques » se coche quand les deux saisies,
+                        // non vides, correspondent.
+                        ListenableBuilder(
+                          listenable: Listenable.merge([_passwordController, _confirmController]),
+                          builder: (context, _) => PasswordRulesList(rules: [
+                            (
+                              label: l10n.resetPasswordSameRule,
+                              met: _confirmController.text.isNotEmpty &&
+                                  _confirmController.text == _passwordController.text,
+                            ),
+                          ]),
                         ),
                       ],
                     ),
@@ -184,24 +198,23 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                     ContentText(_errorMessage!, style: const TextStyle(color: AppColors.danger)),
                   ],
                   const SizedBox(height: 24),
-                  ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: AppColors.emerald,
-                      foregroundColor: Colors.white,
-                      padding: const EdgeInsets.symmetric(vertical: 14),
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                  // Bouton « block » du kit (thème), grisé sous 8 caractères.
+                  ValueListenableBuilder<TextEditingValue>(
+                    valueListenable: _passwordController,
+                    builder: (context, value, _) => ElevatedButton(
+                      onPressed: _submitting || value.text.length < 8 ? null : _submit,
+                      child: _submitting
+                          ? const SizedBox(
+                              height: 18,
+                              width: 18,
+                              child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white))
+                          : Text(l10n.resetPasswordSubmit),
                     ),
-                    onPressed: _submitting ? null : _submit,
-                    child: _submitting
-                        ? const SizedBox(
-                            height: 18,
-                            width: 18,
-                            child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white))
-                        : Text(l10n.resetPasswordSubmit, style: const TextStyle(fontWeight: FontWeight.w600)),
                   ),
                   const SizedBox(height: 8),
                   TextButton(
                     onPressed: _submitting ? null : widget.onCancel,
+                    style: TextButton.styleFrom(foregroundColor: AppColors.secondaryInk),
                     child: Text(l10n.resetPasswordCancel),
                   ),
                 ],

@@ -103,7 +103,9 @@ class _GuestBody extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context)!;
-    void signIn() => ref.read(signInRequestProvider.notifier).state++;
+    // Chaque bouton ouvre l'écran de compte dans son onglet.
+    void signUp() => requestSignIn(ref, signUp: true);
+    void signIn() => requestSignIn(ref);
     final benefits = [l10n.profileGuestBenefit1, l10n.profileGuestBenefit2, l10n.profileGuestBenefit3];
 
     return ListView(
@@ -155,9 +157,7 @@ class _GuestBody extends ConsumerWidget {
                     ),
                   ),
                 const SizedBox(height: 6),
-                // La même étape d'authentification, qui bascule entre
-                // connexion et création de compte.
-                FilledButton(onPressed: signIn, child: Text(l10n.authSignUpAction)),
+                FilledButton(onPressed: signUp, child: Text(l10n.authSignUpAction)),
                 TextButton(onPressed: signIn, child: Text(l10n.profileGuestHaveAccount)),
               ],
             ),

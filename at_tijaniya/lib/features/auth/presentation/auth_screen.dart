@@ -1,21 +1,22 @@
-import '../../../core/validation/text_limits.dart';
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show TextInput;
-import 'package:google_fonts/google_fonts.dart';
 import 'package:supabase_flutter/supabase_flutter.dart' show GoTrueClient, OtpType;
 
 import '../../../core/supabase/supabase_config.dart';
 import '../../../core/theme/app_colors.dart';
+import '../../../core/validation/text_limits.dart';
+import '../../../core/widgets/content_text.dart';
+import '../../../core/widgets/segmented_switch.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../settings/presentation/privacy_policy_screen.dart';
 import '../domain/auth_error_message.dart';
-import '../../../core/widgets/content_text.dart';
+import 'auth_widgets.dart';
 
 /// Inscription / Connexion — email/mot de passe. Téléphone/OTP hors
 /// périmètre pour l'instant : nécessiterait un fournisseur SMS non
-/// configuré (cf. docs/06-architecture-backend.md). Mode consultation sans
-/// compte possible pour le module Wirds seul (cf.
-/// docs/03-architecture-ecrans.md). Priorité P0.
+/// configuré (cf. docs/06-architecture-backend.md). Priorité P0.
 ///
 /// Le lien de confirmation envoyé par e-mail à l'inscription et le lien de
 /// réinitialisation du mot de passe pointent vers `SupabaseConfig.authCallbackUrl`
@@ -29,18 +30,43 @@ import '../../../core/widgets/content_text.dart';
 /// Facebook), malgré la maquette `docs/atijaniya_login_signup_toggle.html` :
 /// décision actée avec le porteur de projet le 2026-08-13. Ça nécessiterait
 /// une configuration OAuth côté Supabase (aucun provider activé à ce jour)
-/// et un deep link natif Android/iOS pour le retour vers l'app (aucun
-/// schème personnalisé déclaré, navigation en `Navigator` classique sans
-/// `go_router`) — chantier d'infrastructure à part, même statut que le
-/// prestataire de paiement des dons ou le streaming natif Khadara. Même
-/// principe déjà appliqué ailleurs dans l'app (audio des wirds, dons) :
-/// jamais de bouton pour une fonctionnalité qui n'a pas d'implémentation
-/// réelle derrière.
+/// et un deep link natif Android/iOS pour le retour vers l'app — chantier
+/// d'infrastructure à part, même statut que le prestataire de paiement des
+/// dons ou le streaming natif Khadara : jamais de bouton pour une
+/// fonctionnalité qui n'a pas d'implémentation réelle derrière.
+///
+/// Refait le 2026-11-03 d'après `docs/maquettes/parcours-entree.html`
+/// (décisions validées du 2026-11-02) :
+/// - on y arrive depuis l'écran d'entrée (`WelcomeScreen`), qui porte
+///   désormais « Découvrir sans compte » ; d'où « Retour » au lieu du lien
+///   « Continuer sans compte » ;
+/// - « Nom affiché » au lieu de « Nom complet », même `display_name` ;
+/// - « Afficher » / « Masquer » en toutes lettres, règles du mot de passe
+///   cochées pendant la saisie, « Créer un compte » grisé sous 8 caractères ;
+/// - boîte mail en écran à part entière, renvoi avec un délai visible.
 class AuthScreen extends StatefulWidget {
-  const AuthScreen({super.key, required this.onAuthenticated, required this.onContinueAsGuest, this.auth});
+  const AuthScreen({
+    super.key,
+    required this.onAuthenticated,
+    required this.onBack,
+    this.initialSignUp = false,
+    this.resendCooldown = const Duration(seconds: 60),
+    this.auth,
+  });
 
   final VoidCallback onAuthenticated;
-  final VoidCallback onContinueAsGuest;
+
+  /// « Retour » et le retour système : vers l'écran d'entrée, ou vers l'app
+  /// pour un invité venu s'y connecter depuis un écran (Profil, Communauté).
+  final VoidCallback onBack;
+
+  /// Ouvre sur « Créer un compte » plutôt que sur « Connexion ».
+  final bool initialSignUp;
+
+  /// Attente avant de pouvoir renvoyer l'e-mail de confirmation. Supabase
+  /// refuse un renvoi rapproché (une minute par défaut) : le bouton le dit au
+  /// lieu d'échouer sur « Trop de tentatives ».
+  final Duration resendCooldown;
 
   /// Client d'authentification — celui de Supabase par défaut ; remplacé
   /// dans les tests de l'écran, qui n'ont pas de serveur.
@@ -54,7 +80,7 @@ class AuthScreen extends StatefulWidget {
 enum _AuthAction { signIn, signUp, resetPassword, resendConfirmation }
 
 class _AuthScreenState extends State<AuthScreen> {
-  bool _isSignUp = false;
+  late bool _isSignUp = widget.initialSignUp;
 
   GoTrueClient get _auth => widget.auth ?? SupabaseConfig.client.auth;
 
@@ -74,7 +100,7 @@ class _AuthScreenState extends State<AuthScreen> {
   bool _loginPasswordObscured = true;
 
   final _signupFormKey = GlobalKey<FormState>();
-  final _fullNameController = TextEditingController();
+  final _displayNameController = TextEditingController();
   final _signupEmailController = TextEditingController();
   final _signupPasswordController = TextEditingController();
   bool _signupPasswordObscured = true;
@@ -93,14 +119,35 @@ class _AuthScreenState extends State<AuthScreen> {
   /// compte qu'il ne pouvait jamais confirmer.
   String? _pendingConfirmationEmail;
 
+  /// Secondes avant que « Renvoyer l'e-mail » redevienne disponible.
+  int _resendSecondsLeft = 0;
+  Timer? _resendTimer;
+
   @override
   void dispose() {
+    _resendTimer?.cancel();
     _loginEmailController.dispose();
     _loginPasswordController.dispose();
-    _fullNameController.dispose();
+    _displayNameController.dispose();
     _signupEmailController.dispose();
     _signupPasswordController.dispose();
     super.dispose();
+  }
+
+  /// Démarre (ou relance) l'attente du renvoi : après l'inscription, puis
+  /// après chaque renvoi réussi.
+  void _startResendCooldown() {
+    _resendTimer?.cancel();
+    setState(() => _resendSecondsLeft = widget.resendCooldown.inSeconds);
+    if (_resendSecondsLeft <= 0) return;
+    _resendTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
+      if (!mounted) {
+        timer.cancel();
+        return;
+      }
+      setState(() => _resendSecondsLeft--);
+      if (_resendSecondsLeft <= 0) timer.cancel();
+    });
   }
 
   void _switchTab(bool isSignUp) {
@@ -159,7 +206,7 @@ class _AuthScreenState extends State<AuthScreen> {
         // Clé lue par le trigger serveur `handle_new_user`
         // (`raw_user_meta_data->>'display_name'`) pour préremplir
         // `profiles.display_name` — voir database/schema.sql.
-        data: {'display_name': _fullNameController.text.trim()},
+        data: {'display_name': _displayNameController.text.trim()},
         emailRedirectTo: SupabaseConfig.authCallbackUrl,
       );
       if (!mounted) return;
@@ -172,9 +219,11 @@ class _AuthScreenState extends State<AuthScreen> {
         // Confirmation par e-mail activée : pas de session tant que le lien
         // reçu par e-mail n'a pas été ouvert. Le formulaire laisse la place
         // au panneau « Vérifiez votre boîte mail » ; le mot de passe saisi
-        // n'a plus à rester à l'écran.
+        // n'a plus à rester à l'écran. Un e-mail vient de partir : le renvoi
+        // attend le délai de Supabase.
         setState(() => _pendingConfirmationEmail = _signupEmailController.text.trim());
         _signupPasswordController.clear();
+        _startResendCooldown();
       }
     } catch (error) {
       if (mounted) setState(() => _errorMessage = _messageFor(classifyAuthError(error), l10n));
@@ -202,7 +251,10 @@ class _AuthScreenState extends State<AuthScreen> {
         email: email,
         emailRedirectTo: SupabaseConfig.authCallbackUrl,
       );
-      if (mounted) setState(() => _infoMessage = l10n.authConfirmationResent);
+      if (mounted) {
+        setState(() => _infoMessage = l10n.authConfirmationResent);
+        if (!fromLogin) _startResendCooldown();
+      }
     } catch (error) {
       if (mounted) setState(() => _errorMessage = _messageFor(classifyAuthError(error), l10n));
     } finally {
@@ -287,38 +339,79 @@ class _AuthScreenState extends State<AuthScreen> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
+    final pending = _pendingConfirmationEmail;
+    final checkingEmail = _isSignUp && pending != null;
 
-    return Scaffold(
-      backgroundColor: AppColors.parchment,
-      body: SafeArea(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.all(24),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              const SizedBox(height: 16),
-              _SegmentedToggle(
-                isSignUp: _isSignUp,
-                loginLabel: l10n.authTabLogin,
-                signupLabel: l10n.authTabSignup,
-                onChanged: _switchTab,
+    // Retour système = « Retour » : sans ça, il fermait l'app depuis cette
+    // étape, qui n'est pas une route poussée mais l'écran racine.
+    return PopScope(
+      canPop: false,
+      onPopInvokedWithResult: (didPop, _) {
+        if (!didPop) widget.onBack();
+      },
+      child: Scaffold(
+        backgroundColor: AppColors.parchment,
+        body: SafeArea(
+          child: LayoutBuilder(
+            builder: (context, constraints) => SingleChildScrollView(
+              padding: const EdgeInsets.fromLTRB(20, 4, 20, 20),
+              child: ConstrainedBox(
+                // Hauteur visible moins les marges : les boutons du bas
+                // restent en bas quand tout tient, et l'écran défile sinon.
+                constraints: BoxConstraints(minHeight: constraints.maxHeight - 24),
+                child: IntrinsicHeight(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      Align(
+                        alignment: AlignmentDirectional.centerStart,
+                        child: TextButton.icon(
+                          onPressed: _loadingAction != null ? null : widget.onBack,
+                          style: TextButton.styleFrom(foregroundColor: AppColors.secondaryInk),
+                          // `arrow_back` suit le sens de lecture (flèche
+                          // vers la droite en arabe).
+                          icon: const Icon(Icons.arrow_back, size: 18),
+                          label: Text(l10n.authBack),
+                        ),
+                      ),
+                      if (checkingEmail)
+                        Expanded(
+                          child: SignupCheckEmailPanel(
+                            email: pending,
+                            resending: _loadingAction == _AuthAction.resendConfirmation,
+                            resendSecondsLeft: _resendSecondsLeft,
+                            errorMessage: _errorMessage,
+                            infoMessage: _infoMessage,
+                            onGoToLogin: _goToLoginAfterSignup,
+                            onResend: _resendConfirmation,
+                            onEditEmail: _editSignupEmail,
+                          ),
+                        )
+                      else ...[
+                        const SizedBox(height: 4),
+                        _PanelTitle(
+                          title: _isSignUp ? l10n.authSignupTitle : l10n.authTitle,
+                          subtitle: _isSignUp ? l10n.authSignupSubtitle : l10n.authSubtitle,
+                        ),
+                        const SizedBox(height: 16),
+                        // Composant du kit (docs/kit/components/SegmentedSwitch),
+                        // à la place du contrôle maison de 2026-08.
+                        SegmentedSwitch<bool>(
+                          items: [
+                            SegmentedSwitchItem(value: false, label: l10n.authTabLogin),
+                            SegmentedSwitchItem(value: true, label: l10n.authTabSignup),
+                          ],
+                          selected: _isSignUp,
+                          onChanged: _switchTab,
+                        ),
+                        const SizedBox(height: 18),
+                        Expanded(child: _isSignUp ? _buildSignupPanel(l10n) : _buildLoginPanel(l10n)),
+                      ],
+                    ],
+                  ),
+                ),
               ),
-              const SizedBox(height: 24),
-              if (_isSignUp && _pendingConfirmationEmail != null)
-                SignupCheckEmailPanel(
-                  email: _pendingConfirmationEmail!,
-                  resending: _loadingAction == _AuthAction.resendConfirmation,
-                  errorMessage: _errorMessage,
-                  infoMessage: _infoMessage,
-                  onGoToLogin: _goToLoginAfterSignup,
-                  onResend: _resendConfirmation,
-                  onEditEmail: _editSignupEmail,
-                )
-              else if (_isSignUp)
-                _buildSignupPanel(l10n)
-              else
-                _buildLoginPanel(l10n),
-            ],
+            ),
           ),
         ),
       ),
@@ -332,8 +425,6 @@ class _AuthScreenState extends State<AuthScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          _PanelTitle(title: l10n.authTitle, subtitle: l10n.authSubtitle),
-          const SizedBox(height: 24),
           // Autoremplissage et touche « suivant »/« OK » du clavier (audit de
           // l'authentification du 2026-10-27, P2-1) : le gestionnaire de mots
           // de passe d'Android ne proposait rien, et Entrée ne faisait rien.
@@ -357,7 +448,7 @@ class _AuthScreenState extends State<AuthScreen> {
                   textInputAction: TextInputAction.done,
                   onFieldSubmitted: (_) => loading ? null : _signIn(),
                   decoration: _fieldDecoration(l10n.authPasswordLabel).copyWith(
-                    suffixIcon: _obscureToggleIcon(
+                    suffixIcon: PasswordVisibilityButton(
                       obscured: _loginPasswordObscured,
                       onPressed: () => setState(() => _loginPasswordObscured = !_loginPasswordObscured),
                     ),
@@ -374,29 +465,22 @@ class _AuthScreenState extends State<AuthScreen> {
               ],
             ),
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: 4),
           Align(
-            alignment: AlignmentDirectional.centerEnd,
+            alignment: AlignmentDirectional.centerStart,
             child: TextButton(
               onPressed: loading ? null : _resetPassword,
-              style: TextButton.styleFrom(padding: EdgeInsets.zero, minimumSize: const Size(0, 32)),
+              style: TextButton.styleFrom(foregroundColor: AppColors.emerald, minimumSize: const Size(0, 44)),
               child: _loadingAction == _AuthAction.resetPassword
                   ? SizedBox(
                       height: 14,
                       width: 14,
                       child: CircularProgressIndicator(strokeWidth: 2, color: AppColors.emerald),
                     )
-                  : Text(
-                      l10n.authForgotPassword,
-                      style: TextStyle(
-                        color: AppColors.emerald,
-                        fontSize: 12,
-                        decoration: TextDecoration.underline,
-                      ),
-                    ),
+                  : Text(l10n.authForgotPassword),
             ),
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: 4),
           if (_errorMessage != null) _MessageBanner(text: _errorMessage!, isError: true),
           if (_infoMessage != null) _MessageBanner(text: _infoMessage!, isError: false),
           if (_offerResendFromLogin)
@@ -413,18 +497,12 @@ class _AuthScreenState extends State<AuthScreen> {
                     : Text(l10n.authResendConfirmation),
               ),
             ),
-          const SizedBox(height: 8),
+          const Spacer(),
+          const SizedBox(height: 16),
           _PrimaryButton(
             label: l10n.authSignInAction,
             loading: _loadingAction == _AuthAction.signIn,
             onPressed: loading ? null : _signIn,
-          ),
-          const SizedBox(height: 20),
-          Center(
-            child: TextButton(
-              onPressed: loading ? null : widget.onContinueAsGuest,
-              child: Text(l10n.authContinueWithoutAccount, textAlign: TextAlign.center),
-            ),
           ),
         ],
       ),
@@ -438,27 +516,34 @@ class _AuthScreenState extends State<AuthScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          _PanelTitle(title: l10n.authSignupTitle, subtitle: l10n.authSignupSubtitle),
-          const SizedBox(height: 24),
           AutofillGroup(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
+                // « Nom affiché » (décision validée du 2026-11-02) : ce nom
+                // signe les publications (« Nom · zawiya »). Demander un nom
+                // complet sans dire qu'il serait visible allait contre l'esprit
+                // de la lignée privée par défaut. Même `display_name` en base.
                 TextFormField(
-                  controller: _fullNameController,
+                  controller: _displayNameController,
                   maxLength: TextLimits.displayName,
-                  decoration: _fieldDecoration(l10n.authFullNameLabel),
+                  decoration: _fieldDecoration(l10n.authDisplayNameLabel).copyWith(
+                    helperText: l10n.authDisplayNameHint,
+                    helperMaxLines: 2,
+                    helperStyle: TextStyle(color: AppColors.secondaryInk, fontSize: 12.5, height: 1.35),
+                  ),
                   keyboardType: TextInputType.name,
                   textCapitalization: TextCapitalization.words,
-                  autofillHints: const [AutofillHints.name],
+                  // Le prénom plutôt que le nom complet : « un prénom suffit ».
+                  autofillHints: const [AutofillHints.givenName],
                   textInputAction: TextInputAction.next,
                   enabled: !loading,
                   validator: (value) {
-                    if ((value ?? '').trim().isEmpty) return l10n.authFullNameRequired;
+                    if ((value ?? '').trim().isEmpty) return l10n.authDisplayNameRequired;
                     return null;
                   },
                 ),
-                const SizedBox(height: 14),
+                const SizedBox(height: 10),
                 TextFormField(
                   controller: _signupEmailController,
                   decoration: _fieldDecoration(l10n.authEmailLabel),
@@ -475,7 +560,7 @@ class _AuthScreenState extends State<AuthScreen> {
                   textInputAction: TextInputAction.done,
                   onFieldSubmitted: (_) => loading ? null : _signUp(),
                   decoration: _fieldDecoration(l10n.authPasswordLabel).copyWith(
-                    suffixIcon: _obscureToggleIcon(
+                    suffixIcon: PasswordVisibilityButton(
                       obscured: _signupPasswordObscured,
                       onPressed: () => setState(() => _signupPasswordObscured = !_signupPasswordObscured),
                     ),
@@ -492,27 +577,19 @@ class _AuthScreenState extends State<AuthScreen> {
               ],
             ),
           ),
-          const SizedBox(height: 6),
-          Text(
-            l10n.authPasswordMinCharsHint,
-            style: TextStyle(color: AppColors.secondaryInk, fontSize: 11),
+          // Règles cochées pendant la saisie, au lieu d'une consigne fixe puis
+          // d'une erreur après coup.
+          ValueListenableBuilder<TextEditingValue>(
+            valueListenable: _signupPasswordController,
+            builder: (context, value, _) => PasswordRulesList(rules: newPasswordRules(value.text, l10n)),
           ),
-          const SizedBox(height: 12),
+          const SizedBox(height: 10),
           if (_errorMessage != null) _MessageBanner(text: _errorMessage!, isError: true),
           if (_infoMessage != null) _MessageBanner(text: _infoMessage!, isError: false),
-          const SizedBox(height: 8),
-          _PrimaryButton(
-            label: l10n.authSignUpAction,
-            loading: _loadingAction == _AuthAction.signUp,
-            onPressed: loading ? null : _signUp,
-          ),
-          const SizedBox(height: 16),
           // Mention légale (audit de l'authentification du 2026-10-27, P2-5) :
-          // les deux mentions avaient l'air de liens mais ne menaient nulle
-          // part, et les conditions d'utilisation n'existent pas encore
-          // (mention retirée, décision du porteur de projet). Toute la phrase
-          // ouvre la politique de confidentialité : une cible de 48 dp plutôt
-          // qu'un lien de 11 px dans le texte.
+          // toute la phrase ouvre la politique de confidentialité, une cible
+          // de 48 dp plutôt qu'un lien de 11 px dans le texte. Avant le bouton
+          // depuis la refonte : on la lit avant d'accepter.
           Semantics(
             link: true,
             child: InkWell(
@@ -522,7 +599,8 @@ class _AuthScreenState extends State<AuthScreen> {
               borderRadius: BorderRadius.circular(8),
               child: ConstrainedBox(
                 constraints: const BoxConstraints(minHeight: 48),
-                child: Center(
+                child: Align(
+                  alignment: AlignmentDirectional.centerStart,
                   child: Text.rich(
                     TextSpan(
                       children: [
@@ -533,12 +611,22 @@ class _AuthScreenState extends State<AuthScreen> {
                         ),
                         TextSpan(text: l10n.authLegalSuffix),
                       ],
-                      style: TextStyle(color: AppColors.secondaryInk, fontSize: 11, height: 1.5),
+                      style: TextStyle(color: AppColors.secondaryInk, fontSize: 12.5, height: 1.5),
                     ),
-                    textAlign: TextAlign.center,
                   ),
                 ),
               ),
+            ),
+          ),
+          const Spacer(),
+          const SizedBox(height: 12),
+          // Grisé tant que la règle des 8 caractères n'est pas remplie.
+          ValueListenableBuilder<TextEditingValue>(
+            valueListenable: _signupPasswordController,
+            builder: (context, value, _) => _PrimaryButton(
+              label: l10n.authSignUpAction,
+              loading: _loadingAction == _AuthAction.signUp,
+              onPressed: loading || value.text.length < 8 ? null : _signUp,
             ),
           ),
         ],
@@ -552,31 +640,17 @@ class _AuthScreenState extends State<AuthScreen> {
       filled: true,
       fillColor: AppColors.offWhite,
       border: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(8),
+        borderRadius: BorderRadius.circular(12),
         borderSide: BorderSide(color: AppColors.bronze),
       ),
     );
   }
-
-  Widget _obscureToggleIcon({required bool obscured, required VoidCallback onPressed}) {
-    return IconButton(
-      // Libellé de l'action réelle, selon l'état (P3-3).
-      tooltip:
-          obscured ? AppLocalizations.of(context)!.a11yShowPassword : AppLocalizations.of(context)!.a11yHidePassword,
-      icon: Icon(obscured ? Icons.visibility_outlined : Icons.visibility_off_outlined, color: AppColors.bronze),
-      onPressed: onPressed,
-    );
-  }
 }
 
-/// Titre (Cormorant Garamond) + sous-titre (Jost) partagés par les deux
-/// panneaux — même hiérarchie typographique que le reste de l'app, réservée
-/// aux titres pour la police serif (cf. règle du design system).
-/// Textes secondaires de cet écran (sous-titres, consignes, mentions, onglet
-/// inactif) en `AppColors.secondaryInk` depuis l'audit de l'authentification
-/// du 2026-10-27 (P1-3) : le bronze faisait 3,72:1 sur le parchemin et 3,35:1
-/// sur l'or doux, sous les 4,5:1 requis pour un texte de 11 à 13 px. Le bronze
-/// reste pour les icônes et les bordures.
+/// Titre + sous-titre de l'écran (connexion, création de compte). Textes
+/// secondaires en `AppColors.secondaryInk` depuis l'audit de
+/// l'authentification du 2026-10-27 (P1-3) : le bronze faisait 3,72:1 sur le
+/// parchemin, sous les 4,5:1 requis. Le bronze reste pour les bordures.
 class _PanelTitle extends StatelessWidget {
   const _PanelTitle({required this.title, required this.subtitle});
 
@@ -588,83 +662,15 @@ class _PanelTitle extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        ContentText(
-          title,
-          style: GoogleFonts.cormorantGaramond(
-            fontSize: 26,
-            fontWeight: FontWeight.w600,
-            color: AppColors.zaytoune,
-          ),
-        ),
+        Semantics(header: true, child: Text(title, style: entryTitleStyle(context, fontSize: 28))),
         const SizedBox(height: 4),
-        ContentText(subtitle, style: TextStyle(color: AppColors.secondaryInk, fontSize: 12, height: 1.4)),
+        ContentText(subtitle, style: TextStyle(color: AppColors.secondaryInk, fontSize: 14, height: 1.45)),
       ],
     );
   }
 }
 
-/// Toggle segmenté maison (pas de package) reproduisant `.tabs`/`label` de
-/// `docs/atijaniya_login_signup_toggle.html` : piste or doux pilule, onglet
-/// actif émeraude/texte blanc.
-class _SegmentedToggle extends StatelessWidget {
-  const _SegmentedToggle({
-    required this.isSignUp,
-    required this.loginLabel,
-    required this.signupLabel,
-    required this.onChanged,
-  });
-
-  final bool isSignUp;
-  final String loginLabel;
-  final String signupLabel;
-  final ValueChanged<bool> onChanged;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(4),
-      decoration: BoxDecoration(color: AppColors.goldSoft, borderRadius: BorderRadius.circular(22)),
-      child: Row(
-        children: [
-          Expanded(child: _segment(label: loginLabel, active: !isSignUp, onTap: () => onChanged(false))),
-          Expanded(child: _segment(label: signupLabel, active: isSignUp, onTap: () => onChanged(true))),
-        ],
-      ),
-    );
-  }
-
-  Widget _segment({required String label, required bool active, required VoidCallback onTap}) {
-    return Semantics(
-      button: true,
-      selected: active,
-      child: GestureDetector(
-        onTap: onTap,
-        child: AnimatedContainer(
-          duration: const Duration(milliseconds: 180),
-          // Hauteur tactile d'au moins 48 dp garantie par la contrainte : la
-          // seule marge de 14 donnait 47 dp avec le texte à 100 % (audit de
-          // l'authentification du 2026-10-27, P3-1).
-          constraints: const BoxConstraints(minHeight: 48),
-          padding: const EdgeInsets.symmetric(vertical: 14),
-          decoration: BoxDecoration(
-            color: active ? AppColors.emerald : Colors.transparent,
-            borderRadius: BorderRadius.circular(18),
-          ),
-          alignment: Alignment.center,
-          child: ContentText(
-            label,
-            style: TextStyle(
-              color: active ? Colors.white : AppColors.secondaryInk,
-              fontWeight: FontWeight.w600,
-              fontSize: 13,
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-}
-
+/// Bouton « block » du kit (thème) : pleine largeur, fin de formulaire.
 class _PrimaryButton extends StatelessWidget {
   const _PrimaryButton({required this.label, required this.loading, required this.onPressed});
 
@@ -675,12 +681,6 @@ class _PrimaryButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ElevatedButton(
-      style: ElevatedButton.styleFrom(
-        backgroundColor: AppColors.emerald,
-        foregroundColor: Colors.white,
-        padding: const EdgeInsets.symmetric(vertical: 14),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-      ),
       onPressed: onPressed,
       child: loading
           ? const SizedBox(
@@ -688,7 +688,7 @@ class _PrimaryButton extends StatelessWidget {
               width: 18,
               child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
             )
-          : ContentText(label, style: const TextStyle(fontWeight: FontWeight.w600)),
+          : Text(label),
     );
   }
 }
@@ -721,6 +721,11 @@ class _MessageBanner extends StatelessWidget {
 /// corriger l'adresse. Plus de bouton « Créer un compte » ici : c'est lui qui
 /// poussait à recommencer une inscription déjà faite.
 ///
+/// Mis au kit le 2026-11-03 (maquette `parcours-entree.html`) : écran à part
+/// entière, sans les onglets, adresse mise en évidence, et renvoi qui dit
+/// dans combien de temps il sera possible ([resendSecondsLeft]) au lieu
+/// d'échouer sur « Trop de tentatives ».
+///
 /// Public pour être testé sans Supabase : toutes les actions sont des
 /// callbacks de [AuthScreen].
 class SignupCheckEmailPanel extends StatelessWidget {
@@ -731,6 +736,7 @@ class SignupCheckEmailPanel extends StatelessWidget {
     required this.onGoToLogin,
     required this.onResend,
     required this.onEditEmail,
+    this.resendSecondsLeft = 0,
     this.errorMessage,
     this.infoMessage,
   });
@@ -739,6 +745,9 @@ class SignupCheckEmailPanel extends StatelessWidget {
 
   /// Renvoi en cours : les actions sont désactivées le temps de l'envoi.
   final bool resending;
+
+  /// Secondes avant que le renvoi soit possible ; 0 : disponible.
+  final int resendSecondsLeft;
   final String? errorMessage;
   final String? infoMessage;
   final VoidCallback onGoToLogin;
@@ -748,43 +757,68 @@ class SignupCheckEmailPanel extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
+    final waiting = resendSecondsLeft > 0;
+    final secondary = TextStyle(color: AppColors.secondaryInk, fontSize: 14, height: 1.45);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
+        const SizedBox(height: 20),
         Center(
           child: Container(
-            width: 64,
-            height: 64,
-            decoration: const BoxDecoration(color: AppColors.emeraldSoft, shape: BoxShape.circle),
-            child: Icon(Icons.mark_email_unread_outlined, color: AppColors.emerald, size: 30),
+            width: 84,
+            height: 84,
+            decoration: BoxDecoration(color: AppColors.emeraldSoft, borderRadius: BorderRadius.circular(24)),
+            child: Icon(Icons.mark_email_unread_outlined, color: AppColors.emerald, size: 40),
           ),
         ),
-        const SizedBox(height: 20),
-        _PanelTitle(title: l10n.authCheckEmailTitle, subtitle: l10n.authCheckEmailBody(email)),
+        const SizedBox(height: 18),
+        Semantics(
+          header: true,
+          child: Text(l10n.authCheckEmailTitle,
+              textAlign: TextAlign.center, style: entryTitleStyle(context, fontSize: 27)),
+        ),
+        const SizedBox(height: 6),
+        Text(l10n.authCheckEmailSentTo, textAlign: TextAlign.center, style: secondary),
         const SizedBox(height: 8),
-        Text(l10n.authCheckEmailSpamHint, style: TextStyle(color: AppColors.secondaryInk, fontSize: 12)),
-        const SizedBox(height: 24),
+        // L'adresse, à vérifier d'un coup d'œil : une faute de frappe est la
+        // première cause d'un e-mail jamais reçu.
+        Center(
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
+            decoration: BoxDecoration(
+              color: AppColors.offWhite,
+              borderRadius: BorderRadius.circular(999),
+              border: Border.all(color: AppColors.bronze.withValues(alpha: 0.3)),
+            ),
+            child: Text(
+              email,
+              textDirection: TextDirection.ltr,
+              style: const TextStyle(fontSize: 14.5, fontWeight: FontWeight.w500, color: AppColors.ink),
+            ),
+          ),
+        ),
+        const SizedBox(height: 10),
+        Text(l10n.authCheckEmailOpen, textAlign: TextAlign.center, style: secondary),
+        const Spacer(),
+        const SizedBox(height: 20),
         if (errorMessage != null) _MessageBanner(text: errorMessage!, isError: true),
         if (infoMessage != null) _MessageBanner(text: infoMessage!, isError: false),
         _PrimaryButton(label: l10n.authGoToLogin, loading: false, onPressed: resending ? null : onGoToLogin),
-        const SizedBox(height: 12),
+        const SizedBox(height: 10),
         OutlinedButton(
-          onPressed: resending ? null : onResend,
-          style: OutlinedButton.styleFrom(
-            padding: const EdgeInsets.symmetric(vertical: 14),
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-          ),
+          onPressed: resending || waiting ? null : onResend,
           child: resending
               ? const SizedBox(height: 18, width: 18, child: CircularProgressIndicator(strokeWidth: 2))
-              : Text(l10n.authResendConfirmation),
+              : Text(waiting ? l10n.authResendIn(resendSecondsLeft) : l10n.authResendConfirmation),
+        ),
+        const SizedBox(height: 2),
+        TextButton(
+          onPressed: resending ? null : onEditEmail,
+          child: Text(l10n.authChangeEmail),
         ),
         const SizedBox(height: 4),
-        Center(
-          child: TextButton(
-            onPressed: resending ? null : onEditEmail,
-            child: Text(l10n.authChangeEmail),
-          ),
-        ),
+        Text(l10n.authCheckEmailSpamHint,
+            textAlign: TextAlign.center, style: TextStyle(color: AppColors.secondaryInk, fontSize: 12.5)),
       ],
     );
   }

@@ -21,7 +21,8 @@ Widget _wrap(Widget child) {
       GlobalWidgetsLocalizations.delegate,
       GlobalCupertinoLocalizations.delegate,
     ],
-    home: Scaffold(body: SingleChildScrollView(child: child)),
+    // Hauteur bornée : le panneau garde ses boutons en bas (`Spacer`).
+    home: Scaffold(body: child),
   );
 }
 

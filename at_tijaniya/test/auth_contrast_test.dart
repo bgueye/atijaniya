@@ -56,17 +56,19 @@ void main() {
     final code = locale.languageCode;
 
     testWidgets('connexion et inscription : textes secondaires lisibles ($code)', (tester) async {
-      await tester.pumpWidget(_app(AuthScreen(onAuthenticated: () {}, onContinueAsGuest: () {}), locale));
+      await tester.pumpWidget(_app(AuthScreen(onAuthenticated: () {}, onBack: () {}), locale));
       await tester.pumpAndSettle();
       final l10n = AppLocalizations.of(tester.element(find.byType(AuthScreen)))!;
 
       expect(_contrast(_renderedColor(tester, l10n.authSubtitle), AppColors.parchment), greaterThanOrEqualTo(4.5));
-      // Onglet inactif, sur l'or doux de la piste.
-      expect(_contrast(_renderedColor(tester, l10n.authTabSignup), AppColors.goldSoft), greaterThanOrEqualTo(4.5));
+      // Onglet inactif, sur la gouttière du contrôle segmenté du kit (bronze
+      // à 12 % sur le parchemin, depuis la refonte du 2026-11-03).
+      final track = Color.alphaBlend(AppColors.bronze.withValues(alpha: 0.12), AppColors.parchment);
+      expect(_contrast(_renderedColor(tester, l10n.authTabSignup), track), greaterThanOrEqualTo(4.5));
 
       await tester.tap(find.text(l10n.authTabSignup));
       await tester.pumpAndSettle();
-      expect(_contrast(_renderedColor(tester, l10n.authTabLogin), AppColors.goldSoft), greaterThanOrEqualTo(4.5));
+      expect(_contrast(_renderedColor(tester, l10n.authTabLogin), track), greaterThanOrEqualTo(4.5));
       for (final text in [l10n.authSignupSubtitle, l10n.authPasswordMinCharsHint, l10n.authLegalPrefix.trim()]) {
         expect(_contrast(_renderedColor(tester, text), AppColors.parchment), greaterThanOrEqualTo(4.5), reason: text);
       }

@@ -107,7 +107,7 @@ abstract class AppLocalizations {
   /// No description provided for @languageChoiceSubtitle.
   ///
   /// In fr, this message translates to:
-  /// **'Vous pourrez la changer à tout moment dans les paramètres.'**
+  /// **'Vous pourrez la changer à tout moment depuis le Profil.'**
   String get languageChoiceSubtitle;
 
   /// No description provided for @languageFrench.
@@ -265,18 +265,6 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'Rejoignez la communauté et commencez à réciter vos wirds.'**
   String get authSignupSubtitle;
-
-  /// No description provided for @authFullNameLabel.
-  ///
-  /// In fr, this message translates to:
-  /// **'Nom complet'**
-  String get authFullNameLabel;
-
-  /// No description provided for @authFullNameRequired.
-  ///
-  /// In fr, this message translates to:
-  /// **'Le nom complet est obligatoire.'**
-  String get authFullNameRequired;
 
   /// No description provided for @authEmailLabel.
   ///
@@ -5303,7 +5291,7 @@ abstract class AppLocalizations {
   /// No description provided for @resetPasswordCancel.
   ///
   /// In fr, this message translates to:
-  /// **'Annuler et revenir à la connexion'**
+  /// **'Abandonner et me déconnecter'**
   String get resetPasswordCancel;
 
   /// No description provided for @sponsorshipBadgeLabel.
@@ -7669,6 +7657,144 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'il y a {count} j'**
   String communityTimeDays(int count);
+
+  /// No description provided for @splashTagline.
+  ///
+  /// In fr, this message translates to:
+  /// **'La pratique de la Tijaniyya, au quotidien'**
+  String get splashTagline;
+
+  /// No description provided for @onboardingPreviewDisciples.
+  ///
+  /// In fr, this message translates to:
+  /// **'Condisciples, en privé'**
+  String get onboardingPreviewDisciples;
+
+  /// No description provided for @remindersOnboardingTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Vos rappels de wird'**
+  String get remindersOnboardingTitle;
+
+  /// No description provided for @remindersOnboardingBody.
+  ///
+  /// In fr, this message translates to:
+  /// **'Une notification à l\'heure choisie, chaque jour. Vous pourrez tout changer depuis chaque wird.'**
+  String get remindersOnboardingBody;
+
+  /// No description provided for @remindersOnboardingLater.
+  ///
+  /// In fr, this message translates to:
+  /// **'Plus tard'**
+  String get remindersOnboardingLater;
+
+  /// No description provided for @remindersOnboardingActivate.
+  ///
+  /// In fr, this message translates to:
+  /// **'{count, plural, =1{Activer 1 rappel} other{Activer {count} rappels}}'**
+  String remindersOnboardingActivate(int count);
+
+  /// No description provided for @welcomeTagline.
+  ///
+  /// In fr, this message translates to:
+  /// **'Votre pratique, votre zawiya, votre communauté'**
+  String get welcomeTagline;
+
+  /// No description provided for @welcomeGuest.
+  ///
+  /// In fr, this message translates to:
+  /// **'Découvrir sans compte'**
+  String get welcomeGuest;
+
+  /// No description provided for @welcomeNote.
+  ///
+  /// In fr, this message translates to:
+  /// **'Sans compte, la pratique, les figures et les zawiyas sont accessibles. Avec ou sans compte, votre pratique (séries, historique) reste sur ce téléphone.'**
+  String get welcomeNote;
+
+  /// No description provided for @authBack.
+  ///
+  /// In fr, this message translates to:
+  /// **'Retour'**
+  String get authBack;
+
+  /// No description provided for @authDisplayNameLabel.
+  ///
+  /// In fr, this message translates to:
+  /// **'Nom affiché'**
+  String get authDisplayNameLabel;
+
+  /// No description provided for @authDisplayNameHint.
+  ///
+  /// In fr, this message translates to:
+  /// **'Visible par la communauté sur vos publications. Un prénom suffit.'**
+  String get authDisplayNameHint;
+
+  /// No description provided for @authDisplayNameRequired.
+  ///
+  /// In fr, this message translates to:
+  /// **'Le nom affiché est obligatoire.'**
+  String get authDisplayNameRequired;
+
+  /// No description provided for @authShowPassword.
+  ///
+  /// In fr, this message translates to:
+  /// **'Afficher'**
+  String get authShowPassword;
+
+  /// No description provided for @authHidePassword.
+  ///
+  /// In fr, this message translates to:
+  /// **'Masquer'**
+  String get authHidePassword;
+
+  /// No description provided for @authPasswordRuleLetters.
+  ///
+  /// In fr, this message translates to:
+  /// **'Des lettres et au moins un chiffre (conseillé)'**
+  String get authPasswordRuleLetters;
+
+  /// No description provided for @authRuleMet.
+  ///
+  /// In fr, this message translates to:
+  /// **'respectée'**
+  String get authRuleMet;
+
+  /// No description provided for @authRuleUnmet.
+  ///
+  /// In fr, this message translates to:
+  /// **'non respectée'**
+  String get authRuleUnmet;
+
+  /// No description provided for @authCheckEmailSentTo.
+  ///
+  /// In fr, this message translates to:
+  /// **'Nous avons envoyé un lien de confirmation à'**
+  String get authCheckEmailSentTo;
+
+  /// No description provided for @authCheckEmailOpen.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ouvrez-le pour activer votre compte, puis connectez-vous.'**
+  String get authCheckEmailOpen;
+
+  /// No description provided for @authResendIn.
+  ///
+  /// In fr, this message translates to:
+  /// **'Renvoyer l\'e-mail · dans {seconds} s'**
+  String authResendIn(int seconds);
+
+  /// No description provided for @resetPasswordConfirmShort.
+  ///
+  /// In fr, this message translates to:
+  /// **'Confirmer'**
+  String get resetPasswordConfirmShort;
+
+  /// No description provided for @resetPasswordSameRule.
+  ///
+  /// In fr, this message translates to:
+  /// **'Identiques'**
+  String get resetPasswordSameRule;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {
