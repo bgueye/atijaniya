@@ -242,6 +242,19 @@ class KhadaraEvent {
 /// Supabase, même esprit que `canManageEvent`. Renvoie `null` si
 /// l'évènement n'est pas récurrent, ou si sa récurrence est terminée
 /// (`recurrenceUntil` dépassé).
+/// `true` si l'évènement est terminé : jour de fin (ou de début, sans fin)
+/// avant aujourd'hui, en jours de calendrier. Jamais pour un évènement
+/// récurrent (il a une prochaine occurrence) ni pour une date approximative :
+/// une date hégirienne peut tomber un jour ou deux après la date estimée, et
+/// un mouqaddam doit pouvoir démarrer le direct le jour réel (audit du
+/// 2026-11-03).
+bool isEventPast(KhadaraEvent event, {DateTime? now}) {
+  if (event.isRecurring || event.showsApproximateDate) return false;
+  final today = now ?? DateTime.now();
+  final last = event.endsAt ?? event.startsAt;
+  return DateTime.utc(last.year, last.month, last.day).isBefore(DateTime.utc(today.year, today.month, today.day));
+}
+
 DateTime? nextOccurrence(KhadaraEvent event, {DateTime? from}) {
   if (!event.isRecurring ||
       event.recurrenceDayOfWeek == null ||

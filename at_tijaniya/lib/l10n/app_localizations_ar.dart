@@ -4288,4 +4288,10 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get zawiyaFormCountryNone => 'غير محدد';
+
+  @override
+  String get eventDetailPast => 'انتهى';
+
+  @override
+  String get eventDetailPastNoLive => 'انتهى هذا الموعد';
 }

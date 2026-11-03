@@ -1478,5 +1478,7 @@
   "khadaraUnderstandingCardBody": "La page qui explique ce qu'est une zawiya",
   "khadaraUnderstandingCardAction": "Lire",
   "zawiyaFormCountryLabel": "Pays",
-  "zawiyaFormCountryNone": "Non renseigné"
+  "zawiyaFormCountryNone": "Non renseigné",
+  "eventDetailPast": "Passé",
+  "eventDetailPastNoLive": "Ce rendez-vous est passé"
 }

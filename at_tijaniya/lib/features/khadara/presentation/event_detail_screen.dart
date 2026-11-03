@@ -185,7 +185,7 @@ class _EventDetailScreenState extends ConsumerState<EventDetailScreen> {
               ],
             ],
             SectionTitle(l10n.eventDetailLive, padding: sectionPadding),
-            _LiveStreamSection(event: event, l10n: l10n),
+            _LiveStreamSection(event: event, l10n: l10n, isPast: isEventPast(event)),
           ],
         ),
       ),
@@ -211,6 +211,9 @@ class _EventHero extends StatelessWidget {
     // l'heure d'été donne 23 h de moins et `inDays` perdait un jour.
     final days =
         DateTime.utc(date.year, date.month, date.day).difference(DateTime.utc(now.year, now.month, now.day)).inDays;
+    // Évènement terminé (audit du 2026-11-03) : « Passé » à la place du
+    // compte à rebours, qui disparaissait sans rien dire.
+    final past = isEventPast(event, now: now);
     final schedule = event.isRecurring || event.showsApproximateDate
         ? formatKhadaraEventSchedule(event, l10n)
         : (event.endsAt == null
@@ -276,13 +279,16 @@ class _EventHero extends StatelessWidget {
               ),
             ],
           ),
-          if (days >= 0 || event.showsApproximateDate) ...[
+          if (days >= 0 || event.showsApproximateDate || past) ...[
             const SizedBox(height: 12),
             Wrap(
               spacing: 8,
               runSpacing: 6,
               children: [
-                if (days >= 0) StatePill(l10n.eventDetailCountdown(days), variant: StatePillVariant.neutral),
+                if (past)
+                  StatePill(l10n.eventDetailPast, variant: StatePillVariant.neutral)
+                else if (days >= 0)
+                  StatePill(l10n.eventDetailCountdown(days), variant: StatePillVariant.neutral),
                 if (event.showsApproximateDate)
                   StatePill(l10n.eventDetailDateApproximate, variant: StatePillVariant.todo),
               ],
@@ -335,10 +341,16 @@ class _DateNote extends StatelessWidget {
 /// Direct : rejoindre s'il est en cours, le démarrer pour qui en a le droit
 /// (mêmes règles qu'avant), sinon une place fixe qui dit qu'il apparaîtra ici.
 class _LiveStreamSection extends ConsumerWidget {
-  const _LiveStreamSection({required this.event, required this.l10n});
+  const _LiveStreamSection({required this.event, required this.l10n, required this.isPast});
 
   final KhadaraEvent event;
   final AppLocalizations l10n;
+
+  /// Évènement terminé (`isEventPast`) : plus de « Il apparaîtra ici dès
+  /// qu'il commence » ni de « Démarrer un direct » (audit du 2026-11-03 : un
+  /// évènement passé s'ouvre depuis la fiche d'une figure, qui liste aussi
+  /// les évènements anciens). Un direct encore en cours reste joignable.
+  final bool isPast;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -364,11 +376,11 @@ class _LiveStreamSection extends ConsumerWidget {
           ListGroupItem(
             icon: Icons.podcasts_outlined,
             tone: ListGroupTone.sacred,
-            title: l10n.eventDetailNoLive,
-            subtitle: l10n.eventDetailNoLiveHint,
+            title: isPast ? l10n.eventDetailPastNoLive : l10n.eventDetailNoLive,
+            subtitle: isPast ? null : l10n.eventDetailNoLiveHint,
           ),
         ]),
-        if (canStart) ...[
+        if (canStart && !isPast) ...[
           const SizedBox(height: 10),
           OutlinedButton.icon(
             onPressed: () => Navigator.of(context).push(

@@ -4367,3 +4367,27 @@ devenues inutiles retirées (anciens onglets, recherche récurrente). `flutter a
 rien et les 712 tests passent (captures ignorées sans polices). **Pas encore validé sur
 téléphone**, notamment « Près de moi » (permission de localisation) et le toucher des points de la
 carte.
+
+## Audit des écrans refaits, étape 1 : fiches d'une zawiya et d'un évènement (2026-11-03)
+
+Audit des dix écrans refaits d'après les maquettes, un agent par écran, en lecture seule :
+`docs/audits/2026-11-03-ecrans-refaits.md` (constats, décisions demandées, plan en six étapes).
+Étape 1, demandée par le porteur de projet après lecture du rapport :
+- **« Actuel » sur la fiche d'une zawiya** : marqué seulement sur le dernier maillon dont la période le
+  dit (« depuis… », « actuel »), par `isCurrentSuccessionHolder` (`figure_models.dart`), quel que soit
+  le rôle. Avant, le dernier khalife de la liste l'était toujours : à tort pour Nioro du Sahel
+  (« 2007–2024 ») et Ségou (sans période), vu en base. Le mokaddem actuel de Fès (« actuel ») est
+  désormais marqué ; le khalife de Nguidjilone (« actuel ») l'est toujours.
+- **Liste incomplète** : un maillon `follows_gap` est précédé de « Liste incomplète : des noms manquent
+  ici. », comme sur la fiche d'une figure (mokaddems de Fès).
+- **Évènement passé** (`isEventPast`, `khadara_models.dart`) : pastille « Passé » à la place du compte à
+  rebours, « Ce rendez-vous est passé » à la place de « Il apparaîtra ici dès qu'il commence », et plus
+  de « Démarrer un direct ». Jamais pour une date approximative (une date hégirienne peut tomber un
+  jour ou deux après l'estimation, et le direct doit pouvoir démarrer le jour réel) ni pour un
+  évènement récurrent ; un évènement sur plusieurs jours n'est passé qu'après son jour de fin. Un direct
+  encore en cours reste joignable.
+
+Tests : `test/detail_screens_audit_test.dart` (règle du titulaire actuel, évènement passé, fiche d'une
+zawiya avec période close et lacune, fiche d'un évènement passé et à venir). `flutter analyze` ne
+signale rien et les 719 tests passent. Pas encore validé sur téléphone.
+

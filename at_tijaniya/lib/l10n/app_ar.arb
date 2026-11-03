@@ -1394,5 +1394,7 @@
   "khadaraUnderstandingCardBody": "الصفحة التي تشرح ما هي الزاوية",
   "khadaraUnderstandingCardAction": "قراءة",
   "zawiyaFormCountryLabel": "البلد",
-  "zawiyaFormCountryNone": "غير محدد"
+  "zawiyaFormCountryNone": "غير محدد",
+  "eventDetailPast": "انتهى",
+  "eventDetailPastNoLive": "انتهى هذا الموعد"
 }

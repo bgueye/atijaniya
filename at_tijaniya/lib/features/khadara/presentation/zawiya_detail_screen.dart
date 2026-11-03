@@ -386,17 +386,26 @@ class _SuccessionList extends ConsumerWidget {
     final l10n = AppLocalizations.of(context)!;
     final arabic = Localizations.localeOf(context).languageCode == 'ar';
     final links = succession.links;
-    // Le dernier khalife de la liste est l'actuel, marqué en or comme dans la
-    // maquette ; pas pour les mokaddems et imams, dont la liste n'est pas
-    // forcément une succession à un seul titulaire.
-    final markCurrent = succession.role == SuccessionRole.khalife;
+    // Titulaire actuel marqué en or comme dans la maquette, seulement si sa
+    // période le dit (`isCurrentSuccessionHolder`) : avant l'audit du
+    // 2026-11-03, le dernier khalife de la liste l'était toujours, y compris
+    // quand sa période était close.
+    bool isCurrent(int i) => isCurrentSuccessionHolder(links[i], isLast: i == links.length - 1);
     return Card(
       margin: EdgeInsets.zero,
       clipBehavior: Clip.antiAlias,
       child: Column(
         children: [
           for (var i = 0; i < succession.links.length; i++) ...[
-            if (i > 0)
+            // Maillon qui suit une lacune (`follows_gap`) : la liste est
+            // incomplète à cet endroit, et le dire évite de lire une
+            // succession continue (audit du 2026-11-03 ; la fiche d'une
+            // figure le faisait déjà).
+            if (links[i].followsGap) ...[
+              if (i > 0) Divider(height: 1, color: AppColors.bronze.withValues(alpha: 0.2)),
+              _SuccessionGapRow(text: l10n.figureSuccessionGapNotice),
+            ],
+            if (i > 0 && !links[i].followsGap)
               Padding(
                 padding: const EdgeInsetsDirectional.only(start: 56),
                 child: Divider(height: 1, color: AppColors.bronze.withValues(alpha: 0.2)),
@@ -414,14 +423,14 @@ class _SuccessionList extends ConsumerWidget {
                         height: 28,
                         alignment: Alignment.center,
                         decoration: BoxDecoration(
-                          color: markCurrent && i == links.length - 1 ? AppColors.goldSoft : AppColors.emeraldSoft,
+                          color: isCurrent(i) ? AppColors.goldSoft : AppColors.emeraldSoft,
                           shape: BoxShape.circle,
                         ),
                         child: Text(
                           '${i + 1}',
                           style: TextStyle(
                             fontSize: 12.5,
-                            color: markCurrent && i == links.length - 1 ? AppColors.ink : AppColors.emerald,
+                            color: isCurrent(i) ? AppColors.ink : AppColors.emerald,
                           ),
                         ),
                       ),
@@ -442,7 +451,7 @@ class _SuccessionList extends ConsumerWidget {
                           ],
                         ),
                       ),
-                      if (markCurrent && i == links.length - 1) ...[
+                      if (isCurrent(i)) ...[
                         StatePill(l10n.zawiyaDetailCurrent, variant: StatePillVariant.gold),
                         const SizedBox(width: 6),
                       ],
@@ -453,6 +462,32 @@ class _SuccessionList extends ConsumerWidget {
               ),
             ),
           ],
+        ],
+      ),
+    );
+  }
+}
+
+/// « Liste incomplète : des noms manquent ici. », entre deux maillons d'une
+/// succession, à la place du filet.
+class _SuccessionGapRow extends StatelessWidget {
+  const _SuccessionGapRow({required this.text});
+
+  final String text;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      color: AppColors.parchment,
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+      child: Row(
+        children: [
+          SizedBox(width: 28, child: Icon(Icons.more_vert, size: 16, color: AppColors.bronze)),
+          const SizedBox(width: 14),
+          Expanded(
+            child: ContentText(text,
+                style: TextStyle(fontSize: 12.5, fontStyle: FontStyle.italic, color: AppColors.secondaryInk)),
+          ),
         ],
       ),
     );

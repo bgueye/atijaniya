@@ -7927,6 +7927,18 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'Non renseigné'**
   String get zawiyaFormCountryNone;
+
+  /// No description provided for @eventDetailPast.
+  ///
+  /// In fr, this message translates to:
+  /// **'Passé'**
+  String get eventDetailPast;
+
+  /// No description provided for @eventDetailPastNoLive.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ce rendez-vous est passé'**
+  String get eventDetailPastNoLive;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

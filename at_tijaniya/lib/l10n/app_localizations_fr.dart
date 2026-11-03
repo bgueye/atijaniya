@@ -4301,4 +4301,10 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get zawiyaFormCountryNone => 'Non renseigné';
+
+  @override
+  String get eventDetailPast => 'Passé';
+
+  @override
+  String get eventDetailPastNoLive => 'Ce rendez-vous est passé';
 }

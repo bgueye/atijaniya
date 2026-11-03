@@ -376,6 +376,21 @@ class FigureKhalifaLink {
 /// n'est pas lisible par le compte courant (fiche encore en brouillon,
 /// masquée par la RLS) : la succession s'affiche alors sans nœud
 /// "Fondateur" plutôt que de disparaître entièrement.
+/// `true` si [link], dernier maillon de sa succession ([isLast]), est le
+/// titulaire actuel d'après la base : sa période le dit (« depuis 2017 »,
+/// « actuel »). Audit du 2026-11-03 : la fiche d'une zawiya marquait
+/// « Actuel » le dernier de la liste quelle que soit sa période — à tort pour
+/// Nioro du Sahel (« 2007–2024 ») et Ségou (sans période). Sans indication
+/// dans la période, rien n'est affirmé : mieux vaut ne pas marquer un
+/// titulaire actuel que d'en désigner un faux. La période est un texte libre
+/// saisi en français ; l'app ne la traduit pas.
+bool isCurrentSuccessionHolder(FigureKhalifaLink link, {required bool isLast}) {
+  if (!isLast) return false;
+  final period = link.periodText?.trim().toLowerCase();
+  if (period == null || period.isEmpty) return false;
+  return period.startsWith('depuis') || RegExp(r'\bactuel').hasMatch(period);
+}
+
 class ZawiyaSuccession {
   const ZawiyaSuccession({
     required this.zawiyaId,
