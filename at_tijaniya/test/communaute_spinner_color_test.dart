@@ -17,7 +17,7 @@ void main() {
     final repo = FakeCommunityRepository()..gate = gate.future;
     await tester.pumpWidget(wrapCommunaute(const Scaffold(body: CommunauteScreen()), community: repo));
     await tester.pumpAndSettle();
-    await tester.tap(find.byType(FloatingActionButton).first);
+    await tester.tap(find.text('Partager avec la communauté…'));
     await tester.pumpAndSettle();
     await tester.enterText(find.byType(TextFormField), 'Salam');
     await tester.tap(find.widgetWithText(ElevatedButton, 'Publier'));

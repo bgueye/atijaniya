@@ -15,6 +15,7 @@ import 'package:at_tijaniya/features/communaute/domain/message_models.dart';
 import 'package:at_tijaniya/features/communaute/presentation/community_providers.dart';
 import 'package:at_tijaniya/features/communaute/presentation/groups_providers.dart';
 import 'package:at_tijaniya/features/communaute/presentation/messages_providers.dart';
+import 'package:at_tijaniya/features/khadara/domain/khadara_models.dart';
 import 'package:at_tijaniya/features/khadara/presentation/khadara_providers.dart';
 import 'package:at_tijaniya/features/khadara/presentation/live_stream_providers.dart';
 import 'package:at_tijaniya/features/profil/domain/profile_models.dart';
@@ -44,11 +45,16 @@ class FakeCommunityRepository extends CommunityRepository {
   /// Fait échouer le chargement du fil (tant qu'il n'est pas remis à `null`).
   Object? feedError;
 
+  /// Zawiyas demandées par le filtre « Ma zawiya », dans l'ordre (`null` :
+  /// toute la communauté).
+  final feedZawiyas = <String?>[];
+
   @override
-  Future<List<CommunityPost>> fetchFeed({required int limit}) async {
+  Future<List<CommunityPost>> fetchFeed({required int limit, String? zawiyaId}) async {
     feedLimits.add(limit);
+    feedZawiyas.add(zawiyaId);
     if (feedError != null) throw feedError!;
-    return posts.take(limit).toList();
+    return posts.where((p) => zawiyaId == null || p.authorZawiyaId == zawiyaId).take(limit).toList();
   }
 
   @override
@@ -156,6 +162,10 @@ Widget wrapCommunaute(
   // Chargement du profil à la place de la valeur déjà prête : profil lent ou
   // en échec.
   Future<Profile> Function()? loadProfile,
+  // Évènements à venir (rendez-vous de la zawiya intercalés dans le fil).
+  List<KhadaraEvent> events = const [],
+  // Thème des captures (vraies polices), `null` ailleurs.
+  ThemeData? theme,
 }) {
   return ProviderScope(
     overrides: [
@@ -170,10 +180,15 @@ Widget wrapCommunaute(
       groupsRepositoryProvider.overrideWithValue(groups ?? FakeGroupsRepository()),
       messagesRepositoryProvider.overrideWithValue(messages ?? FakeMessagesRepository()),
       attachableZawiyasProvider.overrideWith((ref) async => const []),
+      // Rendez-vous de la zawiya intercalés dans le fil (refonte du
+      // 2026-11-02) : aucun par défaut, sans réseau.
+      upcomingEventsProvider.overrideWith((ref) async => events),
       shareGroupWithProvider.overrideWith((ref, otherUserId) async => false),
       ...extraOverrides,
     ],
     child: MaterialApp(
+      debugShowCheckedModeBanner: false,
+      theme: theme,
       builder: (context, child) => MediaQuery(
         data: MediaQuery.of(context).copyWith(textScaler: TextScaler.linear(textScale)),
         child: child!,
@@ -197,11 +212,12 @@ CommunityPost testPost({
   String? authorDisplayName = 'Autre disciple',
   String? authorZawiyaName = 'Zawiya de test',
   String contentText = 'Salam à tous',
+  String authorZawiyaId = 'z1',
 }) {
   return CommunityPost(
     id: id,
     authorUserId: authorUserId,
-    authorZawiyaId: 'z1',
+    authorZawiyaId: authorZawiyaId,
     authorDisplayName: authorDisplayName,
     authorZawiyaName: authorZawiyaName,
     contentText: contentText,

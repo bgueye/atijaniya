@@ -3909,4 +3909,128 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get figureTextSize => 'حجم النص';
+
+  @override
+  String get communityViewMessages => 'الرسائل';
+
+  @override
+  String communityMessagesUnread(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count محادثات غير مقروءة',
+      one: 'محادثة واحدة غير مقروءة',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get communityScopeAll => 'المجتمع كله';
+
+  @override
+  String communityScopeMine(String name) {
+    return 'زاويتي · $name';
+  }
+
+  @override
+  String get communityComposerHint => 'شارك مع المجتمع…';
+
+  @override
+  String get communityComposerPhoto => 'نشر صورة';
+
+  @override
+  String get communityUnlockEyebrow => 'للنشر';
+
+  @override
+  String get communityUnlockTitle => 'اربط ملفك بزاويتك';
+
+  @override
+  String get communityUnlockBody =>
+      'النشر مخصص للمريدين المرتبطين بزاوية. يمكنك من الآن الإعجاب والتعليق والانضمام إلى المجموعات.';
+
+  @override
+  String get communityUnlockAction => 'اختيار زاويتي';
+
+  @override
+  String get communityGuestTitle => 'سجّل الدخول للمشاركة';
+
+  @override
+  String get communityGuestBody =>
+      'بحساب، يمكنك الإعجاب والتعليق والانضمام إلى المجموعات، وبعد الارتباط بزاوية يمكنك النشر أيضًا.';
+
+  @override
+  String get communityGuestAction => 'تسجيل الدخول';
+
+  @override
+  String get communityZawiyaEventEyebrow => 'موعد من زاويتك';
+
+  @override
+  String get communityFeedScopeEmpty => 'لا توجد منشورات من زاويتك حاليًا.';
+
+  @override
+  String get communityFindDisciplesBody => 'مريدو مقدّمك الذين قبلوا ذلك. خاص: لا يظهر شيء دون موافقتك.';
+
+  @override
+  String get communityFindDisciplesOpen => 'فتح';
+
+  @override
+  String get communityGroupsMine => 'مجموعات زاويتي';
+
+  @override
+  String get communityGroupsOthers => 'مجموعات أخرى';
+
+  @override
+  String get communityGroupsCreateShort => 'إنشاء';
+
+  @override
+  String get communityGroupJoinShort => 'انضمام';
+
+  @override
+  String get communityGroupMemberShort => 'عضو';
+
+  @override
+  String communityGroupMembers(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count أعضاء',
+      one: 'عضو واحد',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get communityConversationsHelp =>
+      'لا تُفتح محادثة إلا مع مريد يشاركك مجموعة ويقبل ذلك في « من يمكنه التواصل معك ». لمراسلته، افتح أحد منشوراته.';
+
+  @override
+  String get communityMessagesGuest => 'سجّل الدخول لتجد محادثاتك الخاصة.';
+
+  @override
+  String get communityTimeNow => 'الآن';
+
+  @override
+  String communityTimeMinutes(int count) {
+    return 'منذ $count د';
+  }
+
+  @override
+  String communityTimeHours(int count) {
+    return 'منذ $count س';
+  }
+
+  @override
+  String get communityTimeYesterday => 'أمس';
+
+  @override
+  String communityTimeDays(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'منذ $count يومًا',
+      few: 'منذ $count أيام',
+      two: 'منذ يومين',
+    );
+    return '$_temp0';
+  }
 }

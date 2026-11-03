@@ -22,10 +22,14 @@ import 'community_providers.dart';
 import 'groups_providers.dart';
 
 class CreatePostSheet extends ConsumerStatefulWidget {
-  const CreatePostSheet({super.key, required this.zawiyaId, this.zawiyaName});
+  const CreatePostSheet({super.key, required this.zawiyaId, this.zawiyaName, this.pickPhotoOnOpen = false});
 
   final String zawiyaId;
   final String? zawiyaName;
+
+  /// Ouvre tout de suite le choix de la photo : icône photo du champ de
+  /// publication de la Communauté (refonte du 2026-11-02).
+  final bool pickPhotoOnOpen;
 
   @override
   ConsumerState<CreatePostSheet> createState() => _CreatePostSheetState();
@@ -43,6 +47,12 @@ class _CreatePostSheetState extends ConsumerState<CreatePostSheet> {
 
   Uint8List? _pickedImageBytes;
   String? _pickedImageExtension;
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.pickPhotoOnOpen) WidgetsBinding.instance.addPostFrameCallback((_) => _pickImage());
+  }
 
   @override
   void dispose() {

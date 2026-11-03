@@ -16,7 +16,7 @@ void main() {
   testWidgets('feuille de publication : 5 000 caractères au plus', (tester) async {
     await tester.pumpWidget(wrapCommunaute(const Scaffold(body: CommunauteScreen())));
     await tester.pumpAndSettle();
-    await tester.tap(find.byType(FloatingActionButton).first);
+    await tester.tap(find.text('Partager avec la communauté…'));
     await tester.pumpAndSettle();
 
     expect(_maxLengths(tester), [TextLimits.post]);
@@ -27,7 +27,7 @@ void main() {
     await tester.pumpAndSettle();
     await tester.tap(find.text('Groupes'));
     await tester.pumpAndSettle();
-    await tester.tap(find.byType(FloatingActionButton).last);
+    await tester.tap(find.text('Créer'));
     await tester.pumpAndSettle();
 
     expect(_maxLengths(tester), [TextLimits.groupName, TextLimits.groupDescription, TextLimits.groupRegion]);

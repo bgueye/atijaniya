@@ -17,7 +17,7 @@ void main() {
     testWidgets('feuille de publication : zawiya indiquée à côté du nom (${locale.languageCode})', (tester) async {
       await tester.pumpWidget(wrapCommunaute(const Scaffold(body: CommunauteScreen()), locale: locale));
       await tester.pumpAndSettle();
-      await tester.tap(find.byType(FloatingActionButton).first);
+      await tester.tap(find.text(locale.languageCode == 'ar' ? 'شارك مع المجتمع…' : 'Partager avec la communauté…'));
       await tester.pumpAndSettle();
 
       expect(find.text(expected), findsOneWidget);

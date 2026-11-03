@@ -15,7 +15,7 @@ aplats : les maquettes ne chargent pas les photos de la base.
 | Wird | `ecran-wird.html` | **Implémenté** le 2026-11-02 sur la branche `claude/attijaniya-homepage-redesign-elyti4`, voir `docs/09`, entrée du 2026-11-02 (le guide d'un wird reste à refaire) |
 | Zawiyas | `ecran-zawiyas.html` | Proposé, à implémenter (demande une colonne `country`, donc une migration) |
 | Figures | `ecran-figures.html` | **Implémenté** le 2026-11-02 sur la branche `claude/attijaniya-homepage-redesign-elyti4`, voir `docs/09` |
-| Communauté | `ecran-communaute.html` | Proposé, à implémenter |
+| Communauté | `ecran-communaute.html` | **Implémenté** le 2026-11-02 sur la branche `claude/attijaniya-homepage-redesign-elyti4`, voir `docs/09` (carte « Pour publier » or doux, pas zaytoune : CLAUDE.md prime ; sans « dernière activité » des groupes ni « + Nouveau » message) |
 | Profil | `ecran-profil.html` | **Implémenté** le 2026-11-02 sur la branche `claude/attijaniya-homepage-redesign-elyti4` (écran Paramètres supprimé), voir `docs/09` |
 | Pratique des wirds (tasbih) | `ecran-pratique.html` | **Implémenté** le 2026-11-02 sur la branche `claude/attijaniya-homepage-redesign-elyti4`, voir `docs/09`, entrée « Refonte de l'écran de pratique » |
 | Écrans de détail (figure, zawiya, évènement) | `ecrans-detail.html` | **Implémenté** le 2026-11-02 sur la branche `claude/attijaniya-homepage-redesign-elyti4`, voir `docs/09` (carte du fondateur claire, pas zaytoune : CLAUDE.md prime) |

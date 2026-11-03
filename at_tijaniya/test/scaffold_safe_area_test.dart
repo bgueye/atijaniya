@@ -53,7 +53,9 @@ List<int> _unsafeBodies(String source) {
       if (trimmed.startsWith('bottomNavigationBar:')) hasBottomBar = true;
       if (trimmed.startsWith('body:') && bodyLine == null) {
         bodyLine = j + 1;
-        bodyIsSafe = trimmed.substring('body:'.length).trimLeft().startsWith('SafeArea');
+        // `const SafeArea(...)` compte aussi (liste des conversations, 2026-11-02).
+        final body = trimmed.substring('body:'.length).trimLeft();
+        bodyIsSafe = body.startsWith('SafeArea') || body.startsWith('const SafeArea');
       }
     }
     if (bodyLine != null && !hasBottomBar && !bodyIsSafe) result.add(bodyLine);

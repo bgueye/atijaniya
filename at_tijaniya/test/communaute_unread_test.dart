@@ -6,6 +6,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
+import 'package:at_tijaniya/core/widgets/state_pill.dart';
 import 'package:at_tijaniya/features/communaute/domain/message_models.dart';
 import 'package:at_tijaniya/features/communaute/presentation/communaute_screen.dart';
 import 'package:at_tijaniya/features/communaute/presentation/conversation_screen.dart';
@@ -23,14 +24,23 @@ const _conversations = [
 ];
 
 void main() {
-  testWidgets("icône de la messagerie : pastille avec le nombre de conversations non lues", (tester) async {
+  // Depuis la refonte du 2026-11-02, Messages est la troisième vue de la
+  // Communauté : la pastille est sur son segment, plus sur une icône.
+  testWidgets("vue Messages : pastille avec le nombre de conversations non lues", (tester) async {
+    final semantics = tester.ensureSemantics();
     await tester.pumpWidget(wrapCommunaute(
       const Scaffold(body: CommunauteScreen()),
       messages: FakeMessagesRepository(conversations: _conversations),
     ));
     await tester.pumpAndSettle();
-    expect(find.byTooltip('Messages, 2 conversations non lues'), findsOneWidget);
-    expect(find.descendant(of: find.byType(Badge), matching: find.text('2')), findsOneWidget);
+    expect(find.descendant(of: find.byType(StatePill), matching: find.text('2')), findsOneWidget);
+    expect(find.bySemanticsLabel(RegExp('2 conversations non lues')), findsOneWidget);
+
+    // La vue Messages montre la liste.
+    await tester.tap(find.text('Messages'));
+    await tester.pumpAndSettle();
+    expect(find.text('Aïssatou'), findsOneWidget);
+    semantics.dispose();
   });
 
   testWidgets('liste des conversations : nombre de messages non lus, nom en gras', (tester) async {
@@ -40,8 +50,7 @@ void main() {
       messages: FakeMessagesRepository(conversations: _conversations),
     ));
     await tester.pumpAndSettle();
-    expect(find.descendant(of: find.byType(Badge), matching: find.text('3')), findsOneWidget);
-    // Annoncé avec le reste de la ligne (le ListTile fusionne ses libellés).
+    expect(find.descendant(of: find.byType(StatePill), matching: find.text('3')), findsOneWidget);
     expect(find.bySemanticsLabel(RegExp('3 messages non lus')), findsOneWidget);
     expect(tester.widget<Text>(find.text('Aïssatou')).style?.fontWeight, FontWeight.w700);
     expect(tester.widget<Text>(find.text('Ibrahima')).style?.fontWeight, isNot(FontWeight.w700));
@@ -50,7 +59,8 @@ void main() {
 
   testWidgets("ouvrir une conversation marque lus les messages reçus", (tester) async {
     final repo = FakeMessagesRepository(messages: [
-      DirectMessage(id: 'm1', conversationId: 'c1', senderId: 'u1', contentText: 'Salam', sentAt: DateTime(2026, 10, 26)),
+      DirectMessage(
+          id: 'm1', conversationId: 'c1', senderId: 'u1', contentText: 'Salam', sentAt: DateTime(2026, 10, 26)),
     ]);
     await tester.pumpWidget(wrapCommunaute(
       const ConversationScreen(conversationId: 'c1', otherUserId: 'u1', otherDisplayName: 'Aïssatou'),

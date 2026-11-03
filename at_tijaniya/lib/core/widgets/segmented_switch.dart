@@ -37,8 +37,12 @@ class SegmentedSwitch<T> extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Gouttière horizontale ici ; la verticale est portée par chaque segment,
+    // pour que sa zone tactile fasse 48 dp (42 visibles + 3 de part et
+    // d'autre) — elle n'en faisait que 42, relevé par le test d'accessibilité
+    // de la Communauté (2026-11-02).
     return Container(
-      padding: const EdgeInsets.all(3),
+      padding: const EdgeInsets.symmetric(horizontal: 3),
       decoration: BoxDecoration(
         color: AppColors.bronze.withValues(alpha: 0.12),
         borderRadius: BorderRadius.circular(12),
@@ -64,48 +68,64 @@ class _Segment<T> extends StatelessWidget {
   Widget build(BuildContext context) {
     final count = item.count;
     final unread = item.unread;
-    return Semantics(
-      button: true,
-      selected: active,
-      child: Material(
-        color: active ? AppColors.offWhite : Colors.transparent,
-        borderRadius: BorderRadius.circular(10),
-        // Ombre très légère de la maquette sur la vue active : seule
-        // exception au « des filets, pas des ombres », car c'est elle qui
-        // fait lire la vue comme « posée » sur la gouttière.
-        elevation: active ? 0.6 : 0,
-        shadowColor: AppColors.ink.withValues(alpha: 0.3),
-        child: InkWell(
+    // Un seul nœud pour le lecteur d'écran, de 48 dp : libellé, état et
+    // toucher réunis ; l'`InkWell` (effet visuel) et le `GestureDetector`
+    // (toucher dans la gouttière) ne s'y déclarent pas.
+    return MergeSemantics(
+      child: Semantics(
+        button: true,
+        selected: active,
+        onTap: onTap,
+        child: GestureDetector(
+          // Un toucher dans la gouttière compte aussi pour le segment.
+          behavior: HitTestBehavior.opaque,
+          excludeFromSemantics: true,
           onTap: onTap,
-          borderRadius: BorderRadius.circular(10),
-          child: ConstrainedBox(
-            // 42 visibles + 3 de gouttière de part et d'autre : 48 dp.
-            constraints: const BoxConstraints(minHeight: 42),
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Flexible(
-                    child: Text(
-                      item.label,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: TextStyle(
-                        fontSize: 14,
-                        color: active ? AppColors.ink : AppColors.secondaryInk,
-                        fontWeight: active ? FontWeight.w500 : FontWeight.w400,
-                      ),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 3),
+            child: Material(
+              color: active ? AppColors.offWhite : Colors.transparent,
+              borderRadius: BorderRadius.circular(10),
+              // Ombre très légère de la maquette sur la vue active : seule
+              // exception au « des filets, pas des ombres », car c'est elle qui
+              // fait lire la vue comme « posée » sur la gouttière.
+              elevation: active ? 0.6 : 0,
+              shadowColor: AppColors.ink.withValues(alpha: 0.3),
+              child: InkWell(
+                onTap: onTap,
+                excludeFromSemantics: true,
+                borderRadius: BorderRadius.circular(10),
+                child: ConstrainedBox(
+                  // 42 visibles + 3 de gouttière de part et d'autre : 48 dp.
+                  constraints: const BoxConstraints(minHeight: 42),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Flexible(
+                          child: Text(
+                            item.label,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: TextStyle(
+                              fontSize: 14,
+                              color: active ? AppColors.ink : AppColors.secondaryInk,
+                              fontWeight: active ? FontWeight.w500 : FontWeight.w400,
+                            ),
+                          ),
+                        ),
+                        if (unread != null && unread > 0) ...[
+                          const SizedBox(width: 6),
+                          StatePill.count(unread, semanticsLabel: item.unreadLabel),
+                        ] else if (count != null) ...[
+                          const SizedBox(width: 4),
+                          Text('$count', style: TextStyle(fontSize: 14, color: AppColors.secondaryInk)),
+                        ],
+                      ],
                     ),
                   ),
-                  if (unread != null && unread > 0) ...[
-                    const SizedBox(width: 6),
-                    StatePill.count(unread, semanticsLabel: item.unreadLabel),
-                  ] else if (count != null) ...[
-                    const SizedBox(width: 4),
-                    Text('$count', style: TextStyle(fontSize: 14, color: AppColors.secondaryInk)),
-                  ],
-                ],
+                ),
               ),
             ),
           ),

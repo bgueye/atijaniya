@@ -1,304 +1,429 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../core/auth/sign_in_request.dart';
 import '../../../core/network/network_errors.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/widgets/app_snackbar.dart';
+import '../../../core/widgets/content_text.dart';
+import '../../../core/widgets/date_block.dart';
+import '../../../core/widgets/eyebrow.dart';
+import '../../../core/widgets/filter_chips.dart';
+import '../../../core/widgets/segmented_switch.dart';
 import '../../../l10n/app_localizations.dart';
+import '../../khadara/domain/khadara_models.dart';
+import '../../khadara/presentation/event_detail_screen.dart';
+import '../../khadara/presentation/khadara_format.dart';
+import '../../khadara/presentation/khadara_providers.dart';
 import '../../profil/domain/profile_models.dart';
+import '../../profil/presentation/edit_profile_sheet.dart';
 import '../../profil/presentation/profile_providers.dart';
 import '../domain/community_models.dart';
-import '../domain/group_models.dart';
-import 'create_sheets.dart';
+import 'community_avatar.dart';
 import 'community_format.dart';
+import 'community_groups_view.dart';
 import 'community_providers.dart';
 import 'community_states.dart';
 import 'conversations_screen.dart';
-import 'messages_providers.dart';
-import 'group_detail_screen.dart';
-import 'groups_providers.dart';
+import 'create_sheets.dart';
 import 'load_more_button.dart';
+import 'messages_providers.dart';
 import 'post_detail_screen.dart';
-import '../../../core/widgets/content_text.dart';
 
-/// Fil d'actualité + Groupes — publications communauté et discussions par
-/// zawiya/région. Priorité P1 pour le fil, P2 pour les groupes
-/// (docs/03-architecture-ecrans.md).
+/// Les trois vues de la Communauté.
+enum CommunityView { feed, groups, messages }
+
+/// Onglet Communauté (refonte du 2026-11-02, maquette
+/// `docs/maquettes/ecran-communaute.html`, décisions validées le 2026-11-01) :
+/// Fil, Groupes et Messages au même niveau dans un `SegmentedSwitch`, le
+/// nombre de conversations non lues sur Messages. Avant, Fil et Groupes
+/// étaient deux onglets et les messages une icône à côté.
 ///
-/// Comme le module Khadara, ce contenu vient de tables Supabase (`posts` /
-/// `groups`) et non d'un fichier statique. Même structure à onglets que
-/// `KhadaraScreen` (Évènements/Zawiyas) pour deux listes liées au même
-/// module. La lignée spirituelle et le statut Mouqaddam restent dans des
-/// écrans dédiés accessibles depuis le profil (données sensibles, cf.
-/// CLAUDE.md), hors périmètre de cet écran.
-class CommunauteScreen extends ConsumerWidget {
-  const CommunauteScreen({super.key});
+/// Le contenu vient des tables Supabase (`posts`, `groups`, `conversations`) ;
+/// les règles de publication (zawiya requise), d'adhésion et d'ouverture
+/// d'une conversation ne changent pas. La lignée spirituelle n'est jamais
+/// affichée ici : la carte « Retrouver mes condisciples » ouvre son parcours.
+class CommunauteScreen extends ConsumerStatefulWidget {
+  const CommunauteScreen({super.key, this.initialView = CommunityView.feed});
+
+  /// Vue ouverte au départ (tests et captures).
+  final CommunityView initialView;
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final unread = ref.watch(unreadConversationsCountProvider);
+  ConsumerState<CommunauteScreen> createState() => _CommunauteScreenState();
+}
+
+class _CommunauteScreenState extends ConsumerState<CommunauteScreen> {
+  late CommunityView _view = widget.initialView;
+
+  @override
+  Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-    return DefaultTabController(
-      length: 2,
-      child: Column(
-        children: [
-          Row(
-            children: [
-              Expanded(
-                child: TabBar(
-                  labelColor: AppColors.emerald,
-                  unselectedLabelColor: AppColors.secondaryInk,
-                  indicatorColor: AppColors.emerald,
-                  tabs: [
-                    Tab(text: l10n.communityFeedTab),
-                    Tab(text: l10n.communityGroupsTab),
-                  ],
-                ),
-              ),
-              // Pastille : conversations avec un message non lu (P3-8).
-              IconButton(
-                icon: Badge(
-                  isLabelVisible: unread > 0,
-                  label: Text('$unread'),
-                  backgroundColor: AppColors.emerald,
-                  child: Icon(Icons.mail_outline, color: AppColors.bronze),
-                ),
-                tooltip: unread > 0 ? l10n.communityMessagesTooltipUnread(unread) : l10n.communityMessagesTooltip,
-                onPressed: () => Navigator.of(context).push(
-                  MaterialPageRoute(builder: (_) => const ConversationsScreen()),
-                ),
+    final unread = ref.watch(unreadConversationsCountProvider);
+    return Column(
+      children: [
+        Padding(
+          padding: const EdgeInsets.fromLTRB(16, 4, 16, 0),
+          child: SegmentedSwitch<CommunityView>(
+            selected: _view,
+            onChanged: (view) => setState(() => _view = view),
+            items: [
+              SegmentedSwitchItem(value: CommunityView.feed, label: l10n.communityFeedTab),
+              SegmentedSwitchItem(value: CommunityView.groups, label: l10n.communityGroupsTab),
+              SegmentedSwitchItem(
+                value: CommunityView.messages,
+                label: l10n.communityViewMessages,
+                unread: unread,
+                unreadLabel: l10n.communityMessagesUnread(unread),
               ),
             ],
           ),
-          const Expanded(
-            child: TabBarView(
-              children: [
-                _FeedTab(),
-                _GroupsTab(),
-              ],
+        ),
+        // `IndexedStack` : chaque vue garde sa position de défilement quand
+        // on passe de l'une à l'autre.
+        Expanded(
+          child: IndexedStack(
+            index: _view.index,
+            children: const [_FeedView(), CommunityGroupsView(), _MessagesView()],
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+/// Vue Messages : la liste des conversations, ou sans compte, l'invitation à
+/// se connecter.
+class _MessagesView extends ConsumerWidget {
+  const _MessagesView();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
+    if (ref.watch(currentUserIdProvider) == null) {
+      return CommunityEmptyState(
+        icon: Icons.mail_outline,
+        message: l10n.communityMessagesGuest,
+        actionLabel: l10n.communityGuestAction,
+        onAction: () => ref.read(signInRequestProvider.notifier).state++,
+      );
+    }
+    return const ConversationsList();
+  }
+}
+
+/// Une ligne du fil : une publication, un rendez-vous de la zawiya, ou
+/// « Voir plus ».
+sealed class _FeedEntry {
+  const _FeedEntry();
+}
+
+class _PostEntry extends _FeedEntry {
+  const _PostEntry(this.post);
+  final CommunityPost post;
+}
+
+class _EventEntry extends _FeedEntry {
+  const _EventEntry(this.event);
+  final KhadaraEvent event;
+}
+
+class _LoadMoreEntry extends _FeedEntry {
+  const _LoadMoreEntry();
+}
+
+/// Publications et rendez-vous mêlés (décision validée du 2026-11-01) : au
+/// plus un rendez-vous toutes les trois publications, le premier après la
+/// première publication. Sans publication, les rendez-vous seuls.
+List<_FeedEntry> _interleave(List<CommunityPost> posts, List<KhadaraEvent> events) {
+  if (posts.isEmpty) return [for (final event in events) _EventEntry(event)];
+  final entries = <_FeedEntry>[];
+  var nextEvent = 0;
+  for (var i = 0; i < posts.length; i++) {
+    entries.add(_PostEntry(posts[i]));
+    if (i % 3 == 0 && nextEvent < events.length) entries.add(_EventEntry(events[nextEvent++]));
+  }
+  return entries;
+}
+
+class _FeedView extends ConsumerWidget {
+  const _FeedView();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
+    final feed = ref.watch(communityFeedProvider);
+    final signedIn = ref.watch(currentUserIdProvider) != null;
+    final profile = signedIn ? ref.watch(myProfileProvider).valueOrNull : null;
+    final zawiya = ref.watch(myCommunityZawiyaProvider);
+    final mineOnly = ref.watch(communityFeedMineOnlyProvider) && zawiya != null;
+    // Rendez-vous publics de la zawiya du disciple, tirés du calendrier
+    // existant. Une erreur de chargement les fait seulement disparaître.
+    final events = zawiya == null
+        ? const <KhadaraEvent>[]
+        : ref.watch(eventsForZawiyaProvider(zawiya.id)).valueOrNull ?? const <KhadaraEvent>[];
+
+    final header = <Widget>[
+      if (!signedIn)
+        _JoinCard(
+          eyebrow: l10n.communityUnlockEyebrow,
+          title: l10n.communityGuestTitle,
+          body: l10n.communityGuestBody,
+          action: l10n.communityGuestAction,
+          onAction: () => ref.read(signInRequestProvider.notifier).state++,
+        )
+      else if (profile != null && profile.zawiyaId == null)
+        // La règle (zawiya requise) dite d'emblée, avec ce qu'il peut déjà
+        // faire, au lieu d'un refus après coup en bas de l'écran.
+        _JoinCard(
+          eyebrow: l10n.communityUnlockEyebrow,
+          title: l10n.communityUnlockTitle,
+          body: l10n.communityUnlockBody,
+          action: l10n.communityUnlockAction,
+          onAction: () => showEditProfileSheet(context, profile),
+        )
+      else if (profile != null && zawiya != null) ...[
+        Wrap(
+          spacing: 8,
+          children: [
+            FilterPill(
+              label: l10n.communityScopeAll,
+              selected: !mineOnly,
+              onTap: () => ref.read(communityFeedMineOnlyProvider.notifier).state = false,
+            ),
+            FilterPill(
+              label: l10n.communityScopeMine(_shortZawiyaName(zawiya.name ?? '')),
+              selected: mineOnly,
+              onTap: () => ref.read(communityFeedMineOnlyProvider.notifier).state = true,
+            ),
+          ],
+        ),
+        const SizedBox(height: 8),
+        _Composer(profile: profile),
+      ],
+      const SizedBox(height: 12),
+    ];
+
+    return RefreshIndicator(
+      color: AppColors.emerald,
+      onRefresh: () => ref.refresh(communityFeedProvider.future),
+      child: feed.when(
+        // « Voir plus » recharge le fil avec une page de plus, sans le
+        // remplacer par l'indicateur de chargement.
+        skipLoadingOnReload: true,
+        loading: () => ListView(
+          padding: const EdgeInsets.fromLTRB(16, 12, 16, 24),
+          children: [
+            ...header,
+            Padding(
+              padding: const EdgeInsets.only(top: 40),
+              child: Center(child: CircularProgressIndicator(color: AppColors.emerald)),
+            ),
+          ],
+        ),
+        error: (error, stackTrace) => ListView(
+          padding: const EdgeInsets.fromLTRB(16, 12, 16, 24),
+          children: [
+            ...header,
+            CommunityErrorState(
+              error: error,
+              message: l10n.communityLoadError,
+              onRetry: () => ref.invalidate(communityFeedProvider),
+            ),
+          ],
+        ),
+        data: (posts) {
+          final entries = _interleave(posts, events);
+          if (posts.length >= ref.watch(communityFeedLimitProvider)) entries.add(const _LoadMoreEntry());
+          return ListView.builder(
+            physics: const AlwaysScrollableScrollPhysics(),
+            padding: const EdgeInsets.fromLTRB(16, 12, 16, 24),
+            itemCount: header.length + entries.length + (posts.isEmpty ? 1 : 0),
+            itemBuilder: (context, i) {
+              if (i < header.length) return header[i];
+              final index = i - header.length;
+              if (index == entries.length) {
+                // Fil vide : le message, après les rendez-vous éventuels.
+                return Padding(
+                  padding: const EdgeInsets.only(top: 12),
+                  child: Text(
+                    mineOnly ? l10n.communityFeedScopeEmpty : l10n.communityFeedEmpty,
+                    textAlign: TextAlign.center,
+                    style: TextStyle(color: AppColors.secondaryInk, fontSize: 14, height: 1.45),
+                  ),
+                );
+              }
+              return switch (entries[index]) {
+                // `key` par publication : sans elle, après une création ou une
+                // suppression, chaque carte gardait le « j'aime » de la carte
+                // qui occupait sa position avant.
+                _PostEntry(:final post) =>
+                  _PostCard(key: ValueKey(post.id), post: post, fallbackAuthor: l10n.communityDefaultAuthor),
+                _EventEntry(:final event) => _ZawiyaEventCard(key: ValueKey('event-${event.id}'), event: event),
+                _LoadMoreEntry() => LoadMoreButton(
+                    label: l10n.communityFeedLoadMore,
+                    loading: feed.isReloading,
+                    onPressed: () => ref.read(communityFeedLimitProvider.notifier).state += communityPageSize,
+                  ),
+              };
+            },
+          );
+        },
+      ),
+    );
+  }
+
+  /// « Zawiya de Tivaouane » devient « Tivaouane » dans la puce du filtre.
+  static String _shortZawiyaName(String name) {
+    const prefix = 'Zawiya de ';
+    return name.startsWith(prefix) ? name.substring(prefix.length) : name;
+  }
+}
+
+/// Carte en tête du fil quand le disciple ne peut pas publier : sans compte,
+/// ou sans zawiya de rattachement. Elle dit pourquoi et mène au réglage.
+class _JoinCard extends StatelessWidget {
+  const _JoinCard({
+    required this.eyebrow,
+    required this.title,
+    required this.body,
+    required this.action,
+    required this.onAction,
+  });
+
+  final String eyebrow;
+  final String title;
+  final String body;
+  final String action;
+  final VoidCallback onAction;
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      margin: EdgeInsets.zero,
+      color: AppColors.goldSoft,
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Eyebrow(eyebrow),
+            const SizedBox(height: 2),
+            Text(title, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600, color: AppColors.ink)),
+            const SizedBox(height: 4),
+            Text(body, style: const TextStyle(fontSize: 13.5, height: 1.45, color: AppColors.ink)),
+            const SizedBox(height: 12),
+            FilledButton(onPressed: onAction, child: Text(action)),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+/// Champ « Partager avec la communauté… » et accès photo, en haut du fil
+/// (au lieu du bouton flottant). Les deux ouvrent la feuille de publication
+/// existante ; l'icône photo ouvre aussitôt le choix de la photo.
+class _Composer extends StatelessWidget {
+  const _Composer({required this.profile});
+
+  final Profile profile;
+
+  Future<void> _open(BuildContext context, {bool photo = false}) {
+    return showModalBottomSheet<void>(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: AppColors.offWhite,
+      shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
+      builder: (context) =>
+          CreatePostSheet(zawiyaId: profile.zawiyaId!, zawiyaName: profile.zawiyaName, pickPhotoOnOpen: photo),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    return Card(
+      margin: EdgeInsets.zero,
+      clipBehavior: Clip.antiAlias,
+      child: Row(
+        children: [
+          Expanded(
+            child: Semantics(
+              button: true,
+              label: l10n.communityComposerHint,
+              excludeSemantics: true,
+              child: InkWell(
+                onTap: () => _open(context),
+                child: Padding(
+                  padding: const EdgeInsetsDirectional.fromSTEB(12, 10, 4, 10),
+                  child: Row(
+                    children: [
+                      CommunityAvatar(name: profile.displayName, imageUrl: profile.avatarUrl, size: 36),
+                      const SizedBox(width: 10),
+                      Expanded(
+                        child: Text(l10n.communityComposerHint,
+                            style: TextStyle(fontSize: 14, color: AppColors.secondaryInk)),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
             ),
           ),
+          IconButton(
+            icon: Icon(Icons.photo_camera_outlined, color: AppColors.bronze),
+            tooltip: l10n.communityComposerPhoto,
+            onPressed: () => _open(context, photo: true),
+          ),
+          const SizedBox(width: 4),
         ],
       ),
     );
   }
 }
 
-class _FeedTab extends ConsumerWidget {
-  const _FeedTab();
+/// Un rendez-vous de la zawiya du disciple, intercalé dans le fil : carte
+/// distincte des publications (bloc date, mention « Rendez-vous de votre
+/// zawiya »), qui ouvre l'évènement.
+class _ZawiyaEventCard extends StatelessWidget {
+  const _ZawiyaEventCard({super.key, required this.event});
 
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final l10n = AppLocalizations.of(context)!;
-    final feed = ref.watch(communityFeedProvider);
-
-    return Scaffold(
-      floatingActionButton: FloatingActionButton.extended(
-        heroTag: 'communaute_create_post',
-        onPressed: () => _openCreateSheet(context, ref),
-        icon: const Icon(Icons.add),
-        label: Text(l10n.communityCreatePostButton),
-      ),
-      // `skipLoadingOnReload` : « Voir plus » recharge le fil avec une page de
-      // plus, sans le remplacer par l'indicateur de chargement.
-      // Tirer pour actualiser (audit Communauté du 2026-10-26, P3-3) : le fil
-      // ne se rechargeait qu'au retour d'une publication ou par « Réessayer ».
-      body: RefreshIndicator(
-        color: AppColors.emerald,
-        onRefresh: () => ref.refresh(communityFeedProvider.future),
-        child: feed.when(
-          skipLoadingOnReload: true,
-          loading: () => Center(child: CircularProgressIndicator(color: AppColors.emerald)),
-          error: (error, stackTrace) => CommunityErrorState(
-            error: error,
-            message: l10n.communityLoadError,
-            onRetry: () => ref.invalidate(communityFeedProvider),
-          ),
-          data: (posts) => posts.isEmpty
-              ? CommunityEmptyState(
-                  icon: Icons.forum_outlined,
-                  message: l10n.communityFeedEmpty,
-                  actionLabel: l10n.communityCreatePostButton,
-                  onAction: () => _openCreateSheet(context, ref),
-                )
-              : ListView.builder(
-                  physics: const AlwaysScrollableScrollPhysics(),
-                  // 100 plutôt que la seule hauteur du FAB : celui-ci masquait
-                  // encore le bas de la dernière carte (image d'une
-                  // publication) avec une marge de 88 — constaté à l'audit
-                  // design pré-publication Play Store.
-                  padding: const EdgeInsets.fromLTRB(16, 16, 16, 100),
-                  // Une ligne de plus pour « Voir plus » quand la page est
-                  // pleine : d'autres publications peuvent suivre.
-                  itemCount: posts.length + (posts.length >= ref.watch(communityFeedLimitProvider) ? 1 : 0),
-                  // `key` par publication : sans elle, après une création ou une
-                  // suppression, chaque carte gardait le « j'aime » de la carte
-                  // qui occupait sa position avant.
-                  itemBuilder: (context, i) => i == posts.length
-                      ? LoadMoreButton(
-                          label: l10n.communityFeedLoadMore,
-                          loading: feed.isReloading,
-                          onPressed: () => ref.read(communityFeedLimitProvider.notifier).state += communityPageSize,
-                        )
-                      : _PostCard(
-                          key: ValueKey(posts[i].id), post: posts[i], fallbackAuthor: l10n.communityDefaultAuthor),
-                ),
-        ),
-      ),
-    );
-  }
-
-  Future<void> _openCreateSheet(BuildContext context, WidgetRef ref) async {
-    final l10n = AppLocalizations.of(context)!;
-    if (ref.read(currentUserIdProvider) == null) {
-      ScaffoldMessenger.of(context)
-        ..hideCurrentSnackBar()
-        ..showSnackBar(SnackBar(content: Text(l10n.communityCreatePostSignInRequired)));
-      return;
-    }
-    // Profil attendu s'il charge encore (audit Communauté du 2026-10-26,
-    // P3-7) : lu tel quel, un profil pas encore chargé ou en erreur faisait
-    // dire « rattachez-vous à une zawiya » à un disciple qui l'est déjà.
-    final Profile profile;
-    try {
-      profile = await ref.read(myProfileProvider.future);
-    } catch (error) {
-      if (context.mounted) {
-        showErrorSnackBar(context, isNetworkError(error) ? l10n.khadaraOfflineError : l10n.profileLoadError);
-      }
-      return;
-    }
-    if (!context.mounted) return;
-    final zawiyaId = profile.zawiyaId;
-    if (zawiyaId == null) {
-      ScaffoldMessenger.of(context)
-        ..hideCurrentSnackBar()
-        ..showSnackBar(SnackBar(content: Text(l10n.communityCreatePostNeedsZawiya)));
-      return;
-    }
-    await showModalBottomSheet<void>(
-      context: context,
-      isScrollControlled: true,
-      backgroundColor: AppColors.offWhite,
-      shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
-      builder: (context) => CreatePostSheet(zawiyaId: zawiyaId, zawiyaName: profile.zawiyaName),
-    );
-  }
-}
-
-class _GroupsTab extends ConsumerWidget {
-  const _GroupsTab();
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final l10n = AppLocalizations.of(context)!;
-    final groups = ref.watch(groupsProvider);
-
-    return Scaffold(
-      floatingActionButton: FloatingActionButton.extended(
-        heroTag: 'communaute_create_group',
-        onPressed: () => _openCreateSheet(context, ref),
-        icon: const Icon(Icons.add),
-        label: Text(l10n.communityGroupsCreateButton),
-      ),
-      body: RefreshIndicator(
-        color: AppColors.emerald,
-        onRefresh: () => ref.refresh(groupsProvider.future),
-        child: groups.when(
-          loading: () => Center(child: CircularProgressIndicator(color: AppColors.emerald)),
-          error: (error, stackTrace) => CommunityErrorState(
-            error: error,
-            message: l10n.communityGroupsLoadError,
-            onRetry: () => ref.invalidate(groupsProvider),
-          ),
-          data: (list) => list.isEmpty
-              ? CommunityEmptyState(
-                  icon: Icons.groups_outlined,
-                  message: l10n.communityGroupsEmpty,
-                  actionLabel: l10n.communityGroupsCreateButton,
-                  onAction: () => _openCreateSheet(context, ref),
-                )
-              : ListView.builder(
-                  physics: const AlwaysScrollableScrollPhysics(),
-                  // 100 plutôt que la seule hauteur du FAB : celui-ci masquait
-                  // encore le bas de la dernière carte (image d'une
-                  // publication) avec une marge de 88 — constaté à l'audit
-                  // design pré-publication Play Store.
-                  padding: const EdgeInsets.fromLTRB(16, 16, 16, 100),
-                  itemCount: list.length,
-                  itemBuilder: (context, i) => _GroupCard(group: list[i]),
-                ),
-        ),
-      ),
-    );
-  }
-
-  void _openCreateSheet(BuildContext context, WidgetRef ref) {
-    final l10n = AppLocalizations.of(context)!;
-    if (ref.read(currentUserIdProvider) == null) {
-      ScaffoldMessenger.of(context)
-        ..hideCurrentSnackBar()
-        ..showSnackBar(SnackBar(content: Text(l10n.communityGroupsSignInToCreate)));
-      return;
-    }
-    showModalBottomSheet<void>(
-      context: context,
-      isScrollControlled: true,
-      backgroundColor: AppColors.offWhite,
-      shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
-      builder: (context) => const CreateGroupSheet(),
-    );
-  }
-}
-
-class _GroupCard extends StatelessWidget {
-  const _GroupCard({required this.group});
-
-  final Group group;
+  final KhadaraEvent event;
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    final date = event.isRecurring ? (nextOccurrence(event) ?? event.startsAt) : event.startsAt;
     return Card(
+      margin: const EdgeInsets.only(bottom: 12),
+      // Or doux : distinct des publications (cartes claires), comme dans la
+      // maquette.
+      color: AppColors.goldSoft,
+      clipBehavior: Clip.antiAlias,
       child: InkWell(
-        borderRadius: BorderRadius.circular(16),
-        onTap: () => Navigator.of(context).push(
-          MaterialPageRoute(builder: (_) => GroupDetailScreen(group: group)),
-        ),
+        onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => EventDetailScreen(event: event))),
         child: Padding(
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
+          padding: const EdgeInsets.all(14),
+          child: Row(
             children: [
-              ContentText(group.name,
-                  style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 16, color: AppColors.ink)),
-              if (group.description != null) ...[
-                const SizedBox(height: 6),
-                ContentText(
-                  group.description!,
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                  style: const TextStyle(color: AppColors.ink, fontSize: 14),
-                ),
-              ],
-              const SizedBox(height: 10),
-              Row(
-                children: [
-                  if (group.locationLabel != null) ...[
-                    Icon(Icons.place_outlined, size: 16, color: AppColors.bronze),
-                    const SizedBox(width: 4),
-                    Expanded(
-                      child: ContentText(
-                        group.locationLabel!,
-                        overflow: TextOverflow.ellipsis,
-                        style: TextStyle(color: AppColors.secondaryInk, fontSize: 13),
-                      ),
+              DateBlock(date: date, approximate: event.showsApproximateDate),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Eyebrow(l10n.communityZawiyaEventEyebrow),
+                    ContentText(event.title,
+                        style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w600, color: AppColors.ink)),
+                    ContentText(
+                      alignToContent: true,
+                      [if (event.zawiyaName != null) event.zawiyaName!, formatKhadaraEventSchedule(event, l10n)]
+                          .join(' · '),
+                      style: TextStyle(fontSize: 12.5, color: AppColors.secondaryInk),
                     ),
-                  ] else
-                    const Spacer(),
-                  Icon(Icons.people_alt_outlined, size: 16, color: AppColors.bronze),
-                  const SizedBox(width: 4),
-                  ContentText('${group.memberCount}', style: TextStyle(color: AppColors.secondaryInk, fontSize: 13)),
-                ],
+                  ],
+                ),
               ),
             ],
           ),
@@ -378,11 +503,20 @@ class _PostCardState extends ConsumerState<_PostCard> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final post = widget.post;
-    final fallbackAuthor = widget.fallbackAuthor;
+    final author = post.authorLabel(widget.fallbackAuthor, deletedAccount: l10n.communityDeletedAccountAuthor);
+    // Avatar à l'initiale du nom seul (pas de « · zawiya »).
+    final avatarName = post.authorUserId == null
+        ? l10n.communityDeletedAccountAuthor
+        : (post.authorDisplayName ?? widget.fallbackAuthor);
+    // Refonte du 2026-11-02 (maquette `ecran-communaute.html`) : avatar,
+    // « disciple · zawiya », date relative, image pleine largeur. Signaler et
+    // bloquer restent dans le détail de la publication.
     return Card(
+      margin: const EdgeInsets.only(bottom: 12),
+      clipBehavior: Clip.antiAlias,
       child: InkWell(
-        borderRadius: BorderRadius.circular(16),
         // Le détail reçoit l'état courant du « j'aime » (pas celui du dernier
         // chargement), et le fil est rechargé au retour : les deux écrans
         // pouvaient se contredire, puis échouer en silence au tap suivant.
@@ -408,50 +542,54 @@ class _PostCardState extends ConsumerState<_PostCard> {
           );
           if (mounted) ref.invalidate(communityFeedProvider);
         },
-        child: Padding(
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              Row(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Padding(
+              padding: const EdgeInsets.fromLTRB(14, 14, 14, 0),
+              child: Row(
                 children: [
+                  CommunityAvatar(name: avatarName),
+                  const SizedBox(width: 10),
                   Expanded(
-                    child: ContentText(
-                      post.authorLabel(fallbackAuthor,
-                          deletedAccount: AppLocalizations.of(context)!.communityDeletedAccountAuthor),
-                      style: const TextStyle(fontWeight: FontWeight.w600, color: AppColors.ink),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        ContentText(author,
+                            style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600, color: AppColors.ink)),
+                        Text(formatCommunityRelative(post.createdAt, l10n),
+                            style: TextStyle(color: AppColors.secondaryInk, fontSize: 12)),
+                      ],
                     ),
                   ),
-                  ContentText(formatCommunityDateTime(post.createdAt),
-                      style: TextStyle(color: AppColors.secondaryInk, fontSize: 11)),
                 ],
               ),
-              const SizedBox(height: 8),
-              ContentText(
+            ),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(14, 10, 14, 0),
+              child: ContentText(
                 post.contentText,
                 maxLines: 4,
                 overflow: TextOverflow.ellipsis,
-                style: const TextStyle(color: AppColors.ink, fontSize: 15),
+                style: const TextStyle(color: AppColors.ink, fontSize: 15, height: 1.45),
               ),
-              if (post.mediaUrl != null) ...[
-                const SizedBox(height: 10),
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(12),
-                  child: Image.network(
-                    post.mediaUrl!,
-                    // Pas de hauteur fixe — même choix que le bandeau de
-                    // couverture Khadara (event_detail_screen.dart) : une
-                    // hauteur fixe coupe la photo selon son orientation.
-                    width: double.infinity,
-                    // cacheWidth : voir la même note dans event_detail_screen.dart.
-                    cacheWidth: (MediaQuery.of(context).size.width * MediaQuery.of(context).devicePixelRatio).round(),
-                    fit: BoxFit.fitWidth,
-                    errorBuilder: (context, error, stackTrace) => const SizedBox.shrink(),
-                  ),
+            ),
+            if (post.mediaUrl != null)
+              Padding(
+                padding: const EdgeInsets.only(top: 10),
+                child: Image.network(
+                  post.mediaUrl!,
+                  // Pas de hauteur fixe : une hauteur fixe coupe la photo
+                  // selon son orientation. Pleine largeur de la carte.
+                  width: double.infinity,
+                  cacheWidth: (MediaQuery.of(context).size.width * MediaQuery.of(context).devicePixelRatio).round(),
+                  fit: BoxFit.fitWidth,
+                  errorBuilder: (context, error, stackTrace) => const SizedBox.shrink(),
                 ),
-              ],
-              const SizedBox(height: 10),
-              Row(
+              ),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(6, 2, 14, 2),
+              child: Row(
                 children: [
                   // InkWell propre à cette zone : intercepte le tap avant
                   // qu'il n'atteigne l'InkWell de la carte (qui ouvre le
@@ -459,12 +597,11 @@ class _PostCardState extends ConsumerState<_PostCard> {
                   Semantics(
                     button: true,
                     selected: _liked,
-                    label: AppLocalizations.of(context)!.a11yLike,
+                    label: l10n.a11yLike,
                     child: InkWell(
                       borderRadius: BorderRadius.circular(8),
                       onTap: _toggleLike,
-                      // 48 dp de haut (audit Communauté du 2026-10-26, P2-7) :
-                      // la zone faisait 26 dp.
+                      // 48 dp de haut (audit Communauté du 2026-10-26, P2-7).
                       child: ConstrainedBox(
                         constraints: const BoxConstraints(minHeight: 48, minWidth: 48),
                         child: Padding(
@@ -484,14 +621,14 @@ class _PostCardState extends ConsumerState<_PostCard> {
                       ),
                     ),
                   ),
-                  const SizedBox(width: 16),
+                  const SizedBox(width: 12),
                   Icon(Icons.mode_comment_outlined, color: AppColors.bronze, size: 18),
                   const SizedBox(width: 4),
                   ContentText('${post.commentCount}', style: TextStyle(color: AppColors.secondaryInk, fontSize: 13)),
                 ],
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );

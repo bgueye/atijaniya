@@ -20,7 +20,7 @@ void main() {
     await tester.pumpWidget(wrapCommunaute(const Scaffold(body: CommunauteScreen()), community: repo));
     await tester.pumpAndSettle();
 
-    await tester.tap(find.byType(FloatingActionButton).first);
+    await tester.tap(find.text('Partager avec la communauté…'));
     await tester.pumpAndSettle();
     await tester.enterText(find.byType(TextFormField), 'Ma nouvelle');
     await tester.tap(find.widgetWithText(ElevatedButton, 'Publier'));
@@ -37,7 +37,7 @@ void main() {
     await tester.pumpWidget(wrapCommunaute(const Scaffold(body: CommunauteScreen()), community: repo));
     await tester.pumpAndSettle();
 
-    await tester.tap(find.byType(FloatingActionButton).first);
+    await tester.tap(find.text('Partager avec la communauté…'));
     await tester.pumpAndSettle();
     await tester.enterText(find.byType(TextFormField), 'Ma nouvelle');
     await tester.tap(find.widgetWithText(ElevatedButton, 'Publier'));
@@ -57,7 +57,7 @@ void main() {
 
     await tester.tap(find.text('المجموعات'));
     await tester.pumpAndSettle();
-    await tester.tap(find.byType(FloatingActionButton).last);
+    await tester.tap(find.text('إنشاء'));
     await tester.pumpAndSettle();
     await tester.enterText(find.byType(TextFormField).first, 'Groupe');
     await tester.tap(find.byType(ElevatedButton));

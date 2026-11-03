@@ -7489,6 +7489,186 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'Taille du texte'**
   String get figureTextSize;
+
+  /// No description provided for @communityViewMessages.
+  ///
+  /// In fr, this message translates to:
+  /// **'Messages'**
+  String get communityViewMessages;
+
+  /// No description provided for @communityMessagesUnread.
+  ///
+  /// In fr, this message translates to:
+  /// **'{count, plural, =1{1 conversation non lue} other{{count} conversations non lues}}'**
+  String communityMessagesUnread(int count);
+
+  /// No description provided for @communityScopeAll.
+  ///
+  /// In fr, this message translates to:
+  /// **'Toute la communauté'**
+  String get communityScopeAll;
+
+  /// No description provided for @communityScopeMine.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ma zawiya · {name}'**
+  String communityScopeMine(String name);
+
+  /// No description provided for @communityComposerHint.
+  ///
+  /// In fr, this message translates to:
+  /// **'Partager avec la communauté…'**
+  String get communityComposerHint;
+
+  /// No description provided for @communityComposerPhoto.
+  ///
+  /// In fr, this message translates to:
+  /// **'Publier une photo'**
+  String get communityComposerPhoto;
+
+  /// No description provided for @communityUnlockEyebrow.
+  ///
+  /// In fr, this message translates to:
+  /// **'Pour publier'**
+  String get communityUnlockEyebrow;
+
+  /// No description provided for @communityUnlockTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Rattachez votre profil à votre zawiya'**
+  String get communityUnlockTitle;
+
+  /// No description provided for @communityUnlockBody.
+  ///
+  /// In fr, this message translates to:
+  /// **'Les publications sont réservées aux disciples rattachés à une zawiya. Vous pouvez déjà aimer, commenter et rejoindre des groupes.'**
+  String get communityUnlockBody;
+
+  /// No description provided for @communityUnlockAction.
+  ///
+  /// In fr, this message translates to:
+  /// **'Choisir ma zawiya'**
+  String get communityUnlockAction;
+
+  /// No description provided for @communityGuestTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Connectez-vous pour participer'**
+  String get communityGuestTitle;
+
+  /// No description provided for @communityGuestBody.
+  ///
+  /// In fr, this message translates to:
+  /// **'Avec un compte, vous pouvez aimer, commenter et rejoindre des groupes ; une fois rattaché à une zawiya, vous pouvez aussi publier.'**
+  String get communityGuestBody;
+
+  /// No description provided for @communityGuestAction.
+  ///
+  /// In fr, this message translates to:
+  /// **'Se connecter'**
+  String get communityGuestAction;
+
+  /// No description provided for @communityZawiyaEventEyebrow.
+  ///
+  /// In fr, this message translates to:
+  /// **'Rendez-vous de votre zawiya'**
+  String get communityZawiyaEventEyebrow;
+
+  /// No description provided for @communityFeedScopeEmpty.
+  ///
+  /// In fr, this message translates to:
+  /// **'Aucune publication de votre zawiya pour le moment.'**
+  String get communityFeedScopeEmpty;
+
+  /// No description provided for @communityFindDisciplesBody.
+  ///
+  /// In fr, this message translates to:
+  /// **'Les disciples de votre moqaddam qui l\'ont accepté. Privé : rien n\'est visible sans votre accord.'**
+  String get communityFindDisciplesBody;
+
+  /// No description provided for @communityFindDisciplesOpen.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ouvrir'**
+  String get communityFindDisciplesOpen;
+
+  /// No description provided for @communityGroupsMine.
+  ///
+  /// In fr, this message translates to:
+  /// **'Groupes de ma zawiya'**
+  String get communityGroupsMine;
+
+  /// No description provided for @communityGroupsOthers.
+  ///
+  /// In fr, this message translates to:
+  /// **'Autres groupes'**
+  String get communityGroupsOthers;
+
+  /// No description provided for @communityGroupsCreateShort.
+  ///
+  /// In fr, this message translates to:
+  /// **'Créer'**
+  String get communityGroupsCreateShort;
+
+  /// No description provided for @communityGroupJoinShort.
+  ///
+  /// In fr, this message translates to:
+  /// **'Rejoindre'**
+  String get communityGroupJoinShort;
+
+  /// No description provided for @communityGroupMemberShort.
+  ///
+  /// In fr, this message translates to:
+  /// **'Membre'**
+  String get communityGroupMemberShort;
+
+  /// No description provided for @communityGroupMembers.
+  ///
+  /// In fr, this message translates to:
+  /// **'{count, plural, =1{1 membre} other{{count} membres}}'**
+  String communityGroupMembers(int count);
+
+  /// No description provided for @communityConversationsHelp.
+  ///
+  /// In fr, this message translates to:
+  /// **'Une conversation ne s\'ouvre qu\'avec un disciple qui partage un groupe avec vous et l\'accepte dans « Qui peut vous contacter ». Pour lui écrire, ouvrez l\'une de ses publications.'**
+  String get communityConversationsHelp;
+
+  /// No description provided for @communityMessagesGuest.
+  ///
+  /// In fr, this message translates to:
+  /// **'Connectez-vous pour retrouver vos conversations privées.'**
+  String get communityMessagesGuest;
+
+  /// No description provided for @communityTimeNow.
+  ///
+  /// In fr, this message translates to:
+  /// **'à l\'instant'**
+  String get communityTimeNow;
+
+  /// No description provided for @communityTimeMinutes.
+  ///
+  /// In fr, this message translates to:
+  /// **'il y a {count} min'**
+  String communityTimeMinutes(int count);
+
+  /// No description provided for @communityTimeHours.
+  ///
+  /// In fr, this message translates to:
+  /// **'il y a {count} h'**
+  String communityTimeHours(int count);
+
+  /// No description provided for @communityTimeYesterday.
+  ///
+  /// In fr, this message translates to:
+  /// **'hier'**
+  String get communityTimeYesterday;
+
+  /// No description provided for @communityTimeDays.
+  ///
+  /// In fr, this message translates to:
+  /// **'il y a {count} j'**
+  String communityTimeDays(int count);
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

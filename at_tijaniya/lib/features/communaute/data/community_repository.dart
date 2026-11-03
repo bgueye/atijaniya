@@ -34,7 +34,11 @@ class CommunityRepository {
   /// la fonction `post_counts` : l'app chargeait toutes les lignes de
   /// `post_likes` et `post_comments` pour les compter, et les compteurs
   /// devenaient faux au-delà du plafond de 1 000 lignes de PostgREST.
-  Future<List<CommunityPost>> fetchFeed({required int limit}) async {
+  ///
+  /// [zawiyaId] : seulement les publications des disciples de cette zawiya
+  /// (filtre « Ma zawiya » de la Communauté, refonte du 2026-11-02), appliqué
+  /// par la requête pour que « Voir plus » compte bien [limit] publications.
+  Future<List<CommunityPost>> fetchFeed({required int limit, String? zawiyaId}) async {
     // .eq('content_status', 'valide') en plus de la RLS : même défense en
     // profondeur que FiguresRepository.fetchFigures() — un compte admin ne
     // doit jamais voir un brouillon dans le fil public.
@@ -55,6 +59,7 @@ class CommunityRepository {
     if (blockedIds.isNotEmpty) {
       query = query.or('author_user_id.is.null,author_user_id.not.in.(${blockedIds.join(',')})');
     }
+    if (zawiyaId != null) query = query.eq('author_zawiya_id', zawiyaId);
     final postRows = await query.order('created_at', ascending: false).range(0, limit - 1);
 
     final postIds = postRows.map((row) => row['id'] as String).toList();

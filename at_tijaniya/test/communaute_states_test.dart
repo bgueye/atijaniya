@@ -26,12 +26,14 @@ void main() {
     expect(find.text('Salam à tous'), findsOneWidget);
   });
 
-  testWidgets('fil vide : invitation à publier, le bouton ouvre la feuille', (tester) async {
+  testWidgets('fil vide : invitation à publier, le champ du haut ouvre la feuille', (tester) async {
     await tester.pumpWidget(wrapCommunaute(const Scaffold(body: CommunauteScreen())));
     await tester.pumpAndSettle();
     expect(find.textContaining('Soyez le premier à partager'), findsOneWidget);
 
-    await tester.tap(find.widgetWithText(FilledButton, 'Publier'));
+    // Depuis la refonte du 2026-11-02, le champ « Partager avec la
+    // communauté… » remplace le bouton de l'état vide et le bouton flottant.
+    await tester.tap(find.text('Partager avec la communauté…'));
     await tester.pumpAndSettle();
     expect(find.text('Nouvelle publication'), findsOneWidget);
   });

@@ -3945,4 +3945,122 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get figureTextSize => 'Taille du texte';
+
+  @override
+  String get communityViewMessages => 'Messages';
+
+  @override
+  String communityMessagesUnread(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count conversations non lues',
+      one: '1 conversation non lue',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get communityScopeAll => 'Toute la communauté';
+
+  @override
+  String communityScopeMine(String name) {
+    return 'Ma zawiya · $name';
+  }
+
+  @override
+  String get communityComposerHint => 'Partager avec la communauté…';
+
+  @override
+  String get communityComposerPhoto => 'Publier une photo';
+
+  @override
+  String get communityUnlockEyebrow => 'Pour publier';
+
+  @override
+  String get communityUnlockTitle => 'Rattachez votre profil à votre zawiya';
+
+  @override
+  String get communityUnlockBody =>
+      'Les publications sont réservées aux disciples rattachés à une zawiya. Vous pouvez déjà aimer, commenter et rejoindre des groupes.';
+
+  @override
+  String get communityUnlockAction => 'Choisir ma zawiya';
+
+  @override
+  String get communityGuestTitle => 'Connectez-vous pour participer';
+
+  @override
+  String get communityGuestBody =>
+      'Avec un compte, vous pouvez aimer, commenter et rejoindre des groupes ; une fois rattaché à une zawiya, vous pouvez aussi publier.';
+
+  @override
+  String get communityGuestAction => 'Se connecter';
+
+  @override
+  String get communityZawiyaEventEyebrow => 'Rendez-vous de votre zawiya';
+
+  @override
+  String get communityFeedScopeEmpty => 'Aucune publication de votre zawiya pour le moment.';
+
+  @override
+  String get communityFindDisciplesBody =>
+      'Les disciples de votre moqaddam qui l\'ont accepté. Privé : rien n\'est visible sans votre accord.';
+
+  @override
+  String get communityFindDisciplesOpen => 'Ouvrir';
+
+  @override
+  String get communityGroupsMine => 'Groupes de ma zawiya';
+
+  @override
+  String get communityGroupsOthers => 'Autres groupes';
+
+  @override
+  String get communityGroupsCreateShort => 'Créer';
+
+  @override
+  String get communityGroupJoinShort => 'Rejoindre';
+
+  @override
+  String get communityGroupMemberShort => 'Membre';
+
+  @override
+  String communityGroupMembers(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count membres',
+      one: '1 membre',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get communityConversationsHelp =>
+      'Une conversation ne s\'ouvre qu\'avec un disciple qui partage un groupe avec vous et l\'accepte dans « Qui peut vous contacter ». Pour lui écrire, ouvrez l\'une de ses publications.';
+
+  @override
+  String get communityMessagesGuest => 'Connectez-vous pour retrouver vos conversations privées.';
+
+  @override
+  String get communityTimeNow => 'à l\'instant';
+
+  @override
+  String communityTimeMinutes(int count) {
+    return 'il y a $count min';
+  }
+
+  @override
+  String communityTimeHours(int count) {
+    return 'il y a $count h';
+  }
+
+  @override
+  String get communityTimeYesterday => 'hier';
+
+  @override
+  String communityTimeDays(int count) {
+    return 'il y a $count j';
+  }
 }

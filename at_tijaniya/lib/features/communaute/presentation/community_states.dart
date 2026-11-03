@@ -62,27 +62,31 @@ class _CenteredState extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final content = Padding(
+      padding: const EdgeInsets.all(24),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(icon, color: AppColors.bronze, size: 32),
+          const SizedBox(height: 12),
+          Text(message, textAlign: TextAlign.center, style: TextStyle(color: AppColors.secondaryInk)),
+          if (action != null) ...[const SizedBox(height: 16), action!],
+        ],
+      ),
+    );
     return LayoutBuilder(
-      builder: (context, constraints) => SingleChildScrollView(
-        physics: const AlwaysScrollableScrollPhysics(),
-        child: ConstrainedBox(
-          constraints: BoxConstraints(minHeight: constraints.maxHeight),
-          child: Center(
-            child: Padding(
-              padding: const EdgeInsets.all(24),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Icon(icon, color: AppColors.bronze, size: 32),
-                  const SizedBox(height: 12),
-                  Text(message, textAlign: TextAlign.center, style: TextStyle(color: AppColors.secondaryInk)),
-                  if (action != null) ...[const SizedBox(height: 16), action!],
-                ],
+      // Dans une liste (sous l'en-tête du fil ou la carte des condisciples,
+      // refonte du 2026-11-02), la hauteur est illimitée : l'état s'y place
+      // simplement à la suite, la liste défile déjà.
+      builder: (context, constraints) => !constraints.hasBoundedHeight
+          ? Center(child: content)
+          : SingleChildScrollView(
+              physics: const AlwaysScrollableScrollPhysics(),
+              child: ConstrainedBox(
+                constraints: BoxConstraints(minHeight: constraints.maxHeight),
+                child: Center(child: content),
               ),
             ),
-          ),
-        ),
-      ),
     );
   }
 }

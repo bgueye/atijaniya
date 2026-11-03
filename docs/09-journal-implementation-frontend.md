@@ -4070,3 +4070,93 @@ Les tests existants sont adaptés aux changements voulus (onglets renommés, nom
 en capitales, intertitres en casse de phrase, couleur du foyer, libellé « Adresse » devenu
 sémantique). `flutter analyze` ne signale rien, et 660 tests passent (captures ignorées sans
 polices). **Pas encore validé sur téléphone.**
+
+## Refonte de la Communauté (2026-11-02)
+
+Demande du porteur de projet : refaire l'onglet Communauté d'après sa maquette de référence
+`docs/maquettes/ecran-communaute.html`, avec les décisions validées le 2026-11-01 et le kit.
+Écarts listés puis validés avant de coder, dont deux écarts à la maquette :
+- **pas de « dernière activité » ni d'avatars des membres sur un groupe** : la RLS
+  (`group_posts_members_read`) réserve les messages d'un groupe à ses membres, l'app ne peut
+  donc pas dire quand un groupe non rejoint a été actif ;
+- **pas de « + Nouveau » dans les Messages** : une conversation s'ouvre depuis un disciple
+  rencontré (publication, groupe) par `start_conversation`. Une liste des disciples joignables
+  ressemblerait à un annuaire.
+
+**Structure** (`communaute_screen.dart`, réécrit)
+- Fil, Groupes et Messages au même niveau dans le `SegmentedSwitch` du kit, avec le nombre de
+  conversations non lues sur Messages. Plus d'icône de messagerie ni de boutons flottants.
+- `IndexedStack` : chaque vue garde sa position de défilement.
+
+**Fil**
+- Disciple rattaché : filtre « Toute la communauté · Ma zawiya · Tivaouane », puis le champ
+  « Partager avec la communauté… » et une icône photo. Les deux ouvrent la feuille de
+  publication existante ; l'icône ouvre aussitôt le choix de la photo (`pickPhotoOnOpen`).
+- Filtre « Ma zawiya » appliqué par la requête (`fetchFeed(zawiyaId:)`), pour que « Voir
+  plus » compte bien une page ; masqué sans zawiya (`myCommunityZawiyaProvider`,
+  `communityFeedMineOnlyProvider`).
+- Disciple sans zawiya : carte « Pour publier · Rattachez votre profil à votre zawiya », qui dit
+  la règle et ce qu'il peut déjà faire. « Choisir ma zawiya » ouvre le réglage du Profil. Elle
+  remplace le refus après coup en bas de l'écran ; la règle ne change pas. Sans compte, même
+  carte avec « Se connecter ». Profil en chargement ou en échec : ni l'un ni l'autre, pour ne
+  pas dire « rattachez-vous » à tort.
+- Rendez-vous publics de la zawiya du disciple intercalés : au plus un toutes les trois
+  publications, le premier après la première publication ; fil vide, les rendez-vous seuls.
+  Carte or doux, bloc date, « Rendez-vous de votre zawiya », qui ouvre l'évènement.
+- Publication : avatar à l'initiale (`CommunityAvatar`, teinte stable par nom), « disciple ·
+  zawiya », date relative (`formatCommunityRelative` : heures sous 24 h, puis « hier », jours,
+  date), image pleine largeur. Signaler et bloquer restent dans le détail.
+
+**Groupes** (`community_groups_view.dart`, nouveau)
+- En tête, « Retrouver mes condisciples » avec « Privé : rien n'est visible sans votre
+  accord ». La carte n'affiche aucune donnée de lignée. Au toucher, elle ouvre le parcours
+  existant, ou la saisie de la lignée si elle manque, ou la connexion sans compte.
+- « Groupes de ma zawiya » d'abord, puis « Autres groupes » ; « Créer » dans l'en-tête de
+  section. Chaque groupe : pastille à l'initiale, « zawiya ou région · N membres »,
+  description sur une ligne, « Rejoindre » (même appel que la fiche) ou « Membre ».
+
+**Messages**
+- `ConversationsList`, partagée avec `ConversationsScreen`, qui reste disponible. Avatar,
+  dernier message, date relative, non-lus en pastille. Le rappel des règles d'ouverture d'une
+  conversation est affiché sous la liste. Sans compte : invitation à se connecter.
+
+**Écart assumé** : la maquette met la carte « Pour publier » en zaytoune. CLAUDE.md réserve ce
+vert à la pratique et à l'accueil, et ses règles priment : la carte est or doux, comme la carte
+du fondateur sur la fiche d'une zawiya.
+
+**Correction du kit** : les segments de `SegmentedSwitch` ne faisaient que 42 dp de zone
+tactile, relevé par le test d'accessibilité du fil. La gouttière verticale est désormais dans
+le segment (48 dp), avec un seul nœud pour le lecteur d'écran. Le rendu est identique, et la
+correction profite aussi aux pages des foyers de l'onglet Figures.
+
+**Autres corrections** :
+- les états vides et d'erreur de la Communauté (`community_states.dart`) se placent à la suite
+  dans une liste, où la hauteur est illimitée ;
+- le contrôle statique des `SafeArea` accepte `const SafeArea(...)`.
+
+**Captures** : `test/communaute_captures_test.dart` produit, en français et en arabe :
+- le fil d'un disciple rattaché, puis avec « Ma zawiya » ;
+- le fil sans zawiya ;
+- les Groupes, avec et sans zawiya ;
+- les Messages.
+
+Les publications, groupes et conversations sont les exemples de la maquette, qui les dit
+inventés. Les captures ont été comparées à la maquette. Corrigés grâce aux captures :
+- les couleurs des cartes, alignées sur la maquette ;
+- « hier » pour une publication de 2 h avant minuit ;
+- « منذ 2 يوم » remplacé par les formes du pluriel arabe ;
+- les textes français rangés à droite en arabe.
+
+**Tests** : `test/communaute_redesign_test.dart` est nouveau. Il couvre :
+- le filtre « Ma zawiya » côté serveur ;
+- l'intercalage des rendez-vous ;
+- aucun rendez-vous sans zawiya ;
+- l'ordre des groupes et « Rejoindre » ;
+- la carte des condisciples (aucune donnée affichée, bon parcours selon la lignée) ;
+- les Messages sans compte ;
+- la date relative.
+
+Les tests de la Communauté visaient le bouton flottant, les onglets et l'icône des messages ;
+ils sont adaptés au champ de publication, au segment Messages et à la carte de rattachement.
+`flutter analyze` ne signale rien et les 669 tests passent (captures ignorées sans polices).
+**Pas encore validé sur téléphone.**

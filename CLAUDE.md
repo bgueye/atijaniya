@@ -120,6 +120,12 @@ plein cadre ou en-tête typographique, chiffres-clés, sommaire et « Aa » de l
 silsila jusqu'au Cheikh), zawiya (fondateur, succession avec le khalife actuel, figures liées,
 en lecture seule) et évènement (la date d'abord, lieu cliquable, note de date, direct à place
 fixe). Pas d'année de naissance, y compris sur la fiche d'une figure.
+**Communauté refaite le 2026-11-02** (maquette `ecran-communaute.html`) : Fil, Groupes et
+Messages dans un `SegmentedSwitch` ; champ de publication en haut du fil, ou carte de
+rattachement à une zawiya (règle de publication inchangée) ; filtre « Ma zawiya » côté serveur ;
+rendez-vous publics de la zawiya intercalés (au plus un toutes les trois publications) ; carte
+« Retrouver mes condisciples » en tête des Groupes, sans aucune donnée de lignée. Pas de
+« dernière activité » des groupes (RLS) ni de « + Nouveau » message (pas d'annuaire).
 **Profil refait le 2026-11-02** (maquette `ecran-profil.html`) : carte d'identité, « Ma pratique »
 (chiffres du téléphone, masquables), « Mon chemin spirituel » et « Confidentialité » qui
 disent l'état de chaque élément sans jamais son contenu, « Application » (langue, contraste,
