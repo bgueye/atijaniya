@@ -13,10 +13,14 @@ import '../../../l10n/app_localizations.dart';
 import '../domain/wird_repair_models.dart';
 import 'wird_repair_styles.dart';
 
-/// Choix du wird : trois onglets à parts égales, soulignés d'un filet d'or
-/// quand ils sont choisis. Plutôt qu'un `SegmentedButton`, dont les segments
-/// tronquaient « Hadratou-l-Jouma » sur un téléphone étroit : ici le nom peut
-/// passer sur deux lignes.
+/// Choix du wird : trois segments à parts égales, à l'apparence du
+/// `SegmentedSwitch` du kit (gouttière bronze à 12 %, segment choisi en
+/// blanc cassé ; mise au thème du kit, 2026-11-04).
+///
+/// Pas le composant lui-même : il coupe son libellé à une ligne, et c'est
+/// précisément parce qu'un `SegmentedButton` tronquait « Hadratou-l-Jouma »
+/// sur un téléphone étroit que ces onglets existent. Ici le nom peut passer
+/// sur deux lignes.
 ///
 /// Sous le nom, l'autre langue en petit (nom arabe dans l'app en français, nom
 /// français dans l'app en arabe) : la charte présente un wird par ses deux
@@ -30,62 +34,78 @@ class RepairWirdTabs extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isArabic = repairIsArabic(context);
-    return DecoratedBox(
+    return Container(
+      padding: const EdgeInsets.all(3),
       decoration: BoxDecoration(
-        border: Border(bottom: BorderSide(color: AppColors.bronze.withValues(alpha: 0.25))),
+        color: AppColors.bronze.withValues(alpha: 0.12),
+        borderRadius: BorderRadius.circular(12),
       ),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          for (final wird in const [RepairWird.lazim, RepairWird.wazifa, RepairWird.hadra])
-            Expanded(child: _tab(context, wird, isArabic)),
-        ],
+      // `IntrinsicHeight` + `stretch` : les trois segments ont la même
+      // hauteur, même quand un seul nom passe sur deux lignes.
+      child: IntrinsicHeight(
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            for (final wird in const [RepairWird.lazim, RepairWird.wazifa, RepairWird.hadra])
+              Expanded(child: _tab(context, wird, isArabic)),
+          ],
+        ),
       ),
     );
   }
 
   Widget _tab(BuildContext context, RepairWird wird, bool isArabic) {
     final isSelected = wird == selected;
-    final color = isSelected ? AppColors.emerald : AppColors.ink.withValues(alpha: 0.7);
+    // Encre sur le segment choisi, encre secondaire sur les autres, comme le
+    // `SegmentedSwitch` du kit.
+    final color = isSelected ? AppColors.ink : AppColors.secondaryInk;
     final validated = repairValidatedWird(wird);
     final other = isArabic ? validated.nameFrench : validated.nameArabic;
     return Semantics(
       selected: isSelected,
       button: true,
-      child: InkWell(
-        onTap: () => onSelected(wird),
-        child: AnimatedContainer(
-          duration: const Duration(milliseconds: 180),
-          constraints: const BoxConstraints(minHeight: 56),
-          padding: const EdgeInsets.fromLTRB(4, 10, 4, 8),
-          decoration: BoxDecoration(
-            border: Border(
-              bottom: BorderSide(color: isSelected ? AppColors.gold : Colors.transparent, width: 2.5),
+      child: Material(
+        color: isSelected ? AppColors.offWhite : Colors.transparent,
+        borderRadius: BorderRadius.circular(10),
+        // Même ombre très légère que le segment actif du kit.
+        elevation: isSelected ? 0.6 : 0,
+        shadowColor: AppColors.ink.withValues(alpha: 0.3),
+        child: InkWell(
+          onTap: () => onSelected(wird),
+          borderRadius: BorderRadius.circular(10),
+          child: ConstrainedBox(
+            // 50 visibles + 3 de gouttière de part et d'autre : plus que les
+            // 48 dp d'une cible tactile.
+            constraints: const BoxConstraints(minHeight: 50),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 6),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    repairWirdName(context, wird),
+                    textAlign: TextAlign.center,
+                    maxLines: 2,
+                    style: isArabic
+                        ? AppTheme.sacredText(fontSize: 17, color: color)
+                            .copyWith(height: 1.3, fontWeight: isSelected ? FontWeight.w700 : FontWeight.w400)
+                        : TextStyle(
+                            fontSize: 14, color: color, fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400),
+                  ),
+                  const SizedBox(height: 2),
+                  // Le nom dans l'autre langue, en petit : repère, pas libellé.
+                  ContentText(
+                    other,
+                    textAlign: TextAlign.center,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: isArabic
+                        ? TextStyle(fontSize: 12, color: color)
+                        : AppTheme.sacredText(fontSize: 14, color: color).copyWith(height: 1.4),
+                  ),
+                ],
+              ),
             ),
-          ),
-          child: Column(
-            children: [
-              Text(
-                repairWirdName(context, wird),
-                textAlign: TextAlign.center,
-                maxLines: 2,
-                style: isArabic
-                    ? AppTheme.sacredText(fontSize: 17, color: color)
-                        .copyWith(height: 1.3, fontWeight: isSelected ? FontWeight.w700 : FontWeight.w400)
-                    : TextStyle(fontSize: 15, color: color, fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400),
-              ),
-              const SizedBox(height: 2),
-              // Le nom dans l'autre langue, en petit : repère, pas libellé.
-              ContentText(
-                other,
-                textAlign: TextAlign.center,
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-                style: isArabic
-                    ? TextStyle(fontSize: 12, color: color)
-                    : AppTheme.sacredText(fontSize: 14, color: color).copyWith(height: 1.4),
-              ),
-            ],
           ),
         ),
       ),
@@ -318,19 +338,18 @@ class RepairWarningBand extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // L'arrondi vient du `ClipRRect` : une bordure qui n'a qu'un côté ne peut
-    // pas porter elle-même de `borderRadius`.
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(12),
-      child: DecoratedBox(
-        decoration: BoxDecoration(
-          color: AppColors.goldSoft,
-          border: BorderDirectional(start: BorderSide(color: AppColors.gold, width: 3)),
-        ),
-        child: Padding(
-          padding: const EdgeInsetsDirectional.fromSTEB(14, 12, 14, 12),
-          child: ContentText(text, style: repairContentStyle(repairIsArabic(context), size: 14.5)),
-        ),
+    // Fond or doux et filet d'or tout autour : le kit interdit la bordure
+    // colorée sur un seul côté (fiche Card ; mise au thème du kit,
+    // 2026-11-04). Texte en encre sur `gold_soft` (kit § Couleurs).
+    return DecoratedBox(
+      decoration: BoxDecoration(
+        color: AppColors.goldSoft,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: AppColors.gold.withValues(alpha: 0.6)),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(14),
+        child: ContentText(text, style: repairContentStyle(repairIsArabic(context), size: 14.5)),
       ),
     );
   }

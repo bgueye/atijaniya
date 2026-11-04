@@ -67,7 +67,8 @@ class _HistoryBody extends StatelessWidget {
     final hasHistory = stats.totalCompletions > 0;
 
     return ListView(
-      padding: const EdgeInsets.fromLTRB(24, 4, 24, 32),
+      // Gouttière `space-16` du kit (mise au thème du kit, 2026-11-04).
+      padding: const EdgeInsets.fromLTRB(16, 4, 16, 32),
       children: [
         _WirdName(wird: wird),
         const SizedBox(height: 16),
@@ -86,32 +87,46 @@ class _HistoryBody extends StatelessWidget {
               )
             : _EmptyHero(title: l10n.wirdHistoryEmptyTitle, hint: l10n.wirdHistoryEmptyHint),
         const SizedBox(height: 24),
-        weekly ? _FridayStrip(periods: stats.recentPeriods, today: stats.today) : _MonthGrid(stats: stats),
-        const SizedBox(height: 14),
-        const _Legend(),
+        // Calendrier et légende dans une carte du kit (blanc cassé, filet
+        // bronze à 20 %) : posés à même le parchemin, ils ne se détachaient
+        // pas du reste de l'écran (mise au thème du kit, 2026-11-04).
+        _KitCard(
+          child: Column(
+            children: [
+              weekly ? _FridayStrip(periods: stats.recentPeriods, today: stats.today) : _MonthGrid(stats: stats),
+              const SizedBox(height: 14),
+              const _Legend(),
+            ],
+          ),
+        ),
         if (hasHistory) ...[
-          const SizedBox(height: 20),
-          const _Hairline(),
-          const SizedBox(height: 16),
-          // Pas de pourcentage : "26 sur 30" dit la même chose sans donner
-          // une note à la pratique (décision du 2026-10-06).
-          _StatLine(
-            label: weekly ? l10n.wirdHistoryFridaysPractised : l10n.wirdHistoryDaysPractised,
-            value: l10n.wirdHistoryRatio(stats.completedInRateWindow, stats.ratePeriods),
-          ),
-          const SizedBox(height: 10),
-          _Meter(fraction: stats.completionRate),
-          const SizedBox(height: 16),
-          const _Hairline(),
-          const SizedBox(height: 16),
-          _StatLine(
-            label: weekly ? l10n.wirdHistoryTotalWeekly : l10n.wirdHistoryTotalDaily,
-            value: '${stats.totalCompletions}',
-          ),
-          const SizedBox(height: 4),
-          Text(
-            l10n.wirdHistorySince(MaterialLocalizations.of(context).formatShortDate(stats.firstCompletion!)),
-            style: const TextStyle(fontSize: 13, color: AppColors.ink),
+          const SizedBox(height: 12),
+          _KitCard(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Pas de pourcentage : "26 sur 30" dit la même chose sans
+                // donner une note à la pratique (décision du 2026-10-06).
+                _StatLine(
+                  label: weekly ? l10n.wirdHistoryFridaysPractised : l10n.wirdHistoryDaysPractised,
+                  value: l10n.wirdHistoryRatio(stats.completedInRateWindow, stats.ratePeriods),
+                ),
+                const SizedBox(height: 10),
+                _Meter(fraction: stats.completionRate),
+                const SizedBox(height: 14),
+                const _Hairline(),
+                const SizedBox(height: 14),
+                _StatLine(
+                  label: weekly ? l10n.wirdHistoryTotalWeekly : l10n.wirdHistoryTotalDaily,
+                  value: '${stats.totalCompletions}',
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  l10n.wirdHistorySince(MaterialLocalizations.of(context).formatShortDate(stats.firstCompletion!)),
+                  style: TextStyle(fontSize: 13, color: AppColors.secondaryInk),
+                ),
+              ],
+            ),
           ),
         ],
       ],
@@ -148,6 +163,23 @@ class _WirdName extends StatelessWidget {
   }
 }
 
+/// Carte du kit (`docs/kit/components/Card`) : le `Card` du thème, marge
+/// intérieure `space-14`, sans marge extérieure (les écarts sont posés par
+/// la liste).
+class _KitCard extends StatelessWidget {
+  const _KitCard({required this.child});
+
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      margin: EdgeInsets.zero,
+      child: Padding(padding: const EdgeInsets.all(14), child: child),
+    );
+  }
+}
+
 class _Hairline extends StatelessWidget {
   const _Hairline();
 
@@ -174,15 +206,15 @@ class _StreakHero extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            ContentText(
+            // Chiffre mis en avant du kit : Cormorant en émeraude, comme
+            // `StatTile`, en plus grand (le seul grand chiffre de l'écran).
+            // Chiffres alignés : les chiffres elzéviriens de Cormorant
+            // dessinent un « 1 » qui se lit « I » (audit du 2026-11-03).
+            Text(
               '$streak',
-              style: const TextStyle(
-                fontSize: 60,
-                height: 1.05,
-                fontWeight: FontWeight.w600,
-                color: AppColors.ink,
-                fontFeatures: _tabularFigures,
-              ),
+              textDirection: TextDirection.ltr,
+              style: AppTheme.titleText(fontSize: 64, color: AppColors.emerald, height: 1.0)
+                  .copyWith(fontFeatures: const [FontFeature.liningFigures(), FontFeature.tabularFigures()]),
             ),
             ContentText(label, style: const TextStyle(fontSize: 17, color: AppColors.ink)),
           ],
@@ -387,7 +419,9 @@ class _DayCell extends StatelessWidget {
             color: state == WirdPeriodState.done
                 ? AppColors.offWhite
                 : inactive
-                    ? AppColors.bronze.withValues(alpha: 0.6)
+                    // Encre secondaire et non bronze à 60 % : estompé, mais
+                    // encore lisible (kit § Couleurs).
+                    ? AppColors.secondaryInk
                     : AppColors.ink,
             fontFeatures: _tabularFigures,
           ),

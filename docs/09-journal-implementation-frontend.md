@@ -4593,3 +4593,42 @@ bandeau de la semaine sous 48 dp en largeur (elles ouvrent toutes l'historique),
 variante « visible » des pastilles d'état (choix de design), textes de la base sans version arabe
 (contenu). Décisions et contenus listés dans le rapport d'audit.
 
+
+## Mise au thème du kit : écrans secondaires du Wird (2026-11-04)
+
+Premier module des écrans sans maquette mis au thème du kit (`docs/kit/README.md`), dans l'ordre
+demandé par le porteur de projet : Wird secondaire, puis chemin spirituel, divers et
+administration. Les deux écrans audio réservés à l'admin (relecture et gestion des récitations)
+sont rangés avec l'administration. Aucun texte religieux ni aucune donnée ne change : seulement la
+présentation.
+
+- **Rappels d'un wird** : note du haut en `Notice.info` (elle était recopiée à la main) ; lignes de
+  rappel en `Card` du thème (filet bronze à 20 %) ; sous-titre « Chaque jour » en encre secondaire
+  (il était en bronze, sous le seuil AA) ; gouttière de 16.
+- **Historique** : gouttière de 16 ; série en cours en Cormorant émeraude (chiffres alignés), seul
+  grand chiffre de l'écran ; calendrier et légende dans une carte, puis les chiffres dans une
+  seconde ; jours à venir en encre secondaire au lieu du bronze à 60 %.
+- **Rattraper son wird** : erreur et contenu indisponible en `Notice` (« Réessayer » du kit) ;
+  « Quel wird ? » et « Que s'est-il passé ? » en `SectionTitle`, annoncés comme titres ; types de
+  situation en `FilterPill` du kit, avec leur nombre, en `Wrap` pour garder les cinq visibles (un
+  type sans cas reste affiché avec « 0 ») ; mise en garde en fond or doux avec un filet complet (le
+  kit interdit la bordure colorée sur un seul côté). **Écart assumé** : les onglets Lazim / Wazifa /
+  Hadra prennent l'apparence du `SegmentedSwitch` (gouttière bronze, segment choisi en blanc cassé)
+  sans être ce composant, qui coupe son libellé à une ligne : c'est parce qu'un segment tronquait
+  « Hadratou-l-Jouma » que ces onglets existent, et ils montrent aussi le nom dans l'autre langue.
+- **Conditions de la Tariqa** : erreur et état vide en `Notice` (ils étaient en bronze) ; titres de
+  catégorie en `SectionTitle` ; numéro en encre sur or doux ; source en encre secondaire, jamais en
+  italique quand elle est en arabe ; écart de 12 entre cartes. Premier test de l'écran
+  (`tariqa_conditions_screen_test.dart`), qui échoue sur l'ancienne version.
+- **Bienfaits** : erreur et contenu indisponible en `Notice` ; encadré « condition » en filet
+  complet. Les citations gardent leur filet d'or latéral, marque d'une citation et non d'une carte.
+- **Commun** : bandeau « brouillon » de l'admin sorti en `DraftBanner`
+  (`lib/core/widgets/draft_banner.dart`), qui remplace les deux copies identiques du rattrapage et
+  des Bienfaits. Celle de « Comprendre la Zawiya », en texte bronze, reste à reprendre avec son
+  module.
+
+Captures FR/AR avec les vraies polices : `test/wird_secondary_captures_test.dart` (ignoré sans
+`KIT_FONTS_DIR`/`KIT_CAPTURES_DIR`). La capture des Bienfaits demande en plus la police
+`CormorantGaramond_500italic`, absente du dossier de polices utilisé : l'image est écrite, mais le
+test signale la police manquante. `wird_repair_screen_test` adapté aux pastilles du kit.
+`flutter analyze` ne signale rien et les 765 tests passent. Pas encore validé sur téléphone.

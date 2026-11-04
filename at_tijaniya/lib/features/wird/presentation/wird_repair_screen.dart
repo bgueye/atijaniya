@@ -3,6 +3,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/theme/app_colors.dart';
 import '../../../core/widgets/content_text.dart';
+import '../../../core/widgets/draft_banner.dart';
+import '../../../core/widgets/notice.dart';
+import '../../../core/widgets/section_title.dart';
 import '../../../l10n/app_localizations.dart';
 import '../domain/wird_repair_models.dart';
 import 'wird_repair_cases.dart';
@@ -73,22 +76,22 @@ class _WirdRepairScreenState extends ConsumerState<WirdRepairScreen> {
       body: SafeArea(
         child: contentAsync.when(
           loading: () => Center(child: CircularProgressIndicator(color: AppColors.emerald)),
-          error: (error, stackTrace) => _Message(
-            icon: Icons.wifi_off,
-            text: l10n.wirdRepairLoadError,
-            action: OutlinedButton(
-              onPressed: () => ref.invalidate(wirdRepairContentProvider),
-              child: Text(l10n.wirdRepairRetry),
-            ),
+          // États du kit (`Notice`, mise au thème du kit, 2026-11-04) : hors
+          // ligne ou erreur, avec « Réessayer ».
+          error: (error, stackTrace) => _NoticeBody(
+            Notice.fromError(error,
+                message: l10n.wirdRepairLoadError, onRetry: () => ref.invalidate(wirdRepairContentProvider)),
           ),
           data: (content) {
             // Arrivé ici sans contenu (lien ouvert juste avant une dépublication,
             // par exemple) : on le dit, sans rien inventer.
-            if (content.isEmpty) return _Message(icon: Icons.hourglass_empty, text: l10n.wirdRepairUnavailable);
+            if (content.isEmpty) {
+              return _NoticeBody(Notice.info(l10n.wirdRepairUnavailable, icon: Icons.hourglass_empty));
+            }
             return ListView(
               padding: const EdgeInsets.fromLTRB(16, 8, 16, 32),
               children: [
-                if (content.hasDrafts) ...[_DraftBanner(text: l10n.wirdRepairDraftBanner), const SizedBox(height: 16)],
+                if (content.hasDrafts) ...[DraftBanner(l10n.wirdRepairDraftBanner), const SizedBox(height: 16)],
                 // Encre et non bronze : le bronze ne passe pas le contraste AA
                 // en texte courant (design_tokens.yaml, 3,72:1).
                 Text(l10n.wirdRepairIntro, style: repairUiBody(size: 14)),
@@ -109,7 +112,7 @@ class _WirdRepairScreenState extends ConsumerState<WirdRepairScreen> {
     final own = content.casesOnlyFor(_wird, kind: _kind);
     final common = content.casesOnlyFor(RepairWird.all, kind: _kind);
     return [
-      _Label(l10n.wirdRepairWhichWird),
+      _Label(l10n.wirdRepairWhichWird, first: true),
       const SizedBox(height: 4),
       RepairWirdTabs(selected: _wird, onSelected: (wird) => setState(() => _wird = wird)),
       const SizedBox(height: 16),
@@ -119,9 +122,8 @@ class _WirdRepairScreenState extends ConsumerState<WirdRepairScreen> {
         duration: const Duration(milliseconds: 220),
         child: RepairWirdSummary(key: ValueKey(_wird), wird: _wird, content: content),
       ),
-      const SizedBox(height: 28),
       _Label(l10n.wirdRepairWhatHappened),
-      const SizedBox(height: 10),
+      const SizedBox(height: 6),
       RepairKindChips(
         selected: _kind,
         // Nombre de cas par type, pour le wird choisi (ses cas et les règles
@@ -189,14 +191,22 @@ class _WirdRepairScreenState extends ConsumerState<WirdRepairScreen> {
   }
 }
 
+/// Question qui ouvre un choix (« Quel wird ? », « Que s'est-il passé ? ») :
+/// `SectionTitle` du kit, annoncé comme titre au lecteur d'écran (mise au
+/// thème du kit, 2026-11-04 ; c'était un texte en gras sans rôle de titre).
+/// Retrait de 2 seulement : la liste porte déjà la gouttière de 16.
 class _Label extends StatelessWidget {
-  const _Label(this.text);
+  const _Label(this.text, {this.first = false});
 
   final String text;
 
+  /// Premier titre de la page : pas d'écart `space-24` au-dessus, l'intro le
+  /// précède déjà.
+  final bool first;
+
   @override
   Widget build(BuildContext context) {
-    return Text(text, style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w600, color: AppColors.ink));
+    return SectionTitle(text, padding: EdgeInsetsDirectional.fromSTEB(2, first ? 0 : 24, 2, 4));
   }
 }
 
@@ -229,7 +239,11 @@ class _GroupHeading extends StatelessWidget {
             Icon(icon, size: 20, color: AppColors.emerald),
             const SizedBox(width: 8),
             Expanded(
-              child: Text(text, style: repairUiBody(size: 15.5, weight: FontWeight.w600, color: AppColors.emerald)),
+              // Annoncé comme titre, comme les autres titres de la page.
+              child: Semantics(
+                header: true,
+                child: Text(text, style: repairUiBody(size: 15.5, weight: FontWeight.w600, color: AppColors.emerald)),
+              ),
             ),
           ],
         ),
@@ -238,56 +252,13 @@ class _GroupHeading extends StatelessWidget {
   }
 }
 
-class _DraftBanner extends StatelessWidget {
-  const _DraftBanner({required this.text});
+/// Un état du kit (`Notice`) seul dans le corps de l'écran, dans la
+/// gouttière `space-16`.
+class _NoticeBody extends StatelessWidget {
+  const _NoticeBody(this.notice);
 
-  final String text;
-
-  @override
-  Widget build(BuildContext context) {
-    return DecoratedBox(
-      decoration: BoxDecoration(
-        color: AppColors.goldSoft,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: AppColors.gold.withValues(alpha: 0.6)),
-      ),
-      child: Padding(
-        padding: const EdgeInsets.all(12),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Icon(Icons.edit_note, color: AppColors.ink, size: 20),
-            const SizedBox(width: 10),
-            Expanded(child: Text(text, style: const TextStyle(fontSize: 13, color: AppColors.ink, height: 1.4))),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class _Message extends StatelessWidget {
-  const _Message({required this.icon, required this.text, this.action});
-
-  final IconData icon;
-  final String text;
-  final Widget? action;
+  final Notice notice;
 
   @override
-  Widget build(BuildContext context) {
-    return Center(
-      child: Padding(
-        padding: const EdgeInsets.all(24),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(icon, color: AppColors.bronze, size: 32),
-            const SizedBox(height: 12),
-            Text(text, textAlign: TextAlign.center, style: repairUiBody(size: 14.5)),
-            if (action != null) ...[const SizedBox(height: 12), action!],
-          ],
-        ),
-      ),
-    );
-  }
+  Widget build(BuildContext context) => ListView(padding: const EdgeInsets.all(16), children: [notice]);
 }

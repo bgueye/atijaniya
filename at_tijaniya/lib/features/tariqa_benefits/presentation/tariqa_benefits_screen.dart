@@ -5,7 +5,8 @@ import 'package:google_fonts/google_fonts.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../core/theme/rosace_painter.dart';
-import '../../../core/widgets/content_text.dart';
+import '../../../core/widgets/draft_banner.dart';
+import '../../../core/widgets/notice.dart';
 import '../../../l10n/app_localizations.dart';
 import '../domain/tariqa_benefits_models.dart';
 import 'tariqa_benefits_providers.dart';
@@ -50,13 +51,11 @@ class TariqaBenefitsScreen extends ConsumerWidget {
       body: SafeArea(
         child: rowsAsync.when(
           loading: () => Center(child: CircularProgressIndicator(color: AppColors.emerald)),
-          error: (error, stackTrace) => _Message(
-            icon: Icons.wifi_off,
-            text: l10n.wirdRepairLoadError,
-            action: OutlinedButton(
-              onPressed: () => ref.invalidate(tariqaBenefitsRowsProvider),
-              child: Text(l10n.wirdRepairRetry),
-            ),
+          // États du kit (`Notice`, mise au thème du kit, 2026-11-04) : hors
+          // ligne ou erreur, avec « Réessayer ».
+          error: (error, stackTrace) => _NoticeBody(
+            Notice.fromError(error,
+                message: l10n.wirdRepairLoadError, onRetry: () => ref.invalidate(tariqaBenefitsRowsProvider)),
           ),
           data: (rows) {
             final content = TariqaBenefitsContent.fromRows(
@@ -64,7 +63,9 @@ class TariqaBenefitsScreen extends ConsumerWidget {
               cardRows: rows.cards,
               isArabic: isArabicUi,
             );
-            if (content.isEmpty) return _Message(icon: Icons.hourglass_empty, text: l10n.wirdRepairUnavailable);
+            if (content.isEmpty) {
+              return _NoticeBody(Notice.info(l10n.wirdRepairUnavailable, icon: Icons.hourglass_empty));
+            }
             return TariqaBenefitsBody(content: content, showFrenchOnlyNote: isArabicUi && !content.isArabicText);
           },
         ),
@@ -191,7 +192,7 @@ class _BenefitsBodyState extends State<TariqaBenefitsBody> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                if (content.hasDrafts) ...[_DraftBanner(text: l10n.wirdRepairDraftBanner), const SizedBox(height: 16)],
+                if (content.hasDrafts) ...[DraftBanner(l10n.wirdRepairDraftBanner), const SizedBox(height: 16)],
                 if (widget.showFrenchOnlyNote) ...[
                   Text(l10n.tariqaBenefitsFrenchOnly, style: _body(size: 13.5, color: _secondaryInk)),
                   const SizedBox(height: 12),
@@ -324,7 +325,8 @@ TextStyle _inlineArabic(TextStyle base) =>
 const _longArabicWords = 5;
 
 bool _isLongArabic(InlineSegment segment) =>
-    segment is ArabicSegment && segment.text.trim().split(RegExp(r'\s+')).where((w) => w != '·').length > _longArabicWords;
+    segment is ArabicSegment &&
+    segment.text.trim().split(RegExp(r'\s+')).where((w) => w != '·').length > _longArabicWords;
 
 /// Texte balisé (gras, arabe en ligne, étiquettes de solidité) rendu d'un
 /// seul tenant, pour que les retours à la ligne restent ceux d'une phrase —
@@ -376,7 +378,10 @@ class _RichLine extends StatelessWidget {
     final match = RegExp(r'\s*(\(?)\s*«\s*$').firstMatch(last.text);
     if (match == null) return (run, false);
     final text = last.text.substring(0, match.start);
-    return ([...run.sublist(0, run.length - 1), if (text.isNotEmpty) PlainSegment(text, bold: last.bold)], match.group(1)!.isNotEmpty);
+    return (
+      [...run.sublist(0, run.length - 1), if (text.isNotEmpty) PlainSegment(text, bold: last.bold)],
+      match.group(1)!.isNotEmpty
+    );
   }
 
   /// Retire « » » (et la parenthèse fermante, la ponctuation qui suit) au
@@ -553,8 +558,7 @@ class _EvidenceRows extends StatelessWidget {
   static TextSpan _spanOf(List<InlineSegment> segments, TextStyle style) => TextSpan(
         style: style,
         children: [
-          for (final s in segments)
-            TextSpan(text: s.text, style: s is ArabicSegment ? _inlineArabic(style) : null),
+          for (final s in segments) TextSpan(text: s.text, style: s is ArabicSegment ? _inlineArabic(style) : null),
         ],
       );
 }
@@ -949,8 +953,11 @@ class _QuoteFrame extends StatelessWidget {
   }
 }
 
-/// Condition attachée au bienfait : bande dorée, filet sur le bord de début.
-/// Même dessin que la mise en garde de « Rattraper son wird ».
+/// Condition attachée au bienfait : fond or doux et filet d'or tout autour.
+/// Même dessin que la mise en garde de « Rattraper son wird » (le filet
+/// n'était que sur le bord de début, ce que le kit interdit ; mise au thème
+/// du kit, 2026-11-04). La citation garde, elle, son filet latéral : c'est la
+/// marque d'une citation, pas une carte.
 class _Condition extends StatelessWidget {
   const _Condition({required this.text});
 
@@ -958,19 +965,15 @@ class _Condition extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // L'arrondi vient du `ClipRRect` : une bordure qui n'a qu'un côté ne peut
-    // pas porter elle-même de `borderRadius`.
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(10),
-      child: DecoratedBox(
-        decoration: BoxDecoration(
-          color: AppColors.goldSoft,
-          border: BorderDirectional(start: BorderSide(color: AppColors.gold, width: 3)),
-        ),
-        child: Padding(
-          padding: const EdgeInsetsDirectional.fromSTEB(14, 10, 14, 10),
-          child: _RichLine(text, style: _body(size: 14.5)),
-        ),
+    return DecoratedBox(
+      decoration: BoxDecoration(
+        color: AppColors.goldSoft,
+        borderRadius: BorderRadius.circular(10),
+        border: Border.all(color: AppColors.gold.withValues(alpha: 0.6)),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+        child: _RichLine(text, style: _body(size: 14.5)),
       ),
     );
   }
@@ -1085,56 +1088,13 @@ class _TableView extends StatelessWidget {
   }
 }
 
-class _DraftBanner extends StatelessWidget {
-  const _DraftBanner({required this.text});
+/// Un état du kit (`Notice`) seul dans le corps de l'écran, dans la
+/// gouttière `space-16`.
+class _NoticeBody extends StatelessWidget {
+  const _NoticeBody(this.notice);
 
-  final String text;
-
-  @override
-  Widget build(BuildContext context) {
-    return DecoratedBox(
-      decoration: BoxDecoration(
-        color: AppColors.goldSoft,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: AppColors.gold.withValues(alpha: 0.6)),
-      ),
-      child: Padding(
-        padding: const EdgeInsets.all(12),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Icon(Icons.edit_note, color: AppColors.ink, size: 20),
-            const SizedBox(width: 10),
-            Expanded(child: Text(text, style: const TextStyle(fontSize: 13, color: AppColors.ink, height: 1.4))),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class _Message extends StatelessWidget {
-  const _Message({required this.icon, required this.text, this.action});
-
-  final IconData icon;
-  final String text;
-  final Widget? action;
+  final Notice notice;
 
   @override
-  Widget build(BuildContext context) {
-    return Center(
-      child: Padding(
-        padding: const EdgeInsets.all(24),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(icon, color: AppColors.bronze, size: 32),
-            const SizedBox(height: 12),
-            ContentText(text, textAlign: TextAlign.center, style: _body(size: 14.5)),
-            if (action != null) ...[const SizedBox(height: 12), action!],
-          ],
-        ),
-      ),
-    );
-  }
+  Widget build(BuildContext context) => ListView(padding: const EdgeInsets.all(16), children: [notice]);
 }

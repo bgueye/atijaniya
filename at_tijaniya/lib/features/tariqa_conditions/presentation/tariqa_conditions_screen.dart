@@ -9,6 +9,8 @@ import '../domain/tariqa_condition_models.dart';
 import 'tariqa_condition_form_screen.dart';
 import 'tariqa_conditions_providers.dart';
 import '../../../core/widgets/content_text.dart';
+import '../../../core/widgets/notice.dart';
+import '../../../core/widgets/section_title.dart';
 
 /// Conditions de la Tariqa (chouroutes) — les 23 conditions régissant
 /// l'affiliation et la pratique du Wird, accessibles depuis une carte en bas
@@ -37,38 +39,40 @@ class TariqaConditionsScreen extends ConsumerWidget {
       body: SafeArea(
         child: conditionsAsync.when(
           loading: () => Center(child: CircularProgressIndicator(color: AppColors.emerald)),
-          error: (error, stackTrace) => Center(
-            child: Padding(
-              padding: const EdgeInsets.all(24),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Icon(Icons.wifi_off, color: AppColors.bronze, size: 32),
-                  const SizedBox(height: 12),
-                  Text(l10n.tariqaConditionsLoadError, textAlign: TextAlign.center, style: TextStyle(color: AppColors.bronze)),
-                  const SizedBox(height: 12),
-                  OutlinedButton(
-                    onPressed: () => ref.invalidate(tariqaConditionsProvider),
-                    child: Text(l10n.tariqaConditionsRetry),
-                  ),
-                ],
+          // États du kit (`Notice`, mise au thème du kit, 2026-11-04) : le
+          // message d'erreur et l'état vide étaient en bronze, sous le seuil
+          // de contraste AA.
+          error: (error, stackTrace) => ListView(
+            padding: const EdgeInsets.all(16),
+            children: [
+              Notice.fromError(
+                error,
+                message: l10n.tariqaConditionsLoadError,
+                onRetry: () => ref.invalidate(tariqaConditionsProvider),
               ),
-            ),
+            ],
           ),
           data: (conditions) {
             if (conditions.isEmpty) {
-              return _EmptyState(title: l10n.tariqaConditionsEmptyTitle, body: l10n.tariqaConditionsEmptyBody);
+              return ListView(
+                padding: const EdgeInsets.all(16),
+                children: [
+                  Notice.info(
+                    '${l10n.tariqaConditionsEmptyTitle}. ${l10n.tariqaConditionsEmptyBody}',
+                    icon: Icons.rule_outlined,
+                  ),
+                ],
+              );
             }
 
             return ListView(
-              padding: const EdgeInsets.all(16),
+              padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
               children: [
                 for (final category in TariqaConditionCategory.values) ...[
                   if (conditions.any((c) => c.category == category)) ...[
                     _SectionHeader(title: _categoryLabel(l10n, category)),
                     for (final condition in conditions.where((c) => c.category == category))
                       _ConditionTile(condition: condition, isAdmin: isAdmin),
-                    const SizedBox(height: 16),
                   ],
                 ],
               ],
@@ -95,32 +99,9 @@ String _categoryLabel(AppLocalizations l10n, TariqaConditionCategory category) {
   }
 }
 
-class _EmptyState extends StatelessWidget {
-  const _EmptyState({required this.title, required this.body});
-
-  final String title;
-  final String body;
-
-  @override
-  Widget build(BuildContext context) {
-    return Center(
-      child: Padding(
-        padding: const EdgeInsets.all(24),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(Icons.rule_outlined, color: AppColors.bronze, size: 40),
-            const SizedBox(height: 16),
-            ContentText(title, style: Theme.of(context).textTheme.headlineSmall, textAlign: TextAlign.center),
-            const SizedBox(height: 8),
-            ContentText(body, textAlign: TextAlign.center, style: TextStyle(color: AppColors.bronze)),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
+/// Titre de catégorie : `SectionTitle` du kit (Cormorant, Amiri en arabe),
+/// annoncé comme titre au lecteur d'écran (mise au thème du kit,
+/// 2026-11-04). Retrait de 2 : la liste porte déjà la gouttière de 16.
 class _SectionHeader extends StatelessWidget {
   const _SectionHeader({required this.title});
 
@@ -128,13 +109,7 @@ class _SectionHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 12),
-      child: ContentText(
-        title,
-        style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 16, color: AppColors.ink),
-      ),
-    );
+    return SectionTitle(title, padding: const EdgeInsetsDirectional.fromSTEB(2, 24, 2, 8));
   }
 }
 
@@ -156,7 +131,8 @@ class _ConditionTile extends StatelessWidget {
     final isArabic = Localizations.localeOf(context).languageCode == 'ar';
     final showArabicFirst = isArabic && condition.textAr != null;
 
-    final frenchText = ContentText(condition.textFr, style: const TextStyle(color: AppColors.ink, fontSize: 16, height: 1.4));
+    final frenchText =
+        ContentText(condition.textFr, style: const TextStyle(color: AppColors.ink, fontSize: 16, height: 1.4));
     final arabicText = condition.textAr != null
         ? Text(
             condition.textAr!,
@@ -182,9 +158,11 @@ class _ConditionTile extends StatelessWidget {
                 height: 28,
                 alignment: Alignment.center,
                 decoration: const BoxDecoration(color: AppColors.goldSoft, shape: BoxShape.circle),
+                // Encre sur or doux (kit § Couleurs) : le bronze d'avant était
+                // sous le seuil AA.
                 child: ContentText(
                   '${condition.orderIndex}',
-                  style: TextStyle(color: AppColors.bronze, fontWeight: FontWeight.w600, fontSize: 13),
+                  style: const TextStyle(color: AppColors.ink, fontWeight: FontWeight.w600, fontSize: 13),
                 ),
               ),
               const SizedBox(width: 12),
@@ -201,9 +179,16 @@ class _ConditionTile extends StatelessWidget {
           ],
           if (condition.sourceNote != null) ...[
             const SizedBox(height: 8),
+            // Encre secondaire (le bronze est sous le seuil AA) ; italique
+            // seulement pour une source en écriture latine, l'arabe n'en a
+            // pas (kit § Typographie).
             ContentText(
               condition.sourceNote!,
-              style: TextStyle(color: AppColors.bronze, fontSize: 12, fontStyle: FontStyle.italic),
+              style: TextStyle(
+                color: AppColors.secondaryInk,
+                fontSize: 12.5,
+                fontStyle: _hasArabic(condition.sourceNote!) ? FontStyle.normal : FontStyle.italic,
+              ),
             ),
           ],
         ],
@@ -211,7 +196,8 @@ class _ConditionTile extends StatelessWidget {
     );
 
     return Card(
-      margin: const EdgeInsets.only(bottom: 8),
+      // Écart `space-12` entre cartes (kit).
+      margin: const EdgeInsets.only(bottom: 12),
       child: isAdmin
           ? InkWell(
               borderRadius: BorderRadius.circular(16),
@@ -224,3 +210,7 @@ class _ConditionTile extends StatelessWidget {
     );
   }
 }
+
+/// Le texte contient-il de l'écriture arabe ? Sert à ne pas mettre une
+/// source arabe en italique.
+bool _hasArabic(String text) => RegExp('[؀-ۿ]').hasMatch(text);

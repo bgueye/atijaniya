@@ -12,6 +12,7 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 
+import 'package:at_tijaniya/core/widgets/filter_chips.dart';
 import 'package:at_tijaniya/features/profil/presentation/profile_providers.dart';
 import 'package:at_tijaniya/features/tariqa_benefits/presentation/tariqa_benefits_providers.dart';
 import 'package:at_tijaniya/features/wird/domain/wird_repair_models.dart';
@@ -146,13 +147,16 @@ void main() {
       await tester.pumpWidget(_wrap(const WirdRepairScreen(), content: _content()));
       await tester.pumpAndSettle();
 
-      await tester.tap(find.text('Erreur'));
+      // Pastilles du kit (`FilterPill`) : libellé et nombre dans un même
+      // texte (« Erreur 1 »), d'où la recherche par libellé.
+      Finder pill(String label) => find.byWidgetPredicate((w) => w is FilterPill && w.label == label);
+      await tester.tap(pill('Erreur'));
       await tester.pumpAndSettle();
       expect(find.text('Doute sur le nombre'), findsOneWidget);
       expect(find.text('Lazim oublié'), findsNothing);
 
       // « Manqué » sur le Lazim, puis la Wazifa, qui n'a aucun cas de ce type.
-      await tester.tap(find.text('Manqué ou oublié'));
+      await tester.tap(pill('Manqué ou oublié'));
       await tester.pumpAndSettle();
       expect(find.text('Lazim oublié'), findsOneWidget);
       await tester.tap(find.text('Wazifa'));

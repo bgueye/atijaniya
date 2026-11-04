@@ -76,9 +76,12 @@ class WirdRemindersScreen extends ConsumerWidget {
         child: state.loading
             ? Center(child: CircularProgressIndicator(color: AppColors.emerald))
             : ListView(
-                padding: const EdgeInsets.all(20),
+                // Gouttière `space-16` du kit, sur tous les écrans.
+                padding: const EdgeInsets.all(16),
                 children: [
-                  _ScopeNote(l10n: l10n),
+                  // Note du kit (`Notice.info`) plutôt qu'un encadré recopié à
+                  // la main (mise au thème du kit, 2026-11-04).
+                  Notice.info(l10n.wirdRemindersScopeNote),
                   // Rappels activés mais notifications coupées : ils ne
                   // sonneront pas, et l'écran le dit (audit du 2026-11-03).
                   if (ref.watch(notificationsEnabledProvider).valueOrNull == false &&
@@ -104,36 +107,6 @@ class WirdRemindersScreen extends ConsumerWidget {
   }
 }
 
-class _ScopeNote extends StatelessWidget {
-  const _ScopeNote({required this.l10n});
-
-  final AppLocalizations l10n;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        color: AppColors.emeraldSoft,
-        borderRadius: BorderRadius.circular(12),
-      ),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Icon(Icons.info_outline, color: AppColors.emerald, size: 18),
-          const SizedBox(width: 8),
-          Expanded(
-            child: Text(
-              l10n.wirdRemindersScopeNote,
-              style: const TextStyle(color: AppColors.ink, fontSize: 12.5),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
 class _ReminderTile extends StatelessWidget {
   const _ReminderTile({
     required this.slot,
@@ -152,12 +125,12 @@ class _ReminderTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final time = TimeOfDay(hour: setting.hour, minute: setting.minute);
-    // `Material` et non un `Container` décoré : sous une décoration, l'effet
-    // du toucher de la ligne était masqué (assertion de Flutter, relevée par
-    // le premier test de cet écran, audit du 2026-11-03).
-    return Material(
-      color: AppColors.offWhite,
-      borderRadius: BorderRadius.circular(16),
+    // `Card` du kit (blanc cassé, filet bronze à 20 %, rayon 16) : la
+    // `Material` nue d'avant n'avait pas de filet (mise au thème du kit,
+    // 2026-11-04). Une `Material` reste nécessaire sous `SwitchListTile`
+    // pour l'effet du toucher (audit du 2026-11-03), et `Card` en est une.
+    return Card(
+      margin: EdgeInsets.zero,
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
         child: Column(
@@ -171,7 +144,9 @@ class _ReminderTile extends StatelessWidget {
                 slot.frequency == ReminderFrequency.weeklyFriday
                     ? l10n.reminderFrequencyWeekly
                     : l10n.reminderFrequencyDaily,
-                style: TextStyle(color: AppColors.bronze, fontSize: 12),
+                // Encre secondaire : le bronze en texte est sous le seuil AA
+                // (4,09:1 sur blanc cassé, kit § Couleurs).
+                style: TextStyle(color: AppColors.secondaryInk, fontSize: 12.5),
               ),
               value: setting.enabled,
               onChanged: onToggle,

@@ -7,15 +7,21 @@ import 'package:flutter/material.dart';
 
 import '../../../core/theme/app_colors.dart';
 import '../../../core/widgets/content_text.dart';
+import '../../../core/widgets/filter_chips.dart';
 import '../../../l10n/app_localizations.dart';
 import '../domain/wird_repair_models.dart';
 import 'wird_repair_styles.dart';
 
 /// Filtres par type de situation, avec le nombre de cas de chacun pour le
 /// wird choisi. Libellés courts (« Erreur », « Empêchement ») : les
-/// libellés longs faisaient trois rangées de puces. Un type sans aucun cas
-/// reste visible mais grisé : le disciple voit qu'il n'y a rien plutôt que
-/// de chercher une puce disparue.
+/// libellés longs faisaient trois rangées de puces.
+///
+/// Pastilles du kit (`FilterPill`, mise au thème du kit, 2026-11-04), en
+/// `Wrap` plutôt que la rangée défilante `FilterChips` : les cinq choix
+/// restent tous visibles, sans qu'un disciple manque celui qui dépasse de
+/// l'écran. Un type sans aucun cas reste affiché avec « 0 » : le disciple
+/// voit qu'il n'y a rien plutôt que de chercher une pastille disparue, et le
+/// choisir affiche « aucun cas » (exception prévue par la fiche du kit).
 class RepairKindChips extends StatelessWidget {
   const RepairKindChips({super.key, required this.selected, required this.countFor, required this.onSelected});
 
@@ -33,48 +39,19 @@ class RepairKindChips extends StatelessWidget {
       (RepairKind.interruption, l10n.wirdRepairKindInterruption),
       (RepairKind.empechement, l10n.wirdRepairKindEmpechement),
     ];
-    // `Wrap` plutôt qu'une ligne défilante : les cinq choix restent tous
-    // visibles, sans qu'un disciple manque celui qui dépasse de l'écran.
+    // Pas d'écart vertical : chaque pastille a déjà sa zone tactile de 48 dp
+    // pour 32 visibles, ce qui sépare les rangées.
     return Wrap(
-      spacing: 8,
-      runSpacing: 8,
+      spacing: 6,
       children: [
-        for (final (kind, label) in options) _chip(kind, label, countFor(kind)),
-      ],
-    );
-  }
-
-  Widget _chip(RepairKind? kind, String label, int count) {
-    final isSelected = kind == selected;
-    final enabled = count > 0 || isSelected;
-    final textColor = isSelected ? AppColors.emerald : AppColors.ink;
-    return ChoiceChip(
-      label: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Text(label),
-          const SizedBox(width: 6),
-          Text(
-            '$count',
-            style: TextStyle(
-              fontSize: 12.5,
-              fontWeight: FontWeight.w600,
-              color: (isSelected ? AppColors.emerald : AppColors.ink).withValues(alpha: 0.65),
-            ),
+        for (final (kind, label) in options)
+          FilterPill(
+            label: label,
+            count: countFor(kind),
+            selected: kind == selected,
+            onTap: () => onSelected(kind),
           ),
-        ],
-      ),
-      selected: isSelected,
-      showCheckmark: false,
-      onSelected: enabled ? (_) => onSelected(kind) : null,
-      selectedColor: AppColors.emeraldSoft,
-      backgroundColor: AppColors.offWhite,
-      disabledColor: AppColors.parchment,
-      side: BorderSide(color: isSelected ? AppColors.emerald : AppColors.bronze.withValues(alpha: 0.3)),
-      labelStyle: TextStyle(
-        color: enabled ? textColor : AppColors.ink.withValues(alpha: 0.45),
-        fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
-      ),
+      ],
     );
   }
 }
