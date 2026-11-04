@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../../core/theme/app_colors.dart';
+import '../../../core/widgets/message_page.dart';
 import '../../../l10n/app_localizations.dart';
 import '../domain/donation_amount.dart';
 import 'donation_providers.dart';
@@ -72,9 +73,7 @@ class _DonationScreenState extends ConsumerState<DonationScreen> {
       _errorMessage = null;
     });
     try {
-      final checkout = await ref
-          .read(donationRepositoryProvider)
-          .startCheckout(amount: amount);
+      final checkout = await ref.read(donationRepositoryProvider).startCheckout(amount: amount);
       if (mounted) setState(() => _submitted = true);
       final uri = Uri.tryParse(checkout.checkoutUrl);
       final launched = uri != null && await launchUrl(uri, mode: LaunchMode.externalApplication);
@@ -103,12 +102,14 @@ class _DonationScreenState extends ConsumerState<DonationScreen> {
     // barre de navigation Android (3 boutons).
     return SafeArea(
       child: SingleChildScrollView(
-        padding: const EdgeInsets.all(20),
+        // Gouttière `space-16` du kit.
+        padding: const EdgeInsets.all(16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             Text(l10n.donationSubtitle,
-                style: TextStyle(color: AppColors.bronze, fontSize: 15)),
+                // Encre secondaire : le bronze en texte est sous le seuil AA.
+                style: TextStyle(color: AppColors.secondaryInk, fontSize: 15)),
             const SizedBox(height: 24),
             Row(
               children: [
@@ -120,19 +121,15 @@ class _DonationScreenState extends ConsumerState<DonationScreen> {
                       onTap: () => _selectPreset(amount),
                     ),
                   ),
-                  if (amount != donationPresetAmounts.last)
-                    const SizedBox(width: 8),
+                  if (amount != donationPresetAmounts.last) const SizedBox(width: 8),
                 ],
               ],
             ),
             const SizedBox(height: 20),
             TextField(
               controller: _customAmountController,
-              keyboardType:
-                  const TextInputType.numberWithOptions(decimal: true),
-              inputFormatters: [
-                FilteringTextInputFormatter.allow(RegExp(r'[0-9.,]'))
-              ],
+              keyboardType: const TextInputType.numberWithOptions(decimal: true),
+              inputFormatters: [FilteringTextInputFormatter.allow(RegExp(r'[0-9.,]'))],
               onChanged: _onCustomAmountChanged,
               decoration: InputDecoration(
                 labelText: l10n.donationCustomAmountLabel,
@@ -142,21 +139,20 @@ class _DonationScreenState extends ConsumerState<DonationScreen> {
             ),
             if (_errorMessage != null) ...[
               const SizedBox(height: 16),
-              ContentText(_errorMessage!,
-                  style: const TextStyle(color: AppColors.danger)),
+              ContentText(_errorMessage!, style: const TextStyle(color: AppColors.danger)),
             ],
             const SizedBox(height: 28),
-            ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                  backgroundColor: AppColors.gold,
-                  foregroundColor: AppColors.zaytoune),
+            // Pilule du kit (`FilledButton`), sans l'ombre de l'`ElevatedButton`
+            // (« des filets, pas des ombres », mise au thème du kit,
+            // 2026-11-04). L'or du don est conservé.
+            FilledButton(
+              style: FilledButton.styleFrom(backgroundColor: AppColors.gold, foregroundColor: AppColors.zaytoune),
               onPressed: _submitting ? null : _submit,
               child: _submitting
                   ? const SizedBox(
                       height: 18,
                       width: 18,
-                      child: CircularProgressIndicator(
-                          strokeWidth: 2, color: AppColors.zaytoune),
+                      child: CircularProgressIndicator(strokeWidth: 2, color: AppColors.zaytoune),
                     )
                   : Text(l10n.donationSubmitButton),
             ),
@@ -173,8 +169,7 @@ class _DonationScreenState extends ConsumerState<DonationScreen> {
 /// l'app (aucun `chipTheme` personnalisé, voir `app_theme.dart`) ne rend pas
 /// les couleurs de marque de façon fiable sur ce widget.
 class _AmountChip extends StatelessWidget {
-  const _AmountChip(
-      {required this.amount, required this.selected, required this.onTap});
+  const _AmountChip({required this.amount, required this.selected, required this.onTap});
 
   final int amount;
   final bool selected;
@@ -189,10 +184,13 @@ class _AmountChip extends StatelessWidget {
         padding: const EdgeInsets.symmetric(vertical: 14),
         alignment: Alignment.center,
         decoration: BoxDecoration(
-          color: selected ? AppColors.goldSoft : Colors.transparent,
+          // État choisi du kit : émeraude doux et filet émeraude ; l'or est
+          // réservé à ce qui concerne la pratique du jour (mise au thème du
+          // kit, 2026-11-04).
+          color: selected ? AppColors.emeraldSoft : Colors.transparent,
           borderRadius: BorderRadius.circular(10),
           border: Border.all(
-              color: selected ? AppColors.gold : AppColors.bronze,
+              color: selected ? AppColors.emerald : AppColors.bronze.withValues(alpha: 0.35),
               width: selected ? 1.5 : 1),
         ),
         child: Text(
@@ -205,7 +203,7 @@ class _AmountChip extends StatelessWidget {
           // indépendant, réordonné selon la direction du paragraphe RTL).
           textDirection: TextDirection.ltr,
           style: TextStyle(
-            color: AppColors.ink,
+            color: selected ? AppColors.emerald : AppColors.ink,
             fontWeight: selected ? FontWeight.w700 : FontWeight.w600,
           ),
         ),
@@ -232,35 +230,15 @@ class _DonationRecordedState extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: Padding(
-        padding: const EdgeInsets.all(24),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Container(
-              width: 72,
-              height: 72,
-              decoration: const BoxDecoration(
-                  color: AppColors.goldSoft, shape: BoxShape.circle),
-              child:
-                  Icon(Icons.favorite, color: AppColors.gold, size: 32),
-            ),
-            const SizedBox(height: 20),
-            Text(l10n.donationRecordedTitle,
-                style: Theme.of(context).textTheme.headlineSmall,
-                textAlign: TextAlign.center),
-            const SizedBox(height: 8),
-            Text(l10n.donationRecordedBody,
-                textAlign: TextAlign.center,
-                style: TextStyle(color: AppColors.bronze)),
-            const SizedBox(height: 24),
-            OutlinedButton(
-              onPressed: () => Navigator.of(context).pop(),
-              child: Text(l10n.donationRecordedBackButton),
-            ),
-          ],
-        ),
+    // Page de conclusion du kit (`MessagePage`) : rond or doux et texte
+    // bronze auparavant (mise au thème du kit, 2026-11-04).
+    return MessagePage(
+      icon: Icons.favorite_outline,
+      title: l10n.donationRecordedTitle,
+      body: l10n.donationRecordedBody,
+      action: OutlinedButton(
+        onPressed: () => Navigator.of(context).pop(),
+        child: Text(l10n.donationRecordedBackButton),
       ),
     );
   }

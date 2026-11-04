@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/theme/app_colors.dart';
+import '../../../core/widgets/message_page.dart';
 import '../../../core/widgets/state_pill.dart';
 import '../../../core/widgets/section_title.dart';
 import '../../../core/widgets/notice.dart';
@@ -329,10 +330,8 @@ class _MatchCard extends ConsumerWidget {
 }
 
 /// Page sans résultat ou bloquée (pas de lignée, lignée non visible, aucun
-/// condisciple) : ce qui manque, puis l'action qui le règle. Mise au thème du
-/// kit le 2026-11-04 : icône `emerald` dans une puce `emerald_soft` (kit §
-/// Iconographie), titre en Cormorant (`SectionTitle.styleFor`), texte en
-/// encre — il était en bronze, sous le seuil AA.
+/// condisciple) : ce qui manque, puis l'action qui le règle, en page
+/// partagée du kit (`MessagePage`, mise au thème du kit, 2026-11-04).
 class _EmptyState extends StatelessWidget {
   const _EmptyState({required this.icon, required this.title, required this.body, this.ctaLabel, this.onTap});
 
@@ -344,30 +343,11 @@ class _EmptyState extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Liste et non `Center` : lisible à 200 % sans débordement.
-    return ListView(
-      padding: const EdgeInsets.fromLTRB(16, 32, 16, 16),
-      children: [
-        Center(
-          child: Container(
-            width: 64,
-            height: 64,
-            decoration: const BoxDecoration(color: AppColors.emeraldSoft, shape: BoxShape.circle),
-            child: Icon(icon, color: AppColors.emerald, size: 28),
-          ),
-        ),
-        const SizedBox(height: 20),
-        Semantics(
-          header: true,
-          child: ContentText(title, style: SectionTitle.styleFor(context), textAlign: TextAlign.center),
-        ),
-        const SizedBox(height: 8),
-        ContentText(body, textAlign: TextAlign.center, style: const TextStyle(color: AppColors.ink, height: 1.5)),
-        if (ctaLabel != null) ...[
-          const SizedBox(height: 24),
-          Center(child: OutlinedButton(onPressed: onTap, child: ContentText(ctaLabel!))),
-        ],
-      ],
+    return MessagePage(
+      icon: icon,
+      title: title,
+      body: body,
+      action: ctaLabel == null ? null : OutlinedButton(onPressed: onTap, child: ContentText(ctaLabel!)),
     );
   }
 }

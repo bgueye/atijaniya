@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show rootBundle;
 
 import '../../../core/theme/app_colors.dart';
+import '../../../core/theme/app_theme.dart';
 import '../../../l10n/app_localizations.dart';
 import '../domain/legal_document.dart';
 
@@ -46,7 +47,7 @@ class _PrivacyPolicyScreenState extends State<PrivacyPolicyScreen> {
             }
             return SelectionArea(
               child: ListView(
-                padding: const EdgeInsets.all(20),
+                padding: const EdgeInsets.all(16), // gouttière du kit
                 children: [
                   if (isArabic)
                     Padding(
@@ -79,7 +80,6 @@ class _LegalBlockView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context).textTheme;
     const body = TextStyle(color: AppColors.ink, fontSize: 15, height: 1.5);
     Text rich(TextStyle style) => Text.rich(
           TextSpan(children: [
@@ -93,14 +93,19 @@ class _LegalBlockView extends StatelessWidget {
       case LegalBlockKind.title:
         return Padding(
           padding: const EdgeInsets.only(bottom: 12),
-          child: Semantics(header: true, child: rich(theme.titleLarge!.copyWith(color: AppColors.zaytoune))),
+          // Titres en Cormorant (`titre-hero` / `titre-section` du kit), en
+          // encre : le titre était en zaytoune, couleur réservée aux fonds de
+          // la pratique (mise au thème du kit, 2026-11-04). Document en
+          // français : jamais Amiri, même dans l'interface arabe.
+          child: Semantics(
+              header: true, child: rich(AppTheme.titleText(fontSize: 28, color: AppColors.ink, height: 1.15))),
         );
       case LegalBlockKind.heading:
         return Padding(
           padding: const EdgeInsets.only(top: 20, bottom: 8),
           child: Semantics(
             header: true,
-            child: rich(const TextStyle(fontWeight: FontWeight.w600, fontSize: 17, color: AppColors.ink)),
+            child: rich(AppTheme.titleText(fontSize: 22, color: AppColors.ink, height: 1.2)),
           ),
         );
       case LegalBlockKind.subheading:

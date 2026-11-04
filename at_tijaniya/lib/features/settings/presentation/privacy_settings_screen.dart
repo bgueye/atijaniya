@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/theme/app_colors.dart';
+import '../../../core/widgets/segmented_switch.dart';
+import '../../../core/widgets/section_title.dart';
+import '../../../core/widgets/notice.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../moderation/presentation/block_user.dart';
 import '../../mouqaddam/presentation/mouqaddam_providers.dart';
@@ -39,26 +42,13 @@ class PrivacySettingsScreen extends ConsumerWidget {
       body: SafeArea(
         child: settingsAsync.when(
           loading: () => Center(child: CircularProgressIndicator(color: AppColors.emerald)),
-          error: (error, stackTrace) => Center(
-            child: Padding(
-              padding: const EdgeInsets.all(24),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Icon(Icons.wifi_off, color: AppColors.bronze, size: 32),
-                  const SizedBox(height: 12),
-                  Text(
-                    l10n.privacyLoadError,
-                    textAlign: TextAlign.center,
-                    style: TextStyle(color: AppColors.secondaryInk),
-                  ),
-                  const SizedBox(height: 12),
-                  OutlinedButton(
-                    onPressed: () => ref.invalidate(myPrivacySettingsProvider),
-                    child: Text(l10n.privacyRetry),
-                  ),
-                ],
-              ),
+          // États du kit (`Notice`, mise au thème du kit, 2026-11-04) : l'erreur
+          // était en texte bronze (sous le seuil AA) ou sans « Réessayer ».
+          error: (error, stackTrace) => NoticeBody(
+            Notice.fromError(
+              error,
+              message: l10n.privacyLoadError,
+              onRetry: () => ref.invalidate(myPrivacySettingsProvider),
             ),
           ),
           data: (settings) => _PrivacyForm(settings: settings, isVerifiedMouqaddam: isVerifiedMouqaddam),
@@ -135,7 +125,8 @@ class _PrivacyFormState extends ConsumerState<_PrivacyForm> {
     final l10n = AppLocalizations.of(context)!;
 
     return ListView(
-      padding: const EdgeInsets.all(20),
+      // Gouttière `space-16` du kit.
+      padding: const EdgeInsets.all(16),
       children: [
         _PrivacySwitch(
           label: l10n.privacyLineageVisibleLabel,
@@ -167,16 +158,19 @@ class _PrivacyFormState extends ConsumerState<_PrivacyForm> {
             (value) => _settings.copyWith(availableAsSponsor: value),
           ),
         ),
-        const SizedBox(height: 20),
-        Text(l10n.privacyWhoCanContactLabel, style: const TextStyle(fontWeight: FontWeight.w600, color: AppColors.ink)),
+        // Titre de section du kit, annoncé comme titre (mise au thème du kit,
+        // 2026-11-04 ; c'était un texte en gras sans rôle de titre).
+        SectionTitle(l10n.privacyWhoCanContactLabel, padding: const EdgeInsetsDirectional.fromSTEB(2, 24, 2, 8)),
         const SizedBox(height: 8),
-        SegmentedButton<WhoCanContact>(
-          segments: [
-            ButtonSegment(value: WhoCanContact.everyone, label: Text(l10n.privacyWhoCanContactEveryone)),
-            ButtonSegment(value: WhoCanContact.matchesOnly, label: Text(l10n.privacyWhoCanContactMatchesOnly)),
+        // Bascule du kit (`SegmentedSwitch`) à la place du `SegmentedButton`
+        // de Material (contour, coche).
+        SegmentedSwitch<WhoCanContact>(
+          items: [
+            SegmentedSwitchItem(value: WhoCanContact.everyone, label: l10n.privacyWhoCanContactEveryone),
+            SegmentedSwitchItem(value: WhoCanContact.matchesOnly, label: l10n.privacyWhoCanContactMatchesOnly),
           ],
-          selected: {_settings.whoCanContact},
-          onSelectionChanged: (selection) => _apply(_settings.copyWith(whoCanContact: selection.first)),
+          selected: _settings.whoCanContact,
+          onChanged: (value) => _apply(_settings.copyWith(whoCanContact: value)),
         ),
         const SizedBox(height: 20),
         // Seul endroit où débloquer un disciple (2026-10-11).

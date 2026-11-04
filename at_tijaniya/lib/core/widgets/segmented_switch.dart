@@ -106,7 +106,12 @@ class _Segment<T> extends StatelessWidget {
                         Flexible(
                           child: Text(
                             item.label,
-                            maxLines: 1,
+                            // Deux lignes : un libellé long (« Uniquement les
+                            // correspondances », Confidentialité) était coupé
+                            // à « Uniquement les correspo… » (mise au thème du
+                            // kit, 2026-11-04). Centré quand il passe à la ligne.
+                            maxLines: 2,
+                            textAlign: TextAlign.center,
                             overflow: TextOverflow.ellipsis,
                             style: TextStyle(
                               fontSize: 14,

@@ -4661,3 +4661,35 @@ Tests : `chemin_spirituel_kit_test.dart` (titres, pastille d'état, erreur et re
 noms, « Vous », aucun texte bronze), qui échoue sur l'ancienne version ; captures FR/AR dans
 `chemin_spirituel_captures_test.dart`. `flutter analyze` ne signale rien et les 768 tests passent.
 Pas encore validé sur téléphone.
+
+## Mise au thème du kit : écrans divers, lot 1 (2026-11-04)
+
+Réglages et pages d'information : Confidentialité, Disciples bloqués, À propos, Politique de
+confidentialité, Notifications, Faire un don, « Comprendre la Zawiya », Mot de passe oublié. Le lot
+2 (sous-écrans de la Communauté et des directs) suit. Aucun texte, aucune donnée ni aucune règle de
+confidentialité ne change.
+
+- **Commun** : erreurs et listes vides en `Notice` / `NoticeBody` avec « Réessayer » (les
+  Notifications n'en avaient pas) ; plus de texte bronze ; gouttière de 16.
+- **Nouveau composant** `MessagePage` (`lib/core/widgets/message_page.dart`) : page « icône, titre,
+  texte, action » qui remplace trois copies (condisciples, don, « Comprendre la Zawiya »), avec une
+  puce `emerald_soft`, un titre de section annoncé comme titre et un texte en encre.
+- **`SegmentedSwitch`** : libellé sur deux lignes au plus, centré (il était coupé à une ligne :
+  « Uniquement les correspo… » sur la Confidentialité). Sans effet sur les libellés courts des
+  autres écrans.
+- **Confidentialité** : « Qui peut vous contacter » en `SectionTitle` et choix en `SegmentedSwitch`
+  (et non `SegmentedButton`) ; les interrupteurs restent en cartes, car deux d'entre eux se grisent
+  tant que le parrainage n'est pas confirmé, ce que `ListGroupItem.toggle` ne prévoit pas.
+- **À propos** et **Politique de confidentialité** : titres en Cormorant (`SectionTitle`, ou
+  `titleText` pour la politique, document en français qui ne passe jamais en Amiri), en encre ; le
+  titre de la politique était en zaytoune.
+- **Faire un don** : montant choisi en émeraude doux et filet émeraude (il était en or) ; bouton
+  « Faire un don » en pilule sans ombre, toujours en or ; remerciement en `MessagePage`.
+- **« Comprendre la Zawiya »** : bandeau brouillon partagé (`DraftBanner`), qui était en bronze.
+- **Mot de passe oublié** : spinner en blanc cassé (le contour bronze des champs reste : le bronze
+  sert aux bordures).
+
+Tests : `divers_kit_test.dart` (8 tests, dont 7 échouent sur l'ancienne version ; le huitième
+vérifie les titres de la politique) ; captures FR/AR dans `divers_captures_test.dart`, sauf la
+politique, dont le texte ne se charge pas quand les polices passent par le canal des assets.
+`flutter analyze` ne signale rien et les 776 tests passent. Pas encore validé sur téléphone.

@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/theme/app_colors.dart';
+import '../../../core/widgets/draft_banner.dart';
+import '../../../core/widgets/message_page.dart';
+import '../../../core/widgets/notice.dart';
 import '../../../l10n/app_localizations.dart';
 import '../data/khadara_understanding_content.dart';
 import 'khadara_providers.dart';
@@ -34,8 +37,14 @@ class KhadaraUnderstandingScreen extends ConsumerWidget {
       body: SafeArea(
         child: page.when(
           loading: () => Center(child: CircularProgressIndicator(color: AppColors.emerald)),
-          error: (err, st) => Center(
-            child: Text(l10n.khadaraLoadError, style: TextStyle(color: AppColors.bronze)),
+          // États du kit (`Notice`, mise au thème du kit, 2026-11-04) : l'erreur
+          // était en texte bronze (sous le seuil AA) ou sans « Réessayer ».
+          error: (err, st) => NoticeBody(
+            Notice.fromError(
+              err,
+              message: l10n.khadaraLoadError,
+              onRetry: () => ref.invalidate(khadaraUnderstandingPageProvider),
+            ),
           ),
           data: (guidePage) {
             if (guidePage == null) {
@@ -49,34 +58,17 @@ class KhadaraUnderstandingScreen extends ConsumerWidget {
             return ListView(
               padding: const EdgeInsets.all(16),
               children: [
-                if (guidePage.contentStatus != 'valide') _DraftBanner(label: l10n.khadaraUnderstandingDraftBanner),
+                // Bandeau « brouillon » partagé (`DraftBanner`) : celui d'ici
+                // était en texte bronze, sous le seuil AA.
+                if (guidePage.contentStatus != 'valide') ...[
+                  DraftBanner(l10n.khadaraUnderstandingDraftBanner),
+                  const SizedBox(height: 12),
+                ],
                 for (final section in sections) _SectionTile(section: section),
               ],
             );
           },
         ),
-      ),
-    );
-  }
-}
-
-class _DraftBanner extends StatelessWidget {
-  const _DraftBanner({required this.label});
-
-  final String label;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      margin: const EdgeInsets.only(bottom: 12),
-      padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(color: AppColors.goldSoft, borderRadius: BorderRadius.circular(8)),
-      child: Row(
-        children: [
-          Icon(Icons.edit_note, color: AppColors.bronze, size: 20),
-          const SizedBox(width: 8),
-          Expanded(child: ContentText(label, style: TextStyle(color: AppColors.bronze))),
-        ],
       ),
     );
   }
@@ -91,33 +83,19 @@ class _EmptyState extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: Padding(
-        padding: const EdgeInsets.all(24),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Container(
-              width: 72,
-              height: 72,
-              decoration: const BoxDecoration(color: AppColors.goldSoft, shape: BoxShape.circle),
-              child: Icon(Icons.menu_book_outlined, color: AppColors.bronze, size: 32),
-            ),
-            const SizedBox(height: 20),
-            ContentText(title, style: Theme.of(context).textTheme.headlineSmall, textAlign: TextAlign.center),
-            const SizedBox(height: 8),
-            ContentText(body, textAlign: TextAlign.center, style: TextStyle(color: AppColors.bronze)),
-            const SizedBox(height: 24),
-            // Renvoie vers le calendrier/l'annuaire déjà fonctionnels de l'onglet
-            // Khadara (cet écran est poussé par-dessus), plutôt que de laisser un
-            // cul-de-sac tant que le contenu pédagogique n'est pas validé.
-            OutlinedButton.icon(
-              onPressed: () => Navigator.of(context).pop(),
-              icon: const Icon(Icons.event_outlined, size: 18),
-              label: ContentText(ctaLabel, textAlign: TextAlign.center),
-            ),
-          ],
-        ),
+    // Page du kit (`MessagePage`) : rond or doux et texte bronze
+    // auparavant (mise au thème du kit, 2026-11-04).
+    return MessagePage(
+      icon: Icons.menu_book_outlined,
+      title: title,
+      body: body,
+      // Renvoie vers le calendrier/l'annuaire déjà fonctionnels de l'onglet
+      // Zawiyas (cet écran est poussé par-dessus), plutôt que de laisser un
+      // cul-de-sac tant que le contenu pédagogique n'est pas validé.
+      action: OutlinedButton.icon(
+        onPressed: () => Navigator.of(context).pop(),
+        icon: const Icon(Icons.event_outlined, size: 18),
+        label: ContentText(ctaLabel, textAlign: TextAlign.center),
       ),
     );
   }

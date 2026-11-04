@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/theme/app_colors.dart';
+import '../../../core/widgets/notice.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../khadara/presentation/khadara_format.dart';
 import '../../khadara/presentation/live_stream_providers.dart';
@@ -37,17 +38,17 @@ class NotificationsScreen extends ConsumerWidget {
       body: SafeArea(
         child: notificationsAsync.when(
           loading: () => Center(child: CircularProgressIndicator(color: AppColors.emerald)),
-          error: (error, stackTrace) => Center(
-            child: Text(l10n.notificationsLoadError, style: TextStyle(color: AppColors.bronze)),
+          // États du kit (`Notice`, mise au thème du kit, 2026-11-04) : l'erreur
+          // était en texte bronze (sous le seuil AA) ou sans « Réessayer ».
+          error: (error, stackTrace) => NoticeBody(
+            Notice.fromError(
+              error,
+              message: l10n.notificationsLoadError,
+              onRetry: () => ref.invalidate(myNotificationsProvider),
+            ),
           ),
           data: (notifications) => notifications.isEmpty
-              ? Center(
-                  child: Padding(
-                    padding: const EdgeInsets.all(24),
-                    child: Text(l10n.notificationsEmpty,
-                        textAlign: TextAlign.center, style: TextStyle(color: AppColors.bronze)),
-                  ),
-                )
+              ? NoticeBody(Notice.info(l10n.notificationsEmpty, icon: Icons.notifications_none))
               : ListView.separated(
                   padding: const EdgeInsets.all(16),
                   itemCount: notifications.length,
@@ -181,7 +182,8 @@ class _NotificationTile extends ConsumerWidget {
         title: ContentText(title, style: TextStyle(fontWeight: unread ? FontWeight.w600 : FontWeight.w400)),
         subtitle: ContentText(
           '$body\n${formatKhadaraDateTime(notification.createdAt)}',
-          style: TextStyle(color: AppColors.bronze, fontSize: 12),
+          // Encre secondaire : le bronze en texte est sous le seuil AA.
+          style: TextStyle(color: AppColors.secondaryInk, fontSize: 12.5),
         ),
         isThreeLine: true,
         trailing: unread

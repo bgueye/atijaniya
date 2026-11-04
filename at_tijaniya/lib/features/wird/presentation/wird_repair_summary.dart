@@ -17,10 +17,11 @@ import 'wird_repair_styles.dart';
 /// `SegmentedSwitch` du kit (gouttière bronze à 12 %, segment choisi en
 /// blanc cassé ; mise au thème du kit, 2026-11-04).
 ///
-/// Pas le composant lui-même : il coupe son libellé à une ligne, et c'est
-/// précisément parce qu'un `SegmentedButton` tronquait « Hadratou-l-Jouma »
-/// sur un téléphone étroit que ces onglets existent. Ici le nom peut passer
-/// sur deux lignes.
+/// Pas le composant lui-même : chaque segment porte ici deux noms (le nom du
+/// wird et, en petit, son nom dans l'autre langue), ce que le composant ne
+/// sait pas afficher. Le nom peut passer sur deux lignes : c'est parce qu'un
+/// `SegmentedButton` tronquait « Hadratou-l-Jouma » sur un téléphone étroit
+/// que ces onglets existent.
 ///
 /// Sous le nom, l'autre langue en petit (nom arabe dans l'app en français, nom
 /// français dans l'app en arabe) : la charte présente un wird par ses deux

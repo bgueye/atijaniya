@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
 import '../../../core/theme/app_colors.dart';
+import '../../../core/widgets/section_title.dart';
 import '../../../l10n/app_localizations.dart';
-import '../../../core/widgets/content_text.dart';
 import '../../../core/widgets/directional_chevron.dart';
 import 'privacy_policy_screen.dart';
 
@@ -34,7 +34,8 @@ class AboutScreen extends StatelessWidget {
       // wird », Conditions, Bienfaits, Paramètres et « Comprendre la Zawiya ».
       body: SafeArea(
         child: SingleChildScrollView(
-          padding: const EdgeInsets.all(20),
+          // Gouttière `space-16` du kit.
+          padding: const EdgeInsets.all(16),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -109,11 +110,9 @@ class _AboutSection extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          ContentText(
-            title,
-            style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 17, color: AppColors.ink),
-          ),
-          const SizedBox(height: 10),
+          // Titre de section du kit (Cormorant, Amiri en arabe), annoncé
+          // comme titre (mise au thème du kit, 2026-11-04).
+          SectionTitle(title, padding: const EdgeInsetsDirectional.fromSTEB(0, 0, 0, 8)),
           ...children,
         ],
       ),

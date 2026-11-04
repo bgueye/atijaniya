@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/theme/app_colors.dart';
+import '../../../core/widgets/notice.dart';
 import '../../../core/widgets/app_snackbar.dart';
 import '../../../core/widgets/content_text.dart';
 import '../../../l10n/app_localizations.dart';
@@ -106,32 +107,19 @@ class BlockedUsersScreen extends ConsumerWidget {
       body: SafeArea(
         child: blocked.when(
           loading: () => Center(child: CircularProgressIndicator(color: AppColors.emerald)),
-          error: (error, stackTrace) => Center(
-            child: Padding(
-              padding: const EdgeInsets.all(24),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Text(l10n.blockedUsersLoadError,
-                      textAlign: TextAlign.center, style: TextStyle(color: AppColors.bronze)),
-                  const SizedBox(height: 12),
-                  OutlinedButton(
-                    onPressed: () => ref.invalidate(blockedUsersProvider),
-                    child: Text(l10n.commonRetry),
-                  ),
-                ],
-              ),
+          // États du kit (`Notice`, mise au thème du kit, 2026-11-04) : l'erreur
+          // était en texte bronze (sous le seuil AA) ou sans « Réessayer ».
+          error: (error, stackTrace) => NoticeBody(
+            Notice.fromError(
+              error,
+              message: l10n.blockedUsersLoadError,
+              onRetry: () => ref.invalidate(blockedUsersProvider),
             ),
           ),
           data: (users) {
             if (users.isEmpty) {
-              return Center(
-                child: Padding(
-                  padding: const EdgeInsets.all(24),
-                  child: Text(l10n.blockedUsersEmpty,
-                      textAlign: TextAlign.center, style: TextStyle(color: AppColors.bronze)),
-                ),
-              );
+              // Liste vide : la note du kit (le texte était en bronze).
+              return NoticeBody(Notice.info(l10n.blockedUsersEmpty));
             }
             return ListView.separated(
               padding: const EdgeInsets.all(16),
