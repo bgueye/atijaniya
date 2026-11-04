@@ -108,9 +108,14 @@ void setUpProfilMocks() {
   );
 }
 
-Widget profilApp(ProfilState state, {Locale locale = const Locale('fr'), ThemeData? theme}) {
+Widget profilApp(
+  ProfilState state, {
+  Locale locale = const Locale('fr'),
+  ThemeData? theme,
+  List<Override> extra = const [],
+}) {
   return ProviderScope(
-    overrides: profilOverrides(state),
+    overrides: [...profilOverrides(state), ...extra],
     child: MaterialApp(
       debugShowCheckedModeBanner: false,
       theme: theme,

@@ -288,7 +288,12 @@ class _EventHero extends StatelessWidget {
                 if (past)
                   StatePill(l10n.eventDetailPast, variant: StatePillVariant.neutral)
                 else if (days >= 0)
-                  StatePill(l10n.eventDetailCountdown(days), variant: StatePillVariant.neutral),
+                  // « environ » seulement pour une date approximative (audit
+                  // du 2026-11-03).
+                  StatePill(
+                    event.showsApproximateDate ? l10n.eventDetailCountdown(days) : l10n.khadaraNextCountdown(days),
+                    variant: StatePillVariant.neutral,
+                  ),
                 if (event.showsApproximateDate)
                   StatePill(l10n.eventDetailDateApproximate, variant: StatePillVariant.todo),
               ],

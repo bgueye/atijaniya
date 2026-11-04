@@ -11,6 +11,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:at_tijaniya/core/theme/app_theme.dart';
 import 'package:at_tijaniya/core/widgets/dashed_border.dart';
 import 'package:at_tijaniya/features/profil/presentation/practice_stats.dart';
+import 'package:at_tijaniya/features/profil/presentation/profile_providers.dart';
 import 'package:at_tijaniya/features/wird/data/wirds_content.dart';
 import 'package:at_tijaniya/features/wird/domain/wird_overview.dart';
 import 'package:at_tijaniya/features/wird/domain/wird_progress_stats.dart';
@@ -127,5 +128,21 @@ void main() {
     expect(find.text('طريقي الروحي'), findsOneWidget);
     expect(find.text('ممارستي'), findsOneWidget);
     expect(find.text('التطبيق'), findsOneWidget);
+  });
+
+  // Audit des écrans refaits du 2026-11-03 : profil illisible (hors ligne),
+  // seul le message restait ; ni langue ni déconnexion.
+  testWidgets("profil illisible : le message, puis les réglages et la déconnexion", (tester) async {
+    tall(tester);
+    await tester.pumpWidget(profilApp(
+      ProfilState.disciple,
+      theme: AppTheme.standard,
+      extra: [myProfileProvider.overrideWith((ref) async => throw StateError('hors ligne'))],
+    ));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Impossible de charger votre profil.'), findsOneWidget);
+    expect(find.text('Se déconnecter'), findsOneWidget);
+    expect(find.text('FR'), findsOneWidget);
   });
 }

@@ -240,7 +240,12 @@ class FoyerCollectionCard extends StatelessWidget {
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                           style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w500, color: AppColors.ink)),
+                      // Une ligne, comme le nom du foyer : la hauteur de la
+                      // rangée est calculée pour deux lignes de texte
+                      // (`figures_screen.dart`).
                       Text(l10n.figuresCount(figures.length),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
                           style: TextStyle(fontSize: 12, color: AppColors.secondaryInk)),
                     ],
                   ),

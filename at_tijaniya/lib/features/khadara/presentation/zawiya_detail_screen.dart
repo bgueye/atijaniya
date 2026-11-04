@@ -10,6 +10,8 @@ import '../../../core/widgets/eyebrow.dart';
 import '../../../core/widgets/notice.dart';
 import '../../../core/widgets/section_title.dart';
 import '../../../core/widgets/state_pill.dart';
+import '../../../core/widgets/app_snackbar.dart';
+import '../../figures/domain/figure_errors.dart';
 import '../../figures/domain/figure_models.dart';
 import '../../figures/presentation/figure_cards.dart';
 import '../../../l10n/app_localizations.dart';
@@ -274,9 +276,23 @@ String _roleLabel(SuccessionRole role, AppLocalizations l10n) {
 
 /// Ouvre la fiche d'une figure connue par son identifiant : prise dans la
 /// liste déjà chargée, sinon lue en base.
+///
+/// Hors ligne, ou pour une fiche dépubliée depuis le chargement, la lecture
+/// échoue : un message le dit, comme sur la fiche d'une figure (audit du
+/// 2026-11-03 : le toucher ne faisait rien, et l'erreur n'était pas
+/// rattrapée).
 Future<void> _openFigureById(BuildContext context, WidgetRef ref, String figureId) async {
+  final l10n = AppLocalizations.of(context)!;
   final known = ref.read(figuresProvider).valueOrNull?.where((f) => f.id == figureId).firstOrNull;
-  final figure = known ?? await ref.read(figuresRepositoryProvider).fetchFigureById(figureId);
+  final Figure figure;
+  try {
+    figure = known ?? await ref.read(figuresRepositoryProvider).fetchFigureById(figureId);
+  } catch (error) {
+    if (context.mounted) {
+      showErrorSnackBar(context, isFigureUnavailableError(error) ? l10n.figureUnavailable : l10n.figuresLoadError);
+    }
+    return;
+  }
   if (!context.mounted) return;
   openFigure(context, figure);
 }

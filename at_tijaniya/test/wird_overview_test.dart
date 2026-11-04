@@ -226,4 +226,13 @@ void main() {
     expect(find.widgetWithText(FilledButton, 'Commencer'), findsNWidgets(2));
     expect(find.widgetWithText(OutlinedButton, 'Guide'), findsNWidgets(3));
   });
+
+  // Audit des écrans refaits du 2026-11-03 : sans condition validée, la tuile
+  // « Conditions de la Tariqa » s'affichait quand même, avec « 0 ».
+  testWidgets('sans condition lisible, la tuile des conditions est masquée', (tester) async {
+    _tall(tester);
+    await tester.pumpWidget(_wrap(sundayMorning()));
+    await tester.pumpAndSettle();
+    expect(find.text('Conditions de la Tariqa'), findsNothing);
+  });
 }

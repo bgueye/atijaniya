@@ -4491,3 +4491,43 @@ signale rien et les 740 tests passent. Non vérifié sur téléphone avec TalkBa
 l'étape 6 : chiffres en Cormorant (« 1 » lu « I »), libellés vocaux « ×N », boutons du wird libre et
 de la ligne d'administration.
 
+## Audit des écrans refaits, étape 6 : finitions (2026-11-04)
+
+Suite de `docs/audits/2026-11-03-ecrans-refaits.md`, les constats restants qui ne demandent ni
+décision ni contenu :
+- **Figures** : la rangée des foyers prend la hauteur du texte réel (réglage d'accessibilité
+  compris) au lieu de 220 dp fixes ; à 1,6×, les cartes débordaient de 67 px. Le nombre de figures
+  tient sur une ligne, comme le nom du foyer.
+- **Profil** : profil illisible (hors ligne) : le message, puis la section Application (langue,
+  contraste) et « Se déconnecter », qui ne dépendent pas du profil ; avant, seul le message
+  restait. « Supprimer » de la confirmation de suppression prend la teinte grisée quand il est
+  désactivé (couleur sur le bouton, plus sur le texte).
+- **Accueil** : « Commencer » ouvre le tasbih, comme sur l'onglet Wird (décision validée du
+  2026-11-01) ; il ouvrait le guide. La feuille d'une condition s'ouvre avec sa source
+  (`source_note`), comme un cas de rattrapage.
+- **Onglet Wird** : la tuile « Conditions de la Tariqa » est masquée sans condition lisible, comme
+  les deux autres (elle s'affichait avec « 0 »).
+- **Fiche d'une zawiya** : ouvrir le fondateur, un khalife ou une figure liée hors ligne (ou une fiche
+  dépubliée) affiche un message, comme sur la fiche d'une figure ; l'erreur n'était pas rattrapée.
+- **Fiche d'un évènement** : compte à rebours sans « environ » pour une date exacte.
+- **Textes** : « dans environ 52 j » (Agenda) au lieu de « environ dans 52 j » ; « Tariqa » au lieu
+  de « tarikha » (deux libellés).
+- **Chiffres** : `StatTile` en chiffres alignés ; en chiffres elzéviriens de Cormorant, le « 1 » se
+  lisait « I » (Profil, chiffres-clés d'une figure). Capture du Profil relue.
+
+Tests : `figures_screen_test.dart` (texte agrandi, en échec avant), `profil_screen_test.dart` (profil
+illisible), `home_action_card_audit_test.dart` (« Commencer », pastille « Fait aujourd'hui »),
+`wird_overview_test.dart` (tuile masquée), `detail_screens_audit_test.dart` (date exacte).
+`flutter analyze` ne signale rien et les 745 tests passent. Pas encore validé sur téléphone.
+
+**Restent ouverts après l'étape 6** (voir le rapport d'audit) : les décisions du porteur de projet
+(zaytoune du Profil et de la fiche d'une figure, écran d'entrée de l'invité, contenu arabe de la
+Hailala et des clôtures, note de la Hadra, écarts de la Communauté), la relecture des formulations
+arabes par un arabophone, et des P3 de confort : arbre de la silsila au lecteur d'écran et flèche
+de la légende, libellés vocaux « ×N », carte contextuelle de l'accueil en arabe, retour système
+dans la découverte, étape Rappels perdue si l'app est fermée, renvoi d'e-mail depuis Connexion,
+règle « lettres », distances en arabe, rechargement de la position, ancien fil gardé en changeant
+de filtre, cartes du fil (« Rejoindre » sans nom, commentaires), lignée en erreur sur le Profil,
+réglage des chiffres de pratique au changement de compte, évènement sans bouton Maps quand
+l'adresse vient de la zawiya.
+

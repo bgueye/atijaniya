@@ -198,6 +198,8 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text('Passé'), findsNothing);
+    // Date exacte : pas d'« environ » (audit, étape 6).
+    expect(find.text('Dans 3 jours'), findsOneWidget);
     expect(find.text('Démarrer un direct'), findsOneWidget);
   });
 }

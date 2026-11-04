@@ -44,8 +44,10 @@ class StatTile extends StatelessWidget {
             Text(
               value,
               textDirection: TextDirection.ltr,
-              style:
-                  AppTheme.titleText(fontSize: 28, color: dark ? AppColors.goldOnDark : AppColors.emerald, height: 1),
+              // Chiffres alignés : les chiffres elzéviriens de Cormorant
+              // dessinent un « 1 » qui se lit « I » (audit du 2026-11-03).
+              style: AppTheme.titleText(fontSize: 28, color: dark ? AppColors.goldOnDark : AppColors.emerald, height: 1)
+                  .copyWith(fontFeatures: const [FontFeature.liningFigures()]),
             ),
             const SizedBox(height: 2),
             ContentText(

@@ -188,3 +188,4 @@ Les points les plus graves :
 | 3. Sessions en pause (accueil, Wird, tasbih), état inconnu du Wird | **fait** le 2026-11-03 (voir `docs/09`) |
 | 4. Pratique (touchers en trop, cadran), taille de l'arabe du guide | **fait** le 2026-11-03 (voir `docs/09`) |
 | 5. Accessibilité transversale et pluriels arabes | **fait** le 2026-11-04 (voir `docs/09`) ; formulations arabes à faire relire |
+| 6. Finitions sans décision ni contenu | **fait en partie** le 2026-11-04 (P1 et P2 restants corrigés ; liste des P3 et des décisions encore ouverts dans `docs/09`) |

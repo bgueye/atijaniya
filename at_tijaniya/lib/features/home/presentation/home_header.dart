@@ -308,7 +308,11 @@ class HomeActionCard extends StatelessWidget {
               : l10n.homeWirdSubtitlePendingFridayToday;
         }
         cta = l10n.homeNextStepStart;
-        onCta = () => openWird(wird);
+        // « Commencer » ouvre la pratique, comme sur l'onglet Wird (décision
+        // validée du 2026-11-01 : « Commencer » ouvre le tasbih, « Guide » en
+        // secondaire). Le guide reste à une touche, par les pastilles des
+        // wirds. Audit du 2026-11-03 : il ouvrait le guide ici seulement.
+        onCta = () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => TasbihScreen(wird: wird)));
       }
     }
 

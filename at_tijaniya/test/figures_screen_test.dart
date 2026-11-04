@@ -72,6 +72,18 @@ void main() {
       expect(find.text('Afficher les 12 figures'), findsOneWidget);
     });
 
+    // Audit des écrans refaits du 2026-11-03 : la rangée des foyers avait une
+    // hauteur fixe, et le nombre de figures était coupé à texte agrandi.
+    testWidgets('texte agrandi : les cartes de foyer ne débordent pas', (tester) async {
+      tall(tester);
+      tester.platformDispatcher.textScaleFactorTestValue = 1.6;
+      addTearDown(tester.platformDispatcher.clearTextScaleFactorTestValue);
+      await tester.pumpWidget(figuresApp(theme: AppTheme.standard));
+      await tester.pumpAndSettle();
+      expect(tester.takeException(), isNull);
+      expect(find.byType(FoyerCollectionCard), findsWidgets);
+    });
+
     testWidgets('sans portrait, le nom arabe sert d\'image', (tester) async {
       tall(tester);
       await tester.pumpWidget(figuresApp(theme: AppTheme.standard));

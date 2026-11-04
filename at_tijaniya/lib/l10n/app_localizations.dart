@@ -2459,7 +2459,7 @@ abstract class AppLocalizations {
   /// No description provided for @figureSilsilaFounderLabel.
   ///
   /// In fr, this message translates to:
-  /// **'Fondateur de la tarikha'**
+  /// **'Fondateur de la Tariqa'**
   String get figureSilsilaFounderLabel;
 
   /// No description provided for @figureSilsilaAddButton.
@@ -4601,7 +4601,7 @@ abstract class AppLocalizations {
   /// No description provided for @mouqaddamChainUltimateSourceQuestion.
   ///
   /// In fr, this message translates to:
-  /// **'Cette personne est-elle Cheikh Ahmed Tijani, à l\'origine de la tarikha ?'**
+  /// **'Cette personne est-elle Cheikh Ahmed Tijani, à l\'origine de la Tariqa ?'**
   String get mouqaddamChainUltimateSourceQuestion;
 
   /// No description provided for @mouqaddamChainCompleteDone.
@@ -7739,7 +7739,7 @@ abstract class AppLocalizations {
   /// No description provided for @khadaraAgendaInDaysApprox.
   ///
   /// In fr, this message translates to:
-  /// **'{count, plural, =0{aujourd\'hui, environ} =1{demain, environ} other{environ dans {count} j}}'**
+  /// **'{count, plural, =0{aujourd\'hui, environ} =1{demain, environ} other{dans environ {count} j}}'**
   String khadaraAgendaInDaysApprox(int count);
 
   /// No description provided for @khadaraAgendaMonthCount.

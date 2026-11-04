@@ -434,6 +434,10 @@ class _DiscoverCardView extends StatelessWidget {
       eyebrow: l10n.homeDiscoverConditionEyebrow(_categoryLabel(l10n, condition.category)),
       onOpenFullPage: () =>
           Navigator.of(context).push(MaterialPageRoute(builder: (_) => const TariqaConditionsScreen())),
+      // La réponse s'ouvre avec sa source, comme un cas de rattrapage et
+      // comme sur la page des conditions (audit du 2026-11-03 : la feuille
+      // d'une condition s'ouvrait sans elle).
+      source: condition.sourceNote != null && condition.sourceNote!.trim().isNotEmpty ? condition.sourceNote : null,
       children: [ContentText(_conditionText(condition, isArabic), style: repairContentStyle(isArabic, size: 15.5))],
     );
   }

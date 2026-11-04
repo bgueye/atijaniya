@@ -188,13 +188,23 @@ class _ProfileBody extends ConsumerWidget {
     final profile = profileAsync.valueOrNull;
     if (profile == null) {
       if (profileAsync.hasError) {
-        return Padding(
-          padding: const EdgeInsets.all(16),
-          child: Notice.fromError(
-            profileAsync.error!,
-            message: l10n.profileLoadError,
-            onRetry: () => ref.invalidate(myProfileProvider),
-          ),
+        // Profil illisible (hors ligne, erreur du serveur) : le message, puis
+        // les réglages de l'app et la déconnexion, qui ne dépendent pas du
+        // profil. Avant l'audit du 2026-11-03, seul le message restait : on
+        // ne pouvait plus ni changer de langue ni se déconnecter.
+        return ListView(
+          padding: const EdgeInsets.fromLTRB(16, 16, 16, 24),
+          children: [
+            Notice.fromError(
+              profileAsync.error!,
+              message: l10n.profileLoadError,
+              onRetry: () => ref.invalidate(myProfileProvider),
+            ),
+            SectionTitle(l10n.profileAppTitle, padding: sectionPadding),
+            const _AppSection(signedIn: true),
+            const SizedBox(height: 24),
+            const _SignOutArea(),
+          ],
         );
       }
       return Center(child: CircularProgressIndicator(color: AppColors.emerald));
@@ -986,9 +996,13 @@ class _DeleteAccountDialogState extends ConsumerState<_DeleteAccountDialog> {
         ),
         TextButton(
           onPressed: canSubmit ? () => _submit(expectedWord) : null,
+          // Couleur sur le bouton et non sur le texte : désactivé (mot pas
+          // encore saisi), il prend la teinte grisée du thème au lieu de
+          // rester rouge vif sans réagir (audit du 2026-11-03).
+          style: TextButton.styleFrom(foregroundColor: AppColors.danger),
           child: _deleting
               ? const SizedBox(width: 16, height: 16, child: CircularProgressIndicator(strokeWidth: 2))
-              : Text(l10n.profileDeleteAccountConfirmAction, style: const TextStyle(color: AppColors.danger)),
+              : Text(l10n.profileDeleteAccountConfirmAction),
         ),
       ],
     );

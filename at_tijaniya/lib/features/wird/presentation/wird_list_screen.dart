@@ -648,15 +648,19 @@ class _UnderstandTiles extends ConsumerWidget {
     String withDraft(String text, bool draft) => draft ? '$text (${l10n.wirdRepairDraftTag})' : text;
 
     final small = [
-      _Tile(
-        icon: Icons.rule_outlined,
-        chipColor: AppColors.emeraldSoft,
-        iconColor: AppColors.emerald,
-        title: l10n.tariqaConditionsCardTitle,
-        subtitle: l10n.tariqaConditionsCardSubtitle,
-        count: conditions?.length,
-        onTap: () => _push(context, const TariqaConditionsScreen()),
-      ),
+      // Masquée sans condition lisible (chargement, erreur, aucune ligne
+      // validée), comme les deux autres tuiles : elle s'affichait vide ou
+      // avec « 0 » (audit du 2026-11-03).
+      if (conditions != null && conditions.isNotEmpty)
+        _Tile(
+          icon: Icons.rule_outlined,
+          chipColor: AppColors.emeraldSoft,
+          iconColor: AppColors.emerald,
+          title: l10n.tariqaConditionsCardTitle,
+          subtitle: l10n.tariqaConditionsCardSubtitle,
+          count: conditions.length,
+          onTap: () => _push(context, const TariqaConditionsScreen()),
+        ),
       if (hasBenefits)
         _Tile(
           icon: Icons.spa_outlined,

@@ -1247,7 +1247,7 @@ class AppLocalizationsFr extends AppLocalizations {
   String get figureSilsilaLoadError => 'Impossible de charger la silsila historique.';
 
   @override
-  String get figureSilsilaFounderLabel => 'Fondateur de la tarikha';
+  String get figureSilsilaFounderLabel => 'Fondateur de la Tariqa';
 
   @override
   String get figureSilsilaAddButton => 'Ajouter à la silsila';
@@ -2343,7 +2343,7 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get mouqaddamChainUltimateSourceQuestion =>
-      'Cette personne est-elle Cheikh Ahmed Tijani, à l\'origine de la tarikha ?';
+      'Cette personne est-elle Cheikh Ahmed Tijani, à l\'origine de la Tariqa ?';
 
   @override
   String get mouqaddamChainCompleteDone =>
@@ -4194,7 +4194,7 @@ class AppLocalizationsFr extends AppLocalizations {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: 'environ dans $count j',
+      other: 'dans environ $count j',
       one: 'demain, environ',
       zero: 'aujourd\'hui, environ',
     );

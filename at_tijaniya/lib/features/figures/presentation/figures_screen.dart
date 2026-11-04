@@ -143,7 +143,14 @@ class _FiguresScreenState extends ConsumerState<FiguresScreen> {
             padding: const EdgeInsetsDirectional.fromSTEB(2, 24, 0, 8),
           ),
           SizedBox(
-            height: 156 + 64,
+            // Mosaïque carrée de 156, marges de 18, et les deux lignes de
+            // texte à la taille réelle du texte (réglage d'accessibilité
+            // compris) : à hauteur fixe, le nombre de figures était coupé dès
+            // un texte à 1,3× (audit du 2026-11-03).
+            height: 156 +
+                18 +
+                8 +
+                (MediaQuery.textScalerOf(context).scale(14) + MediaQuery.textScalerOf(context).scale(12)) * 1.5,
             child: ListView.separated(
               scrollDirection: Axis.horizontal,
               clipBehavior: Clip.none,

@@ -479,7 +479,7 @@ void main() {
       expect(find.textContaining('rendez-vous'), findsWidgets);
       expect(find.text('Ziyara'), findsNWidgets(2));
       expect(find.text('dans 10 j'), findsOneWidget);
-      expect(find.text('environ dans 40 j'), findsOneWidget);
+      expect(find.text('dans environ 40 j'), findsOneWidget);
       // Pas de section « Rediffusions » sans rediffusion.
       expect(find.text('Rediffusions'), findsNothing);
       // Pas de bouton de création pour un disciple.
