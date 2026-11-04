@@ -201,6 +201,30 @@ void main() {
     expect(find.text('Pilier 3 / 5 · Istighfar ×100'), findsOneWidget);
   });
 
+  // Audit des écrans refaits du 2026-11-03 : l'intention et la Fatiha ont le
+  // même bouton au même endroit ; un double toucher marquait la Fatiha
+  // récitée sans retour possible. Les touchers sont ignorés un court instant
+  // après chaque changement de pilier.
+  testWidgets('un double toucher sur « Récitée » ne saute pas la Fatiha', (tester) async {
+    _seed(lazim, pillarIndex: 0);
+    await tester.pumpWidget(_wrap(lazim));
+    await tester.pumpAndSettle();
+    expect(find.text('Récitée · pilier suivant'), findsOneWidget);
+
+    await tester.tap(find.text('Récitée · pilier suivant'));
+    await tester.pump();
+    // Second toucher aussitôt, sur le bouton de la Fatiha : ignoré.
+    await tester.tap(find.text('Récitée · pilier suivant'), warnIfMissed: false);
+    await tester.pumpAndSettle();
+    expect(find.text(lazim.pillars[1].fullText!.first.arabic), findsOneWidget, reason: 'toujours sur la Fatiha');
+
+    // Après le court délai, le bouton répond de nouveau.
+    await tester.pump(const Duration(milliseconds: 700));
+    await tester.tap(find.text('Récitée · pilier suivant'));
+    await tester.pumpAndSettle();
+    expect(find.text('Pilier 3 / 5 · Istighfar ×100'), findsOneWidget);
+  });
+
   testWidgets('« Réinitialiser » est dans le menu « ⋯ », avec « Annuler »', (tester) async {
     _seed(lazim, pillarIndex: 2, count: 12);
     await tester.pumpWidget(_wrap(lazim));

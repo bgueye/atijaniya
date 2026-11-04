@@ -9,6 +9,8 @@
 /// Tous les textes viennent du corpus validé (`wirds_content.dart`).
 library;
 
+import 'dart:math' as math;
+
 import 'package:flutter/material.dart';
 
 import '../../../core/theme/app_colors.dart';
@@ -179,7 +181,7 @@ class WirdPillarCard extends StatelessWidget {
           if (pillar.closingFormulas != null)
             for (final formula in pillar.closingFormulas!) ...[
               const SizedBox(height: 10),
-              _ClosingFormulaBlock(formula: formula, arabicSize: arabicSize - 4),
+              _ClosingFormulaBlock(formula: formula, arabicSize: arabicSize - 2),
             ],
           if (fullText != null && !expandedVerses) ...[
             const SizedBox(height: 4),
@@ -197,7 +199,7 @@ class WirdPillarCard extends StatelessWidget {
                   ),
                   children: [
                     for (var i = 0; i < fullText.length; i++)
-                      _Verse(paragraph: fullText[i], number: null, arabicSize: arabicSize - 4),
+                      _Verse(paragraph: fullText[i], number: null, arabicSize: arabicSize - 2),
                   ],
                 ),
               ),
@@ -256,6 +258,10 @@ class _Note extends StatelessWidget {
 
 /// Un verset (Fatiha, numéroté) ou un paragraphe d'un texte long : arabe,
 /// translittération, traduction.
+/// Plus petite taille de l'arabe d'un verset ou d'une clôture dans le guide,
+/// quel que soit le réglage « Aa » (audit du 2026-11-03).
+const double minArabicSize = 18;
+
 class _Verse extends StatelessWidget {
   const _Verse({required this.paragraph, required this.number, required this.arabicSize});
 
@@ -297,7 +303,12 @@ class _Verse extends StatelessWidget {
                   textAlign: TextAlign.right,
                   textDirection: TextDirection.rtl,
                   style:
-                      AppTheme.sacredText(fontSize: arabicSize - 4, color: AppColors.goldOnDark).copyWith(height: 1.7),
+                      // Taille reçue telle quelle, avec un plancher : le guide
+                      // part déjà de la taille du tasbih moins 4, et retirer
+                      // encore 4 ici menait à 10 px au réglage minimal
+                      // (audit du 2026-11-03).
+                      AppTheme.sacredText(fontSize: math.max(arabicSize, minArabicSize), color: AppColors.goldOnDark)
+                          .copyWith(height: 1.7),
                 ),
                 _Transliteration(paragraph.transliteration, align: TextAlign.left),
                 const SizedBox(height: 2),
@@ -342,7 +353,8 @@ class _ClosingFormulaBlock extends StatelessWidget {
             formula.arabic,
             textAlign: TextAlign.center,
             textDirection: TextDirection.rtl,
-            style: AppTheme.sacredText(fontSize: arabicSize, color: AppColors.goldOnDark).copyWith(height: 1.7),
+            style: AppTheme.sacredText(fontSize: math.max(arabicSize, minArabicSize), color: AppColors.goldOnDark)
+                .copyWith(height: 1.7),
           ),
           if (formula.transliteration != null) ...[
             const SizedBox(height: 2),

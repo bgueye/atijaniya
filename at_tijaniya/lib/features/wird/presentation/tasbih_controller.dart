@@ -291,6 +291,9 @@ class TasbihController extends StateNotifier<TasbihState> with WidgetsBindingObs
     if (isLastPillar) {
       await _store.clear(wird.id);
       await _completionStore.recordCompletionToday(wird.id);
+      // Écran quitté pendant l'enregistrement : la complétion est gardée,
+      // mais l'état ne s'écrit plus (audit du 2026-11-03).
+      if (!mounted) return;
       state = state.copyWith(wirdCompleted: true);
       return;
     }

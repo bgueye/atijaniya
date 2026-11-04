@@ -96,6 +96,26 @@ void main() {
     }
   });
 
+  // Audit des écrans refaits du 2026-11-03 : l'arabe des versets et des
+  // clôtures était réduit deux fois (14 px pour la Fatiha au réglage minimal).
+  testWidgets("réglage « Aa » minimal : versets et clôtures à 18 px au moins", (tester) async {
+    tall(tester);
+    SharedPreferences.setMockInitialValues({'tasbih_reading_arabic_size::guest': 22.0});
+    await tester.pumpWidget(_wrap(lazim, sundayMorning()));
+    await tester.pumpAndSettle();
+
+    // Une même formule peut figurer à plusieurs endroits : chaque occurrence
+    // est vérifiée.
+    Iterable<double> sizesOf(String text) => tester.widgetList<Text>(find.text(text)).map((t) => t.style!.fontSize!);
+    for (final verse in lazim.pillars[1].fullText!) {
+      expect(sizesOf(verse.arabic), everyElement(greaterThanOrEqualTo(18)));
+    }
+    for (final formula in lazim.pillars[4].closingFormulas!) {
+      expect(sizesOf(formula.arabic), isNotEmpty);
+      expect(sizesOf(formula.arabic), everyElement(greaterThanOrEqualTo(18)));
+    }
+  });
+
   testWidgets('Wazifa en pause : « Reprendre » ; Jawharatoul Kamal reste repliée', (tester) async {
     tall(tester);
     await tester.pumpWidget(_wrap(wazifa, sundayEvening()));

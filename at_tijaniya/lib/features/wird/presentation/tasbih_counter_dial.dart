@@ -133,15 +133,27 @@ class _DialPainter extends CustomPainter {
     }
   }
 
+  /// Au-delà, un anneau continu remplace les centaines : chaque segment
+  /// devient plus court que son écart, et passé environ 89 centaines la
+  /// longueur devenait négative, l'anneau se dessinait à l'envers (audit du
+  /// 2026-11-03 ; le wird libre n'a pas de plafond).
+  static const maxHundredSegments = 24;
+
   void _hundreds(Canvas canvas, Offset center, double radius) {
     final segments = (target / 100).ceil();
-    const gap = 0.07;
-    final sweep = 2 * math.pi / segments;
     final rect = Rect.fromCircle(center: center, radius: radius - 4);
     final base = Paint()
       ..style = PaintingStyle.stroke
       ..strokeWidth = 8
       ..strokeCap = StrokeCap.round;
+    if (segments > maxHundredSegments) {
+      canvas.drawArc(rect, -math.pi / 2, 2 * math.pi, false, base..color = _off);
+      final done = (count / target).clamp(0.0, 1.0);
+      if (done > 0) canvas.drawArc(rect, -math.pi / 2, 2 * math.pi * done, false, base..color = _on);
+      return;
+    }
+    const gap = 0.07;
+    final sweep = 2 * math.pi / segments;
     for (var s = 0; s < segments; s++) {
       final start = -math.pi / 2 + s * sweep + gap / 2;
       final length = sweep - gap;

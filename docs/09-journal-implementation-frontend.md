@@ -4436,3 +4436,26 @@ Tests : `test/tasbih_sessions_audit_test.dart` (règle, onglet Wird, accueil) et
 `wird_overview_test.dart` (données illisibles). `flutter analyze` ne signale rien et les 732 tests
 passent. Pas encore validé sur téléphone.
 
+## Audit des écrans refaits, étape 4 : pratique et guide (2026-11-03)
+
+Suite de `docs/audits/2026-11-03-ecrans-refaits.md` :
+- **Touchers en trop dans la pratique** (`tasbih_screen.dart`) : après chaque changement de scène
+  (pilier suivant, pilier terminé, clôture), les touchers sont ignorés 600 ms. Un double toucher sur
+  « Récitée · pilier suivant » marquait la Fatiha récitée juste après l'intention, sans retour
+  possible ; en mode concentré, un toucher de trop après le dernier compte pouvait tomber sur
+  « Terminer » et enregistrer le wird. Le premier affichage n'est pas neutralisé.
+- **Contrôleur** : `nextPillar` ne réécrit plus l'état si l'écran a été quitté pendant
+  l'enregistrement de la complétion (qui reste enregistrée).
+- **Cadran du wird libre** (`tasbih_counter_dial.dart`) : au-delà de 24 centaines, un anneau continu
+  remplace les centaines ; vers 8 900 et plus, la longueur des segments devenait négative et l'anneau
+  se dessinait à l'envers (le wird libre n'a pas de plafond). Non couvert par un test (dessin).
+- **Taille de l'arabe du guide** (`wird_pillar_card.dart`) : les versets n'enlèvent plus 4 à une
+  taille déjà réduite de 4 ; texte intégral et clôtures à la taille du guide moins 2 ; plancher de
+  18 px (`minArabicSize`). Au réglage minimal, la Fatiha passait à 14 px et le texte intégral de
+  Jawharatoul Kamal à 10 px. Captures du guide relues.
+
+Tests : `tasbih_screen_test.dart` (double toucher sur « Récitée », vérifié en échec sans la
+neutralisation), `wird_guide_test.dart` (réglage minimal, versets et clôtures à 18 px au moins).
+`flutter analyze` ne signale rien et les 734 tests passent. Pas encore validé sur téléphone, en
+particulier la durée de 600 ms au doigt.
+

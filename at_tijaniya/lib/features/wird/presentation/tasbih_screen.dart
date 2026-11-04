@@ -19,6 +19,8 @@
 // Comptage, voix, avance automatique et reprise de session restent dans
 // `TasbihController`, inchangés.
 
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -98,6 +100,40 @@ class _TasbihBodyState extends ConsumerState<_TasbihBody> {
 
   Wird get wird => widget.wird;
 
+  /// Durée pendant laquelle les touchers sont ignorés après un changement de
+  /// scène (pilier suivant, fin d'un pilier, clôture). Audit du 2026-11-03 :
+  /// l'intention et la Fatiha ont le même bouton au même endroit, et un
+  /// double toucher marquait la Fatiha récitée sans retour possible ; en mode
+  /// concentré, un toucher de trop après le dernier compte tombait sur
+  /// « Terminer » et enregistrait le wird. Assez court pour ne pas gêner un
+  /// geste voulu.
+  static const sceneGuard = Duration(milliseconds: 600);
+
+  /// Scène affichée au dernier rendu (pilier, pilier terminé, clôture), pour
+  /// repérer un changement.
+  String? _sceneKey;
+  bool _guarding = false;
+  Timer? _guardTimer;
+
+  @override
+  void dispose() {
+    _guardTimer?.cancel();
+    super.dispose();
+  }
+
+  /// Appelé à chaque rendu : à un changement de scène, ignore les touchers
+  /// pendant [sceneGuard]. Le premier affichage n'est pas neutralisé.
+  void _watchScene(String key) {
+    final previous = _sceneKey;
+    _sceneKey = key;
+    if (previous == null || previous == key) return;
+    _guarding = true;
+    _guardTimer?.cancel();
+    _guardTimer = Timer(sceneGuard, () {
+      if (mounted) setState(() => _guarding = false);
+    });
+  }
+
   void _enterFocus() => setState(() {
         _focus = true;
         _hintVisible = false;
@@ -134,6 +170,8 @@ class _TasbihBodyState extends ConsumerState<_TasbihBody> {
       tasbihTapHaptic(session.currentCount + 1, controller.targetCount);
       controller.increment();
     }
+
+    _watchScene('${session.pillarIndex}|$complete|$closingNow|$once');
 
     final Widget scene;
     if (closingNow) {
@@ -173,7 +211,7 @@ class _TasbihBodyState extends ConsumerState<_TasbihBody> {
           showReading: !focus,
         ),
         if (!focus) _Landmarks(controller: controller, count: session.currentCount),
-        Expanded(child: scene),
+        Expanded(child: IgnorePointer(ignoring: _guarding, child: scene)),
       ],
     );
   }
