@@ -26,10 +26,14 @@ import 'khadara_format.dart';
 /// répétée sans fin attirerait l'œil en permanence, et le texte « En direct »
 /// dit déjà l'état.
 class LiveNowBanner extends StatelessWidget {
-  const LiveNowBanner({super.key, required this.stream, required this.onTap});
+  const LiveNowBanner({super.key, required this.stream, required this.onTap, this.placeName});
 
   final LiveStream stream;
   final VoidCallback onTap;
+
+  /// Lieu du rendez-vous (ou groupe) du direct, avant la plateforme, comme
+  /// dans la maquette (« Zawiya de Tivaouane · YouTube »).
+  final String? placeName;
 
   @override
   Widget build(BuildContext context) {
@@ -65,8 +69,11 @@ class LiveNowBanner extends StatelessWidget {
                       overflow: TextOverflow.ellipsis,
                       style: const TextStyle(fontSize: 14.5, fontWeight: FontWeight.w500, color: AppColors.offWhite),
                     ),
-                    Text(
-                      liveStreamSourceLabel(stream.sourceType, l10n),
+                    ContentText(
+                      [
+                        if (placeName != null && placeName!.isNotEmpty) placeName!,
+                        liveStreamSourceLabel(stream.sourceType, l10n),
+                      ].join(' · '),
                       style: TextStyle(fontSize: 12, color: AppColors.secondaryOnDark),
                     ),
                   ],

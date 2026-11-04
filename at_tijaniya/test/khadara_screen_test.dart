@@ -221,6 +221,21 @@ void main() {
       expect(find.text('Regarder'), findsOneWidget);
     });
 
+    testWidgets('bandeau du direct : le lieu du rendez-vous avant la plateforme', (tester) async {
+      _tall(tester);
+      await tester.pumpWidget(_wrap(live: const [
+        LiveStream(
+          id: 'l1',
+          eventId: 'e1',
+          eventTitle: 'Ziarra de Médina Baye',
+          sourceType: LiveStreamSourceType.youtube,
+          status: LiveStreamStatus.live,
+        ),
+      ]));
+      await tester.pumpAndSettle();
+      expect(find.text('Zawiya de Médina Baye (Kaolack) · YouTube'), findsOneWidget);
+    });
+
     testWidgets('deux vues, Lieux par défaut, avec leur nombre', (tester) async {
       _tall(tester);
       await tester.pumpWidget(_wrap());
@@ -450,6 +465,34 @@ void main() {
       expect(find.textContaining('~'), findsWidgets);
       expect(find.text('1 lieu sans coordonnées n\'est pas classé.'), findsOneWidget);
       expect(_place('Lieu saint de test'), findsNothing);
+    });
+
+    // Audit des écrans refaits du 2026-11-03 (P3) : position relue en
+    // tirant pour actualiser ; distances écrites à l'arabe.
+    testWidgets('tirer pour actualiser relit la position', (tester) async {
+      _tall(tester);
+      final location = _FakeLocationService();
+      await tester.pumpWidget(_wrap(location: location));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Près de moi'));
+      await tester.pumpAndSettle();
+      expect(location.requests, 1);
+
+      // Actualisation déclenchée comme par le geste (`show` lance le même
+      // `onRefresh`).
+      tester.state<RefreshIndicatorState>(find.byType(RefreshIndicator)).show();
+      await tester.pumpAndSettle();
+      expect(location.requests, 2);
+    });
+
+    testWidgets("distances en arabe : « كم », point décimal", (tester) async {
+      _tall(tester);
+      await tester.pumpWidget(_wrap(locale: const Locale('ar')));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('بالقرب مني'));
+      await tester.pumpAndSettle();
+      expect(find.textContaining('كم'), findsWidgets);
+      expect(find.textContaining(' km'), findsNothing);
     });
 
     testWidgets('refus définitif : bouton vers les réglages, en plus de « Réessayer »', (tester) async {

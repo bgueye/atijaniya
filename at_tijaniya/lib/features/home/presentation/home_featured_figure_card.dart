@@ -71,7 +71,9 @@ class HomeFeaturedFigureCard extends StatelessWidget {
                 figure.portraitUrl!,
                 fit: BoxFit.cover,
                 alignment: const Alignment(0, -0.55),
-                errorBuilder: (context, error, stackTrace) => const ColoredBox(color: AppColors.zaytoune),
+                // Émeraude, pas zaytoune : cette carte n'est pas une exception
+                // de la charte (audit du 2026-11-03).
+                errorBuilder: (context, error, stackTrace) => ColoredBox(color: AppColors.emerald),
                 // Fond et indicateur pendant le téléchargement : la carte était
                 // un rectangle vide jusqu'à l'arrivée du portrait (P2-2).
                 loadingBuilder: (context, child, progress) => progress == null

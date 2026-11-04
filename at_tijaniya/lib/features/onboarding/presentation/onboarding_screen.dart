@@ -13,7 +13,6 @@ import '../../khadara/domain/khadara_models.dart';
 import '../../khadara/presentation/khadara_providers.dart';
 import '../../wird/data/wirds_content.dart';
 import '../../wird/presentation/wird_band.dart';
-import '../data/onboarding_store.dart';
 
 /// Découverte — présentation de l'app avant d'y entrer. Priorité P1
 /// (docs/03-architecture-ecrans.md : « 3-4 écrans d'introduction (wirds,
@@ -37,7 +36,6 @@ class OnboardingScreen extends StatefulWidget {
 
 class _OnboardingScreenState extends State<OnboardingScreen> {
   final _controller = PageController();
-  final _store = const OnboardingStore();
   int _page = 0;
 
   static const _pageCount = 3;
@@ -48,10 +46,10 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     super.dispose();
   }
 
-  Future<void> _finish() async {
-    await _store.markSeen();
-    if (mounted) widget.onFinished();
-  }
+  /// La découverte n'est marquée « vue » qu'à la fin de l'étape Rappels qui
+  /// la suit (`app.dart`) : marquée ici, une app fermée pendant les Rappels ne
+  /// les proposait plus jamais (audit du 2026-11-03).
+  void _finish() => widget.onFinished();
 
   void _next() {
     if (_page == _pageCount - 1) {
@@ -84,51 +82,60 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     ];
     final isLast = _page == _pageCount - 1;
 
-    return Scaffold(
-      backgroundColor: AppColors.parchment,
-      body: SafeArea(
-        child: Column(
-          children: [
-            Align(
-              alignment: AlignmentDirectional.topEnd,
-              child: Padding(
-                padding: const EdgeInsets.all(8),
-                // Place gardée sur le dernier écran, où « Continuer » mène au
-                // même endroit : le contenu ne saute pas.
-                child: Visibility(
-                  visible: !isLast,
-                  maintainSize: true,
-                  maintainAnimation: true,
-                  maintainState: true,
-                  child: TextButton(
-                    onPressed: _finish,
-                    style: TextButton.styleFrom(foregroundColor: AppColors.secondaryInk),
-                    child: Text(l10n.onboardingSkip),
+    // Retour système : la page précédente de la découverte, et seulement
+    // ensuite la sortie (audit du 2026-11-03 : il fermait l'app depuis la
+    // deuxième ou la troisième page).
+    return PopScope(
+      canPop: _page == 0,
+      onPopInvokedWithResult: (didPop, _) {
+        if (!didPop) _controller.previousPage(duration: const Duration(milliseconds: 300), curve: Curves.easeOut);
+      },
+      child: Scaffold(
+        backgroundColor: AppColors.parchment,
+        body: SafeArea(
+          child: Column(
+            children: [
+              Align(
+                alignment: AlignmentDirectional.topEnd,
+                child: Padding(
+                  padding: const EdgeInsets.all(8),
+                  // Place gardée sur le dernier écran, où « Continuer » mène au
+                  // même endroit : le contenu ne saute pas.
+                  child: Visibility(
+                    visible: !isLast,
+                    maintainSize: true,
+                    maintainAnimation: true,
+                    maintainState: true,
+                    child: TextButton(
+                      onPressed: _finish,
+                      style: TextButton.styleFrom(foregroundColor: AppColors.secondaryInk),
+                      child: Text(l10n.onboardingSkip),
+                    ),
                   ),
                 ),
               ),
-            ),
-            Expanded(
-              child: PageView(
-                controller: _controller,
-                onPageChanged: (i) => setState(() => _page = i),
-                children: slides,
-              ),
-            ),
-            _PageIndicator(count: _pageCount, current: _page),
-            const SizedBox(height: 20),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 24),
-              child: SizedBox(
-                width: double.infinity,
-                child: ElevatedButton(
-                  onPressed: _next,
-                  child: Text(isLast ? l10n.continueLabel : l10n.onboardingNext),
+              Expanded(
+                child: PageView(
+                  controller: _controller,
+                  onPageChanged: (i) => setState(() => _page = i),
+                  children: slides,
                 ),
               ),
-            ),
-            const SizedBox(height: 20),
-          ],
+              _PageIndicator(count: _pageCount, current: _page),
+              const SizedBox(height: 20),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 24),
+                child: SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton(
+                    onPressed: _next,
+                    child: Text(isLast ? l10n.continueLabel : l10n.onboardingNext),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 20),
+            ],
+          ),
         ),
       ),
     );

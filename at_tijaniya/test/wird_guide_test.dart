@@ -116,6 +116,17 @@ void main() {
     }
   });
 
+  // Audit des écrans refaits du 2026-11-03 (P3) : « ×100 » était lu
+  // « multiplication 100 ».
+  testWidgets('les nombres de récitations sont lus « 100 fois »', (tester) async {
+    tall(tester);
+    final semantics = tester.ensureSemantics();
+    await tester.pumpWidget(_wrap(lazim, sundayMorning()));
+    await tester.pumpAndSettle();
+    expect(find.semantics.byLabel(RegExp(r'100 fois')), findsWidgets);
+    semantics.dispose();
+  });
+
   testWidgets('Wazifa en pause : « Reprendre » ; Jawharatoul Kamal reste repliée', (tester) async {
     tall(tester);
     await tester.pumpWidget(_wrap(wazifa, sundayEvening()));

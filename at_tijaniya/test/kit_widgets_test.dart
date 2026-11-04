@@ -197,8 +197,10 @@ void main() {
       ])));
 
       expect(tester.getSize(find.byType(InkWell).first).height, greaterThanOrEqualTo(48));
-      // Une seule ligne sans élément de fin : un seul chevron.
-      expect(find.byIcon(Icons.chevron_right), findsOneWidget);
+      // Les deux lignes s'ouvrent : un chevron chacune, y compris celle que
+      // termine une pastille d'état (audit du 2026-11-03 : elle n'en avait
+      // pas, et rien ne montrait qu'elle s'ouvre).
+      expect(find.byIcon(Icons.chevron_right), findsNWidgets(2));
       await tester.tap(find.text('Ma lignée spirituelle'));
       expect(opened, isTrue);
     });

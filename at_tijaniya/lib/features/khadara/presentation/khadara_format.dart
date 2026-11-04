@@ -72,9 +72,15 @@ String? formatKhadaraNextOccurrence(KhadaraEvent event, AppLocalizations l10n, {
 /// « Près de moi » (écran Zawiyas). Virgule plutôt que point : cohérent avec
 /// l'usage courant en français, l'arabe utilisé dans l'app affichant
 /// aussi les chiffres latins ailleurs (voir `formatKhadaraDateTime`).
-String formatKhadaraDistance(double km) {
-  if (km < 1) return '${(km * 1000).round()} m';
-  return '${km.toStringAsFixed(1).replaceAll('.', ',')} km';
+///
+/// [languageCode] `ar` : « 2.1 كم », « 850 م » (audit du 2026-11-03 : la
+/// virgule et « km » s'affichaient en arabe). Chiffres latins dans les deux
+/// langues, comme le reste de l'app.
+String formatKhadaraDistance(double km, {String languageCode = 'fr'}) {
+  final arabic = languageCode == 'ar';
+  if (km < 1) return '${(km * 1000).round()} ${arabic ? 'م' : 'm'}';
+  final value = km.toStringAsFixed(1);
+  return arabic ? '$value كم' : '${value.replaceAll('.', ',')} km';
 }
 
 IconData khadaraEventTypeIcon(KhadaraEventType type) {

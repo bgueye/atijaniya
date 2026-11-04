@@ -68,12 +68,24 @@ class FilterChips<T> extends StatelessWidget {
 /// Une pastille de filtre seule, pour les rares cas où la rangée ne convient
 /// pas. Pastille visible de 32 px dans une zone tactile de 48 dp.
 class FilterPill extends StatelessWidget {
-  const FilterPill({super.key, required this.label, required this.selected, required this.onTap, this.count});
+  const FilterPill({
+    super.key,
+    required this.label,
+    required this.selected,
+    required this.onTap,
+    this.count,
+    this.semanticsLabel,
+  });
 
   final String label;
   final bool selected;
   final VoidCallback onTap;
   final int? count;
+
+  /// Ce que dit le lecteur d'écran à la place de [label] quand celui-ci est
+  /// une abréviation (« FR » se disait lettre à lettre ; audit du
+  /// 2026-11-03).
+  final String? semanticsLabel;
 
   @override
   Widget build(BuildContext context) {
@@ -83,6 +95,9 @@ class FilterPill extends StatelessWidget {
     return Semantics(
       button: true,
       selected: selected,
+      label: semanticsLabel,
+      excludeSemantics: semanticsLabel != null,
+      onTap: semanticsLabel != null ? onTap : null,
       child: InkWell(
         onTap: onTap,
         borderRadius: BorderRadius.circular(999),

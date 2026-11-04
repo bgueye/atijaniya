@@ -214,7 +214,7 @@ class _ProfileBody extends ConsumerWidget {
       padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),
       children: [
         _IdentityCard(profile: profile),
-        if (showStats) ...[
+        if (showStats == true) ...[
           SectionTitle(
             l10n.profilePracticeTitle,
             padding: sectionPadding,
@@ -572,6 +572,9 @@ class _SpiritualPathSection extends ConsumerWidget {
 
     Future<void> openLineage() async {
       final saved = await Navigator.of(context).push<bool>(MaterialPageRoute(builder: (_) => const LineageScreen()));
+      // Écran du Profil quitté entre-temps (déconnexion) : son `ref` n'est
+      // plus utilisable (audit du 2026-11-03).
+      if (!context.mounted) return;
       ref.invalidate(myLineageProvider);
       if (saved == true && context.mounted) {
         ScaffoldMessenger.of(context)
@@ -588,24 +591,37 @@ class _SpiritualPathSection extends ConsumerWidget {
               privacy?.lineageVisible == true ? l10n.profileStateVisibleToCondisciples : l10n.profileStatePrivate);
     }
 
+    // Lignée illisible (hors ligne) : avant l'audit du 2026-11-03, elle était
+    // présentée « à renseigner » et le toucher ouvrait la saisie. Le message
+    // le dit, et le toucher relance la lecture.
+    final lineageFailed = lineageAsync.hasError && !lineageAsync.hasValue;
+    void retryLineage() => ref.invalidate(myLineageProvider);
+
     return ListGroup(items: [
       ListGroupItem(
         icon: Icons.account_tree_outlined,
         tone: ListGroupTone.sacred,
         title: l10n.profileMyLineage,
-        subtitle: hasLineage ? l10n.profileLineageFilled : l10n.profileLineageEmptySubtitle,
+        subtitle: lineageFailed
+            ? l10n.lineageLoadError
+            : (hasLineage ? l10n.profileLineageFilled : l10n.profileLineageEmptySubtitle),
         trailing: lineageState,
-        showChevron: lineageState == null,
-        onTap: openLineage,
+        onTap: lineageFailed ? retryLineage : openLineage,
       ),
       ListGroupItem(
         icon: Icons.groups_outlined,
         title: l10n.lineageFindDisciplesCta,
-        subtitle: hasLineage
-            ? (matches == null ? null : l10n.profileMatchesCount(matches.length))
-            : l10n.profileMatchesAfterLineage,
+        subtitle: lineageFailed
+            ? null
+            : hasLineage
+                ? (matches == null ? null : l10n.profileMatchesCount(matches.length))
+                : l10n.profileMatchesAfterLineage,
         trailing: matches != null && matches.isNotEmpty ? StatePill.count(matches.length) : null,
-        onTap: hasLineage ? () => _push(context, const LineageMatchesScreen()) : openLineage,
+        onTap: lineageFailed
+            ? retryLineage
+            : hasLineage
+                ? () => _push(context, const LineageMatchesScreen())
+                : openLineage,
       ),
       if (verified) ...[
         ListGroupItem(
@@ -653,6 +669,7 @@ class _PrivacySection extends ConsumerWidget {
 
     Future<void> open(Widget screen) async {
       await Navigator.of(context).push(MaterialPageRoute(builder: (_) => screen));
+      if (!context.mounted) return;
       ref.invalidate(myPrivacySettingsProvider);
       ref.invalidate(blockedUsersProvider);
     }
@@ -730,6 +747,7 @@ class _AppSection extends ConsumerWidget {
           children: [
             FilterPill(
               label: 'FR',
+              semanticsLabel: l10n.languageFrench,
               selected: current.languageCode == 'fr',
               onTap: () => ref.read(localeControllerProvider.notifier).setLocale(const Locale('fr')),
             ),
@@ -753,7 +771,7 @@ class _AppSection extends ConsumerWidget {
         ListGroupItem.toggle(
           icon: Icons.insights_outlined,
           title: l10n.profileShowPracticeStats,
-          value: showStats,
+          value: showStats ?? true,
           onChanged: (value) => ref.read(showPracticeStatsProvider.notifier).set(value),
         ),
       ListGroupItem(

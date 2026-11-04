@@ -235,4 +235,18 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.text('Conditions de la Tariqa'), findsNothing);
   });
+
+  // Audit des écrans refaits du 2026-11-03 (P3) : le wird libre est annoncé
+  // comme un bouton, en un seul élément ; « Lazim, Wazifa marqués » s'accorde.
+  testWidgets('wird libre annoncé comme bouton ; jours de la semaine accordés', (tester) async {
+    _tall(tester);
+    final semantics = tester.ensureSemantics();
+    await tester.pumpWidget(_wrap(sundayMorning()));
+    await tester.pumpAndSettle();
+
+    final free = tester.getSemantics(find.text('Wird libre'));
+    expect(free.flagsCollection.isButton, isTrue);
+    expect(find.semantics.byLabel(RegExp(r'Lazim, Wazifa marqués')), findsWidgets);
+    semantics.dispose();
+  });
 }

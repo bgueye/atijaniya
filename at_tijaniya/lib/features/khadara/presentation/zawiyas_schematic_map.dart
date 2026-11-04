@@ -99,6 +99,7 @@ class ZawiyasSchematicMap extends StatelessWidget {
                             language: language,
                             project: (country) => _project(country, size),
                             radius: _radius,
+                            textScaler: MediaQuery.textScalerOf(context).clamp(maxScaleFactor: 1.5),
                             // Styles tirés du thème (Jost, et la police de
                             // secours des captures) plutôt qu'une famille
                             // écrite en dur, voir `app_colors.dart`.
@@ -236,8 +237,10 @@ class _MapPainter extends CustomPainter {
     required this.radius,
     required this.labelStyle,
     required this.countStyle,
+    this.textScaler = TextScaler.noScaling,
   });
 
+  final TextScaler textScaler;
   final List<CountryPoint> points;
   final String? selected;
   final String language;
@@ -303,6 +306,9 @@ class _MapPainter extends CustomPainter {
     final painter = TextPainter(
       text: TextSpan(text: text, style: style),
       textDirection: language == 'ar' ? TextDirection.rtl : TextDirection.ltr,
+      // Taille du texte du système, bornée pour que les noms restent dans le
+      // dessin (audit du 2026-11-03 : ils ne grossissaient pas du tout).
+      textScaler: textScaler,
       maxLines: 1,
     )..layout();
     var dx = centered ? anchor.dx - painter.width / 2 : anchor.dx;
@@ -313,5 +319,9 @@ class _MapPainter extends CustomPainter {
 
   @override
   bool shouldRepaint(_MapPainter old) =>
-      old.points != points || old.selected != selected || old.language != language || old.labelStyle != labelStyle;
+      old.points != points ||
+      old.selected != selected ||
+      old.language != language ||
+      old.labelStyle != labelStyle ||
+      old.textScaler != textScaler;
 }

@@ -5861,7 +5861,7 @@ abstract class AppLocalizations {
   /// No description provided for @blockUserConfirmBody.
   ///
   /// In fr, this message translates to:
-  /// **'Vous ne recevrez plus ses messages et ne verrez plus ce qu\'il écrit. Il ne pourra plus vous écrire et n\'en sera pas informé. Pour le débloquer : Paramètres → Confidentialité → Disciples bloqués.'**
+  /// **'Vous ne recevrez plus ses messages et ne verrez plus ce qu\'il écrit. Il ne pourra plus vous écrire et n\'en sera pas informé. Pour le débloquer : Mon profil, puis Confidentialité, puis Disciples bloqués.'**
   String get blockUserConfirmBody;
 
   /// No description provided for @blockUserSuccess.
@@ -6641,8 +6641,8 @@ abstract class AppLocalizations {
   /// No description provided for @wirdWeekDayMarked.
   ///
   /// In fr, this message translates to:
-  /// **'{day} : {wirds} marqué'**
-  String wirdWeekDayMarked(String day, String wirds);
+  /// **'{count, plural, one{{day} : {wirds} marqué} other{{day} : {wirds} marqués}}'**
+  String wirdWeekDayMarked(String day, String wirds, int count);
 
   /// No description provided for @wirdWeekDayNothing.
   ///
@@ -7193,7 +7193,7 @@ abstract class AppLocalizations {
   /// No description provided for @figuresSilsilaLegend.
   ///
   /// In fr, this message translates to:
-  /// **'Silsila historique (maître → disciple), d\'après les liens renseignés dans l\'app. Ce n\'est pas un arbre généalogique.'**
+  /// **'Silsila historique (du maître au disciple), d\'après les liens renseignés dans l\'app. Ce n\'est pas un arbre généalogique.'**
   String get figuresSilsilaLegend;
 
   /// No description provided for @figuresSilsilaExternal.
@@ -7577,7 +7577,7 @@ abstract class AppLocalizations {
   /// No description provided for @remindersOnboardingBody.
   ///
   /// In fr, this message translates to:
-  /// **'Une notification à l\'heure choisie, chaque jour. Vous pourrez tout changer depuis chaque wird.'**
+  /// **'Une notification à l\'heure choisie pour chaque wird. Vous pourrez tout changer depuis chaque wird.'**
   String get remindersOnboardingBody;
 
   /// No description provided for @remindersOnboardingLater.
@@ -7927,6 +7927,48 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'{count, plural, one{{count} vendredi d\'affilée} other{{count} vendredis d\'affilée}}'**
   String wirdStreakFridaysLine(int count);
+
+  /// No description provided for @a11yRepetitions.
+  ///
+  /// In fr, this message translates to:
+  /// **'{count, plural, one{{count} fois} other{{count} fois}}'**
+  String a11yRepetitions(int count);
+
+  /// No description provided for @khadaraNearLocationUnknown.
+  ///
+  /// In fr, this message translates to:
+  /// **'Votre position n\'a pas pu être obtenue. Réessayez, de préférence à l\'extérieur ou près d\'une fenêtre.'**
+  String get khadaraNearLocationUnknown;
+
+  /// No description provided for @communityCommentsCount.
+  ///
+  /// In fr, this message translates to:
+  /// **'{count, plural, one{{count} commentaire} other{{count} commentaires}}'**
+  String communityCommentsCount(int count);
+
+  /// No description provided for @communityGroupJoinNamed.
+  ///
+  /// In fr, this message translates to:
+  /// **'Rejoindre {group}'**
+  String communityGroupJoinNamed(String group);
+
+  /// No description provided for @remindersOnboardingPermissionDenied.
+  ///
+  /// In fr, this message translates to:
+  /// **'Autorisez les notifications dans les réglages du téléphone pour activer ces rappels.'**
+  String get remindersOnboardingPermissionDenied;
+
+  /// No description provided for @remindersOnboardingScheduleFailed.
+  ///
+  /// In fr, this message translates to:
+  /// **'Certains rappels n\'ont pas pu être programmés. Réessayez depuis chaque wird.'**
+  String get remindersOnboardingScheduleFailed;
+
+  /// No description provided for @wirdRemindersNotificationsOff.
+  ///
+  /// In fr, this message translates to:
+  /// **'Les notifications d\'At-Tijaniya sont coupées dans les réglages du téléphone : ces rappels ne sonneront pas tant qu\'elles n\'y sont pas autorisées.'**
+  String get wirdRemindersNotificationsOff;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

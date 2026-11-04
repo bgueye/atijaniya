@@ -4531,3 +4531,65 @@ de filtre, cartes du fil (« Rejoindre » sans nom, commentaires), lignée en er
 réglage des chiffres de pratique au changement de compte, évènement sans bouton Maps quand
 l'adresse vient de la zawiya.
 
+## Audit des écrans refaits : les P3 (2026-11-04)
+
+Demande du porteur de projet : corriger les P3 restants de `docs/audits/2026-11-03-ecrans-refaits.md`,
+hors décisions et contenu à fournir.
+- **Figures** : chaque nœud de l'arbre de la silsila annonce son maître au lecteur d'écran (le
+  retrait ne s'entendait pas) ; nom du maître écrit dans la langue de l'interface ; rond uni sans
+  portrait (le nom arabe en 9 px n'en montrait que des fragments) ; légende sans flèche, que Jost ne
+  dessine pas (« du maître au disciple ») ; page d'un foyer avec chargement et erreur ; libellés
+  arabes « عرض كل الشخصيات (12) » et « بطاقات ».
+- **Onglet Wird** : wird libre et ligne d'administration annoncés comme boutons ; contours du bandeau
+  de la semaine à 3:1 (points vides, losange de la Hadra) ; « Lazim, Wazifa marqués » ; titre du
+  bandeau annoncé en arabe dans l'interface arabe, nom arabe jamais coupé ; texte de la Hadra aligné
+  selon son sens en arabe.
+- **Guide** : « ×100 » lu « 100 fois » ; cercles des numéros qui grandissent avec le texte.
+- **Rappels** : l'écran des rappels dit quand les notifications de l'app sont coupées dans les
+  réglages du téléphone (`WirdNotificationService.notificationsEnabled`) ; ses lignes posées sur un
+  `Material` (l'effet du toucher était masqué, assertion relevée par le premier test de l'écran).
+- **Pratique** : erreur du micro dite en mode concentré ; « Annuler » après la sortie sans effet ;
+  menu « ⋯ » masqué quand sa seule action est indisponible ; réglage « Aa » fait avant la fin du
+  chargement appliqué aux valeurs lues ; boutons du kit (`PracticeButton`) dans le wird libre.
+- **Zawiyas** : distances en arabe (« 2.1 كم ») ; position relue en tirant pour actualiser ; échec de
+  localisation présenté comme tel ; lieu du rendez-vous dans le bandeau du direct ; noms de la carte
+  à la taille du texte (bornée à 1,5×).
+- **Communauté** : un échec de « Voir plus » garde le fil et dit l'erreur à la place du bouton ;
+  barre de chargement pendant un changement de filtre ; « Rejoindre {groupe} » et « 3 commentaires »
+  au lecteur d'écran ; condisciples hors ligne : un message au lieu de la saisie de la lignée ;
+  conteneur Riverpod relevé avant l'attente (adhésion, publication) ; guillemets arabes insécables.
+- **Profil** : lignée illisible dite (et non « à renseigner ») ; réglage des chiffres de pratique
+  relu à chaque compte, rien de montré avant sa lecture ; `ref` après navigation protégé ; « FR »
+  annoncé « Français » (`FilterPill.semanticsLabel`) ; chevron sur toute ligne qui s'ouvre, même
+  terminée par une pastille d'état (règle du kit `ListGroup`).
+- **Fiches** : succession, figures liées et direct illisibles dits, avec « Réessayer » ; « Ouvrir
+  dans Maps » vers la zawiya quand l'évènement n'a pas de lieu propre ; nom de la figure annoncé
+  comme titre.
+- **Accueil** : condition entière sur sa carte (bornée seulement au-delà de 1,3×) ; réponse arabe de
+  la carte contextuelle à droite ; style tonal du kit ; émeraude et non zaytoune pour un portrait
+  absent ; marges directionnelles de la ligne du don ; « السلام عليكم، » ; flèche du pied de carte
+  non lue.
+- **Parcours d'entrée** : découverte marquée « vue » à la fin de l'étape Rappels (une app fermée
+  pendant les Rappels les repropose) ; retour système qui revient à la page précédente de la
+  découverte ; « Retour » depuis la boîte mail mène à la connexion, adresse gardée ; délai de renvoi
+  aussi depuis la connexion ; décompte lisible ; règle « lettres » qui demande une vraie lettre ;
+  messages des Rappels au pluriel ; « pour chaque wird » au lieu de « chaque jour » ; « كلمة المرور »
+  partout ; « الأيام المتتالية » au lieu de « السلاسل » ; invité ramené sur son onglet d'origine
+  (`homeTabIndexProvider`, remis à l'Accueil à la déconnexion).
+- **Au passage** : le message de blocage d'un disciple renvoyait aux « Paramètres », écran supprimé
+  (« Mon profil, puis Confidentialité, puis Disciples bloqués »).
+
+Tests ajoutés ou complétés : `figures_screen_test`, `wird_overview_test`, `wird_guide_test`,
+`wird_reminders_notifications_test` (nouveau), `khadara_screen_test`, `communaute_pagination_test`,
+`profil_screen_test`, `detail_screens_audit_test`, `parcours_entree_test`, `app_startup_test`,
+`home_shell_lazy_tabs_test` ; `kit_widgets_test` et `free_wird_screen_test` adaptés aux nouvelles
+règles (chevron, bouton de pratique). `flutter analyze` ne signale rien et les 762 tests passent.
+Pas encore validé sur téléphone.
+
+**Non traités, par choix** : écarts de la maquette d'accueil non décidés (liens « Calendrier » et
+« Lire la biographie »), pays à un seul lieu sans nom sur la carte (conforme à la maquette), cases du
+bandeau de la semaine sous 48 dp en largeur (elles ouvrent toutes l'historique), barre audio du guide
+(assumée), « Hadratou-l-Jouma » coupé au trait d'union dans l'aperçu arabe (comportement du composant),
+variante « visible » des pastilles d'état (choix de design), textes de la base sans version arabe
+(contenu). Décisions et contenus listés dans le rapport d'audit.
+

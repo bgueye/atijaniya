@@ -342,6 +342,8 @@ class _PillarSummary extends StatelessWidget {
                 const SizedBox(width: 4),
                 Text(
                   '×${pillar.repetitions}',
+                  // Lu « 100 fois » plutôt que « multiplication 100 » (audit du 2026-11-03).
+                  semanticsLabel: AppLocalizations.of(context)!.a11yRepetitions(pillar.repetitions),
                   textDirection: TextDirection.ltr,
                   style: const TextStyle(fontSize: 12.5, fontWeight: FontWeight.w600, color: AppColors.goldOnDark),
                 ),

@@ -78,7 +78,7 @@ Future<bool> confirmAndBlockUser(
   return true;
 }
 
-/// Écran « Disciples bloqués » (Paramètres → Confidentialité) : le seul
+/// Écran « Disciples bloqués » (Profil → Confidentialité) : le seul
 /// endroit où débloquer quelqu'un.
 class BlockedUsersScreen extends ConsumerWidget {
   const BlockedUsersScreen({super.key});
@@ -112,7 +112,8 @@ class BlockedUsersScreen extends ConsumerWidget {
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Text(l10n.blockedUsersLoadError, textAlign: TextAlign.center, style: TextStyle(color: AppColors.bronze)),
+                  Text(l10n.blockedUsersLoadError,
+                      textAlign: TextAlign.center, style: TextStyle(color: AppColors.bronze)),
                   const SizedBox(height: 12),
                   OutlinedButton(
                     onPressed: () => ref.invalidate(blockedUsersProvider),
@@ -127,7 +128,8 @@ class BlockedUsersScreen extends ConsumerWidget {
               return Center(
                 child: Padding(
                   padding: const EdgeInsets.all(24),
-                  child: Text(l10n.blockedUsersEmpty, textAlign: TextAlign.center, style: TextStyle(color: AppColors.bronze)),
+                  child: Text(l10n.blockedUsersEmpty,
+                      textAlign: TextAlign.center, style: TextStyle(color: AppColors.bronze)),
                 ),
               );
             }

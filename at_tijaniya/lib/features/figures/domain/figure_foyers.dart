@@ -42,7 +42,14 @@ int discipleCount(String figureId, List<FigureSilsilaLink> links) =>
 
 /// Un nœud de l'arbre de silsila d'un foyer, dans l'ordre d'affichage.
 class FoyerSilsilaNode {
-  const FoyerSilsilaNode({required this.figure, required this.depth, this.external = false, this.masterName});
+  const FoyerSilsilaNode({
+    required this.figure,
+    required this.depth,
+    this.external = false,
+    this.masterName,
+    this.master,
+    this.showMaster = false,
+  });
 
   final Figure figure;
 
@@ -53,9 +60,21 @@ class FoyerSilsilaNode {
   /// branche de ses disciples du foyer.
   final bool external;
 
-  /// Nom du maître quand le nœud n'est pas rangé directement sous lui (au-delà
-  /// de la profondeur affichée), pour dire de qui il est le disciple.
+  /// Nom français du maître quand le nœud n'est pas rangé directement sous
+  /// lui (au-delà de la profondeur affichée). Gardé pour les appelants
+  /// existants ; l'écran écrit désormais le nom de [master] dans la langue de
+  /// l'interface (audit du 2026-11-03 : le nom français s'affichait en
+  /// arabe).
   final String? masterName;
+
+  /// Maître du nœud dans l'arbre (`null` pour une racine). Le lecteur
+  /// d'écran le dit toujours, le retrait seul ne s'entendant pas (audit du
+  /// 2026-11-03).
+  final Figure? master;
+
+  /// `true` quand le nom du maître est écrit sous le nœud (au-delà de la
+  /// profondeur affichée).
+  final bool showMaster;
 }
 
 /// Arbre maître → disciple du [foyer], à partir des liens de silsila :
@@ -119,17 +138,19 @@ List<FoyerSilsilaNode> buildFoyerSilsilaTree(
 
   final result = <FoyerSilsilaNode>[];
   final seen = <String>{};
-  void visit(String id, int depth, String? master) {
+  void visit(String id, int depth, Figure? master) {
     if (!seen.add(id)) return;
     final shownDepth = depth > maxDepth ? maxDepth : depth;
     result.add(FoyerSilsilaNode(
       figure: byId[id]!,
       depth: shownDepth,
-      masterName: depth > maxDepth ? master : null,
+      masterName: depth > maxDepth ? master?.nameFrench : null,
+      master: master,
+      showMaster: depth > maxDepth,
     ));
     final kids = (children[id] ?? const []).where(inFoyer.contains).toList()..sort(compare);
     for (final kid in kids) {
-      visit(kid, depth + 1, byId[id]!.nameFrench);
+      visit(kid, depth + 1, byId[id]!);
     }
   }
 
@@ -138,7 +159,7 @@ List<FoyerSilsilaNode> buildFoyerSilsilaTree(
     result.add(FoyerSilsilaNode(figure: byId[master]!, depth: 0, external: true));
     final kids = externalRoots[master]!..sort(compare);
     for (final kid in kids) {
-      visit(kid, 1, byId[master]!.nameFrench);
+      visit(kid, 1, byId[master]!);
     }
   }
   roots.sort(compare);

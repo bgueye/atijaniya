@@ -202,4 +202,50 @@ void main() {
     expect(find.text('Dans 3 jours'), findsOneWidget);
     expect(find.text('Démarrer un direct'), findsOneWidget);
   });
+
+  // Audit des écrans refaits du 2026-11-03 (P3) : sections muettes hors
+  // ligne ; adresse de la zawiya affichée sans bouton Maps.
+  testWidgets('zawiya : succession illisible, le message et « Réessayer »', (tester) async {
+    _tall(tester);
+    await tester.pumpWidget(ProviderScope(
+      overrides: [
+        ...detailOverrides(),
+        successionsForZawiyaProvider('z-test').overrideWith((ref) async => throw StateError('hors ligne')),
+        figuresForZawiyaProvider('z-test').overrideWith((ref) async => const []),
+      ],
+      child: const MaterialApp(
+        locale: Locale('fr'),
+        supportedLocales: [Locale('fr'), Locale('ar')],
+        localizationsDelegates: [
+          AppLocalizations.delegate,
+          GlobalMaterialLocalizations.delegate,
+          GlobalWidgetsLocalizations.delegate,
+          GlobalCupertinoLocalizations.delegate,
+        ],
+        home: ZawiyaDetailScreen(zawiya: _zawiya),
+      ),
+    ));
+    await tester.pumpAndSettle();
+    expect(find.text('Impossible de charger les données.'), findsOneWidget);
+    expect(find.text('Réessayer'), findsOneWidget);
+  });
+
+  testWidgets("évènement sans lieu propre : « Ouvrir dans Maps » vers sa zawiya", (tester) async {
+    _tall(tester);
+    final now = DateTime.now();
+    final event = KhadaraEvent(
+      id: 'e-sans-lieu',
+      zawiyaId: 'z-tivaouane',
+      zawiyaName: 'Zawiya de Tivaouane',
+      title: 'Causerie',
+      type: KhadaraEventType.other,
+      startsAt: DateTime(now.year, now.month, now.day + 5, 9),
+    );
+    await tester.pumpWidget(_app(
+      EventDetailScreen(event: event),
+      extra: [latestStreamForEventProvider('e-sans-lieu').overrideWith((ref) async => null)],
+    ));
+    await tester.pumpAndSettle();
+    expect(find.text('Ouvrir dans Maps'), findsOneWidget);
+  });
 }

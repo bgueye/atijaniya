@@ -214,8 +214,11 @@ class _FeedView extends ConsumerWidget {
       },
       child: feed.when(
         // « Voir plus » recharge le fil avec une page de plus, sans le
-        // remplacer par l'indicateur de chargement.
+        // remplacer par l'indicateur de chargement. Un échec du rechargement
+        // garde aussi les publications déjà affichées (audit du 2026-11-03 :
+        // l'erreur effaçait tout le fil) ; il est dit à la place du bouton.
         skipLoadingOnReload: true,
+        skipError: true,
         loading: () => ListView(
           padding: const EdgeInsets.fromLTRB(16, 12, 16, 24),
           children: [
@@ -239,14 +242,27 @@ class _FeedView extends ConsumerWidget {
         ),
         data: (posts) {
           final entries = _interleave(posts, events);
-          if (posts.length >= ref.watch(communityFeedLimitProvider)) entries.add(const _LoadMoreEntry());
+          // Après un échec de « Voir plus », l'entrée reste pour dire l'erreur
+          // et proposer « Réessayer », même si la page n'est pas pleine.
+          if (feed.hasError || posts.length >= ref.watch(communityFeedLimitProvider)) {
+            entries.add(const _LoadMoreEntry());
+          }
+          // Rechargement en cours (filtre « Ma zawiya » changé, « Voir
+          // plus ») : une barre en tête, l'ancienne liste restant affichée
+          // (audit du 2026-11-03 : rien n'indiquait que la liste n'était pas
+          // encore celle du filtre choisi).
+          final top = [
+            ...header,
+            if (feed.isReloading) LinearProgressIndicator(color: AppColors.emerald, minHeight: 2),
+          ];
+          final loadMoreFailed = feed.hasError;
           return ListView.builder(
             physics: const AlwaysScrollableScrollPhysics(),
             padding: const EdgeInsets.fromLTRB(16, 12, 16, 24),
-            itemCount: header.length + entries.length + (posts.isEmpty ? 1 : 0),
+            itemCount: top.length + entries.length + (posts.isEmpty ? 1 : 0),
             itemBuilder: (context, i) {
-              if (i < header.length) return header[i];
-              final index = i - header.length;
+              if (i < top.length) return top[i];
+              final index = i - top.length;
               if (index == entries.length) {
                 // Fil vide : le message, après les rendez-vous éventuels.
                 return Padding(
@@ -265,11 +281,17 @@ class _FeedView extends ConsumerWidget {
                 _PostEntry(:final post) =>
                   _PostCard(key: ValueKey(post.id), post: post, fallbackAuthor: l10n.communityDefaultAuthor),
                 _EventEntry(:final event) => _ZawiyaEventCard(key: ValueKey('event-${event.id}'), event: event),
-                _LoadMoreEntry() => LoadMoreButton(
-                    label: l10n.communityFeedLoadMore,
-                    loading: feed.isReloading,
-                    onPressed: () => ref.read(communityFeedLimitProvider.notifier).state += communityPageSize,
-                  ),
+                _LoadMoreEntry() => loadMoreFailed
+                    ? CommunityErrorState(
+                        error: feed.error!,
+                        message: l10n.communityLoadError,
+                        onRetry: () => ref.invalidate(communityFeedProvider),
+                      )
+                    : LoadMoreButton(
+                        label: l10n.communityFeedLoadMore,
+                        loading: feed.isReloading,
+                        onPressed: () => ref.read(communityFeedLimitProvider.notifier).state += communityPageSize,
+                      ),
               };
             },
           );
@@ -630,7 +652,13 @@ class _PostCardState extends ConsumerState<_PostCard> {
                   const SizedBox(width: 12),
                   Icon(Icons.mode_comment_outlined, color: AppColors.bronze, size: 18),
                   const SizedBox(width: 4),
-                  ContentText('${post.commentCount}', style: TextStyle(color: AppColors.secondaryInk, fontSize: 13)),
+                  // Lu « 3 commentaires », pas « 3 » seul (audit du 2026-11-03).
+                  Semantics(
+                    label: l10n.communityCommentsCount(post.commentCount),
+                    excludeSemantics: true,
+                    child: ContentText('${post.commentCount}',
+                        style: TextStyle(color: AppColors.secondaryInk, fontSize: 13)),
+                  ),
                 ],
               ),
             ),

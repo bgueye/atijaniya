@@ -322,8 +322,10 @@ class _DiscoverCardView extends StatelessWidget {
           footer: l10n.homeDiscoverWhatToDo,
           onTap: () => push(WirdRepairScreen(initialWird: wird)),
           children: [
+            // Texte arabe à droite quelle que soit la langue de l'interface :
+            // « fin » voulait dire gauche en arabe (audit du 2026-11-03).
             Align(
-              alignment: AlignmentDirectional.centerEnd,
+              alignment: Alignment.centerRight,
               child: Text(
                 answer.textAr,
                 textDirection: TextDirection.rtl,
@@ -374,9 +376,13 @@ class _DiscoverCardView extends StatelessWidget {
           footer: l10n.homeDiscoverReadMore,
           onTap: () => _showConditionSheet(context, condition),
           children: [
+            // En entier : pour une condition, ce texte est la réponse, et la
+            // maquette la veut intégrale (phrases courtes). Coupée à 4 lignes,
+            // elle s'arrêtait en pleine phrase à texte agrandi (audit du
+            // 2026-11-03). Bornée seulement au-delà de 1,3×.
             ContentText(
               text,
-              maxLines: 4,
+              maxLines: MediaQuery.textScalerOf(context).scale(10) > 13 ? 6 : null,
               overflow: TextOverflow.ellipsis,
               style: repairContentStyle(isArabic, size: 14),
             ),
@@ -513,8 +519,14 @@ class _CardShell extends StatelessWidget {
                 constraints: const BoxConstraints(minHeight: 44),
                 child: Align(
                   alignment: AlignmentDirectional.centerStart,
-                  child: Text('$footer  $arrow',
-                      style: TextStyle(fontSize: 13, fontWeight: FontWeight.w500, color: footerColor)),
+                  // Flèche lue « flèche droite » par le lecteur d'écran :
+                  // seul le libellé est annoncé (audit du 2026-11-03).
+                  child: Semantics(
+                    label: footer,
+                    excludeSemantics: true,
+                    child: Text('$footer  $arrow',
+                        style: TextStyle(fontSize: 13, fontWeight: FontWeight.w500, color: footerColor)),
+                  ),
                 ),
               ),
             ],

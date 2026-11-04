@@ -157,6 +157,23 @@ void main() {
       expect(find.textContaining('Ce n\'est pas un arbre généalogique'), findsOneWidget);
     });
 
+    // Audit des écrans refaits du 2026-11-03 : le retrait de l'arbre ne
+    // s'entendait pas ; chaque nœud dit maintenant de qui il est le disciple.
+    // Légende sans flèche, que Jost ne dessine pas.
+    testWidgets('arbre de la silsila : chaque disciple annonce son maître', (tester) async {
+      tall(tester);
+      final semantics = tester.ensureSemantics();
+      await tester.pumpWidget(figuresApp(
+        theme: AppTheme.standard,
+        home: const FoyerScreen(foyer: Foyer.tivaouane, initialView: FoyerView.silsila),
+      ));
+      await tester.pumpAndSettle();
+
+      expect(find.semantics.byLabel(RegExp(r'disciple de ')), findsWidgets);
+      expect(find.textContaining('du maître au disciple'), findsOneWidget);
+      semantics.dispose();
+    });
+
     testWidgets('foyer sans lien de silsila : le dit', (tester) async {
       tall(tester);
       await tester.pumpWidget(figuresApp(

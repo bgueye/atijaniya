@@ -450,10 +450,15 @@ class _FigureHero extends StatelessWidget {
           style: AppTheme.sacredText(fontSize: compact ? 22 : (hasPortrait ? 26 : 34), color: AppColors.goldOnDark)
               .copyWith(fontWeight: FontWeight.w700, height: 1.45),
         ),
-        ContentText(
-          figure.nameFrench,
-          textAlign: hasPortrait ? TextAlign.start : TextAlign.center,
-          style: AppTheme.titleText(fontSize: compact ? 20 : 24, color: AppColors.offWhite, height: 1.15),
+        // Titre de la fiche pour le lecteur d'écran, comme sur les fiches
+        // d'une zawiya et d'un évènement (audit du 2026-11-03).
+        Semantics(
+          header: true,
+          child: ContentText(
+            figure.nameFrench,
+            textAlign: hasPortrait ? TextAlign.start : TextAlign.center,
+            style: AppTheme.titleText(fontSize: compact ? 20 : 24, color: AppColors.offWhite, height: 1.15),
+          ),
         ),
         if (foyer != null) ...[
           const SizedBox(height: 4),

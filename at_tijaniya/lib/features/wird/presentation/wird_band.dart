@@ -60,6 +60,7 @@ class WirdBand extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final arabicUi = Localizations.localeOf(context).languageCode == 'ar';
     final l10n = AppLocalizations.of(context)!;
     final colors = wirdBandColors(wird.id);
     final frequency = wird.frequency == WirdFrequency.daily ? l10n.wirdFrequencyDaily : l10n.homeWirdSubtitleWeeklyInfo;
@@ -76,8 +77,13 @@ class WirdBand extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisSize: MainAxisSize.min,
               children: [
+                // Titre annoncé dans la langue de l'interface : en arabe, le
+                // lecteur d'écran disait le nom français (audit du
+                // 2026-11-03). Le nom arabe, à côté, n'est alors pas relu.
                 Semantics(
                   header: true,
+                  label: arabicUi ? wird.nameArabic : wird.nameFrench,
+                  excludeSemantics: true,
                   child: ContentText(
                     wird.nameFrench,
                     style: AppTheme.titleText(fontSize: 22, color: colors.foreground, height: 1.05),
@@ -94,13 +100,16 @@ class WirdBand extends StatelessWidget {
           // validé et s'écrit toujours de droite à gauche, quelle que soit la
           // langue de l'interface. En arabe, la rangée s'inverse et le nom
           // passe à gauche, comme dans la maquette.
+          // Jamais coupé : un nom religieux ne finit pas en points de
+          // suspension, même à texte agrandi (audit du 2026-11-03).
           Flexible(
-            child: Text(
-              wird.nameArabic,
-              textDirection: TextDirection.rtl,
-              maxLines: 2,
-              overflow: TextOverflow.ellipsis,
-              style: AppTheme.sacredText(fontSize: 30, color: colors.arabic).copyWith(height: 1.3),
+            child: ExcludeSemantics(
+              excluding: arabicUi,
+              child: Text(
+                wird.nameArabic,
+                textDirection: TextDirection.rtl,
+                style: AppTheme.sacredText(fontSize: 30, color: colors.arabic).copyWith(height: 1.3),
+              ),
             ),
           ),
         ],

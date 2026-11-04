@@ -137,6 +137,9 @@ class _AtTijaniyaAppState extends ConsumerState<AtTijaniyaApp> {
       final event = next.valueOrNull?.event;
       if (event == AuthChangeEvent.signedOut && _step == _Step.home && mounted) {
         _navigatorKey.currentState?.popUntil((route) => route.isFirst);
+        // Après une déconnexion, on repart de l'Accueil (le dernier onglet
+        // n'est gardé que pour un passage par la connexion).
+        ref.invalidate(homeTabIndexProvider);
         // L'écran d'entrée, comme au lancement sans session : il propose de
         // se reconnecter comme de continuer sans compte.
         setState(() => _step = _Step.welcome);
@@ -252,7 +255,12 @@ class _AtTijaniyaAppState extends ConsumerState<AtTijaniyaApp> {
         return OnboardingScreen(onFinished: () => setState(() => _step = _Step.reminders));
       case _Step.reminders:
         // Étape facultative, vue une seule fois, juste après la découverte.
-        return OnboardingRemindersScreen(onFinished: () => setState(() => _step = _Step.welcome));
+        // Découverte marquée « vue » ici, une fois les Rappels passés : une
+        // app fermée pendant cette étape la repropose au lancement suivant.
+        return OnboardingRemindersScreen(onFinished: () async {
+          await _onboardingStore.markSeen();
+          if (mounted) setState(() => _step = _Step.welcome);
+        });
       case _Step.welcome:
         return WelcomeScreen(
           onCreateAccount: () => _openAuth(signUp: true, backToHome: false),

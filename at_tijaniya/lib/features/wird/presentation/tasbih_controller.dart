@@ -255,6 +255,10 @@ class TasbihController extends StateNotifier<TasbihState> with WidgetsBindingObs
     required bool useAlternative,
     required int previousCount,
   }) async {
+    // « Annuler » touché après la sortie de l'écran (le message survit à la
+    // page) : le contrôleur est libéré, rien n'est réécrit (audit du
+    // 2026-11-03).
+    if (!mounted) return;
     final session = state.session;
     if (state.wirdCompleted || session.pillarIndex != pillarIndex || session.useAlternative != useAlternative) {
       return;

@@ -135,10 +135,18 @@ class _FindDisciplesCard extends ConsumerWidget {
       return;
     }
     // Lue au toucher seulement, pour choisir l'écran : rien n'en est affiché.
-    var hasLineage = false;
+    // Illisible (hors ligne) : le dire, plutôt que d'ouvrir la saisie à un
+    // disciple dont la lignée est déjà renseignée (audit du 2026-11-03).
+    final l10n = AppLocalizations.of(context)!;
+    final bool hasLineage;
     try {
       hasLineage = await ref.read(myLineageProvider.future) != null;
-    } catch (_) {}
+    } catch (error) {
+      if (context.mounted) {
+        showErrorSnackBar(context, isNetworkError(error) ? l10n.khadaraOfflineError : l10n.lineageLoadError);
+      }
+      return;
+    }
     if (!context.mounted) return;
     await Navigator.of(context).push(MaterialPageRoute(
       builder: (_) => hasLineage ? const LineageMatchesScreen() : const LineageScreen(),
@@ -212,9 +220,12 @@ class _GroupCardState extends ConsumerState<_GroupCard> {
     }
     if (_joining) return;
     setState(() => _joining = true);
+    // Conteneur relevé avant l'attente : la carte peut avoir disparu au
+    // retour, son `ref` avec elle (audit du 2026-11-03).
+    final container = ProviderScope.containerOf(context, listen: false);
     try {
       await ref.read(groupsRepositoryProvider).joinGroup(widget.group.id);
-      ref.invalidate(groupsProvider);
+      container.invalidate(groupsProvider);
     } catch (error) {
       if (mounted) {
         showErrorSnackBar(context, isNetworkError(error) ? l10n.khadaraOfflineError : l10n.communityGroupsJoinError);
@@ -289,7 +300,10 @@ class _GroupCardState extends ConsumerState<_GroupCard> {
                   ),
                   child: _joining
                       ? const SizedBox(width: 16, height: 16, child: CircularProgressIndicator(strokeWidth: 2))
-                      : Text(l10n.communityGroupJoinShort),
+                      // Annoncé avec le nom du groupe : sinon, « Rejoindre »
+                      // se répétait à l'identique sur chaque carte (audit du
+                      // 2026-11-03).
+                      : Text(l10n.communityGroupJoinShort, semanticsLabel: l10n.communityGroupJoinNamed(group.name)),
                 ),
             ],
           ),

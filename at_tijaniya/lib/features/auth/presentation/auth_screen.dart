@@ -253,12 +253,26 @@ class _AuthScreenState extends State<AuthScreen> {
       );
       if (mounted) {
         setState(() => _infoMessage = l10n.authConfirmationResent);
-        if (!fromLogin) _startResendCooldown();
+        // Même délai depuis la connexion : sans lui, plusieurs touchers
+        // tombaient sur « Trop de tentatives » (audit du 2026-11-03).
+        _startResendCooldown();
       }
     } catch (error) {
       if (mounted) setState(() => _errorMessage = _messageFor(classifyAuthError(error), l10n));
     } finally {
       if (mounted) setState(() => _loadingAction = null);
+    }
+  }
+
+  /// « Retour » et retour système. Depuis la boîte mail, ils mènent à la
+  /// connexion, adresse remplie, au lieu de quitter l'écran : sinon
+  /// l'attente de confirmation était perdue, et une nouvelle inscription dans
+  /// la minute tombait sur « Trop de tentatives » (audit du 2026-11-03).
+  void _back() {
+    if (_isSignUp && _pendingConfirmationEmail != null) {
+      _goToLoginAfterSignup();
+    } else {
+      widget.onBack();
     }
   }
 
@@ -347,7 +361,7 @@ class _AuthScreenState extends State<AuthScreen> {
     return PopScope(
       canPop: false,
       onPopInvokedWithResult: (didPop, _) {
-        if (!didPop) widget.onBack();
+        if (!didPop) _back();
       },
       child: Scaffold(
         backgroundColor: AppColors.parchment,
@@ -366,7 +380,7 @@ class _AuthScreenState extends State<AuthScreen> {
                       Align(
                         alignment: AlignmentDirectional.centerStart,
                         child: TextButton.icon(
-                          onPressed: _loadingAction != null ? null : widget.onBack,
+                          onPressed: _loadingAction != null ? null : _back,
                           style: TextButton.styleFrom(foregroundColor: AppColors.secondaryInk),
                           // `arrow_back` suit le sens de lecture (flèche
                           // vers la droite en arabe).
@@ -487,14 +501,15 @@ class _AuthScreenState extends State<AuthScreen> {
             Align(
               alignment: AlignmentDirectional.centerStart,
               child: TextButton(
-                onPressed: loading ? null : () => _resendConfirmation(fromLogin: true),
+                onPressed: loading || _resendSecondsLeft > 0 ? null : () => _resendConfirmation(fromLogin: true),
                 child: _loadingAction == _AuthAction.resendConfirmation
                     ? SizedBox(
                         height: 14,
                         width: 14,
                         child: CircularProgressIndicator(strokeWidth: 2, color: AppColors.emerald),
                       )
-                    : Text(l10n.authResendConfirmation),
+                    : Text(
+                        _resendSecondsLeft > 0 ? l10n.authResendIn(_resendSecondsLeft) : l10n.authResendConfirmation),
               ),
             ),
           const Spacer(),
@@ -807,6 +822,15 @@ class SignupCheckEmailPanel extends StatelessWidget {
         const SizedBox(height: 10),
         OutlinedButton(
           onPressed: resending || waiting ? null : onResend,
+          // Pendant le délai, le libellé (« dans 45 s ») porte une information :
+          // en encre secondaire plutôt qu'en gris de bouton désactivé, peu
+          // lisible (audit du 2026-11-03).
+          style: waiting
+              ? OutlinedButton.styleFrom(
+                  disabledForegroundColor: AppColors.secondaryInk,
+                  side: BorderSide(color: AppColors.bronze.withValues(alpha: 0.5)),
+                )
+              : null,
           child: resending
               ? const SizedBox(height: 18, width: 18, child: CircularProgressIndicator(strokeWidth: 2))
               : Text(waiting ? l10n.authResendIn(resendSecondsLeft) : l10n.authResendConfirmation),

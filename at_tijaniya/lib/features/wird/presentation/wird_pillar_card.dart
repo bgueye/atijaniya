@@ -74,8 +74,10 @@ class WirdPillarCard extends StatelessWidget {
           Row(
             children: [
               Container(
-                width: 26,
-                height: 26,
+                // Diamètre qui suit la taille du texte : fixe, le numéro débordait
+                // du cercle à texte agrandi (audit du 2026-11-03).
+                width: MediaQuery.textScalerOf(context).scale(26).clamp(26.0, 52.0),
+                height: MediaQuery.textScalerOf(context).scale(26).clamp(26.0, 52.0),
                 alignment: Alignment.center,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
@@ -103,6 +105,8 @@ class WirdPillarCard extends StatelessWidget {
                       // Toujours « ×100 », de gauche à droite.
                       Text(
                         '×${pillar.repetitions}',
+                        // Lu « 100 fois » plutôt que « multiplication 100 » (audit du 2026-11-03).
+                        semanticsLabel: AppLocalizations.of(context)!.a11yRepetitions(pillar.repetitions),
                         textDirection: TextDirection.ltr,
                         style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600, color: AppColors.goldOnDark),
                       ),
@@ -284,8 +288,10 @@ class _Verse extends StatelessWidget {
         children: [
           if (number != null)
             Container(
-              width: 22,
-              height: 22,
+              // Diamètre qui suit la taille du texte : fixe, le numéro débordait
+              // du cercle à texte agrandi (audit du 2026-11-03).
+              width: MediaQuery.textScalerOf(context).scale(22).clamp(22.0, 44.0),
+              height: MediaQuery.textScalerOf(context).scale(22).clamp(22.0, 44.0),
               margin: const EdgeInsetsDirectional.only(end: 10, top: 6),
               alignment: Alignment.center,
               decoration: BoxDecoration(

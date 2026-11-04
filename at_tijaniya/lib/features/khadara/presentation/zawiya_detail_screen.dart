@@ -98,8 +98,17 @@ class _ZawiyaDetailScreenState extends ConsumerState<ZawiyaDetailScreen> {
     final zawiya = _zawiya;
     final canManage = ref.watch(canManageZawiyasProvider);
     final upcoming = ref.watch(eventsForZawiyaProvider(zawiya.id));
-    final successions = ref.watch(successionsForZawiyaProvider(zawiya.id)).valueOrNull ?? const <ZawiyaSuccession>[];
-    final linkedFigures = ref.watch(figuresForZawiyaProvider(zawiya.id)).valueOrNull ?? const <Figure>[];
+    final successionsAsync = ref.watch(successionsForZawiyaProvider(zawiya.id));
+    final linkedFiguresAsync = ref.watch(figuresForZawiyaProvider(zawiya.id));
+    final successions = successionsAsync.valueOrNull ?? const <ZawiyaSuccession>[];
+    final linkedFigures = linkedFiguresAsync.valueOrNull ?? const <Figure>[];
+    // Hors ligne, ces sections disparaissaient sans un mot (audit du
+    // 2026-11-03) : une erreur de lecture est dite, avec « Réessayer ».
+    final linksError = (successionsAsync.hasError && !successionsAsync.hasValue)
+        ? successionsAsync.error
+        : (linkedFiguresAsync.hasError && !linkedFiguresAsync.hasValue)
+            ? linkedFiguresAsync.error
+            : null;
     final founder = successions.isEmpty ? null : successions.first;
     final hasPlace = zawiya.hasLocation || zawiya.addressText != null;
     const sectionPadding = EdgeInsetsDirectional.fromSTEB(2, 24, 0, 8);
@@ -232,6 +241,17 @@ class _ZawiyaDetailScreenState extends ConsumerState<ZawiyaDetailScreen> {
             // liens se gèrent depuis la fiche d'une figure, par l'admin
             // (décision validée du 2026-11-02). Une section vide n'apparaît
             // pas.
+            if (linksError != null) ...[
+              const SizedBox(height: 16),
+              Notice.fromError(
+                linksError,
+                message: l10n.figuresLoadError,
+                onRetry: () {
+                  ref.invalidate(successionsForZawiyaProvider(zawiya.id));
+                  ref.invalidate(figuresForZawiyaProvider(zawiya.id));
+                },
+              ),
+            ],
             if (founder != null) ...[
               SectionTitle(l10n.zawiyaDetailFounder, padding: sectionPadding),
               _FounderCard(succession: founder),

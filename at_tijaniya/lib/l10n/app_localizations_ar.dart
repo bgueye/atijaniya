@@ -103,13 +103,13 @@ class AppLocalizationsAr extends AppLocalizations {
   String get authPhoneLabel => 'الهاتف';
 
   @override
-  String get authPasswordLabel => 'كلمة السر';
+  String get authPasswordLabel => 'كلمة المرور';
 
   @override
   String get authPasswordMinCharsHint => '8 أحرف على الأقل';
 
   @override
-  String get authForgotPassword => 'نسيت كلمة السر؟';
+  String get authForgotPassword => 'نسيت كلمة المرور؟';
 
   @override
   String get authResetPasswordSent =>
@@ -131,16 +131,16 @@ class AppLocalizationsAr extends AppLocalizations {
   String get authEmailInvalid => 'عنوان بريد إلكتروني غير صالح.';
 
   @override
-  String get authPasswordRequired => 'كلمة السر إلزامية.';
+  String get authPasswordRequired => 'كلمة المرور إلزامية.';
 
   @override
-  String get authPasswordTooShort => 'يجب أن تتكوّن كلمة السر من 6 أحرف على الأقل.';
+  String get authPasswordTooShort => 'يجب أن تتكوّن كلمة المرور من 6 أحرف على الأقل.';
 
   @override
-  String get authPasswordTooShortSignup => 'يجب أن تتكوّن كلمة السر من 8 أحرف على الأقل.';
+  String get authPasswordTooShortSignup => 'يجب أن تتكوّن كلمة المرور من 8 أحرف على الأقل.';
 
   @override
-  String get authInvalidCredentials => 'البريد الإلكتروني أو كلمة السر غير صحيحة.';
+  String get authInvalidCredentials => 'البريد الإلكتروني أو كلمة المرور غير صحيحة.';
 
   @override
   String get authEmailAlreadyRegistered => 'يوجد حساب مسجَّل بالفعل بهذا البريد الإلكتروني.';
@@ -218,7 +218,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get homeGreeting => 'السلام عليكم';
 
   @override
-  String get homeGreetingPrefix => 'السلام عليكم';
+  String get homeGreetingPrefix => 'السلام عليكم،';
 
   @override
   String homeDateLine(String weekday, int day, String month, int year, int hijriDay, String hijriMonth, int hijriYear) {
@@ -3037,7 +3037,7 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get blockUserConfirmBody =>
-      'لن تصلك رسائله ولن ترى ما يكتبه، ولن يتمكن من مراسلتك ولن يُخطَر بذلك. لإلغاء الحظر: الإعدادات ← الخصوصية ← المريدون المحظورون.';
+      'لن تصلك رسائله ولن ترى ما يكتبه، ولن يتمكن من مراسلتك ولن يُخطَر بذلك. لإلغاء الحظر: ملفي الشخصي، ثم الخصوصية، ثم المريدون المحظورون.';
 
   @override
   String get blockUserSuccess => 'تم حظر المريد.';
@@ -3454,8 +3454,15 @@ class AppLocalizationsAr extends AppLocalizations {
   String get wirdWeekSeeHistory => 'عرض السجل';
 
   @override
-  String wirdWeekDayMarked(String day, String wirds) {
-    return '$day: $wirds مسجَّل';
+  String wirdWeekDayMarked(String day, String wirds, int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$day: $wirds مسجَّلة',
+      two: '$day: $wirds مسجَّلان',
+      one: '$day: $wirds مسجَّل',
+    );
+    return '$_temp0';
   }
 
   @override
@@ -3785,7 +3792,7 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String figuresShowAll(int count) {
-    return 'عرض الشخصيات الـ$count';
+    return 'عرض كل الشخصيات ($count)';
   }
 
   @override
@@ -3804,13 +3811,14 @@ class AppLocalizationsAr extends AppLocalizations {
   String get figuresStatLinks => 'روابط السلسلة';
 
   @override
-  String get figuresViewGrid => 'شبكة';
+  String get figuresViewGrid => 'بطاقات';
 
   @override
   String get figuresViewSilsila => 'السلسلة';
 
   @override
-  String get figuresSilsilaLegend => 'سلسلة تاريخية (شيخ ← مريد)، بحسب الروابط المدخلة في التطبيق. وليست شجرة نسب.';
+  String get figuresSilsilaLegend =>
+      'سلسلة تاريخية (من الشيخ إلى المريد)، بحسب الروابط المدخلة في التطبيق. وليست شجرة نسب.';
 
   @override
   String figuresSilsilaExternal(String foyer) {
@@ -4062,7 +4070,7 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get communityConversationsHelp =>
-      'لا تُفتح محادثة إلا مع مريد يشاركك مجموعة ويقبل ذلك في « من يمكنه التواصل معك ». لمراسلته، افتح أحد منشوراته.';
+      'لا تُفتح محادثة إلا مع مريد يشاركك مجموعة ويقبل ذلك في « من يمكنه التواصل معك ». لمراسلته، افتح أحد منشوراته.';
 
   @override
   String get communityMessagesGuest => 'سجّل الدخول لتجد محادثاتك الخاصة.';
@@ -4105,7 +4113,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get remindersOnboardingTitle => 'تذكيرات أورادك';
 
   @override
-  String get remindersOnboardingBody => 'إشعار في الوقت الذي تختاره، كل يوم. يمكنك تغيير كل شيء من صفحة كل ورد.';
+  String get remindersOnboardingBody => 'إشعار في الوقت الذي تختاره لكل ورد. يمكنك تغيير كل شيء من صفحة كل ورد.';
 
   @override
   String get remindersOnboardingLater => 'لاحقًا';
@@ -4131,7 +4139,7 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get welcomeNote =>
-      'دون حساب، يمكنك الوصول إلى الأوراد والأعلام والزوايا. وبحساب أو دونه، تبقى ممارستك (السلاسل والسجل) على هذا الهاتف.';
+      'دون حساب، يمكنك الوصول إلى الأوراد والأعلام والزوايا. وبحساب أو دونه، تبقى ممارستك (الأيام المتتالية والسجل) على هذا الهاتف.';
 
   @override
   String get authBack => 'رجوع';
@@ -4433,4 +4441,51 @@ class AppLocalizationsAr extends AppLocalizations {
     );
     return '$_temp0';
   }
+
+  @override
+  String a11yRepetitions(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count مرة',
+      many: '$count مرة',
+      few: '$count مرات',
+      two: 'مرتان',
+      one: 'مرة واحدة',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get khadaraNearLocationUnknown => 'تعذّر تحديد موقعك. أعد المحاولة، ويُفضَّل في الخارج أو قرب نافذة.';
+
+  @override
+  String communityCommentsCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count تعليق',
+      many: '$count تعليقًا',
+      few: '$count تعليقات',
+      two: 'تعليقان',
+      one: 'تعليق واحد',
+      zero: 'لا تعليقات',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String communityGroupJoinNamed(String group) {
+    return 'الانضمام إلى $group';
+  }
+
+  @override
+  String get remindersOnboardingPermissionDenied => 'اسمح بالإشعارات من إعدادات الهاتف لتفعيل هذه التذكيرات.';
+
+  @override
+  String get remindersOnboardingScheduleFailed => 'تعذّرت جدولة بعض التذكيرات. أعد المحاولة من صفحة كل ورد.';
+
+  @override
+  String get wirdRemindersNotificationsOff =>
+      'إشعارات التجانية معطّلة في إعدادات الهاتف: لن ترنّ هذه التذكيرات ما لم تسمح بها هناك.';
 }

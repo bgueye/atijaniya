@@ -14,7 +14,8 @@ import 'communaute_test_helpers.dart';
 
 void main() {
   testWidgets('fil : une page de 20, puis « Voir plus » charge la suivante', (tester) async {
-    final repo = FakeCommunityRepository(posts: [for (var i = 0; i < 25; i++) testPost(id: 'p$i', contentText: 'Publication $i')]);
+    final repo = FakeCommunityRepository(
+        posts: [for (var i = 0; i < 25; i++) testPost(id: 'p$i', contentText: 'Publication $i')]);
     await tester.pumpWidget(wrapCommunaute(const Scaffold(body: CommunauteScreen()), community: repo));
     await tester.pumpAndSettle();
     expect(repo.feedLimits, [20]);
@@ -29,6 +30,28 @@ void main() {
     expect(find.text('Voir plus de publications'), findsNothing);
   });
 
+  // Audit des écrans refaits du 2026-11-03 (P3) : un échec de « Voir plus »
+  // effaçait tout le fil ; les publications restent, l'erreur est dite à la
+  // place du bouton, avec « Réessayer ».
+  testWidgets("échec de « Voir plus » : le fil reste, l'erreur est dite en bas", (tester) async {
+    final repo = FakeCommunityRepository(
+        posts: [for (var i = 0; i < 25; i++) testPost(id: 'p$i', contentText: 'Publication $i')]);
+    await tester.pumpWidget(wrapCommunaute(const Scaffold(body: CommunauteScreen()), community: repo));
+    await tester.pumpAndSettle();
+
+    final list = find.descendant(of: find.byType(ListView), matching: find.byType(Scrollable)).first;
+    await tester.scrollUntilVisible(find.text('Voir plus de publications'), 500, scrollable: list);
+    repo.feedError = StateError('serveur indisponible');
+    await tester.tap(find.text('Voir plus de publications'));
+    await tester.pumpAndSettle();
+
+    // Dernière publication de la première page, toujours là (liste paresseuse :
+    // les premières ne sont plus construites une fois défilées).
+    expect(find.text('Publication 19', skipOffstage: false), findsOneWidget);
+    await tester.scrollUntilVisible(find.text('Réessayer'), 500, scrollable: list);
+    expect(find.text('Réessayer'), findsOneWidget);
+  });
+
   testWidgets('fil incomplet : pas de « Voir plus »', (tester) async {
     await tester.pumpWidget(wrapCommunaute(
       const Scaffold(body: CommunauteScreen()),
@@ -41,7 +64,12 @@ void main() {
   testWidgets('discussion de groupe : 50 derniers messages, puis les précédents', (tester) async {
     final posts = [
       for (var i = 0; i < 60; i++)
-        GroupPost(id: 'm$i', groupId: 'g1', authorUserId: 'other', contentText: 'Message $i', createdAt: DateTime(2026, 10, 1, 0, i)),
+        GroupPost(
+            id: 'm$i',
+            groupId: 'g1',
+            authorUserId: 'other',
+            contentText: 'Message $i',
+            createdAt: DateTime(2026, 10, 1, 0, i)),
     ];
     await tester.pumpWidget(wrapCommunaute(
       GroupDetailScreen(group: testGroup(isMember: true)),

@@ -16,6 +16,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'package:at_tijaniya/core/theme/locale_controller.dart';
 import 'package:at_tijaniya/features/auth/presentation/auth_screen.dart';
+import 'package:at_tijaniya/features/auth/presentation/auth_widgets.dart';
 import 'package:at_tijaniya/features/auth/presentation/reset_password_screen.dart';
 import 'package:at_tijaniya/features/auth/presentation/welcome_screen.dart';
 import 'package:at_tijaniya/features/khadara/domain/khadara_models.dart';
@@ -198,6 +199,22 @@ void main() {
       expect(find.text('Wazifa du vendredi'), findsNothing);
     });
 
+    // Audit des écrans refaits du 2026-11-03 (P3) : le retour système
+    // fermait l'app depuis la deuxième page.
+    testWidgets('retour système : la page précédente de la découverte', (tester) async {
+      await tester.pumpWidget(_app(OnboardingScreen(onFinished: () {}),
+          overrides: [upcomingEventsProvider.overrideWith((ref) async => const [])]));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Suivant'));
+      await tester.pumpAndSettle();
+      expect(find.text('Vos wirds, guidés pas à pas'), findsNothing);
+
+      final popped = await tester.binding.handlePopRoute();
+      await tester.pumpAndSettle();
+      expect(popped, isTrue, reason: "l'app ne doit pas se fermer");
+      expect(find.text('Vos wirds, guidés pas à pas'), findsOneWidget);
+    });
+
     testWidgets('« Passer » mène aussi à la suite', (tester) async {
       var finished = 0;
       await tester.pumpWidget(_app(OnboardingScreen(onFinished: () => finished++),
@@ -260,7 +277,7 @@ void main() {
       await tester.tap(find.text('Activer 3 rappels'));
       await tester.pumpAndSettle();
       expect(finished, 1);
-      expect(find.text('Autorisez les notifications dans les réglages du téléphone pour activer ce rappel.'),
+      expect(find.text('Autorisez les notifications dans les réglages du téléphone pour activer ces rappels.'),
           findsOneWidget);
     });
 
@@ -380,6 +397,44 @@ void main() {
       expect(find.text("Renvoyer l'e-mail · dans 3 s"), findsOneWidget);
       await tester.pump(const Duration(seconds: 3));
     });
+  });
+
+  // Audit des écrans refaits du 2026-11-03 (P3).
+  test('règle « lettres » : une vraie lettre, de toute écriture, pas la ponctuation', () {
+    final l10n = lookupAppLocalizations(const Locale('fr'));
+    bool letters(String p) => newPasswordRules(p, l10n)[1].met;
+    expect(letters('12345678!'), isFalse);
+    expect(letters('abcd1234'), isTrue);
+    expect(letters('سلام1234'), isTrue);
+  });
+
+  testWidgets("boîte mail : « Retour » mène à la connexion, adresse gardée", (tester) async {
+    tester.view.physicalSize = const Size(800, 1600);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.reset);
+    var left = 0;
+    await tester.pumpWidget(_app(AuthScreen(
+      onAuthenticated: () {},
+      onBack: () => left++,
+      initialSignUp: true,
+      resendCooldown: const Duration(seconds: 3),
+      auth: _FakeAuth(),
+    )));
+    await tester.pumpAndSettle();
+    final fields = find.byType(TextFormField);
+    await tester.enterText(fields.at(0), 'Bocar');
+    await tester.enterText(fields.at(1), 'disciple@example.com');
+    await tester.enterText(fields.at(2), 'motdepasse1');
+    await tester.pump();
+    await tester.tap(find.widgetWithText(ElevatedButton, 'Créer un compte'));
+    await tester.pumpAndSettle();
+    expect(find.text('Vérifiez votre boîte mail'), findsOneWidget);
+
+    await tester.binding.handlePopRoute();
+    await tester.pumpAndSettle();
+    expect(left, 0, reason: "l'écran n'est pas quitté");
+    expect(find.widgetWithText(TextFormField, 'disciple@example.com'), findsOneWidget);
+    await tester.pump(const Duration(seconds: 3));
   });
 
   testWidgets('nouveau mot de passe : « Enregistrer » grisé sous 8 caractères, « Identiques » coché', (tester) async {

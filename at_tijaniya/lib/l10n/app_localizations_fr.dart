@@ -3045,7 +3045,7 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get blockUserConfirmBody =>
-      'Vous ne recevrez plus ses messages et ne verrez plus ce qu\'il écrit. Il ne pourra plus vous écrire et n\'en sera pas informé. Pour le débloquer : Paramètres → Confidentialité → Disciples bloqués.';
+      'Vous ne recevrez plus ses messages et ne verrez plus ce qu\'il écrit. Il ne pourra plus vous écrire et n\'en sera pas informé. Pour le débloquer : Mon profil, puis Confidentialité, puis Disciples bloqués.';
 
   @override
   String get blockUserSuccess => 'Disciple bloqué.';
@@ -3466,8 +3466,14 @@ class AppLocalizationsFr extends AppLocalizations {
   String get wirdWeekSeeHistory => 'Voir l\'historique';
 
   @override
-  String wirdWeekDayMarked(String day, String wirds) {
-    return '$day : $wirds marqué';
+  String wirdWeekDayMarked(String day, String wirds, int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$day : $wirds marqués',
+      one: '$day : $wirds marqué',
+    );
+    return '$_temp0';
   }
 
   @override
@@ -3811,7 +3817,7 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get figuresSilsilaLegend =>
-      'Silsila historique (maître → disciple), d\'après les liens renseignés dans l\'app. Ce n\'est pas un arbre généalogique.';
+      'Silsila historique (du maître au disciple), d\'après les liens renseignés dans l\'app. Ce n\'est pas un arbre généalogique.';
 
   @override
   String figuresSilsilaExternal(String foyer) {
@@ -4080,7 +4086,7 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get remindersOnboardingBody =>
-      'Une notification à l\'heure choisie, chaque jour. Vous pourrez tout changer depuis chaque wird.';
+      'Une notification à l\'heure choisie pour chaque wird. Vous pourrez tout changer depuis chaque wird.';
 
   @override
   String get remindersOnboardingLater => 'Plus tard';
@@ -4383,4 +4389,47 @@ class AppLocalizationsFr extends AppLocalizations {
     );
     return '$_temp0';
   }
+
+  @override
+  String a11yRepetitions(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count fois',
+      one: '$count fois',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get khadaraNearLocationUnknown =>
+      'Votre position n\'a pas pu être obtenue. Réessayez, de préférence à l\'extérieur ou près d\'une fenêtre.';
+
+  @override
+  String communityCommentsCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count commentaires',
+      one: '$count commentaire',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String communityGroupJoinNamed(String group) {
+    return 'Rejoindre $group';
+  }
+
+  @override
+  String get remindersOnboardingPermissionDenied =>
+      'Autorisez les notifications dans les réglages du téléphone pour activer ces rappels.';
+
+  @override
+  String get remindersOnboardingScheduleFailed =>
+      'Certains rappels n\'ont pas pu être programmés. Réessayez depuis chaque wird.';
+
+  @override
+  String get wirdRemindersNotificationsOff =>
+      'Les notifications d\'At-Tijaniya sont coupées dans les réglages du téléphone : ces rappels ne sonneront pas tant qu\'elles n\'y sont pas autorisées.';
 }

@@ -100,6 +100,23 @@ class WirdNotificationService {
     if (launch?.didNotificationLaunchApp ?? false) _onNotificationTapped(launch!.notificationResponse?.id);
   }
 
+  /// `false` si les notifications de l'app sont coupées dans les réglages
+  /// du téléphone : les rappels activés ne sonneront pas. Lu sans rien
+  /// demander (audit du 2026-11-03 : le rappel s'affichait « actif » sans
+  /// que rien ne le dise). `true` quand la plateforme ne le dit pas.
+  Future<bool> notificationsEnabled() async {
+    try {
+      await init();
+      final androidImpl = _plugin.resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>();
+      if (androidImpl != null) return await androidImpl.areNotificationsEnabled() ?? true;
+      final iosImpl = _plugin.resolvePlatformSpecificImplementation<IOSFlutterLocalNotificationsPlugin>();
+      if (iosImpl != null) return (await iosImpl.checkPermissions())?.isEnabled ?? true;
+    } catch (_) {
+      // Plateforme sans réponse : on ne prétend pas que c'est coupé.
+    }
+    return true;
+  }
+
   Future<bool> requestPermission() async {
     await init();
     final androidImpl = _plugin.resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>();

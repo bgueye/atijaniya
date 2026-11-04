@@ -12,6 +12,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../core/storage/user_scoped_prefs.dart';
+import 'profile_providers.dart';
 import '../../wird/domain/wird_models.dart';
 import '../../wird/domain/wird_overview.dart';
 
@@ -46,21 +47,25 @@ PracticeStats computePracticeStats(List<WirdOverviewEntry> entries, DateTime now
 
 /// Afficher ou masquer « Ma pratique ». Affichée par défaut ; gardé sur
 /// l'appareil, propre au compte connecté.
-final showPracticeStatsProvider = NotifierProvider<ShowPracticeStatsController, bool>(ShowPracticeStatsController.new);
+///
+/// `null` tant que le réglage n'est pas lu : la section n'est pas montrée,
+/// plutôt que montrée un instant puis masquée. Relu à chaque changement de
+/// compte : la valeur du compte précédent restait (audit du 2026-11-03).
+final showPracticeStatsProvider = NotifierProvider<ShowPracticeStatsController, bool?>(ShowPracticeStatsController.new);
 
-class ShowPracticeStatsController extends Notifier<bool> {
+class ShowPracticeStatsController extends Notifier<bool?> {
   static const _base = 'profile_show_practice_stats';
 
   @override
-  bool build() {
+  bool? build() {
+    ref.watch(currentUserIdProvider);
     _load();
-    return true;
+    return null;
   }
 
   Future<void> _load() async {
     final prefs = await SharedPreferences.getInstance();
-    final stored = prefs.getBool(userScopedKey(prefs, _base));
-    if (stored != null && stored != state) state = stored;
+    state = prefs.getBool(userScopedKey(prefs, _base)) ?? true;
   }
 
   Future<void> set(bool value) async {

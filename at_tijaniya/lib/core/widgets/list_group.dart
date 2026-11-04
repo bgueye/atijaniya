@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import '../theme/app_colors.dart';
 import 'content_text.dart';
 import 'directional_chevron.dart';
+import 'state_pill.dart';
 
 /// Ton de la puce d'icône (34 px), d'après la nature de la ligne.
 enum ListGroupTone {
@@ -128,7 +129,12 @@ class _ListGroupRow extends StatelessWidget {
       ListGroupTone.sacred => (AppColors.goldSoft, AppColors.ink),
       ListGroupTone.neutral => (AppColors.parchment, AppColors.bronze),
     };
-    final chevron = item.showChevron ?? (item.onTap != null && item.trailing == null);
+    // Chevron sur une ligne qui s'ouvre, même quand une pastille d'état la
+    // termine (audit du 2026-11-03 : « Ma lignée spirituelle » ou
+    // « Visibilité de ma lignée » ne montraient pas qu'elles s'ouvrent, alors
+    // que « Disciples bloqués » le montrait). Pas pour une commande (choix de
+    // langue, interrupteur), qui fait déjà son travail sur place.
+    final chevron = item.showChevron ?? (item.onTap != null && (item.trailing == null || item.trailing is StatePill));
     final subtitle = item.subtitle;
 
     final row = LayoutBuilder(

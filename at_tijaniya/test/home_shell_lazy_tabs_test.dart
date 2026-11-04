@@ -22,7 +22,7 @@ import 'package:at_tijaniya/features/profil/presentation/profile_providers.dart'
 import 'package:at_tijaniya/features/wird/presentation/wird_list_screen.dart';
 import 'package:at_tijaniya/l10n/app_localizations.dart';
 
-Widget _shell({int Function()? onLiveFetch}) => ProviderScope(
+Widget _shell({int Function()? onLiveFetch, Widget home = const HomeShell()}) => ProviderScope(
       overrides: [
         allLiveStreamsProvider.overrideWith((ref) async {
           onLiveFetch?.call();
@@ -33,16 +33,16 @@ Widget _shell({int Function()? onLiveFetch}) => ProviderScope(
         upcomingEventsProvider.overrideWith((ref) async => const []),
         featuredFigureProvider.overrideWith((ref) async => null),
       ],
-      child: const MaterialApp(
-        locale: Locale('fr'),
-        supportedLocales: [Locale('fr'), Locale('ar')],
-        localizationsDelegates: [
+      child: MaterialApp(
+        locale: const Locale('fr'),
+        supportedLocales: const [Locale('fr'), Locale('ar')],
+        localizationsDelegates: const [
           AppLocalizations.delegate,
           GlobalMaterialLocalizations.delegate,
           GlobalWidgetsLocalizations.delegate,
           GlobalCupertinoLocalizations.delegate,
         ],
-        home: HomeShell(),
+        home: home,
       ),
     );
 
@@ -108,6 +108,31 @@ void main() {
     await tester.tap(find.text('Accueil'));
     await tester.pumpAndSettle();
     expect(fetches, greaterThan(initial));
+    await tester.pumpWidget(const SizedBox());
+  });
+
+  // Audit des écrans refaits du 2026-11-03 (P3) : un invité qui passait par la
+  // connexion revenait sur l'Accueil, les onglets étant reconstruits ; il
+  // retrouve l'onglet qu'il avait quitté.
+  testWidgets("onglets reconstruits : le dernier onglet ouvert est retrouvé", (tester) async {
+    SharedPreferences.setMockInitialValues({});
+    final generation = ValueNotifier<int>(0);
+    await tester.pumpWidget(_shell(
+      home: ValueListenableBuilder<int>(
+        valueListenable: generation,
+        builder: (context, n, _) => HomeShell(key: ValueKey(n)),
+      ),
+    ));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Wird'));
+    await tester.pumpAndSettle();
+    expect(find.byType(WirdListScreen), findsOneWidget);
+
+    // Comme au retour de l'écran de connexion : un nouveau HomeShell.
+    generation.value++;
+    await tester.pumpAndSettle();
+    expect(find.byType(WirdListScreen), findsOneWidget);
+    expect(find.byType(HomeScreen), findsNothing);
     await tester.pumpWidget(const SizedBox());
   });
 }

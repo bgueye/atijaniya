@@ -87,6 +87,7 @@ class _CreatePostSheetState extends ConsumerState<CreatePostSheet> {
       _error = null;
     });
     String? mediaUrl;
+    final container = ProviderScope.containerOf(context, listen: false);
     try {
       if (_pickedImageBytes != null) {
         final userId = SupabaseConfig.client.auth.currentUser!.id;
@@ -102,7 +103,9 @@ class _CreatePostSheetState extends ConsumerState<CreatePostSheet> {
             zawiyaId: widget.zawiyaId,
             mediaUrl: mediaUrl,
           );
-      ref.invalidate(communityFeedProvider);
+      // Feuille fermée pendant l'envoi : son `ref` n'est plus utilisable, le
+      // conteneur relevé avant l'envoi l'est (audit du 2026-11-03).
+      container.invalidate(communityFeedProvider);
       if (mounted) Navigator.of(context).pop();
     } catch (error) {
       // Audit du 2026-10-26 (P1) : l'échec (réseau coupé, refus du serveur)

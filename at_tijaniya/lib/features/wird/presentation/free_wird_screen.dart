@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/text/numerals.dart';
 import '../../../core/theme/app_colors.dart';
+import '../../../core/widgets/app_buttons.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../core/widgets/keep_screen_on.dart';
 import '../../../l10n/app_localizations.dart';
@@ -174,7 +175,8 @@ class _SetupFormState extends State<_SetupForm> {
             ),
           ),
           const SizedBox(height: 32),
-          ElevatedButton(onPressed: _submit, child: Text(l10n.wirdFreeStartButton)),
+          // Bouton de pratique du kit, comme le tasbih (audit du 2026-11-03).
+          PracticeButton(onPressed: _submit, label: l10n.wirdFreeStartButton),
         ],
       ),
     );
@@ -318,16 +320,13 @@ class _CounterBody extends StatelessWidget {
             icon: const Icon(Icons.close, color: AppColors.parchment),
             onPressed: () => _abandon(context),
           ),
-          completeAction: SizedBox(
-            width: double.infinity,
-            child: ElevatedButton.icon(
-              onPressed: () {
-                HapticFeedback.mediumImpact();
-                controller.finish();
-              },
-              icon: const Icon(Icons.check_circle),
-              label: Text(l10n.wirdFreeFinishButton),
-            ),
+          completeAction: PracticeButton(
+            onPressed: () {
+              HapticFeedback.mediumImpact();
+              controller.finish();
+            },
+            icon: Icons.check_circle,
+            label: l10n.wirdFreeFinishButton,
           ),
         ),
       ),
@@ -362,10 +361,7 @@ class _CompletedView extends StatelessWidget {
               style: TextStyle(color: AppColors.secondaryOnDark),
             ),
             const SizedBox(height: 24),
-            ElevatedButton(
-              onPressed: controller.newCounter,
-              child: Text(l10n.wirdFreeNewCounterButton),
-            ),
+            PracticeButton(onPressed: controller.newCounter, label: l10n.wirdFreeNewCounterButton),
           ],
         ),
       ),

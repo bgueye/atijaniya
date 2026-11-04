@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -130,6 +132,9 @@ class _KhadaraScreenState extends ConsumerState<KhadaraScreen> {
     ref.invalidate(allLiveStreamsProvider);
     ref.invalidate(streamReplaysProvider);
     ref.invalidate(zawiyaLinkCountsProvider);
+    // En « Près de moi », la position est relue : après un déplacement, les
+    // distances restaient celles du premier calcul (audit du 2026-11-03).
+    if (_near) unawaited(_locate());
     await Future.wait([
       ref.refresh(zawiyasProvider.future).then((_) {}, onError: (_) {}),
       ref.refresh(upcomingEventsProvider.future).then((_) {}, onError: (_) {}),
@@ -192,6 +197,7 @@ class _KhadaraScreenState extends ConsumerState<KhadaraScreen> {
             for (final stream in liveStreams.take(2)) ...[
               LiveNowBanner(
                 stream: stream,
+                placeName: allEvents.where((e) => e.id == stream.eventId).firstOrNull?.zawiyaName ?? stream.groupName,
                 onTap: () =>
                     Navigator.of(context).push(MaterialPageRoute(builder: (_) => LiveStreamScreen(stream: stream))),
               ),
@@ -392,6 +398,7 @@ class _KhadaraScreenState extends ConsumerState<KhadaraScreen> {
 
   List<Widget> _nearList(
       AppLocalizations l10n, List<Zawiya> filtered, List<KhadaraEvent> events, ZawiyaLinkCounts counts) {
+    final language = Localizations.localeOf(context).languageCode;
     if (_locating) {
       return [
         Padding(
@@ -426,8 +433,8 @@ class _KhadaraScreenState extends ConsumerState<KhadaraScreen> {
             // « ~ » devant une distance calculée sur des coordonnées
             // approximatives (audit Zawiyas du 2026-10-25, P2-2).
             distanceText: item.place.coordinatesApproximate
-                ? l10n.khadaraNearestApproxDistance(formatKhadaraDistance(item.distanceKm))
-                : formatKhadaraDistance(item.distanceKm),
+                ? l10n.khadaraNearestApproxDistance(formatKhadaraDistance(item.distanceKm, languageCode: language))
+                : formatKhadaraDistance(item.distanceKm, languageCode: language),
           ),
         ),
       if (result.unlocatedCount > 0)
@@ -558,7 +565,9 @@ class _LocationProblem extends ConsumerWidget {
     final message = switch (failure) {
       LocationFailure.serviceDisabled => l10n.khadaraNearServiceDisabled,
       LocationFailure.permissionDenied || LocationFailure.permissionDeniedForever => l10n.khadaraNearPermissionDenied,
-      LocationFailure.unknown => l10n.khadaraLoadError,
+      // Délai dépassé, service qui refuse : il s'agit de la position, pas
+      // du réseau (audit du 2026-11-03).
+      LocationFailure.unknown => l10n.khadaraNearLocationUnknown,
     };
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 8),

@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import '../data/wird_notification_service.dart';
+import '../../../core/widgets/notice.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/theme/app_colors.dart';
@@ -31,6 +33,13 @@ String _slotLabel(AppLocalizations l10n, WirdReminderSlot slot) {
 /// L'heure de chaque rappel est choisie librement par le disciple — voir la
 /// justification dans `wird_reminder_slots.dart` (pas de calcul automatique
 /// d'horaire de prière en V1, pour ne rien inventer côté contenu religieux).
+/// Notifications de l'app autorisées dans les réglages du téléphone ;
+/// remplaçable dans les tests. Relu à chaque ouverture de l'écran des
+/// rappels (`autoDispose`), au retour des réglages du téléphone.
+final notificationsEnabledProvider = FutureProvider.autoDispose<bool>(
+  (ref) => WirdNotificationService.instance.notificationsEnabled(),
+);
+
 class WirdRemindersScreen extends ConsumerWidget {
   const WirdRemindersScreen({super.key, required this.wird});
 
@@ -70,6 +79,13 @@ class WirdRemindersScreen extends ConsumerWidget {
                 padding: const EdgeInsets.all(20),
                 children: [
                   _ScopeNote(l10n: l10n),
+                  // Rappels activés mais notifications coupées : ils ne
+                  // sonneront pas, et l'écran le dit (audit du 2026-11-03).
+                  if (ref.watch(notificationsEnabledProvider).valueOrNull == false &&
+                      state.settings.values.any((s) => s.enabled)) ...[
+                    const SizedBox(height: 12),
+                    Notice.error(l10n.wirdRemindersNotificationsOff),
+                  ],
                   const SizedBox(height: 20),
                   for (final slot in slots) ...[
                     _ReminderTile(
@@ -136,47 +152,50 @@ class _ReminderTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final time = TimeOfDay(hour: setting.hour, minute: setting.minute);
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-      decoration: BoxDecoration(
-        color: AppColors.offWhite,
-        borderRadius: BorderRadius.circular(16),
-      ),
-      child: Column(
-        children: [
-          SwitchListTile(
-            contentPadding: EdgeInsets.zero,
-            activeThumbColor: AppColors.emerald,
-            title:
-                Text(_slotLabel(l10n, slot), style: const TextStyle(fontWeight: FontWeight.w600, color: AppColors.ink)),
-            subtitle: Text(
-              slot.frequency == ReminderFrequency.weeklyFriday
-                  ? l10n.reminderFrequencyWeekly
-                  : l10n.reminderFrequencyDaily,
-              style: TextStyle(color: AppColors.bronze, fontSize: 12),
+    // `Material` et non un `Container` décoré : sous une décoration, l'effet
+    // du toucher de la ligne était masqué (assertion de Flutter, relevée par
+    // le premier test de cet écran, audit du 2026-11-03).
+    return Material(
+      color: AppColors.offWhite,
+      borderRadius: BorderRadius.circular(16),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+        child: Column(
+          children: [
+            SwitchListTile(
+              contentPadding: EdgeInsets.zero,
+              activeThumbColor: AppColors.emerald,
+              title: Text(_slotLabel(l10n, slot),
+                  style: const TextStyle(fontWeight: FontWeight.w600, color: AppColors.ink)),
+              subtitle: Text(
+                slot.frequency == ReminderFrequency.weeklyFriday
+                    ? l10n.reminderFrequencyWeekly
+                    : l10n.reminderFrequencyDaily,
+                style: TextStyle(color: AppColors.bronze, fontSize: 12),
+              ),
+              value: setting.enabled,
+              onChanged: onToggle,
             ),
-            value: setting.enabled,
-            onChanged: onToggle,
-          ),
-          if (setting.enabled)
-            Padding(
-              padding: const EdgeInsets.only(bottom: 10),
-              child: Align(
-                alignment: AlignmentDirectional.centerStart,
-                child: TextButton.icon(
-                  onPressed: () async {
-                    final picked = await showTimePicker(context: context, initialTime: time);
-                    if (picked != null) onPickTime(picked);
-                  },
-                  icon: Icon(Icons.schedule, color: AppColors.emerald, size: 18),
-                  label: ContentText(
-                    time.format(context),
-                    style: TextStyle(color: AppColors.emerald, fontWeight: FontWeight.w600),
+            if (setting.enabled)
+              Padding(
+                padding: const EdgeInsets.only(bottom: 10),
+                child: Align(
+                  alignment: AlignmentDirectional.centerStart,
+                  child: TextButton.icon(
+                    onPressed: () async {
+                      final picked = await showTimePicker(context: context, initialTime: time);
+                      if (picked != null) onPickTime(picked);
+                    },
+                    icon: Icon(Icons.schedule, color: AppColors.emerald, size: 18),
+                    label: ContentText(
+                      time.format(context),
+                      style: TextStyle(color: AppColors.emerald, fontWeight: FontWeight.w600),
+                    ),
                   ),
                 ),
               ),
-            ),
-        ],
+          ],
+        ),
       ),
     );
   }

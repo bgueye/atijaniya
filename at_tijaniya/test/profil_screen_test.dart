@@ -10,6 +10,7 @@ import 'package:flutter_test/flutter_test.dart';
 
 import 'package:at_tijaniya/core/theme/app_theme.dart';
 import 'package:at_tijaniya/core/widgets/dashed_border.dart';
+import 'package:at_tijaniya/features/lineage/presentation/lineage_providers.dart';
 import 'package:at_tijaniya/features/profil/presentation/practice_stats.dart';
 import 'package:at_tijaniya/features/profil/presentation/profile_providers.dart';
 import 'package:at_tijaniya/features/wird/data/wirds_content.dart';
@@ -144,5 +145,28 @@ void main() {
     expect(find.text('Impossible de charger votre profil.'), findsOneWidget);
     expect(find.text('Se déconnecter'), findsOneWidget);
     expect(find.text('FR'), findsOneWidget);
+  });
+
+  // Audit des écrans refaits du 2026-11-03 (P3) : lignée illisible présentée
+  // « à renseigner » ; « FR » épelé par le lecteur d'écran.
+  testWidgets("lignée illisible : le message, pas l'invitation à la renseigner", (tester) async {
+    tall(tester);
+    await tester.pumpWidget(profilApp(
+      ProfilState.disciple,
+      theme: AppTheme.standard,
+      extra: [myLineageProvider.overrideWith((ref) async => throw StateError('hors ligne'))],
+    ));
+    await tester.pumpAndSettle();
+    expect(find.text('Impossible de charger votre lignée spirituelle.'), findsOneWidget);
+    expect(find.text('À renseigner'), findsNothing);
+  });
+
+  testWidgets("choix de la langue : « Français » pour le lecteur d'écran", (tester) async {
+    tall(tester);
+    final semantics = tester.ensureSemantics();
+    await tester.pumpWidget(profilApp(ProfilState.disciple, theme: AppTheme.standard));
+    await tester.pumpAndSettle();
+    expect(find.semantics.byLabel('Français'), findsOne);
+    semantics.dispose();
   });
 }

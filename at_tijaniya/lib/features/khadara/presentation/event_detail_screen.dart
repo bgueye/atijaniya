@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart' show DateFormat;
 
 import '../../../core/theme/app_colors.dart';
+import '../../../core/widgets/notice.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../core/widgets/list_group.dart';
 import '../../../core/widgets/section_title.dart';
@@ -157,14 +158,17 @@ class _EventDetailScreenState extends ConsumerState<EventDetailScreen> {
                 ),
               ]),
             ],
-            if (event.hasMapsTarget) ...[
+            // Coordonnées ou adresse de l'évènement, sinon celles de sa zawiya :
+            // l'adresse affichée retombait déjà sur celle-ci, sans bouton
+            // pour l'ouvrir (audit du 2026-11-03).
+            if (event.hasMapsTarget || (zawiya != null && (zawiya.hasLocation || address != null))) ...[
               const SizedBox(height: 12),
               FilledButton.icon(
                 onPressed: () => openInMaps(
                   context,
-                  latitude: event.latitude,
-                  longitude: event.longitude,
-                  addressText: event.addressText,
+                  latitude: event.hasLocation ? event.latitude : zawiya?.latitude,
+                  longitude: event.hasLocation ? event.longitude : zawiya?.longitude,
+                  addressText: address,
                 ),
                 icon: const Icon(Icons.map_outlined, size: 18),
                 label: Text(l10n.khadaraOpenInMaps),
@@ -359,7 +363,18 @@ class _LiveStreamSection extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final stream = ref.watch(latestStreamForEventProvider(event.id)).valueOrNull;
+    final streamAsync = ref.watch(latestStreamForEventProvider(event.id));
+    // Lecture du direct impossible (hors ligne) : le dire, au lieu de « Pas de
+    // direct pour l'instant », faux si un direct est en cours (audit du
+    // 2026-11-03).
+    if (streamAsync.hasError && !streamAsync.hasValue) {
+      return Notice.fromError(
+        streamAsync.error!,
+        message: l10n.figuresLoadError,
+        onRetry: () => ref.invalidate(latestStreamForEventProvider(event.id)),
+      );
+    }
+    final stream = streamAsync.valueOrNull;
     final myUserId = ref.watch(currentUserIdProvider);
     if (stream != null && stream.status != LiveStreamStatus.ended) {
       return FilledButton.icon(

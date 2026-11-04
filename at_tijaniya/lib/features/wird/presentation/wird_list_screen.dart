@@ -222,7 +222,7 @@ class _WeekStrip extends StatelessWidget {
       for (final w in wirds)
         if (day.done.contains(w.id)) locale == 'ar' ? w.nameArabic : w.nameFrench
     ];
-    return done.isEmpty ? l10n.wirdWeekDayNothing(date) : l10n.wirdWeekDayMarked(date, done.join(', '));
+    return done.isEmpty ? l10n.wirdWeekDayNothing(date) : l10n.wirdWeekDayMarked(date, done.join(', '), done.length);
   }
 
   void _pickHistory(BuildContext context) => showWirdHistoryPicker(context);
@@ -302,7 +302,10 @@ class _Dot extends StatelessWidget {
         color: on ? color : null,
         shape: diamond ? BoxShape.rectangle : BoxShape.circle,
         borderRadius: diamond ? BorderRadius.circular(2) : null,
-        border: Border.all(color: on ? color : AppColors.bronze.withValues(alpha: 0.4), width: 1.5),
+        // Contour bronze plein : à 40 %, un point vide faisait 1,6:1 sur le
+        // blanc cassé, et le losange or de la Hadra 2,3:1 ; un élément
+        // graphique demande 3:1 (audit du 2026-11-03).
+        border: Border.all(color: on && !diamond ? color : AppColors.bronze, width: 1.5),
       ),
     );
     return diamond ? Transform.rotate(angle: 0.785398, child: box) : box;
@@ -354,8 +357,12 @@ class _WirdOverviewCard extends StatelessWidget {
                 // Hadra : son texte validé en entier (jamais coupé), en
                 // français comme dans le guide, faute de version arabe validée.
                 if (weekly && wird.conditionsNote != null && !entry.collapsed) ...[
+                  // Paragraphe français dans l'interface arabe : aligné selon
+                  // son propre sens (exception validée du 2026-10-25), au lieu
+                  // d'un bord gauche irrégulier (audit du 2026-11-03).
                   ContentText(
                     wird.conditionsNote!,
+                    alignToContent: true,
                     style: TextStyle(fontSize: 12.5, height: 1.4, color: AppColors.secondaryInk),
                   ),
                   const SizedBox(height: 9),
@@ -412,6 +419,8 @@ class _PillarChips extends StatelessWidget {
                 // Nombre toujours en chiffres latins, de gauche à droite.
                 Text(
                   '×${pillar.repetitions}',
+                  // Lu « 100 fois » plutôt que « multiplication 100 » (audit du 2026-11-03).
+                  semanticsLabel: AppLocalizations.of(context)!.a11yRepetitions(pillar.repetitions),
                   textDirection: TextDirection.ltr,
                   style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: AppColors.ink),
                 ),
@@ -586,39 +595,46 @@ class _FreeWirdTool extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-    return DashedBorder(
-      child: Material(
-        color: Colors.transparent,
-        borderRadius: BorderRadius.circular(16),
-        clipBehavior: Clip.antiAlias,
-        child: InkWell(
-          onTap: () => _push(context, const FreeWirdScreen()),
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
-            child: Row(
-              children: [
-                Container(
-                  width: 38,
-                  height: 38,
-                  decoration: BoxDecoration(color: AppColors.goldSoft, borderRadius: BorderRadius.circular(11)),
-                  child: const Icon(Icons.tune, size: 20, color: AppColors.ink),
+    // Annoncé comme un bouton, en un seul élément (audit du 2026-11-03 :
+    // le titre, le sous-titre et l'action étaient lus séparément).
+    return MergeSemantics(
+      child: Semantics(
+        button: true,
+        child: DashedBorder(
+          child: Material(
+            color: Colors.transparent,
+            borderRadius: BorderRadius.circular(16),
+            clipBehavior: Clip.antiAlias,
+            child: InkWell(
+              onTap: () => _push(context, const FreeWirdScreen()),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+                child: Row(
+                  children: [
+                    Container(
+                      width: 38,
+                      height: 38,
+                      decoration: BoxDecoration(color: AppColors.goldSoft, borderRadius: BorderRadius.circular(11)),
+                      child: const Icon(Icons.tune, size: 20, color: AppColors.ink),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(l10n.wirdFreeTitle,
+                              style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w500, color: AppColors.ink)),
+                          Text(l10n.wirdFreeSubtitle, style: TextStyle(fontSize: 12, color: AppColors.secondaryInk)),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    Text(l10n.wirdFreeOpen,
+                        style: TextStyle(fontSize: 13, fontWeight: FontWeight.w500, color: AppColors.emerald)),
+                    DirectionalChevron(color: AppColors.emerald, size: 18),
+                  ],
                 ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(l10n.wirdFreeTitle,
-                          style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w500, color: AppColors.ink)),
-                      Text(l10n.wirdFreeSubtitle, style: TextStyle(fontSize: 12, color: AppColors.secondaryInk)),
-                    ],
-                  ),
-                ),
-                const SizedBox(width: 8),
-                Text(l10n.wirdFreeOpen,
-                    style: TextStyle(fontSize: 13, fontWeight: FontWeight.w500, color: AppColors.emerald)),
-                DirectionalChevron(color: AppColors.emerald, size: 18),
-              ],
+              ),
             ),
           ),
         ),
@@ -847,53 +863,60 @@ class _AdminLine extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        Divider(height: 1, color: AppColors.bronze.withValues(alpha: 0.2)),
-        InkWell(
-          onTap: () => showModalBottomSheet<void>(
-            context: context,
-            showDragHandle: true,
-            backgroundColor: AppColors.offWhite,
-            builder: (sheetContext) {
-              void open(Widget screen) {
-                Navigator.of(sheetContext).pop();
-                _push(context, screen);
-              }
+    // Annoncé comme un bouton, en un seul élément (audit du 2026-11-03 :
+    // le titre, le sous-titre et l'action étaient lus séparément).
+    return MergeSemantics(
+      child: Semantics(
+        button: true,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Divider(height: 1, color: AppColors.bronze.withValues(alpha: 0.2)),
+            InkWell(
+              onTap: () => showModalBottomSheet<void>(
+                context: context,
+                showDragHandle: true,
+                backgroundColor: AppColors.offWhite,
+                builder: (sheetContext) {
+                  void open(Widget screen) {
+                    Navigator.of(sheetContext).pop();
+                    _push(context, screen);
+                  }
 
-              return SafeArea(
-                child: Padding(
-                  padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
-                  child: ListGroup(items: [
-                    ListGroupItem(
-                      icon: Icons.fact_check_outlined,
-                      title: l10n.wirdRecitationsReviewButton,
-                      onTap: () => open(const WirdRecitationsReviewScreen()),
+                  return SafeArea(
+                    child: Padding(
+                      padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+                      child: ListGroup(items: [
+                        ListGroupItem(
+                          icon: Icons.fact_check_outlined,
+                          title: l10n.wirdRecitationsReviewButton,
+                          onTap: () => open(const WirdRecitationsReviewScreen()),
+                        ),
+                        ListGroupItem(
+                          icon: Icons.library_music_outlined,
+                          title: l10n.wirdRecitationsManageTitle,
+                          subtitle: l10n.wirdRecitationsManageCardSubtitle,
+                          onTap: () => open(const WirdRecitationsManagementScreen()),
+                        ),
+                      ]),
                     ),
-                    ListGroupItem(
-                      icon: Icons.library_music_outlined,
-                      title: l10n.wirdRecitationsManageTitle,
-                      subtitle: l10n.wirdRecitationsManageCardSubtitle,
-                      onTap: () => open(const WirdRecitationsManagementScreen()),
-                    ),
-                  ]),
+                  );
+                },
+              ),
+              child: ConstrainedBox(
+                constraints: const BoxConstraints(minHeight: 48),
+                child: Row(
+                  children: [
+                    Expanded(
+                        child: Text(l10n.wirdAdminLine, style: TextStyle(fontSize: 13, color: AppColors.secondaryInk))),
+                    DirectionalChevron(color: AppColors.bronze, size: 20),
+                  ],
                 ),
-              );
-            },
-          ),
-          child: ConstrainedBox(
-            constraints: const BoxConstraints(minHeight: 48),
-            child: Row(
-              children: [
-                Expanded(
-                    child: Text(l10n.wirdAdminLine, style: TextStyle(fontSize: 13, color: AppColors.secondaryInk))),
-                DirectionalChevron(color: AppColors.bronze, size: 20),
-              ],
+              ),
             ),
-          ),
+          ],
         ),
-      ],
+      ),
     );
   }
 }

@@ -47,7 +47,8 @@ class _FoyerScreenState extends ConsumerState<FoyerScreen> {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     final label = figuresFoyerLabel(widget.foyer, l10n);
-    final all = ref.watch(figuresProvider).valueOrNull ?? const <Figure>[];
+    final allAsync = ref.watch(figuresProvider);
+    final all = allAsync.valueOrNull ?? const <Figure>[];
     final linksAsync = ref.watch(silsilaLinksProvider);
     final links = linksAsync.valueOrNull;
     final isArabic = Localizations.localeOf(context).languageCode == 'ar';
@@ -99,7 +100,18 @@ class _FoyerScreenState extends ConsumerState<FoyerScreen> {
               onChanged: (view) => setState(() => _view = view),
             ),
             const SizedBox(height: 14),
-            if (_view == FoyerView.grid)
+            // Liste des figures pas encore lue, ou illisible : le dire, au
+            // lieu de « 0 figures » et d'une grille vide (audit du
+            // 2026-11-03).
+            if (!allAsync.hasValue && allAsync.hasError)
+              Notice.fromError(
+                allAsync.error!,
+                message: l10n.figuresLoadError,
+                onRetry: () => ref.invalidate(figuresProvider),
+              )
+            else if (!allAsync.hasValue)
+              Center(child: CircularProgressIndicator(color: AppColors.emerald))
+            else if (_view == FoyerView.grid)
               FigureGrid(figures: figures, captionFor: (_) => null)
             else if (links == null)
               linksAsync.hasError
@@ -167,15 +179,35 @@ class _TreeNode extends StatelessWidget {
     final String? note;
     if (node.external) {
       note = figure.foyer == null ? null : l10n.figuresSilsilaExternal(figuresFoyerLabel(figure.foyer!, l10n));
-    } else if (node.masterName != null) {
-      note = l10n.figuresSilsilaDiscipleOf(node.masterName!);
+    } else if (node.showMaster && node.master != null) {
+      note = l10n.figuresSilsilaDiscipleOf(figureDisplayName(context, node.master!));
     } else {
       note = null;
     }
 
+    // Sans portrait, un rond uni : le nom arabe en 9 px dans 34 dp n'en
+    // montrait que des fragments (audit du 2026-11-03). Le nom est écrit à
+    // côté.
+    final hasPortrait = figure.portraitUrl != null && figure.portraitUrl!.isNotEmpty;
     final avatar = ClipOval(
-      child: SizedBox(width: 34, height: 34, child: FigureImage(figure: figure, arabicSize: 9)),
+      child: SizedBox(
+        width: 34,
+        height: 34,
+        child: hasPortrait
+            ? FigureImage(figure: figure, arabicSize: 9)
+            : ColoredBox(
+                color: AppColors.emeraldSoft,
+                child: Icon(Icons.person_outline, size: 18, color: AppColors.emerald),
+              ),
+      ),
     );
+    // Lu d'un seul tenant, avec le maître : le retrait de l'arbre ne
+    // s'entend pas au lecteur d'écran (audit du 2026-11-03).
+    final master = node.master;
+    final spoken = [
+      figureDisplayName(context, figure),
+      if (note != null) note else if (master != null) l10n.figuresSilsilaDiscipleOf(figureDisplayName(context, master)),
+    ].join(', ');
     final content = InkWell(
       onTap: () => openFigure(context, figure),
       borderRadius: BorderRadius.circular(12),
@@ -220,25 +252,31 @@ class _TreeNode extends StatelessWidget {
       ),
     );
 
-    return Padding(
-      padding: EdgeInsetsDirectional.only(start: node.depth * _step, bottom: 4),
-      child: Row(
-        children: [
-          // Filet vers le maître : un trait court, du côté du début de ligne.
-          if (node.depth > 0) Container(width: 12, height: 1.5, color: AppColors.bronze.withValues(alpha: 0.45)),
-          Expanded(
-            child: node.external
-                ? DashedBorder(radius: 12, child: content)
-                : DecoratedBox(
-                    decoration: BoxDecoration(
-                      color: AppColors.offWhite,
-                      borderRadius: BorderRadius.circular(12),
-                      border: Border.all(color: AppColors.bronze.withValues(alpha: 0.2)),
+    return Semantics(
+      button: true,
+      label: spoken,
+      excludeSemantics: true,
+      onTap: () => openFigure(context, figure),
+      child: Padding(
+        padding: EdgeInsetsDirectional.only(start: node.depth * _step, bottom: 4),
+        child: Row(
+          children: [
+            // Filet vers le maître : un trait court, du côté du début de ligne.
+            if (node.depth > 0) Container(width: 12, height: 1.5, color: AppColors.bronze.withValues(alpha: 0.45)),
+            Expanded(
+              child: node.external
+                  ? DashedBorder(radius: 12, child: content)
+                  : DecoratedBox(
+                      decoration: BoxDecoration(
+                        color: AppColors.offWhite,
+                        borderRadius: BorderRadius.circular(12),
+                        border: Border.all(color: AppColors.bronze.withValues(alpha: 0.2)),
+                      ),
+                      child: content,
                     ),
-                    child: content,
-                  ),
-          ),
-        ],
+            ),
+          ],
+        ),
       ),
     );
   }

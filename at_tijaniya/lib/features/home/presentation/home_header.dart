@@ -11,6 +11,7 @@ import 'package:flutter/material.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../core/theme/rosace_painter.dart';
+import '../../../core/widgets/app_buttons.dart';
 import '../../../core/widgets/content_text.dart';
 import '../../../core/widgets/eyebrow.dart';
 import '../../../l10n/app_localizations.dart';
@@ -330,13 +331,11 @@ class HomeActionCard extends StatelessWidget {
             ),
             child: Text(cta),
           )
-        : FilledButton.tonal(
+        // Style tonal du kit plutôt qu'une copie (audit du 2026-11-03).
+        : FilledButton(
             onPressed: onCta,
-            style: FilledButton.styleFrom(
-              backgroundColor: AppColors.emeraldSoft,
-              foregroundColor: AppColors.emerald,
-              shape: const StadiumBorder(),
-              padding: const EdgeInsets.symmetric(horizontal: 18),
+            style: AppButtonStyles.tonal.merge(
+              FilledButton.styleFrom(padding: const EdgeInsets.symmetric(horizontal: 18)),
             ),
             child: Text(cta),
           );

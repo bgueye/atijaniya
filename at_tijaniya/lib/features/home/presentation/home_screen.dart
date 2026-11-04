@@ -254,7 +254,8 @@ class _DonationLine extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.fromLTRB(16, 20, 8, 0),
+      // Directionnelles : en arabe, les marges s'inversent avec la ligne.
+      padding: const EdgeInsetsDirectional.fromSTEB(16, 20, 8, 0),
       child: Column(
         children: [
           Divider(height: 1, color: AppColors.bronze.withValues(alpha: 0.2)),

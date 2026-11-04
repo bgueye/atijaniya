@@ -72,8 +72,9 @@ class _OnboardingRemindersScreenState extends State<OnboardingRemindersScreen> {
     // une fois, par le messager de l'app, qui survit au changement d'écran.
     final message = switch (outcome) {
       BulkReminderOutcome.done => null,
-      BulkReminderOutcome.permissionDenied => l10n.wirdReminderPermissionDenied,
-      BulkReminderOutcome.partialFailure => l10n.wirdReminderScheduleFailed,
+      // Au pluriel : l'étape en active plusieurs (audit du 2026-11-03).
+      BulkReminderOutcome.permissionDenied => l10n.remindersOnboardingPermissionDenied,
+      BulkReminderOutcome.partialFailure => l10n.remindersOnboardingScheduleFailed,
     };
     if (message != null) {
       messenger

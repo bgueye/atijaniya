@@ -44,6 +44,7 @@ import 'tasbih_controller.dart';
 import 'tasbih_counter_panel.dart';
 import 'tasbih_reading_prefs_provider.dart';
 import 'tasbih_reading_sheet.dart';
+import 'voice_error_message.dart';
 import 'wird_counter_feedback.dart';
 import 'wird_display_name.dart';
 import 'wird_history_screen.dart';
@@ -321,13 +322,20 @@ class _Header extends ConsumerWidget {
                 child: const Text('Aa', textDirection: TextDirection.ltr),
               ),
             ),
-          PopupMenuButton<void>(
-            tooltip: l10n.wirdTasbihMoreActions,
-            icon: const Icon(Icons.more_horiz, color: AppColors.parchment),
-            itemBuilder: (_) => [
-              PopupMenuItem(enabled: canReset, onTap: onReset, child: Text(l10n.wirdTasbihResetPillar)),
-            ],
-          ),
+          // Sa seule action (réinitialiser le pilier) est indisponible sur un
+          // pilier récité une fois, en clôture ou à 0 : le menu ne s'ouvre
+          // plus sur une entrée grisée ; sa place reste réservée pour ne pas
+          // décaler le titre (audit du 2026-11-03).
+          if (canReset)
+            PopupMenuButton<void>(
+              tooltip: l10n.wirdTasbihMoreActions,
+              icon: const Icon(Icons.more_horiz, color: AppColors.parchment),
+              itemBuilder: (_) => [
+                PopupMenuItem(onTap: onReset, child: Text(l10n.wirdTasbihResetPillar)),
+              ],
+            )
+          else
+            const SizedBox(width: 48),
         ],
       ),
     );
@@ -755,6 +763,20 @@ class _FocusView extends StatelessWidget {
                   icon: Icon(state.isListening ? Icons.pause : Icons.mic),
                   label: Text(state.isListening ? l10n.wirdFreeListeningActive : l10n.wirdFreeStartListening),
                 ),
+                // Micro refusé ou indisponible : le dire ici aussi, comme le
+                // panneau du mode normal (audit du 2026-11-03 : le bouton
+                // restait sans explication).
+                if (state.voiceError != null) ...[
+                  const SizedBox(height: 8),
+                  Semantics(
+                    liveRegion: true,
+                    child: Text(
+                      voiceErrorMessage(l10n, state.voiceError) ?? l10n.wirdFreeVoiceUnavailable,
+                      textAlign: TextAlign.center,
+                      style: TextStyle(fontSize: 13, color: AppColors.secondaryOnDark),
+                    ),
+                  ),
+                ],
               ],
               const Spacer(),
               TextButton.icon(

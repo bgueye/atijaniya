@@ -36,6 +36,12 @@ import '../../../core/widgets/content_text.dart';
 /// demande du porteur de projet) — pas le code, les tables (`events`,
 /// `zawiyas`) ni les routes, pour limiter le risque sur un module déjà en
 /// fin de développement.
+/// Dernier onglet ouvert, gardé hors de l'écran : quand un invité passe par
+/// la connexion (depuis la Communauté, par exemple), les onglets sont
+/// reconstruits à son retour. Il revenait sur l'Accueil ; il retrouve
+/// l'onglet qu'il avait quitté (audit du 2026-11-03).
+final homeTabIndexProvider = StateProvider<int>((ref) => 0);
+
 class HomeShell extends ConsumerStatefulWidget {
   const HomeShell({super.key});
 
@@ -56,6 +62,8 @@ class _HomeShellState extends ConsumerState<HomeShell> {
   @override
   void initState() {
     super.initState();
+    _index = ref.read(homeTabIndexProvider);
+    _visited.add(_index);
     // Rappel du wird touché (P2-5) : ouvert dès l'arrivée sur les onglets
     // s'il a lancé l'app, ou aussitôt s'il est touché pendant l'utilisation.
     WirdNotificationService.instance.pendingWirdId.addListener(_openPendingWird);
@@ -209,6 +217,7 @@ class _HomeShellState extends ConsumerState<HomeShell> {
     setState(() {
       _index = i;
       _visited.add(i);
+      ref.read(homeTabIndexProvider.notifier).state = i;
     });
   }
 

@@ -96,10 +96,14 @@ void main() {
     await tester.tap(find.text('Passer'));
     await tester.pumpAndSettle();
     expect(find.byType(OnboardingRemindersScreen), findsOneWidget);
+    // Audit des écrans refaits du 2026-11-03 : la découverte n'est « vue »
+    // qu'une fois les Rappels passés ; une app fermée ici les repropose.
+    expect((await SharedPreferences.getInstance()).getBool('onboarding_seen'), isNot(true));
 
     await tester.tap(find.text('Plus tard'));
     await tester.pumpAndSettle();
     expect(find.byType(WelcomeScreen), findsOneWidget);
+    expect((await SharedPreferences.getInstance()).getBool('onboarding_seen'), isTrue);
 
     await tester.tap(find.text('Créer un compte'));
     await tester.pumpAndSettle();

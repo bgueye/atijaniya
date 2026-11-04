@@ -70,7 +70,9 @@ List<PasswordRule> newPasswordRules(String password, AppLocalizations l10n) => [
       (label: l10n.authPasswordMinCharsHint, met: password.length >= 8),
       (
         label: l10n.authPasswordRuleLetters,
-        met: RegExp(r'\d').hasMatch(password) && RegExp(r'[^\d\s]').hasMatch(password),
+        // Une vraie lettre (latine, arabe…), pas la ponctuation : « 12345678! »
+        // cochait la règle (audit du 2026-11-03).
+        met: RegExp(r'\d').hasMatch(password) && RegExp(r'\p{L}', unicode: true).hasMatch(password),
       ),
     ];
 
