@@ -6,6 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/widgets/message_composer.dart';
 import '../../../l10n/app_localizations.dart';
+import 'community_states.dart';
 import '../../moderation/domain/moderation_models.dart';
 import '../../moderation/presentation/block_user.dart';
 import '../../moderation/presentation/report_content_dialog.dart';
@@ -117,29 +118,16 @@ class _ConversationScreenState extends ConsumerState<ConversationScreen> {
             child: messages.when(
               skipLoadingOnReload: true,
               loading: () => Center(child: CircularProgressIndicator(color: AppColors.emerald)),
-              error: (error, stackTrace) => Center(
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Text(l10n.communityMessagesLoadError, style: TextStyle(color: AppColors.secondaryInk)),
-                    TextButton(
-                      onPressed: () => ref.invalidate(conversationMessagesProvider(widget.conversationId)),
-                      child: Text(l10n.commonRetry),
-                    ),
-                  ],
-                ),
+              // États de la Communauté (refonte du 2026-11-02), hors ligne
+              // distingué : l'erreur et la conversation vide étaient refaites
+              // à la main (mise au thème du kit, 2026-11-04).
+              error: (error, stackTrace) => CommunityErrorState(
+                error: error,
+                message: l10n.communityMessagesLoadError,
+                onRetry: () => ref.invalidate(conversationMessagesProvider(widget.conversationId)),
               ),
               data: (list) => list.isEmpty
-                  ? Center(
-                      child: Padding(
-                        padding: const EdgeInsets.all(24),
-                        child: Text(
-                          l10n.communityConversationsNoMessages,
-                          textAlign: TextAlign.center,
-                          style: TextStyle(color: AppColors.secondaryInk),
-                        ),
-                      ),
-                    )
+                  ? CommunityEmptyState(icon: Icons.mail_outline, message: l10n.communityConversationsNoMessages)
                   // `reverse` : la liste s'ouvre sur le message le plus récent
                   // et y reste quand un nouveau arrive (elle s'ouvrait sur les
                   // plus anciens, le message envoyé restait hors écran).

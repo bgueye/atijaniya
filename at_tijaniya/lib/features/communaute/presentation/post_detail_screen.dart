@@ -4,6 +4,8 @@ import 'package:supabase_flutter/supabase_flutter.dart' show PostgrestException;
 
 import '../../../core/network/network_errors.dart';
 import '../../../core/theme/app_colors.dart';
+import '../../../core/widgets/section_title.dart';
+import '../../../core/widgets/notice.dart';
 import '../../../core/widgets/app_snackbar.dart';
 import '../../../core/widgets/message_composer.dart';
 import '../../../l10n/app_localizations.dart';
@@ -284,7 +286,8 @@ class _PostDetailScreenState extends ConsumerState<PostDetailScreen> {
         children: [
           Expanded(
             child: ListView(
-              padding: const EdgeInsets.all(20),
+              // Gouttière `space-16` du kit.
+              padding: const EdgeInsets.all(16),
               children: [
                 ContentText(
                   formatCommunityDateTime(post.createdAt),
@@ -348,11 +351,9 @@ class _PostDetailScreenState extends ConsumerState<PostDetailScreen> {
                   ],
                 ),
                 const Divider(height: 32),
-                Text(
-                  l10n.communityCommentsTitle,
-                  style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 16, color: AppColors.ink),
-                ),
-                const SizedBox(height: 12),
+                // Titre de section du kit, annoncé comme titre (mise au thème du
+                // kit, 2026-11-04 ; c'était un texte en gras sans rôle de titre).
+                SectionTitle(l10n.communityCommentsTitle, padding: const EdgeInsetsDirectional.fromSTEB(0, 0, 0, 8)),
                 comments.when(
                   loading: () => Center(
                     child: Padding(
@@ -362,18 +363,12 @@ class _PostDetailScreenState extends ConsumerState<PostDetailScreen> {
                   ),
                   // Hors ligne distingué et « Réessayer » (P3-3) ; le message
                   // parlait des publications, pas des commentaires.
-                  error: (error, stackTrace) => Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        isNetworkError(error) ? l10n.khadaraOfflineError : l10n.communityCommentsLoadError,
-                        style: TextStyle(color: AppColors.secondaryInk),
-                      ),
-                      TextButton(
-                        onPressed: () => ref.invalidate(postCommentsProvider(post.id)),
-                        child: Text(l10n.communityRetry),
-                      ),
-                    ],
+                  // Carte d'erreur de section du kit (`Notice`), hors ligne
+                  // distingué.
+                  error: (error, stackTrace) => Notice.fromError(
+                    error,
+                    message: l10n.communityCommentsLoadError,
+                    onRetry: () => ref.invalidate(postCommentsProvider(post.id)),
                   ),
                   data: (list) => list.isEmpty
                       ? Text(l10n.communityNoComments, style: TextStyle(color: AppColors.secondaryInk))

@@ -6,6 +6,7 @@ import 'package:url_launcher/url_launcher.dart';
 
 import '../../../core/text/numerals.dart';
 import '../../../core/theme/app_colors.dart';
+import '../../../core/widgets/notice.dart';
 import '../../../core/url/safe_url.dart';
 import '../../../core/widgets/message_composer.dart';
 import '../../../l10n/app_localizations.dart';
@@ -224,7 +225,8 @@ class _LiveStreamScreenState extends ConsumerState<LiveStreamScreen> {
                       if (isEnded)
                         Padding(
                           padding: const EdgeInsets.only(bottom: 8),
-                          child: Text(l10n.khadaraLiveEnded, style: TextStyle(color: AppColors.bronze)),
+                          // Encre secondaire : le bronze en texte est sous le seuil AA.
+                          child: Text(l10n.khadaraLiveEnded, style: TextStyle(color: AppColors.secondaryInk)),
                         ),
                       FilledButton.icon(
                         onPressed: _openExternal,
@@ -247,7 +249,7 @@ class _LiveStreamScreenState extends ConsumerState<LiveStreamScreen> {
                 : myUserId == null
                     ? Padding(
                         padding: const EdgeInsets.all(16),
-                        child: Text(l10n.khadaraChatSignInToWrite, style: TextStyle(color: AppColors.bronze)),
+                        child: Text(l10n.khadaraChatSignInToWrite, style: TextStyle(color: AppColors.secondaryInk)),
                       )
                     : MessageComposer(
                         hintText: l10n.khadaraChatHint,
@@ -281,12 +283,18 @@ class _ChatMessagesList extends ConsumerWidget {
 
     return messages.when(
       loading: () => Center(child: CircularProgressIndicator(color: AppColors.emerald)),
-      error: (error, stackTrace) => Center(
-        child: Text(l10n.khadaraLoadError, style: TextStyle(color: AppColors.bronze)),
+      // Carte d'erreur du kit avec « Réessayer » : le chat n'offrait
+      // aucune relance (mise au thème du kit, 2026-11-04).
+      error: (error, stackTrace) => NoticeBody(
+        Notice.fromError(
+          error,
+          message: l10n.khadaraLoadError,
+          onRetry: () => ref.invalidate(chatMessagesProvider(streamId)),
+        ),
       ),
       data: (list) => list.isEmpty
           ? Center(
-              child: Text(l10n.khadaraChatEmpty, style: TextStyle(color: AppColors.bronze)),
+              child: Text(l10n.khadaraChatEmpty, style: TextStyle(color: AppColors.secondaryInk)),
             )
           // `reverse` : le chat reste calé sur le dernier message.
           : ListView.builder(

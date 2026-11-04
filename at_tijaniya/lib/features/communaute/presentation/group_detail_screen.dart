@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/network/network_errors.dart';
 import '../../../core/theme/app_colors.dart';
+import '../../../core/widgets/message_page.dart';
 import '../../../core/widgets/app_snackbar.dart';
 import '../../../core/widgets/message_composer.dart';
 import '../../../l10n/app_localizations.dart';
@@ -292,7 +293,8 @@ class _GroupHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.all(20),
+      // Gouttière `space-16` du kit.
+      padding: const EdgeInsets.all(16),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
@@ -330,7 +332,9 @@ class _GroupHeader extends StatelessWidget {
                     style: OutlinedButton.styleFrom(foregroundColor: AppColors.danger),
                     child: Text(l10n.communityGroupsLeave),
                   )
-                : ElevatedButton(
+                // Bouton principal du kit (`FilledButton`), sans l'ombre de
+                // l'`ElevatedButton` (mise au thème du kit, 2026-11-04).
+                : FilledButton(
                     onPressed: updating ? null : (signedIn ? onJoin : onSignInPrompt),
                     child: Text(l10n.communityGroupsJoin),
                   ),
@@ -464,28 +468,12 @@ class _NotMemberState extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: Padding(
-        padding: const EdgeInsets.all(24),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(Icons.lock_outline, color: AppColors.bronze, size: 32),
-            const SizedBox(height: 12),
-            Text(
-              l10n.communityGroupsNotMemberTitle,
-              textAlign: TextAlign.center,
-              style: const TextStyle(fontWeight: FontWeight.w600, color: AppColors.ink),
-            ),
-            const SizedBox(height: 8),
-            Text(
-              l10n.communityGroupsNotMemberBody,
-              textAlign: TextAlign.center,
-              style: TextStyle(color: AppColors.secondaryInk),
-            ),
-          ],
-        ),
-      ),
+    // Page du kit (`MessagePage`) : cadenas en émeraude dans sa puce,
+    // titre annoncé comme titre (mise au thème du kit, 2026-11-04).
+    return MessagePage(
+      icon: Icons.lock_outline,
+      title: l10n.communityGroupsNotMemberTitle,
+      body: l10n.communityGroupsNotMemberBody,
     );
   }
 }
@@ -511,16 +499,8 @@ class _GroupPosts extends ConsumerWidget {
         onRetry: () => ref.invalidate(groupPostsProvider(groupId)),
       ),
       data: (list) => list.isEmpty
-          ? Center(
-              child: Padding(
-                padding: const EdgeInsets.all(24),
-                child: Text(
-                  l10n.communityGroupsPostsEmpty,
-                  textAlign: TextAlign.center,
-                  style: TextStyle(color: AppColors.secondaryInk),
-                ),
-              ),
-            )
+          // État vide de la Communauté (mise au thème du kit, 2026-11-04).
+          ? CommunityEmptyState(icon: Icons.forum_outlined, message: l10n.communityGroupsPostsEmpty)
           // `key` par message : sans elle, après une suppression ou un
           // rechargement, la tuile réutilisait l'état de la précédente à la
           // même position (texte d'un message supprimé affiché sur le

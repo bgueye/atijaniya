@@ -77,16 +77,8 @@ class GroupPastLiveStreamsScreen extends ConsumerWidget {
             onRetry: () => ref.invalidate(pastStreamsForGroupProvider(group.id)),
           ),
           data: (streams) => streams.isEmpty
-              ? Center(
-                  child: Padding(
-                    padding: const EdgeInsets.all(24),
-                    child: Text(
-                      l10n.communityGroupsPastStreamsEmpty,
-                      textAlign: TextAlign.center,
-                      style: TextStyle(color: AppColors.secondaryInk),
-                    ),
-                  ),
-                )
+              // État vide de la Communauté (mise au thème du kit, 2026-11-04).
+              ? CommunityEmptyState(icon: Icons.videocam_off_outlined, message: l10n.communityGroupsPastStreamsEmpty)
               : ListView.separated(
                   padding: const EdgeInsets.all(16),
                   itemCount: streams.length,

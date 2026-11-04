@@ -4693,3 +4693,28 @@ Tests : `divers_kit_test.dart` (8 tests, dont 7 échouent sur l'ancienne version
 vérifie les titres de la politique) ; captures FR/AR dans `divers_captures_test.dart`, sauf la
 politique, dont le texte ne se charge pas quand les polices passent par le canal des assets.
 `flutter analyze` ne signale rien et les 776 tests passent. Pas encore validé sur téléphone.
+
+## Mise au thème du kit : écrans divers, lot 2 (2026-11-04)
+
+Sous-écrans de la Communauté et des directs : conversation privée, détail d'un groupe, directs passés,
+détail d'une publication, direct, démarrage d'un direct. Ils reprenaient déjà en bonne partie les
+états de la Communauté refaite le 2026-11-02 ; restaient des écarts locaux. Aucune règle d'accès, de
+messagerie ou de direct ne change.
+
+- **Conversation privée** : erreur et conversation vide en états de la Communauté
+  (`CommunityErrorState`, qui distingue le hors-ligne, et `CommunityEmptyState`).
+- **Groupe** : « Rejoindre le groupe » en `FilledButton` (l'`ElevatedButton` portait une ombre) ;
+  « réservé aux membres » en `MessagePage` ; discussion vide en état de la Communauté ; gouttière
+  de 16.
+- **Directs passés** : liste vide en état de la Communauté.
+- **Publication** : « Commentaires » en `SectionTitle` ; erreur des commentaires en `Notice` de
+  section, hors ligne distingué, avec « Réessayer » ; gouttière de 16.
+- **Direct** : « Direct terminé », « Connectez-vous pour écrire » et le chat vide en encre secondaire
+  (ils étaient en bronze) ; erreur du chat en `Notice` avec « Réessayer » (il n'y en avait pas).
+  L'écran reste sur parchemin : le zaytoune, permis pour « Khadara en direct », serait un changement
+  de design non demandé.
+- **Démarrer un direct** : explication en encre secondaire, spinner en blanc cassé, gouttière de 16.
+
+Tests : `divers_communaute_kit_test.dart` (6 tests, tous en échec sur l'ancienne version) ; captures
+FR/AR dans `divers_communaute_captures_test.dart`. `flutter analyze` ne signale rien et les 782 tests
+passent. Pas encore validé sur téléphone.

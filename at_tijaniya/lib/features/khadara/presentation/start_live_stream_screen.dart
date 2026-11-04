@@ -88,11 +88,13 @@ class _StartLiveStreamScreenState extends ConsumerState<StartLiveStreamScreen> {
         child: Form(
           key: _formKey,
           child: ListView(
-            padding: const EdgeInsets.all(20),
+            // Gouttière `space-16` du kit.
+            padding: const EdgeInsets.all(16),
             children: [
               ContentText(widget.contextTitle, style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 16)),
               const SizedBox(height: 8),
-              Text(l10n.khadaraStartLiveBody, style: TextStyle(color: AppColors.bronze, fontSize: 13)),
+              // Encre secondaire : le bronze en texte est sous le seuil AA.
+              Text(l10n.khadaraStartLiveBody, style: TextStyle(color: AppColors.secondaryInk, fontSize: 13)),
               const SizedBox(height: 20),
               _SourceTile(
                 label: l10n.khadaraSourceYoutube,
@@ -138,7 +140,9 @@ class _StartLiveStreamScreenState extends ConsumerState<StartLiveStreamScreen> {
                 onPressed: _starting ? null : _start,
                 child: _starting
                     ? const SizedBox(
-                        height: 18, width: 18, child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white))
+                        height: 18,
+                        width: 18,
+                        child: CircularProgressIndicator(strokeWidth: 2, color: AppColors.offWhite))
                     : Text(l10n.khadaraStartLiveButton),
               ),
             ],
