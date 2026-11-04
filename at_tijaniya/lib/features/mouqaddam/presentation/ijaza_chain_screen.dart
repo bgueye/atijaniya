@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/theme/app_colors.dart';
+import '../../../core/widgets/notice.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../core/theme/rosace_painter.dart';
 import '../../../core/widgets/app_snackbar.dart';
@@ -46,33 +47,21 @@ class IjazaChainScreen extends ConsumerWidget {
       body: SafeArea(
         child: chainAsync.when(
           loading: () => Center(child: CircularProgressIndicator(color: AppColors.emerald)),
-          error: (error, stackTrace) => Center(
-            child: Padding(
-              padding: const EdgeInsets.all(24),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Icon(Icons.wifi_off, color: AppColors.bronze, size: 32),
-                  const SizedBox(height: 12),
-                  Text(l10n.mouqaddamChainLoadError, textAlign: TextAlign.center, style: TextStyle(color: AppColors.bronze)),
-                  const SizedBox(height: 12),
-                  OutlinedButton(onPressed: () => ref.invalidate(myIjazaChainProvider), child: Text(l10n.mouqaddamRetry)),
-                ],
-              ),
-            ),
+          // États du kit (`Notice`, mise au thème du kit, 2026-11-04) : l'erreur
+          // était une colonne centrée en texte bronze, sous le seuil AA.
+          error: (error, stackTrace) => NoticeBody(
+            Notice.fromError(error,
+                message: l10n.mouqaddamChainLoadError, onRetry: () => ref.invalidate(myIjazaChainProvider)),
           ),
           data: (chain) {
             final currentUserId = ref.watch(currentUserIdProvider);
             return ListView(
-              padding: const EdgeInsets.all(20),
+              // Gouttière `space-16` du kit.
+              padding: const EdgeInsets.all(16),
               children: [
                 if (chain.isEmpty)
-                  Center(
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 24),
-                      child: Text(l10n.mouqaddamChainEmpty, textAlign: TextAlign.center, style: TextStyle(color: AppColors.bronze)),
-                    ),
-                  )
+                  // Chaîne vide : la note du kit (le texte était en bronze).
+                  Notice.info(l10n.mouqaddamChainEmpty)
                 else
                   _SilsilaRevealSection(chain: chain, currentUserId: currentUserId, l10n: l10n),
                 const SizedBox(height: 32),
@@ -89,11 +78,9 @@ class IjazaChainScreen extends ConsumerWidget {
                   const _MyManualLinksSection(),
                   _CompleteChainSection(l10n: l10n, chainCompleted: chain.isNotEmpty && chain.last.isUltimateSource),
                 ] else
-                  Text(
-                    l10n.mouqaddamChainManualOwnedBySponsor,
-                    textAlign: TextAlign.center,
-                    style: TextStyle(color: AppColors.bronze),
-                  ),
+                  // La suite de la silsila est tenue par le parrain : une
+                  // information, en note du kit (le texte était en bronze).
+                  Notice.info(l10n.mouqaddamChainManualOwnedBySponsor),
               ],
             );
           },
@@ -133,7 +120,8 @@ class _SilsilaRevealSection extends StatefulWidget {
 
 class _SilsilaRevealSectionState extends State<_SilsilaRevealSection> with TickerProviderStateMixin {
   final _introStore = const SilsilaIntroStore();
-  late final AnimationController _pulseController = AnimationController(vsync: this, duration: const Duration(milliseconds: 2200));
+  late final AnimationController _pulseController =
+      AnimationController(vsync: this, duration: const Duration(milliseconds: 2200));
 
   int _visibleCount = 0;
   int _threadGrownUpTo = 0;
@@ -250,7 +238,8 @@ class _SilsilaRevealSectionState extends State<_SilsilaRevealSection> with Ticke
                   pulse: _pulseController,
                   l10n: l10n,
                 ),
-                if (pos < displayChain.length - 1) _RevealThread(grown: (widget.chain.length - 1 - pos) < _threadGrownUpTo),
+                if (pos < displayChain.length - 1)
+                  _RevealThread(grown: (widget.chain.length - 1 - pos) < _threadGrownUpTo),
               ],
             ],
           ),
@@ -314,7 +303,8 @@ class _RevealThread extends StatelessWidget {
         width: 2,
         height: grown ? 26 : 0,
         decoration: BoxDecoration(
-          gradient: LinearGradient(begin: Alignment.topCenter, end: Alignment.bottomCenter, colors: [AppColors.gold, Colors.transparent]),
+          gradient: LinearGradient(
+              begin: Alignment.topCenter, end: Alignment.bottomCenter, colors: [AppColors.gold, Colors.transparent]),
         ),
       ),
     );
@@ -451,7 +441,9 @@ class _NodeCard extends StatelessWidget {
                 : link.isManual
                     ? Border.all(color: AppColors.bronze)
                     : null,
-        boxShadow: const [BoxShadow(color: Colors.black26, blurRadius: 10, offset: Offset(0, 3))],
+        // Pas d'ombre (le kit n'en connaît qu'une, `shadow-action`) : sur le
+        // fond zaytoune, la carte claire se détache seule (mise au thème du
+        // kit, 2026-11-04).
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
@@ -459,9 +451,14 @@ class _NodeCard extends StatelessWidget {
           ContentText(
             link.displayName('—'),
             textAlign: TextAlign.center,
-            style: isFounder
-                ? AppTheme.sacredText(fontSize: 19, color: AppColors.goldSoft)
-                : AppTheme.sacredText(fontSize: 14, color: AppColors.zaytoune),
+            // Nom en Cormorant, police des noms de figures ; en Amiri seulement
+            // s'il est écrit en arabe (Amiri est réservée au texte religieux
+            // et à l'arabe ; mise au thème du kit, 2026-11-04).
+            style: _nameStyle(
+              link.displayName('—'),
+              size: isFounder ? 20 : 16,
+              color: isFounder ? AppColors.goldSoft : AppColors.zaytoune,
+            ),
           ),
           if (metaText != null) ...[
             const SizedBox(height: 4),
@@ -469,14 +466,22 @@ class _NodeCard extends StatelessWidget {
               metaText,
               style: TextStyle(
                 fontSize: 11,
-                color: isFounder ? const Color(0xFFCFE0D6) : AppColors.bronze,
+                // Jetons du kit : texte secondaire sur fond sombre pour le
+                // Cheikh, encre secondaire sur blanc cassé (le bronze en texte
+                // est sous le seuil AA ; la couleur était écrite en dur).
+                color: isFounder ? AppColors.secondaryOnDark : AppColors.secondaryInk,
                 fontStyle: link.isManual ? FontStyle.italic : FontStyle.normal,
               ),
             ),
           ],
           if (isSelf) ...[
             const SizedBox(height: 4),
-            Text(l10n.mouqaddamChainYouLabel, style: TextStyle(fontSize: 10, color: AppColors.gold, fontWeight: FontWeight.w600)),
+            // Émeraude et non or : l'or ne s'écrit jamais en texte sur fond
+            // clair (kit § Couleurs). L'anneau d'or de la carte reste.
+            Text(
+              l10n.mouqaddamChainYouLabel,
+              style: TextStyle(fontSize: 11, color: AppColors.emerald, fontWeight: FontWeight.w600),
+            ),
           ],
         ],
       ),
@@ -551,7 +556,7 @@ class _CompleteChainSectionState extends ConsumerState<_CompleteChainSection> {
       return Card(
         child: Padding(
           padding: const EdgeInsets.all(16),
-          child: Text(l10n.mouqaddamChainCompleteDone, style: TextStyle(color: AppColors.bronze, fontSize: 13)),
+          child: Text(l10n.mouqaddamChainCompleteDone, style: TextStyle(color: AppColors.secondaryInk, fontSize: 13)),
         ),
       );
     }
@@ -565,7 +570,8 @@ class _CompleteChainSectionState extends ConsumerState<_CompleteChainSection> {
             children: [
               Text(l10n.mouqaddamChainCompleteTitle, style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 15)),
               const SizedBox(height: 8),
-              Text(l10n.mouqaddamChainCompleteBody, style: TextStyle(color: AppColors.bronze, fontSize: 13)),
+              // Encre secondaire : le bronze en texte est sous le seuil AA.
+              Text(l10n.mouqaddamChainCompleteBody, style: TextStyle(color: AppColors.secondaryInk, fontSize: 13)),
               const SizedBox(height: 16),
               TextFormField(
                 controller: _nameController,
@@ -626,8 +632,7 @@ class _MyManualLinksSection extends ConsumerWidget {
             children: [
               Text(l10n.mouqaddamChainMyLinksTitle, style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 15)),
               const SizedBox(height: 4),
-              for (final link in links)
-                _ManualLinkRow(link: link, isLast: link.orderIndex == links.last.orderIndex),
+              for (final link in links) _ManualLinkRow(link: link, isLast: link.orderIndex == links.last.orderIndex),
             ],
           ),
         ),
@@ -726,7 +731,7 @@ class _ManualLinkRow extends ConsumerWidget {
                 for (final detail in details)
                   ContentText(
                     detail,
-                    style: TextStyle(fontSize: 12, color: AppColors.bronze, fontStyle: FontStyle.italic),
+                    style: TextStyle(fontSize: 12, color: AppColors.secondaryInk, fontStyle: FontStyle.italic),
                   ),
               ],
             ),
@@ -832,4 +837,12 @@ class _EditManualLinkDialogState extends State<_EditManualLinkDialog> {
       ],
     );
   }
+}
+
+/// Style d'un nom de la chaîne : Cormorant (`titre-carte` du kit) pour un nom
+/// en écriture latine, Amiri pour un nom écrit en arabe.
+TextStyle _nameStyle(String name, {required double size, required Color color}) {
+  return contentDirection(name) == TextDirection.rtl
+      ? AppTheme.sacredText(fontSize: size - 2, color: color)
+      : AppTheme.titleText(fontSize: size, color: color, height: 1.2).copyWith(fontWeight: FontWeight.w600);
 }

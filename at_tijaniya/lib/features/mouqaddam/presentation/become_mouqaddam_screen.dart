@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/text/numerals.dart';
 import '../../../core/theme/app_colors.dart';
+import '../../../core/widgets/notice.dart';
 import '../../../l10n/app_localizations.dart';
 import '../domain/mouqaddam_models.dart';
 import 'mouqaddam_providers.dart';
@@ -30,32 +31,15 @@ class BecomeMouqaddamScreen extends ConsumerWidget {
       // masqué sous la barre de navigation Android (3 boutons).
       body: SafeArea(
         child: requestAsync.when(
-          loading: () => Center(
-              child: CircularProgressIndicator(color: AppColors.emerald)),
-          error: (error, stackTrace) => Center(
-            child: Padding(
-              padding: const EdgeInsets.all(24),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Icon(Icons.wifi_off, color: AppColors.bronze, size: 32),
-                  const SizedBox(height: 12),
-                  Text(l10n.mouqaddamLoadError,
-                      textAlign: TextAlign.center,
-                      style: TextStyle(color: AppColors.bronze)),
-                  const SizedBox(height: 12),
-                  OutlinedButton(
-                    onPressed: () =>
-                        ref.invalidate(myLatestSponsorshipRequestProvider),
-                    child: Text(l10n.mouqaddamRetry),
-                  ),
-                ],
-              ),
-            ),
+          loading: () => Center(child: CircularProgressIndicator(color: AppColors.emerald)),
+          // États du kit (`Notice`, mise au thème du kit, 2026-11-04) : l'erreur
+          // était une colonne centrée en texte bronze, sous le seuil AA.
+          error: (error, stackTrace) => NoticeBody(
+            Notice.fromError(error,
+                message: l10n.mouqaddamLoadError, onRetry: () => ref.invalidate(myLatestSponsorshipRequestProvider)),
           ),
           data: (request) {
-            if (request != null &&
-                request.status == SponsorshipRequestStatus.pending) {
+            if (request != null && request.status == SponsorshipRequestStatus.pending) {
               return _PendingRequestView(request: request, l10n: l10n);
             }
             return _RequestForm(previousRequest: request, l10n: l10n);
@@ -79,22 +63,17 @@ class _PendingRequestView extends ConsumerWidget {
         title: Text(l10n.mouqaddamPendingCancelConfirmTitle),
         content: Text(l10n.mouqaddamPendingCancelConfirmBody),
         actions: [
-          TextButton(
-              onPressed: () => Navigator.of(context).pop(false),
-              child: Text(l10n.profileCancel)),
+          TextButton(onPressed: () => Navigator.of(context).pop(false), child: Text(l10n.profileCancel)),
           TextButton(
             onPressed: () => Navigator.of(context).pop(true),
-            child: Text(l10n.mouqaddamPendingCancelConfirmAction,
-                style: const TextStyle(color: AppColors.danger)),
+            child: Text(l10n.mouqaddamPendingCancelConfirmAction, style: const TextStyle(color: AppColors.danger)),
           ),
         ],
       ),
     );
     if (confirmed != true) return;
     try {
-      await ref
-          .read(mouqaddamRepositoryProvider)
-          .cancelMyPendingRequest(request.id);
+      await ref.read(mouqaddamRepositoryProvider).cancelMyPendingRequest(request.id);
       ref.invalidate(myLatestSponsorshipRequestProvider);
     } catch (_) {
       if (context.mounted) {
@@ -108,7 +87,7 @@ class _PendingRequestView extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return Padding(
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.all(16),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
@@ -120,26 +99,23 @@ class _PendingRequestView extends ConsumerWidget {
                 children: [
                   Row(
                     children: [
-                      Icon(Icons.hourglass_top_outlined,
-                          color: AppColors.gold),
+                      // Icône en émeraude (kit § Iconographie) : l'or ne sert
+                      // qu'en aplat ou en filet.
+                      Icon(Icons.hourglass_top_outlined, color: AppColors.emerald),
                       const SizedBox(width: 12),
-                      Text(l10n.mouqaddamPendingTitle,
-                          style: Theme.of(context).textTheme.titleMedium),
+                      Text(l10n.mouqaddamPendingTitle, style: Theme.of(context).textTheme.titleMedium),
                     ],
                   ),
                   const SizedBox(height: 16),
+                  // Libellés en encre secondaire (gouttière `space-16` du
+                  // kit plus haut) : le bronze en texte est sous le seuil AA.
                   Text(l10n.mouqaddamPendingSponsorLabel,
-                      style: TextStyle(
-                          color: AppColors.bronze, fontSize: 13)),
-                  ContentText(request.sponsorName ?? '—',
-                      style: const TextStyle(fontSize: 16)),
+                      style: TextStyle(color: AppColors.secondaryInk, fontSize: 13)),
+                  ContentText(request.sponsorName ?? '—', style: const TextStyle(fontSize: 16)),
                   if (request.ijazaYear != null) ...[
                     const SizedBox(height: 12),
-                    Text(l10n.mouqaddamYearFieldLabel,
-                        style: TextStyle(
-                            color: AppColors.bronze, fontSize: 13)),
-                    ContentText('${request.ijazaYear}',
-                        style: const TextStyle(fontSize: 16)),
+                    Text(l10n.mouqaddamYearFieldLabel, style: TextStyle(color: AppColors.secondaryInk, fontSize: 13)),
+                    ContentText('${request.ijazaYear}', style: const TextStyle(fontSize: 16)),
                   ],
                 ],
               ),
@@ -218,37 +194,21 @@ class _RequestFormState extends ConsumerState<_RequestForm> {
   Widget build(BuildContext context) {
     final l10n = widget.l10n;
     return SingleChildScrollView(
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.all(16),
       child: Form(
         key: _formKey,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Card(
-              color: AppColors.goldSoft,
-              child: Padding(
-                padding: const EdgeInsets.all(16),
-                child: Row(
-                  children: [
-                    Icon(Icons.info_outline, color: AppColors.bronze),
-                    const SizedBox(width: 12),
-                    Expanded(
-                        child: Text(l10n.mouqaddamIntro,
-                            style: const TextStyle(
-                                color: AppColors.ink, fontSize: 15))),
-                  ],
-                ),
-              ),
-            ),
-            if (widget.previousRequest?.status ==
-                SponsorshipRequestStatus.rejected) ...[
+            // Note d'information du kit (`Notice.info`, mise au thème du
+            // kit, 2026-11-04) : carte or doux à icône bronze auparavant.
+            Notice.info(l10n.mouqaddamIntro),
+            if (widget.previousRequest?.status == SponsorshipRequestStatus.rejected) ...[
               const SizedBox(height: 16),
-              Text(l10n.mouqaddamRejectedNote,
-                  style: const TextStyle(color: AppColors.danger)),
+              Text(l10n.mouqaddamRejectedNote, style: const TextStyle(color: AppColors.danger)),
             ],
             const SizedBox(height: 24),
-            Text(l10n.mouqaddamSelectedSponsorLabel,
-                style: TextStyle(color: AppColors.bronze, fontSize: 13)),
+            Text(l10n.mouqaddamSelectedSponsorLabel, style: TextStyle(color: AppColors.secondaryInk, fontSize: 13)),
             const SizedBox(height: 4),
             Text(
               _selectedSponsor?.displayName ?? l10n.mouqaddamNoSponsorChosen,
@@ -258,15 +218,13 @@ class _RequestFormState extends ConsumerState<_RequestForm> {
             OutlinedButton.icon(
               onPressed: _chooseSponsor,
               icon: const Icon(Icons.search, size: 18),
-              label: Text(_selectedSponsor == null
-                  ? l10n.mouqaddamChooseSponsorButton
-                  : l10n.mouqaddamChangeSponsorButton),
+              label: Text(
+                  _selectedSponsor == null ? l10n.mouqaddamChooseSponsorButton : l10n.mouqaddamChangeSponsorButton),
             ),
             const SizedBox(height: 16),
             TextFormField(
               controller: _yearController,
-              decoration:
-                  InputDecoration(labelText: l10n.mouqaddamYearFieldLabel),
+              decoration: InputDecoration(labelText: l10n.mouqaddamYearFieldLabel),
               keyboardType: TextInputType.number,
               validator: (value) {
                 final text = value?.trim() ?? '';
@@ -280,18 +238,19 @@ class _RequestFormState extends ConsumerState<_RequestForm> {
             ),
             if (_errorMessage != null) ...[
               const SizedBox(height: 16),
-              ContentText(_errorMessage!,
-                  style: const TextStyle(color: AppColors.danger)),
+              ContentText(_errorMessage!, style: const TextStyle(color: AppColors.danger)),
             ],
             const SizedBox(height: 24),
-            ElevatedButton(
+            // Bouton principal du kit (`FilledButton`, pilule émeraude) : l'ombre
+            // de l'`ElevatedButton` sort de la règle « des filets, pas des ombres »
+            // (mise au thème du kit, 2026-11-04).
+            FilledButton(
               onPressed: _submitting ? null : _submit,
               child: _submitting
                   ? const SizedBox(
                       height: 18,
                       width: 18,
-                      child: CircularProgressIndicator(
-                          strokeWidth: 2, color: Colors.white),
+                      child: CircularProgressIndicator(strokeWidth: 2, color: AppColors.offWhite),
                     )
                   : Text(l10n.mouqaddamSubmitButton),
             ),

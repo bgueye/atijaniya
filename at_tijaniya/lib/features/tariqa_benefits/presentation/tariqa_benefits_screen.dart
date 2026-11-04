@@ -53,7 +53,7 @@ class TariqaBenefitsScreen extends ConsumerWidget {
           loading: () => Center(child: CircularProgressIndicator(color: AppColors.emerald)),
           // États du kit (`Notice`, mise au thème du kit, 2026-11-04) : hors
           // ligne ou erreur, avec « Réessayer ».
-          error: (error, stackTrace) => _NoticeBody(
+          error: (error, stackTrace) => NoticeBody(
             Notice.fromError(error,
                 message: l10n.wirdRepairLoadError, onRetry: () => ref.invalidate(tariqaBenefitsRowsProvider)),
           ),
@@ -64,7 +64,7 @@ class TariqaBenefitsScreen extends ConsumerWidget {
               isArabic: isArabicUi,
             );
             if (content.isEmpty) {
-              return _NoticeBody(Notice.info(l10n.wirdRepairUnavailable, icon: Icons.hourglass_empty));
+              return NoticeBody(Notice.info(l10n.wirdRepairUnavailable, icon: Icons.hourglass_empty));
             }
             return TariqaBenefitsBody(content: content, showFrenchOnlyNote: isArabicUi && !content.isArabicText);
           },
@@ -1086,15 +1086,4 @@ class _TableView extends StatelessWidget {
     }
     return count;
   }
-}
-
-/// Un état du kit (`Notice`) seul dans le corps de l'écran, dans la
-/// gouttière `space-16`.
-class _NoticeBody extends StatelessWidget {
-  const _NoticeBody(this.notice);
-
-  final Notice notice;
-
-  @override
-  Widget build(BuildContext context) => ListView(padding: const EdgeInsets.all(16), children: [notice]);
 }

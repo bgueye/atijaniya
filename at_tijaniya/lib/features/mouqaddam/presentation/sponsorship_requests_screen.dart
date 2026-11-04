@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/theme/app_colors.dart';
+import '../../../core/widgets/notice.dart';
 import '../../../l10n/app_localizations.dart';
 import '../domain/mouqaddam_models.dart';
 import 'mouqaddam_providers.dart';
@@ -32,32 +33,17 @@ class SponsorshipRequestsScreen extends ConsumerWidget {
       body: SafeArea(
         child: requestsAsync.when(
           loading: () => Center(child: CircularProgressIndicator(color: AppColors.emerald)),
-          error: (error, stackTrace) => Center(
-            child: Padding(
-              padding: const EdgeInsets.all(24),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Icon(Icons.wifi_off, color: AppColors.bronze, size: 32),
-                  const SizedBox(height: 12),
-                  Text(l10n.mouqaddamRequestsLoadError, textAlign: TextAlign.center, style: TextStyle(color: AppColors.bronze)),
-                  const SizedBox(height: 12),
-                  OutlinedButton(
-                    onPressed: () => ref.invalidate(receivedSponsorshipRequestsProvider),
-                    child: Text(l10n.mouqaddamRetry),
-                  ),
-                ],
-              ),
-            ),
+          // États du kit (`Notice`, mise au thème du kit, 2026-11-04) : l'erreur
+          // était une colonne centrée en texte bronze, sous le seuil AA.
+          error: (error, stackTrace) => NoticeBody(
+            Notice.fromError(error,
+                message: l10n.mouqaddamRequestsLoadError,
+                onRetry: () => ref.invalidate(receivedSponsorshipRequestsProvider)),
           ),
           data: (requests) {
             if (requests.isEmpty) {
-              return Center(
-                child: Padding(
-                  padding: const EdgeInsets.all(24),
-                  child: Text(l10n.mouqaddamRequestsEmpty, textAlign: TextAlign.center, style: TextStyle(color: AppColors.bronze)),
-                ),
-              );
+              // Liste vide : la note du kit (le texte était en bronze).
+              return NoticeBody(Notice.info(l10n.mouqaddamRequestsEmpty));
             }
             return ListView.separated(
               padding: const EdgeInsets.all(16),
@@ -104,7 +90,8 @@ class _RequestCard extends ConsumerWidget {
       if (!context.mounted) return;
       ScaffoldMessenger.of(context)
         ..hideCurrentSnackBar()
-        ..showSnackBar(SnackBar(content: Text(accept ? l10n.mouqaddamRequestsSuccessAccepted : l10n.mouqaddamRequestsSuccessRejected)));
+        ..showSnackBar(SnackBar(
+            content: Text(accept ? l10n.mouqaddamRequestsSuccessAccepted : l10n.mouqaddamRequestsSuccessRejected)));
     } catch (_) {
       if (context.mounted) {
         ScaffoldMessenger.of(context)
@@ -130,7 +117,8 @@ class _RequestCard extends ConsumerWidget {
                 ),
                 const SizedBox(width: 12),
                 Expanded(
-                  child: ContentText(request.candidateName ?? '—', style: const TextStyle(fontWeight: FontWeight.w500, fontSize: 16)),
+                  child: ContentText(request.candidateName ?? '—',
+                      style: const TextStyle(fontWeight: FontWeight.w500, fontSize: 16)),
                 ),
               ],
             ),
@@ -138,7 +126,8 @@ class _RequestCard extends ConsumerWidget {
               const SizedBox(height: 8),
               Text(
                 '${l10n.mouqaddamRequestsYearLabel} : ${request.ijazaYear}',
-                style: TextStyle(color: AppColors.bronze, fontSize: 13),
+                // Encre secondaire : le bronze en texte est sous le seuil AA.
+                style: TextStyle(color: AppColors.secondaryInk, fontSize: 13),
               ),
             ],
             const SizedBox(height: 12),
@@ -151,7 +140,10 @@ class _RequestCard extends ConsumerWidget {
                   child: Text(l10n.mouqaddamRequestsReject),
                 ),
                 const SizedBox(width: 8),
-                ElevatedButton(
+                // Bouton principal du kit (`FilledButton`, pilule émeraude) : l'ombre
+                // de l'`ElevatedButton` sort de la règle « des filets, pas des ombres »
+                // (mise au thème du kit, 2026-11-04).
+                FilledButton(
                   onPressed: () => _respond(context, ref, accept: true),
                   child: Text(l10n.mouqaddamRequestsAccept),
                 ),

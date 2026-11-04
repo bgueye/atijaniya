@@ -84,6 +84,9 @@ vérifier la section 12 de `database/schema.sql` et `database/migrations/`.
   nouvelle décision. Étendue le 2026-11-01 (refonte de l'accueil, proposition B retenue),
   sur l'accueil seulement, à sa barre d'app et à la carte de rattrapage contextuelle du
   carrousel « Comprendre et rattraper ».
+  Seconde exception actée le 2026-11-04 (mise au thème du kit) : le bloc animé de la chaîne sur
+  « Ma silsila d'ijaza » (`ijaza_chain_screen.dart`), moment de révélation de la silsila, garde son
+  fond zaytoune ; le reste de cet écran est sur parchemin.
 
 ## Écran d'accueil (refonte du 2026-11-01)
 En-tête + anneau du jour, carte « Prochaine étape » (seule action principale), carrousel

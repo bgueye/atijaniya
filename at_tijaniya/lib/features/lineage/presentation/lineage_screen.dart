@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/text/numerals.dart';
 import '../../../core/theme/app_colors.dart';
+import '../../../core/widgets/notice.dart';
 import '../../../l10n/app_localizations.dart';
 import '../domain/lineage_errors.dart';
 import '../domain/lineage_models.dart';
@@ -80,9 +81,7 @@ class _LineageScreenState extends ConsumerState<LineageScreen> {
       final zawiyaText = _zawiyaController.text.trim();
       await ref.read(lineageRepositoryProvider).saveMyLineage(
             foyer: _foyer,
-            foyerAutreText: _foyer == Foyer.autre
-                ? _foyerAutreController.text.trim()
-                : null,
+            foyerAutreText: _foyer == Foyer.autre ? _foyerAutreController.text.trim() : null,
             moqaddamNameText: _moqaddamNameController.text.trim(),
             transmissionYear: yearText.isEmpty ? null : parseLocalizedInt(yearText)!,
             zawiyaText: zawiyaText.isEmpty ? null : zawiyaText,
@@ -113,13 +112,10 @@ class _LineageScreenState extends ConsumerState<LineageScreen> {
         title: Text(l10n.lineageDeleteConfirmTitle),
         content: Text(l10n.lineageDeleteConfirmBody),
         actions: [
-          TextButton(
-              onPressed: () => Navigator.of(context).pop(false),
-              child: Text(l10n.profileCancel)),
+          TextButton(onPressed: () => Navigator.of(context).pop(false), child: Text(l10n.profileCancel)),
           TextButton(
             onPressed: () => Navigator.of(context).pop(true),
-            child: Text(l10n.lineageDeleteConfirmAction,
-                style: const TextStyle(color: AppColors.danger)),
+            child: Text(l10n.lineageDeleteConfirmAction, style: const TextStyle(color: AppColors.danger)),
           ),
         ],
       ),
@@ -172,34 +168,17 @@ class _LineageScreenState extends ConsumerState<LineageScreen> {
       // la barre de navigation Android (3 boutons).
       body: SafeArea(
         child: lineageAsync.when(
-          loading: () => Center(
-              child: CircularProgressIndicator(color: AppColors.emerald)),
-          error: (error, stackTrace) => Center(
-            child: Padding(
-              padding: const EdgeInsets.all(24),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Icon(Icons.wifi_off, color: AppColors.bronze, size: 32),
-                  const SizedBox(height: 12),
-                  Text(
-                    l10n.lineageLoadError,
-                    textAlign: TextAlign.center,
-                    style: TextStyle(color: AppColors.bronze),
-                  ),
-                  const SizedBox(height: 12),
-                  OutlinedButton(
-                    onPressed: () => ref.invalidate(myLineageProvider),
-                    child: Text(l10n.lineageRetry),
-                  ),
-                ],
-              ),
-            ),
+          loading: () => Center(child: CircularProgressIndicator(color: AppColors.emerald)),
+          // États du kit (`Notice`, mise au thème du kit, 2026-11-04) : l'erreur
+          // était une colonne centrée en texte bronze, sous le seuil AA.
+          error: (error, stackTrace) => NoticeBody(
+            Notice.fromError(error, message: l10n.lineageLoadError, onRetry: () => ref.invalidate(myLineageProvider)),
           ),
           data: (lineage) {
             _applyExisting(lineage);
             return SingleChildScrollView(
-              padding: const EdgeInsets.all(20),
+              // Gouttière `space-16` du kit.
+              padding: const EdgeInsets.all(16),
               child: Form(
                 key: _formKey,
                 child: Column(
@@ -208,75 +187,47 @@ class _LineageScreenState extends ConsumerState<LineageScreen> {
                     if (lineage != null) ...[
                       OutlinedButton.icon(
                         onPressed: () => Navigator.of(context).push(
-                          MaterialPageRoute(
-                              builder: (_) => const LineageMatchesScreen()),
+                          MaterialPageRoute(builder: (_) => const LineageMatchesScreen()),
                         ),
                         icon: const Icon(Icons.people_outline, size: 18),
                         label: Text(l10n.lineageFindDisciplesCta),
                       ),
                       const SizedBox(height: 20),
                     ],
-                    Card(
-                      color: AppColors.goldSoft,
-                      child: Padding(
-                        padding: const EdgeInsets.all(16),
-                        child: Row(
-                          children: [
-                            Icon(Icons.lock_outline,
-                                color: AppColors.bronze),
-                            const SizedBox(width: 12),
-                            Expanded(
-                              child: Text(
-                                l10n.lineagePrivacyNote,
-                                style: const TextStyle(
-                                    color: AppColors.ink, fontSize: 15),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
+                    // Note de confidentialité du kit (`Notice.info`, mise au
+                    // thème du kit, 2026-11-04) : carte or doux à cadenas
+                    // bronze auparavant.
+                    Notice.info(l10n.lineagePrivacyNote, icon: Icons.lock_outline),
                     const SizedBox(height: 24),
                     DropdownButtonFormField<Foyer>(
                       initialValue: _foyer,
-                      decoration:
-                          InputDecoration(labelText: l10n.lineageFoyerLabel),
+                      decoration: InputDecoration(labelText: l10n.lineageFoyerLabel),
                       items: [
                         for (final foyer in Foyer.values)
-                          DropdownMenuItem(
-                              value: foyer,
-                              child: Text(foyerLabel(foyer, l10n))),
+                          DropdownMenuItem(value: foyer, child: Text(foyerLabel(foyer, l10n))),
                       ],
-                      onChanged: (value) =>
-                          setState(() => _foyer = value ?? Foyer.tivaouane),
+                      onChanged: (value) => setState(() => _foyer = value ?? Foyer.tivaouane),
                     ),
                     if (_foyer == Foyer.autre) ...[
                       const SizedBox(height: 16),
                       TextFormField(
                         controller: _foyerAutreController,
-                        decoration: InputDecoration(
-                            labelText: l10n.lineageFoyerAutreLabel),
+                        decoration: InputDecoration(labelText: l10n.lineageFoyerAutreLabel),
                         validator: (value) =>
-                            (value == null || value.trim().isEmpty)
-                                ? l10n.lineageFoyerAutreRequired
-                                : null,
+                            (value == null || value.trim().isEmpty) ? l10n.lineageFoyerAutreRequired : null,
                       ),
                     ],
                     const SizedBox(height: 16),
                     TextFormField(
                       controller: _moqaddamNameController,
-                      decoration: InputDecoration(
-                          labelText: l10n.lineageMoqaddamNameLabel),
+                      decoration: InputDecoration(labelText: l10n.lineageMoqaddamNameLabel),
                       validator: (value) =>
-                          (value == null || value.trim().isEmpty)
-                              ? l10n.lineageMoqaddamNameRequired
-                              : null,
+                          (value == null || value.trim().isEmpty) ? l10n.lineageMoqaddamNameRequired : null,
                     ),
                     const SizedBox(height: 16),
                     TextFormField(
                       controller: _yearController,
-                      decoration:
-                          InputDecoration(labelText: l10n.lineageYearLabel),
+                      decoration: InputDecoration(labelText: l10n.lineageYearLabel),
                       keyboardType: TextInputType.number,
                       validator: (value) {
                         final text = value?.trim() ?? '';
@@ -291,28 +242,27 @@ class _LineageScreenState extends ConsumerState<LineageScreen> {
                     const SizedBox(height: 16),
                     TextFormField(
                       controller: _zawiyaController,
-                      decoration:
-                          InputDecoration(labelText: l10n.lineageZawiyaLabel),
+                      decoration: InputDecoration(labelText: l10n.lineageZawiyaLabel),
                     ),
                     if (_errorMessage != null) ...[
                       const SizedBox(height: 16),
-                      ContentText(_errorMessage!,
-                          style: const TextStyle(color: AppColors.danger)),
+                      ContentText(_errorMessage!, style: const TextStyle(color: AppColors.danger)),
                     ],
                     if (_infoMessage != null) ...[
                       const SizedBox(height: 16),
-                      ContentText(_infoMessage!,
-                          style: TextStyle(color: AppColors.emerald)),
+                      ContentText(_infoMessage!, style: TextStyle(color: AppColors.emerald)),
                     ],
                     const SizedBox(height: 24),
-                    ElevatedButton(
+                    // Bouton principal du kit (`FilledButton`, pilule émeraude) : l'ombre
+                    // de l'`ElevatedButton` sort de la règle « des filets, pas des ombres »
+                    // (mise au thème du kit, 2026-11-04).
+                    FilledButton(
                       onPressed: _saving ? null : _save,
                       child: _saving
                           ? const SizedBox(
                               height: 18,
                               width: 18,
-                              child: CircularProgressIndicator(
-                                  strokeWidth: 2, color: Colors.white),
+                              child: CircularProgressIndicator(strokeWidth: 2, color: AppColors.offWhite),
                             )
                           : Text(l10n.lineageSave),
                     ),
@@ -320,8 +270,7 @@ class _LineageScreenState extends ConsumerState<LineageScreen> {
                       const SizedBox(height: 12),
                       OutlinedButton(
                         onPressed: _saving ? null : _delete,
-                        style: OutlinedButton.styleFrom(
-                            foregroundColor: AppColors.danger),
+                        style: OutlinedButton.styleFrom(foregroundColor: AppColors.danger),
                         child: Text(l10n.lineageDelete),
                       ),
                     ],

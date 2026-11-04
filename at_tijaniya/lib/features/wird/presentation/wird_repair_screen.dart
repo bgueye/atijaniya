@@ -78,7 +78,7 @@ class _WirdRepairScreenState extends ConsumerState<WirdRepairScreen> {
           loading: () => Center(child: CircularProgressIndicator(color: AppColors.emerald)),
           // États du kit (`Notice`, mise au thème du kit, 2026-11-04) : hors
           // ligne ou erreur, avec « Réessayer ».
-          error: (error, stackTrace) => _NoticeBody(
+          error: (error, stackTrace) => NoticeBody(
             Notice.fromError(error,
                 message: l10n.wirdRepairLoadError, onRetry: () => ref.invalidate(wirdRepairContentProvider)),
           ),
@@ -86,7 +86,7 @@ class _WirdRepairScreenState extends ConsumerState<WirdRepairScreen> {
             // Arrivé ici sans contenu (lien ouvert juste avant une dépublication,
             // par exemple) : on le dit, sans rien inventer.
             if (content.isEmpty) {
-              return _NoticeBody(Notice.info(l10n.wirdRepairUnavailable, icon: Icons.hourglass_empty));
+              return NoticeBody(Notice.info(l10n.wirdRepairUnavailable, icon: Icons.hourglass_empty));
             }
             return ListView(
               padding: const EdgeInsets.fromLTRB(16, 8, 16, 32),
@@ -250,15 +250,4 @@ class _GroupHeading extends StatelessWidget {
       ],
     );
   }
-}
-
-/// Un état du kit (`Notice`) seul dans le corps de l'écran, dans la
-/// gouttière `space-16`.
-class _NoticeBody extends StatelessWidget {
-  const _NoticeBody(this.notice);
-
-  final Notice notice;
-
-  @override
-  Widget build(BuildContext context) => ListView(padding: const EdgeInsets.all(16), children: [notice]);
 }

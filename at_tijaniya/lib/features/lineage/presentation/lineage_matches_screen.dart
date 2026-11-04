@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/theme/app_colors.dart';
+import '../../../core/widgets/state_pill.dart';
+import '../../../core/widgets/section_title.dart';
+import '../../../core/widgets/notice.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../moderation/domain/moderation_models.dart';
 import '../../moderation/presentation/report_content_dialog.dart';
@@ -45,6 +48,7 @@ class LineageMatchesScreen extends ConsumerWidget {
         child: lineageAsync.when(
           loading: () => Center(child: CircularProgressIndicator(color: AppColors.emerald)),
           error: (error, stackTrace) => _ErrorState(
+            error: error,
             message: l10n.lineageMatchesLoadError,
             onRetry: () => ref.invalidate(myLineageProvider),
           ),
@@ -61,6 +65,7 @@ class LineageMatchesScreen extends ConsumerWidget {
             return privacyAsync.when(
               loading: () => Center(child: CircularProgressIndicator(color: AppColors.emerald)),
               error: (error, stackTrace) => _ErrorState(
+                error: error,
                 message: l10n.lineageMatchesLoadError,
                 onRetry: () => ref.invalidate(myPrivacySettingsProvider),
               ),
@@ -101,6 +106,7 @@ class _MatchesBody extends ConsumerWidget {
     }
     if (matchesAsync.hasError || requestsAsync.hasError) {
       return _ErrorState(
+        error: matchesAsync.error ?? requestsAsync.error!,
         message: l10n.lineageMatchesLoadError,
         onRetry: () {
           ref.invalidate(lineageMatchesProvider);
@@ -111,7 +117,8 @@ class _MatchesBody extends ConsumerWidget {
 
     final matches = matchesAsync.value ?? [];
     final requests = requestsAsync.value ?? [];
-    final received = requests.where((r) => r.recipientId == currentUserId && r.status == LineageConnectionStatus.pending).toList();
+    final received =
+        requests.where((r) => r.recipientId == currentUserId && r.status == LineageConnectionStatus.pending).toList();
     final byOtherUserId = <String, LineageConnectionRequest>{
       for (final r in requests) (r.requesterId == currentUserId ? r.recipientId : r.requesterId): r,
     };
@@ -130,7 +137,6 @@ class _MatchesBody extends ConsumerWidget {
         if (received.isNotEmpty) ...[
           _SectionHeader(title: l10n.lineageMatchesReceivedSection),
           for (final request in received) _ReceivedRequestCard(request: request),
-          const SizedBox(height: 16),
         ],
         if (matches.isNotEmpty) ...[
           _SectionHeader(title: l10n.lineageMatchesResultsSection),
@@ -141,6 +147,9 @@ class _MatchesBody extends ConsumerWidget {
   }
 }
 
+/// Titre de section du kit (`SectionTitle`), annoncé comme titre au lecteur
+/// d'écran (mise au thème du kit, 2026-11-04 ; c'était un texte en gras sans
+/// rôle de titre). Pas d'écart au-dessus du premier titre de la page.
 class _SectionHeader extends StatelessWidget {
   const _SectionHeader({required this.title});
 
@@ -148,10 +157,7 @@ class _SectionHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 12),
-      child: ContentText(title, style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 16, color: AppColors.ink)),
-    );
+    return SectionTitle(title, padding: const EdgeInsetsDirectional.fromSTEB(2, 16, 2, 8));
   }
 }
 
@@ -190,7 +196,8 @@ class _ReceivedRequestCard extends ConsumerWidget {
                 ),
                 const SizedBox(width: 12),
                 Expanded(
-                  child: ContentText(request.otherUserName ?? '—', style: const TextStyle(fontWeight: FontWeight.w500, fontSize: 16)),
+                  child: ContentText(request.otherUserName ?? '—',
+                      style: const TextStyle(fontWeight: FontWeight.w500, fontSize: 16)),
                 ),
                 IconButton(
                   icon: Icon(Icons.flag_outlined, size: 20, color: AppColors.bronze),
@@ -214,7 +221,10 @@ class _ReceivedRequestCard extends ConsumerWidget {
                   child: Text(l10n.lineageMatchesDecline),
                 ),
                 const SizedBox(width: 8),
-                ElevatedButton(
+                // Bouton principal du kit (`FilledButton`, pilule émeraude) : l'ombre
+                // de l'`ElevatedButton` sort de la règle « des filets, pas des ombres »
+                // (mise au thème du kit, 2026-11-04).
+                FilledButton(
                   onPressed: () => _respond(context, ref, l10n, accept: true),
                   child: Text(l10n.lineageMatchesAccept),
                 ),
@@ -297,7 +307,15 @@ class _MatchCard extends ConsumerWidget {
                 ),
               ),
             if (statusLabel != null)
-              ContentText(statusLabel, style: TextStyle(color: AppColors.bronze, fontSize: 13))
+              // L'état de la demande en pastille du kit (texte bronze
+              // auparavant, sous le seuil AA) : acceptée en « fait », les
+              // autres neutres.
+              StatePill(
+                statusLabel,
+                variant: existingRequest?.status == LineageConnectionStatus.accepted
+                    ? StatePillVariant.done
+                    : StatePillVariant.neutral,
+              )
             else
               OutlinedButton(
                 onPressed: () => _sendRequest(context, ref, l10n),
@@ -310,6 +328,11 @@ class _MatchCard extends ConsumerWidget {
   }
 }
 
+/// Page sans résultat ou bloquée (pas de lignée, lignée non visible, aucun
+/// condisciple) : ce qui manque, puis l'action qui le règle. Mise au thème du
+/// kit le 2026-11-04 : icône `emerald` dans une puce `emerald_soft` (kit §
+/// Iconographie), titre en Cormorant (`SectionTitle.styleFor`), texte en
+/// encre — il était en bronze, sous le seuil AA.
 class _EmptyState extends StatelessWidget {
   const _EmptyState({required this.icon, required this.title, required this.body, this.ctaLabel, this.onTap});
 
@@ -321,55 +344,43 @@ class _EmptyState extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: Padding(
-        padding: const EdgeInsets.all(24),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Container(
-              width: 72,
-              height: 72,
-              decoration: const BoxDecoration(color: AppColors.goldSoft, shape: BoxShape.circle),
-              child: Icon(icon, color: AppColors.bronze, size: 32),
-            ),
-            const SizedBox(height: 20),
-            ContentText(title, style: Theme.of(context).textTheme.headlineSmall, textAlign: TextAlign.center),
-            const SizedBox(height: 8),
-            ContentText(body, textAlign: TextAlign.center, style: TextStyle(color: AppColors.bronze)),
-            if (ctaLabel != null) ...[
-              const SizedBox(height: 24),
-              OutlinedButton(onPressed: onTap, child: ContentText(ctaLabel!)),
-            ],
-          ],
+    // Liste et non `Center` : lisible à 200 % sans débordement.
+    return ListView(
+      padding: const EdgeInsets.fromLTRB(16, 32, 16, 16),
+      children: [
+        Center(
+          child: Container(
+            width: 64,
+            height: 64,
+            decoration: const BoxDecoration(color: AppColors.emeraldSoft, shape: BoxShape.circle),
+            child: Icon(icon, color: AppColors.emerald, size: 28),
+          ),
         ),
-      ),
+        const SizedBox(height: 20),
+        Semantics(
+          header: true,
+          child: ContentText(title, style: SectionTitle.styleFor(context), textAlign: TextAlign.center),
+        ),
+        const SizedBox(height: 8),
+        ContentText(body, textAlign: TextAlign.center, style: const TextStyle(color: AppColors.ink, height: 1.5)),
+        if (ctaLabel != null) ...[
+          const SizedBox(height: 24),
+          Center(child: OutlinedButton(onPressed: onTap, child: ContentText(ctaLabel!))),
+        ],
+      ],
     );
   }
 }
 
+/// Erreur de chargement : la carte d'erreur du kit (`Notice`), hors ligne ou
+/// non, avec « Réessayer ».
 class _ErrorState extends StatelessWidget {
-  const _ErrorState({required this.message, required this.onRetry});
+  const _ErrorState({required this.error, required this.message, required this.onRetry});
 
+  final Object error;
   final String message;
   final VoidCallback onRetry;
 
   @override
-  Widget build(BuildContext context) {
-    return Center(
-      child: Padding(
-        padding: const EdgeInsets.all(24),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(Icons.wifi_off, color: AppColors.bronze, size: 32),
-            const SizedBox(height: 12),
-            ContentText(message, textAlign: TextAlign.center, style: TextStyle(color: AppColors.bronze)),
-            const SizedBox(height: 12),
-            OutlinedButton(onPressed: onRetry, child: Text(AppLocalizations.of(context)!.lineageMatchesRetry)),
-          ],
-        ),
-      ),
-    );
-  }
+  Widget build(BuildContext context) => NoticeBody(Notice.fromError(error, message: message, onRetry: onRetry));
 }

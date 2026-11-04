@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/theme/app_colors.dart';
+import '../../../core/widgets/notice.dart';
 import '../../../l10n/app_localizations.dart';
 import '../domain/mouqaddam_models.dart';
 import 'mouqaddam_providers.dart';
@@ -26,6 +27,9 @@ class _SearchSponsorScreenState extends ConsumerState<SearchSponsorScreen> {
   List<AvailableSponsor>? _results;
   bool _loading = false;
   bool _hasError = false;
+
+  /// Dernière erreur de recherche : hors ligne ou non, pour le message du kit.
+  Object? _error;
 
   /// Longueur minimale d'une recherche — même règle que la fonction serveur
   /// `search_available_sponsors` (audit du 2026-10-04, S25) : une requête
@@ -62,8 +66,13 @@ class _SearchSponsorScreenState extends ConsumerState<SearchSponsorScreen> {
     try {
       final results = await ref.read(mouqaddamRepositoryProvider).searchAvailableSponsors(query);
       if (mounted && seq == _searchSeq) setState(() => _results = results);
-    } catch (_) {
-      if (mounted && seq == _searchSeq) setState(() => _hasError = true);
+    } catch (error) {
+      if (mounted && seq == _searchSeq) {
+        setState(() {
+          _hasError = true;
+          _error = error;
+        });
+      }
     } finally {
       if (mounted && seq == _searchSeq) setState(() => _loading = false);
     }
@@ -105,20 +114,10 @@ class _SearchSponsorScreenState extends ConsumerState<SearchSponsorScreen> {
       return Center(child: CircularProgressIndicator(color: AppColors.emerald));
     }
     if (_hasError) {
-      return Center(
-        child: Padding(
-          padding: const EdgeInsets.all(24),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Icon(Icons.wifi_off, color: AppColors.bronze, size: 32),
-              const SizedBox(height: 12),
-              Text(l10n.mouqaddamSearchLoadError, textAlign: TextAlign.center, style: TextStyle(color: AppColors.bronze)),
-              const SizedBox(height: 12),
-              OutlinedButton(onPressed: _search, child: Text(l10n.mouqaddamRetry)),
-            ],
-          ),
-        ),
+      // État du kit (`Notice`, mise au thème du kit, 2026-11-04) : l'erreur
+      // était une colonne centrée en texte bronze, sous le seuil AA.
+      return NoticeBody(
+        Notice.fromError(_error ?? StateError('recherche'), message: l10n.mouqaddamSearchLoadError, onRetry: _search),
       );
     }
 
@@ -128,12 +127,7 @@ class _SearchSponsorScreenState extends ConsumerState<SearchSponsorScreen> {
       // caractères) — on invite à saisir un nom plutôt que d'annoncer à tort
       // qu'aucun parrain n'existe.
       final message = _results == null ? l10n.mouqaddamSearchPrompt : l10n.mouqaddamSearchNoResults;
-      return Center(
-        child: Padding(
-          padding: const EdgeInsets.all(24),
-          child: ContentText(message, textAlign: TextAlign.center, style: TextStyle(color: AppColors.bronze)),
-        ),
-      );
+      return NoticeBody(Notice.info(message, icon: Icons.search));
     }
 
     return ListView.builder(

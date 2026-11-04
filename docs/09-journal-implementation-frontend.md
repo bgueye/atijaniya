@@ -4632,3 +4632,32 @@ Captures FR/AR avec les vraies polices : `test/wird_secondary_captures_test.dart
 `CormorantGaramond_500italic`, absente du dossier de polices utilisé : l'image est écrite, mais le
 test signale la police manquante. `wird_repair_screen_test` adapté aux pastilles du kit.
 `flutter analyze` ne signale rien et les 765 tests passent. Pas encore validé sur téléphone.
+
+## Mise au thème du kit : chemin spirituel (2026-11-04)
+
+Deuxième module des écrans sans maquette : lignée, « Retrouver mes condisciples », « Devenir
+Mouqaddam », demandes de parrainage, recherche d'un parrain et « Ma silsila d'ijaza ». La carte
+de partage de la silsila (image exportée) n'est pas touchée ; « Confidentialité » est rangée avec
+les écrans divers. Aucune règle de confidentialité ni aucune donnée ne change.
+
+- **Commun** : erreurs et listes vides en `Notice` du kit, avec « Réessayer » (colonnes centrées en
+  texte bronze, sous le seuil AA) ; nouveau `NoticeBody` (`notice.dart`), une `Notice` seule dans
+  le corps d'un écran, qui remplace aussi les copies privées du rattrapage, des Bienfaits et des
+  Conditions ; autres textes bronze en encre secondaire ; gouttière de 16 ; bouton principal en
+  `FilledButton` du kit (l'`ElevatedButton` portait une ombre) ; spinner en blanc cassé et non
+  `Colors.white`.
+- **Lignée** et **Devenir Mouqaddam** : notes or doux à icône bronze remplacées par `Notice.info`
+  (cadenas pour la confidentialité) ; icône d'attente en émeraude et non en or.
+- **Condisciples** : titres de section en `SectionTitle` ; état d'une demande en `StatePill`
+  (« fait » si acceptée, neutre sinon) ; pages sans résultat avec une puce `emerald_soft`, un titre
+  en Cormorant annoncé comme titre et un texte en encre.
+- **Silsila d'ijaza** : le bloc animé de la chaîne garde son fond zaytoune, **exception actée par le
+  porteur de projet** et inscrite dans CLAUDE.md ; noms en Cormorant, ou en Amiri seulement s'ils
+  sont écrits en arabe (Amiri était employée pour tous) ; « Vous » en émeraude (l'or ne s'écrit pas
+  sur fond clair) ; plus d'ombre noire sous les cartes ; couleur écrite en dur remplacée par
+  `secondaryOnDark`.
+
+Tests : `chemin_spirituel_kit_test.dart` (titres, pastille d'état, erreur et relance, polices des
+noms, « Vous », aucun texte bronze), qui échoue sur l'ancienne version ; captures FR/AR dans
+`chemin_spirituel_captures_test.dart`. `flutter analyze` ne signale rien et les 768 tests passent.
+Pas encore validé sur téléphone.

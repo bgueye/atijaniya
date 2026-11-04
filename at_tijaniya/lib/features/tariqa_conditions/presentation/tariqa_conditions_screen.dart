@@ -42,26 +42,20 @@ class TariqaConditionsScreen extends ConsumerWidget {
           // États du kit (`Notice`, mise au thème du kit, 2026-11-04) : le
           // message d'erreur et l'état vide étaient en bronze, sous le seuil
           // de contraste AA.
-          error: (error, stackTrace) => ListView(
-            padding: const EdgeInsets.all(16),
-            children: [
-              Notice.fromError(
-                error,
-                message: l10n.tariqaConditionsLoadError,
-                onRetry: () => ref.invalidate(tariqaConditionsProvider),
-              ),
-            ],
+          error: (error, stackTrace) => NoticeBody(
+            Notice.fromError(
+              error,
+              message: l10n.tariqaConditionsLoadError,
+              onRetry: () => ref.invalidate(tariqaConditionsProvider),
+            ),
           ),
           data: (conditions) {
             if (conditions.isEmpty) {
-              return ListView(
-                padding: const EdgeInsets.all(16),
-                children: [
-                  Notice.info(
-                    '${l10n.tariqaConditionsEmptyTitle}. ${l10n.tariqaConditionsEmptyBody}',
-                    icon: Icons.rule_outlined,
-                  ),
-                ],
+              return NoticeBody(
+                Notice.info(
+                  '${l10n.tariqaConditionsEmptyTitle}. ${l10n.tariqaConditionsEmptyBody}',
+                  icon: Icons.rule_outlined,
+                ),
               );
             }
 
@@ -187,7 +181,8 @@ class _ConditionTile extends StatelessWidget {
               style: TextStyle(
                 color: AppColors.secondaryInk,
                 fontSize: 12.5,
-                fontStyle: _hasArabic(condition.sourceNote!) ? FontStyle.normal : FontStyle.italic,
+                fontStyle:
+                    contentDirection(condition.sourceNote!) == TextDirection.rtl ? FontStyle.normal : FontStyle.italic,
               ),
             ),
           ],
@@ -210,7 +205,3 @@ class _ConditionTile extends StatelessWidget {
     );
   }
 }
-
-/// Le texte contient-il de l'écriture arabe ? Sert à ne pas mettre une
-/// source arabe en italique.
-bool _hasArabic(String text) => RegExp('[؀-ۿ]').hasMatch(text);

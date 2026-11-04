@@ -91,3 +91,19 @@ class Notice extends StatelessWidget {
     );
   }
 }
+
+/// Une [Notice] seule dans le corps d'un écran (chargement en échec, page sans
+/// contenu), dans la gouttière `space-16` du kit. Une liste plutôt qu'un
+/// `Center` : le message reste en haut, lisible à 200 % sans débordement.
+///
+/// Ajouté le 2026-11-04 (mise au thème du kit des écrans sans maquette) : les
+/// écrans recopiaient chacun une colonne centrée « icône bronze, texte bronze,
+/// bouton » (texte sous le seuil AA).
+class NoticeBody extends StatelessWidget {
+  const NoticeBody(this.notice, {super.key});
+
+  final Notice notice;
+
+  @override
+  Widget build(BuildContext context) => ListView(padding: const EdgeInsets.all(16), children: [notice]);
+}
