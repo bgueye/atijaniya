@@ -51,15 +51,14 @@ class WirdStreakLine extends StatelessWidget {
     final l10n = AppLocalizations.of(context)!;
     final streak = entry.stats.currentStreak;
     final weekly = entry.wird.frequency == WirdFrequency.weekly;
-    final unit = weekly
-        ? (streak == 1 ? l10n.wirdHistoryStreakFridaySingular : l10n.wirdHistoryStreakFridays)
-        : (streak == 1 ? l10n.wirdHistoryStreakDaySingular : l10n.wirdHistoryStreakDays);
+    // Série écrite en entier, nombre compris : en arabe, « 2 » se dit
+    // « جمعتان » sans chiffre (audit du 2026-11-03).
+    final line = weekly ? l10n.wirdStreakFridaysLine(streak) : l10n.wirdStreakDaysLine(streak);
     final strong = onDark ? AppColors.offWhite : AppColors.ink;
     final soft = onDark ? AppColors.secondaryOnDark : AppColors.secondaryInk;
     final on = onDark ? AppColors.goldOnDark : AppColors.emerald;
     final off = onDark ? AppColors.parchment.withValues(alpha: 0.18) : AppColors.bronze.withValues(alpha: 0.22);
-    final streakText =
-        Text('$streak $unit', style: TextStyle(fontSize: 12, fontWeight: FontWeight.w500, color: strong));
+    final streakText = Text(line, style: TextStyle(fontSize: 12, fontWeight: FontWeight.w500, color: strong));
     if (weekly) {
       return streak > 0
           ? Align(alignment: AlignmentDirectional.centerStart, child: streakText)

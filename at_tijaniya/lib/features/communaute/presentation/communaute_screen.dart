@@ -358,6 +358,7 @@ class _Composer extends StatelessWidget {
               button: true,
               label: l10n.communityComposerHint,
               excludeSemantics: true,
+              onTap: () => _open(context),
               child: InkWell(
                 onTap: () => _open(context),
                 child: Padding(

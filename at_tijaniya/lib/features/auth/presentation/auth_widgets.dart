@@ -43,6 +43,7 @@ class PasswordVisibilityButton extends StatelessWidget {
           button: true,
           label: obscured ? l10n.a11yShowPassword : l10n.a11yHidePassword,
           excludeSemantics: true,
+          onTap: onPressed,
           child: TextButton(
             onPressed: onPressed,
             style: TextButton.styleFrom(

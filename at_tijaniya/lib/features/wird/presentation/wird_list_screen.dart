@@ -251,6 +251,7 @@ class _WeekDayCell extends StatelessWidget {
       button: true,
       label: label,
       excludeSemantics: true,
+      onTap: onTap,
       child: InkWell(
         onTap: onTap,
         borderRadius: BorderRadius.circular(10),
@@ -545,6 +546,7 @@ class _IconAction extends StatelessWidget {
       button: true,
       label: semanticsLabel ?? label,
       excludeSemantics: true,
+      onTap: onTap,
       child: InkWell(
         onTap: onTap,
         borderRadius: BorderRadius.circular(10),
@@ -713,6 +715,7 @@ class _WideTile extends StatelessWidget {
       button: true,
       label: '$title. $subtitle. ${l10n.wirdTileCount(count)}',
       excludeSemantics: true,
+      onTap: onTap,
       child: Material(
         color: AppColors.zaytoune,
         borderRadius: BorderRadius.circular(16),
@@ -785,6 +788,7 @@ class _Tile extends StatelessWidget {
       button: true,
       label: [title, subtitle, if (badge != null) badge!, if (count != null) l10n.wirdTileCount(count)].join('. '),
       excludeSemantics: true,
+      onTap: onTap,
       child: Card(
         margin: EdgeInsets.zero,
         clipBehavior: Clip.antiAlias,

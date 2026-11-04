@@ -4459,3 +4459,35 @@ neutralisation), `wird_guide_test.dart` (réglage minimal, versets et clôtures 
 `flutter analyze` ne signale rien et les 734 tests passent. Pas encore validé sur téléphone, en
 particulier la durée de 600 ms au doigt.
 
+## Audit des écrans refaits, étape 5 : accessibilité et pluriels (2026-11-04)
+
+Suite de `docs/audits/2026-11-03-ecrans-refaits.md` :
+- **Boutons inactivables au lecteur d'écran** : douze boutons faits maison étaient annoncés « bouton »
+  mais `Semantics(excludeSemantics: true)` retirait l'action de leur contenu sans en déclarer une ; le
+  double toucher de TalkBack ne faisait rien (vérifié par un test : « Afficher le mot de passe »
+  n'avait aucune action). Concernés : « Afficher / Masquer » du mot de passe, champ « Partager avec la
+  communauté… », cartes de foyer, « Aa » de la biographie, du tasbih et du guide, figures liées
+  d'une zawiya, Historique et Rappel du guide et de l'onglet Wird, jours du bandeau de la semaine,
+  tuiles de l'onglet Wird. Chacun déclare maintenant son `onTap`. Garde-fou :
+  `test/a11y_semantic_actions_test.dart` relit `lib/` et refuse ce motif sans `onTap`.
+- **Interrupteurs du Profil** (contraste renforcé, chiffres de pratique) : `ListGroupItem.toggle`
+  (kit) fait de la ligne un seul élément pour le lecteur d'écran, titre et état compris, et toute la
+  ligne change la valeur. Avant, l'interrupteur était annoncé seul, sans dire ce qu'il réglait.
+- **Cibles de 48 dp** : sélecteur manuel / voix et bouton d'écoute du tasbih (44), « Mot de passe
+  oublié ? » (44).
+- **Annonces** : l'avatar du Profil est annoncé comme bouton ; les pastilles des wirds de l'accueil
+  disent « Fait aujourd'hui » au lieu de « sélectionné ».
+- **Pluriels** : séries (onglet Wird, guide, historique, écran de fin, accueil, Profil), chiffres-clés
+  d'une figure, nombre de fiches, messages et conversations non lus, et les pluriels arabes qui
+  n'avaient que « 1 / plusieurs » (correspondances, figures, disciples rattachés, sections, membres,
+  conversations). En arabe, chaque nombre a sa forme (1, 2, 3–10, 11–99, 100 et plus) : « جمعتان
+  متتاليتان » au lieu de « 2 جمعات متتالية », « 12 يومًا » au lieu de « 12 أيام ». En français, 0 et 1
+  restent au singulier. Les clés « …Singular » sont retirées. **Formulations arabes à faire relire par
+  un arabophone.**
+
+Tests : `test/a11y_semantic_actions_test.dart` (action sémantique, interrupteur, garde-fou du code
+source) et `test/plurals_audit_test.dart`. Captures du Wird et du Profil relues. `flutter analyze` ne
+signale rien et les 740 tests passent. Non vérifié sur téléphone avec TalkBack. Restent pour
+l'étape 6 : chiffres en Cormorant (« 1 » lu « I »), libellés vocaux « ×N », boutons du wird libre et
+de la ligne d'administration.
+

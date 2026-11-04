@@ -187,3 +187,4 @@ Les points les plus graves :
 | 2. Carte des Zawiyas au lecteur d'écran, rechargement du direct et des non-lus | **fait** le 2026-11-03 (voir `docs/09`) |
 | 3. Sessions en pause (accueil, Wird, tasbih), état inconnu du Wird | **fait** le 2026-11-03 (voir `docs/09`) |
 | 4. Pratique (touchers en trop, cadran), taille de l'arabe du guide | **fait** le 2026-11-03 (voir `docs/09`) |
+| 5. Accessibilité transversale et pluriels arabes | **fait** le 2026-11-04 (voir `docs/09`) ; formulations arabes à faire relire |

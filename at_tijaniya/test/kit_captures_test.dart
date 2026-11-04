@@ -134,9 +134,9 @@ final Map<String, _Sheet> _sheets = {
         ),
       ]),
   'stat_tile': (context, l10n) => Wrap(spacing: 8, runSpacing: 8, children: [
-        StatTile(value: '7', label: l10n.wirdHistoryStreakDays, dark: true),
+        StatTile(value: '7', label: l10n.wirdHistoryStreakDays(7), dark: true),
         StatTile(value: '52', label: l10n.wirdHistoryDaysPractised),
-        StatTile(value: '3', label: l10n.wirdHistoryStreakFridays),
+        StatTile(value: '3', label: l10n.wirdHistoryStreakFridays(3)),
       ]),
   'segmented_switch': (context, l10n) => Column(mainAxisSize: MainAxisSize.min, children: [
         SegmentedSwitch<int>(

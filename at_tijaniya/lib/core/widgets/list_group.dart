@@ -31,7 +31,26 @@ class ListGroupItem {
     this.tone = ListGroupTone.action,
     this.showChevron,
     this.fixedTrailing = false,
+    this.mergeSemantics = false,
   });
+
+  /// Réglage à bascule (contraste, chiffres de pratique) : toute la ligne
+  /// change la valeur, et le lecteur d'écran l'annonce en un seul élément,
+  /// titre et état compris (« Contraste renforcé, commutateur, activé »).
+  /// Audit du 2026-11-03 : l'interrupteur seul était annoncé, sans dire ce
+  /// qu'il réglait, et seul lui réagissait au toucher.
+  ListGroupItem.toggle({
+    required this.icon,
+    required this.title,
+    this.subtitle,
+    required bool value,
+    required ValueChanged<bool> onChanged,
+    this.tone = ListGroupTone.neutral,
+  })  : trailing = Switch(value: value, onChanged: onChanged),
+        onTap = (() => onChanged(!value)),
+        showChevron = false,
+        fixedTrailing = true,
+        mergeSemantics = true;
 
   final IconData icon;
   final String title;
@@ -53,6 +72,11 @@ class ListGroupItem {
   /// `true` : l'élément de fin garde sa largeur (commande compacte, comme le
   /// choix FR / عربي de la langue) au lieu d'être borné à 55 % de la ligne. Réservé aux éléments courts, sinon la ligne déborde.
   final bool fixedTrailing;
+
+  /// `true` : la ligne et son élément de fin forment un seul élément pour le
+  /// lecteur d'écran. Seulement pour un élément de fin unique (interrupteur),
+  /// jamais pour plusieurs boutons, qui deviendraient inaccessibles.
+  final bool mergeSemantics;
 }
 
 class ListGroup extends StatelessWidget {
@@ -156,7 +180,7 @@ class _ListGroupRow extends StatelessWidget {
         ),
       ),
     );
-    if (item.onTap == null) return row;
-    return InkWell(onTap: item.onTap, child: row);
+    final Widget result = item.onTap == null ? row : InkWell(onTap: item.onTap, child: row);
+    return item.mergeSemantics ? MergeSemantics(child: result) : result;
   }
 }

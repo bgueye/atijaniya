@@ -208,6 +208,7 @@ class FoyerCollectionCard extends StatelessWidget {
         button: true,
         label: '$label, ${l10n.figuresCount(figures.length)}',
         excludeSemantics: true,
+        onTap: onTap,
         child: Card(
           margin: EdgeInsets.zero,
           clipBehavior: Clip.antiAlias,

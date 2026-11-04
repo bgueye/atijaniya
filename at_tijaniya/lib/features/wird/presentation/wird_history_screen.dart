@@ -78,10 +78,11 @@ class _HistoryBody extends StatelessWidget {
         hasHistory
             ? _StreakHero(
                 streak: stats.currentStreak,
-                // Singulier jusqu'à 1 : "0 jour", "1 jour", "2 jours".
-                label: stats.currentStreak <= 1
-                    ? (weekly ? l10n.wirdHistoryStreakFridaySingular : l10n.wirdHistoryStreakDaySingular)
-                    : (weekly ? l10n.wirdHistoryStreakFridays : l10n.wirdHistoryStreakDays),
+                // Pluriel selon la langue (arabe : 1, 2, 3–10, 11–99, 100 et
+                // plus ; audit du 2026-11-03).
+                label: weekly
+                    ? l10n.wirdHistoryStreakFridays(stats.currentStreak)
+                    : l10n.wirdHistoryStreakDays(stats.currentStreak),
               )
             : _EmptyHero(title: l10n.wirdHistoryEmptyTitle, hint: l10n.wirdHistoryEmptyHint),
         const SizedBox(height: 24),

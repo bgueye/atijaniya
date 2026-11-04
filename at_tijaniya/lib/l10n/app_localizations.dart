@@ -785,13 +785,13 @@ abstract class AppLocalizations {
   /// No description provided for @homeStreakDaily.
   ///
   /// In fr, this message translates to:
-  /// **'{count} jours de suite'**
+  /// **'{count, plural, one{{count} jour de suite} other{{count} jours de suite}}'**
   String homeStreakDaily(int count);
 
   /// No description provided for @homeStreakWeekly.
   ///
   /// In fr, this message translates to:
-  /// **'{count} vendredis de suite'**
+  /// **'{count, plural, one{{count} vendredi de suite} other{{count} vendredis de suite}}'**
   String homeStreakWeekly(int count);
 
   /// No description provided for @homeWirdSubtitlePendingDaily.
@@ -5327,14 +5327,14 @@ abstract class AppLocalizations {
   /// No description provided for @wirdHistoryStreakFridays.
   ///
   /// In fr, this message translates to:
-  /// **'vendredis d\'affilée'**
-  String get wirdHistoryStreakFridays;
+  /// **'{count, plural, one{vendredi d\'affilée} other{vendredis d\'affilée}}'**
+  String wirdHistoryStreakFridays(int count);
 
   /// No description provided for @wirdHistoryStreakDays.
   ///
   /// In fr, this message translates to:
-  /// **'jours d\'affilée'**
-  String get wirdHistoryStreakDays;
+  /// **'{count, plural, one{jour d\'affilée} other{jours d\'affilée}}'**
+  String wirdHistoryStreakDays(int count);
 
   /// No description provided for @wirdHistoryTotalWeekly.
   ///
@@ -5447,13 +5447,13 @@ abstract class AppLocalizations {
   /// No description provided for @communityMessagesTooltipUnread.
   ///
   /// In fr, this message translates to:
-  /// **'Messages, {count} conversations non lues'**
+  /// **'{count, plural, one{Messages, {count} conversation non lue} other{Messages, {count} conversations non lues}}'**
   String communityMessagesTooltipUnread(int count);
 
   /// No description provided for @communityConversationUnread.
   ///
   /// In fr, this message translates to:
-  /// **'{count} messages non lus'**
+  /// **'{count, plural, one{{count} message non lu} other{{count} messages non lus}}'**
   String communityConversationUnread(int count);
 
   /// No description provided for @communityLikeError.
@@ -5815,30 +5815,6 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'Pas encore fait'**
   String get wirdHistoryPending;
-
-  /// No description provided for @wirdHistoryStreakDaySingular.
-  ///
-  /// In fr, this message translates to:
-  /// **'jour d\'affilée'**
-  String get wirdHistoryStreakDaySingular;
-
-  /// No description provided for @wirdHistoryStreakFridaySingular.
-  ///
-  /// In fr, this message translates to:
-  /// **'vendredi d\'affilée'**
-  String get wirdHistoryStreakFridaySingular;
-
-  /// No description provided for @homeStreakDailySingular.
-  ///
-  /// In fr, this message translates to:
-  /// **'{count} jour de suite'**
-  String homeStreakDailySingular(Object count);
-
-  /// No description provided for @homeStreakWeeklySingular.
-  ///
-  /// In fr, this message translates to:
-  /// **'{count} vendredi de suite'**
-  String homeStreakWeeklySingular(Object count);
 
   /// No description provided for @moderationTypeGroupPost.
   ///
@@ -6743,7 +6719,7 @@ abstract class AppLocalizations {
   /// No description provided for @wirdTileCount.
   ///
   /// In fr, this message translates to:
-  /// **'{count} fiches'**
+  /// **'{count, plural, one{{count} fiche} other{{count} fiches}}'**
   String wirdTileCount(int count);
 
   /// No description provided for @wirdTasbihQuit.
@@ -7337,20 +7313,20 @@ abstract class AppLocalizations {
   /// No description provided for @figureFactWorks.
   ///
   /// In fr, this message translates to:
-  /// **'œuvres'**
-  String get figureFactWorks;
+  /// **'{count, plural, one{œuvre} other{œuvres}}'**
+  String figureFactWorks(int count);
 
   /// No description provided for @figureFactDisciples.
   ///
   /// In fr, this message translates to:
-  /// **'disciples dans l\'app'**
-  String get figureFactDisciples;
+  /// **'{count, plural, one{disciple dans l\'app} other{disciples dans l\'app}}'**
+  String figureFactDisciples(int count);
 
   /// No description provided for @figureFactPlaces.
   ///
   /// In fr, this message translates to:
-  /// **'lieux liés'**
-  String get figureFactPlaces;
+  /// **'{count, plural, one{lieu lié} other{lieux liés}}'**
+  String figureFactPlaces(int count);
 
   /// No description provided for @figureBioMeta.
   ///
@@ -7939,6 +7915,18 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'Ce rendez-vous est passé'**
   String get eventDetailPastNoLive;
+
+  /// No description provided for @wirdStreakDaysLine.
+  ///
+  /// In fr, this message translates to:
+  /// **'{count, plural, one{{count} jour d\'affilée} other{{count} jours d\'affilée}}'**
+  String wirdStreakDaysLine(int count);
+
+  /// No description provided for @wirdStreakFridaysLine.
+  ///
+  /// In fr, this message translates to:
+  /// **'{count, plural, one{{count} vendredi d\'affilée} other{{count} vendredis d\'affilée}}'**
+  String wirdStreakFridaysLine(int count);
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

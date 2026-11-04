@@ -611,11 +611,11 @@ class _FigureFacts extends ConsumerWidget {
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            fact('${figure.works?.length ?? 0}', l10n.figureFactWorks, 2),
+            fact('${figure.works?.length ?? 0}', l10n.figureFactWorks(figure.works?.length ?? 0), 2),
             const SizedBox(width: 8),
-            fact(disciples == null ? '–' : '$disciples', l10n.figureFactDisciples, 1),
+            fact(disciples == null ? '–' : '$disciples', l10n.figureFactDisciples(disciples ?? 0), 1),
             const SizedBox(width: 8),
-            fact(places == null ? '–' : '${places.length}', l10n.figureFactPlaces, 3),
+            fact(places == null ? '–' : '${places.length}', l10n.figureFactPlaces(places?.length ?? 0), 3),
           ],
         ),
       ),
@@ -732,6 +732,7 @@ class _BiographyTabState extends ConsumerState<_BiographyTab> {
               button: true,
               label: l10n.figureTextSize,
               excludeSemantics: true,
+              onTap: () => ref.read(biographyTextScaleProvider.notifier).next(),
               child: TextButton(
                 onPressed: () => ref.read(biographyTextScaleProvider.notifier).next(),
                 style: TextButton.styleFrom(minimumSize: const Size(48, 48)),

@@ -268,9 +268,7 @@ class HomeActionCard extends StatelessWidget {
       final streak = dailyStreakOfTheDay(statuses);
       eyebrow = l10n.homeDayDoneEyebrow;
       title = Text(l10n.homeDayDoneTitle, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w500));
-      meta = streak > 0
-          ? (streak == 1 ? l10n.homeStreakDailySingular(streak) : l10n.homeStreakDaily(streak))
-          : l10n.homeStatusAllDone;
+      meta = streak > 0 ? l10n.homeStreakDaily(streak) : l10n.homeStatusAllDone;
       cta = l10n.homeQuickTasbihLabel;
       onCta = openFreeTasbih;
       icon = Icons.check_circle_outline;
@@ -424,9 +422,11 @@ class _WirdPill extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final color = done ? AppColors.emerald : AppColors.secondaryInk;
+    // « Fait aujourd'hui » dit en clair, et non « sélectionné », qui ne veut
+    // pas dire « fait » (audit du 2026-11-03).
     return Semantics(
       button: true,
-      selected: done,
+      value: done ? AppLocalizations.of(context)!.wirdStateDoneToday : null,
       child: InkWell(
         onTap: onTap,
         borderRadius: BorderRadius.circular(999),

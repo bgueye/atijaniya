@@ -309,52 +309,59 @@ class _IdentityCardState extends ConsumerState<_IdentityCard> {
               children: [
                 Tooltip(
                   message: avatarUrl == null ? l10n.imagePickerAdd : l10n.imagePickerChange,
-                  child: GestureDetector(
-                    onTap: _changingAvatar ? null : _changeAvatar,
-                    child: Stack(
-                      clipBehavior: Clip.none,
-                      children: [
-                        CircleAvatar(
-                          radius: avatarSize / 2,
-                          backgroundColor: AppColors.emeraldSoft,
-                          // `ResizeImage` : `CircleAvatar` décode sinon l'image
-                          // en pleine taille.
-                          backgroundImage: avatarUrl != null
-                              ? ResizeImage(NetworkImage(avatarUrl), width: pixels, height: pixels)
-                              : null,
-                          child: avatarUrl == null
-                              ? Text(
-                                  profile.displayName.isEmpty ? '' : profile.displayName.characters.first.toUpperCase(),
-                                  style: AppTheme.titleText(fontSize: 30, color: AppColors.emerald),
-                                )
-                              : null,
-                        ),
-                        if (_changingAvatar)
-                          const Positioned.fill(
-                            child: CircleAvatar(
-                              backgroundColor: Colors.black45,
-                              child: SizedBox(
-                                width: 18,
-                                height: 18,
-                                child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
-                              ),
-                            ),
-                          )
-                        else
-                          PositionedDirectional(
-                            end: -2,
-                            bottom: -2,
-                            child: Container(
-                              padding: const EdgeInsets.all(5),
-                              decoration: BoxDecoration(
-                                color: AppColors.gold,
-                                shape: BoxShape.circle,
-                                border: Border.all(color: AppColors.offWhite, width: 2),
-                              ),
-                              child: const Icon(Icons.photo_camera_outlined, size: 14, color: AppColors.zaytoune),
-                            ),
+                  // Annoncé comme bouton (audit du 2026-11-03) : le libellé
+                  // vient de l'infobulle, le toucher du détecteur.
+                  child: Semantics(
+                    button: true,
+                    child: GestureDetector(
+                      onTap: _changingAvatar ? null : _changeAvatar,
+                      child: Stack(
+                        clipBehavior: Clip.none,
+                        children: [
+                          CircleAvatar(
+                            radius: avatarSize / 2,
+                            backgroundColor: AppColors.emeraldSoft,
+                            // `ResizeImage` : `CircleAvatar` décode sinon l'image
+                            // en pleine taille.
+                            backgroundImage: avatarUrl != null
+                                ? ResizeImage(NetworkImage(avatarUrl), width: pixels, height: pixels)
+                                : null,
+                            child: avatarUrl == null
+                                ? Text(
+                                    profile.displayName.isEmpty
+                                        ? ''
+                                        : profile.displayName.characters.first.toUpperCase(),
+                                    style: AppTheme.titleText(fontSize: 30, color: AppColors.emerald),
+                                  )
+                                : null,
                           ),
-                      ],
+                          if (_changingAvatar)
+                            const Positioned.fill(
+                              child: CircleAvatar(
+                                backgroundColor: Colors.black45,
+                                child: SizedBox(
+                                  width: 18,
+                                  height: 18,
+                                  child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
+                                ),
+                              ),
+                            )
+                          else
+                            PositionedDirectional(
+                              end: -2,
+                              bottom: -2,
+                              child: Container(
+                                padding: const EdgeInsets.all(5),
+                                decoration: BoxDecoration(
+                                  color: AppColors.gold,
+                                  shape: BoxShape.circle,
+                                  border: Border.all(color: AppColors.offWhite, width: 2),
+                                ),
+                                child: const Icon(Icons.photo_camera_outlined, size: 14, color: AppColors.zaytoune),
+                              ),
+                            ),
+                        ],
+                      ),
                     ),
                   ),
                 ),
@@ -484,7 +491,6 @@ class _PracticeSection extends ConsumerWidget {
     final now = ref.watch(clockProvider)();
     final locale = Localizations.localeOf(context).languageCode;
     final stats = entries == null ? null : computePracticeStats(entries, now);
-    String unit(int n, String singular, String plural) => n == 1 ? singular : plural;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -496,7 +502,7 @@ class _PracticeSection extends ConsumerWidget {
               child: StatTile(
                 dark: true,
                 value: '${stats?.dailyStreak ?? '–'}',
-                label: unit(stats?.dailyStreak ?? 0, l10n.wirdHistoryStreakDaySingular, l10n.wirdHistoryStreakDays),
+                label: l10n.wirdHistoryStreakDays(stats?.dailyStreak ?? 0),
               ),
             ),
             const SizedBox(width: 8),
@@ -510,8 +516,7 @@ class _PracticeSection extends ConsumerWidget {
             Expanded(
               child: StatTile(
                 value: '${stats?.fridayStreak ?? '–'}',
-                label:
-                    unit(stats?.fridayStreak ?? 0, l10n.wirdHistoryStreakFridaySingular, l10n.wirdHistoryStreakFridays),
+                label: l10n.wirdHistoryStreakFridays(stats?.fridayStreak ?? 0),
               ),
             ),
           ],
@@ -727,25 +732,19 @@ class _AppSection extends ConsumerWidget {
           ],
         ),
       ),
-      ListGroupItem(
+      ListGroupItem.toggle(
         icon: Icons.contrast,
-        tone: ListGroupTone.neutral,
         title: l10n.settingsHighContrastTitle,
         subtitle: l10n.settingsHighContrastSubtitle,
-        trailing: Switch(
-          value: highContrast,
-          onChanged: (value) => ref.read(contrastControllerProvider.notifier).setEnabled(value),
-        ),
+        value: highContrast,
+        onChanged: (value) => ref.read(contrastControllerProvider.notifier).setEnabled(value),
       ),
       if (signedIn)
-        ListGroupItem(
+        ListGroupItem.toggle(
           icon: Icons.insights_outlined,
-          tone: ListGroupTone.neutral,
           title: l10n.profileShowPracticeStats,
-          trailing: Switch(
-            value: showStats,
-            onChanged: (value) => ref.read(showPracticeStatsProvider.notifier).set(value),
-          ),
+          value: showStats,
+          onChanged: (value) => ref.read(showPracticeStatsProvider.notifier).set(value),
         ),
       ListGroupItem(
         icon: Icons.notifications_none_outlined,

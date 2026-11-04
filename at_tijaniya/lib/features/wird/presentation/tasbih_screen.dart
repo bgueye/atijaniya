@@ -310,6 +310,7 @@ class _Header extends ConsumerWidget {
               button: true,
               label: l10n.wirdTasbihReadingSettings,
               excludeSemantics: true,
+              onTap: () => showTasbihReadingSheet(context),
               child: TextButton(
                 style: TextButton.styleFrom(
                   foregroundColor: AppColors.parchment,
@@ -1165,9 +1166,7 @@ class _WirdCompletedViewState extends ConsumerState<_WirdCompletedView> {
                     if (streak != null && streak > 0) ...[
                       _EndStat(
                         value: '$streak',
-                        label: weekly
-                            ? (streak == 1 ? l10n.wirdHistoryStreakFridaySingular : l10n.wirdHistoryStreakFridays)
-                            : (streak == 1 ? l10n.wirdHistoryStreakDaySingular : l10n.wirdHistoryStreakDays),
+                        label: weekly ? l10n.wirdHistoryStreakFridays(streak) : l10n.wirdHistoryStreakDays(streak),
                       ),
                     ],
                   ],

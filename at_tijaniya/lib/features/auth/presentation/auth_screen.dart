@@ -470,7 +470,7 @@ class _AuthScreenState extends State<AuthScreen> {
             alignment: AlignmentDirectional.centerStart,
             child: TextButton(
               onPressed: loading ? null : _resetPassword,
-              style: TextButton.styleFrom(foregroundColor: AppColors.emerald, minimumSize: const Size(0, 44)),
+              style: TextButton.styleFrom(foregroundColor: AppColors.emerald, minimumSize: const Size(0, 48)),
               child: _loadingAction == _AuthAction.resetPassword
                   ? SizedBox(
                       height: 14,

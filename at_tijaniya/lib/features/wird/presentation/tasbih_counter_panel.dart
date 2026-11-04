@@ -249,7 +249,8 @@ class TasbihCounterPanel extends StatelessWidget {
             SizedBox(height: compact ? 2 : 6),
             // Seul ce bouton démarre ou met en pause l'écoute. La marge
             // transparente autour de la pastille porte sa hauteur tactile à
-            // 44 px sans grossir son dessin.
+            // 48 dp au moins sans grossir son dessin (44 avant l'audit du
+            // 2026-11-03).
             // `FittedBox` : le libellé se réduit plutôt que de déborder quand
             // le socle est étroit (paysage, grande taille de police).
             FittedBox(
@@ -260,7 +261,7 @@ class TasbihCounterPanel extends StatelessWidget {
                   behavior: HitTestBehavior.opaque,
                   onTap: isListening ? onStopListening : onStartListening,
                   child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 5),
+                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 7),
                     child: Container(
                       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                       decoration: BoxDecoration(
@@ -481,9 +482,10 @@ class _ModeToggle extends StatelessWidget {
           child: InkWell(
             borderRadius: BorderRadius.circular(24),
             onTap: selected ? null : () => onChanged(value),
+            // 48 dp de haut (audit du 2026-11-03 : 44).
             child: Container(
               width: 52,
-              height: 44,
+              height: 48,
               decoration: BoxDecoration(
                 color: selected ? AppColors.goldOnDark : Colors.transparent,
                 borderRadius: BorderRadius.circular(24),

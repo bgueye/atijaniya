@@ -508,6 +508,7 @@ class _FigureFace extends StatelessWidget {
         button: true,
         label: figureDisplayName(context, figure),
         excludeSemantics: true,
+        onTap: () => openFigure(context, figure),
         child: InkWell(
           onTap: () => openFigure(context, figure),
           borderRadius: BorderRadius.circular(12),

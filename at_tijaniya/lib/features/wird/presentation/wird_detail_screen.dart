@@ -128,6 +128,7 @@ class _WirdDetailScreenState extends ConsumerState<WirdDetailScreen> {
               button: true,
               label: l10n.wirdTasbihReadingSettings,
               excludeSemantics: true,
+              onTap: () => showTasbihReadingSheet(context, sizeOnly: true),
               child: TextButton(
                 style: TextButton.styleFrom(
                   foregroundColor: AppColors.parchment,
@@ -275,6 +276,7 @@ class _DarkIconAction extends StatelessWidget {
       button: true,
       label: semanticsLabel ?? label,
       excludeSemantics: true,
+      onTap: onTap,
       child: InkWell(
         onTap: onTap,
         borderRadius: BorderRadius.circular(10),

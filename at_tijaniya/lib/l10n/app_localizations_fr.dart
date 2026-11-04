@@ -364,12 +364,24 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String homeStreakDaily(int count) {
-    return '$count jours de suite';
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count jours de suite',
+      one: '$count jour de suite',
+    );
+    return '$_temp0';
   }
 
   @override
   String homeStreakWeekly(int count) {
-    return '$count vendredis de suite';
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count vendredis de suite',
+      one: '$count vendredi de suite',
+    );
+    return '$_temp0';
   }
 
   @override
@@ -2720,10 +2732,26 @@ class AppLocalizationsFr extends AppLocalizations {
   String get wirdTasbihDonationNudge => 'At-Tijaniya reste gratuite grâce à vous — faire un don';
 
   @override
-  String get wirdHistoryStreakFridays => 'vendredis d\'affilée';
+  String wirdHistoryStreakFridays(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'vendredis d\'affilée',
+      one: 'vendredi d\'affilée',
+    );
+    return '$_temp0';
+  }
 
   @override
-  String get wirdHistoryStreakDays => 'jours d\'affilée';
+  String wirdHistoryStreakDays(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'jours d\'affilée',
+      one: 'jour d\'affilée',
+    );
+    return '$_temp0';
+  }
 
   @override
   String get wirdHistoryTotalWeekly => 'Hadratou-l-Jouma terminées au total';
@@ -2781,12 +2809,24 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String communityMessagesTooltipUnread(int count) {
-    return 'Messages, $count conversations non lues';
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Messages, $count conversations non lues',
+      one: 'Messages, $count conversation non lue',
+    );
+    return '$_temp0';
   }
 
   @override
   String communityConversationUnread(int count) {
-    return '$count messages non lus';
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count messages non lus',
+      one: '$count message non lu',
+    );
+    return '$_temp0';
   }
 
   @override
@@ -2977,22 +3017,6 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get wirdHistoryPending => 'Pas encore fait';
-
-  @override
-  String get wirdHistoryStreakDaySingular => 'jour d\'affilée';
-
-  @override
-  String get wirdHistoryStreakFridaySingular => 'vendredi d\'affilée';
-
-  @override
-  String homeStreakDailySingular(Object count) {
-    return '$count jour de suite';
-  }
-
-  @override
-  String homeStreakWeeklySingular(Object count) {
-    return '$count vendredi de suite';
-  }
 
   @override
   String get moderationTypeGroupPost => 'Message de groupe';
@@ -3488,7 +3512,13 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String wirdTileCount(int count) {
-    return '$count fiches';
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count fiches',
+      one: '$count fiche',
+    );
+    return '$_temp0';
   }
 
   @override
@@ -3856,13 +3886,37 @@ class AppLocalizationsFr extends AppLocalizations {
   String get zawiyaDetailCurrent => 'Actuel';
 
   @override
-  String get figureFactWorks => 'œuvres';
+  String figureFactWorks(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'œuvres',
+      one: 'œuvre',
+    );
+    return '$_temp0';
+  }
 
   @override
-  String get figureFactDisciples => 'disciples dans l\'app';
+  String figureFactDisciples(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'disciples dans l\'app',
+      one: 'disciple dans l\'app',
+    );
+    return '$_temp0';
+  }
 
   @override
-  String get figureFactPlaces => 'lieux liés';
+  String figureFactPlaces(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'lieux liés',
+      one: 'lieu lié',
+    );
+    return '$_temp0';
+  }
 
   @override
   String figureBioMeta(int sections, int minutes) {
@@ -4307,4 +4361,26 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get eventDetailPastNoLive => 'Ce rendez-vous est passé';
+
+  @override
+  String wirdStreakDaysLine(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count jours d\'affilée',
+      one: '$count jour d\'affilée',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String wirdStreakFridaysLine(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count vendredis d\'affilée',
+      one: '$count vendredi d\'affilée',
+    );
+    return '$_temp0';
+  }
 }
