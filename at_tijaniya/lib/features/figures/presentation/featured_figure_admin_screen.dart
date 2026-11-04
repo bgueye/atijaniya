@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/theme/app_colors.dart';
+import '../../../core/widgets/notice.dart';
 import '../../../l10n/app_localizations.dart';
 import '../domain/featured_figure.dart';
 import '../domain/figure_models.dart';
@@ -96,8 +97,15 @@ class _FeaturedFigureAdminScreenState extends ConsumerState<FeaturedFigureAdminS
       body: SafeArea(
         child: figuresAsync.when(
           loading: () => Center(child: CircularProgressIndicator(color: AppColors.emerald)),
-          error: (error, stackTrace) => Center(
-            child: Text(l10n.figuresLoadError, style: TextStyle(color: AppColors.secondaryInk)),
+          // États du kit (`Notice`, mise au thème du kit, 2026-11-04) : l'erreur
+          // était une colonne centrée ou un texte seul, sans « Réessayer »
+          // pour certains.
+          error: (error, stackTrace) => NoticeBody(
+            Notice.fromError(
+              error,
+              message: l10n.figuresLoadError,
+              onRetry: () => ref.invalidate(figuresProvider),
+            ),
           ),
           data: (figures) {
             final eligible = eligibleForRotation(figures);
@@ -111,7 +119,7 @@ class _FeaturedFigureAdminScreenState extends ConsumerState<FeaturedFigureAdminS
             }
 
             return SingleChildScrollView(
-              padding: const EdgeInsets.all(20),
+              padding: const EdgeInsets.all(16),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
@@ -178,7 +186,9 @@ class _FeaturedFigureAdminScreenState extends ConsumerState<FeaturedFigureAdminS
                       onChanged: (value) => setState(() => _selectedFigureId = value),
                     ),
                     const SizedBox(height: 16),
-                    ElevatedButton(
+                    // Bouton principal du kit (`FilledButton`), sans l'ombre de
+                    // l'`ElevatedButton` (mise au thème du kit, 2026-11-04).
+                    FilledButton(
                       onPressed: _saving || _selectedFigureId == null ? null : _pin,
                       child: _saving
                           // Émeraude : le bouton est désactivé pendant l'enregistrement, et

@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/text/numerals.dart';
 import '../../../core/theme/app_colors.dart';
+import '../../../core/widgets/notice.dart';
 import '../../../l10n/app_localizations.dart';
 import '../domain/figure_models.dart';
 import 'figures_providers.dart';
@@ -106,15 +107,22 @@ class _FigureSilsilaFormScreenState extends ConsumerState<FigureSilsilaFormScree
       body: SafeArea(
         child: figuresAsync.when(
           loading: () => Center(child: CircularProgressIndicator(color: AppColors.emerald)),
-          error: (error, stackTrace) => Center(
-            child: Text(l10n.figuresLoadError, style: TextStyle(color: AppColors.secondaryInk)),
+          // États du kit (`Notice`, mise au thème du kit, 2026-11-04) : l'erreur
+          // était une colonne centrée ou un texte seul, sans « Réessayer »
+          // pour certains.
+          error: (error, stackTrace) => NoticeBody(
+            Notice.fromError(
+              error,
+              message: l10n.figuresLoadError,
+              onRetry: () => ref.invalidate(figuresProvider),
+            ),
           ),
           data: (figures) {
             final allLinks = linksAsync.valueOrNull ?? const <FigureSilsilaLink>[];
             final candidates = figures.where((f) => f.id != widget.figure.id).toList();
 
             return SingleChildScrollView(
-              padding: const EdgeInsets.all(20),
+              padding: const EdgeInsets.all(16),
               child: Form(
                 key: _formKey,
                 child: Column(
@@ -159,7 +167,9 @@ class _FigureSilsilaFormScreenState extends ConsumerState<FigureSilsilaFormScree
                       ContentText(_errorMessage!, style: const TextStyle(color: AppColors.danger)),
                     ],
                     const SizedBox(height: 24),
-                    ElevatedButton(
+                    // Bouton principal du kit (`FilledButton`), sans l'ombre de
+                    // l'`ElevatedButton` (mise au thème du kit, 2026-11-04).
+                    FilledButton(
                       onPressed: _saving ? null : _submit,
                       child: _saving
                           // Émeraude : le bouton est désactivé pendant l'enregistrement, et

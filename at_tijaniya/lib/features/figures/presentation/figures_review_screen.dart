@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/theme/app_colors.dart';
+import '../../../core/widgets/notice.dart';
 import '../../../core/widgets/app_snackbar.dart';
 import '../../../l10n/app_localizations.dart';
 import '../domain/figure_models.dart';
@@ -35,34 +36,19 @@ class FiguresReviewScreen extends ConsumerWidget {
       body: SafeArea(
         child: draftsAsync.when(
           loading: () => Center(child: CircularProgressIndicator(color: AppColors.emerald)),
-          error: (error, stackTrace) => Center(
-            child: Padding(
-              padding: const EdgeInsets.all(24),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Icon(Icons.wifi_off, color: AppColors.bronze, size: 32),
-                  const SizedBox(height: 12),
-                  Text(l10n.figuresLoadError,
-                      textAlign: TextAlign.center, style: TextStyle(color: AppColors.secondaryInk)),
-                  const SizedBox(height: 12),
-                  OutlinedButton(
-                    onPressed: () => ref.invalidate(draftFiguresProvider),
-                    child: Text(l10n.figuresRetry),
-                  ),
-                ],
-              ),
+          // États du kit (`Notice`, mise au thème du kit, 2026-11-04) : l'erreur
+          // était une colonne centrée ou un texte seul, sans « Réessayer »
+          // pour certains.
+          error: (error, stackTrace) => NoticeBody(
+            Notice.fromError(
+              error,
+              message: l10n.figuresLoadError,
+              onRetry: () => ref.invalidate(draftFiguresProvider),
             ),
           ),
           data: (drafts) {
             if (drafts.isEmpty) {
-              return Center(
-                child: Padding(
-                  padding: const EdgeInsets.all(24),
-                  child: Text(l10n.figuresReviewEmpty,
-                      textAlign: TextAlign.center, style: TextStyle(color: AppColors.secondaryInk)),
-                ),
-              );
+              return NoticeBody(Notice.info(l10n.figuresReviewEmpty));
             }
             return ListView.separated(
               padding: const EdgeInsets.all(16),

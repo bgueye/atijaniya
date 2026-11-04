@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/theme/app_colors.dart';
+import '../../../core/widgets/notice.dart';
 import '../../../l10n/app_localizations.dart';
 import '../domain/moderation_models.dart';
 import 'moderation_providers.dart';
@@ -30,32 +31,19 @@ class ModerationReportsScreen extends ConsumerWidget {
       body: SafeArea(
         child: reportsAsync.when(
           loading: () => Center(child: CircularProgressIndicator(color: AppColors.emerald)),
-          error: (error, stackTrace) => Center(
-            child: Padding(
-              padding: const EdgeInsets.all(24),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Icon(Icons.wifi_off, color: AppColors.bronze, size: 32),
-                  const SizedBox(height: 12),
-                  Text(l10n.moderationLoadError, textAlign: TextAlign.center, style: TextStyle(color: AppColors.bronze)),
-                  const SizedBox(height: 12),
-                  OutlinedButton(
-                    onPressed: () => ref.invalidate(pendingReportsProvider),
-                    child: Text(l10n.moderationRetry),
-                  ),
-                ],
-              ),
+          // États du kit (`Notice`, mise au thème du kit, 2026-11-04) : l'erreur
+          // était une colonne centrée ou un texte seul, sans « Réessayer »
+          // pour certains.
+          error: (error, stackTrace) => NoticeBody(
+            Notice.fromError(
+              error,
+              message: l10n.moderationLoadError,
+              onRetry: () => ref.invalidate(pendingReportsProvider),
             ),
           ),
           data: (reports) {
             if (reports.isEmpty) {
-              return Center(
-                child: Padding(
-                  padding: const EdgeInsets.all(24),
-                  child: Text(l10n.moderationEmptyState, textAlign: TextAlign.center, style: TextStyle(color: AppColors.bronze)),
-                ),
-              );
+              return NoticeBody(Notice.info(l10n.moderationEmptyState));
             }
             return ListView.separated(
               padding: const EdgeInsets.all(16),
@@ -141,12 +129,14 @@ class _ReportCardState extends ConsumerState<_ReportCard> {
           l10n.moderationConfirmBlockRequestTitle,
           l10n.moderationConfirmBlockRequestBody
         ),
-      ReportableContentType.post ||
-      ReportableContentType.postComment =>
-        (l10n.moderationConfirmHideContentTitle, l10n.moderationConfirmHideContentBody),
-      ReportableContentType.groupPost ||
-      ReportableContentType.message =>
-        (l10n.moderationConfirmHideMessageTitle, l10n.moderationConfirmHideMessageBody),
+      ReportableContentType.post || ReportableContentType.postComment => (
+          l10n.moderationConfirmHideContentTitle,
+          l10n.moderationConfirmHideContentBody
+        ),
+      ReportableContentType.groupPost || ReportableContentType.message => (
+          l10n.moderationConfirmHideMessageTitle,
+          l10n.moderationConfirmHideMessageBody
+        ),
     };
     return showDialog<bool>(
       context: context,
@@ -188,7 +178,7 @@ class _ReportCardState extends ConsumerState<_ReportCard> {
               const SizedBox(height: 6),
               Text(
                 l10n.moderationReasonPrefix(report.reason!),
-                style: TextStyle(color: AppColors.bronze, fontStyle: FontStyle.italic),
+                style: TextStyle(color: AppColors.secondaryInk, fontStyle: FontStyle.italic),
               ),
             ],
             const SizedBox(height: 12),

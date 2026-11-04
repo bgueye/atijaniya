@@ -4718,3 +4718,28 @@ messagerie ou de direct ne change.
 Tests : `divers_communaute_kit_test.dart` (6 tests, tous en échec sur l'ancienne version) ; captures
 FR/AR dans `divers_communaute_captures_test.dart`. `flutter analyze` ne signale rien et les 782 tests
 passent. Pas encore validé sur téléphone.
+
+## Mise au thème du kit : administration (2026-11-04)
+
+Dernier groupe des écrans sans maquette : relecture des figures, figure de la semaine, formulaires
+de figure, d'œuvre, de citation, de silsila et de succession, de zawiya et d'évènement, de
+condition de la Tariqa, signalements, zawiyas des mouqaddams, relecture et gestion des récitations.
+Aucun droit d'administration, aucune règle RLS ni aucun contenu religieux ne change.
+
+- Erreurs et listes vides en `Notice` / `NoticeBody` avec « Réessayer » (colonnes centrées en bronze
+  ou texte seul ; le choix de la zawiya du formulaire d'évènement n'avait pas de relance).
+- Textes bronze en encre secondaire : libellés de date et d'heure du formulaire d'évènement,
+  introduction des zawiyas des mouqaddams, aides des récitations, motif d'un signalement. Le bronze
+  reste sur les icônes et les chevrons.
+- État d'une récitation en `StatePill` (« à faire » pour un brouillon, « fait » une fois validée) au
+  lieu d'un texte coloré.
+- Bouton « Enregistrer » des dix formulaires en `FilledButton` (sans l'ombre de l'`ElevatedButton`),
+  spinner en blanc cassé, gouttière de 16.
+
+Tests : `admin_kit_test.dart`, dont un contrôle du code des 14 écrans (ni `ElevatedButton`, ni texte
+en bronze, ni `Colors.white`) et quatre tests d'écran ; les cinq échouent sur l'ancienne version.
+Captures FR/AR d'un formulaire, d'une liste vide et d'une erreur : `admin_captures_test.dart`.
+`flutter analyze` ne signale rien et les 787 tests passent. Pas encore validé sur téléphone.
+
+Avec cette entrée, tous les écrans sans maquette sont au thème du kit (Wird secondaire, chemin
+spirituel, divers en deux lots, administration).

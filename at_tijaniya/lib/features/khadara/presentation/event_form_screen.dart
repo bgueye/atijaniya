@@ -6,6 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/storage/image_source_sheet.dart';
 import '../../../core/storage/image_upload_service.dart';
 import '../../../core/theme/app_colors.dart';
+import '../../../core/widgets/notice.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../mouqaddam/presentation/mouqaddam_providers.dart';
 import '../../profil/presentation/profile_providers.dart';
@@ -411,7 +412,7 @@ class _EventFormScreenState extends ConsumerState<EventFormScreen> {
       // la barre de navigation Android (3 boutons).
       body: SafeArea(
         child: SingleChildScrollView(
-          padding: const EdgeInsets.all(20),
+          padding: const EdgeInsets.all(16),
           child: Form(
             key: _formKey,
             child: Column(
@@ -429,7 +430,7 @@ class _EventFormScreenState extends ConsumerState<EventFormScreen> {
                   maxLines: 4,
                 ),
                 const SizedBox(height: 16),
-                Text(l10n.eventFormImageLabel, style: TextStyle(color: AppColors.bronze, fontSize: 13)),
+                Text(l10n.eventFormImageLabel, style: TextStyle(color: AppColors.secondaryInk, fontSize: 13)),
                 const SizedBox(height: 6),
                 _buildImagePicker(l10n),
                 const SizedBox(height: 16),
@@ -461,7 +462,8 @@ class _EventFormScreenState extends ConsumerState<EventFormScreen> {
                     onChanged: (value) => setState(() => _recurrenceDayOfWeek = value ?? DateTime.friday),
                   ),
                   const SizedBox(height: 16),
-                  Text(l10n.eventFormRecurrenceTimeLabel, style: TextStyle(color: AppColors.bronze, fontSize: 13)),
+                  Text(l10n.eventFormRecurrenceTimeLabel,
+                      style: TextStyle(color: AppColors.secondaryInk, fontSize: 13)),
                   const SizedBox(height: 6),
                   OutlinedButton.icon(
                     onPressed: _pickRecurrenceTime,
@@ -469,7 +471,8 @@ class _EventFormScreenState extends ConsumerState<EventFormScreen> {
                     label: ContentText(_recurrenceTime.format(context)),
                   ),
                   const SizedBox(height: 16),
-                  Text(l10n.eventFormRecurrenceUntilLabel, style: TextStyle(color: AppColors.bronze, fontSize: 13)),
+                  Text(l10n.eventFormRecurrenceUntilLabel,
+                      style: TextStyle(color: AppColors.secondaryInk, fontSize: 13)),
                   const SizedBox(height: 6),
                   Row(
                     children: [
@@ -491,7 +494,7 @@ class _EventFormScreenState extends ConsumerState<EventFormScreen> {
                   ),
                 ] else ...[
                   const SizedBox(height: 8),
-                  Text(l10n.eventFormStartsAtLabel, style: TextStyle(color: AppColors.bronze, fontSize: 13)),
+                  Text(l10n.eventFormStartsAtLabel, style: TextStyle(color: AppColors.secondaryInk, fontSize: 13)),
                   const SizedBox(height: 6),
                   OutlinedButton.icon(
                     onPressed: _pickStartsAt,
@@ -499,7 +502,7 @@ class _EventFormScreenState extends ConsumerState<EventFormScreen> {
                     label: Text(_startsAt != null ? formatKhadaraDateTime(_startsAt!) : l10n.eventFormPickDateTime),
                   ),
                   const SizedBox(height: 16),
-                  Text(l10n.eventFormEndsAtLabel, style: TextStyle(color: AppColors.bronze, fontSize: 13)),
+                  Text(l10n.eventFormEndsAtLabel, style: TextStyle(color: AppColors.secondaryInk, fontSize: 13)),
                   const SizedBox(height: 6),
                   Row(
                     children: [
@@ -540,8 +543,13 @@ class _EventFormScreenState extends ConsumerState<EventFormScreen> {
                 if (isAdmin)
                   ref.watch(zawiyasProvider).when(
                         loading: () => LinearProgressIndicator(color: AppColors.emerald),
-                        error: (error, stackTrace) =>
-                            Text(l10n.khadaraLoadError, style: TextStyle(color: AppColors.bronze)),
+                        // Carte d'erreur du kit avec « Réessayer » (le texte
+                        // était en bronze, sans relance).
+                        error: (error, stackTrace) => Notice.fromError(
+                          error,
+                          message: l10n.khadaraLoadError,
+                          onRetry: () => ref.invalidate(zawiyasProvider),
+                        ),
                         data: (list) => DropdownButtonFormField<String?>(
                           // `isExpanded` + ellipsis : sans eux la liste prend la largeur du
                           // nom le plus long et déborde ("right overflowed") avec les noms de
@@ -586,13 +594,15 @@ class _EventFormScreenState extends ConsumerState<EventFormScreen> {
                   ContentText(_errorMessage!, style: const TextStyle(color: AppColors.danger)),
                 ],
                 const SizedBox(height: 24),
-                ElevatedButton(
+                // Bouton principal du kit (`FilledButton`), sans l'ombre de
+                // l'`ElevatedButton` (mise au thème du kit, 2026-11-04).
+                FilledButton(
                   onPressed: _saving ? null : _submit,
                   child: _saving
                       ? const SizedBox(
                           height: 18,
                           width: 18,
-                          child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
+                          child: CircularProgressIndicator(strokeWidth: 2, color: AppColors.offWhite),
                         )
                       : Text(l10n.eventFormSave),
                 ),

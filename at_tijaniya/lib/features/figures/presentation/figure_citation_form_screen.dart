@@ -108,7 +108,7 @@ class _FigureCitationFormScreenState extends ConsumerState<FigureCitationFormScr
       // wirds, généralisé à tous les formulaires plein écran de l'app.
       body: SafeArea(
         child: SingleChildScrollView(
-          padding: const EdgeInsets.all(20),
+          padding: const EdgeInsets.all(16),
           child: Form(
             key: _formKey,
             child: Column(
@@ -141,7 +141,9 @@ class _FigureCitationFormScreenState extends ConsumerState<FigureCitationFormScr
                   ContentText(_errorMessage!, style: const TextStyle(color: AppColors.danger)),
                 ],
                 const SizedBox(height: 24),
-                ElevatedButton(
+                // Bouton principal du kit (`FilledButton`), sans l'ombre de
+                // l'`ElevatedButton` (mise au thème du kit, 2026-11-04).
+                FilledButton(
                   onPressed: _saving ? null : _submit,
                   child: _saving
                       // Émeraude : le bouton est désactivé pendant l'enregistrement, et

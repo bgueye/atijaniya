@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/supabase/supabase_config.dart';
 import '../../../core/theme/app_colors.dart';
+import '../../../core/widgets/notice.dart';
 import '../../../core/widgets/app_snackbar.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../khadara/domain/khadara_models.dart';
@@ -63,43 +64,24 @@ class AdminMouqaddamZawiyasScreen extends ConsumerWidget {
       body: SafeArea(
         child: mouqaddams.when(
           loading: () => Center(child: CircularProgressIndicator(color: AppColors.emerald)),
-          error: (error, stackTrace) => Center(
-            child: Padding(
-              padding: const EdgeInsets.all(24),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Text(
-                    l10n.adminMouqaddamZawiyasLoadError,
-                    textAlign: TextAlign.center,
-                    style: TextStyle(color: AppColors.bronze),
-                  ),
-                  const SizedBox(height: 12),
-                  OutlinedButton(
-                    onPressed: () => ref.invalidate(_managedMouqaddamsProvider),
-                    child: Text(l10n.commonRetry),
-                  ),
-                ],
-              ),
+          // États du kit (`Notice`, mise au thème du kit, 2026-11-04) : l'erreur
+          // était une colonne centrée ou un texte seul, sans « Réessayer »
+          // pour certains.
+          error: (error, stackTrace) => NoticeBody(
+            Notice.fromError(
+              error,
+              message: l10n.adminMouqaddamZawiyasLoadError,
+              onRetry: () => ref.invalidate(_managedMouqaddamsProvider),
             ),
           ),
           data: (list) {
             if (list.isEmpty) {
-              return Center(
-                child: Padding(
-                  padding: const EdgeInsets.all(24),
-                  child: Text(
-                    l10n.adminMouqaddamZawiyasEmpty,
-                    textAlign: TextAlign.center,
-                    style: TextStyle(color: AppColors.bronze),
-                  ),
-                ),
-              );
+              return NoticeBody(Notice.info(l10n.adminMouqaddamZawiyasEmpty));
             }
             return ListView(
               padding: const EdgeInsets.all(16),
               children: [
-                Text(l10n.adminMouqaddamZawiyasIntro, style: TextStyle(color: AppColors.bronze)),
+                Text(l10n.adminMouqaddamZawiyasIntro, style: TextStyle(color: AppColors.secondaryInk)),
                 const SizedBox(height: 16),
                 for (final mouqaddam in list)
                   _MouqaddamCard(

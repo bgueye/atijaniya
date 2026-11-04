@@ -18,6 +18,8 @@ import 'package:just_audio/just_audio.dart';
 import 'package:path_provider/path_provider.dart';
 
 import '../../../core/theme/app_colors.dart';
+import '../../../core/widgets/notice.dart';
+import '../../../core/widgets/state_pill.dart';
 import '../../../l10n/app_localizations.dart';
 import '../data/wird_audio_picker_service.dart';
 import '../data/wird_recitation_repository.dart';
@@ -45,23 +47,14 @@ class WirdRecitationsManagementScreen extends ConsumerWidget {
       body: SafeArea(
         child: stepsAsync.when(
           loading: () => Center(child: CircularProgressIndicator(color: AppColors.emerald)),
-          error: (error, stackTrace) => Center(
-            child: Padding(
-              padding: const EdgeInsets.all(24),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Icon(Icons.wifi_off, color: AppColors.bronze, size: 32),
-                  const SizedBox(height: 12),
-                  Text(l10n.wirdRecitationsManageLoadError,
-                      textAlign: TextAlign.center, style: TextStyle(color: AppColors.bronze)),
-                  const SizedBox(height: 12),
-                  OutlinedButton(
-                    onPressed: () => ref.invalidate(allWirdStepRecitationsProvider),
-                    child: Text(l10n.wirdRecitationsReviewRetry),
-                  ),
-                ],
-              ),
+          // États du kit (`Notice`, mise au thème du kit, 2026-11-04) : l'erreur
+          // était une colonne centrée ou un texte seul, sans « Réessayer »
+          // pour certains.
+          error: (error, stackTrace) => NoticeBody(
+            Notice.fromError(
+              error,
+              message: l10n.wirdRecitationsManageLoadError,
+              onRetry: () => ref.invalidate(allWirdStepRecitationsProvider),
             ),
           ),
           data: (stepsByWird) => ListView(
@@ -114,7 +107,8 @@ class _PillarCard extends ConsumerWidget {
             if (step.recitations.isEmpty)
               Padding(
                 padding: const EdgeInsets.symmetric(vertical: 8),
-                child: Text(l10n.wirdRecitationsManageEmpty, style: TextStyle(color: AppColors.bronze, fontSize: 13)),
+                child: Text(l10n.wirdRecitationsManageEmpty,
+                    style: TextStyle(color: AppColors.secondaryInk, fontSize: 13)),
               )
             else
               for (final entry in step.recitations)
@@ -313,9 +307,16 @@ class _RecitationEntryTileState extends ConsumerState<_RecitationEntryTile> {
                   },
                 ),
           title: ContentText('${entry.reciterName} · v${entry.contentVersion}'),
-          subtitle: Text(
-            isDraft ? widget.l10n.wirdRecitationsManageStatusDraft : widget.l10n.wirdRecitationsManageStatusValidated,
-            style: TextStyle(color: isDraft ? AppColors.bronze : AppColors.emerald, fontSize: 12),
+          // État en pastille du kit (`StatePill`) : « à faire » pour un
+          // brouillon, « fait » pour une récitation validée (texte coloré
+          // auparavant, en bronze pour le brouillon ; mise au thème du kit,
+          // 2026-11-04).
+          subtitle: Align(
+            alignment: AlignmentDirectional.centerStart,
+            child: StatePill(
+              isDraft ? widget.l10n.wirdRecitationsManageStatusDraft : widget.l10n.wirdRecitationsManageStatusValidated,
+              variant: isDraft ? StatePillVariant.todo : StatePillVariant.done,
+            ),
           ),
           trailing: Row(
             mainAxisSize: MainAxisSize.min,
@@ -452,11 +453,11 @@ class _UploadRecitationSheetState extends ConsumerState<_UploadRecitationSheet> 
                 padding: const EdgeInsets.only(top: 4),
                 child: Text(
                   l10n.wirdRecitationsManageUploadFileChosen(_pickedFileName!),
-                  style: TextStyle(fontSize: 12, color: AppColors.bronze),
+                  style: TextStyle(fontSize: 12, color: AppColors.secondaryInk),
                 ),
               ),
             const SizedBox(height: 8),
-            Text(l10n.wirdRecitationsManageUploadHint, style: TextStyle(fontSize: 12, color: AppColors.bronze)),
+            Text(l10n.wirdRecitationsManageUploadHint, style: TextStyle(fontSize: 12, color: AppColors.secondaryInk)),
             if (_errorMessage != null)
               Padding(
                 padding: const EdgeInsets.only(top: 8),

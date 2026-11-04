@@ -124,7 +124,7 @@ class _FigureFormScreenState extends ConsumerState<FigureFormScreen> {
       // la barre de navigation Android (3 boutons).
       body: SafeArea(
         child: SingleChildScrollView(
-          padding: const EdgeInsets.all(20),
+          padding: const EdgeInsets.all(16),
           child: Form(
             key: _formKey,
             child: Column(
@@ -192,7 +192,9 @@ class _FigureFormScreenState extends ConsumerState<FigureFormScreen> {
                   ContentText(_errorMessage!, style: const TextStyle(color: AppColors.danger)),
                 ],
                 const SizedBox(height: 24),
-                ElevatedButton(
+                // Bouton principal du kit (`FilledButton`), sans l'ombre de
+                // l'`ElevatedButton` (mise au thème du kit, 2026-11-04).
+                FilledButton(
                   onPressed: _saving ? null : _submit,
                   child: _saving
                       // Émeraude : le bouton est désactivé pendant l'enregistrement, et
