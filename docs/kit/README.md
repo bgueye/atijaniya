@@ -65,7 +65,8 @@ d'écart, le code fait foi et ce kit doit être corrigé.
   mises en avant (carte d'action, cartes de wird) ; `radius-pill` pour pastilles, filtres et
   bouton principal dans une carte ; `radius-button` (12) pour le bouton plein du thème et
   les champs ; `radius-chip` (8) pour les petites puces d'icône.
-- Ombre : `shadow-action` seulement.
+- Ombre : `shadow-action` seulement. Aucun bouton n'en porte, y compris le bouton plein du thème
+  (`ElevatedButton`, sans élévation depuis le 2026-11-05).
 
 ## Voix et ton
 
@@ -112,3 +113,18 @@ d'écart, le code fait foi et ce kit doit être corrigé.
 
 Captures de chaque composant en français et en arabe, avec les vraies polices :
 `test/kit_captures_test.dart` (mode d'emploi en tête du fichier ; images hors dépôt).
+
+## États d'un écran
+
+Un écran ne refait jamais lui-même son état vide ou d'erreur :
+- message dans le corps d'un écran ou d'une section (liste vide, hors ligne, erreur avec
+  « Réessayer ») : `Notice`, ou `NoticeBody` quand il occupe tout l'écran ;
+- page avec un titre et une action (lignée à renseigner, groupe réservé aux membres,
+  remerciement) : `MessagePage` ;
+- contenu religieux en brouillon visible de l'admin : `DraftBanner` ;
+- Communauté : `CommunityErrorState` / `CommunityEmptyState` (refonte du 2026-11-02), qui gardent
+  le « tirer pour actualiser ».
+
+Tous les écrans sans maquette ont été mis au thème avec ce kit le 2026-11-04 (Wird secondaire,
+chemin spirituel, réglages et pages d'information, sous-écrans de la Communauté et des directs,
+administration) ; détail dans `docs/09-journal-implementation-frontend.md`.

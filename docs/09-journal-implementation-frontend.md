@@ -4743,3 +4743,26 @@ Captures FR/AR d'un formulaire, d'une liste vide et d'une erreur : `admin_captur
 
 Avec cette entrée, tous les écrans sans maquette sont au thème du kit (Wird secondaire, chemin
 spirituel, divers en deux lots, administration).
+
+## Bouton de fin de formulaire sans ombre (2026-11-05)
+
+En mettant les écrans sans maquette au thème (2026-11-04), les boutons de fin de formulaire
+(`ElevatedButton`) avaient été remplacés par des `FilledButton` en pilule, à cause du liseré sombre
+que leur ombre traçait sur les captures. Or la fiche Button du kit fait de l'`ElevatedButton` le
+bouton `block` (pleine largeur, coins de 12), celui du parcours d'entrée validé : l'app mélangeait
+deux formes pour le même rôle. **Décision du porteur de projet** : garder la forme de la fiche et
+retirer l'ombre.
+
+- `AppTheme` : `elevatedButtonTheme` sans élévation et avec une ombre transparente (l'élévation de
+  Material remonte au toucher) ; vaut pour tous les boutons `block`, parcours d'entrée compris.
+- Retour à l'`ElevatedButton` pour les 13 boutons de fin de formulaire changés la veille (lignée,
+  Devenir Mouqaddam, « Rejoindre le groupe », « Faire un don » en or, neuf formulaires
+  d'administration). Les deux « Accepter » posés à côté de « Refuser » (condisciples, demandes de
+  parrainage) restent en pilule `primary` : action d'une carte, pas fin de formulaire.
+- Kit : fiches Button (règle `primary` / `block`, aucun bouton à ombre), Notice (`NoticeBody`),
+  SegmentedControl (libellé sur deux lignes) ; nouvelles fiches `MessagePage` et `DraftBanner` ;
+  section « États d'un écran » dans `docs/kit/README.md`. CLAUDE.md mis à jour (18 composants,
+  règles pour un nouvel écran).
+
+Tests : `admin_kit_test.dart` vérifie le thème (élévation nulle, ombre transparente même au
+toucher, coins de 12) ; `divers_communaute_kit_test.dart` adapté.

@@ -141,9 +141,9 @@ class _FigureCitationFormScreenState extends ConsumerState<FigureCitationFormScr
                   ContentText(_errorMessage!, style: const TextStyle(color: AppColors.danger)),
                 ],
                 const SizedBox(height: 24),
-                // Bouton principal du kit (`FilledButton`), sans l'ombre de
-                // l'`ElevatedButton` (mise au thème du kit, 2026-11-04).
-                FilledButton(
+                // Bouton `block` du kit (fin de formulaire, pleine largeur, rayon 12) :
+                // `ElevatedButton`, sans ombre depuis le thème (décision du 2026-11-05).
+                ElevatedButton(
                   onPressed: _saving ? null : _submit,
                   child: _saving
                       // Émeraude : le bouton est désactivé pendant l'enregistrement, et

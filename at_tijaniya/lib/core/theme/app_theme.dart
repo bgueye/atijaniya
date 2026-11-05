@@ -138,6 +138,14 @@ class AppTheme {
           textStyle: GoogleFonts.jost(fontWeight: FontWeight.w500).copyWith(fontFamilyFallback: debugFontFallback),
           padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          // Bouton `block` du kit (fin de formulaire, pleine largeur) : sans
+          // ombre, « des filets, pas des ombres » (kit § Espacements, rayons,
+          // ombre). L'ombre de Material dessinait un liseré sombre sous le
+          // bouton (décision du porteur de projet du 2026-11-05). L'ombre est
+          // aussi rendue transparente : l'élévation de Material remonte au
+          // toucher.
+          elevation: 0,
+          shadowColor: Colors.transparent,
           // Fond sombre : l'émeraude ne se détache pas du zaytoune (1,96:1,
           // 1,18:1 en mode renforcé) et la forme du bouton disparaissait
           // (« Commencer » du wird libre, audit du 2026-10-25, P3-11). Un

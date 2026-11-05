@@ -1,6 +1,7 @@
 // Écrans d'administration mis au thème du kit le 2026-11-04 :
-// - aucun `ElevatedButton` (ombre) ni texte en bronze (sous le seuil AA) dans
-//   leur code ;
+// - aucun texte en bronze (sous le seuil AA) ni blanc pur dans leur code ;
+// - bouton de fin de formulaire (`ElevatedButton`) sans ombre dans le thème
+//   (décision du 2026-11-05) ;
 // - signalements, relecture des figures et des récitations : erreur et liste
 //   vide en `Notice`, avec « Réessayer ».
 
@@ -12,6 +13,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'package:at_tijaniya/core/theme/app_colors.dart';
+import 'package:at_tijaniya/core/theme/app_theme.dart';
 import 'package:at_tijaniya/core/widgets/notice.dart';
 import 'package:at_tijaniya/features/figures/domain/figure_models.dart';
 import 'package:at_tijaniya/features/figures/presentation/figures_providers.dart';
@@ -65,14 +67,24 @@ void _expectNoBronzeText(WidgetTester tester) {
 }
 
 void main() {
-  test("code des écrans d'administration : ni ElevatedButton, ni texte en bronze, ni blanc pur", () {
+  test("code des écrans d'administration : ni texte en bronze, ni blanc pur", () {
     final textInBronze = RegExp(r'TextStyle\([^()]*color: AppColors\.bronze');
     for (final path in _adminScreens) {
       final source = File(path).readAsStringSync();
-      expect(source.contains('ElevatedButton('), isFalse, reason: '$path : bouton à ombre');
       expect(textInBronze.hasMatch(source), isFalse, reason: '$path : texte en bronze');
       expect(source.contains('Colors.white'), isFalse, reason: '$path : blanc pur au lieu du blanc cassé');
     }
+  });
+
+  // Test d'écran et non test simple : construire le thème charge les polices
+  // par `google_fonts`, ce que seul l'environnement des tests d'écran permet.
+  testWidgets('bouton de fin de formulaire du thème : coins de 12, sans ombre', (tester) async {
+    final style = AppTheme.standard.elevatedButtonTheme.style!;
+    expect(style.elevation?.resolve({}), 0);
+    expect(style.shadowColor?.resolve({}), Colors.transparent);
+    expect(style.shadowColor?.resolve({WidgetState.pressed}), Colors.transparent);
+    final shape = style.shape?.resolve({}) as RoundedRectangleBorder;
+    expect(shape.borderRadius, BorderRadius.circular(12));
   });
 
   testWidgets('signalements : liste vide en note du kit', (tester) async {

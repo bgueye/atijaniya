@@ -140,9 +140,8 @@ class _RequestCard extends ConsumerWidget {
                   child: Text(l10n.mouqaddamRequestsReject),
                 ),
                 const SizedBox(width: 8),
-                // Bouton principal du kit (`FilledButton`, pilule émeraude) : l'ombre
-                // de l'`ElevatedButton` sort de la règle « des filets, pas des ombres »
-                // (mise au thème du kit, 2026-11-04).
+                // Action principale d'une carte : pilule `primary` du kit
+                // (`FilledButton`), à côté de « Refuser » (mise au thème du kit).
                 FilledButton(
                   onPressed: () => _respond(context, ref, accept: true),
                   child: Text(l10n.mouqaddamRequestsAccept),

@@ -241,10 +241,9 @@ class _RequestFormState extends ConsumerState<_RequestForm> {
               ContentText(_errorMessage!, style: const TextStyle(color: AppColors.danger)),
             ],
             const SizedBox(height: 24),
-            // Bouton principal du kit (`FilledButton`, pilule émeraude) : l'ombre
-            // de l'`ElevatedButton` sort de la règle « des filets, pas des ombres »
-            // (mise au thème du kit, 2026-11-04).
-            FilledButton(
+            // Bouton `block` du kit (fin de formulaire, pleine largeur, rayon 12) :
+            // `ElevatedButton`, sans ombre depuis le thème (décision du 2026-11-05).
+            ElevatedButton(
               onPressed: _submitting ? null : _submit,
               child: _submitting
                   ? const SizedBox(

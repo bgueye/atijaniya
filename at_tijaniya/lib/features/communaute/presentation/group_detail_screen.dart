@@ -332,9 +332,9 @@ class _GroupHeader extends StatelessWidget {
                     style: OutlinedButton.styleFrom(foregroundColor: AppColors.danger),
                     child: Text(l10n.communityGroupsLeave),
                   )
-                // Bouton principal du kit (`FilledButton`), sans l'ombre de
-                // l'`ElevatedButton` (mise au thème du kit, 2026-11-04).
-                : FilledButton(
+                // Bouton `block` du kit (fin de formulaire, pleine largeur, rayon 12) :
+                // `ElevatedButton`, sans ombre depuis le thème (décision du 2026-11-05).
+                : ElevatedButton(
                     onPressed: updating ? null : (signedIn ? onJoin : onSignInPrompt),
                     child: Text(l10n.communityGroupsJoin),
                   ),

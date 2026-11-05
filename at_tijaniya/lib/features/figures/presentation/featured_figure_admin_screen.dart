@@ -186,9 +186,9 @@ class _FeaturedFigureAdminScreenState extends ConsumerState<FeaturedFigureAdminS
                       onChanged: (value) => setState(() => _selectedFigureId = value),
                     ),
                     const SizedBox(height: 16),
-                    // Bouton principal du kit (`FilledButton`), sans l'ombre de
-                    // l'`ElevatedButton` (mise au thème du kit, 2026-11-04).
-                    FilledButton(
+                    // Bouton `block` du kit (fin de formulaire, pleine largeur, rayon 12) :
+                    // `ElevatedButton`, sans ombre depuis le thème (décision du 2026-11-05).
+                    ElevatedButton(
                       onPressed: _saving || _selectedFigureId == null ? null : _pin,
                       child: _saving
                           // Émeraude : le bouton est désactivé pendant l'enregistrement, et

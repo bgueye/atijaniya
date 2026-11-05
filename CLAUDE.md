@@ -154,11 +154,18 @@ l'Istighfar de la Wazifa (100 dans *Jawâhir*, 30 dans le corpus) est levé par 
 100 avec une formule courte, 30 avec la formule longue ; **le projet ne retient que 30 avec la
 formule longue** (décision du 2026-11-02).
 Pour le contenu religieux et ses références, consulter d'abord `docs/sources/`.
-Kit de composants commun (jetons, règles d'usage, 15 composants avec leur correspondance
-Flutter) : `docs/kit/README.md`. Les écrans sans maquette se mettent au thème avec ce kit.
-Les composants existent depuis le 2026-11-02 dans `lib/core/widgets/` (`WirdBand` dans le
-module Wird) : les réutiliser plutôt que recopier un style ; captures FR/AR avec les vraies
-polices par `test/kit_captures_test.dart`.
+Kit de composants commun (jetons, règles d'usage, 18 composants avec leur correspondance
+Flutter) : `docs/kit/README.md`. Les composants existent depuis le 2026-11-02 dans
+`lib/core/widgets/` (`WirdBand` dans le module Wird) : les réutiliser plutôt que recopier un
+style ; captures FR/AR avec les vraies polices par `test/kit_captures_test.dart`.
+**Tous les écrans sans maquette sont au thème du kit depuis le 2026-11-04** (Wird secondaire,
+chemin spirituel, réglages et pages d'information, sous-écrans de la Communauté et des directs,
+administration ; détail dans `docs/09`). Un nouvel écran suit les mêmes règles : états vides et
+d'erreur en `Notice` / `NoticeBody` (ou `MessagePage` avec titre et action), jamais de texte en
+`bronze` (sous le seuil AA, `secondaryInk` à la place), titres de section en `SectionTitle`,
+bandeau de brouillon admin en `DraftBanner`, gouttière de 16. Bouton de fin de formulaire :
+`ElevatedButton` pleine largeur, coins de 12, **sans ombre** (thème, décision du 2026-11-05) ;
+action d'une carte : `FilledButton` en pilule.
 
 ## Contenu religieux — règle impérative
 Aucun texte de wird, biographie ou enseignement attribué ne doit être codé en dur ou publié

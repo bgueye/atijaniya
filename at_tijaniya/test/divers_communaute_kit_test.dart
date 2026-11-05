@@ -1,7 +1,7 @@
 // Sous-écrans de la Communauté et des directs mis au thème du kit le
 // 2026-11-04 (écrans divers, lot 2) :
 // - groupe : « réservé aux membres » en `MessagePage`, « Rejoindre » en
-//   `FilledButton` (sans ombre), discussion vide en état de la Communauté ;
+//   bouton de fin de formulaire du kit, discussion vide en état de la Communauté ;
 // - conversation privée : erreur en état de la Communauté, avec « Réessayer » ;
 // - publication : « Commentaires » en titre du kit, erreur des commentaires en
 //   `Notice` de section ;
@@ -53,8 +53,9 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.byType(MessagePage), findsOneWidget);
-    expect(find.widgetWithText(FilledButton, 'Rejoindre le groupe'), findsOneWidget);
-    expect(find.byType(ElevatedButton), findsNothing);
+    // Bouton `block` du kit : `ElevatedButton` pleine largeur, sans ombre dans
+    // le thème (décision du 2026-11-05).
+    expect(find.widgetWithText(ElevatedButton, 'Rejoindre le groupe'), findsOneWidget);
     _expectNoBronzeText(tester);
   });
 

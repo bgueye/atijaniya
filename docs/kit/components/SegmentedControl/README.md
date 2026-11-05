@@ -11,6 +11,8 @@ Bascule entre deux ou trois vues d'un même écran, avec leur nombre facultatif.
 - Fond `bronze` à 12 %, vue active en `off_white` avec `ink` 500.
 - Trois vues au plus ; au-delà, revoir l'écran.
 - Les non-lus s'affichent en `StatePill` `count`.
+- Un libellé long passe sur deux lignes, centré, au lieu d'être coupé (« Uniquement les
+  correspondances », Confidentialité ; 2026-11-04).
 
 **Flutter** : existe, `SegmentedSwitch` et `SegmentedSwitchItem`
 (`lib/core/widgets/segmented_switch.dart`, 2026-11-02). Le `SegmentedButton` de Material a un
