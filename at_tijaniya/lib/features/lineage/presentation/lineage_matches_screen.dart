@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/theme/app_colors.dart';
+import '../../../core/widgets/app_buttons.dart';
 import '../../../core/widgets/message_page.dart';
 import '../../../core/widgets/state_pill.dart';
 import '../../../core/widgets/section_title.dart';
@@ -218,7 +219,8 @@ class _ReceivedRequestCard extends ConsumerWidget {
               children: [
                 OutlinedButton(
                   onPressed: () => _respond(context, ref, l10n, accept: false),
-                  style: OutlinedButton.styleFrom(foregroundColor: AppColors.danger),
+                  // Contour `danger` comme le texte (il restait émeraude, 2026-11-05).
+                  style: AppButtonStyles.outlineDanger,
                   child: Text(l10n.lineageMatchesDecline),
                 ),
                 const SizedBox(width: 8),

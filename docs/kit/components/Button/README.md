@@ -23,10 +23,17 @@ suppression, et la variante or des écrans de pratique.
 - `primary` (pilule) pour l'action d'une carte ou d'une rangée (« Accepter » à côté de
   « Refuser ») ; `block` pour le bouton qui termine un formulaire ou une page (« Enregistrer »,
   « Envoyer la demande », « Rejoindre le groupe », « Faire un don »).
+- Une alternative pleine largeur posée dans la même colonne qu'un `block` (« Retrouver mes
+  condisciples », « Supprimer mes informations », « Quitter le groupe ») prend ses coins de 12,
+  pas la pilule : une colonne de boutons n'a qu'une forme (vu sur émulateur le 2026-11-05).
+- Une action destructrice à contour a le texte **et** le contour en `danger`, jamais un texte
+  rouge sur un contour émeraude.
 
 **Flutter** : existe (2026-11-02). `primary` : `FilledButton` ; `block` : `ElevatedButton` en
 pleine largeur, sans ombre (`elevation: 0`, ombre transparente dans `AppTheme`) ; `tonal` : `FilledButton.tonal` avec `style: AppButtonStyles.tonal` ; `outline` :
-`OutlinedButton` ; `text` : `TextButton` — tous thémés dans `AppTheme` (pilule, Jost 14 500,
+`OutlinedButton`, avec `style: AppButtonStyles.blockOutline` en pleine largeur à côté d'un
+`block`, `AppButtonStyles.blockOutlineDanger` pour une action destructrice dans ce cas, et
+`AppButtonStyles.outlineDanger` pour une action destructrice en pilule ; `text` : `TextButton` — tous thémés dans `AppTheme` (pilule, Jost 14 500,
 48 dp). `danger-link` : `DangerLinkButton` ; `gold` : `PracticeButton`
 (`lib/core/widgets/app_buttons.dart`). Ne pas passer un `TextStyle` sans police dans
 `styleFrom(textStyle: …)` : il remplace celui du thème et le libellé perd Jost.

@@ -21,6 +21,35 @@ abstract final class AppButtonStyles {
   /// teinte émeraude change avec le mode contraste renforcé.
   static ButtonStyle get tonal =>
       FilledButton.styleFrom(backgroundColor: AppColors.emeraldSoft, foregroundColor: AppColors.emerald);
+
+  /// Coins du bouton `block` (rayon 12), partagés par ses alternatives.
+  static const _blockShape = RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(12)));
+
+  /// Alternative en pleine largeur posée à côté d'un bouton `block`
+  /// (« Retrouver mes condisciples » au-dessus du formulaire de lignée) :
+  /// contour émeraude du thème, mais coins de 12 au lieu de la pilule. Vu sur
+  /// émulateur le 2026-11-05 : une pilule pleine largeur juste au-dessus ou
+  /// au-dessous d'un `block` à coins de 12 faisait deux formes sur une même
+  /// colonne de boutons.
+  static ButtonStyle get blockOutline => OutlinedButton.styleFrom(shape: _blockShape);
+
+  /// Action destructrice en pleine largeur à côté d'un bouton `block`
+  /// (« Supprimer mes informations », « Quitter le groupe ») : texte **et**
+  /// contour en `danger`, coins de 12. Avant, seul le texte passait en
+  /// `danger` et le contour restait émeraude (thème), un mélange vert-rouge
+  /// qui brouillait le sens de l'action.
+  static ButtonStyle get blockOutlineDanger => OutlinedButton.styleFrom(
+        foregroundColor: AppColors.danger,
+        side: const BorderSide(color: AppColors.danger),
+        shape: _blockShape,
+      );
+
+  /// Action destructrice en pilule dans une carte (« Refuser », « Décliner »,
+  /// action d'un signalement) : même correction du contour, forme du thème.
+  static ButtonStyle get outlineDanger => OutlinedButton.styleFrom(
+        foregroundColor: AppColors.danger,
+        side: const BorderSide(color: AppColors.danger),
+      );
 }
 
 /// Lien d'action irréversible (« Supprimer mon compte ») : texte `danger` en

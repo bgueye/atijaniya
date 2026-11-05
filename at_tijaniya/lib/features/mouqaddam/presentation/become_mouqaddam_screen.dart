@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/text/numerals.dart';
 import '../../../core/theme/app_colors.dart';
+import '../../../core/widgets/app_buttons.dart';
 import '../../../core/widgets/notice.dart';
 import '../../../l10n/app_localizations.dart';
 import '../domain/mouqaddam_models.dart';
@@ -124,7 +125,9 @@ class _PendingRequestView extends ConsumerWidget {
           const SizedBox(height: 20),
           OutlinedButton(
             onPressed: () => _cancel(context, ref),
-            style: OutlinedButton.styleFrom(foregroundColor: AppColors.danger),
+            // Action destructrice en pleine largeur, seule en bas de la demande : contour
+            // et texte `danger`, coins de 12 (`AppButtonStyles.blockOutlineDanger`, 2026-11-05).
+            style: AppButtonStyles.blockOutlineDanger,
             child: Text(l10n.mouqaddamPendingCancelButton),
           ),
         ],
@@ -215,7 +218,10 @@ class _RequestFormState extends ConsumerState<_RequestForm> {
               style: const TextStyle(fontSize: 16),
             ),
             const SizedBox(height: 12),
+            // Alternative en pleine largeur dans le formulaire du bouton `block` :
+            // coins de 12 comme lui (`AppButtonStyles.blockOutline`, 2026-11-05).
             OutlinedButton.icon(
+              style: AppButtonStyles.blockOutline,
               onPressed: _chooseSponsor,
               icon: const Icon(Icons.search, size: 18),
               label: Text(

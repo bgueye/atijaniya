@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/text/numerals.dart';
 import '../../../core/theme/app_colors.dart';
+import '../../../core/widgets/app_buttons.dart';
 import '../../../core/widgets/notice.dart';
 import '../../../l10n/app_localizations.dart';
 import '../domain/lineage_errors.dart';
@@ -185,7 +186,11 @@ class _LineageScreenState extends ConsumerState<LineageScreen> {
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
                     if (lineage != null) ...[
+                      // Alternative en pleine largeur au-dessus du bouton `block` : coins
+                      // de 12 comme lui, plus la pilule (`AppButtonStyles.blockOutline`,
+                      // vu sur émulateur le 2026-11-05).
                       OutlinedButton.icon(
+                        style: AppButtonStyles.blockOutline,
                         onPressed: () => Navigator.of(context).push(
                           MaterialPageRoute(builder: (_) => const LineageMatchesScreen()),
                         ),
@@ -269,7 +274,9 @@ class _LineageScreenState extends ConsumerState<LineageScreen> {
                       const SizedBox(height: 12),
                       OutlinedButton(
                         onPressed: _saving ? null : _delete,
-                        style: OutlinedButton.styleFrom(foregroundColor: AppColors.danger),
+                        // Action destructrice en pleine largeur, à côté du bouton `block` : contour
+                        // et texte `danger`, coins de 12 (`AppButtonStyles.blockOutlineDanger`, 2026-11-05).
+                        style: AppButtonStyles.blockOutlineDanger,
                         child: Text(l10n.lineageDelete),
                       ),
                     ],

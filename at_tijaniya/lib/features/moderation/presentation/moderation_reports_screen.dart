@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/theme/app_colors.dart';
+import '../../../core/widgets/app_buttons.dart';
 import '../../../core/widgets/notice.dart';
 import '../../../l10n/app_localizations.dart';
 import '../domain/moderation_models.dart';
@@ -192,7 +193,8 @@ class _ReportCardState extends ConsumerState<_ReportCard> {
                 const SizedBox(width: 8),
                 OutlinedButton(
                   onPressed: _busy ? null : () => _resolve(takeAction: true),
-                  style: OutlinedButton.styleFrom(foregroundColor: AppColors.danger),
+                  // Contour `danger` comme le texte (il restait émeraude, 2026-11-05).
+                  style: AppButtonStyles.outlineDanger,
                   child: ContentText(_actionLabel()),
                 ),
               ],

@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/network/network_errors.dart';
 import '../../../core/theme/app_colors.dart';
+import '../../../core/widgets/app_buttons.dart';
 import '../../../core/widgets/message_page.dart';
 import '../../../core/widgets/app_snackbar.dart';
 import '../../../core/widgets/message_composer.dart';
@@ -329,7 +330,9 @@ class _GroupHeader extends StatelessWidget {
             child: group.isMember
                 ? OutlinedButton(
                     onPressed: updating ? null : onLeave,
-                    style: OutlinedButton.styleFrom(foregroundColor: AppColors.danger),
+                    // Action destructrice en pleine largeur, à côté du bouton `block` : contour
+                    // et texte `danger`, coins de 12 (`AppButtonStyles.blockOutlineDanger`, 2026-11-05).
+                    style: AppButtonStyles.blockOutlineDanger,
                     child: Text(l10n.communityGroupsLeave),
                   )
                 // Bouton `block` du kit (fin de formulaire, pleine largeur, rayon 12) :

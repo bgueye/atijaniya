@@ -4766,3 +4766,29 @@ retirer l'ombre.
 
 Tests : `admin_kit_test.dart` vérifie le thème (élévation nulle, ombre transparente même au
 toucher, coins de 12) ; `divers_communaute_kit_test.dart` adapté.
+
+## Boutons à contour à côté du bouton `block` (2026-11-05)
+
+Test sur émulateur (version de débogage, `adb install -r`) après la décision précédente : les
+boutons `block` (« Enregistrer » de la lignée, « Nouveau lieu ») sont bien plats, coins de 12. Il a
+montré deux défauts sur « Ma lignée spirituelle », antérieurs à cette décision :
+- « Retrouver mes condisciples » et « Supprimer mes informations », boutons à contour pleine
+  largeur, restaient en pilule au-dessus et au-dessous d'« Enregistrer » aux coins de 12 ;
+- « Supprimer mes informations » avait un texte `danger` sur un contour émeraude (seule la couleur
+  du texte était changée, le contour venait du thème).
+
+Correction : trois styles dans `AppButtonStyles` (`app_buttons.dart`) — `blockOutline` (contour du
+thème, coins de 12), `blockOutlineDanger` (texte et contour `danger`, coins de 12) et
+`outlineDanger` (texte et contour `danger`, pilule du thème). Appliqués à la lignée (les deux
+boutons), « Quitter le groupe », la demande de parrainage (« Choisir un parrain », « Annuler la
+demande ») et aux actions destructrices en pilule (« Refuser » d'une demande de parrainage,
+« Décliner » d'un condisciple, action d'un signalement). Les boutons de date et d'heure du
+formulaire d'évènement et « Se déconnecter » du Profil gardent la pilule : aucun `block` dans leur
+colonne. Fiche Button du kit mise à jour.
+
+La carte de don de l'accueil n'a pas pu être vue : elle reste masquée (`kDonationsEnabled = false`)
+tant que PayDunya n'est pas en mode réel.
+
+Test : `outline_buttons_kit_test.dart` (aucun `OutlinedButton.styleFrom(foregroundColor:
+AppColors.danger)` seul dans `lib/`, `blockOutline` sur les trois écrans, valeurs des styles),
+vérifié en échec sur l'ancien code des écrans.
