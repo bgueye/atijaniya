@@ -601,6 +601,26 @@ Conséquences pour la suite du développement :
   Google exige au moins 12 testeurs inscrits pendant 14 jours d'affilée avant de pouvoir
   demander la production. Type de compte non vérifié ici.
 
+### Versions envoyées sur la piste de test fermé
+- `1.0.0+5` (commit `3750eee`) : en test fermé depuis le 2026-10-30.
+- `1.0.0+6` (commit `38f543c`, branche `claude/attijaniya-homepage-redesign-elyti4`) :
+  bundle signé avec la clé d'envoi, **envoyé par le porteur de projet le 2026-11-05**. Contient
+  les 39 commits depuis la `+5` :
+  - refonte d'après les maquettes : accueil, Wird, pratique, guide des wirds avec ses
+    références, Figures, fiches de détail, Communauté, parcours d'entrée, Zawiyas par pays et
+    Profil (l'écran Paramètres n'existe plus) ;
+  - kit de composants et mise au thème des écrans sans maquette ;
+  - corrections de l'audit des écrans refaits.
+
+  Migration liée : `2026-11-03_zawiyas_country.sql`, déjà appliquée en base et compatible avec
+  la `+5`. Notes de version en français et en arabe.
+  **Reste à faire** : quand Google aura validé la version, vérifier sur le téléphone de test,
+  qui se met à jour par le Play Store depuis la `+5`, les écrans touchés le 2026-11-05. Seul
+  l'écran de lignée a été vu à l'écran (sur émulateur) depuis le changement des boutons.
+- Le téléphone de test n'accepte plus une version signée sur le PC : il a la version du Play
+  Store, signée par Google (`INSTALL_FAILED_UPDATE_INCOMPATIBLE`). Valider sur l'émulateur, ou
+  attendre la version du Play Store.
+
 Restent ouverts : passage en production sur Google Play, tout le volet App Store (iOS), et
 la bascule PayDunya en mode live.
 
