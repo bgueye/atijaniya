@@ -20,6 +20,10 @@ moitié du § 3 (drapeau "date approximative") ; les § 1.2 et 1.3 sont écarté
 du porteur de projet** :
 `docs/12-propositions-evolution-contenu.md`.
 
+Fiches de figures proposées le 2026-11-06 (Thierno Hamet Baba Talla, Muhammad Baddi, Mawlud Fal,
+mouqaddams d'El Hadj Malick Sy, femmes de la Tariqa), relues mais **non saisies en base**, avec les
+corrections qu'elles appellent dans des fiches validées : `docs/15-propositions-fiches-figures.md`.
+
 Audit complet des 56 écrans et formulaires (2026-10-04) : synthèse, tableau de suivi des
 points de sécurité et de confidentialité, décisions du porteur de projet et liste de ce qui
 reste à faire dans `docs/13-audit-ecrans-2026-10-04.md` ; rapports bruts par module dans

@@ -250,6 +250,8 @@ Ces points portent en partie sur des fiches déjà publiées (lot du 28/09, rest
   - Muhammad Baddi (successeur de Muhammad al-Hafiz) ;
   - le successeur actuel de Thierno Amadou Hady Tall à Nioro ;
   - des **femmes** de la Tariqa, presque absentes de la base.
+  > Recherche du 2026-11-06 sur Talla, Muhammad Baddi, les mouqaddams d'El Hadj Malick Sy et les
+  > femmes : 17 fiches proposées, relues, rien en base. Voir `docs/15-propositions-fiches-figures.md`.
 - **Zawiyas à confirmer :** la zawiya de Bergame (Italie), citée en 2020 sans adresse ; le projet de zawiya de Paris, toujours en cours ; des zawiyas en Mauritanie (héritage de Muhammad al-Hafiz).
 - **Frise chronologique :** de 1737 (naissance de Cheikh Ahmed Tijani) à l'installation des grands foyers.
 - **Pratique :** vérifier que `wirds`, `wird_steps` et `wird_recitations` couvrent le Lazim, la Wazifa, la Hadra du vendredi et les règles de réparation (jabr), en recoupant avec tidjaniya.com.
