@@ -85,6 +85,14 @@ ces 7 derniers jours ; bienfaits exclus du carrousel en arabe.
 - Années de naissance : non affichées hors de la fiche tant qu'elles ne sont pas corrigées
   en base (plusieurs années grégoriennes dans `birth_year_hijri`). **La correction se fait
   avec les dates fournies par le porteur de projet, jamais estimées par le modèle.**
+  Le 2026-11-06, à la demande du porteur de projet, trois années ont été corrigées à partir
+  de dates exactes sourcées (Baye Niasse 1318, Sidi Ibrahim Riahi 1180, Serigne Mansour Sy
+  « Borom Daara Dji » 1344 ; détail et sources dans
+  `database/migrations/2026-11-06_figures_birth_year_hijri_fix.sql`). Huit valeurs restent
+  des années grégoriennes, faute de date exacte : Cheikh Amary Ndack Seck (1831), Serigne
+  Babacar Sy (1885), Serigne Mansour Sy « Balkhawmi » (1900), Thierno Aliou Thierno Yéro
+  Baal Anne (1901), Mame Abdoul Aziz Sy « Dabakh » (1904), Thierno Ciré Diop (1910),
+  Serigne Abdoul Aziz Sy « Al Amine » (1927), Serigne Babacar Sy Mansour (1932).
 
 **Communauté**
 - Rendez-vous de la zawiya du disciple intercalés dans le fil, au plus un toutes les trois
